@@ -50,22 +50,19 @@ __start_on_cheetah() {
 
   local log_path="$EXPERIMENT_DIR/tmp/baseline_tasks_cheetah_${log_suffix}.log"
 
-  while [[ $? -eq 0 ]]; do
-    local command="cd \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/lab_software/tomcat-baseline-tasks "
-    command+="&& $PYTHON ${python_script_name} -n $experimenter &> \$HOME$log_path &"
-    ssh $EXPERIMENT_USER@$client_address "$command"
+  local command="cd \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/lab_software/tomcat-baseline-tasks "
+  command+="&& $PYTHON ${python_script_name} -n $experimenter &> \$HOME$log_path &"
+  ssh $EXPERIMENT_USER@$client_address "$command"
 
-    if [[ $? -eq 0 ]]; then
-      local text="${padding}${YELLOW}Check the server to see if the process"
-      text+="started successfully.${NC}"
-      echo -e "$text"
-    else
-      local text="${padding}${RED}Error while starting the process. "
-      text+="Check the log file in ${EMPH}$log_path${RED} for more information.${NC}"
-      echo -e "$text"
-    fi
-    yes_no_question "${padding}Do you want to ${EMPH}RETRY${NC}?"
-  done
+  if [[ $? -eq 0 ]]; then
+    local text="${padding}${YELLOW}Check the server to see if the process"
+    text+="started successfully.${NC}"
+    echo -e "$text"
+  else
+    local text="${padding}${RED}Error while starting the process. "
+    text+="Check the log file in ${EMPH}$log_path${RED} for more information.${NC}"
+    echo -e "$text"
+  fi
 }
 
 __start_on_client() {
@@ -85,21 +82,21 @@ __start_on_client() {
 
     local log_path=$EXPERIMENT_DIR/tmp/baseline_tasks_$client_name.log
 
-    while [[ $? -eq 0 ]]; do
-      local command="cd \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/lab_software/tomcat-baseline-tasks "
-      command+="&& $PYTHON run_client.py -n $participant_id  &> \$HOME$log_path &"
-      ssh $EXPERIMENT_USER@$client_address "$command"
+    echo -e "${padding}Starting client on ${EMPH}$client_name${NC}..."
 
-      if [[ $? -eq 0 ]]; then
-        local text="${padding}${YELLOW}Check the server to see if the "
-        text+="connection was successfully established.${NC}"
-        echo -e "$text"
-      else
-        local text="${padding}${RED}Error while trying to start client. "
-        text+="Check the log file in ${EMPH}$log_path${RED} for more information.${NC}"
-        echo -e "$text"
-      fi
-    done
+    local command="cd \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/lab_software/tomcat-baseline-tasks "
+    command+="&& $PYTHON run_client.py -n $participant_id  &> \$HOME$log_path &"
+    ssh $EXPERIMENT_USER@$client_address "$command"
+
+    if [[ $? -eq 0 ]]; then
+      local text="${padding}${YELLOW} Check the server to see if the "
+      text+="connection was successfully established.${NC}"
+      echo -e "$text"
+    else
+      local text="${padding}${RED} Error while trying to start client. "
+      text+="Check the log file in ${EMPH}$log_path${RED} for more information.${NC}"
+      echo -e "$text"
+    fi
   fi
 }
 
