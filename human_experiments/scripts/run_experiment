@@ -59,6 +59,17 @@ done
 export ALL
 
 data_dir_prefix_cat=/data/cat
+tmux_session_name="processAggregator"
+
+# Kill session with the same name if it already exists
+tmux has-session -t $tmux_session_name 2>/dev/null
+if [ $? -eq 0 ]
+then
+    tmux kill-session -t $tmux_session_name
+fi
+
+# Create new tmux session and detach it
+tmux new-session -d -s $tmux_session_name
 
 if [[ -z ${DEVELOP+x} ]]; then
   export DEVELOP=0
