@@ -12,6 +12,10 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, *args, **kwargs):
         #initlize streams
 
+        self.skip = 500
+        self.offset = 0
+        self.tot_samples = 0
+
         self.streams = resolve_stream('type', 'EEG')
         self.inlet = StreamInlet(self.streams[device_id])
 
@@ -34,7 +38,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         pg.setConfigOptions(antialias=True)
 
-        self.x = [0]
+        self.x = [-self.skip]
         self.y = [[0] for i in range(len(self.channel_list))] #34 channel data
 
         self.graphWidgetLayout.setBackground('w')
@@ -80,13 +84,13 @@ class MainWindow(QtWidgets.QMainWindow):
     def update_plot_data(self):
         #update data
 
+        '''
         if len(self.x) >= 100:
             self.x = self.x[1:]  # Remove the first x element.
             
             for i in range(len(self.channel_list)):
                 self.y[i] = self.y[i][1:]  # Remove the first
 
-        '''
         self.sample,time = self.inlet.pull_sample() #get continuos streams from LSL
         #self.sample = np.random.randint(low = -30, high = 30, size = 34)
 
@@ -103,20 +107,88 @@ class MainWindow(QtWidgets.QMainWindow):
         # They were accumulated while we were plotting the previous chunk
         self.sample, time = self.inlet.pull_chunk()
 
-        print(len(self.sample))
+        n_samples = len(self.sample)
+        # print(n_samples)
+        self.tot_samples += n_samples
+        print(self.tot_samples)
+        print(self.sample)
+        return
 
-        if len(self.sample) > 0:
-            # Plot the most recent sample of this chunk. Discard the rest
+        n_effective = n_samples - self.offset
+
+        n_points_in_this_chunk = n_effective // self.skip
+        if n_effective % self.skip != 0:
+            n_points_in_this_chunk += 1
+
+        for idx in range(n_points_in_this_chunk):
+            if len(self.x) >= 100:
+                self.x = self.x[1:]  # Remove the first x element.
+
+                for i in range(len(self.channel_list)):
+                    self.y[i] = self.y[i][1:]  # Remove the first
 
             # Update the x value according to the number of samples we skipped
-            self.x.append(self.x[-1] + len(self.sample))
+            self.x.append(self.x[-1] + self.skip)
 
             # Append the last sample
             for i in range(len(self.channel_list)):
-                self.y[i].append(self.sample[-1][i])
+                self.y[i].append(self.sample[idx * self.skip + self.offset][i])
 
             for i in range(0, len(self.channel_list)):
                 self.dataLine[i][0].setData(self.x, self.y[i])
+
+        print(self.tot_samples, n_samples, self.offset, n_effective % self.skip, n_points_in_this_chunk)
+        print(self.x)
+        print()
+        self.offset = (self.skip - (n_effective % self.skip)) % self.skip
+
+        return
+
+        if (n_samples - self.offset) > 0:
+            # Plot the most recent sample of this chunk. Discard the rest
+            if (n_samples - self.offset) < self.skip:
+                if len(self.x) >= 100:
+                    self.x = self.x[1:]  # Remove the first x element.
+
+                    for i in range(len(self.channel_list)):
+                        self.y[i] = self.y[i][1:]  # Remove the first
+
+                # Update the x value according to the number of samples we skipped
+                self.x.append(self.x[-1] + self.skip)
+
+                # Append the last sample
+                for i in range(len(self.channel_list)):
+                    self.y[i].append(self.sample[self.offset][i])
+
+                for i in range(0, len(self.channel_list)):
+                    self.dataLine[i][0].setData(self.x, self.y[i])
+
+                self.offset = self.skip - (n_samples - self.offset)
+
+
+            for idx in range((n_samples - self.offset) // self.skip):
+                if len(self.x) >= 100:
+                    self.x = self.x[1:]  # Remove the first x element.
+
+                    for i in range(len(self.channel_list)):
+                        self.y[i] = self.y[i][1:]  # Remove the first
+
+                # Update the x value according to the number of samples we skipped
+                self.x.append(self.x[-1] + self.skip)
+
+                # Append the last sample
+                for i in range(len(self.channel_list)):
+                    self.y[i].append(self.sample[idx * self.skip + self.offset][i])
+
+                for i in range(0, len(self.channel_list)):
+                    self.dataLine[i][0].setData(self.x, self.y[i])
+
+            print(self.tot_samples, n_samples, self.offset, (n_samples - self.offset) % self.skip, (n_samples - self.offset) // self.skip)
+            print(self.x)
+            print()
+            self.offset = self.skip - ((n_samples - self.offset) % self.skip)
+        else:
+            self.offset -= n_samples
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Plotting EEG signals via LSL')
