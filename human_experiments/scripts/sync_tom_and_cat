@@ -59,8 +59,13 @@ export TOMCAT_DIR="${HOME}/tomcat"
 # limiting the path to standard root controlled directories. 
 export PATH="/usr/bin:/bin:${TOMCAT_DIR}/scripts"
 
-# If this fails, we simply die, because we are not ready to do anything else. 
+# If this fails, we are not ready report anything so we simply die.
 set -e
+
+# Revoke possible removal of group perms (if we are running as root) and don't
+# permit others any access. 
+umask 0007
+
 log_dir=${TOMCAT_DIR}/logs
 mkdir -p ${log_dir}
 log_file="${log_dir}/sync_tom_and_cat.log"
@@ -74,7 +79,7 @@ touch "${log_file}"
 set +e 
 
 echo "============================================================================" | tee -a ${log_file}
-echo "Script sync_tom_and_cat_2 starting on: $(date)" | tee -a ${log_file}
+echo "Script sync_tom_and_cat is calling sync_tom_and_cat_2 on $(date)" | tee -a ${log_file}
 echo " " | tee -a ${log_file}
 
 set -o pipefail 
