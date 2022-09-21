@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -u
+
+log_path=$1
+pid_path=$2
+
+socat TCP4-LISTEN:9000,fork,reuseaddr TCP4:tom.local:9000 > "$log_path" &
+echo $! > "$pid_path"
