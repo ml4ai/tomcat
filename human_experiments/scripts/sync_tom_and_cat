@@ -13,24 +13,28 @@
 #     that there are two files that have the same name but are different, we
 #     move the older one to have a dated suffix. 
 #
-#     This script should be run as sudo on either cat or tom. Generally, it
-#     should be called right after data collection by the master "uber" script.
-#     In addition, it should be called by the scripts that pull data IVILAB
-#     servers. 
+#     This script should be run as either user tom on machine tom or user cat on
+#     machine cat, or potentially a user on one of those two machines in the
+#     group tomcat. Generally, it should be called right after data collection
+#     by the master "uber" script.  In addition, it should be called by the
+#     scripts that pull data IVILAB servers. 
 #     
 #     We assume that this script lives in ${HOME}/tomcat/scripts, which should
-#     be symbolic link to the current code repo. Since this script should be run
-#     as sudo on a linux machine, ${HOME} is generally /root. 
+#     be symbolic link to the current code repo. 
 #
-#     This script relies on the UID for tom on tom is the same as the UID for
+#     This script may rely on the UID for tom on tom being the same as the UID for
 #     cat on cat. This "feature" might be confusing, but so far it has not
-#     caused grief. 
+#     caused grief. Also, being in group "tomcat" should also provide needed
+#     permissions as long as the GID is shared over tom and cat. 
 #
 # Output: 
 #     All output, including error output, goes to stdout, and is also appended
 #     to ${HOME}/tomcat/logs/sync_tom_and_cat.log. Because of this logging, in
 #     scripts, redirecting stdout to /dev/null might make sense. However, one
 #     should always check the exit status.
+#
+#     This scripts respects the setting of IVI_VERBOSE. If it is set to "1",
+#     then we provide more output. 
 #
 # Exit status:
 #     Following unix convention, this script exits with 0 on success, and
