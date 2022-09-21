@@ -200,6 +200,12 @@ __cleanup_on_client() {
   fi
 }
 
+__clean_tmp_directory() {
+  # We remove the .pid files from the tmp directory as we don't need to store the process IDs after the experiment.
+  echo -e "${padding}Removing .pid files from the temporary directory."
+  rm "$EXPERIMENT_DIR/tmp/*.pid" > /dev/null
+}
+
 __freeze_experiment_data() {
   local padding=$1
 
@@ -241,8 +247,8 @@ __cleanup() {
   __cleanup_on_client "tiger" "tiger.local" "$padding "
   __cleanup_on_client "leopard" "leopard.local" "$padding "
 
-  echo -e "${padding}Killing ${EMPH}Minecraft${NC} in the ${EMPH}server${NC}..."
   source stop_testbed "$EXPERIMENT_DIR" "$padding "
+  __clean_tmp_directory "$padding "
   __freeze_experiment_data "$padding "
   __backup_experiment_data "$padding "
 }
