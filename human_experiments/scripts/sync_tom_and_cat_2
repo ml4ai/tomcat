@@ -30,6 +30,10 @@ exit_status=0
 # exit. 
 set -e
 
+# Revoke possible removal of group perms (if we are running as root) and don't
+# permit others any access. 
+umask 0007 
+
 data="/data"
 # For testing. 
 # data="${TOMCAT_DIR}/data"
@@ -63,7 +67,17 @@ backup_suffix="-RSYNC-${date_stamp}"
 mkdir -p "${cat_data_dir}"  2>&1
 mkdir -p "${tom_data_dir}"  2>&1 
 
-rsync_options="-a -u -b --suffix ${backup_suffix}"
+# We initially used '-a' which means '-rlptgoD', but setting ownership (-o) or
+# group (-g) on cross-mounted disks can cause breakage, and we do not need it.
+# Also, it seems desirable to preserve create times ('-N' or '--crtimes') as we
+# might need this as an emergency data time stamp, but this does not work,
+# possibly due to rsync, possibly due to the OS (whether or not the OS can
+# change a create time is not universal, and debatable as desirable, but Kobus
+# uses it on ocasion).
+#
+### rsync_options="-a -u -b --suffix ${backup_suffix}"
+### rsync_options="-rlptgD --crtimes -u -b --suffix ${backup_suffix}"
+rsync_options="-rlptD -u -b --suffix ${backup_suffix}"
 
 if [[ "${IVI_VERBOSE}" != "0" ]]; then
     rsync_options="-v ${rsync_options}"
