@@ -25,8 +25,8 @@ __play_on_client() {
 
     # If the location of the video in the client machine changes, make sure to
     # update the applescript below.
-    local command="osascript \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/macos/play_instructive_video.scpt"
-    ssh $EXPERIMENT_USER@$client_address "$command" >/dev/null
+    local command="open \$HOME/resources/tomcat/video.mp4"
+    ssh "$EXPERIMENT_USER@$client_address" "$command" >/dev/null
     if [[ $? -eq 0 ]]; then
       echo -e "${padding} ${EMPH}Video${GREEN} opened successfully.${NC}"
     else
