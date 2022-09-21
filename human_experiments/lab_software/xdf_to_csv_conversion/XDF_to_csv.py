@@ -3,7 +3,7 @@ import sys
 import pyxdf
 import argparse
 from termcolor import colored
-from utils import get_start_stop_time_from_xdf, create_csv_file, write_to_csv_file
+from utils import get_start_stop_time_from_xdf, dataframe_to_csv, create_time_distribution
 
 def read_xdf(xdf_file_paths):
     """
@@ -17,8 +17,8 @@ def read_xdf(xdf_file_paths):
                 colored('[Status] Reading ', 'red', attrs=['bold']), 
                 colored(data[i]['info']['type'], 'blue'))
                 time_start_streams_nirs, time_end_streams_nirs = get_start_stop_time_from_xdf(data[i]) #get the unix time
-                csv_file_path, csv_writer = create_csv_file(path, 'NIRS') #2. Create CSV file for each of the streams in their respective directory
-                write_to_csv_file(csv_file_path, data[i]['time_series'], csv_writer)
+                timestamp_distribution = create_time_distribution(time_start_streams_nirs, time_end_streams_nirs, len(data[i]['time_series']))
+                dataframe_to_csv(path, data[i]['time_series'], 'NIRS', timestamp_distribution)
 
             elif data[i]['info']['type'] == ['Markers']:
                 #We don't have physical marker for our physio data
@@ -32,6 +32,7 @@ def read_xdf(xdf_file_paths):
                 colored(data[i]['info']['type'], 'blue'))
                 #create_csv_file(path, 'EEG')
                 time_start_streams_eeg, time_end_streams_eeg = get_start_stop_time_from_xdf(data[i]) #get the unix time
+                #dataframe_to_csv(path, data[i]['time_series'], 'EEG')
 
             elif data[i]['info']['type'] == ['Gaze']:
                 print(
@@ -39,6 +40,7 @@ def read_xdf(xdf_file_paths):
                 colored(data[i]['info']['type'], 'blue'))
                 #create_csv_file(path, 'Gaze')
                 time_start_streams_gaze, time_end_streams_gaze = get_start_stop_time_from_xdf(data[i]) #get the unix time
+                # dataframe_to_csv(path, data[i]['time_series'], 'Gaze')
             
             elif data[i]['info']['type'] == ['Accelerometer']:
                 print(
