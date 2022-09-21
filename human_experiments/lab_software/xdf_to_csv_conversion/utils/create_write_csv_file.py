@@ -2,9 +2,10 @@ import os
 import csv
 from unicodedata import name
 import pandas as pd
+
 #from baseline_tasks_timestamps import read_rest_state_time
 
-def dataframe_to_csv(path, data, stream_type, timestamp_distribution):
+def dataframe_to_csv(path, data, stream_type, time_distribution_human_readable, time_distribution_unix):
     """
     Read data from the XDF file, convert it into a dictionary, 
     then convert that to a pandas dataframe and save it as csv file. 
@@ -31,7 +32,10 @@ def dataframe_to_csv(path, data, stream_type, timestamp_distribution):
     #1. Gather all the channel data into the data frame
     df = pd.DataFrame.from_dict(csv_entry, columns=channel_list, orient='index')
 
-    #2. Gather timestamp distribution
-    df[header[1]] = timestamp_distribution
+    #2. Gather human readable timestamp distribution
+    df[header[1]] = time_distribution_human_readable
+
+    #3. Gather unix timestamp distribution
+    df[header[0]] = time_distribution_unix
     
     df.to_csv(csv_file_name + ".csv", sep='\t', encoding='utf-8')

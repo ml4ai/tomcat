@@ -17,8 +17,8 @@ def read_xdf(xdf_file_paths):
                 colored('[Status] Reading ', 'red', attrs=['bold']), 
                 colored(data[i]['info']['type'], 'blue'))
                 time_start_streams_nirs, time_end_streams_nirs = get_start_stop_time_from_xdf(data[i]) #get the unix time
-                timestamp_distribution = create_time_distribution(time_start_streams_nirs, time_end_streams_nirs, len(data[i]['time_series']))
-                dataframe_to_csv(path, data[i]['time_series'], 'NIRS', timestamp_distribution)
+                time_distribution_human_readable, time_distribution_unix = create_time_distribution(time_start_streams_nirs, time_end_streams_nirs, len(data[i]['time_series']))
+                dataframe_to_csv(path, data[i]['time_series'], 'NIRS', time_distribution_human_readable, time_distribution_unix)
 
             elif data[i]['info']['type'] == ['Markers']:
                 #We don't have physical marker for our physio data
