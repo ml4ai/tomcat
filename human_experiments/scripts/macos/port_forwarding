@@ -9,5 +9,5 @@ pid_path=$2
 # socat was installed with MacPorts. The PATH variable is updated in ~/.zprofile by MacPorts.
 source "$HOME/.zprofile"
 
-socat TCP4-LISTEN:9000,fork,reuseaddr TCP4:tom.local:9000 &> "$log_path" &
+socat TCP4-LISTEN:9000,fork,reuseaddr TCP4:192.168.0.24:9000 &> "$log_path" &
 echo $! > "$pid_path"
