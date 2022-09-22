@@ -1,5 +1,6 @@
 import pandas as pd
 from datetime import datetime
+from termcolor import colored
 
 def create_time_distribution(starts, ends, count):
     """

@@ -1,4 +1,4 @@
 from .xdf_timestamps import get_start_stop_time_from_xdf
-#from .baseline_tasks_timestamps import read_rest_state_time
+from .baseline_tasks_timestamps import read_rest_state_time
 from .create_write_csv_file import dataframe_to_csv
 from .create_time_distribution import create_time_distribution

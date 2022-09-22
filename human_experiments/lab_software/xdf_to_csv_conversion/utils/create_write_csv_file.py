@@ -1,11 +1,10 @@
 import os
-import csv
-from unicodedata import name
 import pandas as pd
+from termcolor import colored 
+from baseline_tasks_timestamps import read_rest_state_time
 
-#from baseline_tasks_timestamps import read_rest_state_time
-
-def dataframe_to_csv(path, data, stream_type, time_distribution_human_readable, time_distribution_unix):
+def dataframe_to_csv(path, data, stream_type, time_distribution_human_readable, time_distribution_unix, 
+                    rootdir_baseline_task, subject_id):
     """
     Read data from the XDF file, convert it into a dictionary, 
     then convert that to a pandas dataframe and save it as csv file. 
@@ -31,11 +30,28 @@ def dataframe_to_csv(path, data, stream_type, time_distribution_human_readable, 
     
     #1. Gather all the channel data into the data frame
     df = pd.DataFrame.from_dict(csv_entry, columns=channel_list, orient='index')
+    print(colored('[Status]', 'red', attrs=['bold']), 
+        colored(stream_type, 'blue'), 
+        colored('data written to CSV file', 'red', attrs=['bold']))
 
     #2. Gather human readable timestamp distribution
     df[header[1]] = time_distribution_human_readable
+    print(colored('[Status]', 'red', attrs=['bold']), 
+        colored(stream_type, 'blue'), 
+        colored('readable timestamp written to CSV file', 'red', attrs=['bold']))
 
     #3. Gather unix timestamp distribution
     df[header[0]] = time_distribution_unix
-    
+    print(colored('[Status]', 'red', attrs=['bold']), 
+        colored(stream_type, 'blue'), 
+        colored('unix timestamp written to CSV file', 'red', attrs=['bold']))    
+
+    #4. Gather baseline task timestamp and sync it with xdf timestamp
+    """
+    Rest state and finger tapping have common timestamps 
+    for all three subjects. 
+    """
+
+    rest_state_time = read_rest_state_time(rootdir_baseline_task)
+
     df.to_csv(csv_file_name + ".csv", sep='\t', encoding='utf-8')

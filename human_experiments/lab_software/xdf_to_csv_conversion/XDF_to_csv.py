@@ -5,7 +5,7 @@ import argparse
 from termcolor import colored
 from utils import get_start_stop_time_from_xdf, dataframe_to_csv, create_time_distribution
 
-def read_xdf(xdf_file_paths):
+def read_xdf(xdf_file_paths, rootdir_baseline_task, subject_id):
     """
     Read the XDF files.
     """
@@ -18,7 +18,7 @@ def read_xdf(xdf_file_paths):
                 colored(data[i]['info']['type'], 'blue'))
                 time_start_streams_nirs, time_end_streams_nirs = get_start_stop_time_from_xdf(data[i]) #get the unix time
                 time_distribution_human_readable, time_distribution_unix = create_time_distribution(time_start_streams_nirs, time_end_streams_nirs, len(data[i]['time_series']))
-                dataframe_to_csv(path, data[i]['time_series'], 'NIRS', time_distribution_human_readable, time_distribution_unix)
+                dataframe_to_csv(path, data[i]['time_series'], 'NIRS', time_distribution_human_readable, time_distribution_unix, rootdir_baseline_task, subject_id)
 
             elif data[i]['info']['type'] == ['Markers']:
                 #We don't have physical marker for our physio data
@@ -77,9 +77,15 @@ if __name__ == "__main__":
         "--p2", 
         required=True, 
         help="Enter the Path to folder with baseline task data")
+    
+    parser.add_argument(
+        '--s',
+        required=True, action='append', 
+        help="Enter the Path to folder with baseline task data")
 
     arg = parser.parse_args()
     rootdir_xdf = arg.p1
     rootdir_baseline_task = arg.p2
+    subject_id = arg.s
     print(colored('[Status] Root Directory:', 'red', attrs=['bold']), colored(rootdir_xdf, 'blue'))
-    sys.exit(look_for_XDF_files(rootdir_xdf))
+    sys.exit(look_for_XDF_files(rootdir_xdf, rootdir_baseline_task, subject_id))
