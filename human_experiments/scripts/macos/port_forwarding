@@ -5,5 +5,9 @@ set -u
 log_path=$1
 pid_path=$2
 
+# We source from zprofile so that a call to this script from a non-interactive shell recognizes socat.
+# socat was installed with MacPorts. The PATH variable is updated in ~/.zprofile by MacPorts.
+source "$HOME/.zprofile"
+
 socat TCP4-LISTEN:9000,fork,reuseaddr TCP4:tom.local:9000 > "$log_path" &
 echo $! > "$pid_path"
