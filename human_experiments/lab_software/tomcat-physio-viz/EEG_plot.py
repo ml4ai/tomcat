@@ -11,7 +11,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def __init__(self, *args, **kwargs):
         #initlize streams
-
+        self.host_name = {'actiCHamp-20010205' : 'Tiger - EEG(200 10 205)', 
+                         'actiCHamp-20010194' : 'Lion - EEG(200 10 194)', 
+                         'actiCHamp-21020492' : 'Leopard - EEG(210 20 492)'}
+                         
         self.streams = resolve_stream('type', 'EEG')
         self.inlet = StreamInlet(self.streams[device_id])
 
@@ -24,7 +27,9 @@ class MainWindow(QtWidgets.QMainWindow):
         super(MainWindow, self).__init__(*args, **kwargs)
 
         device_name = self.streams[device_id].name()
-        self.setWindowTitle(device_name)
+        for stream_name, stream_name_with_id in self.host_name.items():
+            if device_name in stream_name:
+                self.setWindowTitle(stream_name_with_id)
 
         self.graphWidgetLayout = pg.GraphicsLayoutWidget()
         self.graphWidgetLayout.resize(900,2500) 

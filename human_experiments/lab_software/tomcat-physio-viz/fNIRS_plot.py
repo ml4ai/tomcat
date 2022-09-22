@@ -11,7 +11,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def __init__(self, *args, **kwargs):
         #initlize streams
-
+        self.host_name = {'tiger_0239' : 'Tiger - fNIRS(2101_0239_A)', 
+                         'lion_0297' : 'Lion - fNIRS(2118_0297_A)', 
+                         'leopard_0171' : 'Leopard - fNIRS(2010_0171_A)'}
+                         
         self.streams = resolve_stream('type', 'NIRS')
         self.inlet = StreamInlet(self.streams[device_id])
 
@@ -23,8 +26,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
         super(MainWindow, self).__init__(*args, **kwargs)
 
-        device_name = self.streams[device_id].hostname()
-        self.setWindowTitle(device_name)
+        device_name = self.streams[device_id].name()
+        for stream_name, stream_name_with_id in self.host_name.items():
+            if device_name in stream_name:
+                self.setWindowTitle(stream_name_with_id)
 
         self.graphWidgetLayout = pg.GraphicsLayoutWidget()
         self.graphWidgetLayout.resize(900,2500) 
