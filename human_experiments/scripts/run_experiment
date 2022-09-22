@@ -11,4 +11,4 @@ tmux kill-session -t $tmux_session_name
 fi
 
 # Create new tmux session and detach it
-tmux new-session -s $tmux_session_name
+tmux new-session -s $tmux_session_name './run_experiment_wrap'
