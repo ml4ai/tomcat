@@ -57,13 +57,6 @@ fi
    
 set -u 
 
-if [[ "$1" == "-q" ]]; then
-    be_quiet=1
-else
-    be_quiet=0
-fi 
-   
-
 # Obscure bash code to set IVI_VERBOSE to 1 if it is set but NULL, 0 if unset,
 # and retain its value otherwise. Don't overthink bash syntax---it is not good
 # for you. We have this after the '-u' to test if this is valid on all bash
@@ -76,8 +69,8 @@ fi
 
 export TOMCAT_DIR="${HOME}/tomcat" 
 
-# Since this is run as sudo, we control the meaning of basic commands by
-# limiting the path to standard root controlled directories. 
+# We control the meaning of basic commands by limiting the path to standard root
+# controlled directories. 
 export PATH="/usr/bin:/bin:${TOMCAT_DIR}/scripts"
 
 # If this fails, we are not ready report anything so we simply die.
