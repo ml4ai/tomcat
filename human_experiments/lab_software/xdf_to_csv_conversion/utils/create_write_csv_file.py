@@ -1,10 +1,11 @@
 import os
 import pandas as pd
 from termcolor import colored 
-from baseline_tasks_timestamps import read_rest_state_time
+from .baseline_tasks_timestamps import read_baseline_tasks_time
+from .minecraft_timestamps import read_minecraft_time
 
 def dataframe_to_csv(path, data, stream_type, time_distribution_human_readable, time_distribution_unix, 
-                    rootdir_baseline_task, subject_id):
+                    rootdir_baseline_task, rootdir_minecraft_data, subject_id):
     """
     Read data from the XDF file, convert it into a dictionary, 
     then convert that to a pandas dataframe and save it as csv file. 
@@ -46,12 +47,18 @@ def dataframe_to_csv(path, data, stream_type, time_distribution_human_readable, 
         colored(stream_type, 'blue'), 
         colored('unix timestamp written to CSV file', 'red', attrs=['bold']))    
 
-    #4. Gather baseline task timestamp and sync it with xdf timestamp
+    #4. Gather baseline task timestamp 
     """
-    Rest state and finger tapping have common timestamps 
-    for all three subjects. 
+    function read_rest_state_time() will return a 
+    dictionary with structure {'state', 'participant', 
+                                'start_time', 'end_time'}  
     """
+    baseline_task_time = read_baseline_tasks_time(rootdir_baseline_task, subject_id)
 
-    rest_state_time = read_rest_state_time(rootdir_baseline_task)
-
+    #4. Gather minecraft timestamp 
+    """
+    We will use the same dictionary rest_state_time
+    and add minecraft timestamp. 
+    """
+    read_minecraft_time(baseline_task_time, rootdir_minecraft_data)
     df.to_csv(csv_file_name + ".csv", sep='\t', encoding='utf-8')

@@ -1,8 +1,7 @@
 import os 
-from time import ctime
 import pandas as pd
 
-def read_rest_state_time(rootdir, subject_id): 
+def read_baseline_tasks_time(rootdir, subject_id): 
     start_stop_time = {} #Create a dictionary that would contain
     idx = 0 #index for the dictionary
     for x in sorted(os.listdir(rootdir)):
@@ -60,7 +59,7 @@ def read_rest_state_time(rootdir, subject_id):
                 """
                 Ping-pong task has 3 rounds:
                     Round 1: File name would be competetive_0_* 
-                    where lion would play against tiger. There lion
+                    where lion would play against tiger. Lion
                     and tiger would have the same time. 
                 
                     Round 2: File name would be competetive_1_* 
@@ -125,6 +124,7 @@ def read_rest_state_time(rootdir, subject_id):
                                                             'start_time': df['time'].iloc[0], 
                                                             'end_time':df['time'].iloc[-1]}      
                                     idx += 1                                    
+    return start_stop_time
 
     # print(start_stop_time)         
-# read_rest_state_time('/Users/calebjonesshibu/Desktop/tom/pilot/exp_2022_09_09_12/baseline_tasks', ['A_0909_1', 'A_0909_2', 'A_0909_3'])
+# read_baseline_tasks_time('/Users/calebjonesshibu/Desktop/tom/dry_runs/exp_2022_09_13_10/baseline_tasks', ['0913_A_1', '0913_A_2', '0913_A_3'])
