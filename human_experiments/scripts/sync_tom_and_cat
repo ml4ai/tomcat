@@ -52,14 +52,13 @@
 #
 ##############################################################################
 
-set -u 
-
 if [[ "$1" == "-q" ]]; then
-    be_quiet=1
+    plumbing='>>'
 else
-    be_quiet=0
+    plumbing='| tee -a'
 fi 
    
+set -u 
 
 # Obscure bash code to set IVI_VERBOSE to 1 if it is set but NULL, 0 if unset,
 # and retain its value otherwise. Don't overthink bash syntax---it is not good
@@ -96,19 +95,14 @@ touch "${log_file}"
 #
 set +e 
 
-echo "============================================================================" | tee -a ${log_file}
-echo "Script sync_tom_and_cat is calling sync_tom_and_cat_2 on $(date)" | tee -a ${log_file}
-echo " " | tee -a ${log_file}
+eval echo "============================================================================" ${plumbing} ${log_file}
+eval echo "Script sync_tom_and_cat is calling sync_tom_and_cat_2 on $(date)" ${plumbing} ${log_file}
+eval echo " " ${plumbing} ${log_file}
 
 set -o pipefail 
 
-if [[ $be_quiet -eq 1 ]]; then
-    sync_tom_and_cat_2 >> ${log_file}
-    exit_status=$?
-else 
-    sync_tom_and_cat_2 | tee -a ${log_file}
-    exit_status=$?
-fi 
+eval sync_tom_and_cat_2 ${plumbing} ${log_file}
+exit_status=$?
 
 echo "Script sync_tom_and_cat exiting with status ${exit_status} on: $(date)" | tee -a ${log_file}
 
