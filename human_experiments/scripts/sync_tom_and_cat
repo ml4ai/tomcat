@@ -101,7 +101,8 @@ set -o pipefail
 eval sync_tom_and_cat_2 ${plumbing} ${log_file}
 exit_status=$?
 
-echo "Script sync_tom_and_cat exiting with status ${exit_status} on: $(date)" | tee -a ${log_file}
+echo "Script sync_tom_and_cat exiting with status ${exit_status} on: $(date)" ${plumbing} ${log_file}
 
 exit ${exit_status}
+
 
