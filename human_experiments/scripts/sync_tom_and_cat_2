@@ -27,7 +27,7 @@ exit_status=0
 
 # The initial commands in this script executes need to succeed, so we can
 # simplify error handling to trap failures to report them, and then ask bash to
-# exit. 
+# exit. But until then we simply have to die. 
 set -e
 
 # Revoke possible removal of group perms (if we are running as root) and don't
@@ -97,8 +97,6 @@ rsync ${rsync_options} ${tom_data_dir} ${cat_data_dir} 2>&1
 # rsync created. 
 #
 rsync ${rsync_options} ${cat_data_dir} ${tom_data_dir} 2>&1
-
-end_date="$(date)"
 
 exit ${exit_status}
 

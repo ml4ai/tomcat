@@ -73,7 +73,9 @@ export TOMCAT_DIR="${HOME}/tomcat"
 # controlled directories. 
 export PATH="/usr/bin:/bin:${TOMCAT_DIR}/scripts"
 
-# If this fails, we are not ready report anything so we simply die.
+# If the preliminary commands fail, we are not ready report anything so we
+# simply die.
+
 set -e
 
 # Revoke possible removal of group perms (if we are running as root) and don't
@@ -86,14 +88,15 @@ log_file="${log_dir}/sync_tom_and_cat.log"
 # Test writing to log_file.
 touch "${log_file}" 
 
-# We want to execute sync_tom_and_cat_2, and report its error. Any other issues
-# are about logging, but where would we report that? The fall back would be to
-# send mail. Maybe in the next version. 
+# We want to execute sync_tom_and_cat_2, and report its error. This is the only
+# command that really counts. Any other issues are about logging, but where
+# would we report that? The fall back would be to send mail. Maybe in the next
+# version. For now, use '+e' so at least the main command gets tried. 
 #
 set +e 
 
 eval echo "============================================================================" ${plumbing} ${log_file}
-eval echo "Script sync_tom_and_cat is calling sync_tom_and_cat_2 on $(date)" ${plumbing} ${log_file}
+eval echo "Script sync_tom_and_cat is starting: $(date)" ${plumbing} ${log_file}
 eval echo " " ${plumbing} ${log_file}
 
 set -o pipefail 
