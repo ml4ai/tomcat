@@ -6,6 +6,9 @@
 #     Synchronizes data between two cross mounted disks on LangLab computers
 #     tom and cat. 
 #
+# Synopsis:
+#      sync_tom_and_cat [ -q ]
+#
 # Description:
 #     This script synchronizes data between two cross mounted disks on LangLab
 #     computers tom and cat. The two data stores are set at the beginning of the
@@ -29,8 +32,12 @@
 #
 # Output: 
 #     All output, including error output, goes to stdout, and is also appended
-#     to ${HOME}/tomcat/logs/sync_tom_and_cat.log. Because of this logging, in
-#     scripts, redirecting stdout to /dev/null might make sense. However, one
+#     to ${HOME}/tomcat/logs/sync_tom_and_cat.log. Because of this logging,
+#     when called from other scripts, we may not want any output. Rather than 
+#     redirect to /dev/null, we can ask for no output with the first optional
+#     argument '-q'. 
+#
+#     but  might make sense. However, one
 #     should always check the exit status.
 #
 #     This scripts respects the setting of IVI_VERBOSE. If it is set to "1",
