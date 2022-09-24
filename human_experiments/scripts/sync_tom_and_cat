@@ -37,9 +37,8 @@
 #     redirect to /dev/null, we can ask for no output with the first optional
 #     argument '-q'. 
 #
-#     but  might make sense. However, one
-#     should always check the exit status.
-#
+#     This scripts respects the setting of IVI_VERBOSE. If it is set to "1",
+#     then we provide more output. 
 #     This scripts respects the setting of IVI_VERBOSE. If it is set to "1",
 #     then we provide more output. 
 #
@@ -52,6 +51,12 @@
 #
 ##############################################################################
 
+if [[ "$1" == "-q" ]]; then
+    plumbing='>>'
+else
+    plumbing='| tee -a'
+fi 
+   
 set -u 
 
 if [[ "$1" == "-q" ]]; then
@@ -96,21 +101,16 @@ touch "${log_file}"
 #
 set +e 
 
-echo "============================================================================" | tee -a ${log_file}
-echo "Script sync_tom_and_cat is calling sync_tom_and_cat_2 on $(date)" | tee -a ${log_file}
-echo " " | tee -a ${log_file}
+eval echo "============================================================================" ${plumbing} ${log_file}
+eval echo "Script sync_tom_and_cat is calling sync_tom_and_cat_2 on $(date)" ${plumbing} ${log_file}
+eval echo " " ${plumbing} ${log_file}
 
 set -o pipefail 
 
-if [[ $be_quiet -eq 1 ]]; then
-    sync_tom_and_cat_2 >> ${log_file}
-    exit_status=$?
-else 
-    sync_tom_and_cat_2 | tee -a ${log_file}
-    exit_status=$?
-fi 
+eval sync_tom_and_cat_2 ${plumbing} ${log_file}
+exit_status=$?
 
-echo "Script sync_tom_and_cat exiting with status ${exit_status} on: $(date)" | tee -a ${log_file}
+eval echo "Script sync_tom_and_cat exiting with status ${exit_status} on: $(date)" ${plumbing} ${log_file}
 
 exit ${exit_status}
 
