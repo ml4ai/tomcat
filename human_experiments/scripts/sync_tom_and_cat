@@ -39,8 +39,6 @@
 #
 #     This scripts respects the setting of IVI_VERBOSE. If it is set to "1",
 #     then we provide more output. 
-#     This scripts respects the setting of IVI_VERBOSE. If it is set to "1",
-#     then we provide more output. 
 #
 # Exit status:
 #     Following unix convention, this script exits with 0 on success, and
