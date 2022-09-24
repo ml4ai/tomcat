@@ -1,0 +1,75 @@
+#!/bin/bash
+
+# This script starts the server and client for the entrainment app used in the
+# pre-sessions.
+
+__help() {
+  # Display Help
+  echo
+  echo "This script starts the entrainment webapp server and client for an experiment pre-session."
+  echo
+  echo "Syntax: run_experiment [-h|d|t]"
+  echo "options:"
+  echo "h     Print this Help."
+  echo "d     Dry-run mode. The data is saved under the dry-run directory structure."
+  echo "t     Test mode. The data is saved under the development directory structure."
+  echo
+}
+
+dry_run=0
+test=0
+while getopts ":hdt" option; do
+  case $option in
+    h) # display Help
+      __help
+      exit;;
+    d) # dry-run mode
+      dry_run=1
+      ;;
+    t) # test mode
+      test=1
+      ;;
+    \?) # Invalid option
+      echo -e "${RED}Error: Invalid option"
+      exit;;
+  esac
+done
+
+source "$HOME/git/ML4AI/tomcat/human_experiments/config/presession/config"
+
+app_dir="$HOME/git/ML4AI/tomcat/exe/entrainment_webapp"
+
+datetime="$(date +%Y_%m_%d_%H)"
+if [[ $dry_run -eq 1 ]]; then
+  data_root_dir=$DATA_ROOT_DIR_DRYRUN
+elif [[ $test -eq 1 ]]; then
+  data_root_dir=$DATA_ROOT_DIR_TEST
+else
+  data_root_dir=$DATA_ROOT_DIR_GROUP
+fi
+data_dir="$data_root_dir/exp_$datetime"
+
+mkdir -p "$data_dir"
+
+pushd "$app_dir" >/dev/null || exit
+  python3 "$app_dir/server.py" --out_dir="$data_dir" &
+  if [[ $? -ne 0 ]]; then
+    exit 1
+  fi
+  server_pid=$!
+popd || exit > /dev/null
+
+pushd "$app_dir/webmic" >/dev/null || exit
+  if ! python3 "webmic.py"; then
+    kill $server_pid
+    exit 1
+  fi
+popd || exit > /dev/null
+
+# A function to handle cleanup when a user interrupts the script with Ctrl+C
+user_interrupt() {
+    echo "Detected keyboard interrupt."
+    kill $server_pid
+}
+
+trap user_interrupt SIGINT SIGTERM EXIT

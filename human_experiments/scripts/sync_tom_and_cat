@@ -39,6 +39,8 @@
 #
 #     This scripts respects the setting of IVI_VERBOSE. If it is set to "1",
 #     then we provide more output. 
+#     This scripts respects the setting of IVI_VERBOSE. If it is set to "1",
+#     then we provide more output. 
 #
 # Exit status:
 #     Following unix convention, this script exits with 0 on success, and
@@ -56,6 +58,13 @@ else
 fi 
    
 set -u 
+
+if [[ "$1" == "-q" ]]; then
+    be_quiet=1
+else
+    be_quiet=0
+fi 
+   
 
 # Obscure bash code to set IVI_VERBOSE to 1 if it is set but NULL, 0 if unset,
 # and retain its value otherwise. Don't overthink bash syntax---it is not good
@@ -104,5 +113,4 @@ exit_status=$?
 eval echo "Script sync_tom_and_cat exiting with status ${exit_status} on: $(date)" ${plumbing} ${log_file}
 
 exit ${exit_status}
-
 
