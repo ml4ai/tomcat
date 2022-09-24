@@ -37,9 +37,6 @@
 #     redirect to /dev/null, we can ask for no output with the first optional
 #     argument '-q'. 
 #
-#     but  might make sense. However, one
-#     should always check the exit status.
-#
 #     This scripts respects the setting of IVI_VERBOSE. If it is set to "1",
 #     then we provide more output. 
 #
