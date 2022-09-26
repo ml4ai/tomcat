@@ -59,7 +59,7 @@ if __name__ == "__main__":
     parser.add_argument("-a", "--address", default=DEFAULT_SERVER_ADDR, help="IP address of server")
     parser.add_argument("-p", "--port", type=int, default=DEFAULT_SERVER_PORT, help="Port of server")
     parser.add_argument("-s", "--save", default=DEFAULT_DATA_SAVE_PATH, help="Specify where to save data")
-    parser.add_argument("-d", "--debug", type=bool, default=False, help="Specify where to save data")
+    parser.add_argument("-d", "--debug", action="store_true", help="Specify where to save data")
     args = parser.parse_args()
 
     data_path = args.save + "/rest_state"
