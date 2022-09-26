@@ -1,3 +1,4 @@
+from itertools import count
 import sys  # We use sys.exit() so that all exceptions can properly propogate up and cause the interpreter to exit.
 import os
 import json
@@ -6,40 +7,40 @@ import datetime
 from termcolor import colored
 
 
-def check_time_difference(trial_start, trial_end):
+def check_time_difference(mission_start, mission_end):
     """
     The timestamps for the start and end of the trial are published in
     ISO-8601 format, which has to be converted into datetime format
     '%Y-%m-%d %H:%M:%S.%f' from which the difference is calculated to
     find out the time taken by a mission.
     """
-    trial_start = (
-        trial_start.split("T")[0]
+    mission_start = (
+        mission_start.split("T")[0]
         + " "
-        + trial_start.split("T")[1].split("Z")[0]
+        + mission_start.split("T")[1].split("Z")[0]
     )
-    trial_end = (
-        trial_end.split("T")[0] + " " + trial_end.split("T")[1].split("Z")[0]
+    mission_end = (
+        mission_end.split("T")[0] + " " + mission_end.split("T")[1].split("Z")[0]
     )
 
     print(
         colored("\n[Status] Mission started at time:", "red", attrs=["bold"]),
-        trial_start,
+        mission_start,
     )
     print(
         colored("\n[Status] Mission ended at time:", "red", attrs=["bold"]),
-        trial_end,
+        mission_end,
     )
 
-    trial_start = datetime.datetime.strptime(
-        str(trial_start), "%Y-%m-%d %H:%M:%S.%f"
+    mission_start = datetime.datetime.strptime(
+        str(mission_start), "%Y-%m-%d %H:%M:%S.%f"
     )
-    trial_start = trial_start.timestamp()
-    trial_end = datetime.datetime.strptime(
-        str(trial_end), "%Y-%m-%d %H:%M:%S.%f"
+    mission_start = mission_start.timestamp()
+    mission_end = datetime.datetime.strptime(
+        str(mission_end), "%Y-%m-%d %H:%M:%S.%f"
     )
-    trial_end = trial_end.timestamp()
-    delta = int(float(trial_end) - float(trial_start))
+    mission_end = mission_end.timestamp()
+    delta = int(float(mission_end) - float(mission_start))
     min, sec = divmod(delta, 60)
 
     if min > 0:
@@ -59,20 +60,25 @@ def check_time_difference(trial_start, trial_end):
         )
 
 
-def read_subject_id(TrialMessages):
-    # Display subject IDs
-    print(colored("\n[Status] Subject info:", "red", attrs=["bold"]))
-    for idx, sub in enumerate(
-        TrialMessages[0]["data"]["metadata"]["trial"]["subjects"]
-    ):
-        print(colored("\t Subect ID", "magenta"), idx, ":", sub)
+def read_subject_id(TrialMessages):   
+    for i in range(len(TrialMessages)):
+        try:
+            if i == 0:
+                print(colored("\n[Status] Trial info:", "red", attrs=["bold"]))
+            #Display details about the minecraft map and test bed    
+            print(colored('\t Testbed version:', 'magenta'), TrialMessages[i]['data']['testbed_version'])
+            print(colored('\t Map name:','magenta'), TrialMessages[i]['data']['map_name'])
 
-    # Display trial name
-    print(
-        colored("\n[Status] Mission name:", "red", attrs=["bold"]),
-        TrialMessages[0]["data"]["metadata"]["trial"]["name"],
-    )
-
+            print(colored("\n[Status] subject info:", "red", attrs=["bold"]))
+            for idx, sub in enumerate(TrialMessages[i]['data']['subjects']):
+                # Display subject IDs, call sign and minecraft player name
+                print(colored("\t Subect ID", "magenta"), idx,":", sub, 
+                    colored("\t Call Sign:", "magenta"), TrialMessages[i]['data']['client_info'][idx]['callsign'], 
+                    colored("\t Player name:", "magenta"), TrialMessages[i]['data']['client_info'][idx]['playername'])
+            if idx == 2:
+                    break
+        except:
+            continue
 
 def read_metadata_as_json(path):
     """
@@ -88,8 +94,10 @@ def read_metadata_as_json(path):
     field.
     """
     TrialMessages = []
+    count = 0
     with open(path, "r") as f:
         for line in f:
+            count += 1
             try:
                 json_message = json.loads(line)
                 TrialMessages.append(json_message)
@@ -170,7 +178,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--p",
         required=True,
-        help="Path to the folder with the baseline task data",
+        help="Path to the folder with the Minecraft data",
     )
     arg = parser.parse_args()
     rootdir = arg.p

@@ -38,16 +38,22 @@ __check_nfs_on_client() {
     while [[ $? -eq 0 ]]; do
       echo -e "${padding}Checking ${EMPH}NFS${NC} on ${EMPH}$client_name${NC}..."
       echo "${padding} [TEST 1]"
-      ssh $EXPERIMENT_USER@$client_address "dd if=/dev/zero of=\$HOME$nfs_dir/multipleFilesTest bs=4096 count=1000000" 2>&1 | sed "s/^/${padding} /"
+      ssh "$EXPERIMENT_USER@$client_address" "dd if=/dev/zero of=\$HOME$nfs_dir/multipleFilesTest bs=4096 count=1000000" 2>&1 | sed "s/^/${padding} /"
       echo "${padding} [TEST 2]"
-      ssh $EXPERIMENT_USER@$client_address "dd if=/dev/zero of=\$HOME$nfs_dir/singleFileTest bs=4096 count=1" 2>&1 | sed "s/^/${padding} /"
+      ssh "$EXPERIMENT_USER@$client_address" "dd if=/dev/zero of=\$HOME$nfs_dir/singleFileTest bs=4096 count=1" 2>&1 | sed "s/^/${padding} /"
       echo "${padding} [TEST 3]"
-      ssh $EXPERIMENT_USER@$client_address "rsync ~/img.png \$HOME$nfs_dir && echo $?" | sed "s/0/${padding} OK/"
+      ssh "$EXPERIMENT_USER@$client_address" "rsync ~/img.png \$HOME$nfs_dir && echo $?" | sed "s/0/${padding} OK/"
       yes_no_question "${padding}Do you want to ${EMPH}REPEAT${NC} the tests?"
-    done  
+    done
+
+    if ! rm -r "$nfs_dir"; then
+      # We don't need to keep the created files in the experiment directory.
+      # They are created just to check if NFS is working.
+      echo -e "${padding}${RED}Error at trying to remove the directory ${nfs_dir}.${NC}"
+    fi
   fi
 }
 
-__check_nfs_on_client $experiment_dir "lion" "lion.local" "$padding"
-__check_nfs_on_client $experiment_dir "tiger" "tiger.local" "$padding"
-__check_nfs_on_client $experiment_dir "leopard" "leopard.local" "$padding"
+__check_nfs_on_client "$experiment_dir" "lion" "lion.local" "$padding"
+__check_nfs_on_client "$experiment_dir" "tiger" "tiger.local" "$padding"
+__check_nfs_on_client "$experiment_dir" "leopard" "leopard.local" "$padding"

@@ -4,6 +4,9 @@ set -u
 
 source configuration_helpers
 
+# The validation script has some string manipulation functionalities that are only present from Python3.9 and beyond.
+PYTHON="/usr/bin/python3.9"
+
 if [[ -z ${1+x} ]]; then
   # In case the script is executed standalone.
   text="${RED}Please provide an experiment directory as the first argument of "
@@ -14,12 +17,16 @@ fi
 EXPERIMENT_DIR=$1
 
 if [[ -z ${2+x} ]]; then
-  padding=""
+  PADDING=""
 else
-  padding=$2
+  PADDING=$2
 fi
-
 
 TRIAL_INFO_FILEPATH="$EXPERIMENT_DIR/trial_info.json"
 OUT_DIR="$EXPERIMENT_DIR/minecraft"
-./retrieve_minecraft_data --trial_info_filepath="$TRIAL_INFO_FILEPATH" --out_dir="$OUT_DIR" | sed "s/^/${padding} /"
+./retrieve_minecraft_data --trial_info_filepath="$TRIAL_INFO_FILEPATH" --out_dir="$OUT_DIR" | sed "s/^/${PADDING} /"
+
+echo -n -e "${PADDING}Press any key to validate the Minecraft data."
+read -r
+
+$PYTHON run_minecraft_metadata_validation.py --p "$OUT_DIR" | sed "s/^/${PADDING} /"

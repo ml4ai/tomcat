@@ -61,18 +61,6 @@ __start_eye_tracker() {
   fi
 }
 
-__start_fnirs() {
-  local client_name=$1
-  local client_address=$2
-  local padding=$3
-
-  echo -e "${padding}Starting ${EMPH}fNIRS${NC} on ${EMPH}$client_name${NC}..."
-  __start_sensor $client_address "launch_aurora.scpt"
-  if [[ $? -eq 0 ]]; then
-    echo -e "${padding}${GREEN} ${EMPH}fNIRS${GREEN} system successfully launched.${NC}"
-  fi
-}
-
 __start_sensors_on_client() {
   local client_name=$1
   local client_address=$2
@@ -88,7 +76,6 @@ __start_sensors_on_client() {
     create_new_desktop_on_client $client_address
 
     __start_eye_tracker $client_name $client_address "$padding"
-    __start_fnirs $client_name $client_address "$padding"
     disable_wifi $client_name $client_address "$padding"
   fi
 }

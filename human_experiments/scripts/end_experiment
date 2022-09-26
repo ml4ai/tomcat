@@ -92,6 +92,30 @@ __stop_minecraft() {
   done
 }
 
+__stop_port_forwarding() {
+  local client_name=$1
+  local client_address=$2
+  local padding=$3
+
+  local pid_path="$EXPERIMENT_DIR/tmp/${client_name}_port_forwarding.pid"
+  local pid
+  pid=$(cat "$pid_path")
+
+  echo -e "${padding}Stopping port forwarding..."
+  local stopped="n"
+  while [[ $stopped != "y" ]]; do
+    if ssh "$EXPERIMENT_USER@$client_address" "kill $pid" > /dev/null; then
+      echo -e "${padding}${GREEN} Port forwarding successfully stopped.${NC}"
+    else
+      echo -e "${padding}${RED} Failed to stop port forwarding.${NC}"
+      yes_no_question "${padding} Do you want to ${EMPH}RETRY${NC}?"
+      if [[ $? -ne 0 ]]; then
+        break
+      fi
+    fi
+  done
+}
+
 __close_application() {
   local client_name=$1
   local client_address=$2
@@ -116,8 +140,6 @@ __close_applications() {
   local padding=$3
 
   echo -e "${padding}Closing ${EMPH}all applications${NC}..."
-  __close_application "$client_name" "$client_address" "Aurora" "$padding "
-  __close_application "$client_name" "$client_address" "Pupil Capture" "$padding "
   __close_application "$client_name" "$client_address" "Google Chrome" "$padding "
   __close_application "$client_name" "$client_address" "Terminal" "$padding "
 }
@@ -167,14 +189,21 @@ __cleanup_on_client() {
     padding="$padding "
   fi
   if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
-    __stop_face_and_screen_recording "$client_name" "$client_address" "$padding"
-    __stop_audio_streamer "$client_name" "$client_address" "$padding"
-    __stop_minecraft "$client_name" "$client_address" "$padding"
-    __close_applications "$client_name" "$client_address" "$padding"
-    __remove_pupil_symlink "$client_name" "$client_address" "$padding"
-    __close_extra_desktops "$client_name" "$client_address" "$padding"
+    echo -e "${padding}Ending experiment on ${EMPH}$client_name${NC}..."
+    __stop_face_and_screen_recording "$client_name" "$client_address" "$padding "
+    __stop_audio_streamer "$client_name" "$client_address" "$padding "
+    __stop_minecraft "$client_name" "$client_address" "$padding "
+    __stop_port_forwarding "$client_name" "$client_address" "$padding "
+    __close_applications "$client_name" "$client_address" "$padding "
+    __remove_pupil_symlink "$client_name" "$client_address" "$padding "
+    __close_extra_desktops "$client_name" "$client_address" "$padding "
   fi
+}
 
+__clean_tmp_directory() {
+  # We remove the .pid files from the tmp directory as we don't need to store the process IDs after the experiment.
+  echo -e "${padding}Removing .pid files from the temporary directory."
+  rm "$EXPERIMENT_DIR/tmp/*.pid" > /dev/null
 }
 
 __freeze_experiment_data() {
@@ -218,9 +247,8 @@ __cleanup() {
   __cleanup_on_client "tiger" "tiger.local" "$padding "
   __cleanup_on_client "leopard" "leopard.local" "$padding "
 
-  echo -e "${padding}Killing ${EMPH}Minecraft${NC} in the ${EMPH}server${NC}..."
-  source kill_minecraft "$padding "
   source stop_testbed "$EXPERIMENT_DIR" "$padding "
+  __clean_tmp_directory "$padding "
   __freeze_experiment_data "$padding "
   __backup_experiment_data "$padding "
 }

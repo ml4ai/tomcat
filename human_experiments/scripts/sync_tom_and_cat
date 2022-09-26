@@ -1,0 +1,110 @@
+#!/bin/bash 
+
+##############################################################################
+#
+# Identification:
+#     Synchronizes data between two cross mounted disks on LangLab computers
+#     tom and cat. 
+#
+# Synopsis:
+#      sync_tom_and_cat [ -q ]
+#
+# Description:
+#     This script synchronizes data between two cross mounted disks on LangLab
+#     computers tom and cat. The two data stores are set at the beginning of the
+#     script, and we assume they will not change very often.  In the rare case
+#     that there are two files that have the same name but are different, we
+#     move the older one to have a dated suffix. 
+#
+#     This script should be run as either user tom on machine tom or user cat on
+#     machine cat, or potentially a user on one of those two machines in the
+#     group tomcat. Generally, it should be called right after data collection
+#     by the master "uber" script.  In addition, it should be called by the
+#     scripts that pull data IVILAB servers. 
+#     
+#     We assume that this script lives in ${HOME}/tomcat/scripts, which should
+#     be symbolic link to the current code repo. 
+#
+#     This script may rely on the UID for tom on tom being the same as the UID for
+#     cat on cat. This "feature" might be confusing, but so far it has not
+#     caused grief. Also, being in group "tomcat" should also provide needed
+#     permissions as long as the GID is shared over tom and cat. 
+#
+# Output: 
+#     All output, including error output, goes to stdout, and is also appended
+#     to ${HOME}/tomcat/logs/sync_tom_and_cat.log. Because of this logging,
+#     when called from other scripts, we may not want any output. Rather than 
+#     redirect to /dev/null, we can ask for no output with the first optional
+#     argument '-q'. 
+#
+#     This scripts respects the setting of IVI_VERBOSE. If it is set to "1",
+#     then we provide more output. 
+#
+# Exit status:
+#     Following unix convention, this script exits with 0 on success, and
+#     non-zero if there was an error. 
+#
+# Author:
+#     Kobus Barnard
+#
+##############################################################################
+
+if [[ "$1" == "-q" ]]; then
+    plumbing='>>'
+else
+    plumbing='| tee -a'
+fi 
+   
+set -u 
+
+# Obscure bash code to set IVI_VERBOSE to 1 if it is set but NULL, 0 if unset,
+# and retain its value otherwise. Don't overthink bash syntax---it is not good
+# for you. We have this after the '-u' to test if this is valid on all bash
+# variants we come across. 
+#
+export IVI_VERBOSE=${IVI_VERBOSE-0}
+if [[ "${IVI_VERBOSE}" == "" ]]; then
+    export IVI_VERBOSE="1"
+fi 
+
+export TOMCAT_DIR="${HOME}/tomcat" 
+
+# We control the meaning of basic commands by limiting the path to standard root
+# controlled directories. 
+export PATH="/usr/bin:/bin:${TOMCAT_DIR}/scripts"
+
+# If the preliminary commands fail, we are not ready report anything so we
+# simply die.
+
+set -e
+
+# Revoke possible removal of group perms (if we are running as root) and don't
+# permit others any access. 
+umask 0007
+
+log_dir=${TOMCAT_DIR}/logs
+mkdir -p ${log_dir}
+log_file="${log_dir}/sync_tom_and_cat.log"
+# Test writing to log_file.
+touch "${log_file}" 
+
+# We want to execute sync_tom_and_cat_2, and report its error. This is the only
+# command that really counts. Any other issues are about logging, but where
+# would we report that? The fall back would be to send mail. Maybe in the next
+# version. For now, use '+e' so at least the main command gets tried. 
+#
+set +e 
+
+eval echo "============================================================================" ${plumbing} ${log_file}
+eval echo "Script sync_tom_and_cat is starting: $(date)" ${plumbing} ${log_file}
+eval echo " " ${plumbing} ${log_file}
+
+set -o pipefail 
+
+eval sync_tom_and_cat_2 ${plumbing} ${log_file}
+exit_status=$?
+
+eval echo "Script sync_tom_and_cat exiting with status ${exit_status} on: $(date)" ${plumbing} ${log_file}
+
+exit ${exit_status}
+
