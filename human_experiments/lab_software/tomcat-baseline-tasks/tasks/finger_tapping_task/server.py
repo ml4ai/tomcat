@@ -1,17 +1,17 @@
 import csv
 import threading
-from time import time, monotonic
 from datetime import datetime
+from time import monotonic, time
 
 import pygame
 from common import record_metadata, request_clients_end
-from config import UPDATE_RATE
 from network import receive, send
 
-from .config import (COUNT_DOWN_MESSAGE,
-                                         SECONDS_COUNT_DOWN,
-                                         SECONDS_PER_SESSION, SESSION,
-                                         SQUARE_WIDTH)
+from config import UPDATE_RATE
+
+from .config import (COUNT_DOWN_MESSAGE, DEBUG_SECONDS_COUNT_DOWN,
+                     DEBUG_SECONDS_PER_SESSION, SECONDS_COUNT_DOWN,
+                     SECONDS_PER_SESSION, SESSION, SQUARE_WIDTH)
 from .utils import TAPPED, UNTAPPED
 
 
@@ -19,7 +19,10 @@ class ServerFingerTappingTask:
     def __init__(self,
                  to_client_connections: list,
                  from_client_connections: dict,
-                 data_save_path: str = '') -> None:
+                 data_save_path: str = '',
+                 debug_mode: bool = False) -> None:
+        self._debug_mode = debug_mode
+
         self._to_client_connections = to_client_connections
         self._from_client_connections = from_client_connections
 
@@ -45,8 +48,8 @@ class ServerFingerTappingTask:
         self._csv_writer.writeheader()
 
         metadata["session"] = SESSION
-        metadata["seconds_per_session"] = SECONDS_PER_SESSION
-        metadata["seconds_count_down"] = SECONDS_COUNT_DOWN
+        metadata["seconds_per_session"] = SECONDS_PER_SESSION if not self._debug_mode else DEBUG_SECONDS_PER_SESSION
+        metadata["seconds_count_down"] = SECONDS_COUNT_DOWN if not self._debug_mode else DEBUG_SECONDS_COUNT_DOWN
         metadata["square_width"] = SQUARE_WIDTH
         metadata["count_down_message"] = COUNT_DOWN_MESSAGE
 
@@ -96,7 +99,7 @@ class ServerFingerTappingTask:
 
     def _to_client_update_state(self):
         session_index = -1
-        counter_target = SECONDS_COUNT_DOWN
+        counter_target = SECONDS_COUNT_DOWN if self._debug_mode else DEBUG_SECONDS_COUNT_DOWN
 
         start_ticks = pygame.time.get_ticks()
 
@@ -111,7 +114,7 @@ class ServerFingerTappingTask:
                     self._running = False
                     break
 
-                counter_target = SECONDS_PER_SESSION[session_index]
+                counter_target = SECONDS_PER_SESSION[session_index] if not self._debug_mode else DEBUG_SECONDS_PER_SESSION[session_index]
                 start_ticks = pygame.time.get_ticks()
 
             data = {}

@@ -5,11 +5,11 @@ from time import monotonic, sleep, time
 from common import record_metadata, request_clients_end
 from network import receive, send
 
-from .config import (BLANK_SCREEN_MILLISECONDS,
-                                    CROSS_SCREEN_MILLISECONDS,
-                                    DISCUSSION_TIMER, INDIVIDUAL_IMAGE_TIMER,
-                                    INDIVIDUAL_RATING_TIMER, TEAM_IMAGE_TIMER,
-                                    TEAM_RATING_TIMER)
+from .config import (BLANK_SCREEN_MILLISECONDS, CROSS_SCREEN_MILLISECONDS,
+                     DEBUG_DISCUSSION_TIMER, DEBUG_INDIVIDUAL_IMAGE_TIMER,
+                     DEBUG_TEAM_IMAGE_TIMER, DISCUSSION_TIMER,
+                     INDIVIDUAL_IMAGE_TIMER, INDIVIDUAL_RATING_TIMER,
+                     TEAM_IMAGE_TIMER, TEAM_RATING_TIMER)
 from .utils import get_image_paths
 
 
@@ -18,7 +18,10 @@ class ServerAffectiveTask:
                  to_client_connections: list,
                  from_client_connections: dict,
                  session_name: str = '',
-                 data_save_path: str = '') -> None:
+                 data_save_path: str = '',
+                 debug_mode: bool = False) -> None:
+        self._debug_mode = debug_mode
+
         self._to_client_connections = to_client_connections
         self._from_client_connections = from_client_connections
 
@@ -37,10 +40,10 @@ class ServerAffectiveTask:
         metadata["participant_ids"] = list(from_client_connections.values())
         metadata["blank_screen_milliseconds"] = BLANK_SCREEN_MILLISECONDS
         metadata["cross_screen_milliseconds"] = CROSS_SCREEN_MILLISECONDS
-        metadata["individual_image_timer"] = INDIVIDUAL_IMAGE_TIMER
+        metadata["individual_image_timer"] = INDIVIDUAL_IMAGE_TIMER if not self._debug_mode else DEBUG_INDIVIDUAL_IMAGE_TIMER
         metadata["individual_rating_timer"] = INDIVIDUAL_RATING_TIMER
-        metadata["team_image_timer"] = TEAM_IMAGE_TIMER
-        metadata["team_discussion_timer"] = DISCUSSION_TIMER
+        metadata["team_image_timer"] = TEAM_IMAGE_TIMER if not self._debug_mode else DEBUG_TEAM_IMAGE_TIMER
+        metadata["team_discussion_timer"] = DISCUSSION_TIMER if not self._debug_mode else DEBUG_DISCUSSION_TIMER
         metadata["team_rating_timer"] = TEAM_RATING_TIMER
 
         json_file_name = csv_file_name + "_metadata"
@@ -63,11 +66,11 @@ class ServerAffectiveTask:
         data["state"] = {}
 
         if collaboration:
-            data["state"]["image_timer"] = TEAM_IMAGE_TIMER
-            data["state"]["discussion_timer"] = DISCUSSION_TIMER
+            data["state"]["image_timer"] = TEAM_IMAGE_TIMER if not self._debug_mode else DEBUG_TEAM_IMAGE_TIMER
+            data["state"]["discussion_timer"] = DISCUSSION_TIMER if not self._debug_mode else DEBUG_DISCUSSION_TIMER
             data["state"]["rating_timer"] = TEAM_RATING_TIMER
         else:
-            data["state"]["image_timer"] = INDIVIDUAL_IMAGE_TIMER
+            data["state"]["image_timer"] = INDIVIDUAL_IMAGE_TIMER if not self._debug_mode else DEBUG_INDIVIDUAL_IMAGE_TIMER
             data["state"]["rating_timer"] = INDIVIDUAL_RATING_TIMER
 
         print("[STATUS] Running affective task")

@@ -1,16 +1,17 @@
 import csv
-import json
 import threading
-from time import time, monotonic
 from datetime import datetime
+from time import monotonic, time
 
 import pygame
 from common import record_metadata, request_clients_end
-from config import CLIENT_WINDOW_HEIGHT, CLIENT_WINDOW_WIDTH, UPDATE_RATE
 from network import receive, send
 
-from .config import (COUNT_DOWN_MESSAGE, SECONDS_COUNT_DOWN,
-                                    SESSION_TIME_SECONDS)
+from config import CLIENT_WINDOW_HEIGHT, CLIENT_WINDOW_WIDTH, UPDATE_RATE
+
+from .config import (COUNT_DOWN_MESSAGE, DEBUG_SECONDS_COUNT_DOWN,
+                     DEBUG_SESSION_TIME_SECONDS, SECONDS_COUNT_DOWN,
+                     SESSION_TIME_SECONDS)
 from .utils import (BALL_SIZE, LEFT_TEAM, RIGHT_TEAM, WINDOW_HEIGHT,
                     WINDOW_WIDTH, Ball, Paddle)
 
@@ -21,7 +22,10 @@ class ServerPingPongTask:
                  from_client_connection_teams: dict,
                  easy_mode: bool = True,
                  session_name: str = '',
-                 data_save_path: str = '') -> None:
+                 data_save_path: str = '',
+                 debug_mode: bool = False) -> None:
+        self._debug_mode = debug_mode
+
         self._to_client_connections = to_client_connections
 
         if easy_mode:
@@ -123,9 +127,9 @@ class ServerPingPongTask:
 
         metadata["client_window_height"] = CLIENT_WINDOW_HEIGHT
         metadata["client_window_width"] = CLIENT_WINDOW_WIDTH
-        metadata["session_time_seconds"] = SESSION_TIME_SECONDS
+        metadata["session_time_seconds"] = SESSION_TIME_SECONDS if not self._debug_mode else DEBUG_SESSION_TIME_SECONDS
         metadata["seconds_count_down"] = SECONDS_COUNT_DOWN
-        metadata["count_down_message"] = COUNT_DOWN_MESSAGE
+        metadata["count_down_message"] = COUNT_DOWN_MESSAGE if not self._debug_mode else DEBUG_SECONDS_COUNT_DOWN
         metadata["paddle_width"] = self._paddle_width
         metadata["paddle_height"] = self._paddle_height
         metadata["ai_paddle_max_speed"] = cfg.AI_PADDLE_MAX_SPEED
@@ -184,7 +188,7 @@ class ServerPingPongTask:
                     self._running = False
                     break
                 else:
-                    counter_target = SESSION_TIME_SECONDS
+                    counter_target = SESSION_TIME_SECONDS if not self._debug_mode else DEBUG_SESSION_TIME_SECONDS
                     start_ticks = pygame.time.get_ticks()
                     game_started = True
 
