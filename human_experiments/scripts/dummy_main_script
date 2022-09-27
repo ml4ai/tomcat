@@ -1,3 +1,9 @@
 #!/bin/bash
 
-./dummy_script > output_file.txt
+# Assuming we are in a tmux session already
+# which we SHOULD be
+
+nohup ./dummy_script &> output_file.txt &
+
+tmux split-window 
+tmux split-window 'tail -f output_file.txt' 

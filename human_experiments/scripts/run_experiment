@@ -12,3 +12,4 @@ fi
 
 # Create new tmux session
 tmux new-session -s $tmux_session_name './dummy_main_script'
+
