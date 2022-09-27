@@ -28,7 +28,7 @@ MqttAgent::MqttAgent(
     std::string agent_name = val<std::string>(config, "agent_name");
 
     // Create an MQTT client smart pointer to be shared among threads.
-    mqtt_client = make_shared<mqtt::async_client>(
+    mqtt_client = std::make_shared<mqtt::async_client>(
         address, agent_name.empty() ? "cpp_template_agent" : agent_name);
 
     // Connect options for a non-persistent session and automatic
