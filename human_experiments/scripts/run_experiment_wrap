@@ -58,8 +58,6 @@ while getopts ":ha" option; do
 done
 export ALL
 
-echo "HERE"
-
 data_dir_prefix_cat=/data/cat
 if [[ -z ${DEVELOP+x} ]]; then
   export DEVELOP=0
