@@ -6,4 +6,4 @@
 nohup ./dummy_script &> output_file.txt &
 
 tmux split-window 
-tmux split-window 'tail -f output_file.txt' 
+tmux split-window -h 'tail -f output_file.txt' 
