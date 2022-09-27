@@ -1,0 +1,3 @@
+#!/bin/bash
+
+./dummy_script > output_file.txt
