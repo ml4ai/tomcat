@@ -11,5 +11,5 @@ tmux kill-session -t $tmux_session_name
 fi
 
 # Create new tmux session
-tmux new-session -s $tmux_session_name './dummy_main_script'
+tmux new-session -s $tmux_session_name './run_experiment_wrap'
 
