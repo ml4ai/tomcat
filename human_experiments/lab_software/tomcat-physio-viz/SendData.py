@@ -15,7 +15,6 @@ nap_time = 1.0 / frequency
 print(name, content_type, n_channels, frequency, data_type, serial_number, nap_time)
 
 mysample = [0 for _ in range(n_channels)]
-# exit()
 
 # first create a new stream info (here we set the name to BioSemi,
 # the content-type to EEG, 8 channels, 100 Hz, and float-valued data) The
@@ -34,20 +33,7 @@ while True:
     # pylsl.vectorf (the data type that is expected by push_sample)
     for idx in range(n_channels):
         mysample[idx] = random.random()
-    '''        
-    mysample = [random.random(), random.random(), random.random(),
-                random.random(), random.random(), random.random(),
-                random.random(), random.random(), random.random(),
-                random.random(), random.random(), random.random(),
-                random.random(), random.random(), random.random(),
-                random.random(), random.random(), random.random(),
-                random.random(), random.random(), random.random(),
-                random.random(), random.random(), random.random(),
-                random.random(), random.random(), random.random(),
-                random.random(), random.random(), random.random(),
-                random.random(), random.random(), random.random(),
-                random.random()]
-    '''
+
     i += 1
     print(i)
     # now send it and wait for a bit

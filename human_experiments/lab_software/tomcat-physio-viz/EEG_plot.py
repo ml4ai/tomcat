@@ -3,7 +3,7 @@ from pyqtgraph import PlotWidget, plot
 import pyqtgraph as pg
 import sys  
 from pylsl import StreamInlet, resolve_stream
-from random import randint                       
+from random import randint
 import numpy as np
 import argparse
 
@@ -91,24 +91,9 @@ class MainWindow(QtWidgets.QMainWindow):
             for i in range(len(self.channel_list)):
                 self.y[i] = self.y[i][1:]  # Remove the first
 
-        '''
-        self.sample,time = self.inlet.pull_sample() #get continuos streams from LSL
-        #self.sample = np.random.randint(low = -30, high = 30, size = 34)
-
-        self.x.append(self.x[-1] + 1)  # Add a new value 1 higher than the last.
-
-        for i in range(len(self.channel_list)):
-            self.y[i].append(self.sample[i])  # Add a new value.
-
-        for i in range(0,len(self.channel_list)):
-            self.dataLine[i][0].setData(self.x, self.y[i])
-
-        '''
         # Get the next chunk of samples from LSL.
         # They were accumulated while we were plotting the previous chunk
         self.sample, time = self.inlet.pull_chunk()
-
-        print(len(self.sample))
 
         if len(self.sample) > 0:
             # Plot the most recent sample of this chunk. Discard the rest
@@ -122,6 +107,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
             for i in range(0, len(self.channel_list)):
                 self.dataLine[i][0].setData(self.x, self.y[i])
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Plotting EEG signals via LSL')

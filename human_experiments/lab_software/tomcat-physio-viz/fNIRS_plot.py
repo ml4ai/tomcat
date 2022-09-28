@@ -99,20 +99,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.y[i] = self.y[i][1:]  # Remove the first
                 self.y1[i] = self.y1[i][1:]  # Remove the first
 
-        '''
-        self.sample,time = self.inlet.pull_sample() #get continuos streams from LSL
-        #self.sample = np.random.randint(low = -30, high = 30, size = 81)
-
-        self.x.append(self.x[-1] + 1)  # Add a new value 1 higher than the last.
-
-        for i in range(len(self.channel_list)):
-            self.y[i].append(self.sample[i+40])  # Add a new value.
-            self.y1[i].append(self.sample[i+60])
-
-        for i in range(0,len(self.channel_list)):
-            self.dataLine[i][0].setData(self.x, self.y[i])
-            self.dataLine1[i][0].setData(self.x, self.y1[i])
-        '''
         # Get the next chunk of samples from LSL.
         # They were accumulated while we were plotting the previous chunk
         self.sample, time = self.inlet.pull_chunk()
@@ -131,6 +117,7 @@ class MainWindow(QtWidgets.QMainWindow):
             for i in range(0,len(self.channel_list)):
                 self.dataLine[i][0].setData(self.x, self.y[i])
                 self.dataLine1[i][0].setData(self.x, self.y1[i])
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Plotting fNIRS signals via LSL')
