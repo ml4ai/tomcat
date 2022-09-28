@@ -35,7 +35,7 @@ while True:
         mysample[idx] = random.random()
 
     i += 1
-    print(i)
+    print(f'{content_type}: ', i)
     # now send it and wait for a bit
     outlet.push_sample(mysample)
     time.sleep(nap_time)

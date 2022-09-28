@@ -36,10 +36,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         pg.setConfigOptions(antialias=True)
 
-        self.x = [0]
-        self.y = [[0] for i in range(len(self.channel_list))]   # HbO
-        self.y1 = [[0] for i in range(len(self.channel_list))]  # HbR
-
         self.graphWidgetLayout.setBackground('w')
 
         self.pen = pg.mkPen(color=(255, 0, 0), width=2)   # red for HbO
@@ -50,13 +46,27 @@ class MainWindow(QtWidgets.QMainWindow):
 
         label_style = {"color": (255, 0, 0), "font-size": "10pt"}
 
+        self.srate = 10  # 10.2Hz for NIRS data
+        self.timer = QtCore.QTimer()
+        # why? https://stackoverflow.com/questions/59094207/how-to-set-pyqt5-qtimer-to-update-in-specified-interval
+        self.timer.setInterval(round(1000/self.srate))
+
+        n_channels = len(self.channel_list)
+
+        self.x = [0]
+        self.y = [[0] for _ in range(n_channels)]   # HbO
+        self.y1 = [[0] for _ in range(n_channels)]  # HbR
+
+        self.dataLine = [[] for _ in range(n_channels)]
+        self.dataLine1 = [[] for _ in range(n_channels)]
+
         for self.idx, self.channel in enumerate(self.channel_list):
             # create 20 subplots
 
             self.channel = self.graphWidgetLayout.addPlot(row=self.idx, col=0)
             # self.channel.showAxes('left', showValues=False)
 
-            if self.idx < 19:
+            if self.idx < n_channels - 1:
                 self.channel.hideAxis('bottom')
 
             self.channel.setLabel('left', self.channel_list[self.idx], **label_style)
@@ -69,9 +79,6 @@ class MainWindow(QtWidgets.QMainWindow):
     def plots(self):
         # draw
 
-        self.dataLine = [[] for i in range(20)]
-        self.dataLine1 = [[] for i in range(20)]
-
         for self.idx, (self.ch, self.ch1) in enumerate(zip(self.ch, self.ch1)):
             self.ch = self.ch.plot(x=self.x, y=self.y[self.idx], pen=self.pen)
             self.ch1 = self.ch1.plot(x=self.x, y=self.y1[self.idx], pen=self.pen1)
@@ -79,10 +86,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.dataLine[self.idx].append(self.ch)
             self.dataLine1[self.idx].append(self.ch1)
 
-        self.srate = 10  # 10.2Hz for NIRS data
-        self.timer = QtCore.QTimer()
-        # why? https://stackoverflow.com/questions/59094207/how-to-set-pyqt5-qtimer-to-update-in-specified-interval
-        self.timer.setInterval(round(1000/self.srate))
         self.timer.timeout.connect(self.update_plot_data)
         self.timer.start()
 
@@ -98,18 +101,18 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Get the next chunk of samples from LSL.
         # They were accumulated while we were plotting the previous chunk
-        self.sample, time = self.inlet.pull_chunk()
+        sample, time = self.inlet.pull_chunk()
 
-        if len(self.sample) > 0:
+        if len(sample) > 0:
             # Plot the most recent sample of this chunk. Discard the rest
 
             # Update the x value according to the number of samples we skipped
-            self.x.append(self.x[-1] + len(self.sample))
+            self.x.append(self.x[-1] + len(sample))
 
             # Append the last sample
             for i in range(len(self.channel_list)):
-                self.y[i].append(self.sample[-1][i+40])
-                self.y1[i].append(self.sample[-1][i+60])
+                self.y[i].append(sample[-1][i+40])
+                self.y1[i].append(sample[-1][i+60])
 
             for i in range(0, len(self.channel_list)):
                 self.dataLine[i][0].setData(self.x, self.y[i])
