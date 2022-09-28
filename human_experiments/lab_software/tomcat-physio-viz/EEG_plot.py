@@ -69,7 +69,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.dataLine = [[] for i in range(33)]
 
         for self.idx, self.ch in enumerate(self.ch):
-            self.ch = self.ch.plot(x = self.x, y = self.y[self.idx], pen = self.pen)
+            self.ch = self.ch.plot(x=self.x, y=self.y[self.idx], pen=self.pen)
     
             self.dataLine[self.idx].append(self.ch)
 

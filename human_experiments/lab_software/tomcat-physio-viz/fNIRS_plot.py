@@ -16,9 +16,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.streams = resolve_stream('type', 'NIRS')
         self.inlet = StreamInlet(self.streams[device_id])
 
-        self.channel_list = ['S1-D1', 'S1-D2', 'S2-D1', 'S2-D3', 'S3-D1', 'S3-D3', 'S3-D4', 'S4-D2', 'S4-D4',
-                             'S4-D5', 'S5-D3', 'S5-D4', 'S5-D6', 'S6-D4', 'S6-D6', 'S6-D7', 'S7-D5', 'S7-D7',
-                             'S8-D6', 'S8-D7']
+        self.channel_list = ['S1-D1', 'S1-D2', 'S2-D1', 'S2-D3', 'S3-D1', 'S3-D3', 'S3-D4', 'S4-D2', 'S4-D4', 'S4-D5',
+                             'S5-D3', 'S5-D4', 'S5-D6', 'S6-D4', 'S6-D6', 'S6-D7', 'S7-D5', 'S7-D7', 'S8-D6', 'S8-D7']
 
         # initialize plots
 
