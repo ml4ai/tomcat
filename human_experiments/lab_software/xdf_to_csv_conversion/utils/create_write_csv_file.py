@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+from time import ctime
 from termcolor import colored 
 from .baseline_tasks_timestamps import read_baseline_tasks_time
 from .minecraft_timestamps import read_minecraft_time
@@ -31,19 +32,19 @@ def dataframe_to_csv(path, data, stream_type, time_distribution_human_readable, 
     
     #1. Gather all the channel data into the data frame
     df = pd.DataFrame.from_dict(csv_entry, columns=channel_list, orient='index')
-    print(colored('[Status]', 'red', attrs=['bold']), 
+    print(colored('[INFO]', 'red', attrs=['bold']), 
         colored(stream_type, 'blue'), 
         colored('data written to CSV file', 'red', attrs=['bold']))
 
     #2. Gather human readable timestamp distribution
     df[header[1]] = time_distribution_human_readable
-    print(colored('[Status]', 'red', attrs=['bold']), 
+    print(colored('[INFO]', 'red', attrs=['bold']), 
         colored(stream_type, 'blue'), 
         colored('readable timestamp written to CSV file', 'red', attrs=['bold']))
 
     #3. Gather unix timestamp distribution
     df[header[0]] = time_distribution_unix
-    print(colored('[Status]', 'red', attrs=['bold']), 
+    print(colored('[INFO]', 'red', attrs=['bold']), 
         colored(stream_type, 'blue'), 
         colored('unix timestamp written to CSV file', 'red', attrs=['bold']))    
 
@@ -57,8 +58,21 @@ def dataframe_to_csv(path, data, stream_type, time_distribution_human_readable, 
 
     #4. Gather minecraft timestamp 
     """
-    We will use the same dictionary rest_state_time
+    We will use the same dictionary baseline_task_time
     and add minecraft timestamp. 
     """
-    read_minecraft_time(baseline_task_time, rootdir_minecraft_data)
+    all_task_time = read_minecraft_time(baseline_task_time, rootdir_minecraft_data)
+
+    #5. Sync rest state timestamp with xdf timestamp
+    for idx, dict in all_task_time.items():
+        if 'rest_state' in dict.values():
+            rest_state_time_start, rest_state_time_stop  = dict['start_time'], dict['end_time']
+            print(rest_state_time_start, rest_state_time_stop)
+            # print(round(rest_state_time_start, 3), round(rest_state_time_stop, 3))
+            # print(df['unix_time'].astype('float').round(3))
+            # print(df.loc[df['unix_time'].astype('float').round(3) >= round(rest_state_time_start, 3)])
+            iloc_idx_start = df['human_readable_time'].searchsorted(ctime(round(rest_state_time_start, 5))) 
+            iloc_idx_end = df['human_readable_time'].searchsorted(ctime(round(rest_state_time_stop, 5)))
+            print(df.index[iloc_idx_start], df.index[iloc_idx_end])
+
     df.to_csv(csv_file_name + ".csv", sep='\t', encoding='utf-8')

@@ -73,5 +73,5 @@ def read_minecraft_time(baseline_task_dict, rootdir_minecraft_data):
                     idx_minecraft_dict += 1
 
     # print(minecraft_dict)
-
+    return minecraft_dict
 # read_minecraft_time('a', '/Users/calebjonesshibu/Desktop/tom/dry_runs/exp_2022_09_13_10/exp_2022_09_13_10/minecraft/')
