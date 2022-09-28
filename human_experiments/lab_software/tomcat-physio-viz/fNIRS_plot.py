@@ -1,28 +1,26 @@
 from PyQt5 import QtWidgets, QtCore
-from pyqtgraph import PlotWidget, plot
 import pyqtgraph as pg
 import sys  
 from pylsl import StreamInlet, resolve_stream
-from random import randint                       
-import numpy as np
 import argparse
+
 
 class MainWindow(QtWidgets.QMainWindow):
 
     def __init__(self, *args, **kwargs):
-        #initlize streams
-        self.host_name = {'tiger_0239' : 'Tiger - fNIRS(2101_0239_A)', 
-                         'lion_0297' : 'Lion - fNIRS(2118_0297_A)', 
-                         'leopard_0171' : 'Leopard - fNIRS(2010_0171_A)'}
+        # initialize streams
+        self.host_name = {'tiger_0239': 'Tiger - fNIRS(2101_0239_A)',
+                          'lion_0297': 'Lion - fNIRS(2118_0297_A)',
+                          'leopard_0171': 'Leopard - fNIRS(2010_0171_A)'}
                          
         self.streams = resolve_stream('type', 'NIRS')
         self.inlet = StreamInlet(self.streams[device_id])
 
-        self.channel_list = ['S1-D1', 'S1-D2', 'S2-D1', 'S2-D3', 'S3-D1', 'S3-D3', 'S3-D4', 'S4-D2', 'S4-D4', 
-                            'S4-D5', 'S5-D3', 'S5-D4', 'S5-D6', 'S6-D4', 'S6-D6', 'S6-D7', 'S7-D5', 'S7-D7',
-                            'S8-D6', 'S8-D7']
+        self.channel_list = ['S1-D1', 'S1-D2', 'S2-D1', 'S2-D3', 'S3-D1', 'S3-D3', 'S3-D4', 'S4-D2', 'S4-D4',
+                             'S4-D5', 'S5-D3', 'S5-D4', 'S5-D6', 'S6-D4', 'S6-D6', 'S6-D7', 'S7-D5', 'S7-D7',
+                             'S8-D6', 'S8-D7']
 
-        #initialize plots
+        # initialize plots
 
         super(MainWindow, self).__init__(*args, **kwargs)
 
@@ -32,7 +30,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.setWindowTitle(stream_name_with_id)
 
         self.graphWidgetLayout = pg.GraphicsLayoutWidget()
-        self.graphWidgetLayout.resize(900,2500) 
+        self.graphWidgetLayout.resize(900, 2500)
         self.setCentralWidget(self.graphWidgetLayout)
         
         # Enable antialiasing for prettier plots
@@ -40,13 +38,13 @@ class MainWindow(QtWidgets.QMainWindow):
         pg.setConfigOptions(antialias=True)
 
         self.x = [0]
-        self.y = [[0] for i in range(len(self.channel_list))] #HbO
-        self.y1 = [[0] for i in range(len(self.channel_list))] #HbR
+        self.y = [[0] for i in range(len(self.channel_list))]   # HbO
+        self.y1 = [[0] for i in range(len(self.channel_list))]  # HbR
 
         self.graphWidgetLayout.setBackground('w')
 
-        self.pen = pg.mkPen(color=(255, 0, 0), width=2) #red for HbO
-        self.pen1 = pg.mkPen(color=(0, 0, 255), width=2) #blue for HbR
+        self.pen = pg.mkPen(color=(255, 0, 0), width=2)   # red for HbO
+        self.pen1 = pg.mkPen(color=(0, 0, 255), width=2)  # blue for HbR
 
         self.ch = []
         self.ch1 = []
@@ -54,10 +52,10 @@ class MainWindow(QtWidgets.QMainWindow):
         label_style = {"color": (255, 0, 0), "font-size": "10pt"}
 
         for self.idx, self.channel in enumerate(self.channel_list):
-            #create 20 subplots
+            # create 20 subplots
 
-            self.channel = self.graphWidgetLayout.addPlot(row = self.idx, col = 0)
-            #self.channel.showAxes('left', showValues=False)
+            self.channel = self.graphWidgetLayout.addPlot(row=self.idx, col=0)
+            # self.channel.showAxes('left', showValues=False)
 
             if self.idx < 19:
                 self.channel.hideAxis('bottom')
@@ -70,27 +68,27 @@ class MainWindow(QtWidgets.QMainWindow):
         self.plots()
     
     def plots(self):
-        #draw 
+        # draw
 
         self.dataLine = [[] for i in range(20)]
         self.dataLine1 = [[] for i in range(20)]
 
         for self.idx, (self.ch, self.ch1) in enumerate(zip(self.ch, self.ch1)):
-            self.ch = self.ch.plot(x = self.x, y = self.y[self.idx], pen = self.pen)
-            self.ch1 = self.ch1.plot(x = self.x, y = self.y1[self.idx], pen = self.pen1)
+            self.ch = self.ch.plot(x=self.x, y=self.y[self.idx], pen=self.pen)
+            self.ch1 = self.ch1.plot(x=self.x, y=self.y1[self.idx], pen=self.pen1)
     
             self.dataLine[self.idx].append(self.ch)
             self.dataLine1[self.idx].append(self.ch1)
 
-        self.srate = 10 #10.2Hz for NIRS data
+        self.srate = 10  # 10.2Hz for NIRS data
         self.timer = QtCore.QTimer()
-        self.timer.setInterval(round(1000/self.srate)) #why? https://stackoverflow.com/questions/59094207/how-to-set-pyqt5-qtimer-to-update-in-specified-interval
+        # why? https://stackoverflow.com/questions/59094207/how-to-set-pyqt5-qtimer-to-update-in-specified-interval
+        self.timer.setInterval(round(1000/self.srate))
         self.timer.timeout.connect(self.update_plot_data)
         self.timer.start()
-        
 
     def update_plot_data(self):
-        #update data
+        # update data
 
         if len(self.x) >= 100:
             self.x = self.x[1:]  # Remove the first x element.
@@ -114,7 +112,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.y[i].append(self.sample[-1][i+40])
                 self.y1[i].append(self.sample[-1][i+60])
 
-            for i in range(0,len(self.channel_list)):
+            for i in range(0, len(self.channel_list)):
                 self.dataLine[i][0].setData(self.x, self.y[i])
                 self.dataLine1[i][0].setData(self.x, self.y1[i])
 
