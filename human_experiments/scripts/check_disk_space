@@ -2,8 +2,6 @@
 
 set -u
 
-source configuration_helpers
-
 if [[ -z ${1+x} ]]; then
   # In case the script is executed standalone.
   text="${RED}Please provide an experiment directory as the first argument of "
