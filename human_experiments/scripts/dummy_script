@@ -1,9 +1,0 @@
-#!/bin/bash
-
-x=1
-while [ $x -le 60 ]
-do
-  echo "Counter: $x"
-  x=$(( $x + 1 ))
-  sleep 1
-done
