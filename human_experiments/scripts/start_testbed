@@ -21,11 +21,12 @@ else
     PADDING=$2
 fi
 
+# Assuming we are in a tmux session already
 function monitor_log_file(){
-    local tail_command="tail -f $1"
-    tmux new-window $tail_command
-}
-
+    local window_name=$1 # Name should not have whitespace
+    local tail_command="tail -f $2"
+    tmux new-window -n $window_name $tail_command
+}  
 
 __monitor_testbed_launch() {
     local log_path=$1
@@ -81,7 +82,7 @@ __launch_testbed() {
 
     # Wait for a while to guarantee the log file was created
     sleep 1
-    monitor_log_file $log_path
+    monitor_log_file "testbed_up" $log_path
     __monitor_testbed_launch $log_path $! "$padding "
 
 
