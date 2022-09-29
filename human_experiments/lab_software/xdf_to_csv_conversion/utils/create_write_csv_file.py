@@ -5,24 +5,6 @@ from termcolor import colored
 from .baseline_tasks_timestamps import read_baseline_tasks_time
 from .minecraft_timestamps import read_minecraft_time
 
-def Insert_row_(row_number, df, row_value):
-    # Slice the upper half of the dataframe
-    df1 = df[0:row_number]
-  
-    # Store the result of lower half of the dataframe
-    df2 = df[row_number:]
-  
-    # Insert the row in the upper half dataframe
-    df1.loc[row_number]=row_value
-  
-    # Concat the two dataframes
-    df_result = pd.concat([df1, df2])
-  
-    # Reassign the index labels
-    df_result.index = [*range(df_result.shape[0])]
-  
-    # Return the updated dataframe
-    return df_result
 
 def dataframe_to_csv(path, data, stream_type, time_distribution_human_readable, time_distribution_unix, 
                     rootdir_baseline_task, rootdir_minecraft_data, subject_id):
@@ -101,5 +83,20 @@ def dataframe_to_csv(path, data, stream_type, time_distribution_human_readable, 
             state ={i:x for i,x in enumerate(state, state_start)}
             # print(state)
             df[header[2]] = df.index.map(state)
+
+        if 'finger_tapping' in dict.values():
+            print('hey')
+            rest_state_time_start, rest_state_time_stop  = dict['start_time'], dict['end_time']
+            print(rest_state_time_start, rest_state_time_stop)
+            iloc_idx_start = df['human_readable_time'].searchsorted(ctime(round(rest_state_time_start, 5))) 
+            iloc_idx_end = df['human_readable_time'].searchsorted(ctime(round(rest_state_time_stop, 5)))
+            state_start = df.index[iloc_idx_start]
+            state_end = df.index[iloc_idx_end]
+            print(state_start, state_end)
+            range_ = list(range(state_start, state_end))
+            state = ['finger_tapping'] * len(range_)
+            state ={i:x for i,x in enumerate(state, state_start)}
+            # print(state)
+            df[header[2]] = df.index.map(state)           
 
     df.to_csv(csv_file_name + ".csv", sep='\t', encoding='utf-8')
