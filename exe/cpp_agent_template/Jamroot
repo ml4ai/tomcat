@@ -1,10 +1,8 @@
 # Boost Jamfile for the C++ Template Agent
 
-
-lib lib_agent_template
+lib agent_template
     : sources Agent.cpp Configurator.cpp FileAgent.cpp MqttAgent.cpp Processor.cpp Utils.cpp
     : requirements  <link>static
     : default-build release
-    : usage-requirements <include>.
     ;
 
