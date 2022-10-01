@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(ProjectName)
+project(cdc_agent)
 find_package(PahoMqttCpp REQUIRED)
 find_package(yaml-cpp REQUIRED)
 set(CMAKE_CXX_STANDARD 20)
@@ -20,7 +20,7 @@ find_package(
 )
 
 add_executable(
-    main main.cpp
+    cdc_agent main.cpp
     Agent.cpp
     MqttAgent.cpp
     FileAgent.cpp
@@ -30,9 +30,9 @@ add_executable(
     Utils.cpp
 
 )
-target_link_libraries(main PahoMqttCpp::paho-mqttpp3 ${Boost_LIBRARIES})
-target_include_directories(main PRIVATE ${YAML_CPP_INCLUDE_DIR})
-target_link_libraries(main yaml-cpp)
+target_link_libraries(cdc_agent PahoMqttCpp::paho-mqttpp3 ${Boost_LIBRARIES})
+target_include_directories(cdc_agent PRIVATE ${YAML_CPP_INCLUDE_DIR})
+target_link_libraries(cdc_agent yaml-cpp)
 
 add_executable(test test.cpp)
 target_include_directories(test PRIVATE ${Boost_INCLUDE_DIRS})
