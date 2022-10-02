@@ -49,12 +49,6 @@
 #
 ##############################################################################
 
-if [[ "$1" == "-q" ]]; then
-    plumbing='>>'
-else
-    plumbing='| tee -a'
-fi 
-   
 set -u 
 
 # Obscure bash code to set IVI_VERBOSE to 1 if it is set but NULL, 0 if unset,
@@ -62,10 +56,27 @@ set -u
 # for you. We have this after the '-u' to test if this is valid on all bash
 # variants we come across. 
 #
+# The default value of IVI_VERBOSE set here can be overriddent by the '-v' flag. 
+#
 export IVI_VERBOSE=${IVI_VERBOSE-0}
 if [[ "${IVI_VERBOSE}" == "" ]]; then
     export IVI_VERBOSE="1"
 fi 
+
+# Default. 
+plumbing='| tee -a'
+
+for var in "$@"
+do
+    if [[ "$var" == "-q" ]]; then
+        plumbing='>>'
+    elif [[ "$var" == "-v" ]]; then
+        export IVI_VERBOSE="1"
+    else 
+        echo "Argument to sync_tom_and_cat ${var} is invalid. Exiting with failure." 
+        exit 1
+    fi 
+done
 
 export TOMCAT_DIR="${HOME}/tomcat" 
 
