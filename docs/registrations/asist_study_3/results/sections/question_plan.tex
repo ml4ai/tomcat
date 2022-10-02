@@ -4,45 +4,46 @@
 Adarsh Pyarelal, Clayton Morrison}
 %% Start on line 115
 
-\section{Summer 2022 Introduction}
+\section{Introduction}
 \subsection{Significance of Question-Asking in SAR Scenarios}
-When we share information\footnote{The Introduction and Evaluation sections of this chapter have been significantly rewritten. To maintain transparency, the Approach section has remained as written in the preregistration. As a consequence, some redundancy may be found between sections.}, clarify ambiguity, or optimize instruction execution, we often do so through question-asking and question-answering. This mode of communication often reflects our intention, strengthens relationships, increases productivity, reduces risk, and creates an equitable environment \citet{rothe_lake_gureckis_2018} and \citet{alaimi_2020} between dialog partners. In the SAR scenario implemented for ASIST Study 3, teams of human players engage in cooperative behavior to search for, stabilize, and rescue victims within a collapsed building. As human players verbalize plans, make suggestions, or tell each other what to do, they also ask questions that can infer hidden goals or intentions. Question-asking enables teammates to reduce their individual knowledge asymmetry.  
+When we gather information or clarify ambiguity, we often do so through question-asking and question-answering. This mode of communication reflect our intention, strengthen relationships, increase productivity, reduce risk, and create an equitable environment \citep{rothe_lake_gureckis_2018} and \citep{alaimi_2020} between dialog partners. In the SAR scenario implemented for ASIST Study 3, teams of human players engage in cooperative behavior to search for, stabilize, and rescue victims within a collapsed building. As human players verbalize plans, make suggestions, or tell each other what to do, they also ask questions that can infer hidden goals or intentions. Question-asking enables teammates to reduce their individual knowledge asymmetry.  
 
-Not understanding a goal or intention can be seen in the designs of artificial intelligence agents that may have been programmed with researcher bias. If that AI agent's purpose is to assist humans in a SAR scenario, the programmer and researcher must check (or augment) their own domain knowledge of SAR communications in order to curb potential bias toward academic best practices regarding the programming of uncertainty, belief and reinforcement learning. Understanding SAR communications facilitates programmers to design a realistic and scalable domain; not doing so, or at least not consulting SAR experts regarding their information-gathering and sharing habits, can result in flawed domains that predict human player and AI agent action at no better than chance. 
+Not understanding a goal or intention can be seen in the designs of artificial intelligence agents that may have been programmed with researcher bias. If an AI agent's purpose is to assist humans in a Search and Rescue (SAR) scenario, the programmer and researcher must justify their own domain knowledge of SAR communications to curb potential bias toward academic interests when programming uncertainty, actin, or intent of players. Understanding SAR communications facilitates programmers to design a realistic and scalable domain. Not doing so can result in flawed domains that predict human player and AI agent action at no better than chance. 
 
-Therefore, question-asking and information-sharing is vital in a domain definition of a Search and Rescue scenario (SAR)  as much as it is in real life. The INSARAG marking system\footnote{FEMA has a similar marking but is only used in the United States, whereas INSARAG is used internationally.} is designed to immediately answer the most frequently-asked questions a rescuer will have in an urban SAR disaster: Go or No-Go, number of live victims, number of dead victims, number of unaccounted-for victims, hazards, building floor references, cleared areas of building, and cleared building \citet{insarag_2022}. SAR workers further communicate with each other through radio, sound horns, Morse code, and direct communication with victims and each other.
+Question-asking and information-sharing is vital in a domain definition of a virtual SAR as much as it is in real life. The INSARAG marking system\footnote{International Search and Rescue Advisory Group. FEMA has a similar marking but is only used in the United States, whereas INSARAG is used internationally.} is designed to immediately answer the most frequently-asked questions a rescuer will have in an urban SAR disaster: Go or No-Go, number of live victims, number of dead victims, number of unaccounted-for victims, hazards, building floor references, cleared areas of building, and cleared building \citep{insarag_2022}. SAR rescuers use radio, sound horns, Morse code and direct communication with victims and each other.
 
-This registration investigates the gap between question-asking in natural language discourse and player goals through goal inference. In the SAR scenario implemented for ASIST Study 3, teams of human players engage in cooperative behavior to search for, stabilize, and rescue victims within a collapsed building. As human players verbalize plans, make suggestions, or tell each other what to do, they also ask questions that can infer hidden goals or intentions. Using procedural Grounded Theory to annotate video observations of teams who play Minecraft in an urban search and rescue scenario, we then map players' utterances to action and intention. Actions and intentions are then mapped into action and task definitions of the HDDL declarative language\footnote{See previous section, written by Loren Champlin et al for a description of HDDL and our plan recognition development.} The results of this study show that teams who ask more questions at a more consistent rate lead to better team performance than teams who ask fewer questions, ask more how-to questions, or use questions as a polite way to give directions to teammates. The registration concludes with suggestions for further research development regarding the knowledge engineering and representation of tasks, goals, and hidden intentions. While simple human goals may be represented with classical AI planning, we believe that complex goals with constraints or multiple levels of abstraction may be best represented by a \emph{hierarchical task network} (HTN)\ap{Add a definition of HTN here}, which is a tree of possible plans.\footnote{Technically, the plans produced by HTN planners can also be represented with flat lists - however, in this section, we use the term `plan' to refer to the actual `plan tree' that contains the task decompositions
-as well, rather than just the plan alone.}
+This registration investigates the gap between question-asking in natural language discourse and player goals through goal inference. In the SAR scenario implemented for ASIST Study 3, teams of human players engage in cooperative behavior to search for, stabilize, and rescue victims within a collapsed building. As human players verbalize plans, make suggestions, or tell each other what to do, they also ask questions that can infer hidden goals or intentions. Using procedural Grounded Theory to annotate video observations of teams who play Minecraft in an urban search and rescue scenario, we map players' utterances to action and intention. Actions and intentions are then mapped into action and task definitions of the HDDL declarative language\footnote{See previous section, written by Loren Champlin et al for a description of HDDL and our plan recognition development. While simple human goals may be represented with classical AI planning, we believe that complex goals with constraints or multiple levels of abstraction may be best represented by a 'hierarchical task network', (HTN) which is a tree of possible plans. Technically, the plans produced by HTN planners can also be represented with flat lists. However, in this section, we use the term `plan' to refer to the actual `plan tree' that contains the task decompositions as well, rather than just the plan alone.} The results of this study show that teams who ask more questions at a more consistent rate lead to better team performance than teams who ask fewer questions, ask more how-to questions, or use questions as a polite way to give orders. The registration concludes with suggestions for further research development regarding the knowledge engineering and representation of tasks, goals, and hidden intentions. 
+
+\subsection{Literature}
 
 \begin{enumerate}
     \item How do spoken questions reveal another person's plan or intent? 
     \item Can people listen to spoken questions and accurately decide if the other person's plan is sequential or hierarchical? Can the distinction between such structures improve predictive performance for Artificial Social Intelligence (ASI) agent intervention?
 \end{enumerate}
 
-Artificial Intelligence (AI), Information Retrieval, and Natural Language Processing yield exciting research into question-\emph{answering}, relevant document retrieval, Theory of Mind (ToM), and human-computer interaction. However, the literature is sparse within the  \emph{intersection} of artificial intelligence, psycho linguistics, indirect speech acts, negative knowledge modeling, ToM, and question-\emph{asking}. Hawkins and Goodman address this sparsity and the trend of past research to focus on the optimization of question-answering, not question-asking \citet{hawkins_goodman_2017}. 
+Artificial Intelligence (AI), Information Retrieval, and Natural Language Processing yield exciting research into question-\emph{answering}, relevant document retrieval, Theory of Mind (ToM), and human-computer interaction. However, the literature is sparse within the  \emph{intersection} of artificial intelligence, psycho linguistics, indirect speech acts, negative knowledge modeling, ToM, and question-\emph{asking}. Hawkins and Goodman address this sparsity and the trend of past research to focus on the optimization of question-answering, not question-asking \citep{hawkins_goodman_2017}. 
 
-\subsection{Literature}
-When we ask questions, we are not seeded with a set of questions or handed a set of 'correct and incorrect' questions. We do not prefer questions with literal, logical answers \citet{rothe_lake_gureckis_2017} and \citet{clark_1979}. However, most research has focused on answer sets or query matching, preference for concise questions and answers. In reality, people ask open-ended questions, sloppy half questions, use questions to politely tell others what to do, and meander in speech without purpose \citet{brown_1980}. We ask questions to express goals. 
+
+When we ask questions, we are not seeded with a set of questions or handed a set of 'correct and incorrect' questions. We do not prefer questions with literal, logical answers \citep{rothe_lake_gureckis_2017} and \citep{clark_1979}. However, most research has focused on answer sets or query matching, preference for concise questions and answers. In reality, people ask open-ended questions, sloppy half questions, use questions to politely tell others what to do, and meander in speech without purpose \citep{brown_1980}. We ask questions to express goals. 
 
 Goals reflect a desired endpoint or world state. A goal can be motivated by belief, desire or intent. People ask questions that either express a goal or infer a hidden goal. A question is the interpretation and response of a hidden (or uttered) goal to be discerned
-by another person, typically a dialog partner \citet{hawkins_goodman_2017}. Indirect speech acts and question-answer dialog is a form of \emph{information asymmetry}: a questioner has a goal but needs information, while an answerer has information but does not know the questioner’s goal. Missing or contradictory information naturally leads to a knowledge goal and the generation of questions. The person is then motivated to ask a question \citet{alaimi_2020}. 
+by another person, typically a dialog partner \citep{hawkins_goodman_2017}. Indirect speech acts and question-answer dialog is a form of \emph{information asymmetry}: a questioner has a goal but needs information, while an answerer has information but does not know the questioner’s goal. Missing or contradictory information naturally leads to a knowledge goal and the generation of questions. The person is then motivated to ask a question \citep{alaimi_2020}. 
 
-Intentions demonstrate action choice to reach that goal-- it is reflected in the way a question is to be asked. A questioner believes that the listener’s knowledge base has information that can facilitate the questioner’s goal.  The type of questions then asked will depend on context, social inference, and other signals in a dialog setting. The key is to decouple\footnote{Hawkins and Goodman's 2017 work was limited to epistemological questions and cooperative behavior.} the inferred goal from the explicit meaning of the question \citet{hawkins_goodman_2017}. This redefinition of \emph{What is a Question} enables models to account for context and avoid assumptions. 
+Intentions demonstrate action choice to reach that goal-- it is reflected in the way a question is to be asked. A questioner believes that the listener’s knowledge base has information that can facilitate the questioner’s goal.  The type of questions then asked will depend on context, social inference, and other signals in a dialog setting. The key is to decouple\footnote{Hawkins and Goodman's 2017 work was limited to epistemological questions and cooperative behavior.} the inferred goal from the explicit meaning of the question \citep{hawkins_goodman_2017}. This redefinition of \emph{What is a Question} enables models to account for context and avoid assumptions. 
 
-Questions can be viewed as a hidden goal or intent, but they can also be viewed as a way to provide or reinforce knowledge \citet{alaimi_2020} and \citet{ray_2001}. Question-askers want the listener to directly understand their goal, or to discern a hidden goal, or both-- then to give appropriate responses (however that appropriate response may be for the context). When question-askers do not receive appropriate answers from listeners, both dialog partners use conversational implicature and politeness to reach a mutual understanding. They will minimize potential transaction and opportunity costs in conversation to reach mutual understanding.  
+Questions can be viewed as a hidden goal or intent, but they can also be viewed as a way to provide or reinforce knowledge \citep{alaimi_2020} and \citep{ray_2001}. Question-askers want the listener to directly understand their goal, or to discern a hidden goal, or both-- then to give appropriate responses (however that appropriate response may be for the context). When question-askers do not receive appropriate answers from listeners, both dialog partners use conversational implicature and politeness to reach a mutual understanding. They will minimize potential transaction and opportunity costs in conversation to reach mutual understanding.  
 
 
 
 
 \section{Approach}
 
-We assume that questions have hidden goals and infer plans. As teams ask more
+We\footnote{The Introduction and Evaluation sections of this chapter have been significantly rewritten. To maintain transparency with our pre-registration, the Approach section has remained as previously written. As a consequence, some redundancy may be found between sections.} assume that questions have hidden goals and infer plans. As teams ask more
 questions of each other, human team ToM converges toward cooperative behavior.
 We will investigate whether question-asking is associated with \emph{team
 planning}, defined as a set of goals, strategies, or tasks that are executed.
 We define \emph{coordination} as behaviors and utterances to create a common
-plan or strategy\footnote{Note that this is distinct from the mathematical
+plan or strategy\footnote{Note that this definition is distinct from the mathematical
 definition of coordination proposed in \autoref{ch:pgm}}. We define
 \emph{cooperation} as team behaviors that implement an already-agreed up on
 plan.
@@ -57,15 +58,15 @@ limited to no less than twelve videos.
 
 Two human annotators will code all uttered questions between teammates within
 the Minecraft SAR scenario.  We use the qualitative coding procedure known as
-Grounded Theory, as defined by \citet{corbin_strauss_2015}. 
+Grounded Theory, as defined by \citep{corbin_strauss_2015}. 
 
-More specifically, and as defined by \citet{saldana_2021}, we will use a
+More specifically, and as defined by \citep{saldana_2021}, we will use a
 Grounded Theory Process Coding for a state or action across some interval of
 time. These \emph{grounded-in-data} labels are known as \emph{concept-level}
 labels, which are the smallest pieces of data that encode a question-asking
 phenomena of interest.
 
-More specifically, and as defined by \citet{saldana_2021}, we will use a
+More specifically, and as defined by \citep{saldana_2021}, we will use a
 Grounded Theory Process Coding for a state or action across some interval of
 time. These \emph{grounded-in-data} labels are known as \emph{concept-level}
 labels, which are the smallest pieces of data that encode a question-asking
@@ -115,36 +116,30 @@ predictive power and ToM inference potential.
 %% Start here
 
 \section{Evaluation}
+
 \subsection{Label Development and Kappa Score}
-The results of this study show that teams who ask more questions at a more consistent rate lead to better team performance than teams who ask fewer questions. When teammates ask each other questions, they engage with each other more often, evidenced by the rescue of critical victims (which require teamwork) as opposed to regular victims (which can be done individually). The data warrant further research into question-asking, information-sharing, and knowledge asymmetry between dialog partners.
+The results of this study show that teams who ask more questions at a more consistent rate lead to better team performance than teams who ask fewer questions. When teammates ask each other questions, they engage with each other more often, evidenced by the rescue of critical victims (which require teamwork) as opposed to regular victims (which can be done individually). 
 
-To capture hidden goals, inferred plans, and patterns, twelve ASIST Study 3 video observations were annotated\footnote{Due to the expensive costs of taxonomy label development with strict adherence to Grounded Theory methodology, this stage of the experiment is limited to twelve videos.}. Videos were annotated using a bottom-up Grounded Theory qualitative coding method to investigate connections between a question-asker's intention and words spoken. This rigorous theory ensures that the labeling is not biased, as it uses unsupervised labels and does not lend itself to the proof or disproof of prior researcher
-belief in Minecraft SAR player strategy. This data-driven, robust method captures player intention, team strategy, and naturally lends itself to
-quantitative analysis. Videos were selected from no-human intervention videos, at random, and three teams were chosen as a sequence (team 217, 218 and 219).
-Two independent annotators\footnote{Salena Ashton, PhD Student, School of Information, University of Arizona; and Stephen Kim, MS Information Science} annotated the videos with unconstrained, not-previously-determined labels and were free to create any label desired to code a
-player's question.
+To capture hidden goals, inferred plans, and patterns, twelve ASIST Study 3 video observations were annotated\footnote{Due to the expensive costs of taxonomy label development with strict adherence to Grounded Theory methodology, this stage of the experiment is limited to twelve videos.} using a bottom-up Grounded Theory qualitative coding method to investigate connections between a question-asker's intention and words spoken. This rigorous theory ensures that the labeling is not biased, as it uses unsupervised labels and does not lend itself to the proof or disproof of prior researcher
+belief in Minecraft SAR player strategy.  We were able to capture player intention, team strategy, and begin preliminary quantitative analysis. Videos were selected from no-human intervention videos and two independent annotators\footnote{Pilot Data: Salena Ashton and Stephen Kim, MS Information Science; Real Data: Salena T. Ashton and Loren Reiffer-Champlin, both PhD Students, School of Information, University of Arizona; } annotated the videos with unconstrained, unsupervised labels and were free to create any label desired to code a player's question.
 
-The continuous disambiguation of unsupervised labels, using lexical definitions, led to extensive
-documentation of words to be used as labels for the capturing of specific phenomena in observations\footnote{Salena Ashton and Loren Reiffer-Champlin, both PhD Students, School of Information, University of Arizona.}. This lead to Theoretical Saturation\footnote{Theoretical saturation is the point when few additional labels are created, regardless of fully-autonomous annotators' ability to create new ones. Saturation demonstrates that the existing label schema fully capture the events and phenomena observed.} and the labeling schema converged to 21 verb
+We disambiguated these unsupervised labels using lexical definitions, which led to extensive
+documentation of words used to capture specific phenomena in observations. This lead to Theoretical Saturation\footnote{Theoretical saturation is the point when few additional labels are created, regardless of fully-autonomous annotators' ability to create new ones. Saturation demonstrates that the existing label schema fully capture the events and phenomena observed.} and the labeling schema converged to 21 verb
 labels, 24 noun labels, 25 modifier labels. Without replacement, these
-components can yield 12,600 possible labels, yet demonstrated theoretical
-saturation through the independent construction of less than 100 labels from the 
-two autonomous annotators.
+components can yield 12,600 possible labels, yet we demonstrated theoretical
+saturation through the independent construction of less than 100 labels.
 
-An unweighted Cohen Kappa\footnote{Grounded Theory is robust in its
+We achieved an unweighted Cohen Kappa\footnote{Grounded Theory is robust in its
 unsupervised labeling approach is because annotators have complete autonomy.
 Because the sample size is small, the theoretical probability of two matching
 labels is even smaller, and only two annotators worked on the real data, there
 is no current justification for using Scott's pi or a weighted Kappa. This will
-change as further research scales.} agreement of 0.892 was achieved. Using the
-disambiguation documentation and Merriam-Webster's Dictionary to meticulously
-settle any annotator label disagreement, question labels were declared as
-'agree' or 'disagree'. When annotator intention and the disambiguation
-documentation did not clarify the agreement or disagreement of labels, the label was labeled as 'disagreement.'
+change as further research scales.} agreement of 0.892. These 100 resulting labels were analyzed for
+emergent categories and preliminary patterns. Label frequency \emph{did not}
+dictate importance. 
 
-Overall, about 100 labels resulted and were analyzed for
-emergent categories and preliminary patterns. Label frequency \textit{did not}
-dictate importance. Data visualization and preliminary analysis focus on three
+\section{Results}
+Data visualization and preliminary analysis focus on three
 key features: \textit{questionLabel}\footnote{Qualitative code representation of the
 question utterance and no further context except for co-reference resolution.
 Some questions were spoken as statements with inflection. Other questions were
@@ -154,12 +149,12 @@ with cooperative intent.}, \textit{abstractLabel}\footnote{Code representation o
 player intention. This was captured by taking the question into context. For
 example, if the question were represented by 'requestBreakRubble', the intent
 behind the question could have been 'collaborateCriticalWake' or
-'navigateLocation'. AbstractLabel is not the representation of *why* a
-question had been asked; it is the *intention* of the player who asked the
+'navigateLocation'. AbstractLabel is not the representation of 'why' a
+question had been asked; it is the 'intention' of the player who asked the
 question.}, and \textit{utterance}, the word of interest uttered in a question. From
-the emergent categories, specific words were chosen that did or *did not*
-represent player interaction\footnote{For example: *ask*, *request*,
-*suggest*, and *clarify* are all actions that show the goal of
+the emergent categories, specific words were chosen that did or 'did not'
+represent player interaction\footnote{For example: 'ask', 'request',
+'suggest', and 'clarify' are all actions that show the goal of
 obtaining information, but 'clarify' asks for additional information after the
 initial question, showing two-way dialog, 'request' is an initiation of
 commitment to another player with the optional accept/ reject response, showing
@@ -168,79 +163,62 @@ option to accept or reject, making the question and dialog a one-way
 discussion. 'Ask' is a one-way dialog utterance to obtain information.}. 
 
 
-\subsection{Results and Figures}
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% Player Intentions
-\begin{figure}[h!]
-    \centering
-    \fbox{\includegraphics[width=0.9\textwidth]{../images/abstractLabelProbability_STA.pdf}}
-    \caption{When a player asked a question about destination, 'requestDestination', the player's intent (represented by abstractLabels, also known as categorical labels within the Grounded Theory framework) is more than 80\% likely to be waking a critical victim. Human annotators intuitively agree with this assessment. When a player intended to wake a critical, they were 55\% likely to ask another player to join them ('requestDestination'). This observation is trivial because the game rules state that at least two people are needed to wake a critical. However, when the condition was flipped, a player's intention is more than 80\% likely to be waking a critical when 'requestDestination' is asked. When teams collaborate to wake a critical victim, they request or clarify --not suggest or tell-- a teammate to come to a particular destination. ('Clarify' and 'request' infer two-way dialog of commitment creation whereas 'direct' or 'suggest' are creation commitments or demands that do not give the listener a chance to respond.) }
-\end{figure}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Teams who asked more questions and worked together generally saved more critical victims and scored higher points. While it is possible for teammates to rescue critical victims without verbalizing any type of request, it is inefficient due to the time constraint of the mission (15 minutes). Teams also scored higher when more of their questions were about victims instead of location or navigation strategies. 
 % Question Timing
 \begin{figure}[h!]
     \centering
     \fbox{\includegraphics[width=0.9\textwidth]{../images/QuestionTiming_STA.pdf}}
     \caption{Time is displayed as color, where dark gray is at the beginning of the mission and red is toward the end of the mission. Team 218 (videos 635 and 636) asked the
 fewest questions, scored the lowest combined points, and asked 66\%
-of questions toward the end of the mission. This suggests that teams who score poorly tend to ask fewer questions that focus on collaboration or planning-- and more questions that ask specific task-oriented items toward the end of each mission. Team 3 (videos 637 and 638) asked the most questions and asked questions at a \emph{consistent rate} throughout their missions. This suggests that teams who score higher tend to ask questions at a consistent rate, enabling the exchange of information, building of rapport and team trust, and setting a social convention of asking each other for collaboration or help. }
+of questions toward the end of the mission. Teams who score poorly tend to ask fewer questions that focus on collaboration or planning-- and more questions that ask specific task-oriented items toward the end of each mission. Team 3 (videos 637 and 638) asked the most questions and asked questions at a \emph{consistent rate} throughout their missions. Teams who score higher tend to ask questions at a consistent rate, enabling the exchange of information, building of rapport and team trust, and setting a social convention of asking each other for collaboration or help. }
 \end{figure}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Word Links to Question Utterances
+% Information from figure I deleted for more space in this paragraph:
+When a player asked a question about destination, 'requestDestination', the player's intent (represented by abstractLabels, also known as categorical labels within the Grounded Theory framework) is more than 80\% likely to be waking a critical victim. When a player intended to wake a critical, they were 55\% likely to ask another player to join them ('requestDestination'). This observation is trivial because the game rules state that at least two people are needed to wake a critical. However, when the condition was flipped, a player's intention is more than 80\% likely to be waking a critical when 'requestDestination' is asked. When teams collaborate to wake a critical victim, they request or clarify --not suggest or tell-- a teammate to come to a particular destination. ('Clarify' and 'request' infer two-way dialog of commitment creation whereas 'direct' or 'suggest' are creation commitments or demands that do not give the listener a chance to respond.
+
+Teams require more collaboration and effort to save critical victims than when saving regular victims; those who ask more questions invite team collaboration and tend to score higher than teams who do not work together. The most common types of questions that teammates asked, given that they scored better than other teams, were question that invited a response, often starting with: "do", "can", "what", and "which." Common questions which did \textit{not} result in high scores tended to start with: "have", "is", and "were." These questions were more about information-seeking than team collaboration.
+
+Players used a non-trivial amount of imperative statements with added inflections as if they were requests of collaboration. For example, "Take this victim, will you?" does not invite the listener to accept or deny this request. Likewise, "You'll take this victim," with inflection at the end of the sentence \textit{sounds} like a question, but it is also an imperative. 
+
+
+
+
+Previous top-down domain definition of the Search and Rescue yielded results that were no better than chance when predicting a player's intention or plan. We believe that the use of non-domain specific word utterances from players when designing a domain can enhance prediction capabilities. Players who work together tend to say 'come', 'say' (stemmed), 'type' or 'want.' Less collaboration included word utterances like: 'go', 'I see', 'there are', and other phrases that inform but do not invite collaboration. More team collaboration included word utterances like: 'can you', 'should we', 'you guys', 'what do you think', 'let's, wake', 'this time'. 
+
+
 \begin{figure}[h!]
     \centering
     \fbox{\includegraphics[width=0.9\textwidth]{../images/QuestionUtterances_Link_STA.pdf}}
-    \caption{Non-domain-specific words that show collaboration include: say, type, or come. These conclusions were made using the 1 x 1 Bag of Words algorithm and matched to intention by hand. The \textbf{significance} of this figure shows that a priori researcher bias can be harmful when designing a domain. For example, our team previously believed that words like: navigate, location, victim, room, critical and marker were the most important words to look for when inferring player intention. This figures shows that is not the case. A priori research team error: navigate, location, victim, room, critical, marker, or area.}
+    \caption{Non-domain-specific words that show collaboration include: say, type, or come. The \emph{significance} of this figure shows that a priori researcher bias can be harmful when designing a domain. For example, our team previously believed that words like: navigate, location, victim, room, critical and marker were the most important words to look for when inferring player intention. This figures shows that is not the case.}
     \end{figure}
     
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Trigram Frequencies
-%\begin{figure}[h!]
-  %  \centering
-    %\fbox{\includegraphics[width=0.9\textwidth]{../images/trigram_Utterances_STA.pdf}}
-%    \caption{ }
-%\end{figure}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Trigram Links to Question Utterances
+
+
+
+
 \begin{figure}[h!]
     \centering    
     \fbox{\includegraphics[width=0.9\textwidth]{../images/FINAL_1_trigram_Utterances_STA.pdf}}
-    \caption{Probability of Player Intention, given Utterance Trigram}
+    \caption{Probability of Player Intention, given Utterance Trigram. Stops words that are traditionally removed for natural language processing ought to be \emph{included} when inferring goals or intentions because they show the logical inference of such plans. For example, the word "if" shows a conditional statement from one player to another. "If you can..." was a common utterance but it was also a polite imperative, not a request or question. The phrase "do you guys" and "do we want" do not carry as much information about named entities, but they do show ample collaboration of teammates.}
 \end{figure}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \clearpage
+\newpage
 
-\subsection{ Conclusion and Discussion}
-Teams who asked more questions and worked together generally saved more critical victims and scored higher points. While it is possible for teammates to rescue critical victims without verbalizing any type of request, it is inefficient due to the time constraint of the mission (15 minutes). Teams also scored higher when more of their questions were about victims instead of location or navigation strategies.
 
-Teams require more collaboration and effort to save critical victims than when saving regular victims; those who ask more questions invite team collaboration and tend to score higher than teams who do not work together. The most common types of questions that teammates asked, given that they scored better than other teams, were question that invited a response, often starting with: "do", "can", "what", and "which". Common questions which did \textit{not} result in high scores tended to start with: "have", "is", and "were". These questions were more about information-seeking than team collaboration.
-
-Players disguised a non-trivial amount of imperative statements with added inflections as if they were requests of collaboration. For example, "Take this victim, will you?" does not invite the listener to accept or deny this request. Likewise, "You'll take this victim," with inflection at the end of the sentence \textit{sounds} like a question, but is also an imperative. 
-
-Previous top-down domain definition of the Search and Rescue yielded results that were no better than chance. This preliminary study shows several inferences that fair better than chance for player intention, questions asked, and natural language of questions that are asked. It will be more productive to observe and include the use of non-domain specific word utterances from players when designing a domain. Players who work together tend to say 'come', 'say' (stemmed), 'type' or 'want.' Less collaboration included word utterances like: 'go', 'I see', 'there are', and other phrases that inform but do not invite collaboration. More team collaboration included word utterances like: 'can you', 'should we', 'you guys', 'what do you think', 'let's, wake', 'this time'. 
-
-Stops words that are traditionally removed for natural language processing must be considered to be \emph{not removed} when inferring goals or intentions because they show the logical inference of such plans. For example, the word "if" shows a conditional statement from one player to another. "If you can..." was a common utterance but it was also a polite imperative, not a request or question. The phrase "do you guys" and "do we want" to not carry as much information about named entities, but it does show ample collaboration of teammates.
+\subsection{Discussion}
 
 The ultimate goals of this registration are to investigate player intent, given a question being asked, and 
 to develop algorithms that extract this
 intent from utterance transcriptions of player without human annotator
 dependency. 
 
-We have discussed how questions can infer explicitly-stated goals, inferred goals, and how questions are better understood through indirect speech acts. We then use a Search and Rescue scenario within ASIST's Minecraft Environment to evaluate how teammates will ask each other questions in order to make and reach individual and team goals. These goals and player intentions were captured with a robust and vigorous coding process called Grounded Theory, annotated by two completely-autonomous annotators, and reached an unweighted Kappa Cohen score of 0.892. We then investigated these data through a series of visualizations, joint and conditional probabilities, and mapping the data to natural language utterances. 
-
-Using this data, this paper answered three particular questions:
-\begin{itemize}
-    \item Are teams more likely to score higher when they focus on critical or regular victims?
-    \item Do teams who score higher ask more questions?
-    \item What types of questions were most frequently asked?
- \end{itemize}
+We have discussed how questions can infer explicitly-stated goals, inferred goals, and how questions are better understood through indirect speech acts. We then use a Search and Rescue scenario within ASIST's Minecraft Environment to investigate how teammates ask each other questions in order to make goals. These goals and intentions were captured with Grounded Theory, annotated by two completely-autonomous annotators, and reached an unweighted Kappa Cohen score of 0.892. We then investigated these data through a series of visualizations, joint and conditional probabilities, and mapping the data to natural language utterances. We found that teams are more likely to score higher when they focus on critical victims and collaborate verbally, score higher when they ask more questions, and ask more questions that require a response.
 
 Further research is warranted for the investigation of question-asking, goal-setting, goal-reaching, and team collaboration. As a bonus, we have discovered that the stop-words not only hold potential research investigation for the logical flow of such arguments, but can possibly yield new insight into causal inference and reasoning. The model we built for annotation and labeling of video observations will scale for Study 4 videos, regardless of ASI interventions, changes in domain events, or player leadership emergence.
-
-
-
 
