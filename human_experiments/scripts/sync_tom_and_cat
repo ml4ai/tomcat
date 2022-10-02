@@ -33,12 +33,13 @@
 # Output: 
 #     All output, including error output, goes to stdout, and is also appended
 #     to ${HOME}/tomcat/logs/sync_tom_and_cat.log. Because of this logging,
-#     when called from other scripts, we may not want any output. Rather than 
-#     redirect to /dev/null, we can ask for no output with the first optional
-#     argument '-q'. 
+#     when called from other scripts, we may not want any output. Rather than
+#     redirect to /dev/null, we can ask for no output with  optional argument
+#     '-q'. 
 #
 #     This scripts respects the setting of IVI_VERBOSE. If it is set to "1",
-#     then we provide more output. 
+#     then we provide more output. This can also be achieved using the argument
+#     '-v'.
 #
 # Exit status:
 #     Following unix convention, this script exits with 0 on success, and
