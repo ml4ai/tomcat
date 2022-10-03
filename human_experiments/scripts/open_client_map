@@ -2,21 +2,10 @@
 
 set -u
 
-source configuration_helpers
-
 if [[ -z ${1+x} ]]; then
-  # In case the script is executed standalone.
-  text="${RED}Please provide an experiment directory as the first argument of "
-  text+="the call to this script.${NC}"
-  echo -e "$text"
-  exit 1
-fi
-EXPERIMENT_DIR=$1
-
-if [[ -z ${2+x} ]]; then
   PADDING=""
 else
-  PADDING=$2
+  PADDING=$1
 fi
 
 __open_on_client() {
@@ -41,6 +30,7 @@ __open_on_client() {
 
     local command="cd \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/macos/; ./port_forwarding "
     command+="$log_path $pid_path"
+    # shellcheck disable=SC2029
     if ssh "$EXPERIMENT_USER@$client_address" "$command" >/dev/null; then
       echo -e "${padding} ${GREEN}Port forwarded successfully.${NC}"
 
@@ -64,9 +54,9 @@ __open_client_maps() {
   source collect_player_names "$EXPERIMENT_DIR" "$padding"
   echo -e "${padding}Opening the ${EMPH}Client Maps${NC}..."
 
-  __open_on_client "lion" "lion.local" $LION_PLAYER_NAME "$padding "
-  __open_on_client "tiger" "tiger.local" $TIGER_PLAYER_NAME "$padding "
-  __open_on_client "leopard" "leopard.local" $LEOPARD_PLAYER_NAME "$padding "
+  __open_on_client "lion" "lion.local" "$LION_PLAYER_NAME" "$padding "
+  __open_on_client "tiger" "tiger.local" "$TIGER_PLAYER_NAME" "$padding "
+  __open_on_client "leopard" "leopard.local" "$LEOPARD_PLAYER_NAME" "$padding "
 }
 
 __open_client_maps "$PADDING"

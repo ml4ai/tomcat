@@ -2,14 +2,11 @@
 
 set -u
 
-source configuration_helpers
-
 echo " "
 echo -e "${YELLOW}WARNING: This will stop all 3 instances of LabRecorder on CAT from recording!"
 echo -e "         (Lion, Tiger and Leopard)"
 echo -e "          and kill any instances of LabRecorder running on CAT!${NC}"
-yes_no_question "${YELLOW}DO YOU WANT TO CONTINUE?${NC}"
-if [[ $? -ne 0 ]]; then
+if ! yes_no_question "${YELLOW}DO YOU WANT TO CONTINUE?${NC}"; then
   echo " "
   echo -e "${RED}Stopping LabRecorder - ABORTED!${NC}"
   echo " "
@@ -19,11 +16,12 @@ fi
 # Stop recording on all 3 instances of LabRecorder on CAT
 # (Lion port:22345, Tiger port:22346 and Leopard port:22347)
 # by running python3 script "stop_recording.py"
-ssh cat@10.192.234.250 python3 /home/cat/git/ML4AI/tomcat/human_experiments/scripts/stop_recording.py
+# shellcheck disable=SC2029
+ssh cat@cat.local python3 "\$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/stop_recording.py"
 
 
 # Kill any instances of LabRecorder running on CAT.
-ssh cat@10.192.234.250 pkill LabRecorder
+ssh cat@cat.local pkill LabRecorder
 echo " "
 echo -e "${YELLOW}Killed any instances of LabRecorder running on CAT!${NC}"
 echo -e "${EMPH}(Verify that no LabRecorder windows are open on CAT!)${NC}"

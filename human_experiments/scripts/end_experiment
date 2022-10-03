@@ -2,21 +2,10 @@
 
 set -u
 
-source configuration_helpers
-
 if [[ -z ${1+x} ]]; then
-  # In case the script is executed standalone.
-  text="${RED}Please provide an experiment directory as the first argument of "
-  text+="the call to this script.${NC}"
-  echo -e "$text"
-  exit 1
-fi
-EXPERIMENT_DIR=$1
-
-if [[ -z ${2+x} ]]; then
   PADDING=""
 else
-  PADDING=$2
+  PADDING=$1
 fi
 
 __stop_face_and_screen_recording() {
@@ -30,12 +19,11 @@ __stop_face_and_screen_recording() {
   echo -e "${padding}Stopping ${EMPH}Face and Screen Recording${NC}..."
   local stopped="n"
   while [[ $stopped != "y" ]]; do
-    ssh $EXPERIMENT_USER@$client_address "$command"
-    if [[ $? -eq 0 ]]; then
+    # shellcheck disable=SC2029
+    if ssh "$EXPERIMENT_USER@$client_address" "$command"; then
       stopped="y"
     else
-      yes_no_question "${padding} Do you want to ${EMPH}RETRY${NC}?"
-      if [[ $? -ne 0 ]]; then
+      if ! yes_no_question "${padding} Do you want to ${EMPH}RETRY${NC}?"; then
         break
       fi
     fi
@@ -55,12 +43,11 @@ __stop_audio_streamer() {
   echo -e "${padding}Stopping ${EMPH}Audio Streamer${NC}..."
   local stopped="n"
   while [[ $stopped != "y" ]]; do
-    ssh $EXPERIMENT_USER@$client_address "$command"
-    if [[ $? -eq 0 ]]; then
+    # shellcheck disable=SC2029
+    if ssh "$EXPERIMENT_USER@$client_address" "$command"; then
       stopped="y"
     else
-      yes_no_question "${padding} Do you want to ${EMPH}RETRY${NC}?"
-      if [[ $? -ne 0 ]]; then
+      if ! yes_no_question "${padding} Do you want to ${EMPH}RETRY${NC}?"; then
         break
       fi
     fi
@@ -78,14 +65,13 @@ __stop_minecraft() {
   echo -e "${padding}Stopping ${EMPH}Minecraft${NC}..."
   local stopped="n"
   while [[ $stopped != "y" ]]; do
-    ssh $EXPERIMENT_USER@$client_address "$command"
-    if [[ $? -eq 0 ]]; then
+    # shellcheck disable=SC2029
+    if ssh "$EXPERIMENT_USER@$client_address" "$command"; then
       echo -e "${padding}${GREEN} ${EMPH}Minecraft${GREEN} successfully stopped.${NC}"
       stopped="y"
     else
       echo -e "${padding}${RED} Failed to stop ${EMPH}Minecraft${RED}.${NC}"
-      yes_no_question "${padding} Do you want to ${EMPH}RETRY${NC}?"
-      if [[ $? -ne 0 ]]; then
+      if ! yes_no_question "${padding} Do you want to ${EMPH}RETRY${NC}?"; then
         break
       fi
     fi
@@ -103,13 +89,14 @@ __stop_port_forwarding() {
 
   echo -e "${padding}Stopping port forwarding..."
   local stopped="n"
+  local command="kill $pid"
   while [[ $stopped != "y" ]]; do
-    if ssh "$EXPERIMENT_USER@$client_address" "kill $pid" > /dev/null; then
+    # shellcheck disable=SC2029
+    if ssh "$EXPERIMENT_USER@$client_address" "$command" > /dev/null; then
       echo -e "${padding}${GREEN} Port forwarding successfully stopped.${NC}"
     else
       echo -e "${padding}${RED} Failed to stop port forwarding.${NC}"
-      yes_no_question "${padding} Do you want to ${EMPH}RETRY${NC}?"
-      if [[ $? -ne 0 ]]; then
+      if ! yes_no_question "${padding} Do you want to ${EMPH}RETRY${NC}?"; then
         break
       fi
     fi
@@ -124,7 +111,8 @@ __close_application() {
 
   local command="osascript \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/macos/close_application.scpt "
   command+="\"$app_name\""
-  ssh $EXPERIMENT_USER@$client_address "$command" &>/dev/null
+  # shellcheck disable=SC2029
+  ssh "$EXPERIMENT_USER@$client_address" "$command" &>/dev/null
   echo -e "${padding}${GREEN}${EMPH}$app_name${GREEN} successfully closed.${NC}"
 
   # The apple script returns exit code 1 because closing an application is an
@@ -151,6 +139,7 @@ __remove_pupil_symlink() {
 
   echo -e "${padding}Removing ${EMPH}Pupil Symlink${NC}..."
   local command="\$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/remove_pupil_symlink"
+  # shellcheck disable=SC2029
   ssh "$EXPERIMENT_USER@$client_address" "$command"
 }
 
@@ -164,14 +153,13 @@ __close_extra_desktops() {
 
   local closed="n"
   while [[ $closed != "y" ]]; do
-    ssh $EXPERIMENT_USER@$client_address "$command" >/dev/null
-    if [[ $? -eq 0 ]]; then
+    # shellcheck disable=SC2029
+    if ssh "$EXPERIMENT_USER@$client_address" "$command" >/dev/null; then
       echo -e "${padding}${GREEN} ${EMPH}Extra desktops${GREEN} successfully closed.${NC}"
       closed="y"
     else
       echo -e "${padding}${RED} Failed to close ${EMPH}extra desktops${RED}.${NC}"
-      yes_no_question "${padding} Do you want to ${EMPH}RETRY${NC}?"
-      if [[ $? -ne 0 ]]; then
+      if yes_no_question "${padding} Do you want to ${EMPH}RETRY${NC}?"; then
         break
       fi
     fi
@@ -214,14 +202,12 @@ __freeze_experiment_data() {
 
   local frozen="n"
   while [[ $frozen != "y" ]]; do
-    chmod a=r "$EXPERIMENT_DIR" >/dev/null
-    if [[ $? -eq 0 ]]; then
+    if chmod a=r "$EXPERIMENT_DIR" >/dev/null; then
       echo -e "${padding}${GREEN} Data successfully frozen.${NC}"
       frozen="y"
     else
       echo -e "${padding}${RED} Failed to freeze data.${NC}"
-      yes_no_question "${padding} Do you want to ${EMPH}RETRY${NC}?"
-      if [[ $? -ne 0 ]]; then
+      if ! yes_no_question "${padding} Do you want to ${EMPH}RETRY${NC}?"; then
         break
       fi
     fi
