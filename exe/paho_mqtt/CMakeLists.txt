@@ -6,18 +6,18 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g") # create gdb symbol table
 
 
-find_package(
-    eclipse-paho-mqtt-c
-    REQUIRED
-)
-
-find_package(
-    eclipse-paho-mqtt-cpp
-    REQUIRED
-)
+#find_package(
+#    eclipse-paho-mqtt-c
+#    REQUIRED
+#)
+#
+#find_package(
+#    eclipse-paho-mqtt-cpp
+#    REQUIRED
+#)
 
 add_executable(
-    paho_mqtt_hello_world main.cpp
+    paho_mqtt_hello_world main.c
 )
 
 #target_include_directories(paho_mqtt_hello_world PRIVATE ${Boost_INCLUDE_DIRS})
