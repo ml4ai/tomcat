@@ -72,6 +72,9 @@ __start_on_client() {
 
     echo -e "${padding}Starting client on ${EMPH}$client_name${NC}..."
 
+    # We set the volume to 0 so participants don't hear the Minecraft background song that is playing.
+    ssh "$EXPERIMENT_USER@$client_address" "osascript -e 'set Volume 0'"
+
     local command="cd \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/lab_software/tomcat-baseline-tasks "
     command+="&& $PYTHON run_client.py -n $participant_id  &> \$HOME$log_path &"
     # shellcheck disable=SC2029
@@ -110,6 +113,11 @@ __start_baseline_tasks() {
 
   echo -n -e "${padding}Press any key to validate the baseline tasks data."
   read -r
+
+  # Bring back the sound in the iMacs
+  ssh "$EXPERIMENT_USER@lion_local" "osascript -e 'set Volume 2'"
+  ssh "$EXPERIMENT_USER@tiger.local" "osascript -e 'set Volume 2'"
+  ssh "$EXPERIMENT_USER@leopard.local" "osascript -e 'set Volume 2'"
 
   source validate_baseline_tasks "$EXPERIMENT_DIR" "$PADDING"
 }
