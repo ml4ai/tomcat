@@ -25,7 +25,13 @@ __start_on_client() {
     padding="$padding "
   fi
   if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
-    local recordings_directory="\$HOME/$EXPERIMENT_DIR/$client_name/audio"
+    local audio_dir="$EXPERIMENT_DIR/$client_name/audio"
+    if ! mkdir -p "$audio_dir"; then
+      echo -e "${padding}${RED}Error when trying to create the folder ${audio_dir}.${NC}"
+      exit 1
+    fi
+
+    local recordings_directory="\$HOME/$audio_dir"
     local command="cd \$HOME/$SYSTEMS_DIR/tomcat/exe/audioStreamer/build/; ./audioStreamer "
     command+="--use_mqtt true --ws_host tom.local --mqtt_host tom.local "
     command+="--player_name $player_name --save_audio true --recordings_directory $recordings_directory "
