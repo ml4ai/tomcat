@@ -34,7 +34,7 @@ __start_on_client() {
     local recordings_directory="\$HOME/$audio_dir"
     local command="cd \$HOME/$SYSTEMS_DIR/tomcat/exe/audioStreamer/build/; ./audioStreamer "
     command+="--use_mqtt true --ws_host tom.local --mqtt_host tom.local "
-    command+="--player_name $player_name --save_audio true --recordings_directory $recordings_directory "
+    command+="--player_name $player_name --save_audio true --recording_directory $recordings_directory "
     command+="&> $log_path &; echo \$! > $pid_path"
     # shellcheck disable=SC2029
     if ssh "$EXPERIMENT_USER@$client_address" "$command" >/dev/null; then
