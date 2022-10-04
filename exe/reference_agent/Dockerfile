@@ -1,13 +1,13 @@
 
-FROM ubuntu:kinetic
+#FROM ubuntu:kinetic
 # FROM ubuntu:jammy
-# FROM ubuntu:latest
+FROM ubuntu:20.04
 
 CMD bash
 
 RUN apt-get update && apt-get install -y sudo software-properties-common g++ apt-utils
 COPY . /tomcat/exe/reference_agent
-WORKDIR /tomcat/exe/reference_agent
+#WORKDIR /tomcat/exe/reference_agent
 
 
 RUN apt-get -y --no-install-recommends install \
@@ -17,7 +17,6 @@ RUN apt-get -y --no-install-recommends install \
       libboost-all-dev \
       pkg-config \
       cmake \
-      make \
       curl \
       git \
       tar \
@@ -51,9 +50,4 @@ RUN git clone https://github.com/eclipse/paho.mqtt.cpp.git \
     && sudo ldconfig
 
 # Build the agent
-RUN rm -rf build \
-    && mkdir build \
-    && cd build \
-    && cmake .. \
-    && make -j `nproc` reference_agent \
-    && cd ..
+RUN pwd; rm -rf build; mkdir build; cd build; cmake ../ ; make -j `nproc` reference_agent; cd ../

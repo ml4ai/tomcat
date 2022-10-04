@@ -1,0 +1,15 @@
+version: '3'
+
+#networks:
+#  asist_net:
+#   external: true    
+    
+services:
+  reference_agent:
+    image: reference_agent:latest
+    container_name: reference_agent
+    #    networks:
+    #   asist_net:
+    #     aliases:
+    #       - reference_agent
+    entrypoint: ./build/reference_agent

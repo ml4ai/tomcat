@@ -23,7 +23,8 @@ find_package(
 )
 
 add_executable(
-    reference_agent main.cpp 
+    reference_agent 
+    main.cpp 
     ReferenceProcessor.cpp
     FileAgent.cpp
     MqttAgent.cpp
