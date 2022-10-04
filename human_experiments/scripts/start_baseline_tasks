@@ -114,12 +114,12 @@ __start_baseline_tasks() {
   echo -n -e "${padding}Press any key to validate the baseline tasks data."
   read -r
 
+  source validate_baseline_tasks "$EXPERIMENT_DIR" "$PADDING"
+
   # Bring back the sound in the iMacs
-  ssh "$EXPERIMENT_USER@lion_local" "osascript -e 'set Volume 2'"
+  ssh "$EXPERIMENT_USER@lion.local" "osascript -e 'set Volume 2'"
   ssh "$EXPERIMENT_USER@tiger.local" "osascript -e 'set Volume 2'"
   ssh "$EXPERIMENT_USER@leopard.local" "osascript -e 'set Volume 2'"
-
-  source validate_baseline_tasks "$EXPERIMENT_DIR" "$PADDING"
 }
 
 __start_baseline_tasks "$PADDING"
