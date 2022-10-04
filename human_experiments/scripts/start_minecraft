@@ -28,7 +28,7 @@ __start_on_client() {
     # shellcheck disable=SC2029
     ssh "$EXPERIMENT_USER@$client_address" "$command"
 
-    enable_wifi "$client_name" "$client_address" "$padding"
+#    enable_wifi "$client_name" "$client_address" "$padding"
 #    wait_for_connection "$client_name" "$client_address" "$padding"
 
     # Start Minecraft on a new desktop
