@@ -38,7 +38,7 @@ __monitor_testbed_launch() {
 
     # TODO - fix this because the process might end but the writer buffer
     # to the log file might still be running I guess
-    if ps "$testbed_pid" >&/dev/null; then
+    if ! ps "$testbed_pid" >&/dev/null; then
       return 1
     fi
 
