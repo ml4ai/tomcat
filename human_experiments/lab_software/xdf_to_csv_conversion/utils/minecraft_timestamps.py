@@ -1,8 +1,7 @@
 import os
 import json
-import argparse
 import datetime
-import pytz
+import numpy as np
 from time import ctime
 from termcolor import colored 
 from .convert_datetime_timezone import change_time_zone
@@ -15,7 +14,9 @@ def read_minecraft_time(baseline_task_dict, rootdir_minecraft_data):
     since that is how baseline and xdf logs timestamps. Also every 
     trial has a common start and stop timestamps. 
     """
-
+    minecraft_dict_temp = {'state':[], 
+                        'start_time': [], 
+                        'end_time' : []}
     minecraft_dict = baseline_task_dict
     idx_minecraft_dict = len(minecraft_dict)
     for x in os.listdir(rootdir_minecraft_data):
@@ -53,7 +54,6 @@ def read_minecraft_time(baseline_task_dict, rootdir_minecraft_data):
                                     break
                         except:
                             continue
-
                     trial_start = ( trial_start.split("T")[0] + " " + trial_start.split("T")[1].split("Z")[0])   
                     trial_start = change_time_zone(trial_start, "UTC", "MST")        
                     trial_start = datetime.datetime.strptime(str(trial_start), "%Y-%m-%d %H:%M:%S.%f")
@@ -65,13 +65,42 @@ def read_minecraft_time(baseline_task_dict, rootdir_minecraft_data):
                     trial_end = trial_end.timestamp()
 
                     # print(ctime(trial_start), ctime(trial_end), trial_start, trial_end, map_name, subject_id, call_sign, playername)
-                    
-                    minecraft_dict[idx_minecraft_dict] = {'state':map_name, 'participant': None, 
-                                            'start_time': trial_start, 
-                                            'end_time':trial_end}
-                    # print(idx_minecraft_dict)
-                    idx_minecraft_dict += 1
+                    minecraft_dict_temp['state'].append(map_name)
+                    minecraft_dict_temp['start_time'].append(trial_start)
+                    minecraft_dict_temp['end_time'].append(trial_end)
 
-    # print(minecraft_dict)
+                    # minecraft_dict[idx_minecraft_dict] = {'state':map_name, 'participant': None, 
+                    #                         'start_time': trial_start, 
+                    #                         'end_time':trial_end}
+                    # # print(idx_minecraft_dict)
+                    
+                    # idx_minecraft_dict += 1
+    """
+    We need a logic to differentiate between 
+    saturn a and saturn b minecraft missions as
+    they both have map name Saturn_2.6_3D. We do 
+    this by sorting the dictionary by the missions
+    start_time and hard coding map name based on 
+    sorted index. 
+    """                
+    sorted_idx = np.argsort(minecraft_dict_temp['start_time'])
+    if len(sorted_idx) == 3:
+        minecraft_dict_temp['state'][2] = 'hands_on_training'
+        minecraft_dict_temp['state'][1] = 'saturn_a'
+        minecraft_dict_temp['state'][0] = 'saturn_b'
+    else:
+        minecraft_dict_temp['state'][2] = 'hands_on_training'
+        minecraft_dict_temp['state'][1] = 'saturn_a'
+
+    for s_idx in sorted_idx:
+        minecraft_dict[idx_minecraft_dict] = {'state':minecraft_dict_temp['state'][s_idx], 'participant': None, 
+                                'start_time': minecraft_dict_temp['start_time'][s_idx], 
+                                'end_time':minecraft_dict_temp['end_time'][s_idx]}
+        # print(idx_minecraft_dict)
+        
+        idx_minecraft_dict += 1
+    print(minecraft_dict)
+    # print('index:', sorted_idx)
+    # print('check:',  minecraft_dict_temp['start_time'][0])
     return minecraft_dict
-# read_minecraft_time('a', '/Users/calebjonesshibu/Desktop/tom/dry_runs/exp_2022_09_13_10/exp_2022_09_13_10/minecraft/')
+# read_minecraft_time('a', '/Users/calebjonesshibu/Desktop/tom/pilot/exp_2022_09_30_10/minecraft/')
