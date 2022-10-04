@@ -6,7 +6,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g") # create gdb symbol table
 
-set(TEMPLATE_AGENT "/home/jastier/tomcat/exe/cpp_agent_template")
 
 add_definitions(-DBOOST_LOG_DYN_LINK)
 
@@ -37,7 +36,5 @@ add_executable(
 
 target_include_directories(reference_agent PRIVATE ${Boost_INCLUDE_DIRS} )
 target_include_directories(reference_agent PRIVATE "/home/jastier/tomcat/exe/reference_agent" )
-target_include_directories(reference_agent PRIVATE ${TEMPLATE_AGENT})
 target_link_libraries(reference_agent PahoMqttCpp::paho-mqttpp3)
 target_link_libraries(reference_agent ${Boost_LIBRARIES})
-#target_link_libraries(reference_agent libagent_template.a)

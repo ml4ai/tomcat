@@ -1,5 +1,9 @@
+#
+# Paho MQTT C project
+#
+
 cmake_minimum_required(VERSION 3.16)
-project(paho_mqtt_c_hello_world)
+project(paho_mqtt_c)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -17,8 +21,8 @@ find_package(
 )
 
 add_executable(
-    paho_mqtt_hello_world main.c
+    paho_mqtt_c main.c
 )
 
 #target_include_directories(paho_mqtt_hello_world PRIVATE ${Boost_INCLUDE_DIRS})
-target_link_libraries(paho_mqtt_hello_world eclipse-paho-mqtt-c::paho-mqtt3as)
+target_link_libraries(paho_mqtt_c eclipse-paho-mqtt-c::paho-mqtt3as)

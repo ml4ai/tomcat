@@ -9,8 +9,8 @@ RUN apt-get update \
       libboost-all-dev \
       pkg-config \
       cmake \
-      make
-
+      make \
+      git
 
 COPY . /cpp_template_agent
 WORKDIR /cpp_template_agent

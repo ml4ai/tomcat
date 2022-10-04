@@ -7,8 +7,7 @@ CMD bash
 
 RUN apt-get update && apt-get install -y sudo software-properties-common g++ apt-utils
 COPY . /tomcat/exe/reference_agent
-#WORKDIR /tomcat/exe/reference_agent
-
+WORKDIR /tomcat/exe/reference_agent
 
 RUN apt-get -y --no-install-recommends install \
       ca-certificates \
@@ -30,7 +29,6 @@ RUN apt-get -y --no-install-recommends install \
       libssl-dev \
       librange-v3-dev
 
-
 # build paho mqtt c from source
 RUN git clone https://github.com/eclipse/paho.mqtt.c.git \
     && cd paho.mqtt.c \
@@ -44,10 +42,9 @@ RUN git clone https://github.com/eclipse/paho.mqtt.c.git \
 # build paho mqtt cpp from source
 RUN git clone https://github.com/eclipse/paho.mqtt.cpp.git \
     && cd paho.mqtt.cpp \
-#    && git checkout v1.3.8 \
     && cmake -Bbuild -H. -DPAHO_BUILD_STATIC=ON -DPAHO_WITH_SSL=ON \
     && sudo cmake --build build/ --target install \
     && sudo ldconfig
 
 # Build the agent
-RUN pwd; rm -rf build; mkdir build; cd build; cmake ../ ; make -j `nproc` reference_agent; cd ../
+RUN pwd; rm -rf build; mkdir build; cd build; cmake .. ; make -j `nproc` 

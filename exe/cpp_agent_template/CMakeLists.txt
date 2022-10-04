@@ -6,7 +6,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g") # create gdb symbol table
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
 add_definitions(-DBOOST_LOG_DYN_LINK)
+
 find_package(
     Boost 1.79
     COMPONENTS 
@@ -18,6 +21,7 @@ find_package(
     log
     REQUIRED
 )
+
 add_executable(
     cpp_agent_template main.cpp
     Agent.cpp
@@ -30,4 +34,10 @@ add_executable(
 )
 
 target_include_directories(cpp_agent_template PRIVATE ${Boost_INCLUDE_DIRS})
-target_link_libraries(cpp_agent_template PahoMqttCpp::paho-mqttpp3 ${Boost_LIBRARIES})
+
+target_link_libraries(
+    cpp_agent_template 
+    PahoMqttCpp::paho-mqttpp3
+    ${Boost_LIBRARIES}
+)
+
