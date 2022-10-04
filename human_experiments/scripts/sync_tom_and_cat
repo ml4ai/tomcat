@@ -33,12 +33,13 @@
 # Output: 
 #     All output, including error output, goes to stdout, and is also appended
 #     to ${HOME}/tomcat/logs/sync_tom_and_cat.log. Because of this logging,
-#     when called from other scripts, we may not want any output. Rather than 
-#     redirect to /dev/null, we can ask for no output with the first optional
-#     argument '-q'. 
+#     when called from other scripts, we may not want any output. Rather than
+#     redirect to /dev/null, we can ask for no output with  optional argument
+#     '-q'. 
 #
 #     This scripts respects the setting of IVI_VERBOSE. If it is set to "1",
-#     then we provide more output. 
+#     then we provide more output. This can also be achieved using the argument
+#     '-v'.
 #
 # Exit status:
 #     Following unix convention, this script exits with 0 on success, and
@@ -49,12 +50,6 @@
 #
 ##############################################################################
 
-if [[ "$1" == "-q" ]]; then
-    plumbing='>>'
-else
-    plumbing='| tee -a'
-fi 
-   
 set -u 
 
 # Obscure bash code to set IVI_VERBOSE to 1 if it is set but NULL, 0 if unset,
@@ -62,10 +57,27 @@ set -u
 # for you. We have this after the '-u' to test if this is valid on all bash
 # variants we come across. 
 #
+# The default value of IVI_VERBOSE set here can be overriddent by the '-v' flag. 
+#
 export IVI_VERBOSE=${IVI_VERBOSE-0}
 if [[ "${IVI_VERBOSE}" == "" ]]; then
     export IVI_VERBOSE="1"
 fi 
+
+# Default. 
+plumbing='| tee -a'
+
+for var in "$@"
+do
+    if [[ "$var" == "-q" ]]; then
+        plumbing='>>'
+    elif [[ "$var" == "-v" ]]; then
+        export IVI_VERBOSE="1"
+    else 
+        echo "Argument to sync_tom_and_cat ${var} is invalid. Exiting with failure." 
+        exit 1
+    fi 
+done
 
 export TOMCAT_DIR="${HOME}/tomcat" 
 

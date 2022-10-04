@@ -77,7 +77,7 @@ mkdir -p "${tom_data_dir}"  2>&1
 #
 ### rsync_options="-a -u -b --suffix ${backup_suffix}"
 ### rsync_options="-rlptgD --crtimes -u -b --suffix ${backup_suffix}"
-rsync_options="-rlptD -u -b --suffix ${backup_suffix}"
+rsync_options="-rlptD -u -b --suffix ${backup_suffix} --modify-window=10"
 
 if [[ "${IVI_VERBOSE}" != "0" ]]; then
     rsync_options="-v ${rsync_options}"
