@@ -2,14 +2,12 @@
 
 set -u
 
-#source wifi
-
 SECONDS_TO_WAIT=300
 
-if [[ -z ${2+x} ]]; then
+if [[ -z ${1+x} ]]; then
   PADDING=""
 else
-  PADDING=$2
+  PADDING=$1
 fi
 
 __start_on_client() {
@@ -27,9 +25,6 @@ __start_on_client() {
     local command="osascript -e \"tell application \\\"QuickTime\\\" to quit\""
     # shellcheck disable=SC2029
     ssh "$EXPERIMENT_USER@$client_address" "$command"
-
-#    enable_wifi "$client_name" "$client_address" "$padding"
-#    wait_for_connection "$client_name" "$client_address" "$padding"
 
     # Start Minecraft on a new desktop
     create_new_desktop_on_client "$client_address"
@@ -121,20 +116,14 @@ __monitor_launch() {
 
     if ! __monitor_launch_on_machine "lion" "$padding "; then
       all_launched="n"
-    #else
-#      disable_wifi "lion" "lion.local" "$padding "
     fi
 
     if ! __monitor_launch_on_machine "tiger" "$padding "; then
       all_launched="n"
-    #else
-#      disable_wifi "tiger" "tiger.local" "$padding "
     fi
 
     if ! __monitor_launch_on_machine "leopard" "$padding "; then
       all_launched="n"
-    #else
-#      disable_wifi "leopard" "leopard.local" "$padding "
     fi
   done
 

@@ -2,6 +2,19 @@
 
 set -u
 
+source wifi
+
+if [[ -z ${1+x} ]]; then
+  PADDING=""
+else
+  PADDING=$1
+fi
+
+# We disable the WiFi in all of the clients to avoid issues with the fNIRS signals.
+disable_wifi "lion" "lion.local" "$PADDING"
+disable_wifi "tiger" "tiger.local" "$PADDING"
+disable_wifi "leopard" "leopard.local" "$PADDING"
+
 if [[ ${EXPERIMENT_DIR::1} != "/" ]]; then
   # In case the first character of experiment is not a slash '/'.
   text="\n${RED}First character of experiment directory must be a slash '/' !${NC}\n"
