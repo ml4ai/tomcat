@@ -44,8 +44,8 @@ pushd "$SCRIPTS_DIR" >/dev/null || exit 1
     echo "[1]:  Set the experiment time"
     echo "[2]:  Checks the NFS status"
     echo "[3]:  Starts the Testbed"
-    echo "[4]:  Opens Instructive Video"
-    echo "[5]:  Starts Eye-tracker"
+    echo "[4]:  Starts Eye-tracker"
+    echo "[5]:  Opens Instructive Video"
     echo "[6]:  Starts the Lab Recorder"
     echo "[7]:  Starts Face and Screen recording"
     echo "[8]:  Starts the Baseline Tasks"
@@ -135,15 +135,15 @@ pushd "$SCRIPTS_DIR" >/dev/null || exit 1
 
   if [[ $GOTO -le 4 ]]; then
     echo " "
-    if yes_no_question "[4] Do you want to play the ${EMPH}Instructive Video${NC}?"; then
-      source play_instructive_video " "
+    if yes_no_question "[4] Do you want to start the ${EMPH}Eye-tracker${NC}?"; then
+      source start_eye_tracker " "
     fi
   fi
 
   if [[ $GOTO -le 5 ]]; then
     echo " "
-    if yes_no_question "[5] Do you want to start the ${EMPH}Eye-tracker${NC}?"; then
-      source start_eye_tracker " "
+    if yes_no_question "[5] Do you want to play the ${EMPH}Instructive Video${NC}?"; then
+      source play_instructive_video " "
     fi
   fi
 
