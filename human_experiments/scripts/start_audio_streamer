@@ -25,12 +25,13 @@ __start_on_client() {
     padding="$padding "
   fi
   if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
+    local recordings_directory="\$HOME/$EXPERIMENT_DIR/$client_name/audio"
     local command="cd \$HOME/$SYSTEMS_DIR/tomcat/exe/audioStreamer/build/; ./audioStreamer "
     command+="--use_mqtt true --ws_host tom.local --mqtt_host tom.local "
-    command+="--player_name $player_name &> $log_path &; echo \$! > $pid_path"
+    command+="--player_name $player_name --save_audio true --recordings_directory $recordings_directory "
+    command+="&> $log_path &; echo \$! > $pid_path"
     # shellcheck disable=SC2029
-    ssh "$EXPERIMENT_USER@$client_address" "$command" >/dev/null
-    if [[ $? -eq 0 ]]; then
+    if ssh "$EXPERIMENT_USER@$client_address" "$command" >/dev/null; then
       echo -e "${padding}${EMPH}Audio Streamer${GREEN} started successfully.${NC}"
     else
       echo -e "${padding}${RED}Failed to start the ${EMPH}Audio Streamer${RED}.${NC}"
