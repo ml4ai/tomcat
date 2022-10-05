@@ -10,6 +10,11 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 add_definitions(-DBOOST_LOG_DYN_LINK)
 
+# Add MacOs Boost directories
+SET(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "/opt/local/libexec/boost/1.76/include/boost")
+SET(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "/opt/local/libexec/boost/1.76/lib")
+
+
 find_package(
     Boost 1.79
     COMPONENTS 
