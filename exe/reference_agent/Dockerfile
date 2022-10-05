@@ -1,7 +1,7 @@
 
-#FROM ubuntu:kinetic
+FROM ubuntu:kinetic
 # FROM ubuntu:jammy
-FROM ubuntu:20.04
+#FROM ubuntu:20.04
 
 CMD bash
 
