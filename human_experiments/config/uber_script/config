@@ -1,6 +1,5 @@
 # Data
-#DATA_DIR=/data/cat
-DATA_DIR=$HOME/tmp/uber
+DATA_DIR=/data/cat
 DATA_DIR_GROUP="$DATA_DIR/LangLab/experiments/study_3_pilot/group"
 DATA_DIR_DRY_RUN="$DATA_DIR/LangLab/dry_runs/group"
 DATA_DIR_TEST="$DATA_DIR/LangLab/dev/group"
