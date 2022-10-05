@@ -12,4 +12,3 @@ EXPERIMENT_USER=labworker
 # URLs
 CLIENT_MAP_URL="https://localhost:9000/ClientMap/map"
 FINAL_SURVEY_LINK_PATH="$HOME/$SYSTEMS_DIR/tomcat-internal/experiment/group/config"
-#FINAL_SURVEY_URL=https://redcap.uahs.arizona.edu/surveys/?s=WMT8K3HRE3RRLJ7R
