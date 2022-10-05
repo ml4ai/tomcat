@@ -26,6 +26,17 @@ def sync_timestamps_with_df(df, final_state, header):
     df[header] = df.index.map(final_state)
     return df
 
+def sync_state_with_imac():
+    """
+    We need this function becaus of Affective
+    individual task, as different participants
+    finish the task at different time, so based 
+    based on the sid we save it to that particular
+    folder. eg: if sid is lion it would go to lions
+    folder. 
+    """
+    print()
+
 def dataframe_to_csv(path, data, stream_type, time_distribution_human_readable, time_distribution_unix, 
                     rootdir_baseline_task, rootdir_minecraft_data, subject_id):
     """
@@ -90,101 +101,116 @@ def dataframe_to_csv(path, data, stream_type, time_distribution_human_readable, 
     *_state_time_stop from our dataframe. Then insert
     the state value to df
     """
-    for idx, dict in all_task_time.items():
-        print(idx, dict.values())
-        if 'rest_state' in dict.values():
-            print(colored('[INFO]', 'red', attrs=['bold']), 
-                colored(stream_type, 'blue'), 
-                colored('Rest state timestamps synced with CSV file', 'red', attrs=['bold']))
-            state = 'rest_state'
-            get_state_rest = get_timestamps_from_dict(df, state, dict, header[2])
-        
-        if 'finger_tapping' in dict.values():
-            print(colored('[INFO]', 'red', attrs=['bold']), 
-                colored(stream_type, 'blue'), 
-                colored('Finger tapping timestamps synced with CSV file', 'red', attrs=['bold']))
-            state = 'finger_tapping'
-            get_state_fingertap = get_timestamps_from_dict(df, state, dict, header[2])
+    for iMac in ['lion', 'tiger', 'leopard']:
+        print(iMac)
+        for idx, dict in all_task_time.items():
+            print(idx, dict.values())
+            if 'rest_state' in dict.values():
+                print(colored('[INFO]', 'red', attrs=['bold']), 
+                    colored(stream_type, 'blue'), 
+                    colored('Rest state timestamps synced with CSV file', 'red', attrs=['bold']))
+                state = 'rest_state'
+                get_state_rest = get_timestamps_from_dict(df, state, dict, header[2])
+            
+            if 'finger_tapping' in dict.values():
+                print(colored('[INFO]', 'red', attrs=['bold']), 
+                    colored(stream_type, 'blue'), 
+                    colored('Finger tapping timestamps synced with CSV file', 'red', attrs=['bold']))
+                state = 'finger_tapping'
+                get_state_fingertap = get_timestamps_from_dict(df, state, dict, header[2])
 
-        if 'affective_task_team' in dict.values():
-            print(colored('[INFO]', 'red', attrs=['bold']), 
-                colored(stream_type, 'blue'), 
-                colored('Affective team task timestamps synced with CSV file', 'red', attrs=['bold']))
-            state = 'affective_task_team'
-            get_state_affective_team = get_timestamps_from_dict(df, state, dict, header[2])
+            if 'affective_task_individual' in dict.values() and iMac in dict.values():
+                """
+                As different participants
+                finish the task at different time, so based 
+                based on the sid we save it to that particular
+                folder. eg: if sid is lion it would go to lions
+                folder. 
+                """
+                print(colored('[INFO]', 'red', attrs=['bold']), 
+                    colored(stream_type, 'blue'), 
+                    colored('Affective individual task timestamps synced with CSV file', 'red', attrs=['bold']))
+                state = 'affective_task_individual'
+                affective_task_individual = get_timestamps_from_dict(df, state, dict, header[2])
 
-        if 'ping_pong_cooperative_0' in dict.values():
-             print(colored('[INFO]', 'red', attrs=['bold']), 
-                colored(stream_type, 'blue'), 
-                colored('Ping pong cooperative 0 task timestamps synced with CSV file', 'red', attrs=['bold']))           
-             state = 'ping_pong_cooperative_0'
-             get_state_pingpong_coop_0 = get_timestamps_from_dict(df, state, dict, header[2])
+            if 'affective_task_team' in dict.values():
+                print(colored('[INFO]', 'red', attrs=['bold']), 
+                    colored(stream_type, 'blue'), 
+                    colored('Affective team task timestamps synced with CSV file', 'red', attrs=['bold']))
+                state = 'affective_task_team'
+                get_state_affective_team = get_timestamps_from_dict(df, state, dict, header[2])
 
-        if 'ping_pong_competetive_0' in dict.values():
-             print(colored('[INFO]', 'red', attrs=['bold']), 
-                colored(stream_type, 'blue'), 
-                colored('Ping pong competetive 0 task timestamps synced with CSV file', 'red', attrs=['bold']))           
-             state = 'ping_pong_competetive_0'
-             get_state_pingpong_comp_0 = get_timestamps_from_dict(df, state, dict, header[2])
+            if 'ping_pong_cooperative_0' in dict.values():
+                print(colored('[INFO]', 'red', attrs=['bold']), 
+                    colored(stream_type, 'blue'), 
+                    colored('Ping pong cooperative 0 task timestamps synced with CSV file', 'red', attrs=['bold']))           
+                state = 'ping_pong_cooperative_0'
+                get_state_pingpong_coop_0 = get_timestamps_from_dict(df, state, dict, header[2])
 
-        if 'ping_pong_competetive_1' in dict.values():
-            print(colored('[INFO]', 'red', attrs=['bold']), 
-                colored(stream_type, 'blue'), 
-                colored('Ping pong competetive 1 task timestamps synced with CSV file', 'red', attrs=['bold']))
-            state = 'ping_pong_competetive_1'
-            get_state_pingpong_comp_1 = get_timestamps_from_dict(df, state, dict, header[2])
-        
-        if 'hands_on_training' in dict.values():
-            print(colored('[INFO]', 'red', attrs=['bold']), 
-                colored(stream_type, 'blue'), 
-                colored('Minecraft hands on training timestamps synced with CSV file', 'red', attrs=['bold']))
-            state = 'hands_on_training'
-            mincraft_handson_training = get_timestamps_from_dict(df, state, dict, header[2])
+            if 'ping_pong_competetive_0' in dict.values():
+                print(colored('[INFO]', 'red', attrs=['bold']), 
+                    colored(stream_type, 'blue'), 
+                    colored('Ping pong competetive 0 task timestamps synced with CSV file', 'red', attrs=['bold']))           
+                state = 'ping_pong_competetive_0'
+                get_state_pingpong_comp_0 = get_timestamps_from_dict(df, state, dict, header[2])
 
-        if 'saturn_a' in dict.values():
-            print(colored('[INFO]', 'red', attrs=['bold']), 
-                colored(stream_type, 'blue'), 
-                colored('Minecraft Saturn A timestamps synced with CSV file', 'red', attrs=['bold']))
-            state = 'saturn_a'
-            mincraft_saturn_a = get_timestamps_from_dict(df, state, dict, header[2])
+            if 'ping_pong_competetive_1' in dict.values():
+                print(colored('[INFO]', 'red', attrs=['bold']), 
+                    colored(stream_type, 'blue'), 
+                    colored('Ping pong competetive 1 task timestamps synced with CSV file', 'red', attrs=['bold']))
+                state = 'ping_pong_competetive_1'
+                get_state_pingpong_comp_1 = get_timestamps_from_dict(df, state, dict, header[2])
+            
+            if 'hands_on_training' in dict.values():
+                print(colored('[INFO]', 'red', attrs=['bold']), 
+                    colored(stream_type, 'blue'), 
+                    colored('Minecraft hands on training timestamps synced with CSV file', 'red', attrs=['bold']))
+                state = 'hands_on_training'
+                mincraft_handson_training = get_timestamps_from_dict(df, state, dict, header[2])
 
-        if 'saturn_b' in dict.values():
-            print(colored('[INFO]', 'red', attrs=['bold']), 
-                colored(stream_type, 'blue'), 
-                colored('Minecraft Saturn B timestamps synced with CSV file', 'red', attrs=['bold']))
-            state = 'saturn_b'
-            mincraft_saturn_b = get_timestamps_from_dict(df, state, dict, header[2])
+            if 'saturn_a' in dict.values():
+                print(colored('[INFO]', 'red', attrs=['bold']), 
+                    colored(stream_type, 'blue'), 
+                    colored('Minecraft Saturn A timestamps synced with CSV file', 'red', attrs=['bold']))
+                state = 'saturn_a'
+                mincraft_saturn_a = get_timestamps_from_dict(df, state, dict, header[2])
 
-    final_state =  {**get_state_rest, **get_state_fingertap, 
-                    **get_state_affective_team, **get_state_pingpong_coop_0, 
-                    **get_state_pingpong_comp_0, **get_state_pingpong_comp_1, 
-                    **mincraft_handson_training, **mincraft_saturn_a, 
-                    **mincraft_saturn_b}
-    # print(final_state)
-    df = sync_timestamps_with_df(df, final_state, header[2])
+            if 'saturn_b' in dict.values():
+                print(colored('[INFO]', 'red', attrs=['bold']), 
+                    colored(stream_type, 'blue'), 
+                    colored('Minecraft Saturn B timestamps synced with CSV file', 'red', attrs=['bold']))
+                state = 'saturn_b'
+                mincraft_saturn_b = get_timestamps_from_dict(df, state, dict, header[2])
 
-        # if 'rest_state' in dict.values():
-        #     print(colored('[INFO]', 'red', attrs=['bold']), 
-        #         colored(stream_type, 'blue'), 
-        #         colored('Rest state timestamps synced with CSV file', 'red', attrs=['bold']))
-        #     state = 'rest_state'
-        #     df.update(sync_with_df(df, state, dict, header[2]), overwrite=False)
-        #     print(df[header[2]].unique())
+        final_state =  {**get_state_rest, **get_state_fingertap, **affective_task_individual, 
+                        **get_state_affective_team, **get_state_pingpong_coop_0, 
+                        **get_state_pingpong_comp_0, **get_state_pingpong_comp_1, 
+                        **mincraft_handson_training, **mincraft_saturn_a, 
+                        **mincraft_saturn_b}
+        # print(final_state)
+            # if 'rest_state' in dict.values():
+            #     print(colored('[INFO]', 'red', attrs=['bold']), 
+            #         colored(stream_type, 'blue'), 
+            #         colored('Rest state timestamps synced with CSV file', 'red', attrs=['bold']))
+            #     state = 'rest_state'
+            #     df.update(sync_with_df(df, state, dict, header[2]), overwrite=False)
+            #     print(df[header[2]].unique())
 
-        # if 'finger_tapping' in dict.values():
-        #     print(colored('[INFO]', 'red', attrs=['bold']), 
-        #         colored(stream_type, 'blue'), 
-        #         colored('Finger tapping timestamps synced with CSV file', 'red', attrs=['bold']))
-        #     state = 'finger_tapping'
-        #     df.update(sync_with_df(df, state, dict, header[2]), overwrite=False)
-        #     print(df[header[2]].unique())
+            # if 'finger_tapping' in dict.values():
+            #     print(colored('[INFO]', 'red', attrs=['bold']), 
+            #         colored(stream_type, 'blue'), 
+            #         colored('Finger tapping timestamps synced with CSV file', 'red', attrs=['bold']))
+            #     state = 'finger_tapping'
+            #     df.update(sync_with_df(df, state, dict, header[2]), overwrite=False)
+            #     print(df[header[2]].unique())
 
-        # if 'affective_task_team' in dict.values():
-        #     print(colored('[INFO]', 'red', attrs=['bold']), 
-        #         colored(stream_type, 'blue'), 
-        #         colored('Affective team task timestamps synced with CSV file', 'red', attrs=['bold']))
-        #     state = 'affective_task_team'
-        #     df.update(sync_with_df(df, state, dict, header[2]), overwrite=False)
-        #     print(df[header[2]].unique())
-
-    df.to_csv(csv_file_name + ".csv", sep='\t', encoding='utf-8')
+            # if 'affective_task_team' in dict.values():
+            #     print(colored('[INFO]', 'red', attrs=['bold']), 
+            #         colored(stream_type, 'blue'), 
+            #         colored('Affective team task timestamps synced with CSV file', 'red', attrs=['bold']))
+            #     state = 'affective_task_team'
+            #     df.update(sync_with_df(df, state, dict, header[2]), overwrite=False)
+            #     print(df[header[2]].unique())
+        df = sync_timestamps_with_df(df, final_state, header[2])
+        # df.to_csv(csv_file_name + ".csv", sep='\t', encoding='utf-8')
+        df.to_csv(csv_file_name + ".csv", sep='\t', encoding='utf-8')

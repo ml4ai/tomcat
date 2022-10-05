@@ -40,6 +40,7 @@ def read_baseline_tasks_time(rootdir, subject_id):
                 for all three paticipants as they work as team here. 
                 """                  
                 csvfiles = list(filter(lambda f: f.endswith('.csv'), os.listdir(os.path.join(rootdir,x))))
+                cnt = 0
                 for csvfile in csvfiles:
                     if 'team_' in csvfile: #if csv filename is team_*
                         df = pd.read_csv(os.path.join(os.path.join(rootdir,x), csvfile), delimiter = ';')
@@ -48,13 +49,18 @@ def read_baseline_tasks_time(rootdir, subject_id):
                                                 'end_time':df['time'].iloc[-1]}      
                         idx += 1
                     else:#if csv filename is individual_*
-                        for sid in subject_id:
+                        # mod_sub_id = []
+                        for sid in sorted(subject_id):
                             if sid in csvfile:
+                                sid = 'lion' if cnt == 0 else 'tiger' if cnt == 1 else 'leopard'
+                                # mod_sub_id = mod_sub_id.append(sid)
                                 df = pd.read_csv(os.path.join(os.path.join(rootdir,x), csvfile), delimiter = ';')
                                 start_stop_time[idx] = {'state':'affective_task_individual', 'participant': sid, 
                                                         'start_time': df['time'].iloc[0], 
                                                         'end_time':df['time'].iloc[-1]}      
                                 idx += 1
+                                cnt += 1
+                            
             elif 'ping_pong' in x:
                 """
                 Ping-pong task has 3 rounds:

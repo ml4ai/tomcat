@@ -89,6 +89,7 @@ def read_minecraft_time(baseline_task_dict, rootdir_minecraft_data):
         minecraft_dict_temp['state'][1] = 'saturn_a'
         minecraft_dict_temp['state'][0] = 'saturn_b'
     else:
+        #sometimes due to time constraints the participants play only 1 misson
         minecraft_dict_temp['state'][2] = 'hands_on_training'
         minecraft_dict_temp['state'][1] = 'saturn_a'
 
