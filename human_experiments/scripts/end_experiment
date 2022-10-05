@@ -90,6 +90,7 @@ __stop_port_forwarding() {
     # shellcheck disable=SC2029
     if ssh "$EXPERIMENT_USER@$client_address" "$command" > /dev/null; then
       echo -e "${padding}${GREEN} Port forwarding successfully stopped.${NC}"
+      stopped="y"
     else
       echo -e "${padding}${RED} Failed to stop port forwarding.${NC}"
       if ! yes_no_question "${padding} Do you want to ${EMPH}RETRY${NC}?"; then
