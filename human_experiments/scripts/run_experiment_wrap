@@ -44,13 +44,13 @@ pushd "$SCRIPTS_DIR" >/dev/null || exit 1
     echo "[1]:  Set the experiment time"
     echo "[2]:  Checks the NFS status"
     echo "[3]:  Starts the Testbed"
-    echo "[4]:  Starts Eye-tracker"
-    echo "[5]:  Opens Instructive Video"
-    echo "[6]:  Starts the Lab Recorder"
-    echo "[7]:  Starts Face and Screen recording"
-    echo "[8]:  Starts the Baseline Tasks"
-    echo "[9]:  Starts Minecraft"
-    echo "[10]: Opens the Client Map"
+    echo "[4]:  Starts Minecraft"
+    echo "[5]:  Opens the Client Map"
+    echo "[6]:  Starts Eye-tracker"
+    echo "[7]:  Opens Instructive Video"
+    echo "[8]:  Starts the Lab Recorder"
+    echo "[9]:  Starts Face and Screen recording"
+    echo "[10]: Starts the Baseline Tasks"
     echo "[11]: Starts the Audio Streamer"
     echo "[12]: Opens the Final Survey"
     echo "[13]: Stops the LabRecorder recordings and kill the LabRecorder instances on CAT"
@@ -135,50 +135,50 @@ pushd "$SCRIPTS_DIR" >/dev/null || exit 1
 
   if [[ $GOTO -le 4 ]]; then
     echo " "
-    if yes_no_question "[4] Do you want to start the ${EMPH}Eye-tracker${NC}?"; then
-      source start_eye_tracker " "
+    if yes_no_question "[4] Do you want to start ${EMPH}Minecraft${NC}?"; then
+      source start_minecraft " "
     fi
   fi
 
   if [[ $GOTO -le 5 ]]; then
     echo " "
-    if yes_no_question "[5] Do you want to play the ${EMPH}Instructive Video${NC}?"; then
-      source play_instructive_video " "
+    if yes_no_question "[5] Do you want to open the ${EMPH}Client Map${NC}?"; then
+      source open_client_map " "
     fi
   fi
 
   if [[ $GOTO -le 6 ]]; then
     echo " "
-    if yes_no_question "[6] Do you want to start ${EMPH}Lab Recorder${NC}?"; then
-      source start_lab_recorder " "
+    if yes_no_question "[6] Do you want to start the ${EMPH}Eye-tracker${NC}?"; then
+      source start_eye_tracker " "
     fi
   fi
 
   if [[ $GOTO -le 7 ]]; then
     echo " "
-    if yes_no_question "[7] Do you want to start ${EMPH}Face and Screen Recording${NC}?"; then
-      source start_ffmpeg " "
+    if yes_no_question "[7] Do you want to play the ${EMPH}Instructive Video${NC}?"; then
+      source play_instructive_video " "
     fi
   fi
 
   if [[ $GOTO -le 8 ]]; then
     echo " "
-    if yes_no_question "[8] Do you want to start the ${EMPH}Baseline Tasks${NC}?"; then
-      source start_baseline_tasks " "
+    if yes_no_question "[8] Do you want to start ${EMPH}Lab Recorder${NC}?"; then
+      source start_lab_recorder " "
     fi
   fi
 
   if [[ $GOTO -le 9 ]]; then
     echo " "
-    if yes_no_question "[9] Do you want to start ${EMPH}Minecraft${NC}?"; then
-      source start_minecraft " "
+    if yes_no_question "[9] Do you want to start ${EMPH}Face and Screen Recording${NC}?"; then
+      source start_ffmpeg " "
     fi
   fi
 
   if [[ $GOTO -le 10 ]]; then
     echo " "
-    if yes_no_question "[10] Do you want to open the ${EMPH}Client Map${NC}?"; then
-      source open_client_map " "
+    if yes_no_question "[10] Do you want to start the ${EMPH}Baseline Tasks${NC}?"; then
+      source start_baseline_tasks " "
     fi
   fi
 
