@@ -35,7 +35,10 @@ __stop_audio_streamer() {
   local client_address=$2
   local padding=$3
 
-  local command="pkill socat"
+  local pid_path="$EXPERIMENT_DIR/tmp/audio_streamer_$client_name.pid"
+  local audio_streamer_pid
+  audio_streamer_pid="$(cat "$pid_path")"
+  local command="kill $audio_streamer_pid"
 
   echo -e "${padding}Stopping ${EMPH}Audio Streamer${NC}..."
   local stopped="n"
@@ -80,13 +83,9 @@ __stop_port_forwarding() {
   local client_address=$2
   local padding=$3
 
-  local pid_path="$EXPERIMENT_DIR/tmp/${client_name}_port_forwarding.pid"
-  local pid
-  pid=$(cat "$pid_path")
-
   echo -e "${padding}Stopping port forwarding..."
   local stopped="n"
-  local command="kill $pid"
+  local command="pkill socat"
   while [[ $stopped != "y" ]]; do
     # shellcheck disable=SC2029
     if ssh "$EXPERIMENT_USER@$client_address" "$command" > /dev/null; then
