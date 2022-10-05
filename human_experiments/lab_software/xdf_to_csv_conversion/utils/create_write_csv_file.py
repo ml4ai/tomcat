@@ -52,7 +52,14 @@ def dataframe_to_csv(path, data, stream_type, time_distribution_human_readable, 
         'S4-D2_HbR', 'S4-D4_HbR', 'S4-D5_HbR', 'S5-D3_HbR', 'S5-D4_HbR', 'S5-D6_HbR', 'S6-D4_HbR', 'S6-D6_HbR', 
         'S6-D7_HbR', 'S7-D5_HbR', 'S7-D7_HbR', 'S8-D6_HbR', 'S8-D7_HbR']
         channel_list = header[3:]
-        index = 41 #This points to index where HbO channel data starts
+        index = 41 #This points to index where HbO channel data starts on the XDF file
+
+    if stream_type == 'EEG':
+        header = ['unix_time', 'human_readable_time', 'event_type', 'AFF1h', 'AFF5h', 'F7', 'FC5', 'FC1', 'C3', 
+        'T7', 'TP9', 'CP5', 'CP1', 'Pz', 'P3', 'P7', 'PO9', 'O1', 'Oz', 'O2', 'PO10', 'P8', 'P4', 'TP10', 'CP6', 
+        'CP2', 'Cz', 'C4', 'T8', 'FC6', 'FC2', 'FCz', 'F8', 'AFF6h', 'AFF2h', 'AUX_GSR', 'AUX_EKG']
+        channel_list = header[3:]
+        index = 0 #EEG starts at the 0th index on the XDF file
 
     data_path = path
     csv_file_name = data_path + '/' + stream_type
