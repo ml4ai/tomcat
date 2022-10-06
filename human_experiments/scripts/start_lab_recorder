@@ -4,6 +4,8 @@ set -u
 
 source wifi
 
+TARGET_IP="cat.local"
+
 if [[ -z ${1+x} ]]; then
   PADDING=""
 else
@@ -22,7 +24,7 @@ if [[ ${EXPERIMENT_DIR::1} != "/" ]]; then
   text+="(experiment directory must start with a slash '/' and not end with a slash.)${NC}\n"
   echo -e "$text"
   exit 1
-fi  
+fi
 
 echo " "
 echo -e "${YELLOW}WARNING: All prior instances of LabRecorder running on CAT will be killed!${NC}"
@@ -36,10 +38,13 @@ fi
 # Set var to where the app LabRecorder path/app is located on CAT.
 LAB_RECORDER_APP="/usr/LabRecorder/./LabRecorder"
 
+# Set var to where the LabRecorder config directory is located on CAT.
+CONFIG_DIR="\$HOME/$SYSTEMS_DIR/tomcat/human_experiments/config/LabRecorder_config"
+
 # Set vars with Lion, Tiger and Leopard unique config path/file located on git.
-LION_CONFIG_FILE="\$HOME/$SYSTEMS_DIR/tomcat/human_experiments/config/LabRecorder_config/LabRecorder_Lion_22345.cfg"
-TIGER_CONFIG_FILE="\$HOME/$SYSTEMS_DIR/tomcat/human_experiments/config/LabRecorder_config/LabRecorder_Tiger_22346.cfg"
-LEOPARD_CONFIG_FILE="\$HOME/$SYSTEMS_DIR/tomcat/human_experiments/config/LabRecorder_config/LabRecorder_Leopard_22347.cfg"
+LION_CONFIG_FILE="${CONFIG_DIR}/LabRecorder_Lion_22345.cfg"
+TIGER_CONFIG_FILE="${CONFIG_DIR}/LabRecorder_Tiger_22346.cfg"
+LEOPARD_CONFIG_FILE="${CONFIG_DIR}/LabRecorder_Leopard_22347.cfg"
 
 # Set vars with Lion, Tiger and Leopard data (StorageLocation) path/file.
 LION_STORAGE_LOCATION="${EXPERIMENT_DIR}/lion/eeg_fnirs_pupil/lion_eeg_fnirs_pupil.xdf"
@@ -55,32 +60,45 @@ echo -e "${GREEN}Leopard: ${LEOPARD_STORAGE_LOCATION}${NC}"
 
 # Change (string find and replace) "StorageLocation=" line in Lion, Tiger and Leopards
 # unique configuration files to have the Storage Location of the xdf file
-# specified in this experiment.  
-ssh cat@cat.local sed -i 's#StorageLocation=.*#StorageLocation='"$LION_STORAGE_LOCATION"'#' "$LION_CONFIG_FILE"
-ssh cat@cat.local sed -i 's#StorageLocation=.*#StorageLocation='"$TIGER_STORAGE_LOCATION}"'#' "$TIGER_CONFIG_FILE"
-ssh cat@cat.local sed -i 's#StorageLocation=.*#StorageLocation='"$LEOPARD_STORAGE_LOCATION"'#' "$LEOPARD_CONFIG_FILE"
-
+# specified in this experiment.
+ssh "cat@$TARGET_IP" sed -i 's#StorageLocation=.*#StorageLocation='"$LION_STORAGE_LOCATION"'#' "$LION_CONFIG_FILE"
+ssh "cat@$TARGET_IP" sed -i 's#StorageLocation=.*#StorageLocation='"$TIGER_STORAGE_LOCATION"'#' "$TIGER_CONFIG_FILE"
+ssh "cat@$TARGET_IP" sed -i 's#StorageLocation=.*#StorageLocation='"$LEOPARD_STORAGE_LOCATION"'#' "$LEOPARD_CONFIG_FILE"
 
 # Kill any prior instances of LabRecorder on CAT so that fresh instances can be opened.
-ssh cat@cat.local pkill LabRecorder
+ssh "cat@$TARGET_IP" pkill LabRecorder
+
 echo " "
 echo -e "${YELLOW}Killed any prior instances of LabRecorder running on CAT!${NC}"
 
 
 # Will need to open 3 fresh instances of LabRecorder to guarantee they using
 # correct config file, connecting to correct streams and using Experiment Dir
-# and Data File for this Experiment.  
+# and Data File for this Experiment.
 echo " "
 echo -e "Opening 3 instances of LabRecorder on CAT:"
 # shellcheck disable=SC2029
-ssh cat@cat.local "DISPLAY=:1 $LAB_RECORDER_APP -c $LION_CONFIG_FILE &>/dev/null &"
+ssh "cat@$TARGET_IP" "DISPLAY=:1 ${LAB_RECORDER_APP} -c ${LION_CONFIG_FILE} &>/dev/null &"
 # shellcheck disable=SC2029
-ssh cat@cat.local "DISPLAY=:1 $LAB_RECORDER_APP -c $TIGER_CONFIG_FILE &>/dev/null &"
+ssh "cat@$TARGET_IP" "DISPLAY=:1 ${LAB_RECORDER_APP} -c ${TIGER_CONFIG_FILE} &>/dev/null &"
 # shellcheck disable=SC2029
-ssh cat@cat.local "DISPLAY=:1 $LAB_RECORDER_APP -c $LEOPARD_CONFIG_FILE &>/dev/null &"
+ssh "cat@$TARGET_IP" "DISPLAY=:1 ${LAB_RECORDER_APP} -c ${LEOPARD_CONFIG_FILE} &>/dev/null &"
 echo " "
-ssh cat@cat.local ps -F -C LabRecorder
+ssh "cat@$TARGET_IP" ps -F -C LabRecorder
 echo " "
+
+# After the 3 LabRecorder instances are open on CAT, restore the 3 modified LabRecorder config files
+# back to what is on the main git repository using the "git checkout <file>" command.
+# This is done so that git will not detect on any branch that the config files have been modified.
+echo -e "Restoring the 3 LabRecorder config files back to what is in the main git repository on CAT:"
+# shellcheck disable=SC2029
+ssh "cat@$TARGET_IP" "cd ${CONFIG_DIR} && git checkout LabRecorder_Lion_22345.cfg"
+# shellcheck disable=SC2029
+ssh "cat@$TARGET_IP" "cd ${CONFIG_DIR} && git checkout LabRecorder_Tiger_22346.cfg"
+# shellcheck disable=SC2029
+ssh "cat@$TARGET_IP" "cd ${CONFIG_DIR} && git checkout LabRecorder_Leopard_22347.cfg"
+echo " "
+
 echo -e "${YELLOW}Verify that you have 3 LabRecorder windows open on CAT and that they are all recording the correct streams!${NC}"
 echo -e "${EMPH}(The 3 LabRecorder windows on CAT might be stacked on top of each other so, "
 echo -e " you may have to use CAT's mouse to separate them!)${NC}"
