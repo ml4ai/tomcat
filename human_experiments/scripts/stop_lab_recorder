@@ -2,6 +2,9 @@
 
 set -u
 
+USER_ON_TARGET="cat"
+TARGET_IP="cat.local"
+
 echo " "
 echo -e "${YELLOW}WARNING: This will stop all 3 instances of LabRecorder on CAT from recording!"
 echo -e "         (Lion, Tiger and Leopard)"
@@ -17,11 +20,11 @@ fi
 # (Lion port:22345, Tiger port:22346 and Leopard port:22347)
 # by running python3 script "stop_recording.py"
 # shellcheck disable=SC2029
-ssh cat@cat.local python3 "\$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/stop_recording.py"
+ssh "$USER_ON_TARGET@$TARGET_IP" python3 "\$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/stop_recording.py"
 
 
 # Kill any instances of LabRecorder running on CAT.
-ssh cat@cat.local pkill LabRecorder
+ssh "$USER_ON_TARGET@$TARGET_IP" pkill LabRecorder
 echo " "
 echo -e "${YELLOW}Killed any instances of LabRecorder running on CAT!${NC}"
 echo -e "${EMPH}(Verify that no LabRecorder windows are open on CAT!)${NC}"
