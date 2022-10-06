@@ -41,8 +41,10 @@ void webcam(string directory) {
         cout << "\n\t**** ERROR: Cannot open the web cam ****\n" << endl;
         return;
     }
-    
+
     Mat img;
+    
+    auto prev_time = date::floor<std::chrono::milliseconds>(std::chrono::system_clock::now());
     
     for (unsigned long i = 1; ; i++) {
         auto curr_time = date::floor<std::chrono::milliseconds>(std::chrono::system_clock::now());
@@ -53,10 +55,12 @@ void webcam(string directory) {
         std::string date_time = date::format("%F %T\n", curr_time).c_str();
         replace( date_time.begin(), date_time.end(), ':', '-');
         replace( date_time.begin(), date_time.end(), ' ', '_');
-        replace( date_time.begin(), date_time.end(), '\n', '.'); // Replace the newline character at the end with a dot
+        replace( date_time.begin(), date_time.end(), '\n', '~'); // Replace the newline character at the end with a ~
+        
+        std::chrono::duration<long, std::milli> between_time = curr_time - prev_time;
 
         std::filesystem::path file = p;
-        file /= std::filesystem::path(to_string(i) + "_" + string(date_time) + "png");
+        file /= std::filesystem::path(to_string(i) + "_" + string(date_time) + to_string(between_time.count()) + ".png");
         imwrite(file, img);
         
         waitKey(500);
