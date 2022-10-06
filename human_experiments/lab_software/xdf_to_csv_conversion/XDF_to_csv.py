@@ -25,7 +25,7 @@ def read_xdf(xdf_file_paths, rootdir_baseline_task, rootdir_minecraft_data, subj
             elif data[i]['info']['type'] == ['Markers']:
                 #We don't have physical marker for our physio data
                 print(
-                colored('[Status] Ignoring ', 'red', attrs=['bold']), 
+                colored('[Status] Skipping ', 'red', attrs=['bold']), 
                 colored(data[i]['info']['type'], 'blue'))                
 
             elif data[i]['info']['type'] == ['EEG']:
@@ -42,16 +42,18 @@ def read_xdf(xdf_file_paths, rootdir_baseline_task, rootdir_minecraft_data, subj
                 print(
                 colored('[Status] Reading ', 'red', attrs=['bold']), 
                 colored(data[i]['info']['type'], 'blue'))
-                #create_csv_file(path, 'Gaze')
                 time_start_streams_gaze, time_end_streams_gaze = get_start_stop_time_from_xdf(data[i]) #get the unix time
-                # dataframe_to_csv(path, data[i]['time_series'], 'Gaze')
+                time_distribution_human_readable_gaze, time_distribution_unix_gaze = create_time_distribution(time_start_streams_gaze, 
+                                                                            time_end_streams_gaze, len(data[i]['time_series'])) 
+                dataframe_to_csv(path, data[i]['time_series'], 'Gaze', time_distribution_human_readable_gaze, 
+                time_distribution_unix_gaze, rootdir_baseline_task, rootdir_minecraft_data, subject_id)
             
             elif data[i]['info']['type'] == ['Accelerometer']:
                 print(
-                colored('[Status] Reading ', 'red', attrs=['bold']), 
+                colored('[Status] Skipping ', 'red', attrs=['bold']), 
                 colored(data[i]['info']['type'], 'blue')) 
                 #create_csv_file(path, 'Accelerometer')
-                time_start_streams_accel, time_end_streams_accel = get_start_stop_time_from_xdf(data[i]) #get the unix time
+                # time_start_streams_accel, time_end_streams_accel = get_start_stop_time_from_xdf(data[i]) #get the unix time
 
 def look_for_XDF_files(rootdir_xdf, rootdir_baseline_task, rootdir_minecraft_data, subject_id):
     """
@@ -99,3 +101,6 @@ if __name__ == "__main__":
     subject_id = arg.s
     print(colored('[Status] Root Directory:', 'red', attrs=['bold']), colored(rootdir_xdf, 'blue'))
     sys.exit(look_for_XDF_files(rootdir_xdf, rootdir_baseline_task, rootdir_minecraft_data, subject_id))
+
+
+#python3 XDF_to_csv.py --p1 /Users/calebjonesshibu/Desktop/tom/dry_runs/exp_2022_09_13_10/exp_2022_09_13_10/ --p2 /Users/calebjonesshibu/Desktop/tom/dry_runs/exp_2022_09_13_10/exp_2022_09_13_10/baseline_tasks --p3 /Users/calebjonesshibu/Desktop/tom/dry_runs/exp_2022_09_13_10/exp_2022_09_13_10/minecraft/ --s 0913_A_1 --s 0913_A_2 --s 0913_A_3

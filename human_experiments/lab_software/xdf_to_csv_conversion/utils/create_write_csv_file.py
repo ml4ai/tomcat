@@ -61,6 +61,15 @@ def dataframe_to_csv(path, data, stream_type, time_distribution_human_readable, 
         channel_list = header[3:]
         index = 0 #EEG starts at the 0th index on the XDF file
 
+    if stream_type == 'Gaze':
+        header = ['unix_time', 'human_readable_time', 'event_type', 'confidence', 'norm_pos_x', 'norm_pos_y',
+        'gaze_point_3d_x', 'gaze_point_3d_y', 'gaze_point_3d_z', 'eye_center0_3d_x', 'eye_center0_3d_y',
+        'eye_center0_3d_z', 'eye_center1_3d_x', 'eye_center1_3d_y', 'eye_center1_3d_z', 'gaze_normal0_x',
+        'gaze_normal0_y', 'gaze_normal0_z', 'gaze_normal1_x', 'gaze_normal1_y', 'gaze_normal1_z', 'diameter0_2d',
+        'diameter1_2d', 'diameter0_3d', 'diameter1_3d']
+        channel_list = header[3:]
+        index = 0 #Gaze starts at the 0th index on the XDF file
+
     data_path = path
     csv_file_name = data_path + '/' + stream_type
     df = pd.DataFrame(columns = header)
