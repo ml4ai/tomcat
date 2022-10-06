@@ -2,20 +2,21 @@
 
 set -u
 
-source configuration_helpers
+source wifi
 
+USER_ON_TARGET="cat"
 TARGET_IP="cat.local"
 
 if [[ -z ${1+x} ]]; then
-  # In case the script is executed standalone.
-  text="\n${RED}Please provide an experiment directory as the first argument of "
-  text+="the call to this script.${NC}\n"
-  text+="${YELLOW}Example: ./start_lab_recorder /data/cat/dry_runs/testing_2022_08_31_01\n"
-  text+="(experiment directory must start with a slash '/' and not end with a slash.)${NC}\n"
-  echo -e "$text"
-  exit 1
+  PADDING=""
+else
+  PADDING=$1
 fi
-EXPERIMENT_DIR=$1
+
+# We disable the WiFi in all of the clients to avoid issues with the fNIRS signals.
+disable_wifi "lion" "lion.local" "$PADDING"
+disable_wifi "tiger" "tiger.local" "$PADDING"
+disable_wifi "leopard" "leopard.local" "$PADDING"
 
 if [[ ${EXPERIMENT_DIR::1} != "/" ]]; then
   # In case the first character of experiment is not a slash '/'.
@@ -26,35 +27,27 @@ if [[ ${EXPERIMENT_DIR::1} != "/" ]]; then
   exit 1
 fi
 
-if [[ -z ${2+x} ]]; then
-  PADDING=""
-else
-  PADDING=$2
-fi
-
 echo " "
 echo -e "${YELLOW}WARNING: All prior instances of LabRecorder running on CAT will be killed!${NC}"
-yes_no_question "${YELLOW}DO YOU WANT TO CONTINUE?${NC}"
-if [[ $? -ne 0 ]]; then
+if ! yes_no_question "${YELLOW}DO YOU WANT TO CONTINUE?${NC}"; then
   echo " "
   echo -e "${RED}Starting LabRecorder - ABORTED!${NC}"
   echo " "
   exit 1
 fi
 
-
 # Set var to where the app LabRecorder path/app is located on CAT.
 LAB_RECORDER_APP="/usr/LabRecorder/./LabRecorder"
 
 # Set var to where the LabRecorder config directory is located on CAT.
-CONFIG_DIR="~/git/ML4AI/tomcat/human_experiments/config/LabRecorder_config"
+CONFIG_DIR="\$HOME/$SYSTEMS_DIR/tomcat/human_experiments/config/LabRecorder_config"
 
-# Set vars with Lion, Tigar and Leopard unique config path/file located on git.
+# Set vars with Lion, Tiger and Leopard unique config path/file located on git.
 LION_CONFIG_FILE="${CONFIG_DIR}/LabRecorder_Lion_22345.cfg"
 TIGER_CONFIG_FILE="${CONFIG_DIR}/LabRecorder_Tiger_22346.cfg"
 LEOPARD_CONFIG_FILE="${CONFIG_DIR}/LabRecorder_Leopard_22347.cfg"
 
-# Set vars with Lion, Tigar and Leopard data (StorageLocation) path/file.
+# Set vars with Lion, Tiger and Leopard data (StorageLocation) path/file.
 LION_STORAGE_LOCATION="${EXPERIMENT_DIR}/lion/eeg_fnirs_pupil/lion_eeg_fnirs_pupil.xdf"
 TIGER_STORAGE_LOCATION="${EXPERIMENT_DIR}/tiger/eeg_fnirs_pupil/tiger_eeg_fnirs_pupil.xdf"
 LEOPARD_STORAGE_LOCATION="${EXPERIMENT_DIR}/leopard/eeg_fnirs_pupil/leopard_eeg_fnirs_pupil.xdf"
@@ -69,36 +62,42 @@ echo -e "${GREEN}Leopard: ${LEOPARD_STORAGE_LOCATION}${NC}"
 # Change (string find and replace) "StorageLocation=" line in Lion, Tiger and Leopards
 # unique configuration files to have the Storage Location of the xdf file
 # specified in this experiment.
-ssh "cat@$TARGET_IP" sed -i 's#StorageLocation=.*#StorageLocation='${LION_STORAGE_LOCATION}'#' ${LION_CONFIG_FILE}
-ssh "cat@$TARGET_IP" sed -i 's#StorageLocation=.*#StorageLocation='${TIGER_STORAGE_LOCATION}'#' ${TIGER_CONFIG_FILE}
-ssh "cat@$TARGET_IP" sed -i 's#StorageLocation=.*#StorageLocation='${LEOPARD_STORAGE_LOCATION}'#' ${LEOPARD_CONFIG_FILE}
-
+ssh "$USER_ON_TARGET@$TARGET_IP" sed -i 's#StorageLocation=.*#StorageLocation='"$LION_STORAGE_LOCATION"'#' "$LION_CONFIG_FILE"
+ssh "$USER_ON_TARGET@$TARGET_IP" sed -i 's#StorageLocation=.*#StorageLocation='"$TIGER_STORAGE_LOCATION"'#' "$TIGER_CONFIG_FILE"
+ssh "$USER_ON_TARGET@$TARGET_IP" sed -i 's#StorageLocation=.*#StorageLocation='"$LEOPARD_STORAGE_LOCATION"'#' "$LEOPARD_CONFIG_FILE"
 
 # Kill any prior instances of LabRecorder on CAT so that fresh instances can be opened.
-ssh "cat@$TARGET_IP" pkill LabRecorder
+ssh "$USER_ON_TARGET@$TARGET_IP" pkill LabRecorder
+
 echo " "
 echo -e "${YELLOW}Killed any prior instances of LabRecorder running on CAT!${NC}"
 
 
-# Will need to open 3 fresh instances of LabRecorder to gaurentee they using
+# Will need to open 3 fresh instances of LabRecorder to guarantee they using
 # correct config file, connecting to correct streams and using Experiment Dir
 # and Data File for this Experiment.
 echo " "
 echo -e "Opening 3 instances of LabRecorder on CAT:"
-ssh "cat@$TARGET_IP" "DISPLAY=:1 ${LAB_RECORDER_APP} -c ${LION_CONFIG_FILE} &>/dev/null &"
-ssh "cat@$TARGET_IP" "DISPLAY=:1 ${LAB_RECORDER_APP} -c ${TIGER_CONFIG_FILE} &>/dev/null &"
-ssh "cat@$TARGET_IP" "DISPLAY=:1 ${LAB_RECORDER_APP} -c ${LEOPARD_CONFIG_FILE} &>/dev/null &"
+# shellcheck disable=SC2029
+ssh "$USER_ON_TARGET@$TARGET_IP" "DISPLAY=:1 ${LAB_RECORDER_APP} -c ${LION_CONFIG_FILE} &>/dev/null &"
+# shellcheck disable=SC2029
+ssh "$USER_ON_TARGET@$TARGET_IP" "DISPLAY=:1 ${LAB_RECORDER_APP} -c ${TIGER_CONFIG_FILE} &>/dev/null &"
+# shellcheck disable=SC2029
+ssh "$USER_ON_TARGET@$TARGET_IP" "DISPLAY=:1 ${LAB_RECORDER_APP} -c ${LEOPARD_CONFIG_FILE} &>/dev/null &"
 echo " "
-ssh "cat@$TARGET_IP" ps -F -C LabRecorder
+ssh "$USER_ON_TARGET@$TARGET_IP" ps -F -C LabRecorder
 echo " "
 
 # After the 3 LabRecorder instances are open on CAT, restore the 3 modified LabRecorder config files
 # back to what is on the main git repository using the "git checkout <file>" command.
 # This is done so that git will not detect on any branch that the config files have been modified.
 echo -e "Restoring the 3 LabRecorder config files back to what is in the main git repository on CAT:"
-ssh "cat@$TARGET_IP" "cd ${CONFIG_DIR} && git checkout LabRecorder_Lion_22345.cfg"
-ssh "cat@$TARGET_IP" "cd ${CONFIG_DIR} && git checkout LabRecorder_Tiger_22346.cfg"
-ssh "cat@$TARGET_IP" "cd ${CONFIG_DIR} && git checkout LabRecorder_Leopard_22347.cfg"
+# shellcheck disable=SC2029
+ssh "$USER_ON_TARGET@$TARGET_IP" "cd ${CONFIG_DIR} && git checkout LabRecorder_Lion_22345.cfg"
+# shellcheck disable=SC2029
+ssh "$USER_ON_TARGET@$TARGET_IP" "cd ${CONFIG_DIR} && git checkout LabRecorder_Tiger_22346.cfg"
+# shellcheck disable=SC2029
+ssh "$USER_ON_TARGET@$TARGET_IP" "cd ${CONFIG_DIR} && git checkout LabRecorder_Leopard_22347.cfg"
 echo " "
 
 echo -e "${YELLOW}Verify that you have 3 LabRecorder windows open on CAT and that they are all recording the correct streams!${NC}"
