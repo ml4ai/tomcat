@@ -58,6 +58,7 @@ void webcam(string directory) {
         replace( date_time.begin(), date_time.end(), '\n', '~'); // Replace the newline character at the end with a ~
         
         std::chrono::duration<long, std::milli> between_time = curr_time - prev_time;
+        prev_time = curr_time;
 
         std::filesystem::path file = p;
         file /= std::filesystem::path(to_string(i) + "_" + string(date_time) + to_string(between_time.count()) + ".png");
