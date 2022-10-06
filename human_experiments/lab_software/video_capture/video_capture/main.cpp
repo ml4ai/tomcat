@@ -7,17 +7,17 @@
 using namespace std;
 using namespace cv;
 
-void create_output_directory( string directory ) {
-    const std::filesystem::path p(directory);
+
+void create_output_directory( const std::filesystem::path p ) {
     std::error_code ec;
     
     if (std::filesystem::exists( p, ec )) {
-        cout << "\n\tWrinig frames to already exisiting path: " << directory << endl;
+        cout << "\n\tWrinig frames to already exisiting path: " << p << endl;
     } else {
-        cout << "\n\tDirectory: " << directory << " does not exists. Creating it.\n";
+        cout << "\n\tDirectory: " << p << " does not exists. Creating it.\n";
         
-        if (std::filesystem::create_directories( directory, ec)) {
-            cerr << "\n\t**** ERROR: Directory " << directory << " Could not be created. ****\n\n\t\tExiting!";
+        if (std::filesystem::create_directories( p, ec)) {
+            cerr << "\n\t**** ERROR: Directory " << p << " Could not be created. ****\n\n\t\tExiting!";
             return;
         }
     }
@@ -25,7 +25,8 @@ void create_output_directory( string directory ) {
 
 
 void webcam(string directory) {
-    create_output_directory( directory );
+    const std::filesystem::path p(directory);
+    create_output_directory( p );
 
     VideoCapture cap(0);
     cap.open(0); //turn on camera
@@ -38,10 +39,16 @@ void webcam(string directory) {
     
     Mat img;
 
-    while (true) {
+//    while (true) {
+    for (int i = 1; ; i++) {
         cap.read(img);
         imshow("Webcam", img);
-        waitKey(20);
+        
+        std::filesystem::path file = p;
+        file /= std::filesystem::path(to_string(i) + ".png");
+        imwrite(file, img);
+        
+        waitKey(500);
     }
 }
 
