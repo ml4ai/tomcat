@@ -29,11 +29,13 @@ void create_output_directory( const std::filesystem::path p ) {
 }
 
 
-void webcam(string directory) {
+void webcam(const string directory, const int frames_per_minute) {
     const std::filesystem::path p(directory);
     create_output_directory( p );
     
-    int frame_period = 500;  // Milliseconds
+    int frame_period = 1000 / frames_per_minute;  // Milliseconds
+    cout << "\n\tCapturing " << frames_per_minute << " frames per minute.\n";
+    cout << "\tA frame is captured every " << frame_period << " milliseconds.\n\n";
 
     VideoCapture cap(0);
     cap.open(0); //turn on camera
@@ -75,7 +77,24 @@ void webcam(string directory) {
 
 
 int main(int argc, const char * argv[]) {
-    string directory = argv[1];
-    webcam( directory );
+    const string directory = argv[1];
+    
+    std::size_t pos{};
+    try
+    {
+        const int frames_per_minute { std::stoi(argv[2], &pos) };
+        webcam( directory, frames_per_minute );
+    }
+    catch(std::invalid_argument const& ex)
+    {
+        cout << "\n\t**** ERROR: Invalid number of frames per minute entered: " << argv[2] << endl;
+        return -1;
+    }
+    catch(std::out_of_range const& ex)
+    {
+        cout << "\n\t**** ERROR: Frames per minute entered is too large: " << argv[2] << endl;
+        return -1;
+    }
+
     return 0;
 }
