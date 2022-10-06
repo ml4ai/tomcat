@@ -32,6 +32,8 @@ void create_output_directory( const std::filesystem::path p ) {
 void webcam(string directory) {
     const std::filesystem::path p(directory);
     create_output_directory( p );
+    
+    int frame_period = 500;  // Milliseconds
 
     VideoCapture cap(0);
     cap.open(0); //turn on camera
@@ -44,27 +46,30 @@ void webcam(string directory) {
 
     Mat img;
     
-    auto prev_time = date::floor<std::chrono::milliseconds>(std::chrono::system_clock::now());
+    auto prev_frame_time = date::floor<std::chrono::milliseconds>(std::chrono::system_clock::now());
     
     for (unsigned long i = 1; ; i++) {
-        auto curr_time = date::floor<std::chrono::milliseconds>(std::chrono::system_clock::now());
+        auto capture_start_time = date::floor<std::chrono::milliseconds>(std::chrono::system_clock::now());
 
         cap.read(img);
         imshow("Webcam", img);
 
-        std::string date_time = date::format("%F %T\n", curr_time).c_str();
+        std::string date_time = date::format("%F %T\n", capture_start_time).c_str();
         replace( date_time.begin(), date_time.end(), ':', '-');
         replace( date_time.begin(), date_time.end(), ' ', '_');
         replace( date_time.begin(), date_time.end(), '\n', '~'); // Replace the newline character at the end with a ~
         
-        std::chrono::duration<long, std::milli> between_time = curr_time - prev_time;
-        prev_time = curr_time;
+        std::chrono::duration<long, std::milli> between_time = capture_start_time - prev_frame_time;
+        prev_frame_time = capture_start_time;
 
         std::filesystem::path file = p;
         file /= std::filesystem::path(to_string(i) + "_" + string(date_time) + to_string(between_time.count()) + ".png");
         imwrite(file, img);
         
-        waitKey(500);
+        auto capture_end_time = date::floor<std::chrono::milliseconds>(std::chrono::system_clock::now());
+        std::chrono::duration<int, std::milli> capture_duration = capture_end_time - prev_frame_time;
+        
+        frame_period > capture_duration.count() ? waitKey(frame_period - capture_duration.count()) : 0;
     }
 }
 
