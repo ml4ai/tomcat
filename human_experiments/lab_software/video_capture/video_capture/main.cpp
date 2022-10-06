@@ -1,8 +1,13 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <chrono>
 
 #include <opencv2/highgui.hpp>
+
+// https://stackoverflow.com/questions/12835577/how-to-convert-stdchronotime-point-to-calendar-datetime-string-with-fraction
+// date.h: https://howardhinnant.github.io/date/date.html
+#include "date.h"
 
 using namespace std;
 using namespace cv;
@@ -38,14 +43,20 @@ void webcam(string directory) {
     }
     
     Mat img;
+    
+    for (unsigned long i = 1; ; i++) {
+        auto curr_time = date::floor<std::chrono::milliseconds>(std::chrono::system_clock::now());
 
-//    while (true) {
-    for (int i = 1; ; i++) {
         cap.read(img);
         imshow("Webcam", img);
-        
+
+        std::string date_time = date::format("%F %T\n", curr_time).c_str();
+        replace( date_time.begin(), date_time.end(), ':', '-');
+        replace( date_time.begin(), date_time.end(), ' ', '_');
+        replace( date_time.begin(), date_time.end(), '\n', '.'); // Replace the newline character at the end with a dot
+
         std::filesystem::path file = p;
-        file /= std::filesystem::path(to_string(i) + ".png");
+        file /= std::filesystem::path(to_string(i) + "_" + string(date_time) + "png");
         imwrite(file, img);
         
         waitKey(500);
