@@ -56,10 +56,7 @@ void webcam(const string directory, const int frames_per_minute) {
         cap.read(img);
         imshow("Webcam", img);
 
-        std::string date_time = date::format("%F %T\n", capture_start_time).c_str();
-        replace( date_time.begin(), date_time.end(), ':', '-');
-        replace( date_time.begin(), date_time.end(), ' ', '_');
-        replace( date_time.begin(), date_time.end(), '\n', '~'); // Replace the newline character at the end with a ~
+        std::string date_time = date::format("%F_%H-%M-%S.%p~", capture_start_time).c_str();
         
         std::chrono::duration<long, std::milli> between_time = capture_start_time - prev_frame_time;
         prev_frame_time = capture_start_time;
