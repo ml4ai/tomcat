@@ -48,6 +48,7 @@ Now the XCode project is ready to compile and run.
 
 `sequence#_yyyy-mm-dd_hh-mm-ss.milsec~gap.png`
 
-gap is the approximate number of milliseconds elapsed since the last frame till this frame was captures.
+- Time is in the *Universal Time Coordinated* (UTC)
+- gap is the approximate number of milliseconds elapsed since the last frame till this frame was captures.
 
 
