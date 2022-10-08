@@ -28,7 +28,6 @@ export FINAL_SURVEY_URL
 
 pushd "$SCRIPTS_DIR" >/dev/null || exit 1
 
-  #source check_global_variables
   source configuration_helpers
 
   __help() {
