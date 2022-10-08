@@ -12,9 +12,11 @@ fi
 
 # Assuming we are in a tmux session already
 function monitor_log_file(){
-  local window_name=$1 # Name should not have whitespace
-  local tail_command="tail -f $2"
-  tmux new-window -n "$window_name" "$tail_command"
+  if [[ $TMUX_ON -eq 1 ]]; then
+    local window_name=$1 # Name should not have whitespace
+    local tail_command="tail -f $2"
+    tmux new-window -n "$window_name" "$tail_command"
+  fi
 }  
 
 __monitor_testbed_launch() {

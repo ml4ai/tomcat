@@ -108,7 +108,7 @@ pushd "$SCRIPTS_DIR" >/dev/null || exit 1
   fi
 
   source check_disk_space "$DATA_DIR"
-#  source check_connections
+  source check_connections
   source check_data_root_directory
 
   echo -n -e "[1] Enter the experiment ${EMPH}time${NC} (e.g. 09): "
