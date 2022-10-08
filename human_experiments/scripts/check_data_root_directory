@@ -2,18 +2,12 @@
 
 set -u
 
-source configuration_helpers
-
 text="The experiment data folder will be created under "
-text+="${EMPH}${DATA_ROOT_DIR}${NC}. Do you want to ${EMPH}CHANGE${NC} this directory?"
-yes_no_question "$text"
+text+="${EMPH}${DATA_ROOT_DIR}${NC}. Do you want to proceed?"
 
-if [[ $? -eq 0 ]]; then
-  read -e -p "New directory: " -r DATA_ROOT_DIR
-  export DATA_ROOT_DIR
-
-  text="${GREEN}The experiment data folder was successfully changed to "
-  text+="${EMPH}${DATA_ROOT_DIR}${GREEN}.${NC}"
-  echo -e $text
+if ! yes_no_question "$text"; then
+  echo -e "${YELLOW}Aborting experiment..."
+  echo -e "You can change the directory by changing the experiment type (e.g. dry-run, test).${NC}"
+  exit 0
 fi
 
