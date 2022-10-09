@@ -1,0 +1,7 @@
+version: '2'
+
+services:
+  c_hello_world:
+    image: c_hello_world
+    build: .
+
