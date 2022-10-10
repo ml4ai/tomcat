@@ -34,17 +34,19 @@ RUN cd paho.mqtt.c \
 && make install \
 && cd build \
 && cmake -DPAHO_WITH_SSL=TRUE \
-  -DPAHO_BUILD_DOCUMENTATION=TRUE \
-  -DPAHO_BUILD_SAMPLES=TRUE \
   -DPAHO_BUILD_DEB_PACKAGE=TRUE .. \
 && cmake --build . \
 && cd ../..
+
+RUN pwd
 
 RUN find -name *.cmake
 
 RUN find -name *.so
 
 RUN find -name *.h
+
+RUN find -name *.a
 
 
 
@@ -54,15 +56,16 @@ RUN find -name *.h
 RUN pwd
 RUN ls
 
-RUN export LD_LIBRARY_PATH=../paho.mqtt.c/src/:$LD_LIBRARY_PATH
+RUN export LD_LIBRARY_PATH=/paho.mqtt.c/src/:$LD_LIBRARY_PATH
 
 # Build the executable
-RUN rm -rf build  \
-&& mkdir build  \
-&& cd build \
-&& cmake .. \
-&& make -j `nproc` paho_mqtt_c  \
-&& cd .. 
+RUN gcc -Lpaho.mqtt.c/build/output/ main.c -l paho-mqtt3c
+#RUN rm -rf build  \
+#&& mkdir build  \
+#&& cd build \
+#&& cmake .. \
+#&& make -j `nproc` -I../paho.mqtt.c/src \
+#&& cd .. 
 
 # Run the executable
 ENTRYPOINT ./build/paho_mqtt_c
