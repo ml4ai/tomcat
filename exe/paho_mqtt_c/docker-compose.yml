@@ -1,0 +1,9 @@
+version: '2'
+
+services:
+  paho_mqtt_c:
+    container_name: paho_mqtt_c
+    build:
+      context:  .
+      dockerfile: Dockerfile 
+    image: paho_mqtt_c:latest
