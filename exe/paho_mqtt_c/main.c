@@ -16,7 +16,7 @@ int main(int argc, char* argv[]) {
 
     MQTTClient_connectOptions options;
 
-    int rc = MQTTClient_connect(handle, &options);
+/*    int rc = MQTTClient_connect(handle, &options); */
 
 
     /*

@@ -28,20 +28,23 @@ WORKDIR /paho_mqtt_c
 # Install Paho c
 RUN git clone --branch v1.2.1 https://github.com/eclipse/paho.mqtt.c.git
 
-RUN pwd;
-RUN ls;
-
+# BUILD PAHO MQTT C
 # you will want to move this repo to the MacOS file path 
 RUN cd paho.mqtt.c \
-&& rm -rf build  \
-&& mkdir build  \
+&& make install \
 && cd build \
-&& cmake -DPAHO_WITH_SSL=TRUE -DPAHO_BUILD_DOCUMENTATION=TRUE \
-    -DPAHO_BUILD_SAMPLES=TRUE .. \
-&& cmake --build . --target package \
-&& cd ..
+&& cmake -DPAHO_WITH_SSL=TRUE \
+  -DPAHO_BUILD_DOCUMENTATION=TRUE \
+  -DPAHO_BUILD_SAMPLES=TRUE \
+  -DPAHO_BUILD_DEB_PACKAGE=TRUE .. \
+&& cmake --build . \
+&& cd ../..
 
+RUN find -name *.cmake
 
+RUN find -name *.so
+
+RUN find -name *.h
 
 
 
@@ -51,12 +54,13 @@ RUN cd paho.mqtt.c \
 RUN pwd
 RUN ls
 
+RUN export LD_LIBRARY_PATH=../paho.mqtt.c/src/:$LD_LIBRARY_PATH
+
 # Build the executable
 RUN rm -rf build  \
 && mkdir build  \
 && cd build \
-&& cmake -DPAHO_WITH_SSL=TRUE -DPAHO_BUILD_DOCUMENTATION=TRUE \
-    -DPAHO_BUILD_SAMPLES=TRUE ../paho.mqtt.c \
+&& cmake .. \
 && make -j `nproc` paho_mqtt_c  \
 && cd .. 
 
