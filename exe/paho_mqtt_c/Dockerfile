@@ -59,14 +59,10 @@ RUN ls
 RUN export LD_LIBRARY_PATH=/paho.mqtt.c/src/:$LD_LIBRARY_PATH
 
 # Build the executable
-RUN gcc -Lpaho.mqtt.c/build/output/ main.c -l paho-mqtt3c
-#RUN rm -rf build  \
-#&& mkdir build  \
-#&& cd build \
-#&& cmake .. \
-#&& make -j `nproc` -I../paho.mqtt.c/src \
-#&& cd .. 
+RUN gcc -Lpaho.mqtt.c/build/output/ main.c -l paho-mqtt3c -o paho_test
+
+RUN ls
 
 # Run the executable
-ENTRYPOINT ./build/paho_mqtt_c
+ENTRYPOINT ./paho_test
 
