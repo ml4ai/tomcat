@@ -1,7 +1,7 @@
 version: '2'
 
 services:
-  c_hello_world:
+  c_hello_world_container:
     image: c_hello_world
     build: .
 
