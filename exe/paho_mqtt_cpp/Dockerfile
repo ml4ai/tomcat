@@ -28,31 +28,13 @@ RUN apt-get -y --no-install-recommends install \
       libeigen3-dev \
       libfmt-dev \
       libssl-dev \
-      librange-v3-dev
-
-
-# build paho mqtt c from source
-RUN git clone https://github.com/eclipse/paho.mqtt.c.git \
-    && cd paho.mqtt.c \
-    && git checkout v1.3.8 \
-    && cmake -Bbuild -H. -DPAHO_ENABLE_TESTING=OFF -DPAHO_BUILD_STATIC=ON \
-    -DPAHO_WITH_SSL=ON -DPAHO_HIGH_PERFORMANCE=ON \
-    && sudo cmake --build build/ --target install \
-    && sudo ldconfig
-
-
-# build paho mqtt cpp from source
-RUN git clone https://github.com/eclipse/paho.mqtt.cpp.git \
-    && cd paho.mqtt.cpp \
-#    && git checkout v1.3.8 \
-    && cmake -Bbuild -H. -DPAHO_BUILD_STATIC=ON -DPAHO_WITH_SSL=ON \
-    && sudo cmake --build build/ --target install \
-    && sudo ldconfig
+      librange-v3-dev \
+      libpaho-mqttpp-dev
 
 # Build the agent
 RUN rm -rf build \
     && mkdir build \
     && cd build \
     && cmake .. \
-    && make -j `nproc` reference_agent \
+    && make -j `nproc` paho_mqtt_cpp \
     && cd ..

@@ -16,6 +16,11 @@ find_package(
 )
 
 find_package(
+    PahoMqttC
+    REQUIRED
+)
+
+find_package(
     OpenSSL
     REQUIRED
 )
