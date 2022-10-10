@@ -40,9 +40,10 @@ RUN rm -rf build  \
 && mkdir build  \
 && cd build \
 && cmake .. \
-&& make -j `nproc` \
+&& make -j `nproc` c_hello_world \
 && cd .. 
 
+# Run the executable
+ENTRYPOINT ./build/c_hello_world
 
-RUN ls
 
