@@ -2,11 +2,16 @@
 # Paho MQTT C project
 #
 
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.5)
 project(paho_mqtt_c)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} paho.mqtt.c/build/src/CMakeFiles/Export/lib/cmake/eclipse-paho-mqtt-c)
+set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} paho.mqtt.c/build/src)
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} paho.mqtt.c/build/src/CMakeFiles/Export/lib/cmake/eclipse-paho-mqtt-c)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} paho.mqtt.c/build/src)
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g") # create gdb symbol table
 
 
