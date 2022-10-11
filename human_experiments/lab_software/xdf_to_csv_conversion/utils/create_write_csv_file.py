@@ -228,5 +228,6 @@ def dataframe_to_csv(path, data, stream_type, time_distribution_human_readable, 
             #     df.update(sync_with_df(df, state, dict, header[2]), overwrite=False)
             #     print(df[header[2]].unique())
         df = sync_timestamps_with_df(df, final_state, header[2])
-        # df.to_csv(csv_file_name + ".csv", sep='\t', encoding='utf-8')
         df.to_csv(csv_file_name + ".csv", sep='\t', encoding='utf-8')
+        df.to_pickle(csv_file_name + ".pkl")
+        
