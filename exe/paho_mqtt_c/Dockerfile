@@ -59,10 +59,7 @@ RUN ls
 RUN export LD_LIBRARY_PATH=/paho.mqtt.c/src/:$LD_LIBRARY_PATH
 
 # Build the executable
-RUN gcc -Lpaho.mqtt.c/build/output/ main.c -l paho-mqtt3c -o paho_test
+RUN gcc -Lpaho.mqtt.c/build/output/ main.c -l paho-mqtt3a -o paho_mqtt_c_test
 
 RUN ls
-
-# Run the executable
-ENTRYPOINT ./paho_test
 
