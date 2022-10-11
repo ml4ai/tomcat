@@ -10,13 +10,21 @@ else
   PADDING=$1
 fi
 
+# Assuming we are in a tmux session already
+function monitor_log_file(){
+  if [[ $TMUX_ON -eq 1 ]]; then
+    local window_name=$1 # Name should not have whitespace
+    local tail_command="tail -f $2"
+    tmux new-window -n "$window_name" "$tail_command"
+  fi
+}  
+
 __monitor_testbed_launch() {
   local log_path=$1
   local testbed_pid=$2
   local padding=$3
 
   echo -e "${padding}Waiting for launch..."
-
   # Wait till the log file actually exists
   while [ ! -f "$log_path" ]; do
     sleep 1
@@ -69,6 +77,7 @@ __launch_testbed() {
 
     # Wait for a while to guarantee the log file was created
     sleep 1
+    monitor_log_file "testbed_up" "$log_path"
     if __monitor_testbed_launch "$log_path" "$testbed_pid" "$padding "; then
       testbed_launched="y"
       echo -e "${padding}${GREEN} ${EMPH}Testbed${GREEN} successfully launched.${NC}"

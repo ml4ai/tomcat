@@ -1,14 +1,239 @@
 #!/bin/bash
 
-tmux_session_name="processAggregator"
+# This is the uber script that drives a full experiment. Each step of the experimental design is included in form of
+# questions, such that no CS experience should be necessary to execute all the steps required.
+# If anything goes wrong during the experiment, the experimenter can abort the process, fix the issue and later
+# start over by jumping to a specific step in the experiment.
 
+set -u
 
-# Kill session with the same name if it already exists
-tmux has-session -t $tmux_session_name 2>/dev/null
-if [ $? -eq 0 ]
-then
-tmux kill-session -t $tmux_session_name
+CONFIG_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../config/uber_script" >/dev/null 2>&1 && pwd)"
+SCRIPTS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+export SCRIPTS_DIR
+
+# Load global variables for the experiment
+source "$CONFIG_DIR/config"
+
+# Get the link to the final survey from the internal resources
+if [ -f "$FINAL_SURVEY_LINK_PATH" ];then
+    # shellcheck disable=SC1090
+    source "$FINAL_SURVEY_LINK_PATH"
 fi
 
-# Create new tmux session
-tmux new-session -s $tmux_session_name './run_experiment_wrap'
+# Export variables in the config file that can be used by sub-processes.
+export SYSTEMS_DIR
+export EXPERIMENT_USER
+export CLIENT_MAP_URL
+export FINAL_SURVEY_URL
+
+pushd "$SCRIPTS_DIR" >/dev/null || exit 1
+
+  source configuration_helpers
+
+  __help() {
+    # Display Help
+    echo
+    echo "This the Uber Script to run a complete experiment in the lab."
+    echo
+    echo "The steps are described below. The first step is always executed to "
+    echo "guarantee that data is saved to the correct directory. You can jump "
+    echo "to a specific step by setting the variable GOTO to the desired step "
+    echo "before calling the script (e.g. GOTO=5 ./run_experiment)"
+    echo
+    echo "[1]:  Set the experiment time"
+    echo "[2]:  Checks the NFS status"
+    echo "[3]:  Starts the Testbed"
+    echo "[4]:  Starts Minecraft"
+    echo "[5]:  Opens the Client Map"
+    echo "[6]:  Starts Eye-tracker"
+    echo "[7]:  Opens Instructive Video"
+    echo "[8]:  Starts the Lab Recorder"
+    echo "[9]:  Starts Face and Screen recording"
+    echo "[10]: Starts the Baseline Tasks"
+    echo "[11]: Starts the Audio Streamer"
+    echo "[12]: Opens the Final Survey"
+    echo "[13]: Stops the LabRecorder recordings and kill the LabRecorder instances on CAT"
+    echo "[14]: Stops all Data Streaming Processes"
+    echo "[15]: Exports Minecraft data"
+    echo "[16]: Ends the experiment (cleanup and backup phase)"
+    echo
+    echo "Syntax: run_experiment [-h|a]"
+    echo "options:"
+    echo "h     Print this Help."
+    echo "a     Starts the components in all of the client machines without "
+    echo "d     Dry-run mode. The data is saved under the dry-run directory structure."
+    echo "t     Test mode. The data is saved under the development directory structure. It has precedence over the -d option."
+    echo "      asking the experimenter to confirm."
+    echo
+  }
+
+  ALL=0
+  DRY_RUN=0
+  TEST=0
+  while getopts ":hadt" option; do
+    case $option in
+      h) # display Help
+        __help
+        exit;;
+      a) # skip client confirmation
+        ALL=1
+        ;;
+      d) # dry-run mode
+        DRY_RUN=1
+        ;;
+      t) # test mode
+        TEST=1
+        ;;
+      \?) # Invalid option
+        echo -e "${RED}Error: Invalid option"
+        exit;;
+    esac
+  done
+  export ALL
+
+  # Check if the script is running in a tmux session. If that is the case, enable the child scripts to tail log files
+  # in different windows of the current tmux session.
+  if [ "$TERM" = "screen" ] && [ -n "$TMUX" ]; then
+    TMUX_ON=1
+  else
+    TMUX_ON=0
+  fi
+  export TMUX_ON
+
+  if [[ $TEST -eq 1 ]]; then
+    DATA_ROOT_DIR="$DATA_DIR_TEST"
+    DRY_RUN=0
+  elif [[ $DRY_RUN -eq 1 ]]; then
+    DATA_ROOT_DIR="$DATA_DIR_DRY_RUN"
+  else
+    DATA_ROOT_DIR="$DATA_DIR_GROUP"
+  fi
+  export DATA_ROOT_DIR
+
+  # The step to jump to after the first step. If not provided, it starts from the next step after the first one.
+  if [[ -z ${GOTO+x} ]]; then
+    GOTO=2
+  fi
+
+  source check_disk_space "$DATA_DIR"
+  source check_connections
+  source check_data_root_directory
+
+  echo -n -e "[1] Enter the experiment ${EMPH}time${NC} (e.g. 09): "
+  read -r experiment_time
+  experiment_id=$(date +%Y_%m_%d_"$experiment_time")
+
+  export EXPERIMENT_DIR="$DATA_ROOT_DIR/exp_$experiment_id"
+
+  source create_data_directory_structure " "
+
+  if [[ $GOTO -le 2 ]]; then
+    echo " "
+
+    if yes_no_question "[2] Do you want to check ${EMPH}NFS${NC} status?"; then
+      source check_nfs "  "
+    fi
+  fi
+
+  if [[ $GOTO -le 3 ]]; then
+    echo " "
+    if yes_no_question "[3] Do you want to start the ${EMPH}Testbed${NC}?"; then
+      source start_testbed " "
+    fi
+  fi
+
+  if [[ $GOTO -le 4 ]]; then
+    echo " "
+    if yes_no_question "[4] Do you want to start ${EMPH}Minecraft${NC}?"; then
+      source start_minecraft " "
+    fi
+  fi
+
+  if [[ $GOTO -le 5 ]]; then
+    echo " "
+    if yes_no_question "[5] Do you want to open the ${EMPH}Client Map${NC}?"; then
+      source open_client_map " "
+    fi
+  fi
+
+  if [[ $GOTO -le 6 ]]; then
+    echo " "
+    if yes_no_question "[6] Do you want to start the ${EMPH}Eye-tracker${NC}?"; then
+      source start_eye_tracker " "
+    fi
+  fi
+
+  if [[ $GOTO -le 7 ]]; then
+    echo " "
+    if yes_no_question "[7] Do you want to play the ${EMPH}Instructive Video${NC}?"; then
+      source play_instructive_video " "
+    fi
+  fi
+
+  if [[ $GOTO -le 8 ]]; then
+    echo " "
+    if yes_no_question "[8] Do you want to start ${EMPH}Lab Recorder${NC}?"; then
+      source start_lab_recorder " "
+    fi
+  fi
+
+  if [[ $GOTO -le 9 ]]; then
+    echo " "
+    if yes_no_question "[9] Do you want to start ${EMPH}Face and Screen Recording${NC}?"; then
+      source start_ffmpeg " "
+    fi
+  fi
+
+  if [[ $GOTO -le 10 ]]; then
+    echo " "
+    if yes_no_question "[10] Do you want to start the ${EMPH}Baseline Tasks${NC}?"; then
+      source start_baseline_tasks " "
+    fi
+  fi
+
+  if [[ $GOTO -le 11 ]]; then
+    echo " "
+    if yes_no_question "[11] Do you want to start the ${EMPH}Audio Streamer${NC}?"; then
+      source start_audio_streamer " "
+    fi
+  fi
+
+  if [[ $GOTO -le 12 ]]; then
+    echo " "
+    if yes_no_question "[12] Do you want to open the ${EMPH}Final Survey${NC}?"; then
+      source open_final_survey " "
+    fi
+  fi
+
+  if [[ $GOTO -le 13 ]]; then
+    echo " "
+    if yes_no_question "[13] Do you want to stop ${EMPH}LabRecorder recordings and kill the LabRecorder instances on CAT${NC}?"; then
+      source stop_lab_recorder
+    fi
+  fi
+
+  if [[ $GOTO -le 14 ]]; then
+    echo " "
+    if yes_no_question "[14] Do you want to stop all ${EMPH}Data Streaming Processes${NC}?"; then
+      source stop_data_streaming_processes
+    fi
+  fi
+
+  if [[ $GOTO -le 15 ]]; then
+    echo " "
+    if yes_no_question "[15] Do you want to export ${EMPH}Minecraft data${NC} for all trials in the experiment?"; then
+      source export_minecraft_data " "
+    fi
+  fi
+
+  if [[ $GOTO -le 16 ]]; then
+    echo " "
+    text="[16] Type [${EMPH}quit${NC}] to end the experiment and close "
+    text+="all open applications and processes: "
+    wait_for_key "$text" "quit"
+    source end_experiment " "
+  fi
+
+popd >/dev/null || exit 1
+
+exit 0
