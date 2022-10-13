@@ -1,12 +1,16 @@
-version: '2'
+version: '3.6'
+
+networks:
+  asist:
+    name: asist_net
+    driver: bridge
+    external: TRUE
 
 services:
   paho_mqtt_c:
-    container_name: paho_mqtt_c
-    ports: [1883]
-    build:
-      context:  .
-      dockerfile: Dockerfile 
-    image: paho_mqtt_c:latest
-    entrypoint: /paho_mqtt_c/paho_mqtt_c_test --host 0.0.0.0
-    expose: [1883/tcp]
+    image: paho_mqtt_c_image:latest
+    container_name: paho_mqtt_c_container
+    build: 
+      context: .
+    networks:
+      - asist
