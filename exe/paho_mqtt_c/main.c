@@ -13,7 +13,7 @@
 #include <OsWrapper.h>
 #endif
  
-#define ADDRESS     "tcp://localhost:1883"
+#define ADDRESS     "tcp://mosquitto:1883"
 #define CLIENTID    "ExampleClientSub"
 #define TOPIC       "docker"
 #define PAYLOAD     "Hello World!"
