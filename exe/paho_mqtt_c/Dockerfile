@@ -22,9 +22,6 @@ RUN  apt-get update && apt-get -y install \
     dh-make \
     lsb-release 
 
-COPY . /paho_mqtt_c
-WORKDIR /paho_mqtt_c
-
 # Install Paho c
 RUN git clone --branch v1.2.1 https://github.com/eclipse/paho.mqtt.c.git
 
@@ -37,6 +34,10 @@ RUN cd paho.mqtt.c \
   -DPAHO_BUILD_DEB_PACKAGE=TRUE .. \
 && cmake --build . \
 && cd ../..
+
+
+COPY . /paho_mqtt_c
+WORKDIR /paho_mqtt_c
 
 RUN export LD_LIBRARY_PATH=/paho.mqtt.c/src/:$LD_LIBRARY_PATH
 
