@@ -38,28 +38,9 @@ RUN cd paho.mqtt.c \
 && cmake --build . \
 && cd ../..
 
-RUN pwd
-
-RUN find -name *.cmake
-
-RUN find -name *.so
-
-RUN find -name *.h
-
-RUN find -name *.a
-
-
-
-# build the paho c repo
-
-
-RUN pwd
-RUN ls
-
 RUN export LD_LIBRARY_PATH=/paho.mqtt.c/src/:$LD_LIBRARY_PATH
 
 # Build the executable
 RUN gcc -Lpaho.mqtt.c/build/output/ main.c -l paho-mqtt3a -o paho_mqtt_c_test
 
-RUN ls
-
+ENTRYPOINT /paho_mqtt_c/paho_mqtt_c_test
