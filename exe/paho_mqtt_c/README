@@ -1,0 +1,6 @@
+
+Use the Makefile to build the image 
+
+Start the mqtt broker in ~/testbed/mqtt
+
+with docker-compose up --build
