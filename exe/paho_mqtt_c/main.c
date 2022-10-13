@@ -15,7 +15,7 @@
  
 #define ADDRESS     "tcp://localhost:1883"
 #define CLIENTID    "ExampleClientSub"
-#define TOPIC       "MQTT Examples"
+#define TOPIC       "docker"
 #define PAYLOAD     "Hello World!"
 #define QOS         1
 #define TIMEOUT     10000L
@@ -50,6 +50,7 @@ int msgarrvd(void *context, char *topicName, int topicLen, MQTTAsync_message *me
     printf("Message arrived\n");
     printf("     topic: %s\n", topicName);
     printf("   message: %.*s\n", message->payloadlen, (char*)message->payload);
+    fflush(stdout);
     MQTTAsync_freeMessage(&message);
     MQTTAsync_free(topicName);
     return 1;
@@ -110,6 +111,8 @@ void onConnect(void* context, MQTTAsync_successData* response)
  
 int main(int argc, char* argv[])
 {
+	printf("main called\n");
+	fflush(stdout);
         MQTTAsync client;
         MQTTAsync_connectOptions conn_opts = MQTTAsync_connectOptions_initializer;
         MQTTAsync_disconnectOptions disc_opts = MQTTAsync_disconnectOptions_initializer;
@@ -123,6 +126,7 @@ int main(int argc, char* argv[])
                 rc = EXIT_FAILURE;
                 goto exit;
         }
+	printf("MQTTAsync_create called\n");
  
         if ((rc = MQTTAsync_setCallbacks(client, client, connlost, msgarrvd, NULL)) != MQTTASYNC_SUCCESS)
         {
@@ -130,6 +134,7 @@ int main(int argc, char* argv[])
                 rc = EXIT_FAILURE;
                 goto destroy_exit;
         }
+	printf("MQTTAsync_setCallbacks called\n");
  
         conn_opts.keepAliveInterval = 20;
         conn_opts.cleansession = 1;
