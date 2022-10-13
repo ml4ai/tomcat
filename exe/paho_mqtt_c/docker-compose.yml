@@ -1,10 +1,8 @@
 version: '3.6'
 
 networks:
-  asist:
-    name: asist_net
-    driver: bridge
-    external: TRUE
+  asist_net:
+    external: true
 
 services:
   paho_mqtt_c:
@@ -13,4 +11,7 @@ services:
     build: 
       context: .
     networks:
-      - asist
+      asist_net:
+        aliases:
+          - paho_mqtt_c_container
+
