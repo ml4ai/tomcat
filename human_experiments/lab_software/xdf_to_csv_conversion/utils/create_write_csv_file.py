@@ -194,8 +194,12 @@ def dataframe_to_csv(path, data, stream_type, time_distribution_human_readable, 
         
         df_remove_before = list(get_state_rest.keys())[0]
         df_remove_after = list(mincraft_saturn_b.keys())[-1]
-        print('before and after',df_remove_before,df_remove_after)
-        df = sync_timestamps_with_df(df, final_state, header[2], df_remove_before, df_remove_after)
-        df.to_csv(csv_file_name + ".csv", sep='\t', encoding='utf-8')
-        df.to_pickle(csv_file_name + ".pkl")
+
+        df_final = sync_timestamps_with_df(df, final_state, header[2], df_remove_before, df_remove_after)
+        df_final.to_csv(csv_file_name + ".csv", sep='\t', encoding='utf-8')
+        print(colored('[INFO]', 'red', attrs=['bold']), 
+                    colored('Sucessfully generated csv file at', 'red', attrs=['bold']), colored(csv_file_name + ".csv", 'blue'))
+        df_final.to_pickle(csv_file_name + ".pkl")
+        print(colored('[INFO]', 'red', attrs=['bold']), 
+                    colored('Sucessfully generated pickle file at', 'red', attrs=['bold']), colored(csv_file_name + ".pkl", 'blue'))
         

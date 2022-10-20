@@ -36,11 +36,9 @@ def read_minecraft_time(baseline_task_dict, rootdir_minecraft_data):
                                 if json_message["data"]["mission_state"] == "Start":
                                     trial_start = json_message["msg"]["timestamp"]
                                     condition.append('Start')
-                                    print('Trial start:', trial_start)
                                 if json_message["data"]["mission_state"] == "Stop":
                                     trial_end = json_message["msg"]["timestamp"]
                                     condition.append('Stop')
-                                    print('Trial end:', trial_end)
                                     
                             if len(condition) == 2:
                                 continue
@@ -48,11 +46,8 @@ def read_minecraft_time(baseline_task_dict, rootdir_minecraft_data):
                                 if (
                                     json_message["header"]["message_type"] == "trial"
                                     ):
-                                    print(json_message["msg"]["sub_type"])
                                     if json_message["msg"]["sub_type"] == "stop":
                                         trial_end = json_message["msg"]["timestamp"]
-                                        print('Trial end:', trial_end)
-                                    
                         except:
                             print(
                                 colored("[Error] Cannot read JSON line", "red"),
@@ -71,7 +66,6 @@ def read_minecraft_time(baseline_task_dict, rootdir_minecraft_data):
                                     break
                         except:
                             continue
-                    print('Before:', trial_start, trial_end)
                     trial_start = ( trial_start.split("T")[0] + " " + trial_start.split("T")[1].split("Z")[0])   
                     trial_start = change_time_zone(trial_start, "UTC", "MST")        
                     trial_start = datetime.datetime.strptime(str(trial_start), "%Y-%m-%d %H:%M:%S.%f")
@@ -108,7 +102,6 @@ def read_minecraft_time(baseline_task_dict, rootdir_minecraft_data):
         minecraft_dict[idx_minecraft_dict] = {'state':minecraft_dict_temp['state'][s_idx], 'participant': None, 
                                 'start_time': minecraft_dict_temp['start_time'][s_idx], 
                                 'end_time':minecraft_dict_temp['end_time'][s_idx]}
-        # print(idx_minecraft_dict)
         
         idx_minecraft_dict += 1
     return minecraft_dict
