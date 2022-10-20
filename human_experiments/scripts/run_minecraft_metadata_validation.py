@@ -60,18 +60,31 @@ def check_time_difference(trial_start, trial_end):
 
 
 def read_subject_id(TrialMessages):
-    # Display subject IDs
-    print(colored("\n[Status] Subject info:", "red", attrs=["bold"]))
-    for idx, sub in enumerate(
-        TrialMessages[0]["data"]["metadata"]["trial"]["subjects"]
-    ):
-        print(colored("\t Subect ID", "magenta"), idx, ":", sub)
 
-    # Display trial name
-    print(
-        colored("\n[Status] Mission name:", "red", attrs=["bold"]),
-        TrialMessages[0]["data"]["metadata"]["trial"]["name"],
-    )
+    print(colored("\n[Status] Subject info:", "red", attrs=["bold"]))
+    try:
+        # Display subject IDs
+        for idx, sub in enumerate(
+            TrialMessages[0]["data"]["metadata"]["trial"]["subjects"]
+        ):
+            print(colored("\t Subect ID", "magenta"), idx, ":", sub)
+        # Display trial name
+        print(
+            colored("\n[Status] Mission name:", "red", attrs=["bold"]),
+            TrialMessages[0]["data"]["metadata"]["trial"]["name"],
+        )
+    except:
+        # Display subject IDs
+        for idx, sub in enumerate(
+            TrialMessages[0]["data"]["subjects"]
+        ):
+            print(colored("\t Subect ID", "magenta"), idx, ":", sub)        
+        # Display trial name
+        print(
+            colored("\n[Status] Mission name:", "red", attrs=["bold"]),
+            TrialMessages[0]['data']['experiment_mission'],
+        )
+
 
 
 def read_metadata_as_json(path):
@@ -89,6 +102,7 @@ def read_metadata_as_json(path):
     """
     TrialMessages = []
     with open(path, "r") as f:
+        condition = []
         for line in f:
             try:
                 json_message = json.loads(line)
@@ -99,8 +113,29 @@ def read_metadata_as_json(path):
                 ):
                     if json_message["data"]["mission_state"] == "Start":
                         mission_start = json_message["msg"]["timestamp"]
-                    else:
+                        condition.append('Start')
+                    if json_message["data"]["mission_state"] == "Stop":
                         mission_end = json_message["msg"]["timestamp"]
+                        condition.append('Stop')
+                        
+                if len(condition) == 2:
+                    continue
+                else: 
+                    '''
+                    There can be issue where the experimentor ends the mission
+                    abruptly, then mission_state wouldn't have stop message. 
+                    Switch to trial message instead and see when the trial 
+                    ended and use that as mission_end. 
+                    '''
+                    if (
+                        json_message["header"]["message_type"] == "trial"
+                        ):
+                        if json_message["msg"]["sub_type"] == "stop":
+                            print(
+                            colored("[Warning] Mission end not found. Using trial end as mission end!", "yellow")
+                            )
+                            mission_end = json_message["msg"]["timestamp"]
+                        
             except:
                 print(
                     colored("[Error] Cannot read JSON line", "red"),
