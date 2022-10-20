@@ -8,34 +8,23 @@ from .minecraft_timestamps import read_minecraft_time
 def get_timestamps_from_dict(df, state, dict, column_name):
         df_temp = df
         rest_state_time_start, rest_state_time_stop  = dict['start_time'], dict['end_time']
-        # print(rest_state_time_start, rest_state_time_stop)
         iloc_idx_start = df_temp['human_readable_time'].searchsorted(ctime(round(rest_state_time_start, 5))) 
         iloc_idx_end = df_temp['human_readable_time'].searchsorted(ctime(round(rest_state_time_stop, 5)))
         state_start = df_temp.index[iloc_idx_start]
         state_end = df_temp.index[iloc_idx_end]
-        print(state_start, state_end)
         range_ = list(range(state_start, state_end))
         state = [state] * len(range_)
         state ={i:x for i,x in enumerate(state, state_start)}
-        # print(df.index.map(state))
-        # df_temp.insert(loc = (int(state_start), int(state_end)) , column = column_name, value= pd.Series(state, index=[state_start, state_end]))
-        # df_temp[state_start:state_end, column_name] = state_end
         return state
 
-def sync_timestamps_with_df(df, final_state, header):
+def sync_timestamps_with_df(df, final_state, header, df_remove_before, df_remove_after):
+    '''
+    Map the states based index with the dataframe 
+    and return dataframe from start of rest state to 
+    end of saturn b minecraft mission. 
+    '''
     df[header] = df.index.map(final_state)
-    return df
-
-def sync_state_with_imac():
-    """
-    We need this function becaus of Affective
-    individual task, as different participants
-    finish the task at different time, so based 
-    based on the sid we save it to that particular
-    folder. eg: if sid is lion it would go to lions
-    folder. 
-    """
-    print()
+    return df.loc[df_remove_before:df_remove_after]
 
 def dataframe_to_csv(path, data, stream_type, time_distribution_human_readable, time_distribution_unix, 
                     rootdir_baseline_task, rootdir_minecraft_data, subject_id):
@@ -120,7 +109,6 @@ def dataframe_to_csv(path, data, stream_type, time_distribution_human_readable, 
     for iMac in ['lion', 'tiger', 'leopard']:
         print(iMac)
         for idx, dict in all_task_time.items():
-            print(idx, dict.values())
             if 'rest_state' in dict.values():
                 print(colored('[INFO]', 'red', attrs=['bold']), 
                     colored(stream_type, 'blue'), 
@@ -203,31 +191,11 @@ def dataframe_to_csv(path, data, stream_type, time_distribution_human_readable, 
                         **get_state_pingpong_comp_0, **get_state_pingpong_comp_1, 
                         **mincraft_handson_training, **mincraft_saturn_a, 
                         **mincraft_saturn_b}
-        # print(final_state)
-            # if 'rest_state' in dict.values():
-            #     print(colored('[INFO]', 'red', attrs=['bold']), 
-            #         colored(stream_type, 'blue'), 
-            #         colored('Rest state timestamps synced with CSV file', 'red', attrs=['bold']))
-            #     state = 'rest_state'
-            #     df.update(sync_with_df(df, state, dict, header[2]), overwrite=False)
-            #     print(df[header[2]].unique())
-
-            # if 'finger_tapping' in dict.values():
-            #     print(colored('[INFO]', 'red', attrs=['bold']), 
-            #         colored(stream_type, 'blue'), 
-            #         colored('Finger tapping timestamps synced with CSV file', 'red', attrs=['bold']))
-            #     state = 'finger_tapping'
-            #     df.update(sync_with_df(df, state, dict, header[2]), overwrite=False)
-            #     print(df[header[2]].unique())
-
-            # if 'affective_task_team' in dict.values():
-            #     print(colored('[INFO]', 'red', attrs=['bold']), 
-            #         colored(stream_type, 'blue'), 
-            #         colored('Affective team task timestamps synced with CSV file', 'red', attrs=['bold']))
-            #     state = 'affective_task_team'
-            #     df.update(sync_with_df(df, state, dict, header[2]), overwrite=False)
-            #     print(df[header[2]].unique())
-        df = sync_timestamps_with_df(df, final_state, header[2])
+        
+        df_remove_before = list(get_state_rest.keys())[0]
+        df_remove_after = list(mincraft_saturn_b.keys())[-1]
+        print('before and after',df_remove_before,df_remove_after)
+        df = sync_timestamps_with_df(df, final_state, header[2], df_remove_before, df_remove_after)
         df.to_csv(csv_file_name + ".csv", sep='\t', encoding='utf-8')
         df.to_pickle(csv_file_name + ".pkl")
         

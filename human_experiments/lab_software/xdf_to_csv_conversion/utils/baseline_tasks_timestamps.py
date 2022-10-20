@@ -131,6 +131,3 @@ def read_baseline_tasks_time(rootdir, subject_id):
                                                             'end_time':df['time'].iloc[-1]}      
                                     idx += 1                                    
     return start_stop_time
-
-    # print(start_stop_time)         
-# read_baseline_tasks_time('/Users/calebjonesshibu/Desktop/tom/dry_runs/exp_2022_09_13_10/baseline_tasks', ['0913_A_1', '0913_A_2', '0913_A_3'])
