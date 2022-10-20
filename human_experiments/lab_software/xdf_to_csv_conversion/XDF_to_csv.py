@@ -102,5 +102,4 @@ if __name__ == "__main__":
     print(colored('[Status] Root Directory:', 'red', attrs=['bold']), colored(rootdir_xdf, 'blue'))
     sys.exit(look_for_XDF_files(rootdir_xdf, rootdir_baseline_task, rootdir_minecraft_data, subject_id))
 
-
 #python3 XDF_to_csv.py --p1 /Users/calebjonesshibu/Desktop/tom/dry_runs/exp_2022_09_13_10/exp_2022_09_13_10/ --p2 /Users/calebjonesshibu/Desktop/tom/dry_runs/exp_2022_09_13_10/exp_2022_09_13_10/baseline_tasks --p3 /Users/calebjonesshibu/Desktop/tom/dry_runs/exp_2022_09_13_10/exp_2022_09_13_10/minecraft/ --s 0913_A_1 --s 0913_A_2 --s 0913_A_3
