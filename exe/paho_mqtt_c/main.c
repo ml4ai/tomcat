@@ -13,6 +13,10 @@
 #include <OsWrapper.h>
 #endif
  
+/* Run on host machine, connect to host machine mosquitto broker */
+/*#define ADDRESS     "tcp://localhost:1883"*/ 
+
+/* Run in Docker container, connect to Testbed mqtt continer */
 #define ADDRESS     "tcp://mosquitto:1883"
 #define CLIENTID    "ExampleClientSub"
 #define TOPIC       "docker"
