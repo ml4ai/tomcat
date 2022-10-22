@@ -83,6 +83,14 @@ if [[ "${IVI_VERBOSE}" != "0" ]]; then
     rsync_options="-v ${rsync_options}"
 fi 
 
+if [[ "${IVI_VERBOSE_2}" != "0" ]]; then
+    rsync_options="-v ${rsync_options}"
+fi 
+
+if [[ "${IVI_VERBOSE_3}" != "0" ]]; then
+    rsync_options="-v ${rsync_options}"
+fi 
+
 # If we get this far, there may be some value of doing subsequent rsyncs even if
 # previous ones failed. 
 set +e 
