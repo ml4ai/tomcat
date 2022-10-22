@@ -64,6 +64,19 @@ if [[ "${IVI_VERBOSE}" == "" ]]; then
     export IVI_VERBOSE="1"
 fi 
 
+# Using more verbose should be rare, but I had issues debugging the robustness
+# of rsync in our use cases. 
+#
+export IVI_VERBOSE=${IVI_VERBOSE_2-0}
+if [[ "${IVI_VERBOSE_2}" == "" ]]; then
+    export IVI_VERBOSE_2="1"
+fi 
+
+export IVI_VERBOSE=${IVI_VERBOSE_3-0}
+if [[ "${IVI_VERBOSE_3}" == "" ]]; then
+    export IVI_VERBOSE_3="1"
+fi 
+
 # Default. 
 plumbing='| tee -a'
 
@@ -73,6 +86,12 @@ do
         plumbing='>>'
     elif [[ "$var" == "-v" ]]; then
         export IVI_VERBOSE="1"
+    elif [[ "$var" == "-v2" ]]; then
+        export IVI_VERBOSE="1"
+        export IVI_VERBOSE_2="1"
+    elif [[ "$var" == "-v3" ]]; then
+        export IVI_VERBOSE="1"
+        export IVI_VERBOSE_3="1"
     else 
         echo "Argument to sync_tom_and_cat ${var} is invalid. Exiting with failure." 
         exit 1
