@@ -67,12 +67,12 @@ fi
 # Using more verbose should be rare, but I had issues debugging the robustness
 # of rsync in our use cases. 
 #
-export IVI_VERBOSE=${IVI_VERBOSE_2-0}
+export IVI_VERBOSE_2=${IVI_VERBOSE_2-0}
 if [[ "${IVI_VERBOSE_2}" == "" ]]; then
     export IVI_VERBOSE_2="1"
 fi 
 
-export IVI_VERBOSE=${IVI_VERBOSE_3-0}
+export IVI_VERBOSE_3=${IVI_VERBOSE_3-0}
 if [[ "${IVI_VERBOSE_3}" == "" ]]; then
     export IVI_VERBOSE_3="1"
 fi 
