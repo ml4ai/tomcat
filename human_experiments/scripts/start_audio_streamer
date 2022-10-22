@@ -2,21 +2,10 @@
 
 set -u
 
-source configuration_helpers
-
 if [[ -z ${1+x} ]]; then
-  # In case the script is executed standalone.
-  text="${RED}Please provide an experiment directory as the first argument of "
-  text+="the call to this script.${NC}"
-  echo -e "$text"
-  exit 1
-fi
-EXPERIMENT_DIR=$1
-
-if [[ -z ${2+x} ]]; then
   PADDING=""
 else
-  PADDING=$2
+  PADDING=$1
 fi
 
 __start_on_client() {
@@ -36,11 +25,19 @@ __start_on_client() {
     padding="$padding "
   fi
   if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
+    local audio_dir="$EXPERIMENT_DIR/$client_name/audio"
+    if ! mkdir -p "$audio_dir"; then
+      echo -e "${padding}${RED}Error when trying to create the folder ${audio_dir}.${NC}"
+      exit 1
+    fi
+
+    local recordings_directory="\$HOME/$audio_dir"
     local command="cd \$HOME/$SYSTEMS_DIR/tomcat/exe/audioStreamer/build/; ./audioStreamer "
-    command+="--use_mqtt true --ws_host 192.168.0.24 --mqtt_host 192.168.0.24 "
-    command+="--player_name $player_name &> $log_path &; echo \$! > $pid_path"
-    ssh "$EXPERIMENT_USER@$client_address" "$command" >/dev/null
-    if [[ $? -eq 0 ]]; then
+    command+="--use_mqtt true --ws_host tom.local --mqtt_host tom.local "
+    command+="--player_name $player_name --save_audio true --recording_directory $recordings_directory "
+    command+="&> $log_path &; echo \$! > $pid_path"
+    # shellcheck disable=SC2029
+    if ssh "$EXPERIMENT_USER@$client_address" "$command" >/dev/null; then
       echo -e "${padding}${EMPH}Audio Streamer${GREEN} started successfully.${NC}"
     else
       echo -e "${padding}${RED}Failed to start the ${EMPH}Audio Streamer${RED}.${NC}"

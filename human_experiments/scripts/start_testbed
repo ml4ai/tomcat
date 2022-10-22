@@ -2,24 +2,22 @@
 
 set -u
 
-source configuration_helpers
-
-SECONDS_TO_WAIT=300
+seconds_to_wait=300 # 5 minutes
 
 if [[ -z ${1+x} ]]; then
-  # In case the script is executed standalone.
-  text="${RED}Please provide an experiment directory as the first argument of "
-  text+="the call to this script.${NC}"
-  echo -e "$text"
-  exit 1
-fi
-EXPERIMENT_DIR=$1
-
-if [[ -z ${2+x} ]]; then
   PADDING=""
 else
-  PADDING=$2
+  PADDING=$1
 fi
+
+# Assuming we are in a tmux session already
+function monitor_log_file(){
+  if [[ $TMUX_ON -eq 1 ]]; then
+    local window_name=$1 # Name should not have whitespace
+    local tail_command="tail -f $2"
+    tmux new-window -n "$window_name" "$tail_command"
+  fi
+}  
 
 __monitor_testbed_launch() {
   local log_path=$1
@@ -27,34 +25,36 @@ __monitor_testbed_launch() {
   local padding=$3
 
   echo -e "${padding}Waiting for launch..."
-
   # Wait till the log file actually exists
-  while [ ! -f $log_path ]; do
+  while [ ! -f "$log_path" ]; do
     sleep 1
   done
 
   local num_seconds=0
-  while [ $num_seconds -lt $SECONDS_TO_WAIT ]; do
+  while [ $num_seconds -lt $seconds_to_wait ]; do
     if [[ -e "${log_path}" ]]; then
-      have_line="$(grep -c 'Testbed successfully launched.' ${log_path})"
-      if [[ ${have_line} -ne 0 ]]; then
+      success_line="$(grep -c 'Testbed successfully launched.' "$log_path")"
+      error_line="$(grep -c 'ERROR.' "$log_path")"
+      if [[ ${success_line} -ne 0 ]]; then
         return 0
+      elif [[ ${error_line} -ne 0 ]]; then
+        return 1
       fi
     else
       return 1
     fi
 
     # TODO - fix this because the process might end but the writer buffer
-    #  to the log file might still be running I guess
-    ps $testbed_pid >&/dev/null
-    if [[ $? -ne 0 ]]; then
+    # to the log file might still be running I guess
+    if ! ps "$testbed_pid" >&/dev/null; then
       return 1
     fi
 
     sleep 1
-    let num_seconds+=1
+    (( num_seconds++ ))
   done
 
+  # Enough time has passes but the success message was not detected.
   return 1
 }
 
@@ -66,19 +66,19 @@ __watch_for_trial_id() {
 __launch_testbed() {
   # Bring the testbed up and save logs
   local padding=$1
-  local log_path=$EXPERIMENT_DIR/tmp/testbed_up.log
+  local log_path="$EXPERIMENT_DIR/tmp/testbed_up.log"
   local testbed_launched="n"
 
   echo -e "${padding}Launching ${EMPH}Testbed${NC}..."
   while [[ $testbed_launched == "n" ]]; do
-    pushd $HOME/$SYSTEMS_DIR/testbed/Local >/dev/null
-    sudo ./testbed_up_core.sh -i &>$log_path &
+    pushd "$HOME/$SYSTEMS_DIR/testbed/Local" >/dev/null || exit 1
+    ./testbed_up_core.sh -i &> "$log_path" &
+    local testbed_pid=$!
 
     # Wait for a while to guarantee the log file was created
     sleep 1
-    __monitor_testbed_launch $log_path $! "$padding "
-
-    if [[ $? -eq 0 ]]; then
+    monitor_log_file "testbed_up" "$log_path"
+    if __monitor_testbed_launch "$log_path" "$testbed_pid" "$padding "; then
       testbed_launched="y"
       echo -e "${padding}${GREEN} ${EMPH}Testbed${GREEN} successfully launched.${NC}"
     else
@@ -88,8 +88,9 @@ __launch_testbed() {
       echo -n -e "${padding} Press any key to ${EMPH}RETRY${NC}: "
       read -r
     fi
-    popd >/dev/null
+    popd >/dev/null || exit 1
   done
+
   __watch_for_trial_id
 }
 

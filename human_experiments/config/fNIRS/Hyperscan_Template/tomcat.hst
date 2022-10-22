@@ -1,0 +1,1 @@
+{"device_splits_list": [{"device_split": {"device_id": "2118_0297_A", "configurations_list": ["tomcat_lion"]}}, {"device_split": {"device_id": "2101_0239_A", "configurations_list": ["tomcat_tiger"]}}, {"device_split": {"device_id": "2010_0171_A", "configurations_list": ["tomcat_leopard"]}}]}

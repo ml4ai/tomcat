@@ -77,6 +77,7 @@ if [[ "${IVI_VERBOSE_3}" == "" ]]; then
     export IVI_VERBOSE_3="1"
 fi 
 
+
 # Default. 
 plumbing='| tee -a'
 
