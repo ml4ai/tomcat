@@ -1,40 +1,57 @@
-
+# Every Dockerfile needs a FROM statement as the first executable line,
+# this is the OS you will be using
 FROM ubuntu:kinetic
-# FROM ubuntu:jammy
-# FROM ubuntu:latest
-
 CMD bash
 
-RUN apt-get update && apt-get install -y sudo software-properties-common g++ apt-utils
-COPY . /tomcat/exe/reference_agent
-WORKDIR /tomcat/exe/reference_agent
+# set this to avoid timezone prompt during apt-get installs
+ENV DEBIAN_FRONTEND noninteractive
+
+# Install anything you need that is not included in your OS.
+RUN  apt-get update && apt-get -y install \
+    libssl-dev \
+    build-essential \
+    cmake \
+    cmake-gui \
+    cmake-curses-gui \
+    make \
+    doxygen \
+    git \
+    gcc \
+    fakeroot \
+    devscripts \
+    dh-make \
+    lsb-release 
+
+# Install Paho c
+RUN git clone --branch v1.3.8 https://github.com/eclipse/paho.mqtt.c.git
+
+# BUILD PAHO MQTT C
+# you will want to move this repo to the MacOS file path 
+RUN cd paho.mqtt.c \
+&& make install \
+&& cmake -Bbuild -H. -DPAHO_ENABLE_TESTING=OFF -DPAHO_BUILD_STATIC=ON \
+    -DPAHO_WITH_SSL=ON -DPAHO_HIGH_PERFORMANCE=ON \
+&& cmake --build build/ --target install \
+&& ldconfig
+
+# Install Paho cpp
+RUN git clone https://github.com/eclipse/paho.mqtt.cpp.git
+
+# BUILD PAHO MQTT CPP
+# you will want to move this repo to the MacOS file path 
+RUN cd paho.mqtt.cpp \
+&& cmake -Bbuild -H. -DPAHO_BUILD_STATIC=ON \
+    -DPAHO_BUILD_DOCUMENTATION=TRUE -DPAHO_BUILD_SAMPLES=TRUE \
+&& cmake --build build/ --target install \
+&& ldconfig
 
 
-RUN apt-get -y --no-install-recommends install \
-      ca-certificates \
-      build-essential \
-      apt-utils \
-      libboost-all-dev \
-      pkg-config \
-      cmake \
-      curl \
-      git \
-      tar \
-      wget \
-      doxygen \
-      graphviz \
-      libgraphviz-dev \
-      libsqlite3-dev \
-      libeigen3-dev \
-      libfmt-dev \
-      libssl-dev \
-      librange-v3-dev \
-      libpaho-mqttpp-dev
+COPY . /paho_mqtt_cpp
+WORKDIR /paho_mqtt_cpp
 
-# Build the agent
-RUN rm -rf build \
-    && mkdir build \
-    && cd build \
-    && cmake .. \
-    && make -j `nproc` paho_mqtt_cpp \
-    && cd ..
+RUN export LD_LIBRARY_PATH=/paho.mqtt.cpp/src/:$LD_LIBRARY_PATH
+
+# Build the executable
+RUN gcc -Lpaho.mqtt.c/build/output/ main.cpp -l paho-mqtt3a -o paho_mqtt_c_test
+
+ENTRYPOINT /paho_mqtt_cpp/paho_mqtt_cpp_test

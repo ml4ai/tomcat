@@ -1,24 +1,15 @@
 #
-# Paho MQTT C++ project
+# Paho MQTT C project
 #
 
 cmake_minimum_required(VERSION 3.16)
-project(paho_mqtt_cpp)
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g") # create gdb symbol table
+project(paho_mqtt_cpp_test LANGUAGES C CPP)
 
-
-find_package(
-    PahoMqttCpp
-    REQUIRED
-)
-
-find_package(
-    PahoMqttC
-    REQUIRED
-)
+set(PAHO_MQTT_C_LIBRARIES ~/paho_mqtt_cpp/paho.mqtt.c/build/output )
+set(PAHO_MQTT_C_INCLUDE_DIRS ~/paho_mqtt_cpp/paho.mqtt.c/include )
+set(PAHO_MQTT_CPP_LIBRARIES ~/paho_mqtt_cpp/paho.mqtt.cpp/build/output )
+set(PAHO_MQTT_CPP_INCLUDE_DIRS ~/paho_mqtt_cpp/paho.mqtt.cpp/include )
+set(CPP=/usr/bin/gcc )
 
 find_package(
     OpenSSL
@@ -26,10 +17,5 @@ find_package(
 )
 
 add_executable(
-    paho_mqtt_cpp main.cpp
-)
-
-target_link_libraries(
-    paho_mqtt_cpp
-    PahoMqttCpp::paho-mqttpp3
+    paho_mqtt_cpp_test main.c
 )

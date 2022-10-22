@@ -1,32 +1,43 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+int main(int argc, char* argv[])
+{
+    sample_mem_persistence persist;
+    mqtt::client cli(ADDRESS, CLIENT_ID, &persist);
 
-#include <mqtt/async_client.h>
+    callback cb;
+    cli.set_callback(cb);
 
+    auto connOpts = mqtt::connect_options_builder() 
+        .keep_alive_interval(20);
+        .clean_session()
+        .finalize();
 
-/* A Paho MQTT hello world program to test Docker */
-/* Further reading:  https://github.com/eclipse/paho.mqtt.c */
+    try {
+        cli.connect(connOpts);
 
-int main(int argc, char* argv[]) {
+        // First use a message pointer.
 
-    std::cout << "Hello world!" << std::endl;
+        mqtt::message_ptr pubmsg = mqtt::make_message(PAYLOAD1);
+        pubmsg->set_qos(QOS);
+        cli.publish(TOPIC, pubmsg);
 
-    /*
-    char* address = "tcp://localhost:1883";
+        // Now try with itemized publish.
 
-    MQTTClient handle;
+        cli.publish(TOPIC, PAYLOAD2, strlen(PAYLOAD2)+1, 0, false);
 
-    MQTTClient_connectOptions options;
+        // Disconnect
+        
+        cli.disconnect();
+    }
+    catch (const mqtt::persistence_exception& exc) {
+        cerr << "Persistence Error: " << exc.what() << " ["
+            << exc.get_reason_code() << "]" << endl;
+        return 1;
+    }
+    catch (const mqtt::exception& exc) {
+        cerr << "Error: " << exc.what() << " ["
+            << exc.get_reason_code() << "]" << endl;
+        return 1;
+    }
 
-    int rc = MQTTClient_connect(handle, &options);
-    */
-
-
-    /*
-    mqtt::async_client async_client = mqtt::async_client(
-        address, "paho_mqtt_async_client");
-	*/
-
-    return EXIT_SUCCESS;
+    return 0;
 }
