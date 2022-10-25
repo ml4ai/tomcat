@@ -18,10 +18,11 @@ while true; do
     mkdir -p "$EXPERIMENT_DIR/testbed_logs" >/dev/null
 
     log_filename="$(find asist_logs_$team_number*.tar.gz)"
+    echo "$log_filename"
     mv "$log_filename" "$EXPERIMENT_DIR/testbed_logs"
 
     # Decompress file and remove compressed file
-    tar –xvzf "$EXPERIMENT_DIR/testbed_logs/$log_filename"
+    tar -xvzf "$EXPERIMENT_DIR/testbed_logs/$log_filename"
     rm "$log_filename"
 
     # Move vocalic features to the experiment folder
