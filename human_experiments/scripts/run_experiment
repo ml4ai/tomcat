@@ -91,6 +91,8 @@ pushd "$SCRIPTS_DIR" >/dev/null || exit 1
     esac
   done
   export ALL
+  export TEST
+  export DRY_RUN
 
   # Check if the script is running in a tmux session. If that is the case, enable the child scripts to tail log files
   # in different windows of the current tmux session.

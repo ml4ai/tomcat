@@ -15,9 +15,15 @@ GB=1048576 # One GB in KB
 free_space_in_kb="$(df -k "$experiment_dir" --output=avail | tail -n 1)"
 
 if [[ $free_space_in_kb -lt 524288000 ]]; then # 500G = 500*1024*1024k
-    free_space_in_gb="$(echo "scale=2; $free_space_in_kb / $GB" | bc)"
+  free_space_in_gb="$(echo "scale=2; $free_space_in_kb / $GB" | bc)"
+  if [[ $DRY_RUN -eq 1 ]] || [[ $TEST -eq 1 ]]; then
+    warning_msg="${YELLOW}There isn't enough space available for the experiment in $experiment_dir.\n"
+    warning_msg+="We require 500GB of free space. Only $free_space_in_gb GB is available.${NC}"
+    echo -e "$warning_msg"
+  else
     error_msg="${RED}There isn't enough space available for the experiment in $experiment_dir.\n"
     error_msg+="We require 500GB of free space. Only $free_space_in_gb GB is available.${NC}"
     echo -e "$error_msg"
     exit 1
+  fi
 fi
