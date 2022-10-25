@@ -20,6 +20,7 @@ pushd "$HOME/$SYSTEMS_DIR/testbed/Tools/docker-logs" >/dev/null || exit 1
       log_filename="$(find asist_logs_$team_number*.tar.gz)"
       mv "$log_filename" "$EXPERIMENT_DIR/testbed_logs"
 
+      break
     else
       echo -e "${PADDING}${RED}Failed to extract the logs for the session. Make sure the testbed is up and retry.${NC}"
       if ! yes_no_question "${PADDING}Do you want to ${EMPH}RETRY${NC}?"; then
