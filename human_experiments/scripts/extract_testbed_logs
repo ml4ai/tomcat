@@ -17,7 +17,7 @@ while true; do
     # Move the compressed logs to the experiment folder
     mkdir -p "$EXPERIMENT_DIR/testbed_logs" >/dev/null
 
-    log_filename="$(find "asist_logs_$team_number*.tar.gz")"
+    log_filename="$(find asist_logs_$team_number*.tar.gz)"
     mv "$log_filename" "$EXPERIMENT_DIR/testbed_logs"
 
     # Decompress file and remove compressed file
