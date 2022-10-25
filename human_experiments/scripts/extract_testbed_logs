@@ -32,7 +32,7 @@ popd >/dev/null || exit 1
 
 pushd "$EXPERIMENT_DIR/testbed_logs" >/dev/null || exit 1
   # Decompress file and remove compressed file
-  tar -xvzf "$EXPERIMENT_DIR/testbed_logs/$log_filename"
+  tar -xvzf "$EXPERIMENT_DIR/testbed_logs/$log_filename" | sed "s/^/${PADDING} /"
   rm "$EXPERIMENT_DIR/testbed_logs/$log_filename"
 popd >/dev/null || exit 1
 
