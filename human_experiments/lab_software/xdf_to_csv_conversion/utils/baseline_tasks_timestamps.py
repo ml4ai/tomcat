@@ -19,6 +19,7 @@ def read_baseline_tasks_time(rootdir, subject_id):
                                     'start_time': df['time'].iloc[0], 
                                     'end_time':df['time'].iloc[-1]}
                     idx += 1
+                    
             elif 'finger_tapping' in x:
                 """
                 It's a single CSV file with time common for 

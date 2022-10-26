@@ -3,7 +3,7 @@ import sys
 import pyxdf
 import argparse
 from termcolor import colored
-from utils import get_start_stop_time_from_xdf, dataframe_to_csv, create_time_distribution, read_baseline_tasks_time
+from utils import get_start_stop_time_from_xdf, dataframe_to_csv, create_time_distribution
 
 def read_xdf(xdf_file_paths, rootdir_baseline_task, rootdir_minecraft_data, subject_id):
     """
@@ -14,7 +14,7 @@ def read_xdf(xdf_file_paths, rootdir_baseline_task, rootdir_minecraft_data, subj
         for i in range(0,len(data)):
             if data[i]['info']['type'] == ['NIRS']:
                 print(
-                colored('[Status] Reading ', 'red', attrs=['bold']), 
+                colored('[Status] Reading ', 'green', attrs=['bold']), 
                 colored(data[i]['info']['type'], 'blue'))
                 time_start_streams_nirs, time_end_streams_nirs = get_start_stop_time_from_xdf(data[i]) #get the unix time
                 time_distribution_human_readable_nirs, time_distribution_unix_nirs = create_time_distribution(time_start_streams_nirs, 
@@ -25,12 +25,12 @@ def read_xdf(xdf_file_paths, rootdir_baseline_task, rootdir_minecraft_data, subj
             elif data[i]['info']['type'] == ['Markers']:
                 #We don't have physical marker for our physio data
                 print(
-                colored('[Status] Skipping ', 'red', attrs=['bold']), 
+                colored('[Status] Skipping ', 'green', attrs=['bold']), 
                 colored(data[i]['info']['type'], 'blue'))                
 
             elif data[i]['info']['type'] == ['EEG']:
                 print(
-                colored('[Status] Reading ', 'red', attrs=['bold']), 
+                colored('[Status] Reading ', 'green', attrs=['bold']), 
                 colored(data[i]['info']['type'], 'blue'))
                 time_start_streams_eeg, time_end_streams_eeg = get_start_stop_time_from_xdf(data[i]) #get the unix time
                 time_distribution_human_readable_eeg, time_distribution_unix_eeg = create_time_distribution(time_start_streams_eeg, 
@@ -40,7 +40,7 @@ def read_xdf(xdf_file_paths, rootdir_baseline_task, rootdir_minecraft_data, subj
 
             elif data[i]['info']['type'] == ['Gaze']:
                 print(
-                colored('[Status] Reading ', 'red', attrs=['bold']), 
+                colored('[Status] Reading ', 'green', attrs=['bold']), 
                 colored(data[i]['info']['type'], 'blue'))
                 time_start_streams_gaze, time_end_streams_gaze = get_start_stop_time_from_xdf(data[i]) #get the unix time
                 time_distribution_human_readable_gaze, time_distribution_unix_gaze = create_time_distribution(time_start_streams_gaze, 
@@ -50,7 +50,7 @@ def read_xdf(xdf_file_paths, rootdir_baseline_task, rootdir_minecraft_data, subj
             
             elif data[i]['info']['type'] == ['Accelerometer']:
                 print(
-                colored('[Status] Skipping ', 'red', attrs=['bold']), 
+                colored('[Status] Skipping ', 'green', attrs=['bold']), 
                 colored(data[i]['info']['type'], 'blue')) 
                 #create_csv_file(path, 'Accelerometer')
                 # time_start_streams_accel, time_end_streams_accel = get_start_stop_time_from_xdf(data[i]) #get the unix time
@@ -65,7 +65,7 @@ def look_for_XDF_files(rootdir_xdf, rootdir_baseline_task, rootdir_minecraft_dat
             if file.endswith(".xdf"):
                 xdf_file_paths.append(os.path.join(root, file))
                 print(
-                    colored('[Status] xdf file found at ', 'red', attrs=['bold']), 
+                    colored('[Status] xdf file found at ', 'green', attrs=['bold']), 
                     colored(os.path.join(root, file), 'blue'))
     
     read_xdf(xdf_file_paths, rootdir_baseline_task, rootdir_minecraft_data, subject_id) #1. read all the XDF files 
@@ -99,7 +99,7 @@ if __name__ == "__main__":
     rootdir_baseline_task = arg.p2
     rootdir_minecraft_data = arg.p3
     subject_id = arg.s
-    print(colored('[Status] Root Directory:', 'red', attrs=['bold']), colored(rootdir_xdf, 'blue'))
+    print(colored('[Status] Root Directory:', 'green', attrs=['bold']), colored(rootdir_xdf, 'blue'))
     sys.exit(look_for_XDF_files(rootdir_xdf, rootdir_baseline_task, rootdir_minecraft_data, subject_id))
 
 #python3 XDF_to_csv.py --p1 /Users/calebjonesshibu/Desktop/tom/dry_runs/exp_2022_09_13_10/exp_2022_09_13_10/ --p2 /Users/calebjonesshibu/Desktop/tom/dry_runs/exp_2022_09_13_10/exp_2022_09_13_10/baseline_tasks --p3 /Users/calebjonesshibu/Desktop/tom/dry_runs/exp_2022_09_13_10/exp_2022_09_13_10/minecraft/ --s 0913_A_1 --s 0913_A_2 --s 0913_A_3
