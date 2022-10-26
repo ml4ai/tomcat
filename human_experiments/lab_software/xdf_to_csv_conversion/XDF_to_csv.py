@@ -1,6 +1,7 @@
 import os
 import sys
 import pyxdf
+import shutil
 import argparse
 from termcolor import colored
 from utils import get_start_stop_time_from_xdf, dataframe_to_csv, create_time_distribution
@@ -9,8 +10,14 @@ def read_xdf(xdf_file_paths, rootdir_baseline_task, rootdir_minecraft_data, subj
     """
     Read the XDF files.
     """
+    columns = shutil.get_terminal_size().columns
     for path in xdf_file_paths:
         data, header = pyxdf.load_xdf(path)
+
+        if 'lion' in path: print(colored('Lion ', 'magenta', attrs=['bold', 'blink']).center(columns))
+        elif 'leopard' in path: print(colored('Leopard ', 'magenta', attrs=['bold', 'blink']).center(columns))
+        else: print(colored('Tiger ', 'magenta', 'on_blue', attrs=['bold', 'blink']).center(columns))
+
         for i in range(0,len(data)):
             if data[i]['info']['type'] == ['NIRS']:
                 print(
