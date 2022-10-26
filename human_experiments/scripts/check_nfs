@@ -2,28 +2,16 @@
 
 set -u
 
-source configuration_helpers
-
 if [[ -z ${1+x} ]]; then
-  # In case the script is executed standalone.
-  text="${RED}Please provide an experiment directory as the first argument of "
-  text+="the call to this script.${NC}"
-  echo -e "$text"
-  exit 1
-fi
-experiment_dir=$1
-
-if [[ -z ${2+x} ]]; then
-  padding=""
+  PADDING=""
 else
-  padding=$2
+  PADDING=$1
 fi
 
 __check_nfs_on_client() {
-  local experiment_dir=$1
-  local client_name=$2
-  local client_address=$3
-  local padding=$4
+  local client_name=$1
+  local client_address=$2
+  local padding=$3
 
   if [[ $ALL -ne 1 ]]; then
     yes_no_question "${padding}Do you want to check the status on ${EMPH}$client_name${NC}?"
@@ -32,22 +20,40 @@ __check_nfs_on_client() {
   fi
   if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
     # Create NFS folder
-    local nfs_dir=$experiment_dir/$client_name/nfs
+    local nfs_dir=$EXPERIMENT_DIR/$client_name/nfs
     mkdir -p "$nfs_dir" > /dev/null
 
-    while [[ $? -eq 0 ]]; do
+    while true; do
       echo -e "${padding}Checking ${EMPH}NFS${NC} on ${EMPH}$client_name${NC}..."
+
+      # We escape $HOME because it must be expanded in the client side.
+
       echo "${padding} [TEST 1]"
-      ssh $EXPERIMENT_USER@$client_address "dd if=/dev/zero of=\$HOME$nfs_dir/multipleFilesTest bs=4096 count=1000000" 2>&1 | sed "s/^/${padding} /"
+      # shellcheck disable=SC2029
+      ssh "$EXPERIMENT_USER@$client_address" "dd if=/dev/zero of=\$HOME$nfs_dir/multipleFilesTest bs=4096 count=1000000" 2>&1 | sed "s/^/${padding} /"
+
       echo "${padding} [TEST 2]"
-      ssh $EXPERIMENT_USER@$client_address "dd if=/dev/zero of=\$HOME$nfs_dir/singleFileTest bs=4096 count=1" 2>&1 | sed "s/^/${padding} /"
+      # shellcheck disable=SC2029
+      ssh "$EXPERIMENT_USER@$client_address" "dd if=/dev/zero of=\$HOME$nfs_dir/singleFileTest bs=4096 count=1" 2>&1 | sed "s/^/${padding} /"
+
       echo "${padding} [TEST 3]"
-      ssh $EXPERIMENT_USER@$client_address "rsync ~/img.png \$HOME$nfs_dir && echo $?" | sed "s/0/${padding} OK/"
-      yes_no_question "${padding}Do you want to ${EMPH}REPEAT${NC} the tests?"
-    done  
+      # shellcheck disable=SC2029
+      ssh "$EXPERIMENT_USER@$client_address" "rsync ~/img.png \$HOME$nfs_dir && echo $?" | sed "s/0/${padding} OK/"
+
+      if ! yes_no_question "${padding}Do you want to ${EMPH}REPEAT${NC} the tests?"; then
+        break
+      fi
+    done
+
+    if ! rm -r "$nfs_dir"; then
+      # We don't need to keep the created files in the experiment directory.
+      # They are created just to check if NFS is working.
+      echo -e "${padding}${RED}Error at trying to remove the directory ${nfs_dir}.${NC}"
+    fi
   fi
 }
 
-__check_nfs_on_client $experiment_dir "lion" "lion.local" "$padding"
-__check_nfs_on_client $experiment_dir "tiger" "tiger.local" "$padding"
-__check_nfs_on_client $experiment_dir "leopard" "leopard.local" "$padding"
+echo -e "${PADDING}Checking ${EMPH}NFS${NC} status..."
+__check_nfs_on_client "lion" "lion.local" "$PADDING"
+__check_nfs_on_client "tiger" "tiger.local" "$PADDING"
+__check_nfs_on_client "leopard" "leopard.local" "$PADDING"

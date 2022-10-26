@@ -2,70 +2,11 @@
 
 set -u
 
-source configuration_helpers
-
 if [[ -z ${1+x} ]]; then
-  # In case the script is executed standalone.
-  text="${RED}Please provide an experiment directory as the first argument of "
-  text+="the call to this script.${NC}"
-  echo -e "$text"
-  exit 1
-fi
-EXPERIMENT_DIR=$1
-
-if [[ -z ${2+x} ]]; then
   PADDING=""
 else
-  PADDING=$2
+  PADDING=$1
 fi
-
-__stop_face_and_screen_recording() {
-  local client_name=$1
-  local client_address=$2
-  local padding=$3
-
-  local command="cd \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/ && "
-  command+="./kill_ffmpeg \"$padding \""
-
-  echo -e "${padding}Stopping ${EMPH}Face and Screen Recording${NC}..."
-  local stopped="n"
-  while [[ $stopped != "y" ]]; do
-    ssh $EXPERIMENT_USER@$client_address "$command"
-    if [[ $? -eq 0 ]]; then
-      stopped="y"
-    else
-      yes_no_question "${padding} Do you want to ${EMPH}RETRY${NC}?"
-      if [[ $? -ne 0 ]]; then
-        break
-      fi
-    fi
-  done
-}
-
-__stop_audio_streamer() {
-  local client_name=$1
-  local client_address=$2
-  local padding=$3
-
-  local pid_path="$EXPERIMENT_DIR/tmp/audio_streamer_$client_name.pid"
-  local audio_streamer_pid
-  audio_streamer_pid="$(cat "$pid_path")"
-  local command="kill $audio_streamer_pid"
-
-  echo -e "${padding}Stopping ${EMPH}Audio Streamer${NC}..."
-  local stopped="n"
-  while [[ $stopped != "y" ]]; do
-    ssh $EXPERIMENT_USER@$client_address "$command"
-    if [[ $? -eq 0 ]]; then
-      stopped="y"
-    else
-      yes_no_question "${padding} Do you want to ${EMPH}RETRY${NC}?"
-      if [[ $? -ne 0 ]]; then
-        break
-      fi
-    fi
-  done
-}
 
 __stop_minecraft() {
   local client_name=$1
@@ -78,14 +19,35 @@ __stop_minecraft() {
   echo -e "${padding}Stopping ${EMPH}Minecraft${NC}..."
   local stopped="n"
   while [[ $stopped != "y" ]]; do
-    ssh $EXPERIMENT_USER@$client_address "$command"
-    if [[ $? -eq 0 ]]; then
+    # shellcheck disable=SC2029
+    if ssh "$EXPERIMENT_USER@$client_address" "$command"; then
       echo -e "${padding}${GREEN} ${EMPH}Minecraft${GREEN} successfully stopped.${NC}"
       stopped="y"
     else
       echo -e "${padding}${RED} Failed to stop ${EMPH}Minecraft${RED}.${NC}"
-      yes_no_question "${padding} Do you want to ${EMPH}RETRY${NC}?"
-      if [[ $? -ne 0 ]]; then
+      if ! yes_no_question "${padding} Do you want to ${EMPH}RETRY${NC}?"; then
+        break
+      fi
+    fi
+  done
+}
+
+__stop_port_forwarding() {
+  local client_name=$1
+  local client_address=$2
+  local padding=$3
+
+  echo -e "${padding}Stopping port forwarding..."
+  local stopped="n"
+  local command="pkill socat"
+  while [[ $stopped != "y" ]]; do
+    # shellcheck disable=SC2029
+    if ssh "$EXPERIMENT_USER@$client_address" "$command" > /dev/null; then
+      echo -e "${padding}${GREEN} Port forwarding successfully stopped.${NC}"
+      stopped="y"
+    else
+      echo -e "${padding}${RED} Failed to stop port forwarding.${NC}"
+      if ! yes_no_question "${padding} Do you want to ${EMPH}RETRY${NC}?"; then
         break
       fi
     fi
@@ -100,7 +62,8 @@ __close_application() {
 
   local command="osascript \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/macos/close_application.scpt "
   command+="\"$app_name\""
-  ssh $EXPERIMENT_USER@$client_address "$command" &>/dev/null
+  # shellcheck disable=SC2029
+  ssh "$EXPERIMENT_USER@$client_address" "$command" &>/dev/null
   echo -e "${padding}${GREEN}${EMPH}$app_name${GREEN} successfully closed.${NC}"
 
   # The apple script returns exit code 1 because closing an application is an
@@ -116,8 +79,6 @@ __close_applications() {
   local padding=$3
 
   echo -e "${padding}Closing ${EMPH}all applications${NC}..."
-  __close_application "$client_name" "$client_address" "Aurora" "$padding "
-  __close_application "$client_name" "$client_address" "Pupil Capture" "$padding "
   __close_application "$client_name" "$client_address" "Google Chrome" "$padding "
   __close_application "$client_name" "$client_address" "Terminal" "$padding "
 }
@@ -129,6 +90,7 @@ __remove_pupil_symlink() {
 
   echo -e "${padding}Removing ${EMPH}Pupil Symlink${NC}..."
   local command="\$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/remove_pupil_symlink"
+  # shellcheck disable=SC2029
   ssh "$EXPERIMENT_USER@$client_address" "$command"
 }
 
@@ -142,14 +104,13 @@ __close_extra_desktops() {
 
   local closed="n"
   while [[ $closed != "y" ]]; do
-    ssh $EXPERIMENT_USER@$client_address "$command" >/dev/null
-    if [[ $? -eq 0 ]]; then
+    # shellcheck disable=SC2029
+    if ssh "$EXPERIMENT_USER@$client_address" "$command" >/dev/null; then
       echo -e "${padding}${GREEN} ${EMPH}Extra desktops${GREEN} successfully closed.${NC}"
       closed="y"
     else
       echo -e "${padding}${RED} Failed to close ${EMPH}extra desktops${RED}.${NC}"
-      yes_no_question "${padding} Do you want to ${EMPH}RETRY${NC}?"
-      if [[ $? -ne 0 ]]; then
+      if yes_no_question "${padding} Do you want to ${EMPH}RETRY${NC}?"; then
         break
       fi
     fi
@@ -167,14 +128,19 @@ __cleanup_on_client() {
     padding="$padding "
   fi
   if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
-    __stop_face_and_screen_recording "$client_name" "$client_address" "$padding"
-    __stop_audio_streamer "$client_name" "$client_address" "$padding"
-    __stop_minecraft "$client_name" "$client_address" "$padding"
-    __close_applications "$client_name" "$client_address" "$padding"
-    __remove_pupil_symlink "$client_name" "$client_address" "$padding"
-    __close_extra_desktops "$client_name" "$client_address" "$padding"
+    echo -e "${padding}Ending experiment on ${EMPH}$client_name${NC}..."
+    __stop_minecraft "$client_name" "$client_address" "$padding "
+    __stop_port_forwarding "$client_name" "$client_address" "$padding "
+    __close_applications "$client_name" "$client_address" "$padding "
+    __remove_pupil_symlink "$client_name" "$client_address" "$padding "
+    __close_extra_desktops "$client_name" "$client_address" "$padding "
   fi
+}
 
+__clean_tmp_directory() {
+  # We remove the .pid files from the tmp directory as we don't need to store the process IDs after the experiment.
+  echo -e "${padding}Removing .pid files from the temporary directory."
+  rm "$EXPERIMENT_DIR/tmp/*.pid" > /dev/null
 }
 
 __freeze_experiment_data() {
@@ -185,14 +151,12 @@ __freeze_experiment_data() {
 
   local frozen="n"
   while [[ $frozen != "y" ]]; do
-    chmod a=r "$EXPERIMENT_DIR" >/dev/null
-    if [[ $? -eq 0 ]]; then
+    if chmod a=r "$EXPERIMENT_DIR" >/dev/null; then
       echo -e "${padding}${GREEN} Data successfully frozen.${NC}"
       frozen="y"
     else
       echo -e "${padding}${RED} Failed to freeze data.${NC}"
-      yes_no_question "${padding} Do you want to ${EMPH}RETRY${NC}?"
-      if [[ $? -ne 0 ]]; then
+      if ! yes_no_question "${padding} Do you want to ${EMPH}RETRY${NC}?"; then
         break
       fi
     fi
@@ -218,9 +182,8 @@ __cleanup() {
   __cleanup_on_client "tiger" "tiger.local" "$padding "
   __cleanup_on_client "leopard" "leopard.local" "$padding "
 
-  echo -e "${padding}Killing ${EMPH}Minecraft${NC} in the ${EMPH}server${NC}..."
-  source kill_minecraft "$padding "
   source stop_testbed "$EXPERIMENT_DIR" "$padding "
+  __clean_tmp_directory "$padding "
   __freeze_experiment_data "$padding "
   __backup_experiment_data "$padding "
 }

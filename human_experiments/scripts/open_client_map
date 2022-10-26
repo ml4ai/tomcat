@@ -2,21 +2,10 @@
 
 set -u
 
-source configuration_helpers
-
 if [[ -z ${1+x} ]]; then
-  # In case the script is executed standalone.
-  text="${RED}Please provide an experiment directory as the first argument of "
-  text+="the call to this script.${NC}"
-  echo -e "$text"
-  exit 1
-fi
-EXPERIMENT_DIR=$1
-
-if [[ -z ${2+x} ]]; then
   PADDING=""
 else
-  PADDING=$2
+  PADDING=$1
 fi
 
 __open_on_client() {
@@ -34,12 +23,27 @@ __open_on_client() {
     # Open the client map
     echo -e "${padding}Opening the ${EMPH}Client Map${NC} on ${EMPH}$client_name${NC}..."
 
-    local command="osascript \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/macos/open_client_map.scpt '$CLIENT_MAP_URL' $player_name"
-    ssh $EXPERIMENT_USER@$client_address "$command" >/dev/null
-    if [[ $? -eq 0 ]]; then
-      echo -e "${padding} ${EMPH}Client Map${GREEN} opened successfully.${NC}"
+    # Port forward in the client map can bypass Google Chrome's security
+    # It assumes socat is installed in the client machine
+    local log_path="\$HOME/$EXPERIMENT_DIR/tmp/${client_name}_port_forwarding.log"
+    local pid_path="\$HOME/$EXPERIMENT_DIR/tmp/${client_name}_port_forwarding.pid"
+
+    local command="cd \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/macos/; ./port_forwarding "
+    command+="$log_path $pid_path"
+    # shellcheck disable=SC2029
+    if ssh "$EXPERIMENT_USER@$client_address" "$command" >/dev/null; then
+      echo -e "${padding} ${GREEN}Port forwarded successfully.${NC}"
+
+      # If port forwarding worked, we can proceed with opening the client map
+      local command="osascript \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/macos/open_client_map.scpt "
+      command+="'https://localhost:9000/ClientMap/map' $player_name"
+      if ssh "$EXPERIMENT_USER@$client_address" "$command" >/dev/null; then
+        echo -e "${padding} ${EMPH}Client Map${GREEN} opened successfully.${NC}"
+      else
+        echo -e "${padding} ${RED}Failed to open the ${EMPH}Client Map${RED}.${NC}"
+      fi
     else
-      echo -e "${padding} ${RED}Failed to open the ${EMPH}Client Map${RED}.${NC}"
+      echo -e "${padding} ${RED}Failed to forward port on ${EMPH}$client_name${RED}.${NC}"
     fi
   fi
 }
@@ -50,9 +54,9 @@ __open_client_maps() {
   source collect_player_names "$EXPERIMENT_DIR" "$padding"
   echo -e "${padding}Opening the ${EMPH}Client Maps${NC}..."
 
-  __open_on_client "lion" "lion.local" $LION_PLAYER_NAME "$padding "
-  __open_on_client "tiger" "tiger.local" $TIGER_PLAYER_NAME "$padding "
-  __open_on_client "leopard" "leopard.local" $LEOPARD_PLAYER_NAME "$padding "
+  __open_on_client "lion" "lion.local" "$LION_PLAYER_NAME" "$padding "
+  __open_on_client "tiger" "tiger.local" "$TIGER_PLAYER_NAME" "$padding "
+  __open_on_client "leopard" "leopard.local" "$LEOPARD_PLAYER_NAME" "$padding "
 }
 
 __open_client_maps "$PADDING"
