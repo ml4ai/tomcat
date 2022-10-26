@@ -60,25 +60,32 @@ def check_time_difference(mission_start, mission_end):
         )
 
 
-def read_subject_id(TrialMessages):   
-    for i in range(len(TrialMessages)):
-        try:
-            if i == 0:
-                print(colored("\n[Status] Trial info:", "red", attrs=["bold"]))
-            #Display details about the minecraft map and test bed    
-            print(colored('\t Testbed version:', 'magenta'), TrialMessages[i]['data']['testbed_version'])
-            print(colored('\t Map name:','magenta'), TrialMessages[i]['data']['map_name'])
+def read_subject_id(TrialMessages):
 
-            print(colored("\n[Status] subject info:", "red", attrs=["bold"]))
-            for idx, sub in enumerate(TrialMessages[i]['data']['subjects']):
-                # Display subject IDs, call sign and minecraft player name
-                print(colored("\t Subect ID", "magenta"), idx,":", sub, 
-                    colored("\t Call Sign:", "magenta"), TrialMessages[i]['data']['client_info'][idx]['callsign'], 
-                    colored("\t Player name:", "magenta"), TrialMessages[i]['data']['client_info'][idx]['playername'])
-            if idx == 2:
-                    break
-        except:
-            continue
+    print(colored("\n[Status] Subject info:", "red", attrs=["bold"]))
+    try:
+        # Display subject IDs
+        for idx, sub in enumerate(
+            TrialMessages[0]["data"]["metadata"]["trial"]["subjects"]
+        ):
+            print(colored("\t Subect ID", "magenta"), idx, ":", sub)
+        # Display trial name
+        print(
+            colored("\n[Status] Mission name:", "red", attrs=["bold"]),
+            TrialMessages[0]["data"]["metadata"]["trial"]["name"],
+        )
+    except:
+        # Display subject IDs
+        for idx, sub in enumerate(
+            TrialMessages[0]["data"]["subjects"]
+        ):
+            print(colored("\t Subect ID", "magenta"), idx, ":", sub)        
+        # Display trial name
+        print(
+            colored("\n[Status] Mission name:", "red", attrs=["bold"]),
+            TrialMessages[0]['data']['experiment_mission'],
+        )
+
 
 def read_metadata_as_json(path):
     """
@@ -96,6 +103,7 @@ def read_metadata_as_json(path):
     TrialMessages = []
     count = 0
     with open(path, "r") as f:
+        condition = []
         for line in f:
             count += 1
             try:
@@ -107,8 +115,29 @@ def read_metadata_as_json(path):
                 ):
                     if json_message["data"]["mission_state"] == "Start":
                         mission_start = json_message["msg"]["timestamp"]
-                    else:
+                        condition.append('Start')
+                    if json_message["data"]["mission_state"] == "Stop":
                         mission_end = json_message["msg"]["timestamp"]
+                        condition.append('Stop')
+                        
+                if len(condition) == 2:
+                    continue
+                else: 
+                    '''
+                    There can be issue where the experimentor ends the mission
+                    abruptly, then mission_state wouldn't have stop message. 
+                    Switch to trial message instead and see when the trial 
+                    ended and use that as mission_end. 
+                    '''
+                    if (
+                        json_message["header"]["message_type"] == "trial"
+                        ):
+                        if json_message["msg"]["sub_type"] == "stop":
+                            print(
+                            colored("[Warning] Mission end not found. Using trial end as mission end!", "yellow")
+                            )
+                            mission_end = json_message["msg"]["timestamp"]
+                        
             except:
                 print(
                     colored("[Error] Cannot read JSON line", "red"),
