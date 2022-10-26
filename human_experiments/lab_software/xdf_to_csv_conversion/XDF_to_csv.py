@@ -4,9 +4,9 @@ import pyxdf
 import shutil
 import argparse
 from termcolor import colored
-from utils import get_start_stop_time_from_xdf, dataframe_to_csv, create_time_distribution
+from utils import get_start_stop_time_from_xdf, dataframe_to_csv, create_time_distribution, str2bool
 
-def read_xdf(xdf_file_paths, rootdir_baseline_task, rootdir_minecraft_data, subject_id):
+def read_xdf(xdf_file_paths, rootdir_baseline_task, rootdir_minecraft_data, subject_id, extract_pkl, extract_csv):
     """
     Read the XDF files.
     """
@@ -27,7 +27,7 @@ def read_xdf(xdf_file_paths, rootdir_baseline_task, rootdir_minecraft_data, subj
                 time_distribution_human_readable_nirs, time_distribution_unix_nirs = create_time_distribution(time_start_streams_nirs, 
                                                                             time_end_streams_nirs, len(data[i]['time_series']))
                 dataframe_to_csv(path, data[i]['time_series'], 'NIRS', time_distribution_human_readable_nirs, 
-                time_distribution_unix_nirs, rootdir_baseline_task, rootdir_minecraft_data, subject_id)
+                time_distribution_unix_nirs, rootdir_baseline_task, rootdir_minecraft_data, subject_id, extract_pkl, extract_csv)
 
             elif data[i]['info']['type'] == ['Markers']:
                 #We don't have physical marker for our physio data
@@ -43,7 +43,7 @@ def read_xdf(xdf_file_paths, rootdir_baseline_task, rootdir_minecraft_data, subj
                 time_distribution_human_readable_eeg, time_distribution_unix_eeg = create_time_distribution(time_start_streams_eeg, 
                                                                             time_end_streams_eeg, len(data[i]['time_series'])) 
                 dataframe_to_csv(path, data[i]['time_series'], 'EEG', time_distribution_human_readable_eeg, 
-                time_distribution_unix_eeg, rootdir_baseline_task, rootdir_minecraft_data, subject_id)
+                time_distribution_unix_eeg, rootdir_baseline_task, rootdir_minecraft_data, subject_id, extract_pkl, extract_csv)
 
             elif data[i]['info']['type'] == ['Gaze']:
                 print(
@@ -53,7 +53,7 @@ def read_xdf(xdf_file_paths, rootdir_baseline_task, rootdir_minecraft_data, subj
                 time_distribution_human_readable_gaze, time_distribution_unix_gaze = create_time_distribution(time_start_streams_gaze, 
                                                                             time_end_streams_gaze, len(data[i]['time_series'])) 
                 dataframe_to_csv(path, data[i]['time_series'], 'Gaze', time_distribution_human_readable_gaze, 
-                time_distribution_unix_gaze, rootdir_baseline_task, rootdir_minecraft_data, subject_id)
+                time_distribution_unix_gaze, rootdir_baseline_task, rootdir_minecraft_data, subject_id, extract_pkl, extract_csv)
             
             elif data[i]['info']['type'] == ['Accelerometer']:
                 print(
@@ -62,7 +62,7 @@ def read_xdf(xdf_file_paths, rootdir_baseline_task, rootdir_minecraft_data, subj
                 #create_csv_file(path, 'Accelerometer')
                 # time_start_streams_accel, time_end_streams_accel = get_start_stop_time_from_xdf(data[i]) #get the unix time
 
-def look_for_XDF_files(rootdir_xdf, rootdir_baseline_task, rootdir_minecraft_data, subject_id):
+def look_for_XDF_files(rootdir_xdf, rootdir_baseline_task, rootdir_minecraft_data, subject_id, extract_pkl, extract_csv):
     """
     Walk through root directory, looking for the xdf files. 
     """
@@ -75,7 +75,7 @@ def look_for_XDF_files(rootdir_xdf, rootdir_baseline_task, rootdir_minecraft_dat
                     colored('[Status] xdf file found at ', 'green', attrs=['bold']), 
                     colored(os.path.join(root, file), 'blue'))
     
-    read_xdf(xdf_file_paths, rootdir_baseline_task, rootdir_minecraft_data, subject_id) #1. read all the XDF files 
+    read_xdf(xdf_file_paths, rootdir_baseline_task, rootdir_minecraft_data, subject_id, extract_pkl, extract_csv) #1. read all the XDF files 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -101,12 +101,26 @@ if __name__ == "__main__":
         required=True, action='append', 
         help="Enter the Path to folder with baseline task data")
 
+    parser.add_argument(
+        '--pkl',
+        default=False, 
+        type=str2bool,
+        help="By setting pkl to True you extract xdf files as pickle file")
+
+    parser.add_argument(
+        '--csv',
+        default=True, 
+        type=str2bool, 
+        help="By setting pkl to True you extract xdf files as pickle file")
+
     arg = parser.parse_args()
     rootdir_xdf = arg.p1
     rootdir_baseline_task = arg.p2
     rootdir_minecraft_data = arg.p3
     subject_id = arg.s
+    extract_pkl = arg.pkl
+    extract_csv = arg.csv
     print(colored('[Status] Root Directory:', 'green', attrs=['bold']), colored(rootdir_xdf, 'blue'))
-    sys.exit(look_for_XDF_files(rootdir_xdf, rootdir_baseline_task, rootdir_minecraft_data, subject_id))
+    sys.exit(look_for_XDF_files(rootdir_xdf, rootdir_baseline_task, rootdir_minecraft_data, subject_id, extract_pkl, extract_csv))
 
 #python3 XDF_to_csv.py --p1 /Users/calebjonesshibu/Desktop/tom/dry_runs/exp_2022_09_13_10/exp_2022_09_13_10/ --p2 /Users/calebjonesshibu/Desktop/tom/dry_runs/exp_2022_09_13_10/exp_2022_09_13_10/baseline_tasks --p3 /Users/calebjonesshibu/Desktop/tom/dry_runs/exp_2022_09_13_10/exp_2022_09_13_10/minecraft/ --s 0913_A_1 --s 0913_A_2 --s 0913_A_3
