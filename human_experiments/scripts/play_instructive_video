@@ -2,8 +2,6 @@
 
 set -u
 
-source configuration_helpers
-
 if [[ -z ${1+x} ]]; then
   PADDING=""
 else
@@ -25,9 +23,9 @@ __play_on_client() {
 
     # If the location of the video in the client machine changes, make sure to
     # update the applescript below.
-    local command="osascript \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/macos/play_instructive_video.scpt"
-    ssh $EXPERIMENT_USER@$client_address "$command" >/dev/null
-    if [[ $? -eq 0 ]]; then
+    local command="open \$HOME/resources/tomcat/video.mp4"
+    # shellcheck disable=SC2029
+    if ssh "$EXPERIMENT_USER@$client_address" "$command" >/dev/null; then
       echo -e "${padding} ${EMPH}Video${GREEN} opened successfully.${NC}"
     else
       echo -e "${padding} ${RED}Failed to open the ${EMPH}video${RED}.${NC}"
@@ -40,9 +38,9 @@ __play_videos() {
 
   echo -e "${padding}Playing the ${EMPH}videos${NC}..."
 
-  __play_on_client "lion" "lion.local" "$padding "
-  __play_on_client "tiger" "tiger.local" "$padding "
-  __play_on_client "leopard" "leopard.local" "$padding "
+  __play_on_client "lion" "lion.local" "$PADDING "
+  __play_on_client "tiger" "tiger.local" "$PADDING "
+  __play_on_client "leopard" "leopard.local" "$PADDING "
 }
 
 __play_videos "$PADDING"

@@ -74,7 +74,7 @@ def read_muliple_csv_files(path, csvfiles, total_time, file_name, sid):
             elif 'cooperative_0' in csvfile:
                 df = df.iloc[: , :-1]
                 print(colored('\t Three participants competing against AI','magenta'))
-                read_csv_column_name(df, sid, -6, file_name)
+                read_csv_column_name(df, sid, -8, file_name)
 
         elif file_name == 'rest_state':
             #rest state doesnt have any subject information

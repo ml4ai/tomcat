@@ -1,0 +1,3 @@
+DATA_ROOT_DIR_GROUP=$HOME/data/cat/LangLab/experiments/study_3_pilot/presession
+DATA_ROOT_DIR_DRYRUN=$HOME/data/cat/LangLab/dry_runs/presession
+DATA_ROOT_DIR_TEST=$HOME/data/cat/LangLab/dev/presession

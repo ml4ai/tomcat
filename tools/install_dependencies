@@ -9,7 +9,7 @@ export TOMCAT
 
 echo "Installing ToMCAT dependencies."
 
-COMMON_MACOS_DEPS="cmake boost doxygen ffmpeg gradle mosquitto nlohmann-json openssl yaml-cpp"
+COMMON_MACOS_DEPS="cmake boost doxygen ffmpeg gradle mosquitto nlohmann-json openssl yaml-cpp socat"
 __install_dependencies_using_macports() {
     echo "'port' executable detected, assuming that MacPorts"
     echo "(https://www.macports.org) is installed and is the package manager."

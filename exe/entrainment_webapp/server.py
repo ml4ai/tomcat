@@ -16,8 +16,13 @@ from logging import debug, info
 import numpy as np
 from soundfile import SoundFile
 import os.path
+import argparse
+from functools import partial
+
 
 RECORDING_IN_PROGRESS = True
+
+
 async def consumer_handler(websocket, path):
     # Number of channels. Currently we expect only one channel.
     n_channels = 1
@@ -28,22 +33,19 @@ async def consumer_handler(websocket, path):
         participant_id = str(uuid4())
     await websocket.send(json.dumps({"participantId": participant_id}))
 
-
     info(f"Participant {participant_id} is now connected.")
 
     sample_rate = int(query_params["sampleRate"][0])
     audio_stream = AudioStream()
 
+    if os.path.exists(f"{path}/participant_{participant_id}.wav"):
+        os.remove(f"{path}/participant_{participant_id}.wav")
 
-    if os.path.exists(f"recordings/participant_{participant_id}.wav") :
-        os.remove(f"recordings/participant_{participant_id}.wav")
-
-    if os.path.exists(f"recordings") == False:
-        os.mkdir("recordings")
+    if not os.path.exists(path):
+        os.mkdir(f"{path}")
 
     with SoundFile(
-
-        f"recordings/participant_{participant_id}.wav",
+        f"{path}/participant_{participant_id}.wav",
         "w",
         sample_rate,
         n_channels,
@@ -61,11 +63,16 @@ async def consumer_handler(websocket, path):
             audio_stream.fill_buffer(chunk)
 
 
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="Starts the entrainment app server."
+    )
+    parser.add_argument("--out_dir", type=str, required=True, help="Directory where data must be saved.")
 
-
-start_server = websockets.serve(consumer_handler, "localhost", 8888)
-try:
-    asyncio.get_event_loop().run_until_complete(start_server)
-    asyncio.get_event_loop().run_forever()
-except KeyboardInterrupt:
-    sys.stderr.write("Websocket Closed. Exiting now.")
+    args = parser.parse_args()
+    start_server = websockets.serve(partial(consumer_handler, path=args.out_dir), "localhost", 8888)
+    try:
+        asyncio.get_event_loop().run_until_complete(start_server)
+        asyncio.get_event_loop().run_forever()
+    except KeyboardInterrupt:
+        sys.stderr.write("Websocket Closed. Exiting now.")
