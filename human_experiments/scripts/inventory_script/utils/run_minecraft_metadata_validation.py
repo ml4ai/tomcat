@@ -16,7 +16,7 @@ def check_vocalics(rootdir):
                 if name.endswith((".sql")):
                     if os.stat(root+'/'+name).st_size!=0:
                         print(
-                            colored("[Status] Voclic features found:", "blue", attrs=["bold"]),
+                            colored("\n [Status] Voclic features found:", "blue", attrs=["bold"]),
                             colored(name, "cyan"),
                         )
             except:
@@ -34,7 +34,7 @@ def check_tar_file(rootdir):
                 if name.endswith((".tar.gz")):
                     if os.stat(rootdir+name).st_size!=0:
                         print(
-                            colored("[Status] Asist tar file:", "blue", attrs=["bold"]),
+                            colored("\n [Status] Asist tar file:", "blue", attrs=["bold"]),
                             colored(name, "cyan"),
                         )
             except:
@@ -52,7 +52,7 @@ def check_audio(rootdir, x):
                 if name.endswith((".wav")):
                     if os.stat(rootdir+x+'/audio/'+name).st_size!=0:
                         print(
-                            colored("[Status] Audio file for", "blue", attrs=["bold"]),
+                            colored("\n [Status] Audio file for", "blue", attrs=["bold"]),
                             colored(x, 'green', attrs=["bold"]),
                             colored('found', 'blue', attrs=["bold"]),
                             colored(name, "cyan"),

@@ -11,28 +11,7 @@ from tasks.rest_state.config import TOTAL_TIME as total_time_rest_state
 from tasks.affective_task.config import TOTAL_TIME as total_time_affective_task
 from tasks.ping_pong_task.config import TOTAL_TIME as total_time_ping_pong_task
 
-def check_subject_id(subject_id, sid):
-    num_sub = len(subject_id)
-    for count, subj_id in enumerate(subject_id):
-        print(subj_id)
-        if subj_id in sid:
-            if count == num_sub-1:
-                print(colored('\t Subect ID:','magenta'), subject_id)
-        else:
-            print(colored('[Error] Subject ID does not match','red'), u'\N{cross mark}')    
-
-def read_csv_column_name(df, sid, idx, file_name):
-    subject_id = []
-    if file_name == 'finger_tapping':
-        for sub_id in df.columns[idx:]: subject_id.append(sub_id)
-        check_subject_id(subject_id, sid)
-
-    if file_name == 'ping_pong':
-        for sub_id in df.columns[idx:]: subject_id.append(sub_id)
-        subject_id = {x.removesuffix('_x').removesuffix('_y') for x in subject_id}
-        check_subject_id(subject_id, sid)
-
-def read_muliple_csv_files(path, csvfiles, total_time, file_name, sid):
+def read_muliple_csv_files(path, csvfiles, total_time):
     for csvfile in csvfiles:
         #display which file its currently reading 
         print(colored('\n\t File:','magenta'), csvfile)
@@ -56,64 +35,35 @@ def read_muliple_csv_files(path, csvfiles, total_time, file_name, sid):
             print(delta)
             print(colored('[Error] Timing for task is off by a large margin','red'), u'\N{cross mark}')
 
-        #check if the subject IDs passed as an argument match the ones in the CSV files
-
-        if file_name == 'affective':
-            #Affective task, the csv file name contains subject ID
-            if 'team_' in csvfile:
-                #the team affective task has the subject name as rows
-                df = df.dropna()
-                check_subject_id(set(df['subject_id'].values.tolist()), sid)
-        elif file_name == 'ping_pong':
-            if 'competitive_0' in csvfile:
-                df = df.iloc[: , :-1]
-                print(colored('\t Two participants competing against each other','magenta'))
-                read_csv_column_name(df, sid, -4, file_name)
-            elif 'competitive_1' in csvfile:
-                df = df.iloc[: , :-1]
-                print(colored('\t Single participant competing against Experimenter','magenta'))
-                read_csv_column_name(df, sid, -4, file_name)
-            elif 'cooperative_0' in csvfile:
-                df = df.iloc[: , :-1]
-                print(colored('\t Three participants competing against AI','magenta'))
-                read_csv_column_name(df, sid, -8, file_name)
-
-        elif file_name == 'rest_state':
-            #rest state doesnt have any subject information
-            continue
-        elif file_name == 'finger_tapping':
-            #finger tapping, last three columns name have subject ID
-            read_csv_column_name(df, sid, -3, file_name)
-
-def csvread(path, all_files, file_name, sid):
+def csvread(path, all_files, file_name):
     #count csv files for ever task
     csvfiles = list(filter(lambda f: f.endswith('.csv'), all_files))
 
     if file_name == 'finger_tapping':
         if len(csvfiles) == 1:
-            read_muliple_csv_files(path, csvfiles, total_time_finger_tapping, file_name, sid)
+            read_muliple_csv_files(path, csvfiles, total_time_finger_tapping)
         else:
             print(colored('\n[Error] CSV file under finger tapping task is missing','red'), u'\N{cross mark}')
 
     elif file_name == 'rest_state':
         if len(csvfiles) == 1:
-            read_muliple_csv_files(path, csvfiles, total_time_rest_state, file_name, sid)
+            read_muliple_csv_files(path, csvfiles, total_time_rest_state)
         else:
             print(colored('\n[Error] CSV file under rest state task is missing','red'), u'\N{cross mark}')
 
     elif file_name == 'affective':
         if len(csvfiles) == 4:
-            read_muliple_csv_files(path, csvfiles, total_time_affective_task, file_name, sid)
+            read_muliple_csv_files(path, csvfiles, total_time_affective_task)
         else:
             print(colored('\n[Error] CSV file under affective task is missing','red'), u'\N{cross mark}')
 
     elif file_name == 'ping_pong':
         if len(csvfiles) == 3:
-            read_muliple_csv_files(path, csvfiles, total_time_ping_pong_task, file_name, sid)
+            read_muliple_csv_files(path, csvfiles, total_time_ping_pong_task)
         else:
             print(colored('\n[Error] CSV file under ping pong task is missing','red'), u'\N{cross mark}')
 
-def fcount_baseline_task(rootdir, sid):
+def fcount_baseline_task(rootdir):
     #check if subdirectories for baseline task exist or not
     file_names = sorted(['finger_tapping', 'rest_state', 'affective', 'ping_pong'])
     count = 0
@@ -121,8 +71,7 @@ def fcount_baseline_task(rootdir, sid):
         if os.path.isdir(os.path.join(rootdir,x)): 
             if file_names[count] in x:
                 print(colored('\n[Status] Sub Directory:', 'blue', attrs=['bold']), colored(os.path.join(rootdir,x), 'green'), u'\N{check mark}')
-                csvread(os.path.join(rootdir,x), os.listdir(os.path.join(rootdir,x)), file_names[count], sid)
+                csvread(os.path.join(rootdir,x), os.listdir(os.path.join(rootdir,x)), file_names[count])
             else:
                 print(colored('\n[Error] File does not exist','red'), u'\N{cross mark}')
             count += 1
-    #print('Number of folders:', count)

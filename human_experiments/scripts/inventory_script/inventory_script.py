@@ -7,7 +7,7 @@ import datetime
 from termcolor import colored
 from utils import checkfile_minecraft, fcount_baseline_task, check_audio, check_tar_file, check_vocalics
 
-def inventory_script(rootdir, sid):
+def inventory_script(rootdir):
     dir = os.listdir(rootdir)
 
     if len(dir) == 0:
@@ -20,34 +20,28 @@ def inventory_script(rootdir, sid):
         )
     else:
         folder_seq = ['baseline_tasks', 'minecraft', 'lion', 'tiger', 'leopard', 'asist_logs', 'vocalics']
-        fcount_baseline_task(rootdir+'baseline_tasks', sid)
-        # checkfile_minecraft(rootdir+'minecraft')
-        # check_audio(rootdir, 'lion')
-        # check_audio(rootdir, 'tiger')
-        # check_audio(rootdir, 'leopard')
-        # check_tar_file(rootdir)
-        # check_vocalics(rootdir)
+        fcount_baseline_task(rootdir+'baseline_tasks')
+        checkfile_minecraft(rootdir+'minecraft')
+        check_audio(rootdir, 'lion')
+        check_audio(rootdir, 'tiger')
+        check_audio(rootdir, 'leopard')
+        check_tar_file(rootdir)
+        check_vocalics(rootdir)
             
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Inventory Script that checks for metadata files from baseline task and minecraft"
     )
     parser.add_argument(
-        "--p1",
+        "--p",
         required=True,
         help="Path to experiment folder",
     )
-    parser.add_argument(
-        "--s", 
-        required=True, 
-        help="Enter the Subject ID", 
-        action='append'
-    )
+
     arg = parser.parse_args()
-    rootdir = arg.p1
-    sid = arg.s
+    rootdir = arg.p
     print(
         colored("[Status] Root Directory:", "blue", attrs=["bold"]),
         colored(rootdir, "cyan"),
     )
-    sys.exit(inventory_script(rootdir, sid))
+    sys.exit(inventory_script(rootdir))
