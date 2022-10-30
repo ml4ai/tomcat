@@ -96,15 +96,42 @@ fi
 set +e 
 
 # The following should be fine if we reverse cat and tom, but since cat
-# currently has most of the data to be transfered, we start with it.
+# currently has most of the data to be transferred, we start with it.
+#
+# The symmetric updates has the side effect that if one wants to delete a file
+# on one disk, they should delete it on both of them. 
 # 
+
+${VERBOSE_ECHO} "Sync_tom_and_cat_2 executing first rsync"
+${VERBOSE_ECHO} "    rsync ${rsync_options} ${cat_data_dir} ${tom_data_dir}"
+${VERBOSE_ECHO} ""
+
 rsync ${rsync_options} ${cat_data_dir} ${tom_data_dir} 2>&1
+
+${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+${VERBOSE_ECHO} ""
+
+${VERBOSE_ECHO} "Sync_tom_and_cat_2 executing second rsync"
+${VERBOSE_ECHO} "    rsync {rsync_options} ${tom_data_dir} ${cat_data_dir}"
+${VERBOSE_ECHO} ""
+
 rsync ${rsync_options} ${tom_data_dir} ${cat_data_dir} 2>&1
+
+${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+${VERBOSE_ECHO} ""
 
 # Redo the first rsync to make sure we synchronize any backups that the second
 # rsync created. 
 #
+${VERBOSE_ECHO} "Sync_tom_and_cat_2 executing third rsync"
+${VERBOSE_ECHO} "    ${rsync_options} ${cat_data_dir} ${tom_data_dir}"
+${VERBOSE_ECHO} ""
+
 rsync ${rsync_options} ${cat_data_dir} ${tom_data_dir} 2>&1
 
+${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+${VERBOSE_ECHO} ""
+
 exit ${exit_status}
+
 
