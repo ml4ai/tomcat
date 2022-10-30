@@ -46,6 +46,11 @@ tom_data_dir="${data}/tom/LangLab/experiments/"
 trap 'exit_status=$?;
       echo 
       echo TRP: Command on or near line $LINENO of $0 failed with status $exit_status 
+      #
+      # Record time in case we need to map issues to system logs. 
+      #
+      echo TRP: Time $(date)
+      #
       echo RAW: $BASH_COMMAND
       #
       # The following naive parsing and eval assumes a limited number of cases
