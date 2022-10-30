@@ -99,6 +99,12 @@ do
     fi 
 done
 
+if [[ "${IVI_VERBOSE}" == "1" ]]; then
+    export VERBOSE_ECHO="echo IVB: "
+else 
+    export VERBOSE_ECHO=": "
+fi
+
 export TOMCAT_DIR="${HOME}/tomcat" 
 
 # We control the meaning of basic commands by limiting the path to standard root
