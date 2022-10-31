@@ -139,7 +139,7 @@ eval echo " " ${plumbing} ${log_file}
 
 set -o pipefail 
 
-eval sync_tom_and_cat_2 ${plumbing} ${log_file}
+eval sg langlab -c 'sync_tom_and_cat_2' ${plumbing} ${log_file}
 exit_status=$?
 
 eval echo "Script sync_tom_and_cat exiting with status ${exit_status} on: $(date)" ${plumbing} ${log_file}
