@@ -82,7 +82,13 @@ mkdir -p "${tom_data_dir}"  2>&1
 #
 ### rsync_options="-a -u -b --suffix ${backup_suffix}"
 ### rsync_options="-rlptgD --crtimes -u -b --suffix ${backup_suffix}"
-rsync_options="-rlptD -u -b --suffix ${backup_suffix} --modify-window=10"
+# 
+# These options are causing grief. Despite preserving time and having a generous
+# modify-window, we will still create backups of files that have not changed.
+# Take a bit more risk to go faster and suffer less grief. 
+# rsync_options="-rlptD -u -b --suffix ${backup_suffix} --modify-window=10"
+#
+rsync_options="-rlptD -u --size-only"
 
 if [[ "${IVI_VERBOSE}" != "0" ]]; then
     rsync_options="-v ${rsync_options}"
