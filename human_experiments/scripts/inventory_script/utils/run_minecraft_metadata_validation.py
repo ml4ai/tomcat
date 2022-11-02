@@ -6,6 +6,67 @@ import argparse
 import datetime
 from termcolor import colored
 
+def check_vocalics(rootdir):
+    '''
+    Vocalics is usually under exp_*/testbed_logs/asist_logs_*/speech_analyzer_agent
+    '''
+    for root, dirs, files in os.walk(rootdir+'testbed_logs'):
+        for name in files:
+            try:
+                if name.endswith((".sql")):
+                    if os.stat(root+'/'+name).st_size!=0:
+                        print(
+                            colored("\n [Status] Voclic features found:", "blue", attrs=["bold"]),
+                            colored(name, "cyan"),
+                        )
+            except:
+                print(
+                    colored("[Error] Voclic features empty or not present", 'red',attrs=["bold"])
+                )    
+
+def check_tar_file(rootdir):
+    '''
+    asist_logs_*.tar.gz is usually under exp_*/
+    '''
+    for _, _, files in os.walk(rootdir):
+        for name in files:
+            try:
+                if name.endswith((".tar.gz")):
+                    if os.stat(rootdir+name).st_size!=0:
+                        print(
+                            colored("\n [Status] Asist tar file:", "blue", attrs=["bold"]),
+                            colored(name, "cyan"),
+                        )
+            except:
+                print(
+                    colored("[Error] Asist tar file is empty or not present", 'red',attrs=["bold"])
+                )    
+
+def check_audio(rootdir, x):
+    '''
+    Audio file will be under exp_*/lion/audio, exp_*/tiger/audio, exp_*/leopard/audio
+    '''
+    for _, _, files in os.walk(rootdir + x):
+        for name in files:
+            try:
+                if name.endswith((".wav")):
+                    if os.stat(rootdir+x+'/audio/'+name).st_size!=0:
+                        print(
+                            colored("\n [Status] Audio file for", "blue", attrs=["bold"]),
+                            colored(x, 'green', attrs=["bold"]),
+                            colored('found', 'blue', attrs=["bold"]),
+                            colored(name, "cyan"),
+                        )
+                    else:
+                        print(
+                        colored("[Error] Audio file is empty", attrs=["bold"]),
+                        colored(x, "cyan"),
+                        )       
+            except:
+                print(
+                colored("[Error] Audio file doesn't exist", attrs=["bold"]),
+                colored(x, "cyan"),
+                )                      
 
 def check_time_difference(mission_start, mission_end):
     """
@@ -24,11 +85,11 @@ def check_time_difference(mission_start, mission_end):
     )
 
     print(
-        colored("\n[Status] Mission started at time:", "red", attrs=["bold"]),
+        colored("\n[Status] Mission started at time:", "blue", attrs=["bold"]),
         mission_start,
     )
     print(
-        colored("\n[Status] Mission ended at time:", "red", attrs=["bold"]),
+        colored("\n[Status] Mission ended at time:", "blue", attrs=["bold"]),
         mission_end,
     )
 
@@ -45,7 +106,7 @@ def check_time_difference(mission_start, mission_end):
 
     if min > 0:
         print(
-            colored("\n[Status] Trial lasted for: ", "red", attrs=["bold"]),
+            colored("\n[Status] Trial lasted for: ", "blue", attrs=["bold"]),
             min,
             "Minutes",
             sec,
@@ -62,7 +123,7 @@ def check_time_difference(mission_start, mission_end):
 
 def read_subject_id(TrialMessages):
 
-    print(colored("\n[Status] Subject info:", "red", attrs=["bold"]))
+    print(colored("\n[Status] Subject info:", "blue", attrs=["bold"]))
     try:
         # Display subject IDs
         for idx, sub in enumerate(
@@ -71,7 +132,7 @@ def read_subject_id(TrialMessages):
             print(colored("\t Subect ID", "magenta"), idx, ":", sub)
         # Display trial name
         print(
-            colored("\n[Status] Mission name:", "red", attrs=["bold"]),
+            colored("\n[Status] Mission name:", "blue", attrs=["bold"]),
             TrialMessages[0]["data"]["metadata"]["trial"]["name"],
         )
     except:
@@ -82,7 +143,7 @@ def read_subject_id(TrialMessages):
             print(colored("\t Subect ID", "magenta"), idx, ":", sub)        
         # Display trial name
         print(
-            colored("\n[Status] Mission name:", "red", attrs=["bold"]),
+            colored("\n[Status] Mission name:", "blue", attrs=["bold"]),
             TrialMessages[0]['data']['experiment_mission'],
         )
 
@@ -147,7 +208,7 @@ def read_metadata_as_json(path):
     check_time_difference(mission_start, mission_end)
 
 
-def checkfile(rootdir):
+def checkfile_minecraft(rootdir):
     """
     This function checks if the .metadata file is present under the given path or not. It also checks
     if the .metadata file is empty or not.
@@ -168,7 +229,7 @@ def checkfile(rootdir):
                 # check if .metadata file exists or not
                 print(
                     colored(
-                        "\n[Status] Metadata File:", "red", attrs=["bold"]
+                        "\n[Status] Metadata File:", "blue", attrs=["bold"]
                     ),
                     colored(os.path.join(rootdir, x), "green"),
                     "\N{check mark}",
@@ -198,21 +259,3 @@ def checkfile(rootdir):
                     ),
                     "\N{cross mark}",
                 )
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Minecraft data validation script"
-    )
-    parser.add_argument(
-        "--p",
-        required=True,
-        help="Path to the folder with the Minecraft data",
-    )
-    arg = parser.parse_args()
-    rootdir = arg.p
-    print(
-        colored("[Status] Root Directory:", "red", attrs=["bold"]),
-        colored(rootdir, "blue"),
-    )
-    sys.exit(checkfile(rootdir))

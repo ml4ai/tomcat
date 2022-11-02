@@ -1,0 +1,40 @@
+#!/bin/bash
+
+set -u
+
+if [[ -z ${1+x} ]]; then
+  PADDING=""
+else
+  PADDING=$1
+fi
+
+echo -n -e "${PADDING}Please, enter the ${EMPH}Team Number${RED} for this experiment: ${NC}"
+read -r team_number
+
+pushd "$HOME/$SYSTEMS_DIR/testbed/Tools/docker-logs" >/dev/null || exit 1
+  while true; do
+    if ./get_all_logs.sh -t "$team_number" | sed "s/^/${PADDING} /"; then
+      # Move the compressed logs to the experiment folder
+      mkdir -p "$EXPERIMENT_DIR/testbed_logs" >/dev/null
+
+      log_filename="$(find asist_logs_$team_number*.tar.gz)"
+      mv "$log_filename" "$EXPERIMENT_DIR/testbed_logs"
+
+      break
+    else
+      echo -e "${PADDING}${RED}Failed to extract the logs for the session. Make sure the testbed is up and retry.${NC}"
+      if ! yes_no_question "${PADDING}Do you want to ${EMPH}RETRY${NC}?"; then
+        break
+      fi
+    fi
+  done
+popd >/dev/null || exit 1
+
+pushd "$EXPERIMENT_DIR/testbed_logs" >/dev/null || exit 1
+  # Decompress file and remove compressed file
+  tar -xvzf "$EXPERIMENT_DIR/testbed_logs/$log_filename" | sed "s/^/${PADDING} /"
+  rm "$EXPERIMENT_DIR/testbed_logs/$log_filename"
+popd >/dev/null || exit 1
+
+
+
