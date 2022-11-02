@@ -118,7 +118,8 @@ ${VERBOSE_ECHO} "    rsync ${rsync_options} ${cat_data_dir} ${tom_data_dir}"
 ${VERBOSE_ECHO} ""
 
 rsync ${rsync_options} ${cat_data_dir} ${tom_data_dir} 2>&1
-
+rc=$?
+${VERBOSE_ECHO} "Rsync return code was ${rc}"
 ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
 ${VERBOSE_ECHO} ""
 
@@ -127,6 +128,10 @@ ${VERBOSE_ECHO} "    rsync {rsync_options} ${tom_data_dir} ${cat_data_dir}"
 ${VERBOSE_ECHO} ""
 
 rsync ${rsync_options} ${tom_data_dir} ${cat_data_dir} 2>&1
+rc=$?
+${VERBOSE_ECHO} "Rsync return code was ${rc}"
+${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+${VERBOSE_ECHO} ""
 
 ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
 ${VERBOSE_ECHO} ""
@@ -139,6 +144,10 @@ ${VERBOSE_ECHO} "    ${rsync_options} ${cat_data_dir} ${tom_data_dir}"
 ${VERBOSE_ECHO} ""
 
 rsync ${rsync_options} ${cat_data_dir} ${tom_data_dir} 2>&1
+rc=$?
+${VERBOSE_ECHO} "Rsync return code was ${rc}"
+${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+${VERBOSE_ECHO} ""
 
 ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
 ${VERBOSE_ECHO} ""
