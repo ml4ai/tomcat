@@ -39,8 +39,8 @@ data="/data"
 # data="${TOMCAT_DIR}/data"
 
 # Must have trailing slashes for rsync (and paths must be devoid of spaces).
-cat_data_dir="${data}/cat/LangLab/experiments/"
-tom_data_dir="${data}/tom/LangLab/experiments/"
+sensor_data_dir="${data}/cat/LangLab/experiments/"
+sensor_mirror_dir="${data}/tom/LangLab/experiments/"
 
 # Generic error reporting for basic commands
 trap 'exit_status=$?;
@@ -69,8 +69,8 @@ trap 'exit_status=$?;
 date_stamp=$(date +%y-%m-%d-%H-%M) 2>&1
 backup_suffix="-RSYNC-${date_stamp}"
 
-mkdir -p "${cat_data_dir}"  2>&1
-mkdir -p "${tom_data_dir}"  2>&1 
+mkdir -p "${sensor_data_dir}"  2>&1
+mkdir -p "${sensor_mirror_dir}"  2>&1 
 
 # We initially used '-a' which means '-rlptgoD', but setting ownership (-o) or
 # group (-g) on cross-mounted disks can cause breakage, and we do not need it.
@@ -106,51 +106,52 @@ fi
 # previous ones failed. 
 set +e 
 
-# The following should be fine if we reverse cat and tom, but since cat
-# currently has most of the data to be transferred, we start with it.
+# If we need to reverse cat and tom, then we need to reverse sensor_data_dir and
+# sensor_mirror_dir above. We originally did three syncs to, from and to, which
+# gives a true mirror including backup files, but this is too slow and unwieldy,
+# and not necessary as we now are pulling data regularly. 
 #
-# The symmetric updates has the side effect that if one wants to delete a file
-# on one disk, they should delete it on both of them. 
+
+${VERBOSE_ECHO} "Sync_tom_and_cat_2 executing rsync"
+${VERBOSE_ECHO} "    rsync ${rsync_options} ${sensor_data_dir} ${sensor_mirror_dir}"
+${VERBOSE_ECHO} ""
+
+rsync ${rsync_options} ${sensor_data_dir} ${sensor_mirror_dir} 2>&1
+rc=$?
+${VERBOSE_ECHO} "Rsync return code was ${rc}"
+${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+${VERBOSE_ECHO} ""
+
+# Now OBSOLETE
+#
+# ${VERBOSE_ECHO} "Sync_tom_and_cat_2 executing second rsync"
+# ${VERBOSE_ECHO} "    rsync {rsync_options} ${sensor_mirror_dir} ${sensor_data_dir}"
+# ${VERBOSE_ECHO} ""
 # 
-
-${VERBOSE_ECHO} "Sync_tom_and_cat_2 executing first rsync"
-${VERBOSE_ECHO} "    rsync ${rsync_options} ${cat_data_dir} ${tom_data_dir}"
-${VERBOSE_ECHO} ""
-
-rsync ${rsync_options} ${cat_data_dir} ${tom_data_dir} 2>&1
-rc=$?
-${VERBOSE_ECHO} "Rsync return code was ${rc}"
-${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
-${VERBOSE_ECHO} ""
-
-${VERBOSE_ECHO} "Sync_tom_and_cat_2 executing second rsync"
-${VERBOSE_ECHO} "    rsync {rsync_options} ${tom_data_dir} ${cat_data_dir}"
-${VERBOSE_ECHO} ""
-
-rsync ${rsync_options} ${tom_data_dir} ${cat_data_dir} 2>&1
-rc=$?
-${VERBOSE_ECHO} "Rsync return code was ${rc}"
-${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
-${VERBOSE_ECHO} ""
-
-${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
-${VERBOSE_ECHO} ""
-
-# Redo the first rsync to make sure we synchronize any backups that the second
-# rsync created. 
-#
-${VERBOSE_ECHO} "Sync_tom_and_cat_2 executing third rsync"
-${VERBOSE_ECHO} "    ${rsync_options} ${cat_data_dir} ${tom_data_dir}"
-${VERBOSE_ECHO} ""
-
-rsync ${rsync_options} ${cat_data_dir} ${tom_data_dir} 2>&1
-rc=$?
-${VERBOSE_ECHO} "Rsync return code was ${rc}"
-${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
-${VERBOSE_ECHO} ""
-
-${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
-${VERBOSE_ECHO} ""
+# rsync ${rsync_options} ${sensor_mirror_dir} ${sensor_data_dir} 2>&1
+# rc=$?
+# ${VERBOSE_ECHO} "Rsync return code was ${rc}"
+# ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+# ${VERBOSE_ECHO} ""
+# 
+# ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+# ${VERBOSE_ECHO} ""
+# 
+# # Redo the first rsync to make sure we synchronize any backups that the second
+# # rsync created. 
+# #
+# ${VERBOSE_ECHO} "Sync_tom_and_cat_2 executing third rsync"
+# ${VERBOSE_ECHO} "    ${rsync_options} ${sensor_data_dir} ${sensor_mirror_dir}"
+# ${VERBOSE_ECHO} ""
+# 
+# rsync ${rsync_options} ${sensor_data_dir} ${sensor_mirror_dir} 2>&1
+# rc=$?
+# ${VERBOSE_ECHO} "Rsync return code was ${rc}"
+# ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+# ${VERBOSE_ECHO} ""
+# 
+# ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+# ${VERBOSE_ECHO} ""
 
 exit ${exit_status}
 
