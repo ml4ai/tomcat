@@ -65,7 +65,7 @@ def read_xdf(xdf_file_paths, rootdir_baseline_task, rootdir_minecraft_data, subj
         else:
             print(
             colored('[Status] Skipping ', 'yellow', attrs=['bold']), 
-            colored(data[i]['info']['type'], 'red'))         
+            colored(exclude, 'red'))         
 
 def look_for_XDF_files(rootdir_xdf, rootdir_baseline_task, rootdir_minecraft_data, subject_id, extract_pkl, extract_csv, exclude):
     """
