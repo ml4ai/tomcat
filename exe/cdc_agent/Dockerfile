@@ -51,9 +51,6 @@ RUN echo "Installation done:"
 RUN pwd; ls
 
 
-COPY . /cdc_agent
-WORKDIR /cdc_agent
-
 # Install Paho c
 RUN echo "Cloning paho mqqt c"
 RUN git clone --branch v1.2.1 https://github.com/eclipse/paho.mqtt.c.git
@@ -68,10 +65,9 @@ RUN pwd; ls
 # build the paho c repo
 
 
-#RUN echo "setting working directory:"
 # set to project dir
-#COPY . /paho_mqtt_c
-#WORKDIR /paho_mqtt_c
+COPY . /cdc_agent
+WORKDIR /cdc_agent
 
 RUN pwd; ls
 
@@ -82,9 +78,8 @@ RUN rm -rf build  \
 && cd build \
 && pwd; ls \
 && cmake .. \
-&& make -j `nproc` paho_mqtt_c_test  \
+&& make -j `nproc` cdc_agent  \
 && cd .. 
-
 
 RUN ls
 
