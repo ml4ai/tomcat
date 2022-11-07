@@ -1,0 +1,9 @@
+version: '2'
+
+services:
+  paho_mqtt_c:
+    container_name: cpp_agent
+    build:
+      context:  .
+      dockerfile: Dockerfile 
+    image: cpp_agent:latest
