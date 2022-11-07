@@ -80,7 +80,7 @@ def look_for_XDF_files(rootdir_xdf, rootdir_baseline_task, rootdir_minecraft_dat
                     colored('[Status] xdf file found at ', 'green', attrs=['bold']), 
                     colored(os.path.join(root, file), 'blue'))
     
-    read_xdf(xdf_file_paths, rootdir_baseline_task, rootdir_minecraft_data, subject_id, extract_pkl, extract_csv, exclude) #1. read all the XDF files 
+    read_xdf(sorted(xdf_file_paths), rootdir_baseline_task, rootdir_minecraft_data, subject_id, extract_pkl, extract_csv, exclude) #1. read all the XDF files 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
