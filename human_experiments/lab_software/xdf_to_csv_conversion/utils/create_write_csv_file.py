@@ -10,6 +10,7 @@ def get_timestamps_from_dict(df, state, dict, column_name):
         rest_state_time_start, rest_state_time_stop  = dict['start_time'], dict['end_time']
         iloc_idx_start = df_temp['human_readable_time'].searchsorted(ctime(round(rest_state_time_start, 5))) 
         iloc_idx_end = df_temp['human_readable_time'].searchsorted(ctime(round(rest_state_time_stop, 5)))
+        print(iloc_idx_start)
         state_start = df_temp.index[iloc_idx_start]
         state_end = df_temp.index[iloc_idx_end]
         range_ = list(range(state_start, state_end))
@@ -106,6 +107,7 @@ def dataframe_to_csv(path, data, stream_type, time_distribution_human_readable, 
     *_state_time_stop from our dataframe. Then insert
     the state value to df
     """
+    print(all_task_time)
     for idx, dict in all_task_time.items():
         if 'rest_state' in dict.values():
             print(colored('[INFO]', 'green', attrs=['bold']), 
@@ -194,7 +196,6 @@ def dataframe_to_csv(path, data, stream_type, time_distribution_human_readable, 
     df_remove_after = list(mincraft_saturn_b.keys())[-1]
     df_final = sync_timestamps_with_df(df, final_state, header[2], df_remove_before, df_remove_after)
 
-    print(extract_pkl, type(extract_pkl))
     if extract_csv == True:
         df_final.to_csv(csv_file_name + ".csv", sep='\t', encoding='utf-8')
         print(colored('[INFO]', 'green', attrs=['bold']), 
