@@ -41,7 +41,7 @@ data="/data"
 # If computers such as tom and cat change roles, we change the conceptual
 # mapping from data and its mirror to actual locations here. 
 #
-# Thse directory strings must have trailing slashes for rsync (and paths must be
+# These directory strings must have trailing slashes for rsync (and paths must be
 # devoid of spaces).
 #
 sensor_data_dir="${data}/cat/LangLab/experiments/"
@@ -51,7 +51,7 @@ source ${TOMCAT_DIR}/shared_code/bash/ivi_error_trap.bash
 
 # Fix permissions. Ideally, group should be langlab and permissions should
 # provide access to the owner and group, but not to others, mostly not to
-# propogate bad practice.  But, so far (Nov 6, 2022) the generation scripts do
+# propagate bad practice.  But, so far (Nov 6, 2022) the generation scripts do
 # not get this completely correct. So, we make things more robust by setting
 # things here. 
 #
@@ -61,8 +61,8 @@ source ${TOMCAT_DIR}/shared_code/bash/ivi_error_trap.bash
 chmod -R ug=rw,o= ${sensor_data_dir}  
 find ${sensor_data_dir} -type d -exec chmod u+x,g+xs,o= {} \;
 
-date_stamp=$(date +%y-%m-%d-%H-%M) 2>&1
-backup_suffix="-RSYNC-${date_stamp}"
+# date_stamp=$(date +%y-%m-%d-%H-%M) 2>&1
+# backup_suffix="-RSYNC-${date_stamp}"
 
 mkdir -p "${sensor_data_dir}"  2>&1
 mkdir -p "${sensor_mirror_dir}"  2>&1 
@@ -73,7 +73,7 @@ mkdir -p "${sensor_mirror_dir}"  2>&1
 # might need this as an emergency data time stamp, but this does not work,
 # possibly due to rsync, possibly due to the OS (whether or not the OS can
 # change a create time is not universal, and debatable as desirable, but Kobus
-# uses it on ocasion).
+# uses it on occasion).
 #
 ### rsync_options="-a -u -b --suffix ${backup_suffix}"
 ### rsync_options="-rlptgD --crtimes -u -b --suffix ${backup_suffix}"
@@ -81,7 +81,7 @@ mkdir -p "${sensor_mirror_dir}"  2>&1
 # These options are causing grief. Despite preserving time and having a generous
 # modify-window, we will still create backups of files that have not changed.
 # Take a bit more risk to go faster and suffer less grief. 
-# rsync_options="-rlptD -u -b --suffix ${backup_suffix} --modify-window=10"
+#     rsync_options="-rlptD -u -b --suffix ${backup_suffix} --modify-window=10"
 #
 rsync_options="-rlptD -u --size-only"
 
