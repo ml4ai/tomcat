@@ -1,50 +1,50 @@
-
+# Every Dockerfile needs a FROM statement as the first executable line,
+# this is the OS you will be using
 FROM ubuntu:kinetic
-# FROM ubuntu:jammy
-#FROM ubuntu:20.04
-
 CMD bash
 
-RUN apt-get update && apt-get install -y sudo software-properties-common g++ apt-utils
-COPY . /tomcat/exe/reference_agent
-WORKDIR /tomcat/exe/reference_agent
+# set this to avoid timezone prompt during apt-get installs
+ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get -y --no-install-recommends install \
-      ca-certificates \
-      build-essential \
-      apt-utils \
-      libboost-all-dev \
-      pkg-config \
-      cmake \
-      curl \
-      git \
-      tar \
-      wget \
-      doxygen \
-      graphviz \
-      libgraphviz-dev \
-      libsqlite3-dev \
-      libeigen3-dev \
-      libfmt-dev \
-      libssl-dev \
-      librange-v3-dev
+# Install anything you need that is not included in your OS.
+RUN  apt-get update && apt-get -y install \
+    libssl-dev \
+    build-essential \
+    cmake \
+    cmake-gui \
+    cmake-curses-gui \
+    make \
+    doxygen \
+    git \
+    gcc \
+    fakeroot \
+    devscripts \
+    dh-make \
+    lsb-release 
 
-# build paho mqtt c from source
-RUN git clone https://github.com/eclipse/paho.mqtt.c.git \
-    && cd paho.mqtt.c \
-    && git checkout v1.3.8 \
-    && cmake -Bbuild -H. -DPAHO_ENABLE_TESTING=OFF -DPAHO_BUILD_STATIC=ON \
-    -DPAHO_WITH_SSL=ON -DPAHO_HIGH_PERFORMANCE=ON \
-    && sudo cmake --build build/ --target install \
-    && sudo ldconfig
+# Install Paho c
+RUN git clone --branch v1.2.1 https://github.com/eclipse/paho.mqtt.c.git
+
+# BUILD PAHO MQTT C
+# you will want to move this repo to the MacOS file path 
+RUN cd paho.mqtt.c \
+&& make install \
+&& cd build \
+&& cmake -DPAHO_WITH_SSL=TRUE \
+  -DPAHO_BUILD_DEB_PACKAGE=TRUE .. \
+&& cmake --build . \
+&& cd ../
 
 
-# build paho mqtt cpp from source
-RUN git clone https://github.com/eclipse/paho.mqtt.cpp.git \
-    && cd paho.mqtt.cpp \
-    && cmake -Bbuild -H. -DPAHO_BUILD_STATIC=ON -DPAHO_WITH_SSL=ON \
-    && sudo cmake --build build/ --target install \
-    && sudo ldconfig
+COPY . /reference_agent
+WORKDIR /reference_agent
 
-# Build the agent
-RUN pwd; rm -rf build; mkdir build; cd build; cmake .. ; make -j `nproc` 
+RUN export LD_LIBRARY_PATH=/paho.mqtt.c/src/:$LD_LIBRARY_PATH
+
+# Build the executable
+RUN echo "building"
+RUN pwd
+RUN ls
+RUN gcc -Lpaho.mqtt.c/build/output/ *.cpp *.hpp -l paho-mqtt3a -o reference_agent_app
+
+ENTRYPOINT /reference_agent/reference_agent_app
