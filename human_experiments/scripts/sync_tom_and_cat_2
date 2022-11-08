@@ -38,33 +38,28 @@ data="/data"
 # For testing. 
 # data="${TOMCAT_DIR}/data"
 
-# Must have trailing slashes for rsync (and paths must be devoid of spaces).
+# If computers such as tom and cat change roles, we change the conceptual
+# mapping from data and its mirror to actual locations here. 
+#
+# Thse directory strings must have trailing slashes for rsync (and paths must be
+# devoid of spaces).
+#
 sensor_data_dir="${data}/cat/LangLab/experiments/"
 sensor_mirror_dir="${data}/tom/LangLab/experiments/"
 
-# Generic error reporting for basic commands
-trap 'exit_status=$?;
-      echo 
-      echo TRP: Command on or near line $LINENO of $0 failed with status $exit_status 
-      #
-      # Record time in case we need to map issues to system logs. 
-      #
-      echo TRP: Time $(date)
-      #
-      echo RAW: $BASH_COMMAND
-      #
-      # The following naive parsing and eval assumes a limited number of cases
-      # of commands, all of which are in this file. In other words, this is OK,
-      # since all failures should be tested.
-      # 
-      clean_cmd=$(echo ${BASH_COMMAND} | sed "s/2>.*//")
-      # echo CMD: ${clean_cmd} 1>&2;
-      #
-      # Extract command from a=$(b).`
-      clean_cmd=$(echo ${clean_cmd} | sed "s/.*=\$(\(.*\))$/\1/")
-      #
-      eval echo EXP: ${clean_cmd}
-      echo ' ERR
+source ${TOMCAT_DIR}/shared_code/bash/ivi_error_trap.bash  
+
+# Fix permissions. Ideally, group should be langlab and permissions should
+# provide access to the owner and group, but not to others, mostly not to
+# propogate bad practice.  But, so far (Nov 6, 2022) the generation scripts do
+# not get this completely correct. So, we make things more robust by setting
+# things here. 
+#
+# If we need to fix the group also:
+#     sudo chown -R :langlab ${sensor_data_dir} 
+#
+chmod -R ug=rw,o= ${sensor_data_dir}  
+find ${sensor_data_dir} -type d -exec chmod u+x,g+xs,o= {} \;
 
 date_stamp=$(date +%y-%m-%d-%H-%M) 2>&1
 backup_suffix="-RSYNC-${date_stamp}"

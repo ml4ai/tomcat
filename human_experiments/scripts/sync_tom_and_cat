@@ -11,14 +11,12 @@
 #
 # Description:
 #     This script synchronizes data between two cross mounted disks on LangLab
-#     computers tom and cat. The two data stores are set at the beginning of the
-#     script, and we assume they will not change very often.  In the rare case
-#     that there are two files that have the same name but are different, we
-#     move the older one to have a dated suffix. 
+#     computers tom and cat. The two data stores are set near the beginning of
+#     the helper script sync_tom_and_cat, and we assume they will not change
+#     very often. 
 #
 #     This script should be run as either user tom on machine tom or user cat on
-#     machine cat, or potentially a user on one of those two machines in the
-#     group tomcat. Generally, it should be called right after data collection
+#     machine cat.  Generally, it should be called right after data collection
 #     by the master "uber" script.  In addition, it should be called by the
 #     scripts that pull data IVILAB servers. 
 #     
@@ -27,19 +25,18 @@
 #
 #     This script may rely on the UID for tom on tom being the same as the UID for
 #     cat on cat. This "feature" might be confusing, but so far it has not
-#     caused grief. Also, being in group "tomcat" should also provide needed
+#     caused grief. Also, being in group "langlab" should also provide needed
 #     permissions as long as the GID is shared over tom and cat. 
 #
 # Output: 
 #     All output, including error output, goes to stdout, and is also appended
-#     to ${HOME}/tomcat/logs/sync_tom_and_cat.log. Because of this logging,
-#     when called from other scripts, we may not want any output. Rather than
-#     redirect to /dev/null, we can ask for no output with  optional argument
-#     '-q'. 
+#     to ${HOME}/tomcat/logs/sync_tom_and_cat.log.  We can ask for no output on
+#     stdout with  optional argument '-q'. 
 #
 #     This scripts respects the setting of IVI_VERBOSE. If it is set to "1",
 #     then we provide more output. This can also be achieved using the argument
-#     '-v'.
+#     '-v'. For more output, either set IVI_VERBOSE_2 to 1 or use '-v2', and for
+#     even more set IVI_VERBOSE_3 or usr '-v3'
 #
 # Exit status:
 #     Following unix convention, this script exits with 0 on success, and
@@ -50,66 +47,21 @@
 #
 ##############################################################################
 
+# TOMCAT_DIR is either the github clone, a link to it, or a facsimile (while
+# develoment). 
+export TOMCAT_DIR="${HOME}/tomcat" 
+
 set -u 
 
-# Obscure bash code to set IVI_VERBOSE to 1 if it is set but NULL, 0 if unset,
-# and retain its value otherwise. Don't overthink bash syntax---it is not good
-# for you. We have this after the '-u' to test if this is valid on all bash
-# variants we come across. 
-#
-# The default value of IVI_VERBOSE set here can be overriddent by the '-v' flag. 
-#
-export IVI_VERBOSE=${IVI_VERBOSE-0}
-if [[ "${IVI_VERBOSE}" == "" ]]; then
-    export IVI_VERBOSE="1"
-fi 
+# We could use $0, but this is less readable as $0 is how it was called, not the
+# name. 
+script_name="sync_tom_and_cat"
 
-# Using more verbose should be rare, but I had issues debugging the robustness
-# of rsync in our use cases. 
-#
-export IVI_VERBOSE_2=${IVI_VERBOSE_2-0}
-if [[ "${IVI_VERBOSE_2}" == "" ]]; then
-    export IVI_VERBOSE_2="1"
-fi 
-
-export IVI_VERBOSE_3=${IVI_VERBOSE_3-0}
-if [[ "${IVI_VERBOSE_3}" == "" ]]; then
-    export IVI_VERBOSE_3="1"
-fi 
-
-
-# Default. 
-plumbing='| tee -a'
-
-for var in "$@"
-do
-    if [[ "$var" == "-q" ]]; then
-        plumbing='>>'
-    elif [[ "$var" == "-v" ]]; then
-        export IVI_VERBOSE="1"
-    elif [[ "$var" == "-v2" ]]; then
-        export IVI_VERBOSE="1"
-        export IVI_VERBOSE_2="1"
-    elif [[ "$var" == "-v3" ]]; then
-        export IVI_VERBOSE="1"
-        export IVI_VERBOSE_3="1"
-    else 
-        echo "Argument to sync_tom_and_cat ${var} is invalid. Exiting with failure." 
-        exit 1
-    fi 
-done
-
-if [[ "${IVI_VERBOSE}" == "1" ]]; then
-    export VERBOSE_ECHO="echo IVB: "
-else 
-    export VERBOSE_ECHO=": "
-fi
-
-export TOMCAT_DIR="${HOME}/tomcat" 
+source ${TOMCAT_DIR}/shared_code/bash/ivi_preamble.bash  
 
 # We control the meaning of basic commands by limiting the path to standard root
 # controlled directories. 
-export PATH="/usr/bin:/bin:${TOMCAT_DIR}/scripts"
+export PATH="/usr/bin:/bin:${TOMCAT_DIR}/human_experiments/scripts"
 
 # If the preliminary commands fail, we are not ready report anything so we
 # simply die.
@@ -128,7 +80,7 @@ touch "${log_file}"
 
 # We want to execute sync_tom_and_cat_2, and report its error. This is the only
 # command that really counts. Any other issues are about logging, but where
-# would we report that? The fall back would be to send mail. Maybe in the next
+# would we report that? The fall back would be to send mail---maybe in the next
 # version. For now, use '+e' so at least the main command gets tried. 
 #
 set +e 
@@ -139,7 +91,9 @@ eval echo " " ${plumbing} ${log_file}
 
 set -o pipefail 
 
-eval sg langlab -c 'sync_tom_and_cat_2' 2>&1 ${plumbing} ${log_file}
+# The command 'sg' is for unix only. 
+eval sg langlab -c 'sync_tom_and_cat_2' ${plumbing} ${log_file}
+
 exit_status=$?
 
 eval echo " " ${plumbing} ${log_file}
