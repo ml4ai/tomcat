@@ -58,15 +58,16 @@ source ${TOMCAT_DIR}/shared_code/bash/ivi_error_trap.bash
 # If we need to fix the group also:
 #     sudo chown -R :langlab ${sensor_data_dir} 
 #
-
-# We should not need to use sudo, and would prefer not to, but if things are too
-# broken, then we might have permission to fix them. 
+# We need to have the 'X' in the following chmod, despite the redundancy in the
+# chmod called via find, because it helps ensure that the "find" won't run into
+# a permission problem
+#
 ${VERBOSE_ECHO} "Sync_tom_and_cat_2 executing:"
-${VERBOSE_ECHO} "    sudo chmod -R ug=rw,o= ${sensor_data_dir}"
-sudo chmod -R ug=rw,o= ${sensor_data_dir}  
+${VERBOSE_ECHO} "    chmod -R ug=rwX,o= ${sensor_data_dir}"
+chmod -R ug=rwX,o= ${sensor_data_dir}  
 ${VERBOSE_ECHO} "Sync_tom_and_cat_2 executing:"
-${VERBOSE_ECHO} "    sudo find ${sensor_data_dir} -type d -exec chmod u+x,g+xs,o= {} \;"
-sudo find ${sensor_data_dir} -type d -exec chmod u+x,g+xs,o= {} \;
+${VERBOSE_ECHO} "    find ${sensor_data_dir} -type d -exec chmod u+x,g+xs,o= {} \;"
+find ${sensor_data_dir} -type d -exec chmod u+x,g+xs,o= {} \;
 
 # date_stamp=$(date +%y-%m-%d-%H-%M) 2>&1
 # backup_suffix="-RSYNC-${date_stamp}"
