@@ -49,15 +49,17 @@ sensor_mirror_dir="${data}/tom/LangLab/experiments/"
 
 source ${TOMCAT_DIR}shared_code/bash/ivi_error_trap.bash  
 
-# Fix permissions. Ideally, group should be langlab and permissions should
-# provide access to the owner and group, but not to others, mostly not to
-# propagate bad practice.  But, so far (Nov 6, 2022) the generation scripts do
-# not get this completely correct. So, we make things more robust by setting
-# things here. 
+# Fix ownerhsip and permissions. Ideally, group should be langlab and
+# permissions should provide access to the owner and group, but not to others,
+# mostly not to propagate bad practice.  But, so far (Nov 6, 2022) the
+# generation scripts do not get this completely correct. So, we make things more
+# robust by setting things here. 
+
+# The group permission is wrong often enough that we should set
+# it. This requires sudo.  
 #
-# If we need to fix the group also:
-#     sudo chown -R :langlab ${sensor_data_dir} 
-#
+sudo chown -R :langlab ${sensor_data_dir} 
+
 # We need to have the 'X' in the following chmod, despite the redundancy in the
 # chmod called via find, because it helps ensure that the "find" won't run into
 # a permission problem
