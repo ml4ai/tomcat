@@ -1,3 +1,5 @@
+# paho_mqtt_cpp
+#
 # Every Dockerfile needs a FROM statement as the first executable line,
 # this is the OS you will be using
 FROM ubuntu:kinetic
@@ -32,7 +34,12 @@ RUN cd paho.mqtt.c \
 && cmake -Bbuild -H. -DPAHO_ENABLE_TESTING=OFF -DPAHO_BUILD_STATIC=ON \
     -DPAHO_WITH_SSL=ON -DPAHO_HIGH_PERFORMANCE=ON \
 && cmake --build build/ --target install \
-&& ldconfig
+&& ldconfig \
+&& cd ..
+
+RUN export LD_LIBRARY_PATH=/paho.mqtt.c/src/:$LD_LIBRARY_PATH
+
+
 
 # Install Paho cpp
 RUN git clone https://github.com/eclipse/paho.mqtt.cpp.git
@@ -43,15 +50,17 @@ RUN cd paho.mqtt.cpp \
 && cmake -Bbuild -H. -DPAHO_BUILD_STATIC=ON \
     -DPAHO_BUILD_DOCUMENTATION=TRUE -DPAHO_BUILD_SAMPLES=TRUE \
 && cmake --build build/ --target install \
-&& ldconfig
+&& ldconfig \
+&& cd ..
+
+RUN export LD_LIBRARY_PATH=/paho.mqtt.cpp/src/:$LD_LIBRARY_PATH
 
 
 COPY . /paho_mqtt_cpp
 WORKDIR /paho_mqtt_cpp
 
-RUN export LD_LIBRARY_PATH=/paho.mqtt.cpp/src/:$LD_LIBRARY_PATH
 
 # Build the executable
-RUN gcc -Lpaho.mqtt.c/build/output/ main.cpp -l paho-mqtt3a -o paho_mqtt_c_test
+RUN gcc -Lpaho.mqtt.c/build/output/ main.cpp -l paho-mqtt3a -o paho_mqtt_cpp_test -lstdc++
 
 ENTRYPOINT /paho_mqtt_cpp/paho_mqtt_cpp_test

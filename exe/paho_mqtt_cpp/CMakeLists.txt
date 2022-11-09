@@ -3,7 +3,7 @@
 #
 
 cmake_minimum_required(VERSION 3.16)
-project(paho_mqtt_cpp_test LANGUAGES C CPP)
+project(paho_mqtt_cpp_test)
 
 set(PAHO_MQTT_C_LIBRARIES ~/paho_mqtt_cpp/paho.mqtt.c/build/output )
 set(PAHO_MQTT_C_INCLUDE_DIRS ~/paho_mqtt_cpp/paho.mqtt.c/include )
@@ -17,5 +17,5 @@ find_package(
 )
 
 add_executable(
-    paho_mqtt_cpp_test main.c
+    paho_mqtt_cpp_test main.cpp
 )
