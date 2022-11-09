@@ -58,6 +58,7 @@ source ${TOMCAT_DIR}/shared_code/bash/ivi_error_trap.bash
 # If we need to fix the group also:
 #     sudo chown -R :langlab ${sensor_data_dir} 
 #
+
 # We should not need to use sudo, and would prefer not to, but if things are too
 # broken, then we might have permission to fix them. 
 ${VERBOSE_ECHO} "Sync_tom_and_cat_2 executing:"
