@@ -61,7 +61,7 @@ source ${TOMCAT_DIR}/shared_code/bash/ivi_preamble.bash
 
 # We control the meaning of basic commands by limiting the path to standard root
 # controlled directories. 
-export PATH="/usr/bin:/bin:${TOMCAT_DIR}/human_experiments/scripts"
+export PATH="/usr/bin:/bin:${TOMCAT_DIR}/scripts"
 
 # If the preliminary commands fail, we are not ready report anything so we
 # simply die.
