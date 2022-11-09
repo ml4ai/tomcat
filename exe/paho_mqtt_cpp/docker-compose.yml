@@ -1,0 +1,17 @@
+version: '3.6'
+
+networks:
+  asist_net:
+    external: true
+
+services:
+  paho_mqtt_cpp:
+    image: paho_mqtt_cpp_image:latest
+    container_name: paho_mqtt_cpp_container
+    build: 
+      context: .
+    networks:
+      asist_net:
+        aliases:
+          - paho_mqtt_cpp_container
+
