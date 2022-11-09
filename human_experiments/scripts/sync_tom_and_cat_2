@@ -36,7 +36,7 @@ umask 0007
 
 data="/data"
 # For testing. 
-# data="${TOMCAT_DIR}/data"
+# data="${TOMCAT_DIR}data"
 
 # If computers such as tom and cat change roles, we change the conceptual
 # mapping from data and its mirror to actual locations here. 
@@ -47,7 +47,7 @@ data="/data"
 sensor_data_dir="${data}/cat/LangLab/experiments/"
 sensor_mirror_dir="${data}/tom/LangLab/experiments/"
 
-source ${TOMCAT_DIR}/shared_code/bash/ivi_error_trap.bash  
+source ${TOMCAT_DIR}shared_code/bash/ivi_error_trap.bash  
 
 # Fix permissions. Ideally, group should be langlab and permissions should
 # provide access to the owner and group, but not to others, mostly not to
