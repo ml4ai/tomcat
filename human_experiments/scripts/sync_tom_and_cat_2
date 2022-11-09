@@ -57,9 +57,11 @@ source ${TOMCAT_DIR}shared_code/bash/ivi_error_trap.bash
 # generation scripts do not get this completely correct. So, we make things more
 # robust by setting things here. 
 
-# The group permission is wrong often enough that we should set
-# it. This requires sudo.  
+# The group permission and even the owner is wrong often enough that we should
+# set it. This requires sudo. This makes the script less versatile. 
 #
+${VERBOSE_ECHO} "Sync_tom_and_cat_2 executing:"
+${VERBOSE_ECHO} "    sudo chown -R ${sensor_data_feline}:langlab ${sensor_data_dir}"
 sudo chown -R ${sensor_data_feline}:langlab ${sensor_data_dir} 
 
 # We need to have the 'X' in the following chmod, despite the redundancy in the
