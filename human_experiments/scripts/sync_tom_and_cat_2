@@ -44,10 +44,10 @@ data="/data"
 # These directory strings must have trailing slashes for rsync (and paths must be
 # devoid of spaces).
 #
-sensor_data_feline="cat"
-sensor_mirror_feline="tom"
-sensor_data_dir="${data}/${sensor_data_feline}/LangLab/experiments/"
-sensor_mirror_dir="${data}/${sensor_mirror_feline}/LangLab/experiments/"
+sensor_data_host="cat"
+sensor_mirror_host="tom"
+sensor_data_dir="${data}/${sensor_data_host}/LangLab/experiments/"
+sensor_mirror_dir="${data}/${sensor_mirror_host}/LangLab/experiments/"
 
 source ${TOMCAT_DIR}shared_code/bash/ivi_error_trap.bash  
 
@@ -61,8 +61,8 @@ source ${TOMCAT_DIR}shared_code/bash/ivi_error_trap.bash
 # set it. This requires sudo. This makes the script less versatile. 
 #
 ${VERBOSE_ECHO} "Sync_tom_and_cat_2 executing:"
-${VERBOSE_ECHO} "    sudo chown -R ${sensor_data_feline}:langlab ${sensor_data_dir}"
-sudo chown -R ${sensor_data_feline}:langlab ${sensor_data_dir} 
+${VERBOSE_ECHO} "    sudo chown -R ${sensor_data_host}:langlab ${sensor_data_dir}"
+sudo chown -R ${sensor_data_host}:langlab ${sensor_data_dir} 
 
 # We need to have the 'X' in the following chmod, despite the redundancy in the
 # chmod called via find, because it helps ensure that the "find" won't run into
