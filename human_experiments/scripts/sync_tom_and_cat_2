@@ -44,8 +44,10 @@ data="/data"
 # These directory strings must have trailing slashes for rsync (and paths must be
 # devoid of spaces).
 #
-sensor_data_dir="${data}/cat/LangLab/experiments/"
-sensor_mirror_dir="${data}/tom/LangLab/experiments/"
+sensor_data_feline="cat"
+sensor_mirror_feline="tom"
+sensor_data_dir="${data}/${sensor_data_feline}/LangLab/experiments/"
+sensor_mirror_dir="${data}/${sensor_mirror_feline}/LangLab/experiments/"
 
 source ${TOMCAT_DIR}shared_code/bash/ivi_error_trap.bash  
 
@@ -58,7 +60,7 @@ source ${TOMCAT_DIR}shared_code/bash/ivi_error_trap.bash
 # The group permission is wrong often enough that we should set
 # it. This requires sudo.  
 #
-sudo chown -R :langlab ${sensor_data_dir} 
+sudo chown -R ${sensor_data_feline}:langlab ${sensor_data_dir} 
 
 # We need to have the 'X' in the following chmod, despite the redundancy in the
 # chmod called via find, because it helps ensure that the "find" won't run into
