@@ -48,19 +48,20 @@ RUN git clone https://github.com/eclipse/paho.mqtt.cpp.git
 # you will want to move this repo to the MacOS file path 
 RUN cd paho.mqtt.cpp \
 && cmake -Bbuild -H. -DPAHO_BUILD_STATIC=ON \
-    -DPAHO_BUILD_DOCUMENTATION=TRUE -DPAHO_BUILD_SAMPLES=TRUE \
 && cmake --build build/ --target install \
 && ldconfig \
 && cd ..
 
-RUN export LD_LIBRARY_PATH=/paho.mqtt.cpp/src/:$LD_LIBRARY_PATH
+RUN export LD_LIBRARY_PATH=/paho.mqtt.cpp/build/src/:$LD_LIBRARY_PATH
+
+RUN ls paho.mqtt.c/build/output/
+RUN ls paho.mqtt.cpp/build
 
 
 COPY . /paho_mqtt_cpp
 WORKDIR /paho_mqtt_cpp
 
-
 # Build the executable
-RUN gcc -Lpaho.mqtt.c/build/output/ main.cpp -l paho-mqtt3a -o paho_mqtt_cpp_test -lstdc++
+RUN g++ -Lpaho.mqtt.cpp/build/src main.cpp -l paho-mqttpp3 -o paho_mqtt_cpp_app
 
-ENTRYPOINT /paho_mqtt_cpp/paho_mqtt_cpp_test
+ENTRYPOINT /paho_mqtt_cpp/paho_mqtt_cpp_app
