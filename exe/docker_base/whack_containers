@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Remove all stopped Docker containers
+
+echo "Docker containers:"
+docker container ls -a
+
+echo "removing all stopped docker containers ..."
+docker ps -a | awk '{print $1 }' | grep -v "CONTAINER" | xargs -I {} docker container rm  {}
+
+echo "Docker containers:"
+docker container ls -a
+
