@@ -54,10 +54,6 @@ RUN cd paho.mqtt.cpp \
 
 RUN export LD_LIBRARY_PATH=/paho.mqtt.cpp/build/src/:$LD_LIBRARY_PATH
 
-RUN ls paho.mqtt.c/build/output/
-RUN ls paho.mqtt.cpp/build
-
-
 COPY . /paho_mqtt_cpp
 WORKDIR /paho_mqtt_cpp
 
