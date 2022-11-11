@@ -35,8 +35,6 @@ set -e
 umask 0007 
 
 data="/data"
-# For testing. 
-# data="${TOMCAT_DIR}data"
 
 # If computers such as tom and cat change roles, we change the conceptual
 # mapping from data and its mirror to actual locations here. 
@@ -51,6 +49,16 @@ sensor_mirror_dir="${data}/${sensor_mirror_host}/LangLab/experiments/"
 
 source ${TOMCAT_DIR}shared_code/bash/ivi_error_trap.bash  
 
+if [[ "${IVI_VERBOSE_3}" != "0" ]]; then
+    rsync_verbose="-v -v -v" 
+elif [[ "${IVI_VERBOSE_2}" != "0" ]]; then
+    rsync_verbose="-v -v" 
+elif [[ "${IVI_VERBOSE}" != "0" ]]; then
+    rsync_verbose="-v" 
+else  
+    rsync_verbose=""
+fi 
+
 # Fix ownerhsip and permissions. Ideally, group should be langlab and
 # permissions should provide access to the owner and group, but not to others,
 # mostly not to propagate bad practice.  But, so far (Nov 6, 2022) the
@@ -58,7 +66,8 @@ source ${TOMCAT_DIR}shared_code/bash/ivi_error_trap.bash
 # robust by setting things here. 
 
 # The group permission and even the owner is wrong often enough that we should
-# set it. This requires sudo. This makes the script less versatile. 
+# set it. This requires sudo to be robust under all scenarios. This makes the
+# script less versatile. 
 #
 ${VERBOSE_ECHO} "Sync_tom_and_cat_2 executing:"
 ${VERBOSE_ECHO} "    sudo chown -R ${sensor_data_host}:langlab ${sensor_data_dir}"
@@ -81,35 +90,7 @@ find ${sensor_data_dir} -type d -exec chmod u+x,g+xs,o= {} \;
 mkdir -p "${sensor_data_dir}"  2>&1
 mkdir -p "${sensor_mirror_dir}"  2>&1 
 
-# We initially used '-a' which means '-rlptgoD', but setting ownership (-o) or
-# group (-g) on cross-mounted disks can cause breakage, and we do not need it.
-# Also, it seems desirable to preserve create times ('-N' or '--crtimes') as we
-# might need this as an emergency data time stamp, but this does not work,
-# possibly due to rsync, possibly due to the OS (whether or not the OS can
-# change a create time is not universal, and debatable as desirable, but Kobus
-# uses it on occasion).
-#
-### rsync_options="-a -u -b --suffix ${backup_suffix}"
-### rsync_options="-rlptgD --crtimes -u -b --suffix ${backup_suffix}"
-# 
-# These options are causing grief. Despite preserving time and having a generous
-# modify-window, we will still create backups of files that have not changed.
-# Take a bit more risk to go faster and suffer less grief. 
-#     rsync_options="-rlptD -u -b --suffix ${backup_suffix} --modify-window=10"
-#
-rsync_options="-rlptD -u --size-only"
-
-if [[ "${IVI_VERBOSE}" != "0" ]]; then
-    rsync_options="-v ${rsync_options}"
-fi 
-
-if [[ "${IVI_VERBOSE_2}" != "0" ]]; then
-    rsync_options="-v ${rsync_options}"
-fi 
-
-if [[ "${IVI_VERBOSE_3}" != "0" ]]; then
-    rsync_options="-v ${rsync_options}"
-fi 
+rsync_options="${rsync_verbose} -rlptD -u --size-only"
 
 # If we get this far, there may be some value of doing subsequent rsyncs even if
 # previous ones failed. 
@@ -130,37 +111,6 @@ rc=$?
 ${VERBOSE_ECHO} "Rsync return code was ${rc}"
 ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
 ${VERBOSE_ECHO} ""
-
-# Now OBSOLETE
-#
-# ${VERBOSE_ECHO} "Sync_tom_and_cat_2 executing second rsync"
-# ${VERBOSE_ECHO} "    rsync {rsync_options} ${sensor_mirror_dir} ${sensor_data_dir}"
-# ${VERBOSE_ECHO} ""
-# 
-# rsync ${rsync_options} ${sensor_mirror_dir} ${sensor_data_dir} 2>&1
-# rc=$?
-# ${VERBOSE_ECHO} "Rsync return code was ${rc}"
-# ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
-# ${VERBOSE_ECHO} ""
-# 
-# ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
-# ${VERBOSE_ECHO} ""
-# 
-# # Redo the first rsync to make sure we synchronize any backups that the second
-# # rsync created. 
-# #
-# ${VERBOSE_ECHO} "Sync_tom_and_cat_2 executing third rsync"
-# ${VERBOSE_ECHO} "    ${rsync_options} ${sensor_data_dir} ${sensor_mirror_dir}"
-# ${VERBOSE_ECHO} ""
-# 
-# rsync ${rsync_options} ${sensor_data_dir} ${sensor_mirror_dir} 2>&1
-# rc=$?
-# ${VERBOSE_ECHO} "Rsync return code was ${rc}"
-# ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
-# ${VERBOSE_ECHO} ""
-# 
-# ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
-# ${VERBOSE_ECHO} ""
 
 exit ${exit_status}
 
