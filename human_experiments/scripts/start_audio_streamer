@@ -51,9 +51,9 @@ __start_audio_streamer() {
   source collect_player_names "$EXPERIMENT_DIR" "$padding"
   echo -e "${padding}Starting the ${EMPH}Audio Streamer${NC}..."
 
-  __start_on_client "lion" "lion.local" "$LION_PLAYER_NAME" "$padding "
-  __start_on_client "tiger" "tiger.local" "$TIGER_PLAYER_NAME" "$padding "
-  __start_on_client "leopard" "leopard.local" "$LEOPARD_PLAYER_NAME" "$padding "
+  __start_on_client "lion" "lion.local" "$LION_PARTICIPANT_ID" "$padding "
+  __start_on_client "tiger" "tiger.local" "$TIGER_PARTICIPANT_ID" "$padding "
+  __start_on_client "leopard" "leopard.local" "$LEOPARD_PARTICIPANT_ID" "$padding "
 }
 
 __start_audio_streamer "$PADDING"
