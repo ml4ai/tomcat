@@ -1,0 +1,28 @@
+#!/bin/bash
+
+set -u
+
+if [[ -z ${1+x} ]]; then
+  PADDING=""
+else
+  PADDING=$1
+fi
+
+__start_on_client() {
+  local client_name=$1
+  local client_address=$2
+  local padding=$3
+
+  local face_images_dir="$EXPERIMENT_DIR/$client_name/face_images"
+  local screenshots_dir="$EXPERIMENT_DIR/$client_name/screenshots"
+  mkdir -p "$face_images_dir" >/dev/null
+  mkdir -p "$screenshots_dir" >/dev/null
+
+  echo -e "${padding}${EMPH}face_images${NC} and ${EMPH}screenshots${NC} directories successfully created."
+
+  # TODO - add a call to the face analyzer script here.
+}
+
+__start_on_client "lion" "lion.local" "$PADDING"
+__start_on_client "tiger" "tiger.local" "$PADDING"
+__start_on_client "leopard" "leopard.local" "$PADDING"
