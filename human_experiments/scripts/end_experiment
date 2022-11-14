@@ -143,26 +143,6 @@ __clean_tmp_directory() {
   rm "$EXPERIMENT_DIR/tmp/*.pid" > /dev/null
 }
 
-__freeze_experiment_data() {
-  local padding=$1
-
-  # Making the directory readonly
-  echo -e "${padding}${EMPH}Freezing${NC} data..."
-
-  local frozen="n"
-  while [[ $frozen != "y" ]]; do
-    if chmod a=r "$EXPERIMENT_DIR" >/dev/null; then
-      echo -e "${padding}${GREEN} Data successfully frozen.${NC}"
-      frozen="y"
-    else
-      echo -e "${padding}${RED} Failed to freeze data.${NC}"
-      if ! yes_no_question "${padding} Do you want to ${EMPH}RETRY${NC}?"; then
-        break
-      fi
-    fi
-  done
-}
-
 __backup_experiment_data() {
   local padding=$1
 
@@ -184,7 +164,6 @@ __cleanup() {
 
   source stop_testbed "$EXPERIMENT_DIR" "$padding "
   __clean_tmp_directory "$padding "
-  __freeze_experiment_data "$padding "
   __backup_experiment_data "$padding "
 }
 
