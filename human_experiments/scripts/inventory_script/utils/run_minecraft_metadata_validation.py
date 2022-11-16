@@ -13,8 +13,9 @@ def check_asist_folder(rootdir):
     asist is usually under exp_*/testbed_logs/
     '''
     for path, dir, files in os.walk(rootdir+'testbed_logs'):
+        print(dir)
         try:
-            if 'asist_logs' in dir:
+            if 'asist_logs' in  str(dir)[1:-1]:
                 print(
                     colored("\n [Status] Asist folder exists:", "blue", attrs=["bold"]),
                     colored(dir, "cyan"),
@@ -53,24 +54,6 @@ def check_vocalics(rootdir):
             except:
                 print(
                     colored("[Error] Voclic features empty or not present", 'red',attrs=["bold"])
-                )    
-
-def check_tar_file(rootdir):
-    '''
-    asist_logs_*.tar.gz is usually under exp_*/
-    '''
-    for _, _, files in os.walk(rootdir+'testbed_logs'):
-        for name in files:
-            try:
-                if name.endswith((".tar.gz")):
-                    if os.stat(rootdir+name).st_size!=0:
-                        print(
-                            colored("\n [Status] Asist tar file:", "blue", attrs=["bold"]),
-                            colored(name, "cyan"),
-                        )
-            except:
-                print(
-                    colored("[Error] Asist tar file is empty or not present", 'red',attrs=["bold"])
                 )    
 
 def check_audio(rootdir, x):
