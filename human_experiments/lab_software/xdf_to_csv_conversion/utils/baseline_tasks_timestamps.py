@@ -42,7 +42,7 @@ def read_baseline_tasks_time(rootdir, subject_id):
                 """                  
                 csvfiles = list(filter(lambda f: f.endswith('.csv'), os.listdir(os.path.join(rootdir,x))))
                 cnt = 0
-                for csvfile in csvfiles:
+                for csvfile in sorted(csvfiles):
                     if 'team_' in csvfile: #if csv filename is team_*
                         df = pd.read_csv(os.path.join(os.path.join(rootdir,x), csvfile), delimiter = ';')
                         start_stop_time[idx] = {'state':'affective_task_team', 'participant': None, 
@@ -78,7 +78,7 @@ def read_baseline_tasks_time(rootdir, subject_id):
                     where lion, tiger and leopard would play against AI. 
                 """
                 csvfiles = list(filter(lambda f: f.endswith('.csv'), os.listdir(os.path.join(rootdir,x))))
-                for csvfile in csvfiles:
+                for csvfile in sorted(csvfiles):
                     if 'competitive_0' in csvfile:
                         df = pd.read_csv(os.path.join(os.path.join(rootdir,x), csvfile), delimiter = ';')
                         df = df.iloc[: , :-1]

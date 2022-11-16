@@ -194,7 +194,6 @@ def dataframe_to_csv(path, data, stream_type, time_distribution_human_readable, 
     df_remove_after = list(mincraft_saturn_b.keys())[-1]
     df_final = sync_timestamps_with_df(df, final_state, header[2], df_remove_before, df_remove_after)
 
-    print(extract_pkl, type(extract_pkl))
     if extract_csv == True:
         df_final.to_csv(csv_file_name + ".csv", sep='\t', encoding='utf-8')
         print(colored('[INFO]', 'green', attrs=['bold']), 

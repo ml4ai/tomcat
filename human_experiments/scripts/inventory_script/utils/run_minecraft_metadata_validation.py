@@ -5,7 +5,38 @@ import json
 import argparse
 import datetime
 from termcolor import colored
+from pathlib import Path
 
+def check_asist_folder(rootdir):
+    '''
+    asist is usually under exp_*/testbed_logs/
+    '''
+    for path, dir, files in os.walk(rootdir+'testbed_logs'):
+        try:
+            if 'asist_logs' in  str(dir)[1:-1]:
+                print(
+                    colored("\n [Status] Asist folder exists:", "blue", attrs=["bold"]),
+                    colored(dir, "cyan"),
+                )
+                
+                size = sum(p.stat().st_size for p in Path(rootdir + 'testbed_logs').rglob('*'))
+                if size > 1.5 * 1e+9:
+                    print(
+                        colored("\n [Status] Asist folder is of size:", "blue", attrs=["bold"]),
+                        colored(size/(1024*1024*1024), "cyan"),
+                        colored('GB', 'cyan')
+                    )
+                else:
+                    print(
+                        colored("\n [Status] Asist folder has an unexpected size. Please check!", "Red", attrs=["bold"]),
+                        colored(size/(1024*1024*1024), "cyan"),
+                        colored('GB', 'cyan')
+                    )
+        except:
+                print(
+                    colored("[Error] Asist folder does not exist", 'red',attrs=["bold"])
+                )                              
+                
 def check_vocalics(rootdir):
     '''
     Vocalics is usually under exp_*/testbed_logs/asist_logs_*/speech_analyzer_agent
@@ -22,24 +53,6 @@ def check_vocalics(rootdir):
             except:
                 print(
                     colored("[Error] Voclic features empty or not present", 'red',attrs=["bold"])
-                )    
-
-def check_tar_file(rootdir):
-    '''
-    asist_logs_*.tar.gz is usually under exp_*/
-    '''
-    for _, _, files in os.walk(rootdir):
-        for name in files:
-            try:
-                if name.endswith((".tar.gz")):
-                    if os.stat(rootdir+name).st_size!=0:
-                        print(
-                            colored("\n [Status] Asist tar file:", "blue", attrs=["bold"]),
-                            colored(name, "cyan"),
-                        )
-            except:
-                print(
-                    colored("[Error] Asist tar file is empty or not present", 'red',attrs=["bold"])
                 )    
 
 def check_audio(rootdir, x):
@@ -259,3 +272,4 @@ def checkfile_minecraft(rootdir):
                     ),
                     "\N{cross mark}",
                 )
+

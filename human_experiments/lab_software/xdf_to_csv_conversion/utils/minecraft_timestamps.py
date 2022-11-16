@@ -35,9 +35,11 @@ def read_minecraft_time(baseline_task_dict, rootdir_minecraft_data):
                             ):
                                 if json_message["data"]["mission_state"] == "Start":
                                     trial_start = json_message["msg"]["timestamp"]
+
                                     condition.append('Start')
                                 if json_message["data"]["mission_state"] == "Stop":
                                     trial_end = json_message["msg"]["timestamp"]
+
                                     condition.append('Stop')
                                     
                             if len(condition) == 2:
@@ -75,7 +77,6 @@ def read_minecraft_time(baseline_task_dict, rootdir_minecraft_data):
                     trial_end = change_time_zone(trial_end, "UTC", "MST")     
                     trial_end = datetime.datetime.strptime(str(trial_end), "%Y-%m-%d %H:%M:%S.%f")
                     trial_end = trial_end.timestamp()
-
                     minecraft_dict_temp['state'].append(map_name)
                     minecraft_dict_temp['start_time'].append(trial_start)
                     minecraft_dict_temp['end_time'].append(trial_end)
