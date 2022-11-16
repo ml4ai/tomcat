@@ -3,8 +3,39 @@ import sys  # We use sys.exit() so that all exceptions can properly propogate up
 import os
 import json
 import argparse
+import math
 import datetime
 from termcolor import colored
+# tomcat/human_experiments/scripts/inventory_script$ python3 inventory_script.py --p /data/cat/LangLab/experiments/study_3_pilot/group/exp_2022_11_15_13/
+
+def check_asist_folder(rootdir):
+    '''
+    asist is usually under exp_*/testbed_logs/
+    '''
+    for path, dir, files in os.walk(rootdir):
+        try:
+            if 'asist_logs' in dir:
+                print(
+                    colored("\n [Status] Asist folder exists:", "blue", attrs=["bold"]),
+                    colored(dir, "cyan"),
+                )
+                for f in files:
+                    fp = os.path.join(path, f)
+                    size += os.path.getsize(fp)
+                    if size > 1.5 * 1e+9:
+                        print(
+                            colored("\n [Status] Asist folder is of size:", "blue", attrs=["bold"]),
+                            colored(int(math.floor(math.log(size, 1024))), "cyan"),
+                        )
+                    else:
+                        print(
+                            colored("\n [Status] Asist folder has an unexpected size. Please check!", "Red", attrs=["bold"]),
+                            colored(int(math.floor(math.log(size, 1024))), "cyan"),
+                        )
+        except:
+                print(
+                    colored("[Error] Asist folder does not exist", 'red',attrs=["bold"])
+                )                              
 
 def check_vocalics(rootdir):
     '''

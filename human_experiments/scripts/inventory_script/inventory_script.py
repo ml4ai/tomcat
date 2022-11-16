@@ -5,7 +5,9 @@ import json
 import argparse
 import datetime
 from termcolor import colored
-from utils import checkfile_minecraft, fcount_baseline_task, check_audio, check_tar_file, check_vocalics, check_xdf, check_pupil_recorder
+from utils import checkfile_minecraft, fcount_baseline_task, \
+                  check_audio, check_tar_file, check_vocalics, \
+                  check_xdf, check_pupil_recorder, check_asist_folder
 
 def inventory_script(rootdir):
     dir = os.listdir(rootdir)
@@ -19,16 +21,17 @@ def inventory_script(rootdir):
             "\N{cross mark}",
         )
     else:
-        folder_seq = ['baseline_tasks', 'minecraft', 'lion', 'tiger', 'leopard', 'asist_logs', 'vocalics']
-        fcount_baseline_task(rootdir+'baseline_tasks')
-        checkfile_minecraft(rootdir+'minecraft')
-        check_xdf(rootdir)
-        check_pupil_recorder(rootdir)
-        check_audio(rootdir, 'lion')
-        check_audio(rootdir, 'tiger')
-        check_audio(rootdir, 'leopard')
-        check_tar_file(rootdir)
-        check_vocalics(rootdir)
+        
+            fcount_baseline_task(rootdir+'baseline_tasks')
+            checkfile_minecraft(rootdir+'minecraft')
+            check_xdf(rootdir)
+            check_pupil_recorder(rootdir)
+            check_audio(rootdir, 'lion')
+            check_audio(rootdir, 'tiger')
+            check_audio(rootdir, 'leopard')
+            check_tar_file(rootdir)
+            check_asist_folder(rootdir)
+            check_vocalics(rootdir)
             
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
