@@ -12,7 +12,7 @@ def check_asist_folder(rootdir):
     '''
     asist is usually under exp_*/testbed_logs/
     '''
-    for path, dir, files in os.walk(rootdir):
+    for path, dir, files in os.walk(rootdir+'testbed_logs'):
         try:
             if 'asist_logs' in dir:
                 print(
@@ -59,7 +59,7 @@ def check_tar_file(rootdir):
     '''
     asist_logs_*.tar.gz is usually under exp_*/
     '''
-    for _, _, files in os.walk(rootdir):
+    for _, _, files in os.walk(rootdir+'testbed_logs'):
         for name in files:
             try:
                 if name.endswith((".tar.gz")):

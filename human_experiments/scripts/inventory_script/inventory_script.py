@@ -21,17 +21,16 @@ def inventory_script(rootdir):
             "\N{cross mark}",
         )
     else:
-        
-            fcount_baseline_task(rootdir+'baseline_tasks')
-            checkfile_minecraft(rootdir+'minecraft')
-            check_xdf(rootdir)
-            check_pupil_recorder(rootdir)
-            check_audio(rootdir, 'lion')
-            check_audio(rootdir, 'tiger')
-            check_audio(rootdir, 'leopard')
-            check_tar_file(rootdir)
-            check_asist_folder(rootdir)
-            check_vocalics(rootdir)
+        fcount_baseline_task(rootdir+'baseline_tasks')
+        checkfile_minecraft(rootdir+'minecraft')
+        check_xdf(rootdir)
+        check_pupil_recorder(rootdir)
+        check_audio(rootdir, 'lion')
+        check_audio(rootdir, 'tiger')
+        check_audio(rootdir, 'leopard')
+        check_tar_file(rootdir)
+        check_asist_folder(rootdir)
+        check_vocalics(rootdir)
             
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
