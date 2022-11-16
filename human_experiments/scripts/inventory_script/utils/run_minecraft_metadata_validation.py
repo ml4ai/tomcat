@@ -20,7 +20,7 @@ def check_asist_folder(rootdir):
                     colored("\n [Status] Asist folder exists:", "blue", attrs=["bold"]),
                     colored(dir, "cyan"),
                 )
-                size = sum(p.stat().st_size for p in Path(dir).rglob('*'))
+                size = sum(p.stat().st_size for p in Path(rootdir + 'testbed_logs' + dir).rglob('*'))
                 if size > 1.5 * 1e+9:
                     print(
                         colored("\n [Status] Asist folder is of size:", "blue", attrs=["bold"]),
