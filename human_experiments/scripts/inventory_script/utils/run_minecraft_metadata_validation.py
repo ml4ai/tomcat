@@ -13,7 +13,6 @@ def check_asist_folder(rootdir):
     asist is usually under exp_*/testbed_logs/
     '''
     for path, dir, files in os.walk(rootdir+'testbed_logs'):
-        print(dir)
         try:
             if 'asist_logs' in  str(dir)[1:-1]:
                 print(
@@ -23,6 +22,7 @@ def check_asist_folder(rootdir):
                 for f in files:
                     fp = os.path.join(path, f)
                     size += os.path.getsize(fp)
+                    print(size)
                     if size > 1.5 * 1e+9:
                         print(
                             colored("\n [Status] Asist folder is of size:", "blue", attrs=["bold"]),
