@@ -5,6 +5,7 @@ import json
 import argparse
 import datetime
 from termcolor import colored
+
 from utils import checkfile_minecraft, fcount_baseline_task, \
                   check_audio, check_vocalics, check_xdf, \
                   check_pupil_recorder, check_asist_folder

@@ -36,7 +36,7 @@ def check_asist_folder(rootdir):
                 print(
                     colored("[Error] Asist folder does not exist", 'red',attrs=["bold"])
                 )                              
-
+                
 def check_vocalics(rootdir):
     '''
     Vocalics is usually under exp_*/testbed_logs/asist_logs_*/speech_analyzer_agent
@@ -272,3 +272,4 @@ def checkfile_minecraft(rootdir):
                     ),
                     "\N{cross mark}",
                 )
+
