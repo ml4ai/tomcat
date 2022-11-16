@@ -3,11 +3,9 @@ import sys  # We use sys.exit() so that all exceptions can properly propogate up
 import os
 import json
 import argparse
-import math
 import datetime
 from termcolor import colored
 from pathlib import Path
-# tomcat/human_experiments/scripts/inventory_script$ python3 inventory_script.py --p /data/cat/LangLab/experiments/study_3_pilot/group/exp_2022_11_15_13/
 
 def check_asist_folder(rootdir):
     '''
@@ -20,16 +18,19 @@ def check_asist_folder(rootdir):
                     colored("\n [Status] Asist folder exists:", "blue", attrs=["bold"]),
                     colored(dir, "cyan"),
                 )
-                size = sum(p.stat().st_size for p in Path(rootdir + 'testbed_logs' + dir).rglob('*'))
+                
+                size = sum(p.stat().st_size for p in Path(rootdir + 'testbed_logs').rglob('*'))
                 if size > 1.5 * 1e+9:
                     print(
                         colored("\n [Status] Asist folder is of size:", "blue", attrs=["bold"]),
-                        colored(int(math.floor(math.log(size, 1024))), "cyan"),
+                        colored(size/(1024*1024*1024), "cyan"),
+                        colored('GB', 'cyan')
                     )
                 else:
                     print(
                         colored("\n [Status] Asist folder has an unexpected size. Please check!", "Red", attrs=["bold"]),
-                        colored(int(math.floor(math.log(size, 1024))), "cyan"),
+                        colored(size/(1024*1024*1024), "cyan"),
+                        colored('GB', 'cyan')
                     )
         except:
                 print(
