@@ -29,7 +29,7 @@ void create_output_directory( const std::filesystem::path p ) {
 }
 
 
-void webcam(const string directory, const int frames_per_minute) {
+void webcam( const string directory, const int frames_per_minute=2, const int webcam_id=0 ) {
     const std::filesystem::path p(directory);
     create_output_directory( p );
     
@@ -37,7 +37,7 @@ void webcam(const string directory, const int frames_per_minute) {
     cout << "\n\tCapturing " << frames_per_minute << " frames per minute.\n";
     cout << "\tA frame is captured every " << frame_period << " milliseconds.\n\n";
 
-    VideoCapture cap(0);
+    VideoCapture cap(webcam_id);
     cap.open(0); //turn on camera
     
     if ( !cap.isOpened() ) {
@@ -75,12 +75,14 @@ void webcam(const string directory, const int frames_per_minute) {
 
 int main(int argc, const char * argv[]) {
     const string directory = argv[1];
+    int frames_per_minute = 2;
+    int webcam_id = 0;
     
     std::size_t pos{};
+    
     try
     {
-        const int frames_per_minute { std::stoi(argv[2], &pos) };
-        webcam( directory, frames_per_minute );
+        frames_per_minute = std::stoi(argv[2], &pos);
     }
     catch(std::invalid_argument const& ex)
     {
@@ -92,6 +94,25 @@ int main(int argc, const char * argv[]) {
         cout << "\n\t**** ERROR: Frames per minute entered is too large: " << argv[2] << endl;
         return -1;
     }
+    
+    if (argc > 3) {
+        try
+        {
+            webcam_id = std::stoi(argv[3], &pos);
+        }
+        catch(std::invalid_argument const& ex)
+        {
+            cout << "\n\t**** ERROR: Invalid webcam ID entered: " << argv[3] << endl;
+            return -1;
+        }
+        catch(std::out_of_range const& ex)
+        {
+            cout << "\n\t**** ERROR: webcam ID entered is too large: " << argv[3] << endl;
+            return -1;
+        }
+    }
+    
+    webcam( directory, frames_per_minute, webcam_id );
 
     return 0;
 }
