@@ -131,6 +131,11 @@ pushd "$SCRIPTS_DIR" >/dev/null || exit 1
 
   source create_data_directory_structure " "
 
+  # Lock the experiment folder while the experiment is going on.
+  # Exp_* dirs with this file will be ignored by data pulling scripts,
+  # unless the file is too old and/or the script process no longer exists.
+  echo $$ > "$EXPERIMENT_DIR/run_experiment.lock"
+
   if [[ $GOTO -le 2 ]]; then
     echo " "
 
@@ -250,6 +255,9 @@ pushd "$SCRIPTS_DIR" >/dev/null || exit 1
     text+="all open applications and processes: "
     wait_for_key "$text" "quit"
     source end_experiment " "
+
+    # Remove the lock
+    rm "$EXPERIMENT_DIR/run_experiment.lock"
   fi
 
 popd >/dev/null || exit 1
