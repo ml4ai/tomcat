@@ -2,8 +2,11 @@ import pandas as pd
 import json
 import os.path
 
-# scp -r gauss:/data/tomcat/LangLab/experiments/study_3_pilot/group/exp_2022_11_15_13/baseline_tasks/ .
+# $ scp -r gauss:/data/tomcat/LangLab/experiments/study_3_pilot/group/exp_2022_11_15_13/baseline_tasks/ .
 # $ ssh gauss ls -l /data/tomcat/LangLab/experiments/study_3_pilot/group/exp_2022_11_10_10/lion/face_images/ > listing.txt
+
+# https://superuser.com/questions/851416/using-scp-to-transfer-a-txt-file-list-of-files
+# $ rsync -av --progress --partial-dir=/tmp --files-from=Minecraft_mission_1_Hands-on\ Training_selected.csv gauss:/data/tomcat/LangLab/experiments/study_3_pilot/group/exp_2022_11_10_10/leopard/face_images/ .
 
 experiment_dir = '/Users/manujinda/Documents/manujinda/ubunosx/tomcat_data/exp_2022_11_10_10/'
 individual_file = 'individual_00074_1668105048.csv'
@@ -54,7 +57,7 @@ for idx, image_type in enumerate(image_types):
 # Process Minecraft metadata
 
 
-def map_image_timestamps(_mission_id, _mission_name, _mission_state, _mission_timestamp, _image_file_listings, _image_types, _mission_start_timestamp, _experiment_dir):
+def map_image_timestamps(_mission_id, _mission_name, _mission_state, _mission_timestamp, _image_file_listings, _image_types, _mission_start_timestamp, _experiment_dir, _n_select_files=100):
     _ws_file_names = {}
     for _idx, _img_listings in enumerate(_image_file_listings):
         _img_type = _image_types[_idx]
@@ -63,15 +66,18 @@ def map_image_timestamps(_mission_id, _mission_name, _mission_state, _mission_ti
         for _ws, _ws_img_listing_df in _img_listings.items():
 
             _img_file_name = ''
+            _n_files = 0
             if _mission_state == 'Start':
                 _img_file_name = _ws_img_listing_df[_ws_img_listing_df['timestamp'] >= _mission_timestamp].iloc[0]['file name']
             elif _mission_state == 'Stop':
                 _ws_mission_images_df = _ws_img_listing_df[(_ws_img_listing_df['timestamp'] >= _mission_start_timestamp) &
                                                     (_ws_img_listing_df['timestamp'] <= _mission_timestamp)]
                 _img_file_name = _ws_mission_images_df.iloc[-1]['file name']
-                _ws_mission_images_df.to_csv(os.path.join(_experiment_dir, 'useful_timestamps/', f'Minecraft_mission_{_img_type}_{_ws}_{_mission_id}_{_mission_name}.csv'), index=False)
+                _n_files = len(_ws_mission_images_df.index)
+                _ws_mission_images_df[['size', 'month', 'date', 'time', 'file name', 'timestamp']].to_csv(os.path.join(_experiment_dir, 'useful_timestamps/', f'Minecraft_mission_{_img_type}_{_ws}_{_mission_id}_{_mission_name}.csv'), index=False)
+                _ws_mission_images_df.head(_n_select_files)['file name'].to_csv(os.path.join(_experiment_dir, _ws, _img_type, f'Minecraft_mission_{_mission_id}_{_mission_name}_selected.csv'), index=False, header=False)
 
-            print(_ws, _mission_state, '\t', _mission_timestamp, '\t', _img_file_name)
+            print(_ws, _mission_state, '\t', _mission_timestamp, '\t', _img_file_name, '\t', _n_files)
             _ws_file_names[f'{_ws}_{_img_type}'] = _img_file_name
 
     return _ws_file_names
