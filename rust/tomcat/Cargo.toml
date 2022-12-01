@@ -1,0 +1,12 @@
+[package]
+name = "tomcat"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+async-std = "1.12.0"
+env_logger = "0.10.0"
+futures = "0.3.25"
+paho-mqtt = "0.11.1"
