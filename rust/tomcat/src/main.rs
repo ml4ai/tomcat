@@ -1,6 +1,3 @@
-// paho-mqtt/examples/async_subscribe.rs
-// This is a Paho MQTT Rust client, sample application.
-//
 //! This application is an MQTT subscriber using the asynchronous client
 //! interface of the Paho Rust client library.
 //! It also monitors for disconnects and performs manual re-connections.
@@ -17,25 +14,16 @@
 //!   - Last will and testament
 //!
 
-/*******************************************************************************
- * Copyright (c) 2017-2022 Frank Pagliughi <fpagliughi@mindspring.com>
- *
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * and Eclipse Distribution License v1.0 which accompany this distribution.
- *
- * The Eclipse Public License is available at
- *    http://www.eclipse.org/legal/epl-v10.html
- * and the Eclipse Distribution License is available at
- *   http://www.eclipse.org/org/documents/edl-v10.php.
- *
- * Contributors:
- *    Frank Pagliughi - initial implementation and documentation
- *******************************************************************************/
-
 use futures::{executor::block_on, stream::StreamExt};
 use paho_mqtt as mqtt;
 use std::{env, process, time::Duration};
+use serde::{Serialize, Deserialize};
+
+/// Configuration
+#[derive(Default, Debug, Serialize, Deserialize)]
+struct Config {
+    topics: Vec<String>
+}
 
 // The topics to which we subscribe.
 const TOPICS: &[&str] = &["test", "hello"];
@@ -47,9 +35,11 @@ fn main() {
     // Initialize the logger from the environment
     env_logger::init();
 
+    let cfg: Config = confy::load_path("tomcat.yml").unwrap();
     let host = env::args()
         .nth(1)
         .unwrap_or_else(|| "tcp://localhost:1883".to_string());
+
 
     // Create the client. Use an ID for a persistent session.
     // A real system should try harder to use a unique ID.
