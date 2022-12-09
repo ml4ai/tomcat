@@ -1,0 +1,6 @@
+client_id: tomcat
+
+# The topics to which we subscribe.
+topics:
+  - minecraft/chat
+  - trial

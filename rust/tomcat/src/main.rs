@@ -14,45 +14,64 @@
 //!   - Last will and testament
 //!
 
-use futures::{executor::block_on, stream::StreamExt};
+use std::time::Duration;
+use futures::StreamExt;
+use futures::executor::block_on;
 use paho_mqtt as mqtt;
-use std::{env, process, time::Duration};
 use serde::{Serialize, Deserialize};
+use clap::Parser;
+use pretty_env_logger;
+use log::{info, warn, error};
 
 /// Configuration
 #[derive(Default, Debug, Serialize, Deserialize)]
 struct Config {
-    topics: Vec<String>
+    topics: Vec<String>,
+    client_id: String
 }
 
-// The topics to which we subscribe.
-const TOPICS: &[&str] = &["test", "hello"];
-const QOS: &[i32] = &[1, 1];
+/// Command line arguments
+#[derive(Parser, Debug)]
+struct Cli {
+    /// MQTT broker host
+    #[arg(long, default_value_t = String::from("localhost"))]
+    host: String,
 
-/////////////////////////////////////////////////////////////////////////////
+    /// MQTT broker port
+    #[arg(short, long, default_value_t = 1883)]
+    port: u16,
+
+    /// Config file
+    #[arg(short, long, default_value_t = String::from("config.yml"))]
+    config: String,
+}
+
+
+fn process_message(msg: mqtt::Message) {
+    println!("{}", msg);
+}
 
 fn main() {
     // Initialize the logger from the environment
-    env_logger::init();
+    pretty_env_logger::init();
 
-    let cfg: Config = confy::load_path("tomcat.yml").unwrap();
-    let host = env::args()
-        .nth(1)
-        .unwrap_or_else(|| "tcp://localhost:1883".to_string());
+    let args = Cli::parse();
 
+    let cfg: Config = confy::load_path(&args.config).unwrap();
+    let address = format!("tcp://{}:{}", &args.host, &args.port);
+    
 
     // Create the client. Use an ID for a persistent session.
     // A real system should try harder to use a unique ID.
     let create_opts = mqtt::CreateOptionsBuilder::new()
         .mqtt_version(mqtt::MQTT_VERSION_5)
-        .server_uri(host)
-        .client_id("rust_async_sub_v5")
+        .server_uri(address)
+        .client_id(&cfg.client_id)
         .finalize();
 
     // Create the client connection
     let mut cli = mqtt::AsyncClient::new(create_opts).unwrap_or_else(|e| {
-        println!("Error creating the client: {:?}", e);
-        process::exit(1);
+        panic!("Error creating the client: {:?}", e);
     });
 
     if let Err(err) = block_on(async {
@@ -70,16 +89,18 @@ fn main() {
             .finalize();
 
         // Make the connection to the broker
-        println!("Connecting to the MQTT server...");
+        info!("Connecting to the MQTT server with client id \"{}\"", &cfg.client_id);
         cli.connect(conn_opts).await?;
 
-        println!("Subscribing to topics: {:?}", TOPICS);
-        let sub_opts = vec![mqtt::SubscribeOptions::default(); TOPICS.len()];
-        cli.subscribe_many_with_options(TOPICS, QOS, &sub_opts, None)
+        let qos = vec![mqtt::QOS_2; cfg.topics.len()];
+
+        info!("Subscribing to topics: {:?} with QOS {}", cfg.topics, mqtt::QOS_2);
+        let sub_opts = vec![mqtt::SubscribeOptions::default(); cfg.topics.len()];
+        cli.subscribe_many_with_options(cfg.topics.as_slice(), qos.as_slice(), &sub_opts, None)
             .await?;
 
         // Just loop on incoming messages.
-        println!("Waiting for messages...");
+        info!("Waiting for messages...");
 
         // Note that we're not providing a way to cleanly shut down and
         // disconnect. Therefore, when you kill this app (with a ^C or
@@ -91,13 +112,19 @@ fn main() {
                 if msg.retained() {
                     print!("(R) ");
                 }
-                println!("{}", msg);
+                match msg.topic() {
+                    "minecraft/chat" => process_message(msg),
+                    _ => {
+                        warn!("Unhandled topic: {}", msg.topic());
+                    }
+                }
             }
             else {
                 // A "None" means we were disconnected. Try to reconnect...
-                println!("Lost connection. Attempting reconnect.");
+                info!("Lost connection. Attempting reconnect.");
                 while let Err(err) = cli.reconnect().await {
-                    println!("Error reconnecting: {}", err);
+                    error!("Error reconnecting: {}", err);
+
                     // For tokio use: tokio::time::delay_for()
                     async_std::task::sleep(Duration::from_millis(1000)).await;
                 }
