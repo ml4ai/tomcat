@@ -46,6 +46,34 @@ struct Cli {
     config: String,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+struct Header {
+    timestamp: String,
+    version: String,
+    message_type: String
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct Msg {
+    trial_id: String,
+    experiment_id: String,
+    timestamp: String,
+    source: String,
+    version: String,
+    sub_type: String,
+    replay_parent_id: String,
+    replay_id: String,
+    replay_parent_type: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct ChatData {
+    text: String,
+    addressees: Vec<String>,
+    elapsed_milliseconds: usize,
+    mission_timer: String,
+    sender: String,
+}
 
 fn process_message(msg: mqtt::Message) {
     println!("{}", msg);
