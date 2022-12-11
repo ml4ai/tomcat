@@ -19,9 +19,11 @@ use futures::StreamExt;
 use futures::executor::block_on;
 use paho_mqtt as mqtt;
 use serde::{Serialize, Deserialize};
+use serde_json;
 use clap::Parser;
 use pretty_env_logger;
 use log::{info, warn, error};
+use ispell::SpellLauncher;
 
 /// Configuration
 #[derive(Default, Debug, Serialize, Deserialize)]
@@ -61,22 +63,51 @@ struct Msg {
     source: String,
     version: String,
     sub_type: String,
-    replay_parent_id: String,
-    replay_id: String,
-    replay_parent_type: String,
+    replay_parent_id: Option<String>,
+    replay_id: Option<String>,
+    replay_parent_type: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 struct ChatData {
     text: String,
     addressees: Vec<String>,
-    elapsed_milliseconds: usize,
+    elapsed_milliseconds: isize,
     mission_timer: String,
     sender: String,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+struct ChatMessage {
+    header: Header,
+    msg: Msg,
+    data: ChatData
+}
+
 fn process_message(msg: mqtt::Message) {
-    println!("{}", msg);
+    //let mut checker = SpellLauncher::new()
+        //.aspell()
+        //.dictionary("en_US")
+        //.launch()
+        //.unwrap();
+    //let errors = checker.check("A simpel test to see if it detetcs typing errors").unwrap();
+    //for e in errors {
+        //println!("'{}' (pos: {}) is misspelled!", &e.misspelled, e.position);
+        //if !e.suggestions.is_empty() {
+            //println!("Maybe you meant '{}'?", &e.suggestions[0]);
+        //}
+    //}
+    let message = serde_json::from_str::<ChatMessage>(&msg.payload_str());
+    match message {
+        Ok(m) => {
+            println!("{}", m.data.text)
+        },
+        Err(e) => {
+            println!("Unable to parse JSON, error: {}", e);
+            println!("{}", &msg.payload_str());
+        }
+
+    }
 }
 
 fn main() {
