@@ -55,21 +55,20 @@ fn process_chat_message(msg: mqtt::Message, mission_stage: &mut MissionStage) {
 
     // For ASIST Study 4, only the shop stage will have free text chat.
     if let MissionStage::shop_stage = mission_stage {
-    let message = serde_json::from_str::<ChatMessage>(&msg.payload_str());
-    match message {
-        Ok(m) => {
-            if let "Server" = m.data.sender.as_str() {
-                // We ignore server-generated messages.
+        let message = serde_json::from_str::<ChatMessage>(&msg.payload_str());
+        match message {
+            Ok(m) => {
+                if let "Server" = m.data.sender.as_str() {
+                    // We ignore server-generated messages.
+                }
+                else {
+                    println!("{}", m.data.text)
+                }
+            },
+            Err(e) => {
+                println!("Unable to parse string {}, error: {}", &msg.payload_str(), e);
             }
-            else {
-                println!("{}", m.data.text)
-            }
-        },
-        Err(e) => {
-            println!("Unable to parse string {}, error: {}", &msg.payload_str(), e);
         }
-    }
-
     }
 }
 
