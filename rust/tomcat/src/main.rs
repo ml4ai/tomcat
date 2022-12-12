@@ -6,9 +6,9 @@ use futures::executor::block_on;
 use paho_mqtt as mqtt;
 use serde::{Serialize, Deserialize};
 use tomcat::messages::{chat::ChatMessage, stage_transition::{MissionStage, StageTransitionMessage}};
-use serde_json;
+
 use clap::Parser;
-use pretty_env_logger;
+
 use log::{info, warn, error};
 use ispell::SpellLauncher;
 
