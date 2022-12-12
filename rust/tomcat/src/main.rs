@@ -1,24 +1,11 @@
-//! This application is an MQTT subscriber using the asynchronous client
-//! interface of the Paho Rust client library.
-//! It also monitors for disconnects and performs manual re-connections.
-//!
-//! The sample demonstrates:
-//!   - An async/await subscriber
-//!   - Connecting to an MQTT server/broker.
-//!   - Subscribing to multiple topics
-//!   - Using MQTT v5 subscribe options
-//!   - Receiving messages from an async stream.
-//!   - Handling disconnects and attempting manual reconnects.
-//!   - Using a "persistent" (non-clean) session so the broker keeps
-//!     subscriptions and messages through reconnects.
-//!   - Last will and testament
-//!
+//! ToMCAT NLU agent
 
 use std::time::Duration;
 use futures::StreamExt;
 use futures::executor::block_on;
 use paho_mqtt as mqtt;
 use serde::{Serialize, Deserialize};
+use tomcat::messages::chat::ChatMessage;
 use serde_json;
 use clap::Parser;
 use pretty_env_logger;
@@ -48,43 +35,17 @@ struct Cli {
     config: String,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-struct Header {
-    timestamp: String,
-    version: String,
-    message_type: String
+/// Mission stage
+enum Stage {
+    Store,
+    Field
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-struct Msg {
-    trial_id: String,
-    experiment_id: String,
-    timestamp: String,
-    source: String,
-    version: String,
-    sub_type: String,
-    replay_parent_id: Option<String>,
-    replay_id: Option<String>,
-    replay_parent_type: Option<String>,
+fn process_planning_message(message: mqtt::Message) {
+
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-struct ChatData {
-    text: String,
-    addressees: Vec<String>,
-    elapsed_milliseconds: isize,
-    mission_timer: String,
-    sender: String,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-struct ChatMessage {
-    header: Header,
-    msg: Msg,
-    data: ChatData
-}
-
-fn process_message(msg: mqtt::Message) {
+fn process_chat_message(msg: mqtt::Message) {
     //let mut checker = SpellLauncher::new()
         //.aspell()
         //.dictionary("en_US")
@@ -100,11 +61,14 @@ fn process_message(msg: mqtt::Message) {
     let message = serde_json::from_str::<ChatMessage>(&msg.payload_str());
     match message {
         Ok(m) => {
-            println!("{}", m.data.text)
+            if let "Server" = m.data.sender.as_str() {
+            }
+            else {
+                println!("{}", m.data.text)
+            }
         },
         Err(e) => {
-            println!("Unable to parse JSON, error: {}", e);
-            println!("{}", &msg.payload_str());
+            println!("Unable to parse string {}, error: {}", &msg.payload_str(), e);
         }
 
     }
@@ -172,7 +136,8 @@ fn main() {
                     print!("(R) ");
                 }
                 match msg.topic() {
-                    "minecraft/chat" => process_message(msg),
+                    "minecraft/chat" => process_chat_message(msg),
+                    "observations/events/missions/planning" => process_planning_message(msg),
                     _ => {
                         warn!("Unhandled topic: {}", msg.topic());
                     }
