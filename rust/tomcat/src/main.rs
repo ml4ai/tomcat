@@ -5,7 +5,7 @@ use futures::StreamExt;
 use futures::executor::block_on;
 use paho_mqtt as mqtt;
 use serde::{Serialize, Deserialize};
-use tomcat::messages::chat::ChatMessage;
+use tomcat::messages::{chat::ChatMessage, planning_stage::PlanningStageMessage};
 use serde_json;
 use clap::Parser;
 use pretty_env_logger;
@@ -42,6 +42,16 @@ enum Stage {
 }
 
 fn process_planning_message(message: mqtt::Message) {
+    let payload = &message.payload_str();
+    let message = serde_json::from_str::<PlanningStageMessage>(payload);
+    match message {
+        Ok(_) => {
+            println!("{}", payload)
+        },
+        Err(e) => {
+            println!("Unable to parse string {}, error: {}", payload, e);
+        }
+    }
 
 }
 
@@ -62,15 +72,15 @@ fn process_chat_message(msg: mqtt::Message) {
     match message {
         Ok(m) => {
             if let "Server" = m.data.sender.as_str() {
+                // We ignore server-generated messages.
             }
             else {
-                println!("{}", m.data.text)
+                //println!("{}", m.data.text)
             }
         },
         Err(e) => {
             println!("Unable to parse string {}, error: {}", &msg.payload_str(), e);
         }
-
     }
 }
 
