@@ -3,5 +3,5 @@ client_id: tomcat
 # The topics to which we subscribe.
 topics:
   - minecraft/chat
-  - observations/events/mission/planning
+  - observations/events/stage_transition
   - trial

@@ -5,7 +5,7 @@ use futures::StreamExt;
 use futures::executor::block_on;
 use paho_mqtt as mqtt;
 use serde::{Serialize, Deserialize};
-use tomcat::messages::{chat::ChatMessage, planning_stage::PlanningStageMessage};
+use tomcat::messages::{chat::ChatMessage, stage_transition::{MissionStage, StageTransitionMessage}};
 use serde_json;
 use clap::Parser;
 use pretty_env_logger;
@@ -35,18 +35,14 @@ struct Cli {
     config: String,
 }
 
-/// Mission stage
-enum Stage {
-    Store,
-    Field
-}
 
-fn process_planning_message(message: mqtt::Message) {
+fn process_stage_transition_message(message: mqtt::Message, mission_stage: &mut MissionStage) {
     let payload = &message.payload_str();
-    let message = serde_json::from_str::<PlanningStageMessage>(payload);
+    let message = serde_json::from_str::<StageTransitionMessage>(payload);
     match message {
-        Ok(_) => {
-            println!("{}", payload)
+        Ok(m) => {
+            *mission_stage = m.data.mission_stage;
+            println!("{}", mission_stage)
         },
         Err(e) => {
             println!("Unable to parse string {}, error: {}", payload, e);
@@ -55,19 +51,10 @@ fn process_planning_message(message: mqtt::Message) {
 
 }
 
-fn process_chat_message(msg: mqtt::Message) {
-    //let mut checker = SpellLauncher::new()
-        //.aspell()
-        //.dictionary("en_US")
-        //.launch()
-        //.unwrap();
-    //let errors = checker.check("A simpel test to see if it detetcs typing errors").unwrap();
-    //for e in errors {
-        //println!("'{}' (pos: {}) is misspelled!", &e.misspelled, e.position);
-        //if !e.suggestions.is_empty() {
-            //println!("Maybe you meant '{}'?", &e.suggestions[0]);
-        //}
-    //}
+fn process_chat_message(msg: mqtt::Message, mission_stage: &mut MissionStage) {
+
+    // For ASIST Study 4, only the shop stage will have free text chat.
+    if let MissionStage::shop_stage = mission_stage {
     let message = serde_json::from_str::<ChatMessage>(&msg.payload_str());
     match message {
         Ok(m) => {
@@ -75,12 +62,14 @@ fn process_chat_message(msg: mqtt::Message) {
                 // We ignore server-generated messages.
             }
             else {
-                //println!("{}", m.data.text)
+                println!("{}", m.data.text)
             }
         },
         Err(e) => {
             println!("Unable to parse string {}, error: {}", &msg.payload_str(), e);
         }
+    }
+
     }
 }
 
@@ -140,16 +129,31 @@ fn main() {
         // whatever) the server will get an unexpected drop and then
         // should emit the LWT message.
 
+        let mut mission_stage = MissionStage::shop_stage;
+
+        let mut checker = SpellLauncher::new()
+            .aspell()
+            .dictionary("en_US")
+            .launch()
+            .unwrap();
+        let errors = checker.check("A simpel test to see if it detetcs typing errors").unwrap();
+        for e in errors {
+            println!("'{}' (pos: {}) is misspelled!", &e.misspelled, e.position);
+            if !e.suggestions.is_empty() {
+                println!("Maybe you meant '{}'?", &e.suggestions[0]);
+            }
+        }
+
         while let Some(msg_opt) = strm.next().await {
             if let Some(msg) = msg_opt {
                 if msg.retained() {
                     print!("(R) ");
                 }
                 match msg.topic() {
-                    "minecraft/chat" => process_chat_message(msg),
-                    "observations/events/missions/planning" => process_planning_message(msg),
-                    _ => {
-                        warn!("Unhandled topic: {}", msg.topic());
+                    "minecraft/chat" => process_chat_message(msg, &mut mission_stage),
+                    "observations/events/stage_transition" => process_stage_transition_message(msg, &mut mission_stage),
+                    _ => { 
+                        warn!("Unhandled topic: {}", msg.topic()); 
                     }
                 }
             }
