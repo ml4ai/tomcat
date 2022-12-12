@@ -1,22 +1,25 @@
 //! ToMCAT NLU agent
 
-use std::time::Duration;
-use futures::StreamExt;
 use futures::executor::block_on;
+use futures::StreamExt;
 use paho_mqtt as mqtt;
-use serde::{Serialize, Deserialize};
-use tomcat::messages::{chat::ChatMessage, stage_transition::{MissionStage, StageTransitionMessage}};
+use serde::{Deserialize, Serialize};
+use std::time::Duration;
+use tomcat::messages::{
+    chat::ChatMessage,
+    stage_transition::{MissionStage, StageTransitionMessage},
+};
 
 use clap::Parser;
 
-use log::{info, warn, error};
 use ispell::SpellLauncher;
+use log::{error, info, warn};
 
 /// Configuration
 #[derive(Default, Debug, Serialize, Deserialize)]
 struct Config {
     topics: Vec<String>,
-    client_id: String
+    client_id: String,
 }
 
 /// Command line arguments
@@ -35,7 +38,6 @@ struct Cli {
     config: String,
 }
 
-
 fn process_stage_transition_message(message: mqtt::Message, mission_stage: &mut MissionStage) {
     let payload = &message.payload_str();
     let message = serde_json::from_str::<StageTransitionMessage>(payload);
@@ -43,16 +45,14 @@ fn process_stage_transition_message(message: mqtt::Message, mission_stage: &mut 
         Ok(m) => {
             *mission_stage = m.data.mission_stage;
             println!("{}", mission_stage)
-        },
+        }
         Err(e) => {
             println!("Unable to parse string {}, error: {}", payload, e);
         }
     }
-
 }
 
 fn process_chat_message(msg: mqtt::Message, mission_stage: &mut MissionStage) {
-
     // For ASIST Study 4, only the shop stage will have free text chat.
     if let MissionStage::shop_stage = mission_stage {
         let message = serde_json::from_str::<ChatMessage>(&msg.payload_str());
@@ -60,13 +60,16 @@ fn process_chat_message(msg: mqtt::Message, mission_stage: &mut MissionStage) {
             Ok(m) => {
                 if let "Server" = m.data.sender.as_str() {
                     // We ignore server-generated messages.
-                }
-                else {
+                } else {
                     println!("{}", m.data.text)
                 }
-            },
+            }
             Err(e) => {
-                println!("Unable to parse string {}, error: {}", &msg.payload_str(), e);
+                println!(
+                    "Unable to parse string {}, error: {}",
+                    &msg.payload_str(),
+                    e
+                );
             }
         }
     }
@@ -80,7 +83,6 @@ fn main() {
 
     let cfg: Config = confy::load_path(&args.config).unwrap();
     let address = format!("tcp://{}:{}", &args.host, &args.port);
-    
 
     // Create the client. Use an ID for a persistent session.
     // A real system should try harder to use a unique ID.
@@ -110,12 +112,19 @@ fn main() {
             .finalize();
 
         // Make the connection to the broker
-        info!("Connecting to the MQTT server with client id \"{}\"", &cfg.client_id);
+        info!(
+            "Connecting to the MQTT server with client id \"{}\"",
+            &cfg.client_id
+        );
         cli.connect(conn_opts).await?;
 
         let qos = vec![mqtt::QOS_2; cfg.topics.len()];
 
-        info!("Subscribing to topics: {:?} with QOS {}", cfg.topics, mqtt::QOS_2);
+        info!(
+            "Subscribing to topics: {:?} with QOS {}",
+            cfg.topics,
+            mqtt::QOS_2
+        );
         let sub_opts = vec![mqtt::SubscribeOptions::default(); cfg.topics.len()];
         cli.subscribe_many_with_options(cfg.topics.as_slice(), qos.as_slice(), &sub_opts, None)
             .await?;
@@ -135,7 +144,9 @@ fn main() {
             .dictionary("en_US")
             .launch()
             .unwrap();
-        let errors = checker.check("A simpel test to see if it detetcs typing errors").unwrap();
+        let errors = checker
+            .check("A simpel test to see if it detetcs typing errors")
+            .unwrap();
         for e in errors {
             println!("'{}' (pos: {}) is misspelled!", &e.misspelled, e.position);
             if !e.suggestions.is_empty() {
@@ -150,13 +161,14 @@ fn main() {
                 }
                 match msg.topic() {
                     "minecraft/chat" => process_chat_message(msg, &mut mission_stage),
-                    "observations/events/stage_transition" => process_stage_transition_message(msg, &mut mission_stage),
-                    _ => { 
-                        warn!("Unhandled topic: {}", msg.topic()); 
+                    "observations/events/stage_transition" => {
+                        process_stage_transition_message(msg, &mut mission_stage)
+                    }
+                    _ => {
+                        warn!("Unhandled topic: {}", msg.topic());
                     }
                 }
-            }
-            else {
+            } else {
                 // A "None" means we were disconnected. Try to reconnect...
                 info!("Lost connection. Attempting reconnect.");
                 while let Err(err) = cli.reconnect().await {
