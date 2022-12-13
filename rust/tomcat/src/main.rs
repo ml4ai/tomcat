@@ -9,8 +9,9 @@ use tomcat::messages::{
     chat::ChatMessage,
     stage_transition::{MissionStage, StageTransitionMessage},
 };
-
+use tomcat::cli::Cli;
 use clap::Parser;
+use reqwest;
 
 use ispell::{SpellChecker, SpellLauncher};
 use log::{error, info, warn};
@@ -22,21 +23,6 @@ struct Config {
     client_id: String,
 }
 
-/// Command line arguments
-#[derive(Parser, Debug)]
-struct Cli {
-    /// MQTT broker host
-    #[arg(long, default_value_t = String::from("localhost"))]
-    host: String,
-
-    /// MQTT broker port
-    #[arg(short, long, default_value_t = 1883)]
-    port: u16,
-
-    /// Config file
-    #[arg(short, long, default_value_t = String::from("config.yml"))]
-    config: String,
-}
 
 fn get_message<'a, T: Deserialize<'a>>(message: &'a mqtt::Message) -> T {
     serde_json::from_slice::<T>(message.payload())
@@ -67,7 +53,10 @@ fn process_chat_message(
                     println!("Maybe you meant '{}'?", &e.suggestions[0]);
                 }
             }
-            println!("{}", message.data.text)
+            println!("{}", message.data.text);
+            let client = reqwest::blocking::Client::new();
+            let res = client.post("http://localhost:8080").body(message.data.text).send().unwrap();
+            println!("{:?}", res.text());
         }
     }
 }
