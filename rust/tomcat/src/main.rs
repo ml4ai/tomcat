@@ -12,7 +12,7 @@ use tomcat::messages::{
 
 use clap::Parser;
 
-use ispell::SpellLauncher;
+use ispell::{SpellChecker, SpellLauncher};
 use log::{error, info, warn};
 
 /// Configuration
@@ -38,39 +38,38 @@ struct Cli {
     config: String,
 }
 
-fn process_stage_transition_message(message: mqtt::Message, mission_stage: &mut MissionStage) {
-    let payload = &message.payload_str();
-    let message = serde_json::from_str::<StageTransitionMessage>(payload);
-    match message {
-        Ok(m) => {
-            *mission_stage = m.data.mission_stage;
-            println!("{}", mission_stage)
-        }
-        Err(e) => {
-            println!("Unable to parse string {}, error: {}", payload, e);
-        }
-    }
+fn get_message<'a, T: Deserialize<'a>>(message: &'a mqtt::Message) -> T {
+    serde_json::from_slice::<T>(message.payload()).expect(&format!(
+        "Unable to parse JSON payload {:?}",
+        message.payload()
+    ))
 }
 
-fn process_chat_message(msg: mqtt::Message, mission_stage: &mut MissionStage) {
+fn process_stage_transition_message(message: mqtt::Message, mission_stage: &mut MissionStage) {
+    let message: StageTransitionMessage = get_message(&message);
+    *mission_stage = message.data.mission_stage;
+}
+
+fn process_chat_message(
+    msg: mqtt::Message,
+    mission_stage: &mut MissionStage,
+    checker: &mut SpellChecker,
+) {
     // For ASIST Study 4, only the shop stage will have free text chat.
     if let MissionStage::shop_stage = mission_stage {
-        let message = serde_json::from_str::<ChatMessage>(&msg.payload_str());
-        match message {
-            Ok(m) => {
-                if let "Server" = m.data.sender.as_str() {
-                    // We ignore server-generated messages.
-                } else {
-                    println!("{}", m.data.text)
+        let message: ChatMessage = get_message(&msg);
+
+        // We ignore server-generated messages.
+        if let "Server" = message.data.sender.as_str() {
+        } else {
+            let errors = checker.check(&message.data.text).unwrap();
+            for e in errors {
+                println!("'{}' (pos: {}) is misspelled!", &e.misspelled, e.position);
+                if !e.suggestions.is_empty() {
+                    println!("Maybe you meant '{}'?", &e.suggestions[0]);
                 }
             }
-            Err(e) => {
-                println!(
-                    "Unable to parse string {}, error: {}",
-                    &msg.payload_str(),
-                    e
-                );
-            }
+            println!("{}", message.data.text)
         }
     }
 }
@@ -132,7 +131,7 @@ fn main() {
         // Just loop on incoming messages.
         info!("Waiting for messages...");
 
-        // Note that we're not providing a way to cleanly shut down and
+        // Note that we are not providing a way to cleanly shut down and
         // disconnect. Therefore, when you kill this app (with a ^C or
         // whatever) the server will get an unexpected drop and then
         // should emit the LWT message.
@@ -144,15 +143,6 @@ fn main() {
             .dictionary("en_US")
             .launch()
             .unwrap();
-        let errors = checker
-            .check("A simpel test to see if it detetcs typing errors")
-            .unwrap();
-        for e in errors {
-            println!("'{}' (pos: {}) is misspelled!", &e.misspelled, e.position);
-            if !e.suggestions.is_empty() {
-                println!("Maybe you meant '{}'?", &e.suggestions[0]);
-            }
-        }
 
         while let Some(msg_opt) = strm.next().await {
             if let Some(msg) = msg_opt {
@@ -160,7 +150,7 @@ fn main() {
                     print!("(R) ");
                 }
                 match msg.topic() {
-                    "minecraft/chat" => process_chat_message(msg, &mut mission_stage),
+                    "minecraft/chat" => process_chat_message(msg, &mut mission_stage, &mut checker),
                     "observations/events/stage_transition" => {
                         process_stage_transition_message(msg, &mut mission_stage)
                     }
