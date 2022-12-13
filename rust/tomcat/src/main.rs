@@ -39,10 +39,8 @@ struct Cli {
 }
 
 fn get_message<'a, T: Deserialize<'a>>(message: &'a mqtt::Message) -> T {
-    serde_json::from_slice::<T>(message.payload()).expect(&format!(
-        "Unable to parse JSON payload {:?}",
-        message.payload()
-    ))
+    serde_json::from_slice::<T>(message.payload()).unwrap_or_else(|_| panic!("Unable to parse JSON payload {:?}",
+        message.payload()))
 }
 
 fn process_stage_transition_message(message: mqtt::Message, mission_stage: &mut MissionStage) {
