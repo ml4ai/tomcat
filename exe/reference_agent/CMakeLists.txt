@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 project(reference_agent)
-find_package(PahoMqttCpp REQUIRED)
+#find_package(PahoMqttCpp REQUIRED)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -11,7 +11,19 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g") # create gdb symbol table
 SET(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "/opt/local/libexec/boost/1.76/include/boost")
 SET(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "/opt/local/libexec/boost/1.76/lib")
 
+set(PAHO_MQTT_C_LIBRARIES ~/paho_mqtt_c/paho.mqtt.c/build/output )
+set(PAHO_MQTT_C_INCLUDE_DIRS ~/paho_mqtt_c/paho.mqtt.c/include )
+set(PAHO_MQTT_C_LIBRARIES ~/paho_mqtt_cpp/paho.mqtt.c/build/output )
+set(PAHO_MQTT_C_INCLUDE_DIRS ~/paho_mqtt_cpp/paho.mqtt.c/include )
+set(PAHO_MQTT_CPP_LIBRARIES ~/paho_mqtt_cpp/paho.mqtt.cpp/build/output )
+set(PAHO_MQTT_CPP_INCLUDE_DIRS ~/paho_mqtt_cpp/paho.mqtt.cpp/include )
+set(CPP=/usr/bin/gcc )
 
+
+find_package(
+    OpenSSL
+    REQUIRED
+)
 
 add_definitions(-DBOOST_LOG_DYN_LINK)
 

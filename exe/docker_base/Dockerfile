@@ -46,4 +46,3 @@ RUN rm -rf build  \
 # Run the executable
 ENTRYPOINT ./build/c_hello_world
 
-

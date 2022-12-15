@@ -1,3 +1,5 @@
+# paho_mqtt_cpp
+#
 # Every Dockerfile needs a FROM statement as the first executable line,
 # this is the OS you will be using
 FROM ubuntu:kinetic
@@ -23,28 +25,39 @@ RUN  apt-get update && apt-get -y install \
     lsb-release 
 
 # Install Paho c
-RUN git clone --branch v1.2.1 https://github.com/eclipse/paho.mqtt.c.git
+RUN git clone --branch v1.3.8 https://github.com/eclipse/paho.mqtt.c.git
 
 # BUILD PAHO MQTT C
 # you will want to move this repo to the MacOS file path 
 RUN cd paho.mqtt.c \
 && make install \
-&& cd build \
-&& cmake -DPAHO_WITH_SSL=TRUE \
-  -DPAHO_BUILD_DEB_PACKAGE=TRUE .. \
-&& cmake --build . \
-&& cd ../
+&& cmake -Bbuild -H. -DPAHO_ENABLE_TESTING=OFF -DPAHO_BUILD_STATIC=ON \
+&& cmake --build build/ --target install \
+&& ldconfig \
+&& cd ..
+
+RUN export LD_LIBRARY_PATH=/paho.mqtt.c/src/:$LD_LIBRARY_PATH
+
+
+
+# Install Paho cpp
+RUN git clone https://github.com/eclipse/paho.mqtt.cpp.git
+
+# BUILD PAHO MQTT CPP
+# you will want to move this repo to the MacOS file path 
+RUN cd paho.mqtt.cpp \
+&& cmake -Bbuild -H. -DPAHO_BUILD_STATIC=ON \
+&& cmake --build build/ --target install \
+&& ldconfig \
+&& cd ..
+
+RUN export LD_LIBRARY_PATH=/paho.mqtt.cpp/src/:$LD_LIBRARY_PATH
 
 
 COPY . /reference_agent
 WORKDIR /reference_agent
 
-RUN export LD_LIBRARY_PATH=/paho.mqtt.c/src/:$LD_LIBRARY_PATH
-
 # Build the executable
-RUN echo "building"
-RUN pwd
-RUN ls
-RUN gcc -Lpaho.mqtt.c/build/output/ *.cpp *.hpp -l paho-mqtt3a -o reference_agent_app
+RUN g++ -Lpaho.mqtt.c/build/output/ *.cpp -l paho-mqtt3a -o reference_agent_app
 
 ENTRYPOINT /reference_agent/reference_agent_app

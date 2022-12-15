@@ -1,18 +1,19 @@
 cmake_minimum_required(VERSION 3.16)
-project(cpp_agent_template)
+project(cpp_agent_template_project)
 find_package(PahoMqttCpp REQUIRED)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g") # create gdb symbol table
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+#list(APPEND CMAKE_MODULE_PATH "/usr/local/lib/cmake/PahoMqttCpp")
+
 
 add_definitions(-DBOOST_LOG_DYN_LINK)
 
 # Add MacOs Boost directories
-SET(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "/opt/local/libexec/boost/1.76/include/boost")
-SET(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "/opt/local/libexec/boost/1.76/lib")
+#SET(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "/opt/local/libexec/boost/1.79/include/boost")
+#SET(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "/opt/local/libexec/boost/1.79/lib")
 
 
 find_package(
@@ -28,7 +29,7 @@ find_package(
 )
 
 add_executable(
-    cpp_agent_template main.cpp
+    cpp_agent_template_app main.cpp
     Agent.cpp
     MqttAgent.cpp
     FileAgent.cpp
@@ -38,10 +39,10 @@ add_executable(
     Utils.cpp
 )
 
-target_include_directories(cpp_agent_template PRIVATE ${Boost_INCLUDE_DIRS})
+target_include_directories(cpp_agent_template_app PRIVATE ${Boost_INCLUDE_DIRS})
 
 target_link_libraries(
-    cpp_agent_template 
+    cpp_agent_template_app 
     PahoMqttCpp::paho-mqttpp3
     ${Boost_LIBRARIES}
 )

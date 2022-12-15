@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "MQTTAsync.h"
@@ -39,11 +38,13 @@ void connlost(void *context, char *cause)
                 printf("     cause: %s\n", cause);
  
         printf("Reconnecting\n");
+        fflush(stdout);
         conn_opts.keepAliveInterval = 20;
         conn_opts.cleansession = 1;
         if ((rc = MQTTAsync_connect(client, &conn_opts)) != MQTTASYNC_SUCCESS)
         {
                 printf("Failed to start connect, return code %d\n", rc);
+                fflush(stdout);
                 finished = 1;
         }
 }
@@ -63,24 +64,28 @@ int msgarrvd(void *context, char *topicName, int topicLen, MQTTAsync_message *me
 void onDisconnectFailure(void* context, MQTTAsync_failureData* response)
 {
         printf("Disconnect failed, rc %d\n", response->code);
+        fflush(stdout);
         disc_finished = 1;
 }
  
 void onDisconnect(void* context, MQTTAsync_successData* response)
 {
         printf("Successful disconnection\n");
+        fflush(stdout);
         disc_finished = 1;
 }
  
 void onSubscribe(void* context, MQTTAsync_successData* response)
 {
         printf("Subscribe succeeded\n");
+        fflush(stdout);
         subscribed = 1;
 }
  
 void onSubscribeFailure(void* context, MQTTAsync_failureData* response)
 {
         printf("Subscribe failed, rc %d\n", response->code);
+        fflush(stdout);
         finished = 1;
 }
  
@@ -88,6 +93,7 @@ void onSubscribeFailure(void* context, MQTTAsync_failureData* response)
 void onConnectFailure(void* context, MQTTAsync_failureData* response)
 {
         printf("Connect failed, rc %d\n", response->code);
+        fflush(stdout);
         finished = 1;
 }
  
@@ -102,12 +108,14 @@ void onConnect(void* context, MQTTAsync_successData* response)
  
         printf("Subscribing to topic %s\nfor client %s using QoS%d\n\n"
            "Press Q<Enter> to quit\n\n", TOPIC, CLIENTID, QOS);
+        fflush(stdout);
         opts.onSuccess = onSubscribe;
         opts.onFailure = onSubscribeFailure;
         opts.context = client;
         if ((rc = MQTTAsync_subscribe(client, TOPIC, QOS, &opts)) != MQTTASYNC_SUCCESS)
         {
                 printf("Failed to start subscribe, return code %d\n", rc);
+                fflush(stdout);
                 finished = 1;
         }
 }
@@ -127,18 +135,22 @@ int main(int argc, char* argv[])
                         != MQTTASYNC_SUCCESS)
         {
                 printf("Failed to create client, return code %d\n", rc);
+	        fflush(stdout);
                 rc = EXIT_FAILURE;
                 goto exit;
         }
 	printf("MQTTAsync_create called\n");
+	fflush(stdout);
  
         if ((rc = MQTTAsync_setCallbacks(client, client, connlost, msgarrvd, NULL)) != MQTTASYNC_SUCCESS)
         {
                 printf("Failed to set callbacks, return code %d\n", rc);
+	        fflush(stdout);
                 rc = EXIT_FAILURE;
                 goto destroy_exit;
         }
 	printf("MQTTAsync_setCallbacks called\n");
+	fflush(stdout);
  
         conn_opts.keepAliveInterval = 20;
         conn_opts.cleansession = 1;
@@ -148,20 +160,39 @@ int main(int argc, char* argv[])
         if ((rc = MQTTAsync_connect(client, &conn_opts)) != MQTTASYNC_SUCCESS)
         {
                 printf("Failed to start connect, return code %d\n", rc);
+	        fflush(stdout);
                 rc = EXIT_FAILURE;
                 goto destroy_exit;
         }
+	printf("subscribed = %d\n", subscribed);
+	printf("finished = %d\n", finished);
+	printf("MQTTAsync test passed, rc = %d\n", rc);
+	fflush(stdout);
  
-        while (!subscribed && !finished)
+	int counter = 0;
+
+        while (!subscribed && !finished) {
+            printf("test loop iteration %d\n", counter);
+            fflush(stdout);
+	    counter += 1;
                 #if defined(_WIN32)
                         Sleep(100);
                 #else
                         usleep(10000L);
                 #endif
+	}
+	printf("subscribed = %d\n", subscribed);
+	printf("subscribed = %d\n", subscribed);
+	printf("finished = %d\n", finished);
+	printf("finished = %d\n", finished);
+        printf("test loop completed\n");
+        fflush(stdout);
  
         if (finished)
                 goto exit;
  
+	printf("Entering main loop\n");
+	fflush(stdout);
         do
         {
                 ch = getchar();
@@ -172,6 +203,7 @@ int main(int argc, char* argv[])
         if ((rc = MQTTAsync_disconnect(client, &disc_opts)) != MQTTASYNC_SUCCESS)
         {
                 printf("Failed to start disconnect, return code %d\n", rc);
+	        fflush(stdout);
                 rc = EXIT_FAILURE;
                 goto destroy_exit;
         }
