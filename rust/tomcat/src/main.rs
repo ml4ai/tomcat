@@ -3,7 +3,6 @@
 use clap::Parser;
 use futures::{executor::block_on, StreamExt};
 use paho_mqtt as mqtt;
-use reqwest;
 use serde::{Deserialize, Serialize};
 use std::time::Duration;
 use tomcat::{
@@ -22,6 +21,8 @@ use log::{error, info, warn};
 struct Config {
     topics: Vec<String>,
     client_id: String,
+    event_extractor_url: String,
+    custom_vocabulary: Vec<String>,
 }
 
 fn get_message<'a, T: Deserialize<'a>>(message: &'a mqtt::Message) -> T {
@@ -38,6 +39,7 @@ fn process_chat_message(
     msg: mqtt::Message,
     mission_stage: &mut MissionStage,
     checker: &mut SpellChecker,
+    cfg: &Config,
 ) {
     // For ASIST Study 4, only the shop stage will have free text chat.
     if let MissionStage::shop_stage = mission_stage {
@@ -46,20 +48,25 @@ fn process_chat_message(
         // We ignore server-generated messages.
         if let "Server" = message.data.sender.as_str() {
         } else {
-            let errors = checker.check(&message.data.text).unwrap();
+            let errors = checker
+                .check(&message.data.text)
+                .expect("Unable to check spelling!");
             for e in errors {
-                println!("'{}' (pos: {}) is misspelled!", &e.misspelled, e.position);
-                if !e.suggestions.is_empty() {
-                    println!("Maybe you meant '{}'?", &e.suggestions[0]);
+                // Only show errors if the misspelled word is not in the custom vocabulary.
+                if !cfg.custom_vocabulary.contains(&e.misspelled) {
+                    println!("'{}' (pos: {}) is misspelled!", &e.misspelled, e.position);
+                    if !e.suggestions.is_empty() {
+                        println!("Maybe you meant '{}'?", &e.suggestions[0]);
+                    }
                 }
             }
             println!("{}", message.data.text);
             let client = reqwest::blocking::Client::new();
             let res = client
-                .post("http://localhost:8080")
+                .post(&cfg.event_extractor_url)
                 .body(message.data.text)
                 .send()
-                .unwrap();
+                .unwrap_or_else(|_| panic!("Unable to contact the event extraction backend at {}, is the service running?", &cfg.event_extractor_url));
             println!("{:?}", res.text());
         }
     }
@@ -71,7 +78,8 @@ fn main() {
 
     let args = Cli::parse();
 
-    let cfg: Config = confy::load_path(&args.config).unwrap();
+    let cfg: Config = confy::load_path(&args.config)
+        .unwrap_or_else(|_| panic!("Unable to load config file {}!", &args.config));
     let address = format!("tcp://{}:{}", &args.host, &args.port);
 
     // Create the client. Use an ID for a persistent session.
@@ -141,7 +149,9 @@ fn main() {
                     print!("(R) ");
                 }
                 match msg.topic() {
-                    "minecraft/chat" => process_chat_message(msg, &mut mission_stage, &mut checker),
+                    "minecraft/chat" => {
+                        process_chat_message(msg, &mut mission_stage, &mut checker, &cfg)
+                    }
                     "observations/events/stage_transition" => {
                         process_stage_transition_message(msg, &mut mission_stage)
                     }
