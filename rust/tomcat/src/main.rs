@@ -1,17 +1,18 @@
 //! ToMCAT NLU agent
 
-use futures::executor::block_on;
-use futures::StreamExt;
+use clap::Parser;
+use futures::{executor::block_on, StreamExt};
 use paho_mqtt as mqtt;
+use reqwest;
 use serde::{Deserialize, Serialize};
 use std::time::Duration;
-use tomcat::messages::{
-    chat::ChatMessage,
-    stage_transition::{MissionStage, StageTransitionMessage},
+use tomcat::{
+    cli::Cli,
+    messages::{
+        chat::ChatMessage,
+        stage_transition::{MissionStage, StageTransitionMessage},
+    },
 };
-use tomcat::cli::Cli;
-use clap::Parser;
-use reqwest;
 
 use ispell::{SpellChecker, SpellLauncher};
 use log::{error, info, warn};
@@ -22,7 +23,6 @@ struct Config {
     topics: Vec<String>,
     client_id: String,
 }
-
 
 fn get_message<'a, T: Deserialize<'a>>(message: &'a mqtt::Message) -> T {
     serde_json::from_slice::<T>(message.payload())
@@ -55,7 +55,11 @@ fn process_chat_message(
             }
             println!("{}", message.data.text);
             let client = reqwest::blocking::Client::new();
-            let res = client.post("http://localhost:8080").body(message.data.text).send().unwrap();
+            let res = client
+                .post("http://localhost:8080")
+                .body(message.data.text)
+                .send()
+                .unwrap();
             println!("{:?}", res.text());
         }
     }
