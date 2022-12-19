@@ -16,3 +16,13 @@ pub struct ChatMessage {
     msg: Msg,
     pub data: ChatData,
 }
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Extraction {
+    pub labels: Vec<String>,
+    pub span: String,
+    pub start_offset: u32,
+    pub end_offset: u32,
+    pub rule: String
+}
+

@@ -6,7 +6,7 @@ use paho_mqtt as mqtt;
 use serde::{Deserialize, Serialize};
 use std::time::Duration;
 use tomcat::messages::{
-    chat::ChatMessage,
+    chat::{ChatMessage, Extraction},
     stage_transition::{MissionStage, StageTransitionMessage},
 };
 use tomcat::cli::Cli;
@@ -39,6 +39,7 @@ fn process_chat_message(
     mission_stage: &mut MissionStage,
     checker: &mut SpellChecker,
 ) {
+    println!("process_chat_message start");
     // For ASIST Study 4, only the shop stage will have free text chat.
     if let MissionStage::shop_stage = mission_stage {
         let message: ChatMessage = get_message(&msg);
@@ -53,12 +54,16 @@ fn process_chat_message(
                     println!("Maybe you meant '{}'?", &e.suggestions[0]);
                 }
             }
-            println!("{}", message.data.text);
+            println!("{}", &message.data.text);
             let client = reqwest::blocking::Client::new();
             let res = client.post("http://localhost:8080").body(message.data.text).send().unwrap();
-            println!("{:?}", res.text());
+            let text = res.text().unwrap();
+
+            let foo: Vec<Extraction> = serde_json::from_str(&text).unwrap(); 
         }
+        
     }
+    println!("process_chat_message done");
 }
 
 fn main() {
