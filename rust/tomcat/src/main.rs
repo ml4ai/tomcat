@@ -60,6 +60,7 @@ fn process_chat_message(
             let text = res.text().unwrap();
 
             let foo: Vec<Extraction> = serde_json::from_str(&text).unwrap(); 
+            println!("{:#?}", &foo);
         }
         
     }
