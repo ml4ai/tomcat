@@ -14,15 +14,28 @@ pub struct ChatData {
 pub struct ChatMessage {
     header: Header,
     msg: Msg,
-    pub data: ChatData,
+    pub data: ChatData
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Attachment {
+    pub labels: Vec<String>,
+    pub agentType: String,
+    pub text: String,
+    pub span: Vec<u32>
+
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Extraction {
     pub labels: Vec<String>,
     pub span: String,
+//    pub arguments: vec<String, Vec<Extraction>>,
+    pub attachments: Vec<Attachment>,
     pub start_offset: u32,
     pub end_offset: u32,
     pub rule: String
 }
+
+
 
