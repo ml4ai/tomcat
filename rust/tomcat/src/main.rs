@@ -1,4 +1,5 @@
-//! ToMCAT NLU agent
+//! ToMCAT N
+//! LU agent
 
 use futures::executor::block_on;
 use futures::StreamExt;
@@ -15,6 +16,9 @@ use reqwest;
 
 use ispell::{SpellChecker, SpellLauncher};
 use log::{error, info, warn};
+
+use std::collections::HashMap;
+
 
 /// Configuration
 #[derive(Default, Debug, Serialize, Deserialize)]
@@ -58,9 +62,16 @@ fn process_chat_message(
             let client = reqwest::blocking::Client::new();
             let res = client.post("http://localhost:8080").body(message.data.text).send().unwrap();
             let text = res.text().unwrap();
+            println!("{:#?}", &text);
 
-            let foo: Vec<Extraction> = serde_json::from_str(&text).unwrap(); 
-            println!("{:#?}", &foo);
+            let value: serde_json::Value = serde_json::from_str(&text).unwrap(); 
+            if let serde_json::Value::Array(extractions) = value {
+                println!("Extraction [0]:");
+                println!("{:#?}", &extractions[0]);
+            }
+            
+
+           // println!("{:#?}", &value);
         }
         
     }
