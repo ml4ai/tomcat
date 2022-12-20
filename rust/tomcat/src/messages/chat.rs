@@ -38,3 +38,7 @@ pub struct Extraction {
     pub rule: String
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Extractions {
+    pub extractions: Vec<Extraction>
+}

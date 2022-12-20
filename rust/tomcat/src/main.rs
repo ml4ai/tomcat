@@ -7,7 +7,7 @@ use paho_mqtt as mqtt;
 use serde::{Deserialize, Serialize};
 use std::time::Duration;
 use tomcat::messages::{
-    chat::{Attachment, ChatMessage, Extraction},
+    chat::{Attachment, ChatMessage, Extraction, Extractions},
     stage_transition::{MissionStage, StageTransitionMessage},
 };
 use tomcat::cli::Cli;
@@ -64,24 +64,26 @@ fn process_chat_message(
             let text = res.text().unwrap();
             println!("{:#?}", &text);
 
-            let value: serde_json::Value = serde_json::from_str(&text).unwrap(); 
+            let value: Vec<serde_json::Value> = serde_json::from_str(&text).unwrap();
+            println!("{:#?}", value);
 
-            if value.is_array()  {
-                println!("Array");
-            } else {
-                println!("Not an Array");
+            for obj in value.iter() {
+                process_json_object(obj);
             }
 
-            if let serde_json::Value::Array(extractions) = value {
-
-                for elem in extractions.iter() {
-                    println!("{:#?}", &elem);
-                }
-            }
         }
     }
     println!("process_chat_message done");
 }
+
+fn process_json_object(obj: &serde_json::Value) {
+    println!("process_json_object");
+
+    println!("{:#?}", obj);
+
+    println!("process_json_object done");
+}
+
 
 fn main() {
     // Initialize the logger from the environment
