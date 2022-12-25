@@ -5,6 +5,7 @@ from .minecraft_timestamps import  read_minecraft_time
 from .create_write_csv_file import dataframe_to_csv
 from .create_time_distribution import create_time_distribution
 from .convert_datetime_timezone import change_time_zone
+from .NIRS_filtering import check_cv, filter
 
 def str2bool(v):
     if isinstance(v, bool):

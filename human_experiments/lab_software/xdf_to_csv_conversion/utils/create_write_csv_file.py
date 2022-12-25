@@ -4,18 +4,26 @@ from time import ctime
 from termcolor import colored 
 from .baseline_tasks_timestamps import read_baseline_tasks_time
 from .minecraft_timestamps import read_minecraft_time
+from .NIRS_filtering import check_cv
 
-def get_timestamps_from_dict(df, state, dict, column_name):
-        df_temp = df
-        rest_state_time_start, rest_state_time_stop  = dict['start_time'], dict['end_time']
-        iloc_idx_start = df_temp['human_readable_time'].searchsorted(ctime(round(rest_state_time_start, 5))) 
-        iloc_idx_end = df_temp['human_readable_time'].searchsorted(ctime(round(rest_state_time_stop, 5)))
-        state_start = df_temp.index[iloc_idx_start]
-        state_end = df_temp.index[iloc_idx_end]
-        range_ = list(range(state_start, state_end))
-        state = [state] * len(range_)
-        state ={i:x for i,x in enumerate(state, state_start)}
-        return state
+def get_timestamps_from_dict(df, state, dict, column_name, data, pth):
+    print(df)
+    df_temp = df
+    rest_state_time_start, rest_state_time_stop  = dict['start_time'], dict['end_time']
+    print('Dict:', rest_state_time_start, rest_state_time_stop)
+    iloc_idx_start = df_temp['human_readable_time'].searchsorted(ctime(round(rest_state_time_start, 5))) 
+    iloc_idx_end = df_temp['human_readable_time'].searchsorted(ctime(round(rest_state_time_stop, 5)))
+    print('iloc:', iloc_idx_start, iloc_idx_end)
+    state_start = df_temp.index[iloc_idx_start]
+    state_end = df_temp.index[iloc_idx_end-1] #reduce index by 1 as the index sometimes overflows
+    range_ = list(range(state_start, state_end))
+    state = [state] * len(range_)
+    state ={i:x for i,x in enumerate(state, state_start)}
+
+    if state == 'rest_state':
+        #send iloc_idx_start, iloc_idx_end along with data to check for signal quality
+        check_cv(data, pth, state_start, iloc_idx_end)
+    return state
 
 def sync_timestamps_with_df(df, final_state, header, df_remove_before, df_remove_after):
     '''
@@ -112,14 +120,14 @@ def dataframe_to_csv(path, data, stream_type, time_distribution_human_readable, 
                 colored(stream_type, 'blue'), 
                 colored('Rest state timestamps synced with CSV file', 'green', attrs=['bold']))
             state = 'rest_state'
-            get_state_rest = get_timestamps_from_dict(df, state, dict, header[2])
+            get_state_rest = get_timestamps_from_dict(df, state, dict, header[2], data, pth = data_path + '/')
         
         if 'finger_tapping' in dict.values():
             print(colored('[INFO]', 'green', attrs=['bold']), 
                 colored(stream_type, 'blue'), 
                 colored('Finger tapping timestamps synced with CSV file', 'green', attrs=['bold']))
             state = 'finger_tapping'
-            get_state_fingertap = get_timestamps_from_dict(df, state, dict, header[2])
+            get_state_fingertap = get_timestamps_from_dict(df, state, dict, header[2], data, pth = data_path + '/')
 
         if 'affective_task_individual' in dict.values() and any((str(iMac) in path) for iMac in dict.values()):
             """
@@ -133,56 +141,56 @@ def dataframe_to_csv(path, data, stream_type, time_distribution_human_readable, 
                 colored(stream_type, 'blue'), 
                 colored('Affective individual task timestamps synced with CSV file', 'green', attrs=['bold']))
             state = 'affective_task_individual'
-            affective_task_individual = get_timestamps_from_dict(df, state, dict, header[2])
+            affective_task_individual = get_timestamps_from_dict(df, state, dict, header[2], data, pth = data_path + '/')
 
         if 'affective_task_team' in dict.values():
             print(colored('[INFO]', 'green', attrs=['bold']), 
                 colored(stream_type, 'blue'), 
                 colored('Affective team task timestamps synced with CSV file', 'green', attrs=['bold']))
             state = 'affective_task_team'
-            get_state_affective_team = get_timestamps_from_dict(df, state, dict, header[2])
+            get_state_affective_team = get_timestamps_from_dict(df, state, dict, header[2], data, pth = data_path + '/')
 
         if 'ping_pong_cooperative_0' in dict.values():
             print(colored('[INFO]', 'green', attrs=['bold']), 
                 colored(stream_type, 'blue'), 
                 colored('Ping pong cooperative 0 task timestamps synced with CSV file', 'green', attrs=['bold']))           
             state = 'ping_pong_cooperative_0'
-            get_state_pingpong_coop_0 = get_timestamps_from_dict(df, state, dict, header[2])
+            get_state_pingpong_coop_0 = get_timestamps_from_dict(df, state, dict, header[2], data, pth = data_path + '/')
 
         if 'ping_pong_competetive_0' in dict.values():
             print(colored('[INFO]', 'green', attrs=['bold']), 
                 colored(stream_type, 'blue'), 
                 colored('Ping pong competetive 0 task timestamps synced with CSV file', 'green', attrs=['bold']))           
             state = 'ping_pong_competetive_0'
-            get_state_pingpong_comp_0 = get_timestamps_from_dict(df, state, dict, header[2])
+            get_state_pingpong_comp_0 = get_timestamps_from_dict(df, state, dict, header[2], data, pth = data_path + '/')
 
         if 'ping_pong_competetive_1' in dict.values():
             print(colored('[INFO]', 'green', attrs=['bold']), 
                 colored(stream_type, 'blue'), 
                 colored('Ping pong competetive 1 task timestamps synced with CSV file', 'green', attrs=['bold']))
             state = 'ping_pong_competetive_1'
-            get_state_pingpong_comp_1 = get_timestamps_from_dict(df, state, dict, header[2])
+            get_state_pingpong_comp_1 = get_timestamps_from_dict(df, state, dict, header[2], data, pth = data_path + '/')
         
         if 'hands_on_training' in dict.values():
             print(colored('[INFO]', 'green', attrs=['bold']), 
                 colored(stream_type, 'blue'), 
                 colored('Minecraft hands on training timestamps synced with CSV file', 'green', attrs=['bold']))
             state = 'hands_on_training'
-            mincraft_handson_training = get_timestamps_from_dict(df, state, dict, header[2])
+            mincraft_handson_training = get_timestamps_from_dict(df, state, dict, header[2], data, pth = data_path + '/')
 
         if 'saturn_a' in dict.values():
             print(colored('[INFO]', 'green', attrs=['bold']), 
                 colored(stream_type, 'blue'), 
                 colored('Minecraft Saturn A timestamps synced with CSV file', 'green', attrs=['bold']))
             state = 'saturn_a'
-            mincraft_saturn_a = get_timestamps_from_dict(df, state, dict, header[2])
+            mincraft_saturn_a = get_timestamps_from_dict(df, state, dict, header[2], data, pth = data_path + '/')
 
         if 'saturn_b' in dict.values():
             print(colored('[INFO]', 'green', attrs=['bold']), 
                 colored(stream_type, 'blue'), 
                 colored('Minecraft Saturn B timestamps synced with CSV file', 'green', attrs=['bold']))
             state = 'saturn_b'
-            mincraft_saturn_b = get_timestamps_from_dict(df, state, dict, header[2])
+            mincraft_saturn_b = get_timestamps_from_dict(df, state, dict, header[2], data, pth = data_path + '/')
 
     final_state =  {**get_state_rest, **get_state_fingertap, **affective_task_individual, 
                         **get_state_affective_team, **get_state_pingpong_coop_0, 
@@ -194,12 +202,12 @@ def dataframe_to_csv(path, data, stream_type, time_distribution_human_readable, 
     df_remove_after = list(mincraft_saturn_b.keys())[-1]
     df_final = sync_timestamps_with_df(df, final_state, header[2], df_remove_before, df_remove_after)
 
-    if extract_csv == True:
-        df_final.to_csv(csv_file_name + ".csv", sep='\t', encoding='utf-8')
-        print(colored('[INFO]', 'green', attrs=['bold']), 
-                    colored('Sucessfully generated csv file at', 'green', attrs=['bold']), colored(csv_file_name + ".csv", 'blue'))
-    if extract_pkl == True:
-        df_final.to_pickle(csv_file_name + ".pkl")
-        print(colored('[INFO]', 'green', attrs=['bold']), 
-                    colored('Sucessfully generated pickle file at', 'green', attrs=['bold']), colored(csv_file_name + ".pkl", 'blue'))
+    # if extract_csv == True:
+    #     df_final.to_csv(csv_file_name + ".csv", sep='\t', encoding='utf-8')
+    #     print(colored('[INFO]', 'green', attrs=['bold']), 
+    #                 colored('Sucessfully generated csv file at', 'green', attrs=['bold']), colored(csv_file_name + ".csv", 'blue'))
+    # if extract_pkl == True:
+    #     df_final.to_pickle(csv_file_name + ".pkl")
+    #     print(colored('[INFO]', 'green', attrs=['bold']), 
+    #                 colored('Sucessfully generated pickle file at', 'green', attrs=['bold']), colored(csv_file_name + ".pkl", 'blue'))
         
