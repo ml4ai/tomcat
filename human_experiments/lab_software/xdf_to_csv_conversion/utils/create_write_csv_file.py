@@ -9,6 +9,7 @@ from .NIRS_filtering import check_cv
 def get_timestamps_from_dict(df, state, dict, column_name, data, stream_type, pth):
     # print(df)
     df_temp = df
+    state_temp = state
     rest_state_time_start, rest_state_time_stop  = dict['start_time'], dict['end_time']
     # print('Dict:', rest_state_time_start, rest_state_time_stop)
     iloc_idx_start = df_temp['human_readable_time'].searchsorted(ctime(round(rest_state_time_start, 5))) 
@@ -20,8 +21,8 @@ def get_timestamps_from_dict(df, state, dict, column_name, data, stream_type, pt
     state = [state] * len(range_)
     state ={i:x for i,x in enumerate(state, state_start)}
 
-    print('state:', state, 'stream type:', stream_type)
-    if state == 'rest_state' and stream_type == 'NIRS':
+    print('state:', state_temp, 'stream type:', stream_type)
+    if state_temp == 'rest_state' and stream_type == 'NIRS':
         #send iloc_idx_start, iloc_idx_end along with data to check for signal quality
         print('Im in cv condition')
         check_cv(data, pth, state_start, iloc_idx_end)
