@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from termcolor import colored 
 from scipy.signal import butter, sosfilt, sosfreqz, sosfiltfilt, filtfilt, lfilter_zi 
 
 def butter_bandpass(lowcut, highcut, fs, order=5):
@@ -15,21 +16,27 @@ def check_cv(data, path, iloc_idx_start, iloc_idx_end):
     Calculate coeffecient of variance for fNIRS raw siganls, if cv is 
     greater than 7.5 then discard then log that channel as
     bad. 
-    https://doi.org/10.3390/app12010316 refer section 2.4. Channel Exclusion Criterion
+    https://doi.org/10.3390/app12010316 refer section 2.4. Channel Exclusion Criterion.
+    This function recives raw+HbO data but will use raw W1 to calculate
+    the cv. 
     '''
+    print(colored('[INFO]', 'green', attrs=['bold']), 
+        colored('calulating coeffecient of variance of NIRS', 'green', attrs=['bold']))    
+
     cv = lambda x: np.std(x, ddof=1) / np.mean(x) * 100
-    coef_var = cv(data)
+    coef_var = cv(data[iloc_idx_start:iloc_idx_end])
 
     channels = {'S1-D1', 'S1-D2', 'S2-D1', 'S2-D3', 'S3-D1', 'S3-D3', 
                 'S3-D4', 'S4-D2', 'S4-D4', 'S4-D5', 'S5-D3', 'S5-D4', 
                 'S5-D6', 'S6-D4', 'S6-D6', 'S6-D7', 'S7-D5', 'S7-D7', 
                 'S8-D6', 'S8-D7'}
 
-    cv_vals = coef_var[0:20]
+    cv_vals = coef_var[0:20] 
 
     channel_good_or_bad = (coef_var[0:20]<7.5).replace({True: 'good_channel', False: 'bad_channel'})
 
     df = pd.DataFrame(list(zip(channels,cv_vals,channel_good_or_bad)), columns=['Channels', 'coeff_of_var', 'status'])
+    print(df)
     df.to_csv(path+'NIRS_channel_qaulity.csv', index=False)
 
 
