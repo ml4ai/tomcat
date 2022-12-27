@@ -20,6 +20,7 @@ def get_timestamps_from_dict(df, state, dict, column_name, data, stream_type, pt
     state = [state] * len(range_)
     state ={i:x for i,x in enumerate(state, state_start)}
 
+    print('state:', state, 'stream type:', stream_type)
     if state == 'rest_state' and stream_type == 'NIRS':
         #send iloc_idx_start, iloc_idx_end along with data to check for signal quality
         print('Im in cv condition')
