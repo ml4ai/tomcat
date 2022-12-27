@@ -21,18 +21,22 @@ def check_cv(data, path, iloc_idx_start, iloc_idx_end):
     the cv. 
     '''
     print(type(data), data.shape)
-    print(colored('[INFO]', 'green', attrs=['bold']), 
-        colored('calulating coeffecient of variance of NIRS', 'green', attrs=['bold']))    
-
-    cv = lambda x: np.std(x, ddof=1) / np.mean(x) * 100
-    coef_var = cv(data[iloc_idx_start:iloc_idx_end])
 
     channels = {'S1-D1', 'S1-D2', 'S2-D1', 'S2-D3', 'S3-D1', 'S3-D3', 
                 'S3-D4', 'S4-D2', 'S4-D4', 'S4-D5', 'S5-D3', 'S5-D4', 
                 'S5-D6', 'S6-D4', 'S6-D6', 'S6-D7', 'S7-D5', 'S7-D7', 
                 'S8-D6', 'S8-D7'}
+
+    print(colored('[INFO]', 'green', attrs=['bold']), 
+        colored('calulating coeffecient of variance of NIRS', 'green', attrs=['bold']))    
+
+    data = pd.DataFrame(data[:, 1:21], columns = ['Column_A','Column_B','Column_C'])
+
+    cv = lambda x: np.std(x, ddof=1) / np.mean(x) * 100
+    coef_var = cv(data[iloc_idx_start:iloc_idx_end])
+
     print(coef_var)
-    cv_vals = coef_var[0:20] 
+    cv_vals = coef_var
 
     channel_good_or_bad = (coef_var[0:20]<7.5).replace({True: 'good_channel', False: 'bad_channel'})
 
