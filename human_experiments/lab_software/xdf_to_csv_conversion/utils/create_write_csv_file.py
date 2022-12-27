@@ -6,7 +6,7 @@ from .baseline_tasks_timestamps import read_baseline_tasks_time
 from .minecraft_timestamps import read_minecraft_time
 from .NIRS_filtering import check_cv
 
-def get_timestamps_from_dict(df, state, dict, column_name, data, pth, stream_type):
+def get_timestamps_from_dict(df, state, dict, column_name, data, stream_type, pth):
     print(df)
     df_temp = df
     rest_state_time_start, rest_state_time_stop  = dict['start_time'], dict['end_time']
