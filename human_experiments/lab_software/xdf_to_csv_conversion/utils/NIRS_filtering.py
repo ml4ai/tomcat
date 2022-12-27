@@ -30,7 +30,7 @@ def check_cv(data, path, iloc_idx_start, iloc_idx_end):
     print(colored('[INFO]', 'green', attrs=['bold']), 
         colored('calulating coeffecient of variance of NIRS', 'green', attrs=['bold']))    
 
-    data = pd.DataFrame(data[:, 1:21], columns = ['Column_A','Column_B','Column_C'])
+    data = pd.DataFrame(data[:, 1:21], columns = channels)
 
     cv = lambda x: np.std(x, ddof=1) / np.mean(x) * 100
     coef_var = cv(data[iloc_idx_start:iloc_idx_end])
