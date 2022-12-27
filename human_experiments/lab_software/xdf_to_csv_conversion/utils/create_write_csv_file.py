@@ -7,13 +7,13 @@ from .minecraft_timestamps import read_minecraft_time
 from .NIRS_filtering import check_cv
 
 def get_timestamps_from_dict(df, state, dict, column_name, data, stream_type, pth):
-    print(df)
+    # print(df)
     df_temp = df
     rest_state_time_start, rest_state_time_stop  = dict['start_time'], dict['end_time']
-    print('Dict:', rest_state_time_start, rest_state_time_stop)
+    # print('Dict:', rest_state_time_start, rest_state_time_stop)
     iloc_idx_start = df_temp['human_readable_time'].searchsorted(ctime(round(rest_state_time_start, 5))) 
     iloc_idx_end = df_temp['human_readable_time'].searchsorted(ctime(round(rest_state_time_stop, 5)))
-    print('iloc:', iloc_idx_start, iloc_idx_end)
+    # print('iloc:', iloc_idx_start, iloc_idx_end)
     state_start = df_temp.index[iloc_idx_start]
     state_end = df_temp.index[iloc_idx_end-1] #reduce index by 1 as the index sometimes overflows
     range_ = list(range(state_start, state_end))
@@ -22,6 +22,7 @@ def get_timestamps_from_dict(df, state, dict, column_name, data, stream_type, pt
 
     if state == 'rest_state' and stream_type == 'NIRS':
         #send iloc_idx_start, iloc_idx_end along with data to check for signal quality
+        print('Im in cv condition')
         check_cv(data, pth, state_start, iloc_idx_end)
     return state
 
