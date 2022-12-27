@@ -20,6 +20,7 @@ def check_cv(data, path, iloc_idx_start, iloc_idx_end):
     This function recives raw+HbO data but will use raw W1 to calculate
     the cv. 
     '''
+    print(data)
     print(colored('[INFO]', 'green', attrs=['bold']), 
         colored('calulating coeffecient of variance of NIRS', 'green', attrs=['bold']))    
 
