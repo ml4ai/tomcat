@@ -4,7 +4,7 @@ from time import ctime
 from termcolor import colored 
 from .baseline_tasks_timestamps import read_baseline_tasks_time
 from .minecraft_timestamps import read_minecraft_time
-from .NIRS_filtering import check_cv
+from .NIRS_filtering import check_cv, filter
 
 def get_timestamps_from_dict(df, state, dict, column_name, data, stream_type, pth):
     # print(df)
@@ -204,6 +204,12 @@ def dataframe_to_csv(path, data, stream_type, time_distribution_human_readable, 
     df_remove_before = list(get_state_rest.keys())[0]
     df_remove_after = list(mincraft_saturn_b.keys())[-1]
     df_final = sync_timestamps_with_df(df, final_state, header[2], df_remove_before, df_remove_after)
+
+    if filter == True:
+        df_final_filtered = filter(df_final)
+        df_final.to_csv(csv_file_name+ "_filtered" + ".csv", sep='\t', encoding='utf-8')
+        print(colored('[INFO]', 'green', attrs=['bold']), 
+                    colored('Sucessfully generated csv file with filtered data at', 'green', attrs=['bold']), colored(csv_file_name + ".csv", 'blue'))
 
     # if extract_csv == True:
     #     df_final.to_csv(csv_file_name + ".csv", sep='\t', encoding='utf-8')

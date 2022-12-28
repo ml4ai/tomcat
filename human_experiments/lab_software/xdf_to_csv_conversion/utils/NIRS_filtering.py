@@ -42,10 +42,10 @@ def check_cv(data, path, iloc_idx_start, iloc_idx_end):
 
     df = pd.DataFrame(list(zip(channels,cv_vals,channel_good_or_bad)), columns=['Channels', 'coeff_of_var', 'status'])
     print(df)
-    df.to_csv(path+'NIRS_channel_qaulity.csv', index=False)
+    df.to_csv(path+'NIRS_channel_quality.csv', index=False)
 
 
-def filter(data, iloc_idx_start, iloc_idx_end):
+def filter(data):
     '''
     Use butterworth bandpass filter with highpass set at 0.2hz and
     lowpass set to 0.01hz. Also with a filter order of 3. 
@@ -61,5 +61,7 @@ def filter(data, iloc_idx_start, iloc_idx_end):
     fb, fa = butter_bandpass(lowcut, highcut, fs)
     zi = lfilter_zi(fb, fa)
 
-    for i in range(20):
-        data.iloc[iloc_idx_start:iloc_idx_end, i] = butter_bandpass_filter(data.iloc[19937:21243, i], lowcut, highcut, fs, order=3)
+    for i in range(40):
+        data.iloc[:, i] = butter_bandpass_filter(data.iloc[:, i], lowcut, highcut, fs, order=3)
+    
+    return data

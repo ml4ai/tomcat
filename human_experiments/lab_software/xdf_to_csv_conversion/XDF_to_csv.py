@@ -27,8 +27,8 @@ def read_xdf(xdf_file_paths, rootdir_baseline_task, rootdir_minecraft_data, subj
                     time_start_streams_nirs, time_end_streams_nirs = get_start_stop_time_from_xdf(data[i]) #get the unix time
                     time_distribution_human_readable_nirs, time_distribution_unix_nirs = create_time_distribution(time_start_streams_nirs, 
                                                                                 time_end_streams_nirs, len(data[i]['time_series']))
-                    dataframe_to_csv(path, data[i]['time_series'], 'NIRS', time_distribution_human_readable_nirs, 
-                    time_distribution_unix_nirs, rootdir_baseline_task, rootdir_minecraft_data, subject_id, extract_pkl, extract_csv)
+                    dataframe_to_csv(path, data[i]['time_series'], 'NIRS', time_distribution_human_readable_nirs, time_distribution_unix_nirs, 
+                                    rootdir_baseline_task, rootdir_minecraft_data, subject_id, extract_pkl, extract_csv, filter)
 
                 # elif data[i]['info']['type'] == ['Markers']:
                 #     #We don't have physical marker for our physio data
