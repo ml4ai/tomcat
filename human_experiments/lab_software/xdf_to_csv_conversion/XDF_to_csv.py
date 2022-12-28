@@ -44,7 +44,7 @@ def read_xdf(xdf_file_paths, rootdir_baseline_task, rootdir_minecraft_data, subj
                     time_distribution_human_readable_eeg, time_distribution_unix_eeg = create_time_distribution(time_start_streams_eeg, 
                                                                                 time_end_streams_eeg, len(data[i]['time_series'])) 
                     dataframe_to_csv(path, data[i]['time_series'], 'EEG', time_distribution_human_readable_eeg, 
-                    time_distribution_unix_eeg, rootdir_baseline_task, rootdir_minecraft_data, subject_id, extract_pkl, extract_csv)
+                    time_distribution_unix_eeg, rootdir_baseline_task, rootdir_minecraft_data, subject_id, extract_pkl, extract_csv, filter)
 
                 elif data[i]['info']['type'] == ['Gaze']:
                     print(
@@ -54,7 +54,7 @@ def read_xdf(xdf_file_paths, rootdir_baseline_task, rootdir_minecraft_data, subj
                     time_distribution_human_readable_gaze, time_distribution_unix_gaze = create_time_distribution(time_start_streams_gaze, 
                                                                                 time_end_streams_gaze, len(data[i]['time_series'])) 
                     dataframe_to_csv(path, data[i]['time_series'], 'Gaze', time_distribution_human_readable_gaze, 
-                    time_distribution_unix_gaze, rootdir_baseline_task, rootdir_minecraft_data, subject_id, extract_pkl, extract_csv)
+                    time_distribution_unix_gaze, rootdir_baseline_task, rootdir_minecraft_data, subject_id, extract_pkl, extract_csv, filter)
                 
                 elif data[i]['info']['type'] == ['Accelerometer']:
                     print(
