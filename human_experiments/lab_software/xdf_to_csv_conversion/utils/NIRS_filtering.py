@@ -20,7 +20,6 @@ def check_cv(data, path, iloc_idx_start, iloc_idx_end):
     This function recives raw+HbO data but will use raw W1 to calculate
     the cv. 
     '''
-    print(type(data), data.shape)
 
     channels = {'S1-D1', 'S1-D2', 'S2-D1', 'S2-D3', 'S3-D1', 'S3-D3', 
                 'S3-D4', 'S4-D2', 'S4-D4', 'S4-D5', 'S5-D3', 'S5-D4', 
@@ -34,14 +33,11 @@ def check_cv(data, path, iloc_idx_start, iloc_idx_end):
 
     cv = lambda x: np.std(x, ddof=1) / np.mean(x) * 100
     coef_var = cv(data[iloc_idx_start:iloc_idx_end])
-
-    print(coef_var)
     cv_vals = coef_var
 
     channel_good_or_bad = (coef_var<7.5).replace({True: 'good_channel', False: 'bad_channel'})
 
     df = pd.DataFrame(list(zip(channels,cv_vals,channel_good_or_bad)), columns=['Channels', 'coeff_of_var', 'status'])
-    print(df)
     df.to_csv(path+'NIRS_channel_quality.csv', index=False)
 
 

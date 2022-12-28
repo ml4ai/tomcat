@@ -7,24 +7,19 @@ from .minecraft_timestamps import read_minecraft_time
 from .NIRS_filtering import check_cv, filter_NIRS
 
 def get_timestamps_from_dict(df, state, dict, column_name, data, stream_type, pth):
-    # print(df)
     df_temp = df
     state_temp = state
     rest_state_time_start, rest_state_time_stop  = dict['start_time'], dict['end_time']
-    # print('Dict:', rest_state_time_start, rest_state_time_stop)
     iloc_idx_start = df_temp['human_readable_time'].searchsorted(ctime(round(rest_state_time_start, 5))) 
     iloc_idx_end = df_temp['human_readable_time'].searchsorted(ctime(round(rest_state_time_stop, 5)))
-    # print('iloc:', iloc_idx_start, iloc_idx_end)
     state_start = df_temp.index[iloc_idx_start]
     state_end = df_temp.index[iloc_idx_end-1] #reduce index by 1 as the index sometimes overflows
     range_ = list(range(state_start, state_end))
     state = [state] * len(range_)
     state ={i:x for i,x in enumerate(state, state_start)}
 
-    print('state:', state_temp, 'stream type:', stream_type)
     if state_temp == 'rest_state' and stream_type == 'NIRS':
         #send iloc_idx_start, iloc_idx_end along with data to check for signal quality
-        print('Im in cv condition')
         check_cv(data, pth, state_start, iloc_idx_end)
     return state
 
@@ -206,20 +201,24 @@ def dataframe_to_csv(path, data, stream_type, time_distribution_human_readable, 
     df_remove_after = list(mincraft_saturn_b.keys())[-1]
     df_final = sync_timestamps_with_df(df, final_state, header[2], df_remove_before, df_remove_after)
 
-    print('filter:', filter, type(filter), 'stream type:', stream_type)
-    if bool(filter)== True and stream_type == 'NIRS':
-        print('Im in filter')
-        df_final_filtered = filter_NIRS(df_final)
-        df_final_filtered.to_csv(csv_file_name+ "_filtered" + ".csv", sep='\t', encoding='utf-8')
+    if extract_csv == True:
+        df_final.to_csv(csv_file_name + ".csv", sep='\t', encoding='utf-8')
         print(colored('[INFO]', 'green', attrs=['bold']), 
-                    colored('Sucessfully generated csv file with filtered data at', 'green', attrs=['bold']), colored(csv_file_name + ".csv", 'blue'))
+                    colored('Sucessfully generated csv file at', 'green', attrs=['bold']), colored(csv_file_name + ".csv", 'blue'))
 
-    # if extract_csv == True:
-    #     df_final.to_csv(csv_file_name + ".csv", sep='\t', encoding='utf-8')
-    #     print(colored('[INFO]', 'green', attrs=['bold']), 
-    #                 colored('Sucessfully generated csv file at', 'green', attrs=['bold']), colored(csv_file_name + ".csv", 'blue'))
-    # if extract_pkl == True:
-    #     df_final.to_pickle(csv_file_name + ".pkl")
-    #     print(colored('[INFO]', 'green', attrs=['bold']), 
-    #                 colored('Sucessfully generated pickle file at', 'green', attrs=['bold']), colored(csv_file_name + ".pkl", 'blue'))
+        if bool(filter)== True and stream_type == 'NIRS':
+            df_final_filtered = filter_NIRS(df_final)
+            df_final_filtered.to_csv(csv_file_name+ "_filtered" + ".csv", sep='\t', encoding='utf-8')
+            print(colored('[INFO]', 'green', attrs=['bold']), 
+                        colored('Sucessfully generated csv file with filtered data at', 'green', attrs=['bold']), colored(csv_file_name + ".csv", 'blue'))
+
+    if extract_pkl == True:
+        df_final.to_pickle(csv_file_name + ".pkl")
+        print(colored('[INFO]', 'green', attrs=['bold']), 
+                    colored('Sucessfully generated pickle file at', 'green', attrs=['bold']), colored(csv_file_name + ".pkl", 'blue'))
         
+        if bool(filter)== True and stream_type == 'NIRS':
+            df_final_filtered = filter_NIRS(df_final)
+            df_final_filtered.to_pickle(csv_file_name+ "_filtered" + ".pkl", sep='\t', encoding='utf-8')
+            print(colored('[INFO]', 'green', attrs=['bold']), 
+                        colored('Sucessfully generated csv file with filtered data at', 'green', attrs=['bold']), colored(csv_file_name + ".csv", 'blue'))
