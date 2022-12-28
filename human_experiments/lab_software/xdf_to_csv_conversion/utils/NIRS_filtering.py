@@ -45,7 +45,7 @@ def check_cv(data, path, iloc_idx_start, iloc_idx_end):
     df.to_csv(path+'NIRS_channel_quality.csv', index=False)
 
 
-def filter(data):
+def filter_NIRS(data):
     '''
     Use butterworth bandpass filter with highpass set at 0.2hz and
     lowpass set to 0.01hz. Also with a filter order of 3. 

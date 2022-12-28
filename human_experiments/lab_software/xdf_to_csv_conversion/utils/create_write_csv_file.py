@@ -4,7 +4,7 @@ from time import ctime
 from termcolor import colored 
 from .baseline_tasks_timestamps import read_baseline_tasks_time
 from .minecraft_timestamps import read_minecraft_time
-from .NIRS_filtering import check_cv, filter
+from .NIRS_filtering import check_cv, filter_NIRS
 
 def get_timestamps_from_dict(df, state, dict, column_name, data, stream_type, pth):
     # print(df)
@@ -38,7 +38,8 @@ def sync_timestamps_with_df(df, final_state, header, df_remove_before, df_remove
     return df.loc[df_remove_before:df_remove_after]
 
 def dataframe_to_csv(path, data, stream_type, time_distribution_human_readable, time_distribution_unix, 
-                    rootdir_baseline_task, rootdir_minecraft_data, subject_id, extract_pkl, extract_csv):
+                    rootdir_baseline_task, rootdir_minecraft_data, subject_id, extract_pkl, extract_csv,
+                    filter):
     """
     Read data from the XDF file, convert it into a dictionary, 
     then convert that to a pandas dataframe and save it as csv file. 
@@ -206,7 +207,7 @@ def dataframe_to_csv(path, data, stream_type, time_distribution_human_readable, 
     df_final = sync_timestamps_with_df(df, final_state, header[2], df_remove_before, df_remove_after)
 
     if filter == True and stream_type == 'NIRS':
-        df_final_filtered = filter(df_final)
+        df_final_filtered = filter_NIRS(df_final)
         df_final.to_csv(csv_file_name+ "_filtered" + ".csv", sep='\t', encoding='utf-8')
         print(colored('[INFO]', 'green', attrs=['bold']), 
                     colored('Sucessfully generated csv file with filtered data at', 'green', attrs=['bold']), colored(csv_file_name + ".csv", 'blue'))
