@@ -208,8 +208,9 @@ def dataframe_to_csv(path, data, stream_type, time_distribution_human_readable, 
 
     print('filter:', filter, 'stream type:', stream_type)
     if filter == True and stream_type == 'NIRS':
+        print('Im in filter')
         df_final_filtered = filter_NIRS(df_final)
-        df_final.to_csv(csv_file_name+ "_filtered" + ".csv", sep='\t', encoding='utf-8')
+        df_final_filtered.to_csv(csv_file_name+ "_filtered" + ".csv", sep='\t', encoding='utf-8')
         print(colored('[INFO]', 'green', attrs=['bold']), 
                     colored('Sucessfully generated csv file with filtered data at', 'green', attrs=['bold']), colored(csv_file_name + ".csv", 'blue'))
 
