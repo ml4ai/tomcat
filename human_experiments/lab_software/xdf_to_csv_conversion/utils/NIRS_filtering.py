@@ -6,11 +6,6 @@ from scipy.signal import butter, sosfilt, sosfreqz, sosfiltfilt, filtfilt, lfilt
 def butter_bandpass(lowcut, highcut, fs, order=5):
     return butter(order, [lowcut, highcut], fs=fs, btype='band')
 
-def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
-    b, a = butter_bandpass(lowcut, highcut, fs, order=order)
-    y = lfilter(b, a, data)
-    return y
-
 def check_cv(data, path, iloc_idx_start, iloc_idx_end):
     '''
     Calculate coeffecient of variance for fNIRS raw siganls, if cv is 
