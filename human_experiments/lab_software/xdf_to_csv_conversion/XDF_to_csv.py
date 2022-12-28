@@ -30,38 +30,38 @@ def read_xdf(xdf_file_paths, rootdir_baseline_task, rootdir_minecraft_data, subj
                     dataframe_to_csv(path, data[i]['time_series'], 'NIRS', time_distribution_human_readable_nirs, time_distribution_unix_nirs, 
                                     rootdir_baseline_task, rootdir_minecraft_data, subject_id, extract_pkl, extract_csv, filter)
 
-                elif data[i]['info']['type'] == ['Markers']:
-                    #We don't have physical marker for our physio data
-                    print(
-                    colored('[Status] Skipping ', 'green', attrs=['bold']), 
-                    colored(data[i]['info']['type'], 'blue'))                
+                # elif data[i]['info']['type'] == ['Markers']:
+                #     #We don't have physical marker for our physio data
+                #     print(
+                #     colored('[Status] Skipping ', 'green', attrs=['bold']), 
+                #     colored(data[i]['info']['type'], 'blue'))                
 
-                elif data[i]['info']['type'] == ['EEG']:
-                    print(
-                    colored('[Status] Reading ', 'green', attrs=['bold']), 
-                    colored(data[i]['info']['type'], 'blue'))
-                    time_start_streams_eeg, time_end_streams_eeg = get_start_stop_time_from_xdf(data[i]) #get the unix time
-                    time_distribution_human_readable_eeg, time_distribution_unix_eeg = create_time_distribution(time_start_streams_eeg, 
-                                                                                time_end_streams_eeg, len(data[i]['time_series'])) 
-                    dataframe_to_csv(path, data[i]['time_series'], 'EEG', time_distribution_human_readable_eeg, 
-                    time_distribution_unix_eeg, rootdir_baseline_task, rootdir_minecraft_data, subject_id, extract_pkl, extract_csv, filter)
+                # elif data[i]['info']['type'] == ['EEG']:
+                #     print(
+                #     colored('[Status] Reading ', 'green', attrs=['bold']), 
+                #     colored(data[i]['info']['type'], 'blue'))
+                #     time_start_streams_eeg, time_end_streams_eeg = get_start_stop_time_from_xdf(data[i]) #get the unix time
+                #     time_distribution_human_readable_eeg, time_distribution_unix_eeg = create_time_distribution(time_start_streams_eeg, 
+                #                                                                 time_end_streams_eeg, len(data[i]['time_series'])) 
+                #     dataframe_to_csv(path, data[i]['time_series'], 'EEG', time_distribution_human_readable_eeg, 
+                #     time_distribution_unix_eeg, rootdir_baseline_task, rootdir_minecraft_data, subject_id, extract_pkl, extract_csv, filter)
 
-                elif data[i]['info']['type'] == ['Gaze']:
-                    print(
-                    colored('[Status] Reading ', 'green', attrs=['bold']), 
-                    colored(data[i]['info']['type'], 'blue'))
-                    time_start_streams_gaze, time_end_streams_gaze = get_start_stop_time_from_xdf(data[i]) #get the unix time
-                    time_distribution_human_readable_gaze, time_distribution_unix_gaze = create_time_distribution(time_start_streams_gaze, 
-                                                                                time_end_streams_gaze, len(data[i]['time_series'])) 
-                    dataframe_to_csv(path, data[i]['time_series'], 'Gaze', time_distribution_human_readable_gaze, 
-                    time_distribution_unix_gaze, rootdir_baseline_task, rootdir_minecraft_data, subject_id, extract_pkl, extract_csv, filter)
+                # elif data[i]['info']['type'] == ['Gaze']:
+                #     print(
+                #     colored('[Status] Reading ', 'green', attrs=['bold']), 
+                #     colored(data[i]['info']['type'], 'blue'))
+                #     time_start_streams_gaze, time_end_streams_gaze = get_start_stop_time_from_xdf(data[i]) #get the unix time
+                #     time_distribution_human_readable_gaze, time_distribution_unix_gaze = create_time_distribution(time_start_streams_gaze, 
+                #                                                                 time_end_streams_gaze, len(data[i]['time_series'])) 
+                #     dataframe_to_csv(path, data[i]['time_series'], 'Gaze', time_distribution_human_readable_gaze, 
+                #     time_distribution_unix_gaze, rootdir_baseline_task, rootdir_minecraft_data, subject_id, extract_pkl, extract_csv, filter)
                 
-                elif data[i]['info']['type'] == ['Accelerometer']:
-                    print(
-                    colored('[Status] Skipping ', 'green', attrs=['bold']), 
-                    colored(data[i]['info']['type'], 'blue')) 
-                    #create_csv_file(path, 'Accelerometer')
-                    # time_start_streams_accel, time_end_streams_accel = get_start_stop_time_from_xdf(data[i]) #get the unix time
+                # elif data[i]['info']['type'] == ['Accelerometer']:
+                #     print(
+                #     colored('[Status] Skipping ', 'green', attrs=['bold']), 
+                #     colored(data[i]['info']['type'], 'blue')) 
+                #     #create_csv_file(path, 'Accelerometer')
+                #     # time_start_streams_accel, time_end_streams_accel = get_start_stop_time_from_xdf(data[i]) #get the unix time
         else:
             print(
             colored('[Status] Skipping ', 'yellow', attrs=['bold']), 
