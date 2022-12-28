@@ -207,7 +207,7 @@ def dataframe_to_csv(path, data, stream_type, time_distribution_human_readable, 
     df_final = sync_timestamps_with_df(df, final_state, header[2], df_remove_before, df_remove_after)
 
     print('filter:', filter, type(filter), 'stream type:', stream_type)
-    if filter == True and stream_type == 'NIRS':
+    if bool(filter)== True and stream_type == 'NIRS':
         print('Im in filter')
         df_final_filtered = filter_NIRS(df_final)
         df_final_filtered.to_csv(csv_file_name+ "_filtered" + ".csv", sep='\t', encoding='utf-8')
