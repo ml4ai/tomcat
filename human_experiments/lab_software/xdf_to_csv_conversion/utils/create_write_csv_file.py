@@ -207,7 +207,7 @@ def dataframe_to_csv(path, data, stream_type, time_distribution_human_readable, 
         '''
         csv_file_name = output_path + csv_file_name
         if not os.path.exists(csv_file_name):
-            os.mkdir(csv_file_name)
+            os.makedirs(csv_file_name)
 
 
     if extract_csv == True:
