@@ -11,7 +11,7 @@ def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
     y = lfilter(b, a, data)
     return y
 
-def check_cv(data, path, iloc_idx_start, iloc_idx_end):
+def check_cv(data, path, iloc_idx_start, iloc_idx_end, output_path,):
     '''
     Calculate coeffecient of variance for fNIRS raw siganls, if cv is 
     greater than 7.5 then discard then log that channel as
@@ -20,7 +20,8 @@ def check_cv(data, path, iloc_idx_start, iloc_idx_end):
     This function recives raw+HbO data but will use raw W1 to calculate
     the cv. 
     '''
-
+    if output_path != None:
+        path = path + output_path
     channels = {'S1-D1', 'S1-D2', 'S2-D1', 'S2-D3', 'S3-D1', 'S3-D3', 
                 'S3-D4', 'S4-D2', 'S4-D4', 'S4-D5', 'S5-D3', 'S5-D4', 
                 'S5-D6', 'S6-D4', 'S6-D6', 'S6-D7', 'S7-D5', 'S7-D7', 
