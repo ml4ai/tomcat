@@ -6,7 +6,7 @@ import argparse
 from termcolor import colored
 from utils import get_start_stop_time_from_xdf, dataframe_to_csv, create_time_distribution, str2bool
 
-def read_xdf(xdf_file_paths, rootdir_baseline_task, rootdir_minecraft_data, subject_id, extract_pkl, extract_csv, exclude, filter):
+def read_xdf(xdf_file_paths, rootdir_baseline_task, rootdir_minecraft_data, subject_id, extract_pkl, extract_csv, exclude, filter, output_path):
     """
     Read the XDF files.
     """
@@ -28,7 +28,7 @@ def read_xdf(xdf_file_paths, rootdir_baseline_task, rootdir_minecraft_data, subj
                     time_distribution_human_readable_nirs, time_distribution_unix_nirs = create_time_distribution(time_start_streams_nirs, 
                                                                                 time_end_streams_nirs, len(data[i]['time_series']))
                     dataframe_to_csv(path, data[i]['time_series'], 'NIRS', time_distribution_human_readable_nirs, time_distribution_unix_nirs, 
-                                    rootdir_baseline_task, rootdir_minecraft_data, subject_id, extract_pkl, extract_csv, filter)
+                                    rootdir_baseline_task, rootdir_minecraft_data, subject_id, extract_pkl, extract_csv, filter, output_path)
 
                 # elif data[i]['info']['type'] == ['Markers']:
                 #     #We don't have physical marker for our physio data
@@ -67,7 +67,7 @@ def read_xdf(xdf_file_paths, rootdir_baseline_task, rootdir_minecraft_data, subj
             colored('[Status] Skipping ', 'yellow', attrs=['bold']), 
             colored(exclude, 'red'))         
 
-def look_for_XDF_files(rootdir_xdf, rootdir_baseline_task, rootdir_minecraft_data, subject_id, extract_pkl, extract_csv, exclude, filter):
+def look_for_XDF_files(rootdir_xdf, rootdir_baseline_task, rootdir_minecraft_data, subject_id, extract_pkl, extract_csv, exclude, filter, output_path):
     """
     Walk through root directory, looking for the xdf files. 
     """
@@ -80,7 +80,7 @@ def look_for_XDF_files(rootdir_xdf, rootdir_baseline_task, rootdir_minecraft_dat
                     colored('[Status] xdf file found at ', 'green', attrs=['bold']), 
                     colored(os.path.join(root, file), 'blue'))
     
-    read_xdf(sorted(xdf_file_paths), rootdir_baseline_task, rootdir_minecraft_data, subject_id, extract_pkl, extract_csv, exclude, filter) #1. read all the XDF files 
+    read_xdf(sorted(xdf_file_paths), rootdir_baseline_task, rootdir_minecraft_data, subject_id, extract_pkl, extract_csv, exclude, filter, output_path) #1. read all the XDF files 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -130,6 +130,12 @@ if __name__ == "__main__":
         default=None,
         help="Enter True if you want to filter the siganl")
 
+    parser.add_argument(
+        '--output_path',
+        required=False,
+        default=None,
+        help="Enter True if you want to filter the siganl")
+
     arg = parser.parse_args()
 
     rootdir_xdf = arg.p1
@@ -140,6 +146,7 @@ if __name__ == "__main__":
     extract_csv = arg.csv
     exclude  = str(arg.exclude)
     filter = str(arg.filter)
+    output_path = arg.output_path
 
     print(colored('[Status] Root Directory:', 'green', attrs=['bold']), colored(rootdir_xdf, 'blue'))
-    sys.exit(look_for_XDF_files(rootdir_xdf, rootdir_baseline_task, rootdir_minecraft_data, subject_id, extract_pkl, extract_csv, exclude, filter))
+    sys.exit(look_for_XDF_files(rootdir_xdf, rootdir_baseline_task, rootdir_minecraft_data, subject_id, extract_pkl, extract_csv, exclude, filter, output_path))

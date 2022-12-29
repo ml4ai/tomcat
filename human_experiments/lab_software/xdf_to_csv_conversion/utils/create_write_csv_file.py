@@ -34,7 +34,7 @@ def sync_timestamps_with_df(df, final_state, header, df_remove_before, df_remove
 
 def dataframe_to_csv(path, data, stream_type, time_distribution_human_readable, time_distribution_unix, 
                     rootdir_baseline_task, rootdir_minecraft_data, subject_id, extract_pkl, extract_csv,
-                    filter):
+                    filter, output_path):
     """
     Read data from the XDF file, convert it into a dictionary, 
     then convert that to a pandas dataframe and save it as csv file. 
@@ -200,6 +200,12 @@ def dataframe_to_csv(path, data, stream_type, time_distribution_human_readable, 
     df_remove_before = list(get_state_rest.keys())[0]
     df_remove_after = list(mincraft_saturn_b.keys())[-1]
     df_final = sync_timestamps_with_df(df, final_state, header[2], df_remove_before, df_remove_after)
+
+    if output_path != None:
+        '''
+        Write extracted Physio data to a diff path
+        '''
+        csv_file_name = output_path + csv_file_name
 
     if extract_csv == True:
         df_final.to_csv(csv_file_name + ".csv", sep='\t', encoding='utf-8')
