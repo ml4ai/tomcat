@@ -206,6 +206,9 @@ def dataframe_to_csv(path, data, stream_type, time_distribution_human_readable, 
         Write extracted Physio data to a diff path
         '''
         csv_file_name = output_path + csv_file_name
+        if not os.path.exists(csv_file_name):
+            os.mkdir(csv_file_name)
+
 
     if extract_csv == True:
         df_final.to_csv(csv_file_name + ".csv", sep='\t', encoding='utf-8')
