@@ -18,6 +18,7 @@ use ispell::{SpellChecker, SpellLauncher};
 use log::{error, info, warn};
 
 use std::collections::HashMap;
+use serde_json::Value;
 
 
 /// Configuration
@@ -64,13 +65,19 @@ fn process_chat_message(
             let text = res.text().unwrap();
             println!("{:#?}", &text);
 
+            let e: Vec<Extraction> = serde_json::from_str(&text).unwrap();
+
+                /*
+
             let value: Vec<serde_json::Value> = serde_json::from_str(&text).unwrap();
             println!("{:#?}", value);
 
             for obj in value.iter() {
+                if let 
                 process_json_object(obj);
             }
 
+            */
         }
     }
     println!("process_chat_message done");
