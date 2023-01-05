@@ -17,8 +17,8 @@ use reqwest;
 use ispell::{SpellChecker, SpellLauncher};
 use log::{error, info, warn};
 
-use std::collections::HashMap;
-use serde_json::Value;
+//use std::collections::HashMap;
+//use serde_json::Value;
 
 
 /// Configuration
@@ -44,7 +44,7 @@ fn process_chat_message(
     mission_stage: &mut MissionStage,
     checker: &mut SpellChecker,
 ) {
-    println!("process_chat_message start");
+    //println!("process_chat_message start");
     // For ASIST Study 4, only the shop stage will have free text chat.
     if let MissionStage::shop_stage = mission_stage {
         let message: ChatMessage = get_message(&msg);
@@ -59,13 +59,14 @@ fn process_chat_message(
                     println!("Maybe you meant '{}'?", &e.suggestions[0]);
                 }
             }
-            println!("{}", &message.data.text);
+     //       println!("{}", &message.data.text);
             let client = reqwest::blocking::Client::new();
             let res = client.post("http://localhost:8080").body(message.data.text).send().unwrap();
             let text = res.text().unwrap();
             println!("{:#?}", &text);
 
             let e: Vec<Extraction> = serde_json::from_str(&text).unwrap();
+            println!("{:#?}", e);
 
                 /*
 
@@ -80,9 +81,10 @@ fn process_chat_message(
             */
         }
     }
-    println!("process_chat_message done");
+   // println!("process_chat_message done");
 }
 
+/*
 fn process_json_object(obj: &serde_json::Value) {
     println!("process_json_object");
 
@@ -90,6 +92,7 @@ fn process_json_object(obj: &serde_json::Value) {
 
     println!("process_json_object done");
 }
+*/
 
 
 fn main() {

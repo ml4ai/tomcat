@@ -19,23 +19,47 @@ pub struct ChatMessage {
     pub data: ChatData
 }
 
+// tomcat-text/src/main/scala/org/clulab/asist/attachments/Agent.scala
 #[derive(Debug, Serialize, Deserialize)]
-pub struct Attachment {
+pub struct AgentAttachment {
     pub labels: Vec<String>,
     pub agentType: String,
     pub text: String,
     pub span: Vec<u32>
 }
 
+// tomcat-text/src/main/scala/org/clulab/asist/attachments/Negation.scala
+#[derive(Debug, Serialize, Deserialize)]
+pub struct BooleanAttachment {
+    pub value: bool,
+}
+
+// tomcat-text/src/main/scala/org/clulab/asist/attachments/MarkerId.scala
+// tomcat-text/src/main/scala/org/clulab/asist/attachments/Tense.scala
+// tomcat-text/src/main/scala/org/clulab/asist/attachments/VictimType.scala
+#[derive(Debug, Serialize, Deserialize)]
+pub struct StringAttachment {
+    pub value: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum Attachment {
+    Agent(AgentAttachment),
+    Bool(BooleanAttachment),
+    String(StringAttachment)
+}
+
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Extraction {
     pub attachments: Vec<Attachment>,
     pub labels: Vec<String>,
-    pub span: String,
-    pub arguments: HashMap<String,Extraction>,
+    pub span: Option<String>, // field may not exist
+    pub arguments: Option<HashMap<String,Vec<Extraction>>>,
     pub start_offset: u32,
     pub end_offset: u32,
-    pub rule: String
+    pub rule: Option<String> // field may not exist
 }
 
 #[derive(Debug, Serialize, Deserialize)]
