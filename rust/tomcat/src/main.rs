@@ -84,7 +84,7 @@ fn process_chat_message(
     // For ASIST Study 4, only the shop stage will have free text chat.
     if let MissionStage::shop_stage = mission_stage {
         let message: ChatMessage = get_message(&msg);
-        let text = message.data.text;
+//        let text = message.data.text;
         let sender = message.data.sender;
 
         // We ignore server-generated messages.
