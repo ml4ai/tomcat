@@ -1,7 +1,15 @@
+# Client ID
 client_id: tomcat
+
+# URL for the event extraction service
+event_extractor_url: http://localhost:8080
 
 # The topics to which we subscribe.
 topics:
   - minecraft/chat
   - observations/events/stage_transition
   - trial
+
+# List of domain-specific words we want the spellchecker to ignore
+custom_vocabulary:
+  - lol

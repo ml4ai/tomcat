@@ -13,13 +13,13 @@ pub enum MissionStage {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StageTransitionData {
     pub mission_stage: MissionStage,
-    transition_number: isize,
-    max_transitions: isize,
+    pub transition_number: isize,
+    pub max_transitions: isize,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StageTransitionMessage {
-    header: Header,
-    msg: Msg,
+    pub header: Header,
+    pub msg: Msg,
     pub data: StageTransitionData,
 }

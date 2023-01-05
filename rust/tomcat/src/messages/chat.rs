@@ -6,9 +6,9 @@ use serde_json::Value;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ChatData {
     pub text: String,
-    addressees: Vec<String>,
-    elapsed_milliseconds: isize,
-    mission_timer: String,
+    pub addressees: Vec<String>,
+    pub elapsed_milliseconds: isize,
+    pub mission_timer: String,
     pub sender: String,
 }
 
@@ -65,4 +65,7 @@ pub struct Extraction {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Extractions {
     pub extractions: Vec<Extraction>
+//    pub header: Header,
+//    pub msg: Msg,
+//    pub data: ChatData,
 }

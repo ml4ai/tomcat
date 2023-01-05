@@ -2,20 +2,20 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Header {
-    timestamp: String,
-    version: String,
-    message_type: String,
+    pub timestamp: String,
+    pub version: String,
+    pub message_type: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Msg {
-    trial_id: String,
-    experiment_id: String,
-    timestamp: String,
-    source: String,
-    version: String,
-    sub_type: String,
-    replay_parent_id: Option<String>,
-    replay_id: Option<String>,
-    replay_parent_type: Option<String>,
+    pub trial_id: String,
+    pub experiment_id: String,
+    pub timestamp: String,
+    pub source: String,
+    pub version: String,
+    pub sub_type: String,
+    pub replay_parent_id: Option<String>,
+    pub replay_id: Option<String>,
+    pub replay_parent_type: Option<String>,
 }
