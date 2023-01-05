@@ -18,7 +18,7 @@ use ispell::{SpellChecker, SpellLauncher};
 use log::{error, info, warn};
 
 //use std::collections::HashMap;
-//use serde_json::Value;
+use serde_json::Value;
 
 
 /// Configuration
@@ -28,7 +28,6 @@ struct Config {
     client_id: String,
 }
 
-
 fn get_message<'a, T: Deserialize<'a>>(message: &'a mqtt::Message) -> T {
     serde_json::from_slice::<T>(message.payload())
         .unwrap_or_else(|_| panic!("Unable to parse JSON payload {:?}", message.payload()))
@@ -37,6 +36,11 @@ fn get_message<'a, T: Deserialize<'a>>(message: &'a mqtt::Message) -> T {
 fn process_stage_transition_message(message: mqtt::Message, mission_stage: &mut MissionStage) {
     let message: StageTransitionMessage = get_message(&message);
     *mission_stage = message.data.mission_stage;
+}
+
+// Maybe translate the Extractions vector as a serde_json Array Value? 
+fn do_something_with_extractions(extractions: Vec<Extraction>) {
+    println!("Extractions: {:#?}", extractions);
 }
 
 fn process_chat_message(
@@ -59,41 +63,19 @@ fn process_chat_message(
                     println!("Maybe you meant '{}'?", &e.suggestions[0]);
                 }
             }
-     //       println!("{}", &message.data.text);
             let client = reqwest::blocking::Client::new();
             let res = client.post("http://localhost:8080").body(message.data.text).send().unwrap();
             let text = res.text().unwrap();
-            println!("{:#?}", &text);
 
-            let e: Vec<Extraction> = serde_json::from_str(&text).unwrap();
-            println!("{:#?}", e);
+            let vec: Vec<Extraction> = serde_json::from_str(&text).unwrap();
 
-                /*
-
-            let value: Vec<serde_json::Value> = serde_json::from_str(&text).unwrap();
-            println!("{:#?}", value);
-
-            for obj in value.iter() {
-                if let 
-                process_json_object(obj);
+            if !vec.is_empty() {
+                println!("Text: {:?}", text);
+                do_something_with_extractions(vec);
             }
-
-            */
         }
     }
-   // println!("process_chat_message done");
 }
-
-/*
-fn process_json_object(obj: &serde_json::Value) {
-    println!("process_json_object");
-
-    println!("{:#?}", obj);
-
-    println!("process_json_object done");
-}
-*/
-
 
 fn main() {
     // Initialize the logger from the environment
