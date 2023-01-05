@@ -8,13 +8,17 @@ use std::time::Duration;
 use tomcat::{
     cli::Cli,
     messages::{
-        chat::ChatMessage,
+        chat::{Attachment, ChatMessage, Extraction},
         stage_transition::{MissionStage, StageTransitionMessage},
     },
 };
 
 use ispell::{SpellChecker, SpellLauncher};
 use log::{error, info, warn, debug};
+
+//use std::collections::HashMap;
+use serde_json::Value;
+
 
 /// Configuration
 #[derive(Default, Debug, Serialize, Deserialize)]
@@ -34,6 +38,11 @@ fn process_stage_transition_message(message: mqtt::Message, mission_stage: &mut 
     let message: StageTransitionMessage = get_message(&message);
     info!("[{}] Stage is now {}", message.header.timestamp, message.data.mission_stage);
     *mission_stage = message.data.mission_stage;
+}
+
+// Maybe translate the Extractions vector as a serde_json Array Value? 
+fn do_something_with_extractions(extractions: Vec<Extraction>) {
+    println!("Extractions: {:#?}", extractions);
 }
 
 fn check_spelling(text: &str, checker: &mut SpellChecker, cfg: &Config) {
@@ -59,6 +68,7 @@ fn get_extractions(text: String, cfg: &Config) {
         .send()
         .unwrap_or_else(|_| panic!("Unable to contact the event extraction backend at {}, is the service running?", &cfg.event_extractor_url));
     println!("{:?}", res.text());
+
 }
 
 fn process_chat_message(
@@ -67,18 +77,38 @@ fn process_chat_message(
     checker: &mut SpellChecker,
     cfg: &Config,
 ) {
+    //println!("process_chat_message start");
     // For ASIST Study 4, only the shop stage will have free text chat.
     if let MissionStage::shop_stage = mission_stage {
         let message: ChatMessage = get_message(&msg);
-        let text = message.data.text;
         let sender = message.data.sender;
 
         // We ignore server-generated messages.
         if let "Server" = sender.as_str() {
         } else {
+
+            let errors = checker.check(&message.data.text).unwrap();
+            for e in errors {
+                println!("'{}' (pos: {}) is misspelled!", &e.misspelled, e.position);
+                if !e.suggestions.is_empty() {
+                    println!("Maybe you meant '{}'?", &e.suggestions[0]);
+                }
+            }
+            let client = reqwest::blocking::Client::new();
+            let res = client.post("http://localhost:8080").body(message.data.text).send().unwrap();
+            let text = res.text().unwrap();
+
+            let vec: Vec<Extraction> = serde_json::from_str(&text).unwrap();
+
+            if !vec.is_empty() {
+                println!("Text: {:?}", text);
+                do_something_with_extractions(vec);
+            }
+
             //check_spelling(&text, checker, cfg);
             //get_extractions(text, cfg);
-            println!("[{}] {}: {}", message.header.timestamp, sender, text);
+//            println!("[{}] {}: {}", message.header.timestamp, sender, text);
+
         }
     }
 }
