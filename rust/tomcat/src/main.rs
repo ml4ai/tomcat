@@ -1,5 +1,4 @@
-//! ToMCAT N
-//! LU agent
+//! ToMCAT NLU agent
 
 use clap::Parser;
 use futures::{executor::block_on, StreamExt};
