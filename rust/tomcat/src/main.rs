@@ -9,7 +9,7 @@ use std::time::Duration;
 use tomcat::{
     cli::Cli,
     messages::{
-        chat::{Attachment, ChatMessage, Extraction, Extractions},
+        chat::{Attachment, ChatMessage, Extraction},
         stage_transition::{MissionStage, StageTransitionMessage},
     },
 };
@@ -41,12 +41,10 @@ fn process_stage_transition_message(message: mqtt::Message, mission_stage: &mut 
     *mission_stage = message.data.mission_stage;
 }
 
-
 // Maybe translate the Extractions vector as a serde_json Array Value? 
 fn do_something_with_extractions(extractions: Vec<Extraction>) {
     println!("Extractions: {:#?}", extractions);
 }
-
 
 fn check_spelling(text: &str, checker: &mut SpellChecker, cfg: &Config) {
     let errors = checker

@@ -50,7 +50,6 @@ pub enum Attachment {
     String(StringAttachment)
 }
 
-
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Extraction {
     pub attachments: Vec<Attachment>,
@@ -62,10 +61,3 @@ pub struct Extraction {
     pub rule: Option<String> // field may not exist
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Extractions {
-    pub extractions: Vec<Extraction>
-//    pub header: Header,
-//    pub msg: Msg,
-//    pub data: ChatData,
-}
