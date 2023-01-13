@@ -1,6 +1,8 @@
 import pandas as pd
 import json
 import os.path
+import pathlib
+import subprocess
 
 # $ scp -r gauss:/data/tomcat/LangLab/experiments/study_3_pilot/group/exp_2022_11_15_13/baseline_tasks/ .
 # $ ssh gauss ls -l /data/tomcat/LangLab/experiments/study_3_pilot/group/exp_2022_11_10_10/lion/face_images/ > listing.txt
@@ -8,24 +10,27 @@ import os.path
 # https://superuser.com/questions/851416/using-scp-to-transfer-a-txt-file-list-of-files
 # $ rsync -av --progress --partial-dir=/tmp --files-from=Minecraft_mission_1_Hands-on\ Training_selected.csv gauss:/data/tomcat/LangLab/experiments/study_3_pilot/group/exp_2022_11_10_10/leopard/face_images/ .
 
-experiment_dir = '/Users/manujinda/Documents/manujinda/ubunosx/tomcat_data/exp_2022_11_10_10/'
+data_dir = '/Users/manujinda/Documents/manujinda/ubunosx/tomcat_data/'
+experiment = 'exp_2022_11_22_10'
+experiment_dir = os.path.join(data_dir, experiment)  #'/Users/manujinda/Documents/manujinda/ubunosx/tomcat_data/exp_2022_11_10_10/'
 individual_file = 'individual_00074_1668105048.csv'
 
 meta_file = os.path.join(experiment_dir, 'baseline_tasks/', 'affective/', individual_file)
 #'/Users/manujinda/Documents/manujinda/ubunosx/tomcat_data/exp_2022_11_15_13/baseline_tasks/affective/individual_00014_1668547218.csv'
 
+
+'''
 meta_df = pd.read_csv(meta_file, sep=';', usecols=['time', 'monotonic_time', 'human_readable_time', 'image_path',
                                                    'subject_id', 'event_type'])
-# print(meta_df)
 
 meta_df.to_csv(os.path.join(experiment_dir, 'useful_timestamps/', individual_file))
 #'/Users/manujinda/Documents/manujinda/ubunosx/tomcat_data/exp_2022_11_15_13/useful_timestams/affective/individual_00014_1668547218.csv')
-
+'''
 # meta_minecraft = '/Users/manujinda/Documents/manujinda/ubunosx/tomcat_data/exp_2022_11_15_13/minecraft/MinecraftData_Trial-2_ID-38075ea6-1243-4c7d-8ef4-92b8cdc28fdb.metadata'
 
 # Load image file listings
 
-workstations = ['cheetah', 'leopard', 'lion', 'tiger']
+workstations = ['leopard', 'lion', 'tiger']  # 'cheetah',
 workstation = workstations[1]
 
 image_types = ['face_images', 'screenshots']
@@ -57,6 +62,25 @@ for idx, image_type in enumerate(image_types):
 # Process Minecraft metadata
 
 
+def download_image_files(_experiment_dir, _ws, _image_types):
+    exp_path = pathlib.Path(_experiment_dir)
+    #if not experiment_dir.is_dir():
+    #    print(f'Making output directory: {experiment_dir}\n')
+    exp_path.mkdir(parents=True, exist_ok=True)
+
+    for _img_type in _image_types:
+        for hd_tl in ['head', 'tail']:
+            pathlib.Path(os.path.join(_experiment_dir, _ws, _img_type, hd_tl)).mkdir(parents=True, exist_ok=True)
+
+    # https://stackoverflow.com/questions/13744473/command-line-execution-in-different-folder
+    # rsync -av --progress --partial-dir=/tmp --files-from=Minecraft_mission_1_Hands-on\ Training_selected.csv gauss:/data/tomcat/LangLab/experiments/study_3_pilot/group/exp_2022_11_10_10/leopard/face_images/ .
+    #p = subprocess.Popen(['rsync', argument1,...], cwd=os.path.join(_experiment_dir, _ws, 'face_images', 'head'))
+    #p.wait()
+
+#download_image_files(experiment_dir, 'test', image_types)
+#exit()
+
+
 def map_image_timestamps(_mission_id, _mission_name, _mission_state, _mission_timestamp, _image_file_listings, _image_types, _mission_start_timestamp, _experiment_dir, _n_select_files=100):
     _ws_file_names = {}
     for _idx, _img_listings in enumerate(_image_file_listings):
@@ -75,7 +99,10 @@ def map_image_timestamps(_mission_id, _mission_name, _mission_state, _mission_ti
                 _img_file_name = _ws_mission_images_df.iloc[-1]['file name']
                 _n_files = len(_ws_mission_images_df.index)
                 _ws_mission_images_df[['size', 'month', 'date', 'time', 'file name', 'timestamp']].to_csv(os.path.join(_experiment_dir, 'useful_timestamps/', f'Minecraft_mission_{_img_type}_{_ws}_{_mission_id}_{_mission_name}.csv'), index=False)
-                _ws_mission_images_df.head(_n_select_files)['file name'].to_csv(os.path.join(_experiment_dir, _ws, _img_type, f'Minecraft_mission_{_mission_id}_{_mission_name}_selected.csv'), index=False, header=False)
+                # _ws_mission_images_df.head(_n_select_files)['file name'].to_csv(os.path.join(_experiment_dir, _ws, _img_type, f'Minecraft_mission_{_mission_id}_{_mission_name.replace(" ", "_")}_selected_head.csv'), index=False, header=False)
+                # _ws_mission_images_df.tail(_n_select_files)['file name'].to_csv(os.path.join(_experiment_dir, _ws, _img_type, f'Minecraft_mission_{_mission_id}_{_mission_name.replace(" ", "_")}_selected_tail.csv'), index=False, header=False)
+                _ws_mission_images_df.head(_n_select_files)['file name'].to_csv(os.path.join(_experiment_dir, _ws, _img_type, f'Minecraft_mission_{_mission_id}_head.csv'), index=False, header=False)
+                _ws_mission_images_df.tail(_n_select_files)['file name'].to_csv(os.path.join(_experiment_dir, _ws, _img_type, f'Minecraft_mission_{_mission_id}_tail.csv'), index=False, header=False)
 
             print(_ws, _mission_state, '\t', _mission_timestamp, '\t', _img_file_name, '\t', _n_files)
             _ws_file_names[f'{_ws}_{_img_type}'] = _img_file_name
@@ -197,3 +224,14 @@ start_end_df.to_csv(os.path.join(experiment_dir, 'useful_timestamps/', f'{workst
 #start_end_df.to_csv('/Users/manujinda/Documents/manujinda/ubunosx/tomcat_data/exp_2022_11_15_13/useful_timestams/Minecraft_mission_timestamps.csv', index=False)
 
 
+# $ rsync -av --progress --partial-dir=/tmp --files-from= gauss:/data/tomcat/LangLab/experiments/study_3_pilot/group/exp_2022_11_10_10/cheetah/face_images/ ./
+# $ rsync -av --progress --partial-dir=/tmp --files-from= gauss:/data/tomcat/LangLab/experiments/study_3_pilot/group/exp_2022_11_10_10/cheetah/screenshots/ .
+
+# $ rsync -av --progress --partial-dir=/tmp --files-from= gauss:/data/tomcat/LangLab/experiments/study_3_pilot/group/exp_2022_11_10_10/leopard/face_images/ .
+# $ rsync -av --progress --partial-dir=/tmp --files-from= gauss:/data/tomcat/LangLab/experiments/study_3_pilot/group/exp_2022_11_10_10/leopard/screenshots/ .
+
+# $ rsync -av --progress --partial-dir=/tmp --files-from= gauss:/data/tomcat/LangLab/experiments/study_3_pilot/group/exp_2022_11_10_10/lion/face_images/ .
+# $ rsync -av --progress --partial-dir=/tmp --files-from= gauss:/data/tomcat/LangLab/experiments/study_3_pilot/group/exp_2022_11_10_10/lion/screenshots/ .
+
+# $ rsync -av --progress --partial-dir=/tmp --files-from= gauss:/data/tomcat/LangLab/experiments/study_3_pilot/group/exp_2022_11_10_10/tiger/face_images/ .
+# $ rsync -av --progress --partial-dir=/tmp --files-from= gauss:/data/tomcat/LangLab/experiments/study_3_pilot/group/exp_2022_11_10_10/tiger/screenshots/ .
