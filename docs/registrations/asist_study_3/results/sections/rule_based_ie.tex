@@ -3,6 +3,7 @@
 \textbf{Remo Nitschke, Adarsh Pyarelal, Joseph Astier}
 
 \section{Introduction}
+\label{sec:ee_intro}
 
 For humans, verbal and non-verbal communication are indicators that provide
 significant insight into social processes. Within the scope of the ASIST
@@ -36,13 +37,13 @@ following reasons:
      along with the concomitant changes to domain-specific vocabulary of
      interest.  It would be near-impossible for us to annotate data and train a
      neural agent on the new vocabulary of a study prior to its actual
-     execution and the release of the data from it. 
+     execution and the release of the data from it.
 
 \end{enumerate}
 
 \section{Hypotheses}
 
-We will test the following hypothesis: 
+We will test the following hypothesis:
 
 \begin{quote}
     \itshape
@@ -73,7 +74,7 @@ events can be categorized into two types:
         and are found by a combination of pattern matching, dependency parsing,
         and POS\footnote{POS: Part of speech.} tagging.
 \end{enumerate}
-    
+
 Each event is associated with a unique span of text and is assigned one or more
 labels by the rule that extracts it. The labels we are using are organized into
 an ontology.  If a rule assigns a label to an event from this ontology, the
@@ -141,7 +142,7 @@ annotate utterances for labels.}, done by team members and hired annotators who
 are familiar with our DialogAgent labels.
 
 
-\subsubsection{Results from early data} 
+\subsubsection{Results from early data}
 
 We have already done a preliminary precision evaluation of 1700 utterances from
 Study 3 subjects data and have found that the simple events are extracted with
@@ -167,3 +168,10 @@ In order to combat this problem, we will run an evaluation for precision over
 the entire label set, as described in the previous subsection. Unfortunately,
 we will not be able to calculate recall for the entire label set, as this
 process is simply too costly for the size of our label set (> 100).
+
+\section{Results}
+
+\subsection{Confirmatory}
+Our hypothesis, declared in \autoref{sec:ee_intro} was confirmed. We achieved a
+precision of 97.5\% for simple events, and 84.4\% for complex events. Our
+analysis and results have been published in \citet{nitschke-etal-2022-rule}.
