@@ -31,7 +31,7 @@ coordination as all members adopt the new perspective (increased between-person
 coordination). Thus being able to recognize ongoing changes in coordination (in
 the domain of mental contents in this example) could help an artificially
 intelligent agent predict subsequent non-linear changes in team states and
-performance outcomes. 
+performance outcomes.
 
 One important aspect of social coordination is that it is not mode- specific
 \citep{eiler2017interaction}. Instead, coordination can be observed at every level of
@@ -79,7 +79,7 @@ results to theoretically based interventions. For the present research,
 therefore, we focus on coordination of two vocalic features that map directly
 to pitch and loudness of human speech (see \autoref{subsec:measures} for
 details), both of which could be targeted by an intervention as simple as
-asking a person to speak softly. 
+asking a person to speak softly.
 
 \section{Hypotheses}
 
@@ -108,16 +108,16 @@ are:
 \begin{enumerate}
     \item If a team member places a marker block (a form of communication
         provided in the game) but does not say they did, then the agent
-        will suggest that they tell their team members that they placed it. 
+        will suggest that they tell their team members that they placed it.
 
     \item If a team member needs help (to stabilize a
         victim or exit a blocked room) but does not say they do, then the
         agent will suggest that they tell their team members that they need
-        assistance. 
+        assistance.
 
     \item If a team member asked for help but did not get a
         reply from any of the other team members, then the agent will
-        suggest that they tell the others again that help is needed. 
+        suggest that they tell the others again that help is needed.
 \end{enumerate}
 
 \noindent This is a
@@ -151,7 +151,7 @@ indicators for modeling linguistic coordination. The first,
 \texttt{F0final\_sma} is the smoothed moving average of fundamental frequency.
 It corresponds to a speaker’s pitch.  The second, \texttt{wav\_RMSenergy\_sma}
 is the Root Mean Square energy measure, which provides an estimate of the
-intensity of the sound, which correlates with what humans perceive as loudness. 
+intensity of the sound, which correlates with what humans perceive as loudness.
 
 \paragraph{Team Process and Effects Measures} We will include five team process
 measures and two team effects measures, each taken from the full set of
@@ -175,7 +175,7 @@ representing a global measure of team effectiveness (score and error rate).
         (or minimum) of (1) Transporter signalling device for the room
         containing the victim, or (2) Medic completes stabilization of the
         victim.
- 
+
     \item \textbf{ASI-M5 Coordinative Communications} A quantitative
         characterization of the complexity of team communication using entropy
         in the dynamical system. Entropy is defined as the level of
@@ -189,24 +189,24 @@ representing a global measure of team effectiveness (score and error rate).
 
     \item \textbf{Rutgers Threat Room Communication AC}: \% of threat
         rooms that had a threat room marker block outside its entrance at some
-        point during the mission.        
+        point during the mission.
 
     \item \textbf{Rutgers Victim Type Communication AC}: count of
         victim type marker blocks placed near the correct type of A or B
         victims.
-    
+
     \item \textbf{Rutgers Belief Difference AC}: entropy of beliefs about
         victim distribution by comparing three models in which (1) players
         share information perfectly, (2) players don't share any information,
-        and (3) players only share information via marker blocks.  
+        and (3) players only share information via marker blocks.
 
 \end{itemize}
 
-\noindent The team effects measures we hope to predict and influence are: 
+\noindent The team effects measures we hope to predict and influence are:
 
 \begin{itemize}
 
-    \item \textbf{ASI-M1 ASI Utility}: SAR game score 
+    \item \textbf{ASI-M1 ASI Utility}: SAR game score
 
     \item \textbf{ASI-M3 Error Rate}: Percentage of subtasks of teamwork tasks
         that are completed per trial, measured as below.  Specifically, the
@@ -216,7 +216,7 @@ representing a global measure of team effectiveness (score and error rate).
             victims rescued/discovered. This is because different victims are
             worth different numbers of points, and it would be reasonable for a
             team to ignore low point value victims in favor of high point value
-        victims.}. 
+        victims.}.
 
         \begin{align}
             \text{Error rate} = 1 - \frac{\text{\# victims rescued}}{\text{\# victims discovered}}
@@ -232,10 +232,10 @@ representing a global measure of team effectiveness (score and error rate).
     about coordination, and (ii) when it comes to evaluation, all estimates are
     probability distributions, rather than point estimates.  If needed, these
     can be distilled into point estimates by either averaging the distribution
-    (MMSE loss) or using the maximum (MAP\footnote{Maximum a posteriori} loss). 
+    (MMSE loss) or using the maximum (MAP\footnote{Maximum a posteriori} loss).
     Our probabilistic model for this experiment (see \autoref{fig:pgm}) models
     outcome measures, $M^i$, conditioned on a coordination latent construct,
-    $C$. 
+    $C$.
 
 %
     \begin{figure}
@@ -293,17 +293,17 @@ representing a global measure of team effectiveness (score and error rate).
     In general, coordination can drift, or even switch, in time, but
     coordination needs to be somewhat stable over time, as it is defined over a
     period of time. More pragmatically, if coordination has complete freedom,
-    the model will surely overfit. 
+    the model will surely overfit.
 
     It is also possible that there are multiple coordinating processes in s
     system. However, for a given coordination processes, observations of
     different modalities and time scales are all linked to the same latent
-    coordination obeying a single temporal assumption. 
+    coordination obeying a single temporal assumption.
 
     To pre-register a single approach, we will assume a single coordination
     process that drifts slowly during the first half of each trial, and is
     constant for the second half of each trial. This allows for the team to
-    develop some rapport and for interventions to have an effect. 
+    develop some rapport and for interventions to have an effect.
 
 \subsection{Interventions}
 \label{subsec:interventions}
@@ -327,7 +327,7 @@ communication among team members. The interventions are:
 The agent uses a state machine to determine when to watch/monitor, activate or
 cancel a specific intervention. Different events in the game might trigger
 different interventions and state transitions. The general idea is illustrated
-in \autoref{fig:marker_block_intervention_flow_chart_general}.  
+in \autoref{fig:marker_block_intervention_flow_chart_general}.
 
 The topics the agent uses to gather relevant information about the missions is listed in \autoref{tab:intervention_variables}.
 The following subsections detail how we use the data to trigger specific events associated with each intervention the agent implements.
@@ -356,21 +356,21 @@ The following subsections detail how we use the data to trigger specific events 
     \begin{tabularx}{6in}{lp{1.2in}X}
         \toprule
         Topic & Publisher & Purpose\\
-        \midrule  
+        \midrule
     	trial & simulator & Determine a mission start and end \\
-    	observations/events/mission & simulator & Determine the list of team members and mission order \\    
+    	observations/events/mission & simulator & Determine the list of team members and mission order \\
     	agent/dialog & UAZ Dialog Agent & Determine relevant information from the team members' speech \\
-    	observations/events/player/triage & simulator & Determine interaction with a victim \\    
+    	observations/events/player/triage & simulator & Determine interaction with a victim \\
     	observations/events/player/victim\_picked\_up & simulator & Determine interaction with a victim \\
     	observations/events/player/marker\_placed & simulator & Determine a marker placement \\
-    	observations/events/player/marker\_removed & simulator & Determine a marker removal \\  
-    	observations/state & simulator & Determine the team members' positions \\	
+    	observations/events/player/marker\_removed & simulator & Determine a marker removal \\
+    	observations/state & simulator & Determine the team members' positions \\
     	observations/events/player/role\_selected & simulator & Determine the team members' roles \\
     	observations/events/player/rubble\_collapse & simulator & Determine if an obstacle is blocking an exit \\
     	observations/events/player/tool\_used & simulator & Determine if an obstacle is being destroyed \\
     	observations/events/player/proximity & IHMC Proximity AC agent & Determine the team members' areas \\
-    	observations/events/player/rubble\_destroyed & simulator & Determine an exit was unblocked \\   
-    	agent/pygl\_fov/player/3d/summary & FoV Tool & Determine objects in the team members' field of view \\    	
+    	observations/events/player/rubble\_destroyed & simulator & Determine an exit was unblocked \\
+    	agent/pygl\_fov/player/3d/summary & FoV Tool & Determine objects in the team members' field of view \\
         \bottomrule
     \end{tabularx}
     \caption{%
@@ -401,7 +401,7 @@ is placed on the map, as they might miss the marker due to them not looking at
 the map at the time of placement.  If the intervention is activated, the agent
 will send the following message to the team member who placed the marker:
 
-\begin{quote} 
+\begin{quote}
     \emph{``[Player color], let your teammates know about the [marker type]
     marker you recently placed."}
 \end{quote}
@@ -436,12 +436,12 @@ whether they perceived a critical victim or not. If the intervention is
 activated, the agent will send one of the following messages to the team member
 who needs help:
 
-\begin{quote} 
+\begin{quote}
     \emph{``[Player color], it seems you need some help to rescue a critical
     victim. Ask your teammates for assistance.''}
 \end{quote}
 
-\begin{quote} 
+\begin{quote}
     \emph{``[Player color], it seems you need some help to exit this room. Ask
     your teammates for assistance.''}
 \end{quote}
@@ -486,7 +486,7 @@ extractions (see \autoref{ch:rule_based_ie}) to detect when a team member asks f
 If the intervention is activated, the agent will send the following message to the team
 member who asked for help:
 
-\begin{quote} 
+\begin{quote}
     \emph{``[Player color], it's been a while since you asked for help. Remind
     your teammates."}
 \end{quote}
@@ -540,4 +540,81 @@ Each case leads to a probability distribution for coordination and outcome
 measures.  Specifically, each trial contributes multiple samples to one of those
 distributions. We will again sample those distributions to evaluate the hypotheses
 within the Bayesian hypothesis testing paradigm using Cohen's d. We will accept
-the hypothesis as supported when the value is greater than $0.1$. 
+the hypothesis as supported when the value is greater than $0.1$.
+
+\section{Results}
+
+We evaluated trials in 3 different conditions: \emph{no advisor}, \emph{human
+advisor} and \emph{tomcat advisor}. We compare the average coordination in a
+trial against the different outcome measures.
+
+We left the Rutgers Belief Difference AC out of the analysis because it is a
+more dynamic measure that changes over time. So, a better analysis should
+compare coordination and that outcome measure at different periods during the
+mission.
+
+\textbf{Hypothesis 1: modeling coordination improves outcome prediction}
+
+This hypothesis passes (p-value $= 0.04$ and $d = 0.7$) for the \emph{tomcat
+advisor} condition in Mission 2 when we correlate coordination with team score.
+In other words, coordination was predictive of team score in trials of the
+second mission in which the ToMCAT agent was active.
+
+It is important to inform that 76\% of the pair (prediction / real score)
+resulted in smaller MSE for the model with coordination. Therefore, we cannot
+accept the predictive hypothesis according to the acceptability criteria we
+defined in this document, which requires at least 95\% of the pairs to result
+in smaller prediction error.
+
+\textbf{Hypothesis 2: increased coordination predicts higher outcome measures}
+
+This hypothesis was verified in mission 2 only. We believe that coordination in
+mission 1 as manifested from vocalic entrainment does not correlate with the
+outcome measures because the team is still getting familiarized with the game.
+Therefore, their conversations tend to be less strategy oriented and therefore,
+may not instill the coordination we are trying to infer.
+
+The table below summarizes the positive correlations found in mission 2.
+
+\begin{table}[h]
+	\centering
+    \begin{sidecaption}{%
+        Positive correlation between average coordination and outcome measures
+        in mission 2. All the results reported were obtained with a p-value $<$
+        1E-6.
+    }[tab:coordination_vs_outcome_measures]
+	\begin{tabular}{lllll}
+		\toprule
+		\textbf{Condition} & \textbf{Outcome Measure} & \textbf{Cohen's $d$}\\
+		\midrule
+		No Advisor                      & ASI-M1: Score        & 1.9\\
+		Human Advisor                   & ASI-M5: Threat Comm. & 0.3\\
+		\multirow{2}{*}{ToMCAT Advisor} & ASI-M1: Score        & 5.4\\
+				                        & ASI-M5: Victim Comm. & 3.7\\
+		\bottomrule
+	\end{tabular}
+\end{sidecaption}
+\end{table}
+
+Moreover, we also tested for negative slope between coordination and ASI-M3 but
+we found no evidence to support that.
+
+\begin{figure}[h]
+	\centering
+    \begin{sidecaption}{%
+        Regression between average coordination in the second mission and final
+        team score for the ToMCAT advisor condition.
+    }[fig:regression]
+    \includegraphics{figures/tomcat_score_slope.pdf}
+\end{sidecaption}
+\end{figure}
+
+
+\textbf{Hypothesis 3: intervening on team communication predicts higher
+coordination and outcome measures}
+
+We accept this hypothesis (p-value $= 0.09$ and $d = 0.55$) in mission 2 when
+comparing the trials in the \emph{ToMCAT advisor} condition and the trials in
+the \emph{No Advisor} conditions. We also tested the \emph{Human advisor} but
+we did not find evidence to support this hypothesis for trials in such a
+condition.

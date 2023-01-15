@@ -21,6 +21,7 @@
 \setcounter{secnumdepth}{3}
 
 
+\usepackage{multirow}
 % Fonts
 \usepackage{fontspec}
 \setmainfont[Numbers = {OldStyle, Proportional}]{TeX Gyre Pagella}
@@ -94,16 +95,16 @@
 
 %% Bringhurst chapter and head styles with a Pedersen-type chapter number
 \makechapterstyle{bringhurst}{%
-	\renewcommand{\chapterheadstart}{} 
-	\renewcommand{\printchaptername}{} 
-	\renewcommand{\chapternamenum}{} 
+	\renewcommand{\chapterheadstart}{}
+	\renewcommand{\printchaptername}{}
+	\renewcommand{\chapternamenum}{}
 	\setlength{\midchapskip}{15mm}
 	\renewcommand*{\printchapternum}{%
         \begin{marginfigure}[0pt]
           \resizebox{!}{\midchapskip}{\color{Maroon}\emph{\thechapter}}
         \end{marginfigure}
       }
-	\renewcommand{\afterchapternum}{} 
+	\renewcommand{\afterchapternum}{}
 	\renewcommand{\printchaptertitle}[1]{%
 	  \raggedright\Large\scshape\MakeLowercase{##1}}
 	\renewcommand{\afterchaptertitle}{%
