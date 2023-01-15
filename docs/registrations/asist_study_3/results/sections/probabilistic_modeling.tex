@@ -2,7 +2,9 @@
 \label{ch:pgm}
 \textbf{Emily Butler, Kobus Barnard, Paulo Soares, Adarsh Pyarelal}
 
-\section{Introduction} Human teams are interpersonal dynamic systems, where the
+\section{Introduction}
+
+Human teams are interpersonal dynamic systems, where the
 individual team members become subsumed by the collective whole in support of
 some shared goal or function \citep{nowak2020insync, Cooke.ea:2013,
 eiler2017interaction, fusaroli2014dialog, gorman2010team, wiltshire2017problem,
@@ -545,20 +547,22 @@ the hypothesis as supported when the value is greater than $0.1$.
 \section{Results}
 
 We evaluated trials in 3 different conditions: \emph{no advisor}, \emph{human
-advisor} and \emph{tomcat advisor}. We compare the average coordination in a
-trial against the different outcome measures.
+advisor} and \emph{ToMCAT advisor}. We compare the average level of
+coordination in a trial against the different outcome measures.
 
-We left the Rutgers Belief Difference AC out of the analysis because it is a
-more dynamic measure that changes over time. So, a better analysis should
-compare coordination and that outcome measure at different periods during the
-mission.
+We left the Rutgers Belief Difference AC out of our analysis because it is a
+more dynamic measure that changes over time, while our model of coordination is
+computed on data from a complete mission. For a dynamic measure such
+as the one produced by the Rutgers Belief Difference AC, it would be more
+appropriate to compare coordination and that outcome measure at different
+periods during the mission.
 
-\textbf{Hypothesis 1: modeling coordination improves outcome prediction}
+\subsection{Hypothesis 1: Modeling coordination improves outcome prediction}
 
-This hypothesis passes (p-value $= 0.04$ and $d = 0.7$) for the \emph{tomcat
-advisor} condition in Mission 2 when we correlate coordination with team score.
-In other words, coordination was predictive of team score in trials of the
-second mission in which the ToMCAT agent was active.
+This hypothesis is confirmed (\emph{p}-value $= 0.04$ and $d = 0.7$) for the
+\emph{ToMCAT advisor} condition in Mission 2 when we correlate coordination
+with team score.  In other words, coordination was predictive of team score in
+trials of the second mission in which the ToMCAT agent was active.
 
 It is important to inform that 76\% of the pair (prediction / real score)
 resulted in smaller MSE for the model with coordination. Therefore, we cannot
@@ -566,15 +570,15 @@ accept the predictive hypothesis according to the acceptability criteria we
 defined in this document, which requires at least 95\% of the pairs to result
 in smaller prediction error.
 
-\textbf{Hypothesis 2: increased coordination predicts higher outcome measures}
+\subsection{Hypothesis 2: Increased coordination predicts higher outcome measures}
 
 This hypothesis was verified in mission 2 only. We believe that coordination in
 mission 1 as manifested from vocalic entrainment does not correlate with the
 outcome measures because the team is still getting familiarized with the game.
 Therefore, their conversations tend to be less strategy oriented and therefore,
 may not instill the coordination we are trying to infer.
-
-The table below summarizes the positive correlations found in mission 2.
+\autoref{tab:coordination_vs_outcome_measures} summarizes the positive
+correlations found in mission 2.
 
 \begin{table}[h]
 	\centering
@@ -596,8 +600,8 @@ The table below summarizes the positive correlations found in mission 2.
 \end{sidecaption}
 \end{table}
 
-Moreover, we also tested for negative slope between coordination and ASI-M3 but
-we found no evidence to support that.
+We also tested for a linear relationship with negative slope between
+coordination and ASI-M3 but we found no evidence to support it.
 
 \begin{figure}[h]
 	\centering
@@ -610,11 +614,11 @@ we found no evidence to support that.
 \end{figure}
 
 
-\textbf{Hypothesis 3: intervening on team communication predicts higher
+\subsection{Hypothesis 3: intervening on team communication predicts higher
 coordination and outcome measures}
 
 We accept this hypothesis (p-value $= 0.09$ and $d = 0.55$) in mission 2 when
 comparing the trials in the \emph{ToMCAT advisor} condition and the trials in
-the \emph{No Advisor} conditions. We also tested the \emph{Human advisor} but
-we did not find evidence to support this hypothesis for trials in such a
-condition.
+the \emph{No Advisor} conditions. We also tested the \emph{Human advisor}
+condition but we did not find evidence to support this hypothesis for trials in
+such a condition.
