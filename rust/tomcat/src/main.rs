@@ -14,11 +14,9 @@ use tomcat::{
 };
 
 use ispell::{SpellChecker, SpellLauncher};
-use log::{error, info, warn, debug};
+use log::{debug, error, info, warn};
 
-//use std::collections::HashMap;
 use serde_json::Value;
-
 
 /// Configuration
 #[derive(Default, Debug, Serialize, Deserialize)]
@@ -36,19 +34,20 @@ fn get_message<'a, T: Deserialize<'a>>(message: &'a mqtt::Message) -> T {
 
 fn process_stage_transition_message(message: mqtt::Message, mission_stage: &mut MissionStage) {
     let message: StageTransitionMessage = get_message(&message);
-    info!("[{}] Stage is now {}", message.header.timestamp, message.data.mission_stage);
+    info!(
+        "[{}] Stage is now {}",
+        message.header.timestamp, message.data.mission_stage
+    );
     *mission_stage = message.data.mission_stage;
 }
 
-// Maybe translate the Extractions vector as a serde_json Array Value? 
+// Maybe translate the Extractions vector as a serde_json Array Value?
 fn do_something_with_extractions(extractions: Vec<Extraction>) {
     println!("Extractions: {:#?}", extractions);
 }
 
 fn check_spelling(text: &str, checker: &mut SpellChecker, cfg: &Config) {
-    let errors = checker
-        .check(text)
-        .expect("Unable to check spelling!");
+    let errors = checker.check(text).expect("Unable to check spelling!");
     for e in errors {
         // Only show errors if the misspelled word is not in the custom vocabulary.
         if !cfg.custom_vocabulary.contains(&e.misspelled) {
@@ -66,9 +65,13 @@ fn get_extractions(text: String, cfg: &Config) {
         .post(&cfg.event_extractor_url)
         .body(text)
         .send()
-        .unwrap_or_else(|_| panic!("Unable to contact the event extraction backend at {}, is the service running?", &cfg.event_extractor_url));
-    println!("{:?}", res.text());
-
+        .unwrap_or_else(|_| {
+            panic!(
+                "Unable to contact the event extraction backend at {}, is the service running?",
+                &cfg.event_extractor_url
+            )
+        });
+    let vec: Vec<Extraction> = serde_json::from_str(&res.text().unwrap()).unwrap();
 }
 
 fn process_chat_message(
@@ -77,39 +80,18 @@ fn process_chat_message(
     checker: &mut SpellChecker,
     cfg: &Config,
 ) {
-    //println!("process_chat_message start");
     // For ASIST Study 4, only the shop stage will have free text chat.
     if let MissionStage::shop_stage = mission_stage {
         let message: ChatMessage = get_message(&msg);
         let sender = message.data.sender;
 
-        // We ignore server-generated messages.
-        if let "Server" = sender.as_str() {
-        } else {
-
-            let errors = checker.check(&message.data.text).unwrap();
-            for e in errors {
-                println!("'{}' (pos: {}) is misspelled!", &e.misspelled, e.position);
-                if !e.suggestions.is_empty() {
-                    println!("Maybe you meant '{}'?", &e.suggestions[0]);
-                }
-            }
-            let client = reqwest::blocking::Client::new();
-            let res = client.post("http://localhost:8080").body(message.data.text).send().unwrap();
-            let text = res.text().unwrap();
-
-            let vec: Vec<Extraction> = serde_json::from_str(&text).unwrap();
-
-            if !vec.is_empty() {
-                println!("Text: {:?}", text);
-                do_something_with_extractions(vec);
-            }
-
-            //check_spelling(&text, checker, cfg);
-            //get_extractions(text, cfg);
-//            println!("[{}] {}: {}", message.header.timestamp, sender, text);
+        if let Some(msg_text) = message.data.text {
+            println!("[{}] {}: {}", message.header.timestamp, sender.unwrap(), msg_text);
+            //check_spelling(&msg_text, checker, cfg);
+            //get_extractions(msg_text, cfg);
 
         }
+
     }
 }
 
@@ -145,7 +127,7 @@ fn main() {
 
         let conn_opts = mqtt::ConnectOptionsBuilder::new()
             .mqtt_version(mqtt::MQTT_VERSION_5)
-            .clean_start(false)
+            .clean_start(true)
             .properties(mqtt::properties![mqtt::PropertyCode::SessionExpiryInterval => 3600])
             .will_message(lwt)
             .finalize();
@@ -190,7 +172,7 @@ fn main() {
                     print!("(R) ");
                 }
                 match msg.topic() {
-                    "minecraft/chat" => {
+                    "communication/chat" => {
                         process_chat_message(msg, &mut mission_stage, &mut checker, &cfg)
                     }
                     "observations/events/stage_transition" => {

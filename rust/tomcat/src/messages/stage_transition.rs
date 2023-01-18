@@ -6,15 +6,17 @@ use serde::{Deserialize, Serialize};
 #[serde(rename_all = "UPPERCASE")]
 #[derive(strum_macros::Display)] // Allows variants to be printed as strings if needed
 pub enum MissionStage {
-    field_stage,
     shop_stage,
+    field_stage,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StageTransitionData {
+    pub mission_timer: String,
+    pub elapsed_milliseconds: i64,
     pub mission_stage: MissionStage,
-    pub transition_number: isize,
-    pub max_transitions: isize,
+    pub transitionsToShop: i32,
+    pub team_budget: i32,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
