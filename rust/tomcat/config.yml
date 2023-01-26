@@ -6,6 +6,7 @@ event_extractor_url: http://localhost:8080
 
 # The topics to which we subscribe.
 topics:
+  - trial
   - communication/chat
   - observations/events/stage_transition
 

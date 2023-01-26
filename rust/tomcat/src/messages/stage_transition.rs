@@ -2,10 +2,11 @@ use crate::messages::common::{Header, Msg};
 use serde::{Deserialize, Serialize};
 
 /// Mission stage
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Default, Serialize, Deserialize)]
 #[serde(rename_all = "UPPERCASE")]
 #[derive(strum_macros::Display)] // Allows variants to be printed as strings if needed
 pub enum MissionStage {
+    #[default]
     shop_stage,
     field_stage,
 }
