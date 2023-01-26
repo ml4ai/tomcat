@@ -158,13 +158,13 @@ fn main() {
         .finalize();
 
     // Create the client connection
-    let mut cli = mqtt::AsyncClient::new(create_opts).unwrap_or_else(|e| {
+    let mut client = mqtt::AsyncClient::new(create_opts).unwrap_or_else(|e| {
         panic!("Error creating the client: {:?}", e);
     });
 
     if let Err(err) = block_on(async {
         // Get message stream before connecting.
-        let mut strm = cli.get_stream(25);
+        let mut strm = client.get_stream(25);
 
         // Define the set of options for the connection
         let lwt = mqtt::Message::new("test", "Async subscriber lost connection", mqtt::QOS_1);
@@ -181,7 +181,7 @@ fn main() {
             "Connecting to the MQTT server with client id \"{}\"",
             &cfg.client_id
         );
-        cli.connect(conn_opts).await?;
+        client.connect(conn_opts).await?;
 
         let qos = vec![mqtt::QOS_2; cfg.topics.len()];
 
@@ -191,7 +191,7 @@ fn main() {
             mqtt::QOS_2
         );
         let sub_opts = vec![mqtt::SubscribeOptions::default(); cfg.topics.len()];
-        cli.subscribe_many_with_options(cfg.topics.as_slice(), qos.as_slice(), &sub_opts, None)
+        client.subscribe_many_with_options(cfg.topics.as_slice(), qos.as_slice(), &sub_opts, None)
             .await?;
 
         // Just loop on incoming messages.
@@ -230,7 +230,7 @@ fn main() {
             } else {
                 // A "None" means we were disconnected. Try to reconnect...
                 info!("Lost connection. Attempting reconnect.");
-                while let Err(err) = cli.reconnect().await {
+                while let Err(err) = client.reconnect().await {
                     error!("Error reconnecting: {}", err);
 
                     // For tokio use: tokio::time::delay_for()
