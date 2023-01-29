@@ -66,30 +66,12 @@ fn process_trial_message(message: mqtt::Message, mission_state: &mut MissionStat
     }
 }
 
-// Maybe translate the Extractions vector as a serde_json Array Value?
-fn do_something_with_extractions(extractions: Vec<Extraction>) {
-    println!("Extractions: {:#?}", extractions);
-}
-
-fn check_spelling(text: &str, checker: &mut SpellChecker, cfg: &Config) {
-    let errors = checker.check(text).expect("Unable to check spelling!");
-    for e in errors {
-        // Only show errors if the misspelled word is not in the custom vocabulary.
-        if !cfg.custom_vocabulary.contains(&e.misspelled) {
-            println!("'{}' (pos: {}) is misspelled!", &e.misspelled, e.position);
-            if !e.suggestions.is_empty() {
-                println!("Maybe you meant '{}'?", &e.suggestions[0]);
-            }
-        }
-    }
-}
-
 /// Get Odin extractions.
-fn get_extractions(text: String, cfg: &Config) {
+fn get_extractions(text: &str, cfg: &Config) {
     let client = reqwest::blocking::Client::new();
     let res = client
         .post(&cfg.event_extractor_url)
-        .body(text)
+        .body(text.to_string())
         .send()
         .unwrap_or_else(|_| {
             panic!(
@@ -98,6 +80,7 @@ fn get_extractions(text: String, cfg: &Config) {
             )
         });
     let vec: Vec<Extraction> = serde_json::from_str(&res.text().unwrap()).unwrap();
+    dbg!(vec);
 }
 
 /// Process chat message.
@@ -129,12 +112,12 @@ fn process_chat_message(
                         .get(&sender.unwrap())
                         .unwrap()
                         .to_string(),
-                    text: msg_text
+                    text: msg_text.clone()
                 })
                 .unwrap()
             );
             //check_spelling(&msg_text, checker, cfg);
-            //get_extractions(msg_text, cfg);
+            get_extractions(&msg_text, cfg);
         }
     }
 }
