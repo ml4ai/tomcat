@@ -54,9 +54,9 @@ pub enum Attachment {
 pub struct Extraction {
     pub attachments: Vec<Attachment>,
     pub labels: Vec<String>,
-    pub span: Option<String>, // field may not exist
+    pub span: String,
     pub arguments: Option<HashMap<String, Vec<Extraction>>>,
     pub start_offset: u32,
     pub end_offset: u32,
-    pub rule: Option<String>, // field may not exist
+    pub rule: String,
 }

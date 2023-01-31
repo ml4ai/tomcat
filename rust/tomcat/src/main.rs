@@ -79,15 +79,16 @@ fn get_extractions(text: &str, cfg: &Config) {
                 &cfg.event_extractor_url
             )
         });
-    let vec: Vec<Extraction> = serde_json::from_str(&res.text().unwrap()).unwrap();
-    dbg!(vec);
+    let vec: Vec<Extraction> = serde_json::from_str(&res.text().unwrap()).unwrap().iter().;
+    let filtered_vec = vec.iter().filter(|x| x.arguments.is_some());
+    dbg!(filtered_vec);
 }
 
 /// Process chat message.
 fn process_chat_message(
     msg: mqtt::Message,
     mission_state: &mut MissionState,
-    checker: &mut SpellChecker,
+    _checker: &mut SpellChecker,
     cfg: &Config,
 ) {
     // For ASIST Study 4, only the shop stage will have free text chat.
@@ -96,13 +97,6 @@ fn process_chat_message(
         let sender = message.data.sender;
 
         if let Some(msg_text) = message.data.text {
-            //println!(
-            //"[{}] {}: {}",
-            //message.header.timestamp,
-            //mission_state.callsign_mapping.get(&sender.unwrap()).unwrap(),
-            //msg_text
-            //);
-
             println!(
                 "{}",
                 serde_json::to_string(&InternalChat {
@@ -116,7 +110,6 @@ fn process_chat_message(
                 })
                 .unwrap()
             );
-            //check_spelling(&msg_text, checker, cfg);
             get_extractions(&msg_text, cfg);
         }
     }
@@ -142,7 +135,7 @@ fn main() {
 
     // Create the client connection
     let mut client = mqtt::AsyncClient::new(create_opts).unwrap_or_else(|e| {
-        panic!("Error creating the client: {:?}", e);
+        panic!("Error creating the client: {e:?}");
     });
 
     if let Err(err) = block_on(async {
@@ -225,6 +218,6 @@ fn main() {
         // Explicit return type for the async block
         Ok::<(), mqtt::Error>(())
     }) {
-        eprintln!("{}", err);
+        eprintln!("{err}");
     }
 }
