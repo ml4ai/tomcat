@@ -232,7 +232,7 @@ pushd "$SCRIPTS_DIR" >/dev/null || exit 1
   if [[ $GOTO -le 15 ]]; then
     echo " "
     if yes_no_question "[15] Do you want to stop all ${EMPH}Data Streaming Processes${NC}?"; then
-      source stop_data_streaming_processes
+      source stop_data_streaming_processes " "
     fi
   fi
 
