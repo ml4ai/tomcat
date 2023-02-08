@@ -71,6 +71,17 @@ __stop_on_client() {
   fi
 }
 
+__stop_monitoring_program_cat() {
+  if [[ $ALL -ne 1 ]]; then
+    yes_no_question "${padding} Do you want to stop image timestamp monitoring?"
+    ans=$?
+    padding="$padding "
+  fi
+  if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
+    ssh cat@cat "~/Desktop/image_timestamp_scripts/end_image_timestamp.sh"
+  fi
+}
+
 __stop() {
   local padding=$1
   echo -e "${padding}Stopping Data Streaming Processes..."
@@ -78,6 +89,9 @@ __stop() {
   __stop_on_client "lion" "lion.local" "$padding "
   __stop_on_client "tiger" "tiger.local" "$padding "
   __stop_on_client "leopard" "leopard.local" "$padding "
+
+  echo -e "${padding}Stopping Image monitoring Program..."
+  __stop_monitoring_program_cat
 }
 
 __stop "$PADDING"

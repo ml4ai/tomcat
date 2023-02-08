@@ -93,11 +93,11 @@ echo " "
 # This is done so that git will not detect on any branch that the config files have been modified.
 echo -e "Restoring the 3 LabRecorder config files back to what is in the main git repository on CAT:"
 # shellcheck disable=SC2029
-ssh "$USER_ON_TARGET@$TARGET_IP" "cd ${CONFIG_DIR} && git checkout LabRecorder_Lion_22345.cfg"
+#ssh "$USER_ON_TARGET@$TARGET_IP" "cd ${CONFIG_DIR} && git checkout LabRecorder_Lion_22345.cfg"
 # shellcheck disable=SC2029
-ssh "$USER_ON_TARGET@$TARGET_IP" "cd ${CONFIG_DIR} && git checkout LabRecorder_Tiger_22346.cfg"
+#ssh "$USER_ON_TARGET@$TARGET_IP" "cd ${CONFIG_DIR} && git checkout LabRecorder_Tiger_22346.cfg"
 # shellcheck disable=SC2029
-ssh "$USER_ON_TARGET@$TARGET_IP" "cd ${CONFIG_DIR} && git checkout LabRecorder_Leopard_22347.cfg"
+#ssh "$USER_ON_TARGET@$TARGET_IP" "cd ${CONFIG_DIR} && git checkout LabRecorder_Leopard_22347.cfg"
 echo " "
 
 echo -e "${YELLOW}Verify that you have 3 LabRecorder windows open on CAT and that they are all recording the correct streams!${NC}"
