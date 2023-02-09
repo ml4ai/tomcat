@@ -49,7 +49,7 @@ pushd "$SCRIPTS_DIR" >/dev/null || exit 1
     echo "[7]:  Starts Eye-tracker"
     echo "[8]:  Opens Instructive Video"
     echo "[9]:  Starts the Lab Recorder"
-    echo "[10]:  Starts Face and Screen recording"
+    echo "[10]: Starts Face and Screen recording"
     echo "[11]: Starts the Baseline Tasks"
     echo "[12]: Starts the Audio Streamer"
     echo "[13]: Opens the Final Survey"
@@ -57,7 +57,8 @@ pushd "$SCRIPTS_DIR" >/dev/null || exit 1
     echo "[15]: Stops all Data Streaming Processes"
     echo "[16]: Exports Minecraft data"
     echo "[17]: Extracts Testbed Logs"
-    echo "[18]: Ends the experiment (cleanup and backup phase)"
+    echo "[18]: Rename Images as Timestamps"
+    echo "[19]: Ends the experiment (cleanup and backup phase)"
     echo
     echo "Syntax: run_experiment [-h|a]"
     echo "options:"
@@ -251,7 +252,14 @@ pushd "$SCRIPTS_DIR" >/dev/null || exit 1
 
   if [[ $GOTO -le 18 ]]; then
     echo " "
-    text="[18] Type [${EMPH}quit${NC}] to end the experiment and close "
+    if yes_no_question "[18] Do you want to ${EMPH}rename images as timestamps${NC}?"; then
+      source rename_image_timestamp "$EXPERIMENT_DIR"
+    fi
+  fi
+
+  if [[ $GOTO -le 19 ]]; then
+    echo " "
+    text="[19] Type [${EMPH}quit${NC}] to end the experiment and close "
     text+="all open applications and processes: "
     wait_for_key "$text" "quit"
     source end_experiment " "
