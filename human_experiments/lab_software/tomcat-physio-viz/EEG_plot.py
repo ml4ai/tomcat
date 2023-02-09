@@ -10,7 +10,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, *args, **kwargs):
         # initialize streams
         self.host_name = {'actiCHamp-20010205': 'Tiger - EEG(200 10 205)',
-                          'actiCHamp-20010194': 'Lion - EEG(200 10 194)',
+                          'actiCHamp-21010477': 'Lion - EEG(210 10 477)',
                           'actiCHamp-21020492': 'Leopard - EEG(210 20 492)'}
                          
         self.streams = resolve_stream('type', 'EEG')
