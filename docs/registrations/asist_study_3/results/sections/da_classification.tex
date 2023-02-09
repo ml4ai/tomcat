@@ -1,0 +1,183 @@
+\chapter{Dialogue act classification}
+\label{ch:da_classification}
+\textbf{Ruihong Huang, Ayesha Qamar, Md Messal Monem Miah, Adarsh Pyarelal}
+
+\section{Introduction}
+
+Spoken natural language is the primary medium of communicating and coordinating
+within the 3-person teams that will be participating in ASIST Study-3.  Given
+this, AI agents will need to be capable of natural language understanding to
+process the conversations to make informed and prompt decisions. Identifying
+dialog acts (DAs) is one of the primary aspects of natural language
+understanding. A dialog act can be identified as a method of defining the
+semantic content and communicative function of a single utterance of dialog
+\citep{Searle:1969}. Examples of dialog acts include `request', `question',
+`acknowledgment', etc.
+Dialog acts can provide important information about the user dialog turns and
+set of possible system actions. The patterns of dialog acts
+of different speakers could also potentially indicate the roles they play in a
+team, e.g., leader, follower, etc., Thus, it is a necessary capability for our
+ToMCAT architecture as well as for conversational agents in general.
+
+Extensive research has been conducted on dialog act classification due to its
+importance in natural language understanding. These research works have taken
+different approaches in terms of datasets, machine learning models and input to
+the models. The most widely used datasets are the Switchboard
+Corpus (SwDA) and ICSI Meeting Recorder Dialog Act Corpus (MRDA)
+\citep{Shriberg.ea:2004}. Most of the approaches use textual utterances from
+dialog transcripts as input to their models. Initial efforts to identify DAs
+used classic statistical machine learning models
+such as support vector machines (SVMs) \citep{Henderson.ea:2012}, hidden Markov
+models (HMMs) \citep{Stolcke.ea:2000}, and conditional random fields (CRFs)
+\citep{Zimmermann:2009}.
+
+More recently, deep learning models have been gaining in popularity for DA
+classification. \citet{Liu.ea:2017} presented both CNN models and hierarchical
+CNN+CNN\footnote{CNN: Convolutional neural network.} and CNN+RNN\footnote{RNN:
+Recurrent neural network} models to classify dialog acts and showed that a
+RNN/Bi-LSTM\footnote{LSTM: Long short-term memory (a type of neural network
+architecture).} on top of a CNN model performs better than the other models
+they considered.  \citet{Shen.ea:2016} showed that a neural attention model
+with context information performed well on the SwDA dataset.
+\citet{Raheja.ea:2019} achieved state-of-the-art results using a context-aware
+self-attention model on the MRDA corpus. Another approach for DA classification
+involves incorporating both lexical and acoustic features. This approach is
+motivated by the fact that humans use vocalic features to express specific
+dialog acts - for example, raising their pitch slightly at the end
+of questions. \citet{Ortega.ea:2018} showed that their lexico-acoustic neural
+network models outperformed similar models that took only lexical information
+as input.
+
+While these approaches provide excellent results on DA classification, they are
+lacking in some critical aspects.
+First, most of these models require clean
+transcripts as input. Achieving clean transcripts requires manual annotation,
+which is both time consuming and costly. As a result, these models cannot be
+used for DA classification in real time where the only transcripts available
+are imperfect ones produced by automatic speech recognition (ASR) systems.
+Second, the approaches do not explicitly address dialogs where mechanisms to
+incorporate speaker identification and determining the discourse structure are
+also crucial.
+Finally, the aforementioned approaches often use only 5 types of high-level
+tags for DA classification, which frequently do not entirely explain the
+purpose of the DA under consideration. It is necessary to have both general
+(high-level) and specific tags to truly understand a DA.
+
+To address these limitations, we will design and implement a deep neural
+network based DA classifier to process input utterances in real time. This will
+allow downstream AI agents to use dialog act information in order to provide
+timely interventions. We will test this capability offline on Study-3 data and
+deploy it online during Study-4 data collection.  The noisy text output from
+the ASR agent \autoref{ch:asr} makes DA classification challenging. To
+compensate for this, we will use acoustic features from the raw speech as
+additional inputs to our system.
+
+\section{Approach}
+
+A Bi-LSTM based baseline model is already trained with clean transcripts. The
+same model is trained again with the ASR generated transcripts and the
+performance dropped significantly due to ASR noise and the highly overlapping
+nature of the utterances in the meetings. To overcome this drop we will use a
+fusion based audio-language model to leverage both lexical and acoustic
+information of the utterances to successfully identify the DAs. In addition,
+our approach will capture the threading structure within a dialogue that
+involves detecting utterances falling within an adjacency pair (consisting of a
+question and an answer utterance, or a request and an acceptance utterance) and
+then linking them together. We will aim to eventually jointly learn both the
+threading structure and DAs of a dialog in a multitask learning setting since
+we expect the two tasks to benefit each other.
+
+Currently we are using the MRDA dataset, which consists of 75 meetings, each of
+which is approximately an hour long. Each utterance has one (out of 11)
+`general' and zero or more (out of 40) `specific' tags. Once the Study-3
+human/ASI advisor dataset is collected, we will use a transfer learning
+approach to train and test the model for Study-3 data.
+
+As mentioned above, each utterance in the MRDA dataset may have multiple tags
+associated with it, which poses a challenge for building an efficient model to
+correctly identify the dialog acts corresponding to the utterances.  One
+approach to solve this multi-label problem is to randomly choose a label from
+the set of labels for a given utterance. However, this approach often does not
+reflect the most prominent purpose of each utterance. Drawing inspiration from
+label disambiguation from related corpora, we carefully looked at examples to
+come up with a set of precedence rules for the labels in the MRDA dataset, thus
+addressing the multi-label challenge. This approach significantly improves the
+performance of our baseline model on the MRDA dataset.
+
+\section{Evaluation}
+
+To evaluate our approach, we will use F1 score as the evaluation metric. For
+multiclass classification problems, especially where the classes are highly
+imbalanced, the F1 score provides more insight than accuracy. We will annotate
+utterances from Study-3 with dialog acts so that our current system that has
+been trained on the MRDA dataset can be fine-tuned for ASIST data. 
+
+\subsection{Preliminary results}
+
+We obtained preliminary results with our baseline model, a hierarchical LSTM,
+on data from Study-3 Pilot (with confederates/non-naive participants) and
+No-Advisor data (3 trials from each).  The macro F1 score for this model on the
+MRDA data is 0.41. However, when we evaluated the model on preliminary data
+data, the accuracy and F1 score both degrade. The performance of the model on
+raw Study-3 no-advisor data in terms of accuracy and macro F1 score is 30\% and
+9.705 respectively. The performance of the baseline model is summarized in
+\autoref{tab:da_baseline_results}.
+
+
+\begin{table}
+    \begin{tabular}{lrr}
+        \toprule
+        Dataset                                & Macro F1 Score & Accuracy \\\midrule
+        MRDA                                   & 0.41           & \\
+        No-Advisor                             & 0.097          & 0.37 \\
+        No-Advisor with corrected transcripts) & 0.19           & 0.30 \\
+        \bottomrule
+    \end{tabular}
+    \caption{%
+        Performance of our baseline model trained on the MRDA dataset on the
+        task of classifying dialog acts in the MRDA dataset as well as the
+        Study-3 pilot and No-Advisor datasets.
+    }
+    \label{tab:da_baseline_results}
+\end{table}
+
+One of the key factors behind this performance degradation is the noisiness of
+transcriptions generated by the ASR system. One of our goals for our proposed
+analysis is to empirically characterize the effect of imperfect ASR on
+automated DA classification.  After correcting the transcripts from the
+pilot and No-Advisor data, we observed a significant improvement on both accuracy and F1
+score. The accuracy and macro F1 score for the cleaned pilot and No-Advisor data are 37\%
+and 18.86 respectively. Highlights of the results on some important classes are
+shown in \autoref{tab:da_results}.
+
+\begin{table}
+    \centering
+    \begin{tabular}{l cc cc cc}
+        \toprule
+                            & \multicolumn{2}{c}{Precision} & \multicolumn{2}{c}{Recall} & \multicolumn{2}{c}{F1 Score}\\
+                                \cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7}
+       Label                & Corrected & Original & Corrected & Original & Corrected & Original\\
+                             \midrule
+        Yes/No Question      & 0.80     & 0.50      & 0.39     & 0.01      & 0.52     & 0.01\\
+        Statement            & 0.36     & 0.32      & 0.73     & 0.73      & 0.48     & 0.44\\
+        Command/Suggestion   & 0.52     & 0.47      & 0.46     & 0.47      & 0.49     & 0.47\\
+        Commitment           & 0.33     & 1.00      & 0.01     & 0.01      & 0.01     & 0.01\\
+        Accept               & 0.45     & 0.39      & 0.40     & 0.31      & 0.42     & 0.34\\
+        Reject               & 0.38     & 0.50      & 0.33     & 0.35      & 0.35     & 0.41\\
+        Understanding Check  & 0.18     & 0.18      & 0.34     & 0.34      & 0.24     & 0.24\\
+        \bottomrule
+    \end{tabular}
+    \caption{%
+        Precision, recall, and F1 score for our dialog act classification
+        system on ASIST Study-3 pilot and No-Advisor data (for both original and
+        corrected transcriptions).
+    }
+    \label{tab:da_results}
+\end{table}
+
+We observe significant improvement for almost all of the interesting DA tags
+when the utterances are corrected manually. In particular, for the Yes/No
+question class we observe massive jumps in both precision and recall. However,
+some classes such as Commitment still suffer from low recall even with
+corrected transcripts. Moving forward, our next step will be to annotate enough
+data to fine-tune the model on ASIST data to achieve even better performance.

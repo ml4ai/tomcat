@@ -1,0 +1,169 @@
+\chapter{Rule-based entity and event extraction}
+\label{ch:rule_based_ie}
+\textbf{Remo Nitschke, Adarsh Pyarelal, Joseph Astier}
+
+\section{Introduction}
+
+For humans, verbal and non-verbal communication are indicators that provide
+significant insight into social processes. Within the scope of the ASIST
+program, team-building and communication within teams is of heightened
+interest. We assert that understanding the semantics of verbal communication is
+essential to develop a model of human individuals and teams. Our `DialogAgent'
+AC is designed with the goal of extracting information from player dialog that
+can help build and update a model of players' mental states. The outputs of the
+DialogAgent AC are consumed by the ToMCAT ASI (\autoref{ch:pgm}).
+
+Raw natural language data is messy by nature - in order for a machine to reason
+about its semantics, it must be processed to extract structured information.
+In order to do this, the DialogAgent leverages Odin
+\cite{valenzuela-escarcega-etal-2016-odins}, a powerful rule-based information
+extraction system developed at UArizona.  While much of modern information
+extraction and event extraction is done using neural networks
+\cite{Ahmad2021GATEGA, Du2020EventEB}, we opt for a rule-based system for the
+following reasons:
+
+\begin{enumerate}
+
+ \item It allows us to be more flexible with our extraction labels. We can
+     quickly add or remove labels if we see the need to do so.
+
+ \item It allows for high precision for the labels we are interested in. Rules
+     can be crafted to be precise (albeit at the cost of recall).
+
+ \item Rules do not require us to create, maintain, and annotate extensive
+     datasets. This is especially pertinent to the ASIST program, with the
+     relatively fast cadence of changes to the experimental task and domain,
+     along with the concomitant changes to domain-specific vocabulary of
+     interest.  It would be near-impossible for us to annotate data and train a
+     neural agent on the new vocabulary of a study prior to its actual
+     execution and the release of the data from it. 
+
+\end{enumerate}
+
+\section{Hypotheses}
+
+We will test the following hypothesis: 
+
+\begin{quote}
+    \itshape
+    Our rule-based event extraction system will be able to achieve a minimum
+    precision of 91\% for simple labels and 75\% for complex labels, as defined
+    below.
+\end{quote}
+
+\section{Approach}
+
+The DialogAgent processes natural language texts from two sources: utterances
+spoken by players, and text chats sent using the Minecraft chat
+interface\footnote{For ASIST Study 3, participants are discouraged from using
+    text chat, but it is not programmatically disallowed - for this reason, we
+    still monitor it. Performer teams who use the outputs of the DialogAgent
+    should inspect the \texttt{data.participant\_id} key in the DialogAgent
+    output messages to make sure that it is not \texttt{Server}, which
+correspnods to chat messages sent by the testbed infrastructure rather than
+humans.}.
+
+Our rule-based framework extracts \emph{events} from natural language. These
+events can be categorized into two types:
+
+\begin{enumerate}
+    \item \emph{Simple events}: These events do not have arguments, and are
+        found by string-pattern matching.
+    \item \emph{Complex events}: These events take other events as arguments,
+        and are found by a combination of pattern matching, dependency parsing,
+        and POS\footnote{POS: Part of speech.} tagging.
+\end{enumerate}
+    
+Each event is associated with a unique span of text and is assigned one or more
+labels by the rule that extracts it. The labels we are using are organized into
+an ontology.  If a rule assigns a label to an event from this ontology, the
+parents of that label in the ontology are also assigned as labels for that
+event.
+
+\section{Evaluation}
+
+We will conduct two kinds of evaluation for Study 3 - an F1 score evaluation on
+a restricted set of event types, and a precision-only evaluation on the entire
+label set.
+
+\subsection{F1 score evaluation for subset of event types}
+
+We will evaluate this capability by comparing the outputs of the DialogAgent to
+events identified by human annotators. We will hire human annotators to
+annotate a representative subset of utterances from Study 3. As the DialogAgent
+currently extracts more than 100 event types, we have narrow down this
+selection to 20 in order to avoid overwhelming our annotators. These events
+will be selected for two qualities:
+
+\begin{enumerate}
+
+    \item \emph{Complexity}: Complex events rely on a dependency parse and are
+        more unpredictable due to the fact that they rely on multiple
+        conditions to trigger. For this evaluation, complex events are of
+        greater interest to us, as their accuracy is harder to predict
+        \footnote{We provide here a brief explanation as to why `simple' labels
+            are less interesting. Consider a label for players talking about
+            victims in the context of the Study 3 experimental task.  This
+            label will be generated by a simple pattern matching rule that
+            scans all tokens for a regular expression that looks something like
+            this: \texttt{/(?i){\textsuperscript{$\wedge$} }victims?\$/} .
+            This pattern will match any and all occurrences of `victim' (plural
+            or singular). The precision and recall of this label now depends
+            entirely on the quality of the transcription and on the way the
+            players talk about `victims' (for example, they may use other terms
+            (e.g., `this guy') as well). This makes this label much more
+            predictable, than, say, one that relies on dependency graphs in
+        addition to pattern matching.}.
+
+    \item \emph{High frequency}: The selected label should occur with sufficiently
+        high frequency in the dataset to generate a representative amount of data.
+        As the events in our ontology are often highly domain-specific (and thus
+        rare), we will circumvent this issue by letting annotators annotate for
+        groupings of labels. For example, we have five different labels for players
+        `needing something', such as a specific item, a specific role, or just help
+        from other players. In order to lighten the load on our annotators, we will
+        collapse these into one label.
+
+\end{enumerate}
+
+Annotators will receive transcripts of player communications. They will be
+asked to annotate the transcripts for the 20 labels we have given them. With
+this annotated data, we can write a script that will counter-check the
+DialogAgent extractions against the annotations and calculate a representative
+F1 score.
+
+\subsection{Precision evaluation for the entire set of event types}
+
+We will also run a separate evaluation for precision\footnote{For reasons of
+economy, we restrict this evaluation to precision. Our expert team members can
+judge produced labels for precision at a much higher speed than they can
+annotate utterances for labels.}, done by team members and hired annotators who
+are familiar with our DialogAgent labels.
+
+
+\subsubsection{Results from early data} 
+
+We have already done a preliminary precision evaluation of 1700 utterances from
+Study 3 subjects data and have found that the simple events are extracted with
+high precision.  In our preliminary evalution, simple labels yielded between
+91-100\% precision.\footnote{This is for labels that had more than 20
+occurrences in our evaluation.} `Complex' labels were found to be extracted
+with 75-94\% precision\footnote{This is for labels that had more than 10
+occurrences in our evaluation.}.
+
+\subsection{Potential evaluation problems}
+
+By subsuming multiple labels under one label for the general evaluation, we run
+the risk of having no way of discerning if one label in a group is a
+particularly challenging extraction. For example, consider the case where we
+have five different labels corresponding to different types of questions, and
+we subsume them under one generic `Question' label. After the annotations are
+done, we calculate an F1 score for this new label. If the DialogAgent performs
+weakly on one of the five labels (for example, an F1 score of 0.3), but the
+others performed well, then the overall F1 score for this label will mask this
+fact.
+
+In order to combat this problem, we will run an evaluation for precision over
+the entire label set, as described in the previous subsection. Unfortunately,
+we will not be able to calculate recall for the entire label set, as this
+process is simply too costly for the size of our label set (> 100).
