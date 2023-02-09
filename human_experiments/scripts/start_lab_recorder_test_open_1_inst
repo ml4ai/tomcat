@@ -1,0 +1,20 @@
+#!/bin/bash
+
+ssh "cat@cat" "DISPLAY=:1 /usr/LabRecorder/./LabRecorder -c git/ML4AI/tomcat/human_experiments/config/LabRecorder_config/LabRecorder_Lion_22345.cfg &>/dev/null &"
+
+# Set var to where the app LabRecorder path/app is located on CAT.
+#LAB_RECORDER_APP="/usr/LabRecorder/./LabRecorder"
+
+# Set var to where the LabRecorder config directory is located on CAT.
+#CONFIG_DIR="\$HOME/$SYSTEMS_DIR/tomcat/human_experiments/config/LabRecorder_config"
+
+# Set vars with Lion, Tiger and Leopard unique config path/file located on git.
+#LION_CONFIG_FILE="${CONFIG_DIR}/LabRecorder_Lion_22345.cfg"
+#TIGER_CONFIG_FILE="${CONFIG_DIR}/LabRecorder_Tiger_22346.cfg"
+#LEOPARD_CONFIG_FILE="${CONFIG_DIR}/LabRecorder_Leopard_22347.cfg"
+
+# Set vars with Lion, Tiger and Leopard data (StorageLocation) path/file.
+#LION_STORAGE_LOCATION="${EXPERIMENT_DIR}/lion/eeg_fnirs_pupil/lion_eeg_fnirs_pupil.xdf"
+#TIGER_STORAGE_LOCATION="${EXPERIMENT_DIR}/tiger/eeg_fnirs_pupil/tiger_eeg_fnirs_pupil.xdf"
+#LEOPARD_STORAGE_LOCATION="${EXPERIMENT_DIR}/leopard/eeg_fnirs_pupil/leopard_eeg_fnirs_pupil.xdf"
+
