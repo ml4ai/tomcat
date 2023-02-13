@@ -1,0 +1,12 @@
+Dockerization of the Rust Agent
+
+Run the Dockerfile to build the rust_agent image
+
+docker build . -t rust_agent
+
+
+Run the docker-compose.yml file to start the rust_agent image as a container
+
+
+docker-compose up --build
+

@@ -1,0 +1,22 @@
+version: '3.7'
+
+networks:
+  asist_net:
+   external: true
+
+services:
+
+  rust_agent:
+
+    image: "rust_agent:latest"
+    container_name: "Rust_Agent"
+
+    environment:
+      - AGENT_NAME=Rust_Agent
+
+    networks:
+      asist_net:
+        aliases:
+          - Rust_Agent
+
+
