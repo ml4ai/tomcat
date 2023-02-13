@@ -1,11 +1,12 @@
-# Rust as the base image
+# Using Rust as the base image
 FROM rust:1.67
 
 RUN USER=root cargo new --bin rust_agent
 WORKDIR /rust_agent
 
 RUN apt-get update
-RUN apt-get install -y curl gcc make build-essential cmake
+RUN apt-get install -y curl gcc make build-essential cmake 
+RUN apt-get install -y cargo # needed?
 
 COPY ./Cargo.lock ./Cargo.lock
 COPY ./Cargo.toml ./Cargo.toml
@@ -20,3 +21,4 @@ RUN rm -rf ./target/release/deps/rust_agent*
 RUN cargo install --path .
 
 CMD ["rust_agent"]
+
