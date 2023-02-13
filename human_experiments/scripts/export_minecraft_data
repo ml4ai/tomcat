@@ -13,7 +13,8 @@ fi
 
 TRIAL_INFO_FILEPATH="$EXPERIMENT_DIR/trial_info.json"
 OUT_DIR="$EXPERIMENT_DIR/minecraft"
-./retrieve_minecraft_data --trial_info_filepath="$TRIAL_INFO_FILEPATH" --out_dir="$OUT_DIR" | sed "s/^/${PADDING} /"
+REF_DATE="$(date +%Y-%m-%d)"
+./retrieve_minecraft_data --trial_info_filepath="$TRIAL_INFO_FILEPATH" --out_dir="$OUT_DIR" --ref_date="$REF_DATE" | sed "s/^/${PADDING} /"
 
 echo -n -e "${PADDING}Press any key to validate the Minecraft data."
 read -r

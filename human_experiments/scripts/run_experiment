@@ -42,21 +42,23 @@ pushd "$SCRIPTS_DIR" >/dev/null || exit 1
     echo
     echo "[1]:  Set the experiment time"
     echo "[2]:  Checks the NFS status"
-    echo "[3]:  Starts the Testbed"
-    echo "[4]:  Starts Minecraft"
-    echo "[5]:  Opens the Client Map"
-    echo "[6]:  Starts Eye-tracker"
-    echo "[7]:  Opens Instructive Video"
-    echo "[8]:  Starts the Lab Recorder"
-    echo "[9]:  Starts Face and Screen recording"
-    echo "[10]: Starts the Baseline Tasks"
-    echo "[11]: Starts the Audio Streamer"
-    echo "[12]: Opens the Final Survey"
-    echo "[13]: Stops the LabRecorder recordings and kill the LabRecorder instances on CAT"
-    echo "[14]: Stops all Data Streaming Processes"
-    echo "[15]: Exports Minecraft data"
-    echo "[16]: Extracts Testbed Logs"
-    echo "[17]: Ends the experiment (cleanup and backup phase)"
+    echo "[3]:  Starts Face Analyzer"
+    echo "[4]:  Starts the Testbed"
+    echo "[5]:  Starts Minecraft"
+    echo "[6]:  Opens the Client Map"
+    echo "[7]:  Starts Eye-tracker"
+    echo "[8]:  Opens Instructive Video"
+    echo "[9]:  Starts the Lab Recorder"
+    echo "[10]: Starts Face and Screen recording"
+    echo "[11]: Starts the Baseline Tasks"
+    echo "[12]: Starts the Audio Streamer"
+    echo "[13]: Opens the Final Survey"
+    echo "[14]: Stops the LabRecorder recordings and kill the LabRecorder instances on CAT"
+    echo "[15]: Stops all Data Streaming Processes"
+    echo "[16]: Exports Minecraft data"
+    echo "[17]: Extracts Testbed Logs"
+    echo "[18]: Rename Images as Timestamps"
+    echo "[19]: Ends the experiment (cleanup and backup phase)"
     echo
     echo "Syntax: run_experiment [-h|a]"
     echo "options:"
@@ -130,6 +132,11 @@ pushd "$SCRIPTS_DIR" >/dev/null || exit 1
 
   source create_data_directory_structure " "
 
+  # Lock the experiment folder while the experiment is going on.
+  # Exp_* dirs with this file will be ignored by data pulling scripts,
+  # unless the file is too old and/or the script process no longer exists.
+  echo $$ > "$EXPERIMENT_DIR/run_experiment.lock"
+
   if [[ $GOTO -le 2 ]]; then
     echo " "
 
@@ -139,109 +146,126 @@ pushd "$SCRIPTS_DIR" >/dev/null || exit 1
   fi
 
   if [[ $GOTO -le 3 ]]; then
-    echo " "
-    if yes_no_question "[3] Do you want to start the ${EMPH}Testbed${NC}?"; then
-      source start_testbed " "
+      echo " "
+      if yes_no_question "[3] Do you want to start the ${EMPH}Face Analyzer${NC}?"; then
+        source start_face_analyzer " "
+      fi
     fi
-  fi
 
   if [[ $GOTO -le 4 ]]; then
     echo " "
-    if yes_no_question "[4] Do you want to start ${EMPH}Minecraft${NC}?"; then
-      source start_minecraft " "
+    if yes_no_question "[4] Do you want to start the ${EMPH}Testbed${NC}?"; then
+      source start_testbed " "
     fi
   fi
 
   if [[ $GOTO -le 5 ]]; then
     echo " "
-    if yes_no_question "[5] Do you want to open the ${EMPH}Client Map${NC}?"; then
-      source open_client_map " "
+    if yes_no_question "[5] Do you want to start ${EMPH}Minecraft${NC}?"; then
+      source start_minecraft " "
     fi
   fi
 
   if [[ $GOTO -le 6 ]]; then
     echo " "
-    if yes_no_question "[6] Do you want to start the ${EMPH}Eye-tracker${NC}?"; then
-      source start_eye_tracker " "
+    if yes_no_question "[6] Do you want to open the ${EMPH}Client Map${NC}?"; then
+      source open_client_map " "
     fi
   fi
 
   if [[ $GOTO -le 7 ]]; then
     echo " "
-    if yes_no_question "[7] Do you want to play the ${EMPH}Instructive Video${NC}?"; then
-      source play_instructive_video " "
+    if yes_no_question "[7] Do you want to start the ${EMPH}Eye-tracker${NC}?"; then
+      source start_eye_tracker " "
     fi
   fi
 
   if [[ $GOTO -le 8 ]]; then
     echo " "
-    if yes_no_question "[8] Do you want to start ${EMPH}Lab Recorder${NC}?"; then
-      source start_lab_recorder " "
+    if yes_no_question "[8] Do you want to play the ${EMPH}Instructive Video${NC}?"; then
+      source play_instructive_video " "
     fi
   fi
 
   if [[ $GOTO -le 9 ]]; then
     echo " "
-    if yes_no_question "[9] Do you want to start ${EMPH}Face and Screen Recording${NC}?"; then
-      source start_ffmpeg " "
+    if yes_no_question "[9] Do you want to start ${EMPH}Lab Recorder${NC}?"; then
+      source start_lab_recorder " "
     fi
   fi
 
   if [[ $GOTO -le 10 ]]; then
     echo " "
-    if yes_no_question "[10] Do you want to start the ${EMPH}Baseline Tasks${NC}?"; then
-      source start_baseline_tasks " "
+    if yes_no_question "[10] Do you want to start ${EMPH}Face and Screen Recording${NC}?"; then
+      source start_ffmpeg " "
     fi
   fi
 
   if [[ $GOTO -le 11 ]]; then
     echo " "
-    if yes_no_question "[11] Do you want to start the ${EMPH}Audio Streamer${NC}?"; then
-      source start_audio_streamer " "
+    if yes_no_question "[11] Do you want to start the ${EMPH}Baseline Tasks${NC}?"; then
+      source start_baseline_tasks " "
     fi
   fi
 
   if [[ $GOTO -le 12 ]]; then
     echo " "
-    if yes_no_question "[12] Do you want to open the ${EMPH}Final Survey${NC}?"; then
-      source open_final_survey " "
+    if yes_no_question "[12] Do you want to start the ${EMPH}Audio Streamer${NC}?"; then
+      source start_audio_streamer " "
     fi
   fi
 
   if [[ $GOTO -le 13 ]]; then
     echo " "
-    if yes_no_question "[13] Do you want to stop ${EMPH}LabRecorder recordings and kill the LabRecorder instances on CAT${NC}?"; then
-      source stop_lab_recorder
+    if yes_no_question "[13] Do you want to open the ${EMPH}Final Survey${NC}?"; then
+      source open_final_survey " "
     fi
   fi
 
   if [[ $GOTO -le 14 ]]; then
     echo " "
-    if yes_no_question "[14] Do you want to stop all ${EMPH}Data Streaming Processes${NC}?"; then
-      source stop_data_streaming_processes
+    if yes_no_question "[14] Do you want to stop ${EMPH}LabRecorder recordings and kill the LabRecorder instances on CAT${NC}?"; then
+      source stop_lab_recorder
     fi
   fi
 
   if [[ $GOTO -le 15 ]]; then
     echo " "
-    if yes_no_question "[15] Do you want to export ${EMPH}Minecraft data${NC} for all trials in the experiment?"; then
-      source export_minecraft_data " "
+    if yes_no_question "[15] Do you want to stop all ${EMPH}Data Streaming Processes${NC}?"; then
+      source stop_data_streaming_processes " "
     fi
   fi
 
   if [[ $GOTO -le 16 ]]; then
     echo " "
-    if yes_no_question "[16] Do you want to extract ${EMPH}Testbed logs${NC}?"; then
-      source extract_testbed_logs " "
+    if yes_no_question "[16] Do you want to export ${EMPH}Minecraft data${NC} for all trials in the experiment?"; then
+      source export_minecraft_data " "
     fi
   fi
 
   if [[ $GOTO -le 17 ]]; then
     echo " "
-    text="[17] Type [${EMPH}quit${NC}] to end the experiment and close "
+    if yes_no_question "[17] Do you want to extract ${EMPH}Testbed logs${NC}?"; then
+      source extract_testbed_logs " "
+    fi
+  fi
+
+  if [[ $GOTO -le 18 ]]; then
+    echo " "
+    if yes_no_question "[18] Do you want to ${EMPH}rename images as timestamps${NC}?"; then
+      source rename_image_timestamp "$EXPERIMENT_DIR"
+    fi
+  fi
+
+  if [[ $GOTO -le 19 ]]; then
+    echo " "
+    text="[19] Type [${EMPH}quit${NC}] to end the experiment and close "
     text+="all open applications and processes: "
     wait_for_key "$text" "quit"
     source end_experiment " "
+
+    # Remove the lock
+    rm "$EXPERIMENT_DIR/run_experiment.lock"
   fi
 
 popd >/dev/null || exit 1
