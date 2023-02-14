@@ -1,24 +1,23 @@
-# Using Rust as the base image
-FROM rust:1.67
+FROM ubuntu:20.04
 
-RUN USER=root cargo new --bin rust_agent
-WORKDIR /rust_agent
-
-RUN apt-get update
-RUN apt-get install -y curl gcc make build-essential cmake 
-RUN apt-get install -y cargo # needed?
-
-COPY ./Cargo.lock ./Cargo.lock
-COPY ./Cargo.toml ./Cargo.toml
-
-RUN cargo build --release
-RUN rm src/*.rs
-
+RUN mkdir src
 COPY ./src ./src
+COPY . .
 
-# Build for release.
-RUN rm -rf ./target/release/deps/rust_agent*
-RUN cargo install --path .
+RUN apt-get update && apt-get install -y wget
+RUN mkdir -m777 /opt/rust /opt/cargo
+ENV RUSTUP_HOME=/opt/rust
+ENV CARGO_HOME=/opt/cargo
+ENV PATH=/opt/cargo/bin:$PATH
+RUN wget --https-only --secure-protocol=TLSv1_2 -O- https://sh.rustup.rs | sh /dev/stdin -y
+RUN apt-get install -y curl 
+RUN apt-get install -y gcc 
+RUN apt-get install -y make 
+RUN apt-get install -y build-essential
+RUN rustup target add x86_64-unknown-freebsd
+RUN printf '#!/bin/sh\nexport CARGO_HOME=/opt/cargo\nexec /bin/sh "$@"\n' >/usr/local/bin/sh
+RUN chmod +x /usr/local/bin/sh
+RUN mkdir rust_docker_image
 
-CMD ["rust_agent"]
+ENTRYPOINT cargo run
 
