@@ -1,15 +1,16 @@
 version: '3.7'
 
-networks:
+#networks:
   asist_net:
    external: true
 
 services:
 
-  rust_agent:
+  rust_agent_container:
 
     image: "rust_agent_image:latest"
     container_name: "Rust_Agent"
+    entrypoint: cargo run
 
     environment:
       - AGENT_NAME=Rust_Agent
@@ -18,5 +19,4 @@ services:
       asist_net:
         aliases:
           - Rust_Agent
-
 
