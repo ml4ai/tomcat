@@ -8,7 +8,7 @@ services:
 
   rust_agent:
 
-    image: "rust_agent:latest"
+    image: "rust_agent_image:latest"
     container_name: "Rust_Agent"
 
     environment:
