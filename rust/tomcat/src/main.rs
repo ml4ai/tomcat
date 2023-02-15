@@ -118,6 +118,7 @@ fn process_chat_message(
 }
 
 fn main() {
+    print!("Initializing Rust Agent...\n");
     // Initialize the logger from the environment
     pretty_env_logger::init();
 
