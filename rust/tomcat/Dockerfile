@@ -31,3 +31,6 @@ RUN wget --https-only --secure-protocol=TLSv1_2 -O- https://sh.rustup.rs | sh /d
 RUN rustup target add x86_64-unknown-freebsd
 RUN printf '#!/bin/sh\nexport CARGO_HOME=/opt/cargo\nexec /bin/sh "$@"\n' >/usr/local/bin/sh
 RUN chmod +x /usr/local/bin/sh
+
+# clean up install cache
+RUN apt-get clean
