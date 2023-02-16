@@ -6,12 +6,15 @@ COPY ./src ./src
 COPY . .
 
 # install Ubuntu tools
-RUN apt-get update && apt-get install -y wget
+RUN apt-get update 
+RUN apt-get install -y wget
 RUN apt-get install -y curl 
 RUN apt-get install -y gcc 
 RUN apt-get install -y make 
+RUN apt-get install -y cmake 
 RUN apt-get install -y build-essential
-RUN apt-get install libssl-dev
+RUN apt-get install -y libssl-dev
+RUN apt-get install -y --no-install-recommends pkg-config
 
 # set up rust directory
 RUN mkdir -m777 /opt/rust 
