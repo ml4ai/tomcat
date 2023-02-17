@@ -17,7 +17,7 @@ services:
       dockerfile: Dockerfile
 
     image: "rust_agent_image:latest"
-    entrypoint: cargo run
+    entrypoint: cargo run --release -- --host mosquitto --port 1883
 
     networks:
       asist_net:
