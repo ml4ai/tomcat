@@ -53,9 +53,11 @@ pub enum Attachment {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Extraction {
+    #[serde(skip_serializing_if = "Vec::is_empty")]
     pub attachments: Vec<Attachment>,
     pub labels: Vec<String>,
     pub span: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub arguments: Option<HashMap<String, Vec<Extraction>>>,
     pub start_offset: u32,
     pub end_offset: u32,

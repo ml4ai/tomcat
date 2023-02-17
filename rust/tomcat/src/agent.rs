@@ -7,12 +7,13 @@ use crate::{
         chat::{ChatMessage, Extraction},
         stage_transition::{MissionStage, StageTransitionMessage},
         trial::TrialMessage,
+        nlu::CompactMessage,
     },
 };
 use futures::{executor, StreamExt};
 use log::{error, info, warn};
 use paho_mqtt as mqtt;
-use serde::Deserialize;
+use serde::{Serialize, Deserialize};
 use std::time::Duration;
 
 /// Deserialize message to a struct.
@@ -25,6 +26,7 @@ fn get_message<'a, T: Deserialize<'a>>(message: &'a mqtt::Message) -> T {
         )
     })
 }
+
 
 pub struct Agent {
     mqtt_client: MqttClient,
@@ -63,29 +65,30 @@ impl Agent {
 
     /// Process chat message.
     fn process_chat_message(&self, msg: mqtt::Message) {
-        dbg!(&msg);
         // For ASIST Study 4, only the shop stage will have free text chat.
         if let MissionStage::shop_stage = &self.kb.stage {
             let message: ChatMessage = get_message(&msg);
             let sender = message.data.sender;
 
             if let Some(msg_text) = message.data.text {
-                println!(
-                    "{}",
-                    serde_json::to_string(&InternalChat {
-                        timestamp: message.header.timestamp,
-                        sender: self
+                let sender = self
                             .kb
                             .callsign_mapping
                             .get(&sender.unwrap())
                             .unwrap()
-                            .to_string(),
-                        text: msg_text.clone()
-                    })
-                    .unwrap()
-                );
-                let extractions = self.get_extractions(&msg_text);
-                dbg!(&extractions);
+                            .to_string();
+
+                //println!(
+                    //"{}",
+                    //serde_json::to_string(&InternalChat {
+                        //timestamp: message.header.timestamp,
+                        //sender: sender,
+                        //text: msg_text.clone()
+                    //})
+                    //.unwrap()
+                //);
+                let extractions = OutputMessage { participant_id: sender, extractions: self.get_extractions(&msg_text)} ;
+                println!("{}", serde_json::to_string_pretty(&extractions).unwrap());
             }
         }
     }
