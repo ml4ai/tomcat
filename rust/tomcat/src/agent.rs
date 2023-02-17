@@ -1,13 +1,13 @@
 use crate::config::Config;
 use crate::mqtt_client::MqttClient;
 use crate::{
+    knowledge_base::KnowledgeBase,
     messages::internal::{InternalChat, InternalStageTransition},
     messages::{
         chat::{ChatMessage, Extraction},
         stage_transition::{MissionStage, StageTransitionMessage},
         trial::TrialMessage,
     },
-    mission_state::MissionState,
 };
 use futures::{executor, StreamExt};
 use log::{error, info, warn};
@@ -24,33 +24,6 @@ fn get_message<'a, T: Deserialize<'a>>(message: &'a mqtt::Message) -> T {
             message.topic(),
         )
     })
-}
-
-/// Process stage transition messages.
-fn process_stage_transition_message(message: mqtt::Message, mission_state: &mut MissionState) {
-    let message: StageTransitionMessage = get_message(&message);
-    println!(
-        "{}",
-        serde_json::to_string(&InternalStageTransition {
-            timestamp: message.header.timestamp,
-            stage: message.data.mission_stage.to_string(),
-        })
-        .unwrap()
-    );
-    mission_state.stage = message.data.mission_stage;
-}
-
-/// Process trial messages.
-fn process_trial_message(message: mqtt::Message, mission_state: &mut MissionState) {
-    let message: TrialMessage = get_message(&message);
-    if let "start" = message.msg.sub_type.as_str() {
-        // Construct a mapping between callsigns and participant IDs.
-        for client in message.data.client_info {
-            mission_state
-                .callsign_mapping
-                .insert(client.participant_id.unwrap(), client.callsign.unwrap());
-        }
-    }
 }
 
 /// Get Odin extractions.
@@ -70,53 +43,83 @@ fn get_extractions(text: &str, cfg: &Config) -> Vec<Extraction> {
     extractions
 }
 
-/// Process chat message.
-fn process_chat_message(msg: mqtt::Message, mission_state: &mut MissionState, cfg: &Config) {
-    dbg!(&msg);
-    // For ASIST Study 4, only the shop stage will have free text chat.
-    if let MissionStage::shop_stage = mission_state.stage {
-        let message: ChatMessage = get_message(&msg);
-        let sender = message.data.sender;
-
-        if let Some(msg_text) = message.data.text {
-            println!(
-                "{}",
-                serde_json::to_string(&InternalChat {
-                    timestamp: message.header.timestamp,
-                    sender: mission_state
-                        .callsign_mapping
-                        .get(&sender.unwrap())
-                        .unwrap()
-                        .to_string(),
-                    text: msg_text.clone()
-                })
-                .unwrap()
-            );
-            let extractions = get_extractions(&msg_text, cfg);
-            dbg!(&extractions);
-        }
-    }
-}
-
 pub struct Agent {
     mqtt_client: MqttClient,
     config: Config,
+    kb: KnowledgeBase,
 }
 
 impl Agent {
     pub fn new(cfg: Config) -> Self {
         let mqtt_client = MqttClient::new(&cfg.mqtt_opts.host, &cfg.mqtt_opts.port, &cfg.client_id);
+        let kb = KnowledgeBase::default();
         let agent = Self {
             mqtt_client,
             config: cfg.clone(),
+            kb,
         };
         agent
+    }
+    /// Process chat message.
+    fn process_chat_message(&self, msg: mqtt::Message) {
+        dbg!(&msg);
+        // For ASIST Study 4, only the shop stage will have free text chat.
+        if let MissionStage::shop_stage = &self.kb.stage {
+            let message: ChatMessage = get_message(&msg);
+            let sender = message.data.sender;
+
+            if let Some(msg_text) = message.data.text {
+                println!(
+                    "{}",
+                    serde_json::to_string(&InternalChat {
+                        timestamp: message.header.timestamp,
+                        sender: self
+                            .kb
+                            .callsign_mapping
+                            .get(&sender.unwrap())
+                            .unwrap()
+                            .to_string(),
+                        text: msg_text.clone()
+                    })
+                    .unwrap()
+                );
+                let extractions = get_extractions(&msg_text, &self.config);
+                dbg!(&extractions);
+            }
+        }
+    }
+
+    /// Process stage transition messages.
+    fn process_stage_transition_message(&mut self, message: mqtt::Message) {
+        let message: StageTransitionMessage = get_message(&message);
+        println!(
+            "{}",
+            serde_json::to_string(&InternalStageTransition {
+                timestamp: message.header.timestamp,
+                stage: message.data.mission_stage.to_string(),
+            })
+            .unwrap()
+        );
+        self.kb.stage = message.data.mission_stage;
+    }
+
+    /// Process trial messages.
+    fn process_trial_message(&mut self, message: mqtt::Message) {
+        let message: TrialMessage = get_message(&message);
+        if let "start" = message.msg.sub_type.as_str() {
+            // Construct a mapping between callsigns and participant IDs.
+            for client in message.data.client_info {
+                self.kb
+                    .callsign_mapping
+                    .insert(client.participant_id.unwrap(), client.callsign.unwrap());
+            }
+        }
     }
 
     pub fn run(&mut self) -> Result<(), mqtt::Error> {
         let fut_values = async {
-            &self.mqtt_client.connect().await;
-            &self.mqtt_client.subscribe(self.config.topics.clone()).await;
+            let _ = &self.mqtt_client.connect().await;
+            let _ = &self.mqtt_client.subscribe(self.config.topics.clone()).await;
             // Just loop on incoming messages.
             info!("Waiting for messages...");
 
@@ -125,21 +128,14 @@ impl Agent {
             // whatever) the server will get an unexpected drop and then
             // should emit the LWT message.
 
-            let mut mission_state = MissionState::default();
-
             while let Some(msg_opt) = self.mqtt_client.stream.next().await {
                 if let Some(msg) = msg_opt {
-                    if msg.retained() {
-                        print!("(R) ");
-                    }
                     match msg.topic() {
-                        "communication/chat" => {
-                            process_chat_message(msg, &mut mission_state, &self.config)
-                        }
+                        "communication/chat" => self.process_chat_message(msg),
                         "observations/events/stage_transition" => {
-                            process_stage_transition_message(msg, &mut mission_state)
+                            self.process_stage_transition_message(msg)
                         }
-                        "trial" => process_trial_message(msg, &mut mission_state),
+                        "trial" => self.process_trial_message(msg),
                         _ => {
                             warn!("Unhandled topic: {}", msg.topic());
                         }

@@ -2,6 +2,7 @@ use crate::messages::common::{Header, Msg};
 use serde::{Deserialize, Serialize};
 
 /// Mission stage
+#[allow(non_camel_case_types)]
 #[derive(Debug, Default, Serialize, Deserialize)]
 #[serde(rename_all = "UPPERCASE")]
 #[derive(strum_macros::Display)] // Allows variants to be printed as strings if needed
@@ -11,6 +12,7 @@ pub enum MissionStage {
     field_stage,
 }
 
+#[allow(non_snake_case)]
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StageTransitionData {
     pub mission_timer: String,

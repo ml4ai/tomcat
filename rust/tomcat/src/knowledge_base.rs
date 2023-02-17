@@ -2,7 +2,7 @@ use crate::messages::stage_transition::MissionStage;
 use std::collections::HashMap;
 
 #[derive(Debug, Default)]
-pub struct MissionState {
+pub struct KnowledgeBase {
     /// Mission stage (shop or field)
     pub stage: MissionStage,
 

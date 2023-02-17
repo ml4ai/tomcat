@@ -20,6 +20,7 @@ pub struct ChatMessage {
 }
 
 // tomcat-text/src/main/scala/org/clulab/asist/attachments/Agent.scala
+#[allow(non_snake_case)]
 #[derive(Debug, Serialize, Deserialize)]
 pub struct AgentAttachment {
     pub labels: Vec<String>,

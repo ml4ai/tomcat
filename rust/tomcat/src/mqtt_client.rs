@@ -1,4 +1,3 @@
-use futures::StreamExt;
 use log::info;
 use mqtt::{AsyncReceiver, Message};
 use paho_mqtt as mqtt;
@@ -25,7 +24,7 @@ impl MqttClient {
             panic!("Error creating the client: {e:?}");
         });
         // Get message stream before connecting.
-        let mut stream = client.get_stream(25);
+        let stream = client.get_stream(25);
         Self {
             client,
             client_id: client_id.to_string(),
@@ -50,7 +49,7 @@ impl MqttClient {
             &self.client_id
         );
 
-        &self.client.connect(conn_opts).await?;
+        let _ = &self.client.connect(conn_opts).await?;
         Ok::<(), mqtt::Error>(())
     }
 
@@ -64,7 +63,7 @@ impl MqttClient {
         );
 
         let sub_opts = vec![mqtt::SubscribeOptions::default(); topics.len()];
-        &self
+        let _ = &self
             .client
             .subscribe_many_with_options(topics.as_slice(), qos.as_slice(), &sub_opts, None)
             .await?;
