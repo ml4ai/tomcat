@@ -1,3 +1,7 @@
+mqtt_opts:
+  host: localhost
+  port: 1883
+
 # Client ID
 client_id: tomcat
 

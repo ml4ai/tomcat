@@ -1,7 +1,6 @@
 use crate::config::Config;
 use crate::mqtt_client::MqttClient;
 use crate::{
-    cli::Cli,
     messages::internal::{InternalChat, InternalStageTransition},
     messages::{
         chat::{ChatMessage, Extraction},
@@ -13,7 +12,7 @@ use crate::{
 use futures::{executor, StreamExt};
 use log::{error, info, warn};
 use paho_mqtt as mqtt;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use std::time::Duration;
 
 /// Deserialize message to a struct.
@@ -115,7 +114,6 @@ impl Agent {
     }
 
     pub fn run(&mut self) -> Result<(), mqtt::Error> {
-
         let fut_values = async {
             &self.mqtt_client.connect().await;
             &self.mqtt_client.subscribe(self.config.topics.clone()).await;
@@ -136,7 +134,6 @@ impl Agent {
                     }
                     match msg.topic() {
                         "communication/chat" => {
-                            println!("communication/chat received");
                             process_chat_message(msg, &mut mission_state, &self.config)
                         }
                         "observations/events/stage_transition" => {
@@ -165,7 +162,7 @@ impl Agent {
 
         let values = executor::block_on(fut_values);
         //if let Err(err) = values {
-            //eprintln!("{err}");
+        //eprintln!("{err}");
         //}
         values
     }
