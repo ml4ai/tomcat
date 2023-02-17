@@ -3,7 +3,7 @@ use iso8601_timestamp::Timestamp;
 use crate::mqtt_client::MqttClient;
 use crate::{
     knowledge_base::KnowledgeBase,
-    messages::internal::{InternalChat, InternalStageTransition},
+    messages::internal::InternalStageTransition,
     messages::{
         common::{Header, Msg},
         chat::{ChatMessage, Extraction},
@@ -16,7 +16,7 @@ use serde_json::Value;
 use futures::{executor, StreamExt};
 use log::{error, info, warn};
 use paho_mqtt as mqtt;
-use serde::{Serialize, Deserialize};
+use serde::Deserialize;
 use std::time::Duration;
 
 /// Deserialize message to a struct.
@@ -39,6 +39,7 @@ pub struct Agent {
 }
 
 impl Agent {
+    /// Construct a new Agent struct.
     pub fn new(cfg: Config) -> Self {
         let mqtt_client = MqttClient::new(&cfg.mqtt_opts.host, &cfg.mqtt_opts.port, &cfg.client_id);
         let kb = KnowledgeBase::default();
@@ -89,9 +90,10 @@ impl Agent {
                     version: "1.2".to_string(),
                     message_type: "agent".to_string(),
                 };
+
                 let msg_1 = Msg {
-                    trial_id: "".to_string(),
-                    experiment_id: "".to_string(),
+                    trial_id: self.kb.trial_id.clone(),
+                    experiment_id: self.kb.experiment_id.clone(),
                     timestamp: Timestamp::now_utc(),
                     source: "".to_string(),
                     version: "0.1".to_string(),
@@ -100,10 +102,12 @@ impl Agent {
                     replay_id: None,
                     replay_parent_type: None,
                 };
+
                 let compact_data = CompactData {
                     participant_id: sender,
                     extractions
                 };
+
                 let compact_message = CompactMessage {
                     header,
                     msg: msg_1,
@@ -139,6 +143,13 @@ impl Agent {
                     .callsign_mapping
                     .insert(client.participant_id.unwrap(), client.callsign.unwrap());
             }
+
+            // Update trial ID
+            self.kb.trial_id = message.msg.trial_id;
+
+            // Update experiment ID
+            self.kb.experiment_id = message.msg.experiment_id;
+
         }
     }
 

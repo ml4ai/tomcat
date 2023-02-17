@@ -1,7 +1,6 @@
-use crate::messages::chat::{Attachment, Extraction};
+use crate::messages::chat::Extraction;
 use crate::messages::common::{Header, Msg};
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CompactData {
