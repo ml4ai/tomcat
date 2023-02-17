@@ -9,10 +9,12 @@ client_id: tomcat
 event_extractor_url: http://localhost:8080
 
 # The topics to which we subscribe.
-topics:
+subscribe_topics:
   - trial
   - communication/chat
   - observations/events/stage_transition
+
+publish_topic: agent/AC_UAZ_TA1_NLU
 
 # List of domain-specific words we want the spellchecker to ignore
 custom_vocabulary:

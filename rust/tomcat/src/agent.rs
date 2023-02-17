@@ -1,22 +1,22 @@
 use crate::config::Config;
-use iso8601_timestamp::Timestamp;
 use crate::mqtt_client::MqttClient;
 use crate::{
     knowledge_base::KnowledgeBase,
     messages::internal::InternalStageTransition,
     messages::{
-        common::{Header, Msg},
         chat::{ChatMessage, Extraction},
+        common::{Header, Msg},
+        nlu::{CompactData, CompactMessage},
         stage_transition::{MissionStage, StageTransitionMessage},
         trial::TrialMessage,
-        nlu::{CompactMessage, CompactData},
     },
 };
-use serde_json::Value;
 use futures::{executor, StreamExt};
+use iso8601_timestamp::Timestamp;
 use log::{error, info, warn};
 use paho_mqtt as mqtt;
 use serde::Deserialize;
+use serde_json::Value;
 use std::time::Duration;
 
 /// Deserialize message to a struct.
@@ -30,7 +30,6 @@ fn get_message<'a, T: Deserialize<'a>>(message: &'a mqtt::Message) -> T {
         )
     })
 }
-
 
 pub struct Agent {
     mqtt_client: MqttClient,
@@ -77,11 +76,11 @@ impl Agent {
 
             if let Some(msg_text) = message.data.text {
                 let sender = self
-                            .kb
-                            .callsign_mapping
-                            .get(&sender.unwrap())
-                            .unwrap()
-                            .to_string();
+                    .kb
+                    .callsign_mapping
+                    .get(&sender.unwrap())
+                    .unwrap()
+                    .to_string();
 
                 let extractions = self.get_extractions(&msg_text);
 
@@ -105,31 +104,32 @@ impl Agent {
 
                 let compact_data = CompactData {
                     participant_id: sender,
-                    extractions
+                    extractions,
                 };
 
                 let compact_message = CompactMessage {
                     header,
                     msg: msg_1,
-                    data: compact_data
+                    data: compact_data,
                 };
 
-                println!("{}", serde_json::to_string_pretty(&compact_message).unwrap());
+                let message = mqtt::Message::new(
+                    self.config.publish_topic.clone(),
+                    serde_json::to_string(&compact_message).unwrap(),
+                    2,
+                );
+                self.publish(message);
             }
         }
+    }
+
+    fn publish(&self, msg: mqtt::Message) {
+        self.mqtt_client.client.publish(msg);
     }
 
     /// Process stage transition messages.
     fn process_stage_transition_message(&mut self, message: mqtt::Message) {
         let message: StageTransitionMessage = get_message(&message);
-        println!(
-            "{}",
-            serde_json::to_string(&InternalStageTransition {
-                timestamp: message.header.timestamp,
-                stage: message.data.mission_stage.to_string(),
-            })
-            .unwrap()
-        );
         self.kb.stage = message.data.mission_stage;
     }
 
@@ -149,7 +149,6 @@ impl Agent {
 
             // Update experiment ID
             self.kb.experiment_id = message.msg.experiment_id;
-
         }
     }
 
@@ -167,7 +166,7 @@ impl Agent {
     pub fn run(&mut self) -> Result<(), mqtt::Error> {
         let fut_values = async {
             let _ = &self.mqtt_client.connect().await;
-            let _ = &self.mqtt_client.subscribe(self.config.topics.clone()).await;
+            let _ = &self.mqtt_client.subscribe(self.config.subscribe_topics.clone()).await;
             // Just loop on incoming messages.
             info!("Waiting for messages...");
 
