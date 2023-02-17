@@ -26,23 +26,6 @@ fn get_message<'a, T: Deserialize<'a>>(message: &'a mqtt::Message) -> T {
     })
 }
 
-/// Get Odin extractions.
-fn get_extractions(text: &str, cfg: &Config) -> Vec<Extraction> {
-    let client = reqwest::blocking::Client::new();
-    let res = client
-        .post(&cfg.event_extractor_url)
-        .body(text.to_string())
-        .send()
-        .unwrap_or_else(|_| {
-            panic!(
-                "Unable to contact the event extraction backend at {}, is the service running?",
-                &cfg.event_extractor_url
-            )
-        });
-    let extractions = serde_json::from_str(&res.text().unwrap()).unwrap();
-    extractions
-}
-
 pub struct Agent {
     mqtt_client: MqttClient,
     config: Config,
@@ -60,6 +43,24 @@ impl Agent {
         };
         agent
     }
+
+    /// Get Odin extractions.
+    fn get_extractions(&self, text: &str) -> Vec<Extraction> {
+        let client = reqwest::blocking::Client::new();
+        let res = client
+            .post(&self.config.event_extractor_url)
+            .body(text.to_string())
+            .send()
+            .unwrap_or_else(|_| {
+                panic!(
+                    "Unable to contact the event extraction backend at {}, is the service running?",
+                    &self.config.event_extractor_url
+                )
+            });
+        let extractions = serde_json::from_str(&res.text().unwrap()).unwrap();
+        extractions
+    }
+
     /// Process chat message.
     fn process_chat_message(&self, msg: mqtt::Message) {
         dbg!(&msg);
@@ -83,7 +84,7 @@ impl Agent {
                     })
                     .unwrap()
                 );
-                let extractions = get_extractions(&msg_text, &self.config);
+                let extractions = self.get_extractions(&msg_text);
                 dbg!(&extractions);
             }
         }
@@ -116,6 +117,17 @@ impl Agent {
         }
     }
 
+    fn process_message(&mut self, msg: mqtt::Message) {
+        match msg.topic() {
+            "communication/chat" => self.process_chat_message(msg),
+            "observations/events/stage_transition" => self.process_stage_transition_message(msg),
+            "trial" => self.process_trial_message(msg),
+            _ => {
+                warn!("Unhandled topic: {}", msg.topic());
+            }
+        }
+    }
+
     pub fn run(&mut self) -> Result<(), mqtt::Error> {
         let fut_values = async {
             let _ = &self.mqtt_client.connect().await;
@@ -130,16 +142,7 @@ impl Agent {
 
             while let Some(msg_opt) = self.mqtt_client.stream.next().await {
                 if let Some(msg) = msg_opt {
-                    match msg.topic() {
-                        "communication/chat" => self.process_chat_message(msg),
-                        "observations/events/stage_transition" => {
-                            self.process_stage_transition_message(msg)
-                        }
-                        "trial" => self.process_trial_message(msg),
-                        _ => {
-                            warn!("Unhandled topic: {}", msg.topic());
-                        }
-                    }
+                    self.process_message(msg);
                 } else {
                     // A "None" means we were disconnected. Try to reconnect...
                     info!("Lost connection. Attempting reconnect.");
