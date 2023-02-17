@@ -79,9 +79,9 @@ fn get_extractions(text: &str, cfg: &Config) {
                 &cfg.event_extractor_url
             )
         });
-    let vec: Vec<Extraction> = serde_json::from_str(&res.text().unwrap()).unwrap().iter().;
-    let filtered_vec = vec.iter().filter(|x| x.arguments.is_some());
-    dbg!(filtered_vec);
+//    let vec: Vec<Extraction> = serde_json::from_str(&res.text().unwrap()).unwrap().iter().;
+//    let filtered_vec = vec.iter().filter(|x| x.arguments.is_some());
+//    dbg!(filtered_vec);
 }
 
 /// Process chat message.
