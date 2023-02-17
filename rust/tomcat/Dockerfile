@@ -1,3 +1,4 @@
+# uaz_rust_agent
 FROM ubuntu:20.04
 
 # copy source files
@@ -7,6 +8,7 @@ COPY . .
 
 # install Ubuntu tools
 RUN apt-get update 
+RUN apt-get install -y aspell 
 RUN apt-get install -y wget
 RUN apt-get install -y curl 
 RUN apt-get install -y gcc 
