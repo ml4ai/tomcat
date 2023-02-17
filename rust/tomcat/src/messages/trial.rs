@@ -1,38 +1,37 @@
 use crate::messages::common::{Header, Msg};
 use serde::{Deserialize, Serialize};
 
-
-
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ClientInfo {
-    pub playername: Option<String>,
     pub callsign: Option<String>,
-    pub participant_id: Option<String>,
-    pub staticmapversion: Option<String>,
     pub markerblocklegend: Option<String>,
+    pub participant_id: Option<String>,
+    pub playername: Option<String>,
+    pub staticmapversion: Option<String>,
     pub unique_id: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct TrialData {
-    pub name: String,
-    pub date: String,
-    pub experimenter: String,
-    pub subjects: Vec<String>,
-    pub trial_number: String,
-    pub group_number: String,
-    pub study_number: String,
-    pub condition: String,
-    pub notes: Vec<String>,
-    pub testbed_version: String,
-    pub experiment_name: String,
-    pub experiment_date: String,
-    pub experiment_author: String,
-    pub experiment_mission: String,
-    pub map_name: String,
-    pub map_block_filename: String,
-    pub intervention_agents: Vec<String>,
     pub client_info: Vec<ClientInfo>,
+    pub condition: String,
+    pub date: String,
+    pub experiment_author: String,
+    pub experiment_date: String,
+    pub experiment_name: String,
+    pub experiment_mission: String,
+    pub experimenter: String,
+    pub group_number: String,
+    pub intervention_agents: Vec<String>,
+    pub map_block_filename: String,
+    pub map_name: String,
+    pub name: String,
+    pub notes: Vec<String>,
+    pub observers: Vec<String>,
+    pub study_number: String,
+    pub subjects: Vec<String>,
+    pub testbed_version: String,
+    pub trial_number: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
