@@ -1,3 +1,5 @@
+# UAZ Rust Agent 
+
 version: '3.7'
 
 networks:
@@ -6,21 +8,18 @@ networks:
 
 services:
 
-  rust_agent_container:
+  uaz_rust_agent:
+
+    container_name: uaz_rust_agent
 
     build:
       context: .
       dockerfile: Dockerfile
 
     image: "rust_agent_image:latest"
-    container_name: "Rust_Agent"
     entrypoint: cargo run
-
-    environment:
-      - AGENT_NAME=Rust_Agent
 
     networks:
       asist_net:
         aliases:
-          - Rust_Agent
-
+          - uaz_rust_agent
