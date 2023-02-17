@@ -1,8 +1,6 @@
 use crate::messages::common::{Header, Msg};
 use serde::{Deserialize, Serialize};
 
-
-
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ClientInfo {
     pub playername: Option<String>,
