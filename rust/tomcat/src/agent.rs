@@ -1,15 +1,18 @@
 use crate::config::Config;
+use iso8601_timestamp::Timestamp;
 use crate::mqtt_client::MqttClient;
 use crate::{
     knowledge_base::KnowledgeBase,
     messages::internal::{InternalChat, InternalStageTransition},
     messages::{
+        common::{Header, Msg},
         chat::{ChatMessage, Extraction},
         stage_transition::{MissionStage, StageTransitionMessage},
         trial::TrialMessage,
-        nlu::CompactMessage,
+        nlu::{CompactMessage, CompactData},
     },
 };
+use serde_json::Value;
 use futures::{executor, StreamExt};
 use log::{error, info, warn};
 use paho_mqtt as mqtt;
@@ -19,9 +22,10 @@ use std::time::Duration;
 /// Deserialize message to a struct.
 fn get_message<'a, T: Deserialize<'a>>(message: &'a mqtt::Message) -> T {
     serde_json::from_slice::<T>(message.payload()).unwrap_or_else(|_| {
+        let v: Value = serde_json::from_str(&message.payload_str()).unwrap();
         panic!(
-            "Unable to deserialize JSON payload {:?} for message arriving on topic '{}'",
-            message.payload_str(),
+            "Unable to deserialize JSON payload {} for message arriving on topic '{}'",
+            serde_json::to_string_pretty(&v).unwrap(),
             message.topic(),
         )
     })
@@ -78,17 +82,35 @@ impl Agent {
                             .unwrap()
                             .to_string();
 
-                //println!(
-                    //"{}",
-                    //serde_json::to_string(&InternalChat {
-                        //timestamp: message.header.timestamp,
-                        //sender: sender,
-                        //text: msg_text.clone()
-                    //})
-                    //.unwrap()
-                //);
-                let extractions = OutputMessage { participant_id: sender, extractions: self.get_extractions(&msg_text)} ;
-                println!("{}", serde_json::to_string_pretty(&extractions).unwrap());
+                let extractions = self.get_extractions(&msg_text);
+
+                let header = Header {
+                    timestamp: Timestamp::now_utc(),
+                    version: "1.2".to_string(),
+                    message_type: "agent".to_string(),
+                };
+                let msg_1 = Msg {
+                    trial_id: "".to_string(),
+                    experiment_id: "".to_string(),
+                    timestamp: Timestamp::now_utc(),
+                    source: "".to_string(),
+                    version: "0.1".to_string(),
+                    sub_type: "".to_string(),
+                    replay_parent_id: None,
+                    replay_id: None,
+                    replay_parent_type: None,
+                };
+                let compact_data = CompactData {
+                    participant_id: sender,
+                    extractions
+                };
+                let compact_message = CompactMessage {
+                    header,
+                    msg: msg_1,
+                    data: compact_data
+                };
+
+                println!("{}", serde_json::to_string_pretty(&compact_message).unwrap());
             }
         }
     }
