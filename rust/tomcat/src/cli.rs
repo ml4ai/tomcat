@@ -4,7 +4,7 @@ use clap::Parser;
 #[derive(Parser, Debug)]
 pub struct Cli {
     /// MQTT broker host
-    #[arg(long, default_value_t = String::from("localhost"))]
+    #[arg(long, default_value_t = String::from("mosquitto"))]
     pub host: String,
 
     /// MQTT broker port
