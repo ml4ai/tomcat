@@ -2,8 +2,10 @@ use crate::config::Config;
 use crate::mqtt_client::MqttClient;
 use crate::{
     knowledge_base::KnowledgeBase,
-    messages::internal::InternalStageTransition,
+    get_extractions::get_extractions,
     messages::{
+        get_message::get_message,
+        internal::InternalStageTransition,
         chat::{ChatMessage, Extraction},
         common::{Header, Msg},
         nlu::{CompactData, CompactMessage},
@@ -19,17 +21,6 @@ use serde::Deserialize;
 use serde_json::Value;
 use std::time::Duration;
 
-/// Deserialize message to a struct.
-fn get_message<'a, T: Deserialize<'a>>(message: &'a mqtt::Message) -> T {
-    serde_json::from_slice::<T>(message.payload()).unwrap_or_else(|_| {
-        let v: Value = serde_json::from_str(&message.payload_str()).unwrap();
-        panic!(
-            "Unable to deserialize JSON payload {} for message arriving on topic '{}'",
-            serde_json::to_string_pretty(&v).unwrap(),
-            message.topic(),
-        )
-    })
-}
 
 pub struct Agent {
     mqtt_client: MqttClient,
@@ -50,22 +41,6 @@ impl Agent {
         agent
     }
 
-    /// Get Odin extractions.
-    fn get_extractions(&self, text: &str) -> Vec<Extraction> {
-        let client = reqwest::blocking::Client::new();
-        let res = client
-            .post(&self.config.event_extractor_url)
-            .body(text.to_string())
-            .send()
-            .unwrap_or_else(|_| {
-                panic!(
-                    "Unable to contact the event extraction backend at {}, is the service running?",
-                    &self.config.event_extractor_url
-                )
-            });
-        let extractions = serde_json::from_str(&res.text().unwrap()).unwrap();
-        extractions
-    }
 
     /// Process chat message.
     fn process_chat_message(&self, msg: mqtt::Message) {
@@ -82,7 +57,7 @@ impl Agent {
                     .unwrap()
                     .to_string();
 
-                let extractions = self.get_extractions(&msg_text);
+                let extractions = get_extractions(&msg_text, &self.config.event_extractor_url);
 
                 let header = Header {
                     timestamp: Timestamp::now_utc(),
@@ -93,7 +68,7 @@ impl Agent {
                 let msg_1 = Msg {
                     trial_id: self.kb.trial_id.clone(),
                     experiment_id: self.kb.experiment_id.clone(),
-                    timestamp: Timestamp::now_utc(),
+                    //timestamp: Timestamp::now_utc(),
                     source: "".to_string(),
                     version: "0.1".to_string(),
                     sub_type: "".to_string(),

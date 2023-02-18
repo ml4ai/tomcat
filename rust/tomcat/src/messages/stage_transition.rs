@@ -15,11 +15,11 @@ pub enum MissionStage {
 #[allow(non_snake_case)]
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StageTransitionData {
-    pub mission_timer: String,
     pub elapsed_milliseconds: i64,
     pub mission_stage: MissionStage,
-    pub transitionsToShop: i32,
+    pub mission_timer: String,
     pub team_budget: i32,
+    pub transitionsToShop: i32,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
