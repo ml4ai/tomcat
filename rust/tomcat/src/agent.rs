@@ -41,6 +41,7 @@ pub struct Agent {
 impl Agent {
     /// Construct a new Agent struct.
     pub fn new(cfg: Config) -> Self {
+        print!("MQTT host = {}, port = {}\n",&cfg.mqtt_opts.host, &cfg.mqtt_opts.port);
         let mqtt_client = MqttClient::new(&cfg.mqtt_opts.host, &cfg.mqtt_opts.port, &cfg.client_id);
         let kb = KnowledgeBase::default();
         let agent = Self {
@@ -154,6 +155,7 @@ impl Agent {
     }
 
     fn process_message(&mut self, msg: mqtt::Message) {
+        print!("process_message with {} \n", msg);
         match msg.topic() {
             "communication/chat" => self.process_chat_message(msg),
             "observations/events/stage_transition" => self.process_stage_transition_message(msg),
