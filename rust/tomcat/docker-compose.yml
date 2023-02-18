@@ -12,6 +12,9 @@ services:
 
     container_name: uaz_rust_agent
 
+    volumes:
+      - ./config.yml:/config.yml
+
     build:
       context: .
       dockerfile: Dockerfile
@@ -23,3 +26,4 @@ services:
       asist_net:
         aliases:
           - uaz_rust_agent
+
