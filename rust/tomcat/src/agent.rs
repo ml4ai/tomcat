@@ -1,26 +1,20 @@
-use crate::config::Config;
-use crate::mqtt_client::MqttClient;
 use crate::{
-    knowledge_base::KnowledgeBase,
+    config::Config,
+    mqtt_client::MqttClient,
     get_extractions::get_extractions,
+    knowledge_base::KnowledgeBase,
     messages::{
+        chat::ChatMessage,
         get_message::get_message,
-        internal::InternalStageTransition,
-        chat::{ChatMessage, Extraction},
-        common::{Header, Msg},
-        nlu::{CompactData, CompactMessage},
-        stage_transition::{MissionStage, StageTransitionMessage},
+        nlu::NLUMessage,
+        stage_transition::StageTransitionMessage,
         trial::TrialMessage,
     },
 };
 use futures::{executor, StreamExt};
-use iso8601_timestamp::Timestamp;
 use log::{error, info, warn};
 use paho_mqtt as mqtt;
-use serde::Deserialize;
-use serde_json::Value;
 use std::time::Duration;
-
 
 pub struct Agent {
     mqtt_client: MqttClient,
@@ -41,60 +35,35 @@ impl Agent {
         agent
     }
 
-
     /// Process chat message.
     fn process_chat_message(&self, msg: mqtt::Message) {
-        // For ASIST Study 4, only the shop stage will have free text chat.
-        if let MissionStage::shop_stage = &self.kb.stage {
-            let message: ChatMessage = get_message(&msg);
-            let sender = message.data.sender;
+        let message: ChatMessage = get_message(&msg);
+        let sender = message.data.sender;
 
-            if let Some(msg_text) = message.data.text {
-                let sender = self
-                    .kb
-                    .callsign_mapping
-                    .get(&sender.unwrap())
-                    .unwrap()
-                    .to_string();
+        if let Some(msg_text) = message.data.text {
+            let sender = self
+                .kb
+                .callsign_mapping
+                .get(&sender.unwrap())
+                .unwrap()
+                .to_string();
 
-                let extractions = get_extractions(&msg_text, &self.config.event_extractor_url);
+            let extractions = get_extractions(&msg_text, &self.config.event_extractor_url);
 
-                let header = Header {
-                    timestamp: Timestamp::now_utc(),
-                    version: "1.2".to_string(),
-                    message_type: "agent".to_string(),
-                };
+            let compact_message = NLUMessage::new(
+                msg_text,
+                sender,
+                extractions,
+                message.msg.trial_id.clone(),
+                message.msg.trial_id.clone(),
+            );
 
-                let msg_1 = Msg {
-                    trial_id: self.kb.trial_id.clone(),
-                    experiment_id: self.kb.experiment_id.clone(),
-                    //timestamp: Timestamp::now_utc(),
-                    source: "".to_string(),
-                    version: "0.1".to_string(),
-                    sub_type: "".to_string(),
-                    replay_parent_id: None,
-                    replay_id: None,
-                    replay_parent_type: None,
-                };
-
-                let compact_data = CompactData {
-                    participant_id: sender,
-                    extractions,
-                };
-
-                let compact_message = CompactMessage {
-                    header,
-                    msg: msg_1,
-                    data: compact_data,
-                };
-
-                let message = mqtt::Message::new(
-                    self.config.publish_topic.clone(),
-                    serde_json::to_string(&compact_message).unwrap(),
-                    2,
-                );
-                self.publish(message);
-            }
+            let message = mqtt::Message::new(
+                self.config.publish_topic.clone(),
+                serde_json::to_string(&compact_message).unwrap(),
+                2,
+            );
+            self.publish(message);
         }
     }
 
@@ -141,7 +110,10 @@ impl Agent {
     pub fn run(&mut self) -> Result<(), mqtt::Error> {
         let fut_values = async {
             let _ = &self.mqtt_client.connect().await;
-            let _ = &self.mqtt_client.subscribe(self.config.subscribe_topics.clone()).await;
+            let _ = &self
+                .mqtt_client
+                .subscribe(self.config.subscribe_topics.clone())
+                .await;
             // Just loop on incoming messages.
             info!("Waiting for messages...");
 
