@@ -1,15 +1,13 @@
 //! File-based reprocessor.
 
 use clap::Parser;
+use iso8601_timestamp::Timestamp;
 use std::{
     collections::HashSet,
     fs::File,
     io::{self, BufRead},
 };
-use tomcat::{
-    get_extractions::get_extractions,
-    messages::{chat::ChatMessage, get_message::get_message_from_string, nlu::NLUMessage},
-};
+use tomcat::{get_extractions::get_extractions, messages::nlu::NLUMessage};
 
 use serde_json as json;
 
@@ -34,6 +32,8 @@ fn main() {
 
     for line in lines {
         if let Ok(l) = line {
+            println!("{}", l);
+
             // We construct sets of trial IDs to handle special cases arising due to changing data
             // formats during the ASIST Study 4 pilot runs.
             let trial_set_1 = HashSet::from([
@@ -59,6 +59,7 @@ fn main() {
             ]);
 
             let value: json::Value = json::from_str(&l).unwrap();
+
             let trial_id = value["msg"]["trial_id"].as_str().unwrap();
             let chat_topic: &str;
 
@@ -128,7 +129,7 @@ fn main() {
 
                 let experiment_id = value["msg"]["experiment_id"].as_str().unwrap();
                 let extractions = get_extractions(text, "http://localhost:8080");
-                let message = NLUMessage::new(
+                let mut message = NLUMessage::new(
                     text.to_string(),
                     // In the earlier pilot runs, the callsigns are fully uppercased (e.g., RED).
                     // We convert them to lowercase for consistency with the later trials.
@@ -137,8 +138,16 @@ fn main() {
                     trial_id.to_string(),
                     experiment_id.to_string(),
                 );
-                let json_serialized_message = json::to_string(&message).unwrap();
-                println!("{}", json_serialized_message);
+
+                // Set the header timestamp to the same value as the input chat message header
+                // timestamp.
+                message.header.timestamp =
+                    Timestamp::parse(value["header"]["timestamp"].as_str().unwrap()).unwrap();
+
+                let mut output_value = json::to_value(message).unwrap();
+                output_value["@timestamp"] = value["@timestamp"].clone();
+                output_value["topic"] = "agent/AC_UAZ_TA1_NLU".into();
+                println!("{}", output_value);
             }
         }
     }

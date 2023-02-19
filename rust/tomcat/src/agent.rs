@@ -1,15 +1,12 @@
 use crate::{
     config::Config,
-    mqtt_client::MqttClient,
     get_extractions::get_extractions,
     knowledge_base::KnowledgeBase,
     messages::{
-        chat::ChatMessage,
-        get_message::get_message,
-        nlu::NLUMessage,
-        stage_transition::StageTransitionMessage,
-        trial::TrialMessage,
+        chat::ChatMessage, get_message::get_message, nlu::NLUMessage,
+        stage_transition::StageTransitionMessage, trial::TrialMessage,
     },
+    mqtt_client::MqttClient,
 };
 use futures::{executor, StreamExt};
 use log::{error, info, warn};
