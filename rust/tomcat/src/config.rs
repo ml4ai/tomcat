@@ -11,7 +11,7 @@ pub struct MqttOpts {
 pub struct Config {
     pub subscribe_topics: Vec<String>,
     pub client_id: String,
-    pub mqtt_opts: MqttOpts,
+    pub mqtt: MqttOpts,
     pub event_extractor_url: String,
     pub custom_vocabulary: Vec<String>,
     pub publish_topic: String,

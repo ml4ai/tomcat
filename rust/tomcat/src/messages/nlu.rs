@@ -30,6 +30,7 @@ impl NLUMessage {
             msg: Msg {
                 trial_id: trial_id,
                 experiment_id: experiment_id,
+                source: "agent".to_string(),
                 ..Default::default()
             },
             data: NLUData {

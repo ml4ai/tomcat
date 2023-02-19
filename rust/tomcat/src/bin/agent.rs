@@ -31,16 +31,13 @@ fn main() {
 
     // allow user command line args to override config file settings
     if let Some(host) = args.host {
-        cfg.mqtt_opts.host = host;
+        cfg.mqtt.host = host;
     }
     if let Some(port) = args.port {
-        cfg.mqtt_opts.port = port;
+        cfg.mqtt.port = port;
     }
 
-    println!(
-        "MQTT host = {}, port = {}",
-        cfg.mqtt_opts.host, cfg.mqtt_opts.port
-    );
+    println!("MQTT host = {}, port = {}", cfg.mqtt.host, cfg.mqtt.port);
 
     let mut agent = Agent::new(cfg);
     agent.run().unwrap();

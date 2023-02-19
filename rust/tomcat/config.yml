@@ -1,9 +1,9 @@
-mqtt_opts:
+mqtt:
   host: localhost
   port: 1883
 
 # Client ID
-client_id: tomcat
+client_id: AC_UAZ_TA1_NLU
 
 # URL for the event extraction service
 event_extractor_url: http://localhost:8080

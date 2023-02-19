@@ -25,7 +25,7 @@ pub struct Agent {
 impl Agent {
     /// Construct a new Agent struct.
     pub fn new(cfg: Config) -> Self {
-        let mqtt_client = MqttClient::new(&cfg.mqtt_opts.host, &cfg.mqtt_opts.port, &cfg.client_id);
+        let mqtt_client = MqttClient::new(&cfg.mqtt.host, &cfg.mqtt.port, &cfg.client_id);
         let kb = KnowledgeBase::default();
         let agent = Self {
             mqtt_client,
@@ -58,8 +58,10 @@ impl Agent {
                 message.msg.trial_id.clone(),
             );
 
+            let publish_topic = "agent".to_owned() + self.config.client_id.as_str();
+
             let message = mqtt::Message::new(
-                self.config.publish_topic.clone(),
+                publish_topic,
                 serde_json::to_string(&compact_message).unwrap(),
                 2,
             );
