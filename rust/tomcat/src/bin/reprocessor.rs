@@ -1,4 +1,4 @@
-//! File-based reprocessor.
+//! File-based replayer.
 
 use clap::Parser;
 use iso8601_timestamp::Timestamp;
@@ -8,6 +8,7 @@ use std::{
     io::{self, BufRead},
 };
 use tomcat::{get_extractions::get_extractions, messages::nlu::NLUMessage};
+use uuid::Uuid;
 
 use serde_json as json;
 
@@ -27,13 +28,13 @@ fn main() {
 
     let input_file = File::open(&args.input).unwrap();
     let lines = io::BufReader::new(input_file).lines();
+    let replay_id = Uuid::new_v4().to_string();
+    let replay_parent_type: &str;
 
     let mut callsign_mapping = std::collections::HashMap::<String, String>::new();
 
     for line in lines {
         if let Ok(l) = line {
-            println!("{}", l);
-
             // We construct sets of trial IDs to handle special cases arising due to changing data
             // formats during the ASIST Study 4 pilot runs.
             let trial_set_1 = HashSet::from([
@@ -58,7 +59,33 @@ fn main() {
                 "56e661e3-cbaa-48e9-9444-705647f934de",
             ]);
 
-            let value: json::Value = json::from_str(&l).unwrap();
+            let mut value: json::Value = json::from_str(&l).unwrap();
+
+            match value["msg"].get_mut("replay_parent_type") {
+                Some(id) => {
+                    *id = json::Value::String("REPLAY".into());
+                }
+                None => {
+                    value["msg"]["replay_parent_type"] = json::Value::String("TRIAL".into());
+                }
+            }
+
+            // Set the replay parent ID
+            if let Some(id) = value["msg"].get("replay_id") {
+                if !id.is_null() {
+                    value["msg"]["replay_parent_id"] = id.clone();
+                }
+            }
+
+            // Check if the .msg.replay_parent_type key exists
+            match value["msg"].get_mut("replay_id") {
+                Some(id) => {
+                    *id = json::Value::String(replay_id.clone());
+                }
+                None => {
+                    value["msg"]["replay_id"] = json::Value::String(replay_id.clone());
+                }
+            }
 
             let trial_id = value["msg"]["trial_id"].as_str().unwrap();
             let chat_topic: &str;
@@ -73,6 +100,7 @@ fn main() {
 
             if topic == Some("trial") {
                 let sub_type = value["msg"]["sub_type"].as_str();
+
                 if let Some("start") = sub_type {
                     // Construct a mapping between callsigns and participant IDs.
                     for client in value["data"]["client_info"].as_array().unwrap() {
@@ -146,6 +174,11 @@ fn main() {
 
                 let mut output_value = json::to_value(message).unwrap();
                 output_value["@timestamp"] = value["@timestamp"].clone();
+                output_value["msg"]["replay_id"] = value["msg"]["replay_id"].clone();
+                output_value["msg"]["replay_parent_id"] = value["msg"]["replay_parent_id"].clone();
+                output_value["msg"]["replay_parent_type"] =
+                    value["msg"]["replay_parent_type"].clone();
+                output_value["msg"]["replay_parent_id"] = value["msg"]["replay_parent_id"].clone();
                 output_value["topic"] = "agent/AC_UAZ_TA1_NLU".into();
                 println!("{}", output_value);
             }
