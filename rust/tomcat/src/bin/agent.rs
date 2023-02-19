@@ -8,12 +8,12 @@ use tomcat::config::Config;
 #[derive(Parser, Debug)]
 pub struct Cli {
     /// MQTT broker host
-    #[arg(long, default_value_t = String::from("localhost"))]
-    pub host: String,
+    #[arg(long)]
+    pub host: Option<String>,
 
     /// MQTT broker port
-    #[arg(short, long, default_value_t = 1883)]
-    pub port: u16,
+    #[arg(short, long)]
+    pub port: Option<u16>,
 
     /// Config file
     #[arg(short, long, default_value_t = String::from("config.yml"))]
@@ -26,8 +26,21 @@ fn main() {
 
     let args = Cli::parse();
 
-    let cfg: Config = confy::load_path(&args.config)
+    let mut cfg: Config = confy::load_path(&args.config)
         .unwrap_or_else(|_| panic!("Unable to load config file {}!", &args.config));
+
+    // allow user command line args to override config file settings
+    if let Some(host) = args.host {
+        cfg.mqtt_opts.host = host;
+    }
+    if let Some(port) = args.port {
+        cfg.mqtt_opts.port = port;
+    }
+
+    println!(
+        "MQTT host = {}, port = {}",
+        cfg.mqtt_opts.host, cfg.mqtt_opts.port
+    );
 
     let mut agent = Agent::new(cfg);
     agent.run().unwrap();
