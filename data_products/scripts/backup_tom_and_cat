@@ -1,0 +1,87 @@
+#!/bin/bash 
+
+##############################################################################
+#
+# Identification:
+#     
+#
+# Description:
+#     
+#
+# Output:
+#     
+#
+# Exit status:
+#     Following unix convention, this script exits with 0 on success, and
+#     non-zero if there was an error. 
+#
+# Author:
+#     Kobus Barnard
+#
+##############################################################################
+
+set -u
+
+export TOMCAT_DIR="${HOME}/tomcat/" 
+source ${TOMCAT_DIR}shared_code/bash/ivi_preamble.bash  
+
+# We control the meaning of basic commands by limiting the path to standard root
+# controlled directories. 
+export PATH="/usr/bin:/bin:${TOMCAT_DIR}scripts"
+
+num_tries=5
+sleep_time_between_tries=600
+
+
+# Our exit status will be that of the last command that failed. 
+exit_status=0
+
+# The initial commands in this script executes need to succeed, so we can
+# simplify error handling to trap failures to report them, and then ask bash to
+# exit. But at the begining we are not ready to report errors or do anything
+# else so we simply die with non-zero return code. 
+
+set -e
+
+# Revoke possible removal of group perms (if we are running as root) and don't
+# permit others any access. 
+umask 0007 
+
+log_dir=${TOMCAT_DIR}logs
+mkdir -p ${log_dir}
+log_file="${log_dir}/backup_tom_and_cat.log"
+# Test writing to log_file.
+touch "${log_file}" 
+
+eval echo "============================================================================" ${plumbing} ${log_file}
+eval echo "Script backup_tom_and_cat is starting: $(date)" ${plumbing} ${log_file}
+eval echo " " ${plumbing} ${log_file}
+
+set +e -o pipefail 
+
+# Sometimes remote rsync dies without explanation, possibly network issues. So,
+# try running this additional times if we fail. 
+try=1
+while [[ 1 ]]; do
+    eval $VERBOSE_ECHO "Call $try to backup_tom_and_cat_2." ${plumbing} ${log_file}
+    eval backup_tom_and_cat_2 ${plumbing} ${log_file} ${plumbing} ${log_file}
+    exit_status=$?
+    if [[ $exit_status -eq 0 ]]; then break; fi
+    eval $VERBOSE_ECHO "Call $try to backup_tom_and_cat_2 failed." ${plumbing} ${log_file}
+
+    try=$(($try+1))
+
+    if  [[ $try -le ${num_tries} ]]; then 
+        eval $VERBOSE_ECHO "Trying again after sleeping for ${sleep_time_between_tries}s." ${plumbing} ${log_file}
+        sleep ${sleep_time_between_tries}
+    else 
+        break
+    fi
+done 
+
+eval echo "Script backup_tom_and_cat exiting with status ${exit_status} on: $(date)" ${plumbing} ${log_file}
+eval echo "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::" ${plumbing} ${log_file}
+eval echo " " ${plumbing} ${log_file}
+
+exit ${exit_status} 
+

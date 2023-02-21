@@ -1,0 +1,278 @@
+#!/bin/bash 
+
+##############################################################################
+#
+# Identification:
+#    Helper script for pull_tomcat_data. 
+#     
+#
+# Description:
+#    See pull_tomcat_data.
+#     
+#
+# Output:
+#     All output goes to stdout for pull_tomcat_data to do with it what it will. 
+#     
+# Exit status:
+#     Following unix convention, this script exits with 0 on success, and
+#     non-zero if there was an error. 
+#
+# Author:
+#     Kobus Barnard
+#
+##############################################################################
+
+set -u
+set -e 
+
+echo "---------------------------------------------------------------------------------------------" 
+echo "Script pull_tomcat_data_2 is starting: $(date)" 
+echo " "
+
+sensor_dirs_to_pull=sensor_dirs_to_pull.$$
+sensor_dirs_to_move=sensor_dirs_to_move.$$
+
+# This is in minutes. 10000 is about a week. 
+last_modification_time=10000
+last_modification_time=4000
+
+
+# If we need to switch cat and tom, we need to do so in the next four lines, and
+# change lines in sync_tom_and_cat and/or sync_tom_and_cat_2 as well. 
+
+export SENSOR_USER="cat"
+export SENSOR_HOST="cat@10.192.234.250"
+export MIRROR_USER="tom"
+export MIRROR_HOST="tom@10.192.234.251"
+
+export SENSOR_TOMCAT_DIR="/home/${SENSOR_USER}/tomcat/" 
+export I01_HOST="root@150.135.82.167"
+
+# Our exit status will be that of the last command that failed. 
+exit_status=0
+
+# The initial commands in this script executes need to succeed, so we can
+# simplify error handling to trap failures to report them, and then ask bash to
+# exit. But at the begining we are not ready to report errors or do anything
+# else so we simply die with non-zero return code. 
+set -e
+
+# Revoke possible removal of group perms (if we are running as root) and don't
+# permit others any access. 
+umask 0007 
+
+data_dir="/data"
+ 
+# Paths must be devoid of spaces.
+sensor_data_dir="${data_dir}/${SENSOR_USER}/LangLab/experiments/"
+
+source ${TOMCAT_DIR}shared_code/bash/ivi_error_trap.bash  
+
+date_stamp=$(date +%y-%m-%d-%H-%M) 2>&1
+backup_suffix="-RSYNC-${date_stamp}"
+
+if [[ "${IVI_VERBOSE_3}" != "0" ]]; then
+    rsync_verbose="-v -v -v" 
+    remote_verbose="-v3"
+elif [[ "${IVI_VERBOSE_2}" != "0" ]]; then
+    rsync_verbose="-v -v" 
+    remote_verbose="-v2"
+elif [[ "${IVI_VERBOSE}" != "0" ]]; then
+    rsync_verbose="-v" 
+    remote_verbose="-v"
+else  
+    rsync_verbose=""
+    remote_verbose=""
+fi 
+
+rsync_options="${rsync_verbose} -rlptD -u --modify-window=20 -b --suffix ${backup_suffix}"
+
+# If we get this far, there may be some value of doing subsequent rsyncs even if
+# previous ones failed. In particular, we used to fail if sync_tom_and_cat
+# failed. But it can (often does) fail due to unknown reasons (possibly tom
+# network flakiness), and it is not a prerequisite for make progress on other
+# transfers. 
+#
+set +e 
+
+${VERBOSE_ECHO} ""
+${VERBOSE_ECHO} "Script pull_tomcat_data_2 executing:"
+${VERBOSE_ECHO} "    ssh -n -x ${SENSOR_HOST} ${SENSOR_TOMCAT_DIR}scripts/sync_tom_and_cat ${remote_verbose}"
+ssh -n -x ${SENSOR_HOST} ${SENSOR_TOMCAT_DIR}scripts/sync_tom_and_cat ${remote_verbose}
+
+# This next bit has to succeed if we are to go on. 
+set -e 
+
+${VERBOSE_ECHO} ""
+${VERBOSE_ECHO} "Script pull_tomcat_data_2 executing:"
+${VERBOSE_ECHO} "    ssh -n -x ${SENSOR_HOST} /usr/bin/find ${sensor_data_dir} -type d -name 'exp_*' "
+ssh -n -x ${SENSOR_HOST} /usr/bin/find ${sensor_data_dir} -type d -name 'exp_*' 2>&1  > ${sensor_dirs_to_pull}
+
+set +e 
+
+if [[ "${IVI_VERBOSE}" != "0" ]]; then
+    echo "Script pull_tomcat_data_2 is considering the following exp directories:"
+    cat ${sensor_dirs_to_pull}
+fi 
+
+while IFS= read -r exp_dir 
+do
+    ${VERBOSE_ECHO} " "
+    ${VERBOSE_ECHO} "Script pull_tomcat_data_2 working on ${exp_dir}"
+    ${VERBOSE_ECHO} " "
+    i02_target_dir=$(echo $exp_dir | sed 's#/data/cat/#/space/tomcat/#')
+    ${VERBOSE_ECHO} "Script pull_tomcat_data_2 first target dir is ${i02_target_dir}"
+
+    mkdir -p "${i02_target_dir}" 2>&1
+    rc=$?
+    ${VERBOSE_ECHO} "Mkdir return code was ${rc}"
+    ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+    ${VERBOSE_ECHO} ""
+
+    if [[ ${rc} -eq 0 ]]; then
+        ${VERBOSE_ECHO} "Script pull_tomcat_data_2 executing:"
+        ${VERBOSE_ECHO} "    rsync ${rsync_options} ${SENSOR_HOST}:${exp_dir}/ ${i02_target_dir}"
+        rsync ${rsync_options} ${SENSOR_HOST}:${exp_dir}/ ${i02_target_dir} 2>&1 
+        rc=$?
+        ${VERBOSE_ECHO} "Rsync return code was ${rc}"
+        ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+        ${VERBOSE_ECHO} ""
+
+        # We are not so uptight about fixing ownership and perms so we do less
+        # reporting here. 
+        #
+        chown -R :langlab ${i02_target_dir} 2>&1 
+        chmod -R g=rX,o=  ${i02_target_dir} 2>&1 
+    fi 
+
+    ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+    ${VERBOSE_ECHO} ""
+
+    i01_target_dir=$(echo $exp_dir | sed 's#/data/cat/#/data/tomcat/#')
+    ${VERBOSE_ECHO} "Script pull_tomcat_data_2 second target dir is ${i01_target_dir}"
+    ssh -n -x ${I01_HOST} mkdir -p "${i01_target_dir}" 2>&1
+    rc=$?
+    ${VERBOSE_ECHO} "Remode mkdir return code was ${rc}"
+    ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+    ${VERBOSE_ECHO} ""
+
+    if [[ ${rc} -eq 0 ]]; then
+        ${VERBOSE_ECHO} "Script pull_tomcat_data_2 executing:"
+        ${VERBOSE_ECHO} "    rsync ${rsync_options} ${i02_target_dir}/ ${I01_HOST}:${i01_target_dir}"
+        rsync ${rsync_options} ${i02_target_dir}/ ${I01_HOST}:${i01_target_dir} 2>&1 
+        rc=$?
+        ${VERBOSE_ECHO} "Rsync return code was ${rc}"
+        ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+        ${VERBOSE_ECHO} ""
+
+        # We are not so uptight about fixing ownership and perms so we do less
+        # reporting here. 
+        #
+        ssh -n -x ${I01_HOST} chown -R :langlab ${i01_target_dir} 2>&1 
+        ssh -n -x ${I01_HOST} chmod -R g=rX,o= ${i01_target_dir} 2>&1 
+    fi 
+done < ${sensor_dirs_to_pull}
+
+rm -f ${sensor_dirs_to_pull}
+
+${VERBOSE_ECHO} ""
+${VERBOSE_ECHO} "Script pull_tomcat_data_2 executing backup_tom_and_cat_2"
+${VERBOSE_ECHO} ""
+backup_tom_and_cat_2 2>&1
+rc=$?
+${VERBOSE_ECHO} "Backup_tom_and_cat_2 return code was ${rc}"
+
+if [[ ${exit_status} -ne 0 ]]; then
+    ${VERBOSE_ECHO} ""
+    ${VERBOSE_ECHO} "Script pull_tomcat_data_2 skipping moving experiment data due to errors."
+    ${VERBOSE_ECHO} ""
+else 
+    ${VERBOSE_ECHO} ""
+    ${VERBOSE_ECHO} "Script pull_tomcat_data_2 executing:"
+    ${VERBOSE_ECHO} "    ssh -n -x ${SENSOR_HOST} /usr/bin/find  ${sensor_data_dir} -type d -name 'exp_*' -mmin +${last_modification_time}" 
+    ssh -n -x ${SENSOR_HOST} /usr/bin/find  ${sensor_data_dir} -type d -name 'exp_*' -mmin +${last_modification_time} 2>&1  > ${sensor_dirs_to_move}
+    rc=$?
+    ${VERBOSE_ECHO} "Remote find return code was ${rc}"
+
+    if [[ ${rc} -ne 0 ]]; then
+        ${VERBOSE_ECHO} "Script pull_tomcat_data_2 aborting moving experiment data."
+    else
+        ${VERBOSE_ECHO} "Script pull_tomcat_data_2 moving experiment data."
+
+        if [[ "${IVI_VERBOSE}" != "0" ]]; then
+            echo "Script pull_tomcat_data_2 is considering moving the following exp directories:"
+            cat ${sensor_dirs_to_move}
+        fi 
+
+        while IFS= read -r sensor_exp_dir 
+        do
+            ${VERBOSE_ECHO} " "
+            ${VERBOSE_ECHO} "Script pull_tomcat_data_2 working on moving ${sensor_exp_dir}"
+            sensor_exp_limbo_dir=$(echo ${sensor_exp_dir} | sed 's#/LangLab/experiments/#/LIMBO/#')
+            sensor_limbo_dir=$(echo ${sensor_exp_limbo_dir} | sed 's#/exp_[^/]*$##')
+
+            # Make the new home in limbo unique so that we can continue to add
+            # files via creating the corresponing exp directory and putting them
+            # there. 
+            sensor_exp_limbo_dir=${sensor_exp_limbo_dir}.$$
+            ${VERBOSE_ECHO} "Script pull_tomcat_data_2 ${sensor_exp_dir} target new name is ${sensor_exp_limbo_dir}"
+
+            # We try to make the target directory on both hosts before doing the
+            # actual moves to increase the chances that if we do the moves, they
+            # will succeed on both hosts. For example, if one host is down, then
+            # we will not try to do either of the moves. 
+
+            ${VERBOSE_ECHO} "Script pull_tomcat_data_2 executing:"
+            ${VERBOSE_ECHO} "    ssh -n -x ${SENSOR_HOST} mkdir -p ${sensor_limbo_dir}"
+            ssh -n -x ${SENSOR_HOST} mkdir -p "${sensor_limbo_dir}" 
+            rc=$?
+            ${VERBOSE_ECHO} "Remote mkdir on ${SENSOR_HOST} return code was ${rc}"
+            ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+            ${VERBOSE_ECHO} ""
+
+            mirror_exp_dir=$(echo ${sensor_exp_dir} | sed "s#/${SENSOR_USER}/#/${MIRROR_USER}/#")
+            mirror_limbo_dir=$(echo ${sensor_limbo_dir} | sed "s#/${SENSOR_USER}/#/${MIRROR_USER}/#")
+            mirror_exp_limbo_dir=$(echo ${sensor_exp_limbo_dir} | sed "s#/${SENSOR_USER}/#/${MIRROR_USER}/#")
+
+            ${VERBOSE_ECHO} "Script pull_tomcat_data_2 executing:"
+            ${VERBOSE_ECHO} "    ssh -n -x ${MIRROR_HOST} mkdir -p ${mirror_limbo_dir}"
+            ssh -n -x ${MIRROR_HOST} mkdir -p "${mirror_limbo_dir}" 
+            rc=$?
+            ${VERBOSE_ECHO} "Remote mkdir on ${MIRROR_HOST} return code was ${rc}"
+            ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+            ${VERBOSE_ECHO} ""
+
+            if [[ ${exit_status} -eq 0 ]]; then
+                ${VERBOSE_ECHO} "Script pull_tomcat_data_2 executing:"
+                ${VERBOSE_ECHO} "    ssh -n -x ${SENSOR_HOST} mv ${sensor_exp_dir} ${sensor_exp_limbo_dir}"
+                ssh -n -x ${SENSOR_HOST} mv ${sensor_exp_dir} ${sensor_exp_limbo_dir}"
+                rc=$?
+                ${VERBOSE_ECHO} "mv of ${sensor_exp_dir} return code was ${rc}"
+                ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+                ${VERBOSE_ECHO} ""
+
+                ${VERBOSE_ECHO} "Script pull_tomcat_data_2 executing:"
+                ${VERBOSE_ECHO} "    ssh -n -x ${MIRROR_HOST} mv ${mirror_exp_dir} ${mirror_exp_limbo_dir}"
+                ssh -n -x ${MIRROR_HOST} mv ${mirror_exp_dir} ${mirror_exp_limbo_dir}"
+                rc=$?
+                ${VERBOSE_ECHO} "mv ${mirror_exp_dir} return code was ${rc}"
+                ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+                ${VERBOSE_ECHO} ""
+            else 
+                # No need to add to the confusion by continuing if we cannot make
+                # LIMBO directories. 
+                break
+            fi 
+        done < ${sensor_dirs_to_move}
+    fi
+fi
+
+rm -f ${sensor_dirs_to_move}
+
+echo " "
+echo "Script pull_tomcat_data_2 exiting with status ${exit_status}: $(date)" 
+echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" 
+
+exit ${exit_status} 
+
+
