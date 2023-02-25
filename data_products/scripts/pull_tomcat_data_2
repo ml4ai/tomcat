@@ -26,7 +26,7 @@ set -u
 set -e 
 
 echo "---------------------------------------------------------------------------------------------" 
-echo "Script pull_tomcat_data_2 is starting: $(date)" 
+echo "Script pull_tomcat_data_2 PID:$$ is starting: $(date)" 
 echo " "
 
 sensor_dirs_to_pull=sensor_dirs_to_pull.$$

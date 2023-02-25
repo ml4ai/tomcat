@@ -70,7 +70,7 @@ set +e -o pipefail
 try=1
 while [[ 1 ]]; do
     eval $VERBOSE_ECHO "" ${plumbing} ${log_file}
-    eval $VERBOSE_ECHO "Call $try to pull_tomcat_data_2." ${plumbing} ${log_file}
+    eval $VERBOSE_ECHO "Call $try to pull_tomcat_data_2 at $(date)." ${plumbing} ${log_file}
     eval pull_tomcat_data_2 ${plumbing} ${log_file}
 
     exit_status=$?
@@ -78,7 +78,7 @@ while [[ 1 ]]; do
     if [[ $exit_status -eq 0 ]]; then break; fi
 
     eval $VERBOSE_ECHO "" ${plumbing} ${log_file}
-    eval $VERBOSE_ECHO "Call $try to pull_tomcat_data_2 failed." ${plumbing} ${log_file}
+    eval $VERBOSE_ECHO "Call $try to pull_tomcat_data_2 failed, noted at $(date)." ${plumbing} ${log_file}
 
     try=$(($try+1))
 
