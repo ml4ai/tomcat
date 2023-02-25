@@ -81,29 +81,29 @@ set +e
 
 base_rsync_options="-rlptD -u --modify-window=20 -b --suffix ${backup_suffix}"
 
-# Backup experiments on SISTA 
-rsync_options="${rsync_verbose} ${base_rsync_options} --chown=:tomcat-editor"
-
-target_dir="${OFFSITE_BACKUP_DIR}/LangLab"
-${VERBOSE_ECHO} "Script backup_tom_and_cat_2 executing:"
-${VERBOSE_ECHO} "    ssh -n -x ${SISTA_BACKUP_HOST} sg tomcat-editor -c \"mkdir -p ${target_dir}\" "
-ssh -n -x ${SISTA_BACKUP_HOST} sg tomcat-editor -c \"mkdir -p ${target_dir}\" 2>&1
-rc=$?
-${VERBOSE_ECHO} "Remode mkdir return code was ${rc}"
-${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
-${VERBOSE_ECHO} ""
-
-if [[ ${rc} -eq 0 ]]; then
-    ${VERBOSE_ECHO} "Script backup_tom_and_cat_2 executing:"
-    ${VERBOSE_ECHO} "    rsync ${rsync_options} ${TOMCAT_DATA_DIR}/ ${SISTA_BACKUP_HOST}:${target_dir}"    
-    rsync ${rsync_options} ${TOMCAT_DATA_DIR}/ ${SISTA_BACKUP_HOST}:${target_dir} 2>&1 
-    rc=$?
-    ${VERBOSE_ECHO} "Rsync return code was ${rc}"
-    ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
-    ${VERBOSE_ECHO} ""
-else 
-    ${VERBOSE_ECHO} "Script backup_tom_and_cat_2 skipping backup of ${TOMCAT_DATA_DIR} due to remote mkdir failure."
-fi
+# # Backup experiments on SISTA 
+# rsync_options="${rsync_verbose} ${base_rsync_options} --chown=:tomcat-editor"
+# 
+# target_dir="${OFFSITE_BACKUP_DIR}/LangLab"
+# ${VERBOSE_ECHO} "Script backup_tom_and_cat_2 executing:"
+# ${VERBOSE_ECHO} "    ssh -n -x ${SISTA_BACKUP_HOST} sg tomcat-editor -c \"mkdir -p ${target_dir}\" "
+# ssh -n -x ${SISTA_BACKUP_HOST} sg tomcat-editor -c \"mkdir -p ${target_dir}\" 2>&1
+# rc=$?
+# ${VERBOSE_ECHO} "Remode mkdir return code was ${rc}"
+# ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+# ${VERBOSE_ECHO} ""
+# 
+# if [[ ${rc} -eq 0 ]]; then
+#     ${VERBOSE_ECHO} "Script backup_tom_and_cat_2 executing:"
+#     ${VERBOSE_ECHO} "    rsync ${rsync_options} ${TOMCAT_DATA_DIR}/ ${SISTA_BACKUP_HOST}:${target_dir}"    
+#     rsync ${rsync_options} ${TOMCAT_DATA_DIR}/ ${SISTA_BACKUP_HOST}:${target_dir} 2>&1 
+#     rc=$?
+#     ${VERBOSE_ECHO} "Rsync return code was ${rc}"
+#     ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+#     ${VERBOSE_ECHO} ""
+# else 
+#     ${VERBOSE_ECHO} "Script backup_tom_and_cat_2 skipping backup of ${TOMCAT_DATA_DIR} due to remote mkdir failure."
+# fi
 
 # Backup stuff other than experiments on IVILAB disks. Here we need some extra
 # excludes. 
