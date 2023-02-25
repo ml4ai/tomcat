@@ -1,0 +1,64 @@
+#!/bin/bash 
+
+##############################################################################
+#
+# Identification: 
+#     Helper for cleanup_rsync_backups
+#     
+#
+# Description:
+#     
+#
+# Output:
+#     
+#
+# Exit status:
+#     Following unix convention, this script exits with 0 on success, and
+#     non-zero if there was an error. 
+#
+# Author:
+#     Kobus Barnard
+#
+##############################################################################
+
+set -u
+
+# Don't trap because diff fails if files differ. 
+# source ${TOMCAT_DIR}shared_code/bash/ivi_error_trap.bash  
+
+exit_status=0
+
+# echo TOMCAT_DIR="${HOME}/tomcat/" 
+
+# echo 
+# echo arg: $1
+
+base_name=`echo $1 | /usr/bin/sed 's#-RSYNC-.*##'`
+
+# echo base_name: $base_name
+
+if [[ -e "${base_name}"  ]]; then
+    diff -q "${base_name}" "${1}" > /dev/null 
+    diff_rc=$?
+    if [[ ${diff_rc} -ne 0 ]]; then 
+        ${VERBOSE_ECHO} "Keeping ${1} as it differs from ${base_name}"
+    else 
+        file_name=`echo ${1} | sed 's#^.*/##'`
+        echo file_name: $file_name
+
+        if [[ -e "${LIMBO_DIR}${file_name}" ]]; then
+            /bin/mv "${LIMBO_DIR}${file_name}" "${LIMBO_DIR}${file_name}-$$"
+            exit_status=$?
+        fi 
+
+        if [[ ${exit_status} -eq 0 ]]; then
+            /bin/mv "${1}" "${LIMBO_DIR}"
+        fi 
+
+    fi 
+else
+    echo "WRN: Missing corresponding base file for ${1}"
+fi 
+
+exit ${exit_status}
+
