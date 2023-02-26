@@ -97,8 +97,8 @@ set +e
 
 ${VERBOSE_ECHO} ""
 ${VERBOSE_ECHO} "Script pull_tomcat_data_2 executing:"
-${VERBOSE_ECHO} "    ssh -n -x ${SENSOR_HOST} ${SENSOR_TOMCAT_DIR}scripts/sync_tom_and_cat ${remote_verbose}"
-ssh -n -x ${SENSOR_HOST} ${SENSOR_TOMCAT_DIR}scripts/sync_tom_and_cat ${remote_verbose}
+${VERBOSE_ECHO} "    ssh -n -x ${SENSOR_HOST} ${SENSOR_TOMCAT_DIR}human_experiments/scripts/sync_tom_and_cat ${remote_verbose}"
+ssh -n -x ${SENSOR_HOST} ${SENSOR_TOMCAT_DIR}human_experiments/scripts/sync_tom_and_cat ${remote_verbose}
 
 # This next bit has to succeed if we are to go on. 
 set -e 
