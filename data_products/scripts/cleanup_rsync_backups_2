@@ -33,7 +33,7 @@ exit_status=0
 # echo 
 # echo arg: $1
 
-base_name=`echo $1 | /usr/bin/sed 's#-RSYNC-.*##'`
+base_name=`echo $1 | sed 's#-RSYNC-.*##'`
 
 # echo base_name: $base_name
 
@@ -44,7 +44,6 @@ if [[ -e "${base_name}"  ]]; then
         ${VERBOSE_ECHO} "Keeping ${1} as it differs from ${base_name}"
     else 
         file_name=`echo ${1} | sed 's#^.*/##'`
-        echo file_name: $file_name
 
         if [[ -e "${LIMBO_DIR}${file_name}" ]]; then
             /bin/mv "${LIMBO_DIR}${file_name}" "${LIMBO_DIR}${file_name}-$$"
@@ -52,7 +51,7 @@ if [[ -e "${base_name}"  ]]; then
         fi 
 
         if [[ ${exit_status} -eq 0 ]]; then
-            /bin/mv "${1}" "${LIMBO_DIR}"
+            echo /bin/mv "${1}" "${LIMBO_DIR}"
         fi 
 
     fi 
