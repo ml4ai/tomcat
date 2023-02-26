@@ -35,11 +35,16 @@ set -u
 
 exit_status=0 
 
-# Paths are a bit of mess here. Leaving them be to make quick progress on a
-# draft of this and similar scripts. 
-
+# TOMCAT_DIR is either the github clone, a link to it, or a directory with
+# needed links that mimics the github clone structure where needed. 
 export TOMCAT_DIR="${HOME}/tomcat/" 
+
 source ${TOMCAT_DIR}shared_code/bash/ivi_preamble.bash  
+
+# We control the meaning of basic commands by limiting the path to standard root
+# controlled directories. We also add all the tomcat script directories we need. 
+export PATH="/usr/bin:/bin:${TOMCAT_DIR}data_products/scripts"
+
 source ${TOMCAT_DIR}shared_code/bash/ivi_error_trap.bash  
 
 volume_dir=`df . | grep '^[^ ]*:*/' | tr '\t' ' ' | sed 's#.* \(/.*\)$#\1/#'`

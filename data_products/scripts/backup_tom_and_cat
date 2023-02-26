@@ -22,12 +22,15 @@
 
 set -u
 
+# TOMCAT_DIR is either the github clone, a link to it, or a directory with
+# needed links that mimics the github clone structure where needed. 
 export TOMCAT_DIR="${HOME}/tomcat/" 
+
 source ${TOMCAT_DIR}shared_code/bash/ivi_preamble.bash  
 
 # We control the meaning of basic commands by limiting the path to standard root
-# controlled directories. 
-export PATH="/usr/bin:/bin:${TOMCAT_DIR}scripts"
+# controlled directories. We also add all the tomcat script directories we need. 
+export PATH="/usr/bin:/bin:${TOMCAT_DIR}data_products/scripts"
 
 num_tries=5
 sleep_time_between_tries=600

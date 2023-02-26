@@ -25,7 +25,10 @@ set -u
 num_tries=5
 sleep_time_between_tries=600
  
+# TOMCAT_DIR is either the github clone, a link to it, or a directory with
+# needed links that mimics the github clone structure where needed. 
 export TOMCAT_DIR="${HOME}/tomcat/" 
+
 source ${TOMCAT_DIR}shared_code/bash/ivi_preamble.bash  
 
 tomcat_dirs_to_pull=tomcat_dirs_to_pull.$$
