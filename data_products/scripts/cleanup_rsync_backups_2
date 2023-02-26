@@ -28,32 +28,42 @@ set -u
 
 exit_status=0
 
-# echo TOMCAT_DIR="${HOME}/tomcat/" 
+# By assumption, $1 and thus file_name will have the string -RSYNC-
+file_name=`echo ${1} | sed 's#^./##'`
+# echo file_name: $file_name
 
-# echo 
-# echo arg: $1
-
-base_name=`echo $1 | sed 's#-RSYNC-.*##'`
-
+base_name=`echo ${file_name} | sed 's#-RSYNC-.*##'`
 # echo base_name: $base_name
 
 if [[ -e "${base_name}"  ]]; then
-    diff -q "${base_name}" "${1}" > /dev/null 
+    diff -q "${base_name}" "${file_name}" > /dev/null 
     diff_rc=$?
     if [[ ${diff_rc} -ne 0 ]]; then 
-        ${VERBOSE_ECHO} "Keeping ${1} as it differs from ${base_name}"
+        ${VERBOSE_ECHO} "Keeping ${file_name} as it differs from ${base_name}"
     else 
-        file_name=`echo ${1} | sed 's#^.*/##'`
+        is_dir=`echo ${file_name} | grep -c '/'`
 
-        if [[ -e "${LIMBO_DIR}${file_name}" ]]; then
-            /bin/mv "${LIMBO_DIR}${file_name}" "${LIMBO_DIR}${file_name}-$$"
+        if [[ "${is_dir}" -ne 0 ]]; then 
+            dir_name=`echo ${file_name} | sed 's#^\(.*\)/.*$#\1#'`
+            mkdir -p "${LIMBO_DIR}${dir_name}"
             exit_status=$?
+            dir_name="${dir_name}/"
+        else 
+            dir_name=""
         fi 
 
         if [[ ${exit_status} -eq 0 ]]; then
-            echo /bin/mv "${1}" "${LIMBO_DIR}"
+            if [[ -e "${LIMBO_DIR}${dir_name}${file_name}" ]]; then
+                ${VERBOSE_ECHO} "mv ${file_name} ${LIMBO_DIR}${dir_name}${file_name}-$$"
+                mv "${file_name}" "${LIMBO_DIR}${dir_name}${file_name}-$$"
+                exit_status=$?
+            fi 
         fi 
 
+        if [[ ${exit_status} -eq 0 ]]; then
+            ${VERBOSE_ECHO} "mv ${file_name} ${LIMBO_DIR}${dir_name}"
+            mv "${file_name}" "${LIMBO_DIR}${dir_name}"
+        fi 
     fi 
 else
     echo "WRN: Missing corresponding base file for ${1}"

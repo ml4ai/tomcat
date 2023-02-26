@@ -47,7 +47,7 @@ export PATH="/usr/bin:/bin:${TOMCAT_DIR}data_products/scripts"
 
 source ${TOMCAT_DIR}shared_code/bash/ivi_error_trap.bash  
 
-volume_dir=`df . | grep '^[^ ]*:*/' | tr '\t' ' ' | sed 's#.* \(/.*\)$#\1/#'`
+volume_dir=`df . | grep '^[^ ]*:*/' | tr '\t' ' ' | sed 's#.* \(/.*\)$#\1/#' | sed 's#//*#/#'`
 export LIMBO_DIR="${volume_dir}LIMBO/"
 
 if [[ ${exit_status} -eq 0 ]]; then
