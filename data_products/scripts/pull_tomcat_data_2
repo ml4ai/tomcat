@@ -34,19 +34,7 @@ sensor_dirs_to_move=sensor_dirs_to_move.$$
 
 # This is in minutes. 10000 is about a week. 
 last_modification_time=10000
-last_modification_time=4000
 
-
-# If we need to switch cat and tom, we need to do so in the next four lines, and
-# change lines in sync_tom_and_cat and/or sync_tom_and_cat_2 as well. 
-
-export SENSOR_USER="cat"
-export SENSOR_HOST="cat@10.192.234.250"
-export MIRROR_USER="tom"
-export MIRROR_HOST="tom@10.192.234.251"
-
-export SENSOR_TOMCAT_DIR="/home/${SENSOR_USER}/tomcat/" 
-export I01_HOST="root@150.135.82.167"
 
 # Our exit status will be that of the last command that failed. 
 exit_status=0
@@ -120,57 +108,83 @@ do
     ${VERBOSE_ECHO} " "
     ${VERBOSE_ECHO} "Script pull_tomcat_data_2 working on ${exp_dir}"
     ${VERBOSE_ECHO} " "
-    i02_target_dir=$(echo $exp_dir | sed 's#/data/cat/#/space/tomcat/#')
-    ${VERBOSE_ECHO} "Script pull_tomcat_data_2 first target dir is ${i02_target_dir}"
+    target_sub_dir=$(echo $exp_dir | sed "s#/data/${SENSOR_USER}/#/space/tomcat/#")
+    ${VERBOSE_ECHO} "Script pull_tomcat_data_2 initial target dir is ${target_sub_dir}"
 
-    mkdir -p "${i02_target_dir}" 2>&1
-    rc=$?
-    ${VERBOSE_ECHO} "Mkdir return code was ${rc}"
-    ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
-    ${VERBOSE_ECHO} ""
+    # First we see if this is updating an existing transfer. 
+    
+    test_volume=""
+    target_dir=""
 
-    if [[ ${rc} -eq 0 ]]; then
-        ${VERBOSE_ECHO} "Script pull_tomcat_data_2 executing:"
-        ${VERBOSE_ECHO} "    rsync ${rsync_options} ${SENSOR_HOST}:${exp_dir}/ ${i02_target_dir}"
-        rsync ${rsync_options} ${SENSOR_HOST}:${exp_dir}/ ${i02_target_dir} 2>&1 
-        rc=$?
-        ${VERBOSE_ECHO} "Rsync return code was ${rc}"
-        ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
-        ${VERBOSE_ECHO} ""
+    for test_volume in ${RAW_DATA_VOLUMES}; do 
+        ${VERBOSE_ECHO} "Script pull_tomcat_data_2 considering ${test_volume}. "
 
-        # We are not so uptight about fixing ownership and perms so we do less
-        # reporting here. 
-        #
-        chown -R :langlab ${i02_target_dir} 2>&1 
-        chmod -R g=rX,o=  ${i02_target_dir} 2>&1 
+        if [[ -e "${test_volume}/data/${target_sub_dir}" ]]; then 
+            target_dir = "${test_volume}/data/${target_sub_dir}"
+            break
+        fi 
+    done 
+
+    if [[ ${target_dir}" != "" ]]; then 
+        ${VERBOSE_ECHO} "Script pull_tomcat_data_2 reusing existing target directory ${target_dir}. "
+    else
+        # If it is a new transfer, then give it to a disk that has space. If there
+        # is no such disk we report an error, but continue. 
+        
+        ${VERBOSE_ECHO} "Script pull_tomcat_data_2 looking for a place to out  ${target_sub_dir}. "
+
+        for test_volume in ${RAW_DATA_VOLUMES}; do 
+            ${VERBOSE_ECHO} "Script pull_tomcat_data_2 considering ${test_volume}. "
+
+            # Sed string is more specfic than necessary to be more robust. 
+            bytes_left=$( df ${test_volume} | tail -1 | sed 's/^[^ ]* *[0-9][0-9]* *[0-9][0-9]* *\([0-9][0-9]*\)  *.*$/\1/')$ 
+
+            if [[ ${bytes_left} > 1000000000 ]]; then 
+                tomcat_volume=test_volume
+                ${VERBOSE_ECHO} "Script pull_tomcat_data_2 reports that ${test_volume} qualifies as it has more than 1TB left. "
+                target_dir = "${test_volume}/data/${target_sub_dir}"
+                ${VERBOSE_ECHO} "Script pull_tomcat_data_2 reports that ${test_volume} qualifies as it has more than 1TB left. "
+
+                break
+            else 
+                ${VERBOSE_ECHO} "Script pull_tomcat_data_2 reports that ${test_volume} has less than 1TB left. "
+            fi 
+        done 
+
+        if [[ ${target_dir}" != "" ]]; then 
+            echo "ERR: Script pull_tomcat_data_2 unable to find a raw data volume with more than 1TB left. "
+            echo "ERR: Skipping ${target_sub_dir}" 
+            exit_status=0
+            continue
+        else 
+            mkdir -p "${i02_target_dir}" 2>&1
+            rc=$?
+            ${VERBOSE_ECHO} "Mkdir return code was ${rc}"
+            ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+            ${VERBOSE_ECHO} ""
+
+            if [[ ${rc} -ne 0 ]]; then
+                continue
+            fi 
+        fi 
     fi 
 
-    ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
-    ${VERBOSE_ECHO} ""
-
-    i01_target_dir=$(echo $exp_dir | sed 's#/data/cat/#/data/tomcat/#')
-    ${VERBOSE_ECHO} "Script pull_tomcat_data_2 second target dir is ${i01_target_dir}"
-    ssh -n -x ${I01_HOST} mkdir -p "${i01_target_dir}" 2>&1
+    ${VERBOSE_ECHO} "Script pull_tomcat_data_2 executing:"
+    ${VERBOSE_ECHO} "    rsync ${rsync_options} ${SENSOR_HOST}:${exp_dir}/ ${i02_target_dir}"
+    rsync ${rsync_options} ${SENSOR_HOST}:${exp_dir}/ ${i02_target_dir} 2>&1 
     rc=$?
-    ${VERBOSE_ECHO} "Remode mkdir return code was ${rc}"
+    ${VERBOSE_ECHO} "Rsync return code was ${rc}"
     ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
     ${VERBOSE_ECHO} ""
 
-    if [[ ${rc} -eq 0 ]]; then
-        ${VERBOSE_ECHO} "Script pull_tomcat_data_2 executing:"
-        ${VERBOSE_ECHO} "    rsync ${rsync_options} ${i02_target_dir}/ ${I01_HOST}:${i01_target_dir}"
-        rsync ${rsync_options} ${i02_target_dir}/ ${I01_HOST}:${i01_target_dir} 2>&1 
-        rc=$?
-        ${VERBOSE_ECHO} "Rsync return code was ${rc}"
-        ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
-        ${VERBOSE_ECHO} ""
+    # We are not so uptight about fixing ownership and perms so we do less
+    # reporting here. 
+    #
+    chown -R :langlab ${i02_target_dir} 2>&1 
+    chmod -R g=rX,o=  ${i02_target_dir} 2>&1 
 
-        # We are not so uptight about fixing ownership and perms so we do less
-        # reporting here. 
-        #
-        ssh -n -x ${I01_HOST} chown -R :langlab ${i01_target_dir} 2>&1 
-        ssh -n -x ${I01_HOST} chmod -R g=rX,o= ${i01_target_dir} 2>&1 
-    fi 
+    ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+    ${VERBOSE_ECHO} ""
 done < ${sensor_dirs_to_pull}
 
 rm -f ${sensor_dirs_to_pull}

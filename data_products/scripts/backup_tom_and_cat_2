@@ -33,15 +33,19 @@ echo " "
 # This can work on any machine with the correct fancy .ssh/config file. 
 export ROOT_USER_ON_CAT="root@10.192.234.250"
 export ROOT_USER_ON_TOM="root@10.192.234.251"
-export SISTA_BACKUP_HOST="kobus@kraken.sista.arizona.edu"
+### Not currently used --- export SISTA_BACKUP_HOST="kobus@kraken.sista.arizona.edu"
 
-# These are typically symbolic links. 
-export MISC_BACKUP_DIR="${HOME}/tomcat/backup" 
+# For misc backups, we coopt the tomcat main backup disks, even though the stuff
+# we are backing up does not appear on the main (fast) tomcat disks (tomcat_1,
+# tomcat_2). 
+#
+export MISC_BACKUP_DIR_1="/tomcat_B1" 
+export MISC_BACKUP_DIR_2="/tomcat_B2" 
 
 # This is relative to the external home. 
-export OFFSITE_BACKUP_DIR="tomcat/backup" 
+### Not currently used --- export OFFSITE_BACKUP_DIR="tomcat/backup" 
 
-export TOMCAT_DATA_DIR="/data/tomcat/LangLab"
+### Not currently used --- export TOMCAT_DATA_DIR="/data/tomcat/LangLab"
 
 # Our exit status will be that of the last command that failed. 
 exit_status=0
@@ -81,6 +85,28 @@ set +e
 
 base_rsync_options="-rlptD -u --modify-window=20 -b --suffix ${backup_suffix}"
 
+rsync_options="${rsync_verbose} ${base_rsync_options} --exclude=LIMBO --exclude=TRASH --exclude=trash --exclude=.[tT]rash --exclude=experiments"
+
+for tomcat_raw_volume in ${RAW_DATA_VOLUMES}; do 
+    ${VERBOSE_ECHO} "Script pull_tomcat_data_2 backing up ${tomcat_raw_volume}. "
+
+    echo DEV rsync ${rsync_options} ${tomcat_raw_volume}/ ${tomcat_raw_volume}_B1/  
+    xxxecho DEV rsync ${rsync_options} ${tomcat_raw_volume}/ ${tomcat_raw_volume}_B1/  
+    rc=$?
+    ${VERBOSE_ECHO} "Rsync return code was ${rc}"
+    ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+    ${VERBOSE_ECHO} ""
+ 
+    echo DEV rsync ${rsync_options} ${tomcat_raw_volume}/ ${tomcat_raw_volume}_B2/  
+    xxxecho DEV rsync ${rsync_options} ${tomcat_raw_volume}/ ${tomcat_raw_volume}_B2/  
+    rc=$?
+    ${VERBOSE_ECHO} "Rsync return code was ${rc}"
+    ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+    ${VERBOSE_ECHO} ""
+done 
+
+
+
 # # Backup experiments on SISTA 
 # rsync_options="${rsync_verbose} ${base_rsync_options} --chown=:tomcat-editor"
 # 
@@ -105,6 +131,9 @@ base_rsync_options="-rlptD -u --modify-window=20 -b --suffix ${backup_suffix}"
 #     ${VERBOSE_ECHO} "Script backup_tom_and_cat_2 skipping backup of ${TOMCAT_DATA_DIR} due to remote mkdir failure."
 # fi
 
+
+
+
 # Backup stuff other than experiments on IVILAB disks. Here we need some extra
 # excludes. 
 rsync_options="${rsync_verbose} ${base_rsync_options} --exclude=LIMBO --exclude=TRASH --exclude=trash --exclude=.[tT]rash --exclude=experiments"
@@ -113,7 +142,7 @@ rsync_options="${rsync_verbose} ${base_rsync_options} --exclude=LIMBO --exclude=
 for cat_dir in /home /data/cat 
 do 
     ${VERBOSE_ECHO} "Script backup_tom_and_cat_2 is working on cat directory: ${cat_dir}."
-    target_dir=${MISC_BACKUP_DIR}/cat/${cat_dir}
+    target_dir=${MISC_BACKUP_DIR_1}/cat/${cat_dir}
     ${VERBOSE_ECHO} "Script backup_tom_and_cat_2 executing:"
     ${VERBOSE_ECHO} "   mkdir -p ${target_dir}"
     mkdir -p "${target_dir}" 2>&1
@@ -139,7 +168,7 @@ done
 for tom_dir in /var/lib/docker /home/
 do 
     ${VERBOSE_ECHO} "Script backup_tom_and_cat_2 is working on tom directory: ${tom_dir}."
-    target_dir=${MISC_BACKUP_DIR}/tom/${tom_dir}
+    target_dir=${MISC_BACKUP_DIR_1}/tom/${tom_dir}
     ${VERBOSE_ECHO} "Script backup_tom_and_cat_2 executing:"
     ${VERBOSE_ECHO} "     mkdir -p ${target_dir}"
     mkdir -p "${target_dir}" 2>&1
@@ -160,6 +189,15 @@ do
         ${VERBOSE_ECHO} "Script backup_tom_and_cat_2 skipping backup of tom directory ${tom_dir} due to remote mkdir failure."
     fi
 done
+
+rsync_options="${rsync_verbose} ${base_rsync_options} 
+
+echo DEV rsync ${rsync_options} ${MISC_BACKUP_DIR_1}/ ${MISC_BACKUP_DIR_2}  
+xecho DEV rsync ${rsync_options} ${MISC_BACKUP_DIR_1}/ ${MISC_BACKUP_DIR_2}  
+rc=$?
+${VERBOSE_ECHO} "Rsync return code was ${rc}"
+${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+${VERBOSE_ECHO} ""
 
 eval echo "Script backup_tom_and_cat_2 exiting with status ${exit_status} on: $(date)" 
 

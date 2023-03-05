@@ -39,6 +39,19 @@ export CAT_USER_ON_CAT="cat@10.192.234.250"
 # controlled directories. 
 export PATH="/usr/bin:/bin:${TOMCAT_DIR}scripts"
 
+# If we need to switch cat and tom, we need to do so in the next four lines, and
+# change lines in sync_tom_and_cat and/or sync_tom_and_cat_2 as well. 
+
+export SENSOR_USER="cat"
+export SENSOR_HOST="cat@10.192.234.250"
+export MIRROR_USER="tom"
+export MIRROR_HOST="tom@10.192.234.251"
+
+# This is currently LangLab cat. 
+export SENSOR_TOMCAT_DIR="/home/${SENSOR_USER}/tomcat/" 
+
+export RAW_DATA_VOLUMES="/tomcat_raw_1 /tomcat_raw_2 /tomcat_raw_3 /tomcat_raw_4"
+
 # Our exit status will be that of the last command that failed. 
 exit_status=0
 

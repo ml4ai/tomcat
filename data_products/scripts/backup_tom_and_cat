@@ -32,6 +32,9 @@ source ${TOMCAT_DIR}shared_code/bash/ivi_preamble.bash
 # controlled directories. We also add all the tomcat script directories we need. 
 export PATH="/usr/bin:/bin:${TOMCAT_DIR}data_products/scripts"
 
+# Sync with pull_tomcat_data
+export RAW_DATA_VOLUMES="/tomcat_raw_1 /tomcat_raw_2 /tomcat_raw_3 /tomcat_raw_4"
+
 num_tries=5
 sleep_time_between_tries=600
 
