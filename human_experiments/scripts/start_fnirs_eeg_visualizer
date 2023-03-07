@@ -1,0 +1,25 @@
+#!/bin/bash
+
+set -u
+
+source wifi
+
+USER_ON_TARGET="cat"
+TARGET_IP="cat.local"
+
+echo " "
+if ! yes_no_question "${YELLOW}Do you want to start 'run_physio_viz.sh' on CAT?${NC}"; then
+  echo " "
+  echo -e "${RED}Starting un_physio_viz.sh - ABORTED!${NC}"
+  echo " "
+  exit 1
+fi
+
+# Set var to where the app un_physio_viz.sh path/app is located on CAT.
+PHYSIO_VIZ_APP="cd git/ML4AI/tomcat/human_experiments/lab_software/tomcat-physio-viz/ && ./run_physio_viz.sh"
+
+ssh "$USER_ON_TARGET@$TARGET_IP" "DISPLAY=:1 ${PHYSIO_VIZ_APP} &>/dev/null &"
+echo " "
+ssh "$USER_ON_TARGET@$TARGET_IP" ps -F -C run_physio_viz.sh
+echo " "
+

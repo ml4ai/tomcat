@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+touch ${1}
+
+say -v Samantha "Please do not click on a blank wall space anytime during the mission. Doing so, could cause you to loose your tool kit for the rest of the mission, and there is no way to get it back!" 
+
+rm -f ${1}
+

@@ -1,0 +1,54 @@
+#!/bin/bash
+
+MY_DIR="$(dirname "$(realpath "$0")")"
+${NC}source "${MY_DIR}/say_announcement_helpers"
+clear
+printf "
+${menu}******************************${Red}Say Announcements - Help File${menu}******************************${NC}
+${BGreen}Program Created By: ${Yellow}Rick Champlin   ${BGreen}Last Modified: ${Yellow}3/6/2023${NC}
+
+${BYellow}Start Program: ${BWhite}${Italic}./say_announcement_menu${NC}
+${BYellow}Command Line Opt:${NC} ${BWhite}${Italic}${Yellow}(No Opt) ${BBlue}Menu${NC} | ${BWhite}${Italic}${Yellow}-h ${BBlue}Help${NC}
+${BYellow}Announcement Files Directory: ${BBlue}data/tom/LangLab/experiments/say_announcements/${NC}
+The Pre-set and Temp Announcement Files are stored in the above Directory because
+all the Devices have a ${BWhite}${Italic}NFS${NC} mapping to it.
+
+${BYellow}Menu Note:${NC} Previously announced options will show a '${Green}\u2714#${NC}' (# times announced).
+
+${Yellow}Enable/Disable Announcement Devices:${NC}
+This will toggle ${White}${On_Green}ENABLE${NC}/${Black}${On_Red}DISABLE${NC} Announcement Devices - ${BBlue}Lion${NC}, ${BBlue}Tiger${NC}, ${BBlue}Leopard${NC},${BBlue}Server TOM${NC}.
+${Green}${Italic}(If a Device is Disabled, it will not play an announcement regardless of what menu
+option is selected!)${NC}
+
+${Yellow}Experiment Step Announcements:${NC}
+This will play on All Enabled Devices, Pre-set Announcements for the start of each
+Experiment Step.
+${Green}${Italic}(These Announcements are typically only played once during the Experiment!)${NC}
+
+${Yellow}Extra Instruction Announcements:${NC}
+This will play on All Enabled Devices, Pre-set Announcements that are optionally played,
+(sometimes, multiple times) throughout the Experiment.
+
+${Yellow}On the Fly (Type-In) Announcements:${NC}
+These options will allow operator to Type-In an announcement on the fly to be played
+only on the Device(s) specified by the option and only if that Device(s) is Enabled.
+Also, it will be played on ${BBlue}Server TOM${NC} if it is Enabled.
+${Green}${Italic}(You will be prompted to type in the announcement. When you press ${BWhite}${Italic}<Enter>${Green}${Italic},
+the announcement will be played on the selected Device(s).
+It will then loop back to allow you to type in another announcement for that same
+option. You can press ${BWhite}${Italic}<Enter> (on blank line)${Green}${Italic} or ${BWhite}${Italic}<x, Enter>${Green}${Italic} or
+${BWhite}${Italic}<ctrl+c>${Green}${Italic} to return to menu.)${NC}
+
+${Yellow}Announcement Tools:${NC}
+${Yellow}test)${NC} ${BBlue}This will play on All Enabled Devices a Pre-set Sound Check Announcement:${NC}
+It will introduce the announcement system and ask participants if they are hearing this
+ok in their earbuds, to let the experimenter know. Also, it lets the participants know
+that they can adjust earbud volume by using the keys on the top right side of keyboard.${NC}
+ 
+${Yellow}edit) ${BBlue}Allow the operator to view/edit the Pre-set Announcements:${NC}
+This will prompt the operator to select the Announcement menu option, then it will
+open that Announcement File in the ${BWhite}${Italic}[nano editor]${NC} for viewing or editing.
+
+${Yellow}help) ${BBlue}Help File:${NC} Displays this Help File (${BWhite}${Italic}say_announcement_help${NC})
+${menu}************************************${Red}End of Help File${menu}*************************************${NC}
+"

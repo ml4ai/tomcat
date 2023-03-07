@@ -1,0 +1,97 @@
+#!/bin/bash
+
+set -u
+
+if [[ -z ${1+x} ]]; then
+  PADDING=""
+else
+  PADDING=$1
+fi
+
+__stop_face_and_screen_recording() {
+  local client_name=$1
+  local client_address=$2
+  local padding=$3
+
+  local command="cd \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/ && "
+  command+="./kill_ffmpeg \"$padding \""
+
+  echo -e "${padding}Stopping ${EMPH}Face and Screen Recording${NC}..."
+  local stopped="n"
+  while [[ $stopped != "y" ]]; do
+    # shellcheck disable=SC2029
+    if ssh "$EXPERIMENT_USER@$client_address" "$command"; then
+      stopped="y"
+    else
+      if ! yes_no_question "${padding} Do you want to ${EMPH}RETRY${NC}?"; then
+        break
+      fi
+    fi
+  done
+}
+
+__stop_audio_streamer() {
+  local client_name=$1
+  local client_address=$2
+  local padding=$3
+
+  local pid_path="$EXPERIMENT_DIR/tmp/audio_streamer_$client_name.pid"
+  local audio_streamer_pid
+  audio_streamer_pid="$(cat "$pid_path")"
+  local command="kill $audio_streamer_pid"
+
+  echo -e "${padding}Stopping ${EMPH}Audio Streamer${NC}..."
+  local stopped="n"
+  while [[ $stopped != "y" ]]; do
+    # shellcheck disable=SC2029
+    if ssh "$EXPERIMENT_USER@$client_address" "$command"; then
+      stopped="y"
+    else
+      if ! yes_no_question "${padding} Do you want to ${EMPH}RETRY${NC}?"; then
+        break
+      fi
+    fi
+  done
+}
+
+__stop_on_client() {
+  local client_name=$1
+  local client_address=$2
+  local padding=$3
+
+  if [[ $ALL -ne 1 ]]; then
+    yes_no_question "${padding}Do you want to stop ${EMPH}Face/Screen Recording and Audio Streamer${NC} on ${EMPH}$client_name${NC}?"
+    ans=$?
+    padding="$padding "
+  fi
+  if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
+    echo -e "${padding}Stopping Face/Screen Recording and Audio Streamer on ${EMPH}$client_name${NC}..."
+    __stop_face_and_screen_recording "$client_name" "$client_address" "$padding "
+    __stop_audio_streamer "$client_name" "$client_address" "$padding "
+  fi
+}
+
+__stop_monitoring_program_cat() {
+  if [[ $ALL -ne 1 ]]; then
+    yes_no_question "${padding} Do you want to stop image timestamp monitoring?"
+    ans=$?
+    padding="$padding "
+  fi
+  if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
+    ssh cat@cat "~/Desktop/image_timestamp_scripts/end_image_timestamp.sh"
+  fi
+}
+
+__stop() {
+  local padding=$1
+  echo -e "${padding}Stopping Data Streaming Processes..."
+
+  __stop_on_client "lion" "lion.local" "$padding "
+  __stop_on_client "tiger" "tiger.local" "$padding "
+  __stop_on_client "leopard" "leopard.local" "$padding "
+
+  echo -e "${padding}Stopping Image monitoring Program..."
+  __stop_monitoring_program_cat
+}
+
+__stop "$PADDING"
