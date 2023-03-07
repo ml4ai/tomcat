@@ -1,0 +1,55 @@
+#!/bin/bash
+
+MY_DIR="$(dirname "$(realpath "$0")")"
+${NC}source "${MY_DIR}/configuration_helpers"
+clear
+printf "
+${menu}****************************************************${Red}Export REDCap Data - Help File${menu}****************************************************${NC}
+${BGreen}Program Created By: ${Yellow}Rick Champlin   ${BGreen}Last Modified: ${Yellow}2/20/2023${NC}
+
+${BRed}(This program will only run on a Server that has the REDCap Security Keys installed on it!)${NC}
+${BYellow}CL Opt:${NC} ${BWhite}${Italic}${Yellow}(No Opt) ${BBlue}Menu${NC} | ${BWhite}${Italic}${Yellow}-c ${BWhite}${Italic}<Team ID ##>${NC} ${BBlue}Check for Team Data${NC} | ${Yellow}-v ${BWhite}${Italic}<Exp Dir exp_yyyy_mm_dd_hh/>${NC} ${BBlue}Check for Team Data in REDCap${NC} | ${BWhite}${Italic}${Yellow}-h ${BBlue}Help${NC}
+
+${Yellow}c) ${BBlue}Check for Team Data in REDCap:${NC}
+${BYellow}Prompted to enter:${NC} [Team ID: ${Italic}##${NC}].
+This function will query the REDCap Team Data and report on the screen, with some of the data, if a record has been entered for the
+specified Team ID. Good check, because you should not run the 'Export Data Process' until the Team Data has been entered into REDCap.
+A temp file will be exported to ${BWhite}${Italic}/data/tom/TRASH/verify_team_data_##${NC}. After it is read into variables, it is immediately deleted.
+
+${Yellow}e) ${BBlue}Export Data:${NC}
+${BYellow}Prompted to enter:${NC} [Exp Dir: ${Italic}<data path>/exp_yyyy_mm_dd_hh/${NC}], [Team ID: ${Italic}##${NC}], [Lion, Tiger & Leopard Subject IDs: ${Italic}#####${NC}].
+(End [Exp Dir] with a slash '/', or the program will add it. For No-Show participants, enter 99999 for Subject ID.)
+
+Seven (7) separate “.csv” files are outputted and they are queried for a specified experiment (example: ${BWhite}${Italic}exp_2023_02_21_14${NC}).
+The files are created/outputted into the experiment directory on CAT where all the other data for that experiment is stored.
+(example: ${BWhite}${Italic}/data/cat/LangLab/experiments/study_3_pilot/group/exp_2023_02_21_14/${NC}).
+
+Here are the files that were exported for ${BWhite}${Italic}exp_2023_02_21_14${NC}:
+${BGreen}Lion: ${BWhite}${Italic}/data/cat/LangLab/experiments/study_3_pilot/group/exp_2023_02_21_14/lion/redcap_data/lion_self_report_data.csv${NC}
+      ${BWhite}${Italic}/data/cat/LangLab/experiments/study_3_pilot/group/exp_2023_02_21_14/lion/redcap_data/lion_post_game_survey_Data.csv${NC}
+${BGreen}Tiger: ${BWhite}${Italic}/data/cat/LangLab/experiments/study_3_pilot/group/exp_2023_02_21_14/tiger/redcap_data/tiger_self_report_data.csv${NC}
+       ${BWhite}${Italic}/data/cat/LangLab/experiments/study_3_pilot/group/exp_2023_02_21_14/tiger/redcap_data/tiger_post_game_survey_Data.csv${NC}
+${BGreen}Leopard: ${BWhite}${Italic}/data/cat/LangLab/experiments/study_3_pilot/group/exp_2023_02_21_14/leopard/redcap_data/leopard_self_report_data.csv${NC}
+         ${BWhite}${Italic}/data/cat/LangLab/experiments/study_3_pilot/group/exp_2023_02_21_14/leopard/redcap_data/leopard_post_game_survey_Data.csv${NC}
+${BGreen}Team: ${BWhite}${Italic}/data/cat/LangLab/experiments/study_3_pilot/group/exp_2023_02_21_14/redcap_data/team_data.csv${NC}
+
+In some cases, the “${BWhite}${Italic}self_report_data.csv${NC}” or “${BWhite}${Italic}post_game_survey_Data.csv${NC}” files could be empty for that experiment.
+For example, if a participant did not show up for an experiment and was assigned to Tiger station, and one of us (experimenter)
+sat in for that participant on Tiger, the “${BWhite}${Italic}tiger_self_report_data.csv${NC}” file will be there, but empty.
+
+If a participant (or an experimenter sitting in) on Tiger did not complete the Final Survey at the end of the experiment,
+the “${BWhite}${Italic}tiger_post_game_survey_Data.csv${NC}” file will be there, but empty.
+
+The “${BWhite}${Italic}team_data.csv${NC}” should always have content in it. Because, I do not export the data until the SC staff has entered the
+redcap team data for that experiment.
+
+${Yellow}v) ${BBlue}Verify that the REDCap Data Files have been Exported:${NC}
+${BYellow}Prompted to enter:${NC} [Exp Dir: ${Italic}<data path>/exp_yyyy_mm_dd_hh/${NC}].
+(End [Exp Dir] with a slash '/' or the program will add it.)
+This function will open the Exported Data Files one by one in ${BWhite}${Italic}vim (READ ONLY)${NC} for a specified [Exp Dir] to verify if the
+REDCap Directorys and Data Files have been created and if the Files have content in them. As you close each file in ${BWhite}${Italic}vim${NC} by
+pressing ${BWhite}${Italic}<Shift+ZQ>${NC} the file will close and the next one in the list as specified by in the 'Export Data Process' will open.   
+
+${Yellow}h) ${BBlue}Help File:${NC} Displays this Help File (${BWhite}${Italic}export_redcap_help${NC})
+${menu}***********************************************************${Red}End of Help File${menu}***********************************************************${NC}
+"

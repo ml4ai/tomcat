@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+touch ${1}
+
+say -v Samantha "Next is the team affective task. Please read the instructions on your screen. If you have any questions, just ask the experimenter in the room."
+
+rm -f ${1}
+

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+touch ${1}
+
+say -v Samantha "That completes the tomcat experiment for today. Thank you very much for participating! While the experimenters are removing the cap and sensors, would you please fill out the final survay. That survay will be ready on your screen shortly. And again, thank you!" 
+
+rm -f ${1}
+

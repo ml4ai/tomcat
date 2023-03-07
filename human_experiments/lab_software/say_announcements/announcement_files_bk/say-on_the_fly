@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+touch ${1}
+
+say -Samantha "This is a big test announcement to test to see if the on th fly is working properly!"
+
+rm -f ${1}
+

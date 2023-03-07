@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+touch ${1}
+
+say -v Samantha "We will begin!" 
+
+rm -f ${1}
+
