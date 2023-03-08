@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+touch ${1}
+
+say -v Samantha "That completes the minecraft saturn a mission. We will now prepare for the minecraft second mission, saturn b." 
+
+rm -f ${1}
+

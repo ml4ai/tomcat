@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+touch ${1}
+
+say -v Samantha "We are ready to start the Baseline Tasks. This first step is a Rest Period. Just try to relax for the next 5 minutes, try not to move your head around to much, and please do not look at or fiddle with your phone." 
+
+rm -f ${1}
+

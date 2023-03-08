@@ -1,0 +1,347 @@
+#!/bin/bash
+
+MY_DIR="$(dirname "$(realpath "$0")")"
+source "${MY_DIR}/configuration_helpers"
+
+SSH_ADDRESS="cat@local"
+
+EXP_DIR_TMP="/data/cat/LangLab/experiments/study_3_pilot/group/exp_2023_"
+
+API_URL="${REDCAP_API_URL}"
+API_SELF_REPORT_KEY="${REDCAP_API_SELF_REPORT_KEY}"
+API_POST_GAME_SURVEY_KEY="${REDCAP_API_POST_GAME_SURVEY_KEY}"
+API_TEAM_DATA_KEY="${REDCAP_API_TEAM_DATA_KEY}"
+set -u
+
+CL_OPT="";
+NO_MENU="";
+TEAM_ID="";
+EXP_DIR_OPT="";
+while getopts ":c:veh" cmd_ln_opt; do  # Loop: Get the next option;
+  case "${cmd_ln_opt}" in 
+    c) CL_OPT="c";
+       TEAM_ID=${OPTARG};
+    ;;
+    v) CL_OPT="v";
+       #EXP_DIR_OPT=${OPTARG}; #Brining in Arguments for -v and -e, not yet implimented.
+    ;;
+    e) CL_OPT="e";
+    ;;
+    h) CL_OPT="h";
+    ;;
+    :) echo "Error: -${OPTARG} requires an argument.";
+       exit;
+    ;;
+    *) exit;
+    ;;
+  esac
+done
+
+
+
+show_menu(){
+  if [[ "${NO_MENU}" == "y" ]]; then exit; fi
+ 
+  clear;
+
+  if [[ "${CL_OPT}" == "" ]]; then
+    printf "\n${menu}*******************************${Red}ToMCAT - Export REDCap Data${menu}*******************************${NC}\n";
+    printf "${menu}**${number} c) ${BBlue}Check to see if Team Data has been entered into REDCap.${NC}\n";
+    printf "${menu}**${number} e) ${BBlue}Export REDCap Data to the Experiment Directory on '/data/cat'.${NC}\n";
+    printf "${menu}**${number} v) ${BBlue}Verify that REDCap Data Files have been Exported to the Experiment Directory.${NC}\n";
+    printf "${menu}**${number} h) ${BBlue}Help File for this program.${NC}\n";
+    printf "${menu}**${number} x) ${BBlue}Exit the program.${NC}\n";
+    printf "${menu}*****************************************************************************************${NC}\n";
+
+    printf "Please enter a menu option and enter ${Red}(x to exit program): ${NC}";
+    read opt;
+  else
+    opt="${CL_OPT}";
+    NO_MENU="y";
+  fi
+}
+
+
+enter_return_main_menu(){
+  if [[ "${NO_MENU}" == "y" ]]; then exit; fi
+  printf "${NC}${BYellow}${Italic}";
+  read -n 1 -r -s -p $'(Press ENTER to return to main menu)';
+  printf "${NC}";
+}
+
+
+check_redcap_keys(){
+  if [[ "${API_URL}" == "" || "${API_SELF_REPORT_KEY}" == "" || "${API_POST_GAME_SURVEY_KEY}" == "" || "${API_TEAM_DATA_KEY}" == "" ]]; then
+    printf "\n${Yellow}${On_Red}* This Server does not have the REDCap Security Keys installed! - PROGRAM TERMINATED! *${NC}\n\n";
+    exit;
+  fi
+}
+
+
+get_exp_dir(){
+  printf "\n${Red}Enter Experiment Directory: ${Yellow}(Must end with a slash '${NC}/${Yellow}')${NC}\n";
+  read -e -i "${EXP_DIR_TMP}" EXP_DIR;
+  if [[ "${EXP_DIR: -1}" != "/" ]]; then EXP_DIR="${EXP_DIR}/"; fi
+  EXP_DATE="${EXP_DIR: -14: 10}";
+  FILTER_DATE=${EXP_DATE//[_]/-};
+
+  if [[ "${EXP_DIR: -19: 5}" != "/exp_" ]]; then
+    printf "\n${Yellow}The Experiment Directory that you entered does not start with '/exp_':${NC} (${BYellow}${Italic}/exp_${BGreen}yyyy_mm_dd_hh/${NC})\n";
+    yes_no_question "${Red}Do you want to re-enter the Experiment Directory?${NC}";
+    if [[ $? -eq 0 ]]; then
+      get_exp_dir;
+    fi
+  fi
+  if ! [[ "$FILTER_DATE" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] || ! date -d $FILTER_DATE >/dev/null 2>&1; then
+    printf "\n${Yellow}The Date part of the Experiment Directory that you entered is Invalid:${NC} (${BGreen}/exp_${BYellow}${Italic}yyyy_mm_dd${NC}${BGreen}_hh/${NC})\n";
+    yes_no_question "${Red}Do you want to re-enter the Experiment Directory?${NC}";
+    if [[ $? -eq 0 ]]; then
+      get_exp_dir;
+    fi
+  fi
+  if ! [[ "${EXP_DIR: -3: 2}" =~ ^[0-9]{2}$ ]] || [[ "${EXP_DIR: -3: 2}" -gt 24 ]] || [[ "${EXP_DIR: -3: 2}" -lt 1 ]]; then
+    printf "\n${Yellow}The hour part of the Experiment Directory that you entered is Invalid:${NC} (${BGreen}/exp_yyyy_mm_dd_${BYellow}${Italic}hh${BGreen}/${NC})\n";
+    yes_no_question "${Red}Do you want to re-enter the Experiment Directory?${NC}";
+    if [[ $? -eq 0 ]]; then
+      get_exp_dir;
+    fi
+  fi
+}
+
+
+get_team_id(){
+  printf "\n${Red}Enter Team ID (##):${NC}\n";
+  read -e -n 3 TEAM_ID;
+}
+
+
+get_subject_ids(){
+  printf "\n${YELLOW}(For a participant that did not show up, enter ${NC}99999${YELLOW} or press ${NC}Enter${YELLOW} for the Subject ID)${NC}\n";
+  printf "${Red}Enter Lion's Subject ID (00###):${NC}\n";
+  read -e -i "00" -n 5 LION_SUBJECT_ID;
+  if [[ "${LION_SUBJECT_ID}" == "00" ]]; then LION_SUBJECT_ID="99999"; echo -ne "\033[1A\033[2K99999\n"; fi
+  printf "\n${Red}Enter Tiger's Subject ID (00###):${NC}\n";
+  read -e -i "00" -n 5 TIGER_SUBJECT_ID;
+  if [[ "${TIGER_SUBJECT_ID}" == "00" ]]; then TIGER_SUBJECT_ID="99999"; echo -ne "\033[1A\033[2K99999\n"; fi
+  printf "\n${Red}Enter Leopard's Subject ID (00###):${NC}\n";
+  read -e -i "00" -n 5 LEOPARD_SUBJECT_ID;
+  if [[ "${LEOPARD_SUBJECT_ID}" == "00" ]]; then LEOPARD_SUBJECT_ID="99999"; echo -ne "\033[1A\033[2K99999\n"; fi
+}
+
+
+set_output_vars(){
+  LION_SELF_REPORT_OUTPUT="${EXP_DIR}lion/redcap_data/lion_self_report_data.csv";
+  TIGER_SELF_REPORT_OUTPUT="${EXP_DIR}tiger/redcap_data/tiger_self_report_data.csv";
+  LEOPARD_SELF_REPORT_OUTPUT="${EXP_DIR}leopard/redcap_data/leopard_self_report_data.csv";
+
+  LION_POST_GAME_SURVEY_OUTPUT="${EXP_DIR}lion/redcap_data/lion_post_game_survey_Data.csv";
+  TIGER_POST_GAME_SURVEY_OUTPUT="${EXP_DIR}tiger/redcap_data/tiger_post_game_survey_Data.csv";
+  LEOPARD_POST_GAME_SURVEY_OUTPUT="${EXP_DIR}leopard/redcap_data/leopard_post_game_survey_Data.csv";
+
+  TEAM_DATA_OUTPUT="${EXP_DIR}redcap_data/team_data.csv";
+}
+
+
+set_export_vars(){
+  LION_SELF_REPORT_OUTPUT="${EXP_DIR}lion/redcap_data/lion_self_report_data.csv";
+  TIGER_SELF_REPORT_OUTPUT="${EXP_DIR}tiger/redcap_data/tiger_self_report_data.csv";
+  LEOPARD_SELF_REPORT_OUTPUT="${EXP_DIR}leopard/redcap_data/leopard_self_report_data.csv";
+
+  LION_POST_GAME_SURVEY_OUTPUT="${EXP_DIR}lion/redcap_data/lion_post_game_survey_Data.csv";
+  TIGER_POST_GAME_SURVEY_OUTPUT="${EXP_DIR}tiger/redcap_data/tiger_post_game_survey_Data.csv";
+  LEOPARD_POST_GAME_SURVEY_OUTPUT="${EXP_DIR}leopard/redcap_data/leopard_post_game_survey_Data.csv";
+
+  TEAM_DATA_OUTPUT="${EXP_DIR}redcap_data/team_data.csv";
+
+  LION_SELF_REPORT_ARG="${API_URL} ${API_SELF_REPORT_KEY} Self_Report ${LION_SELF_REPORT_OUTPUT} ([subject_id]='${LION_SUBJECT_ID}')";
+  TIGER_SELF_REPORT_ARG="${API_URL} ${API_SELF_REPORT_KEY} Self_Report ${TIGER_SELF_REPORT_OUTPUT} ([subject_id]='${TIGER_SUBJECT_ID}')";
+  LEOPARD_SELF_REPORT_ARG="${API_URL} ${API_SELF_REPORT_KEY} Self_Report ${LEOPARD_SELF_REPORT_OUTPUT} ([subject_id]='${LEOPARD_SUBJECT_ID}')";
+
+  # If you have spaces in a command line argument like " AND " in the Post_Game_Survey filter argument, it will cause the argument to split up into 3 arguments
+  # when it is passed into "python3 export_redcap_data.py". The way I get around this problem is to use question marks (?) instead of spaces "?AND?" and replace
+  # the question marks (?) with spaces in "export_redcap_data.py". "?AND?" becomes " AND " in "export_redcap_data.py" to make the REDCap filter logic work correctly.
+  LION_POST_GAME_SURVEY_ARG="${API_URL} ${API_POST_GAME_SURVEY_KEY} Post_Game_Survey ${LION_POST_GAME_SURVEY_OUTPUT} (([subject_id]=\'${LION_SUBJECT_ID}\')?AND?([session1_date]=\'${FILTER_DATE}\'))";
+  TIGER_POST_GAME_SURVEY_ARG="${API_URL} ${API_POST_GAME_SURVEY_KEY} Post_Game_Survey ${TIGER_POST_GAME_SURVEY_OUTPUT} (([subject_id]=\'${TIGER_SUBJECT_ID}\')?AND?([session1_date]=\'${FILTER_DATE}\'))";
+  LEOPARD_POST_GAME_SURVEY_ARG="${API_URL} ${API_POST_GAME_SURVEY_KEY} Post_Game_Survey ${LEOPARD_POST_GAME_SURVEY_OUTPUT} (([subject_id]=\'${LEOPARD_SUBJECT_ID}\')?AND?([session1_date]=\'${FILTER_DATE}\'))";
+
+  TEAM_DATA_ARG="${API_URL} ${API_TEAM_DATA_KEY} Team_Data ${TEAM_DATA_OUTPUT} ([team_id]='${TEAM_ID}')";
+}
+
+
+
+do_check_team_record(){
+  if [[ "${NO_MENU}" != "y" || "${CL_OPT}" != "c" ]]; then 
+    get_team_id;
+
+    yes_no_question "\n${Red}DO you want to continue checking:\nTo see if ${Green}Team ID: ${Yellow}${TEAM_ID} ${Red}Data has been entered into REDCap?${NC}";
+    if [[ $? -ne 0 ]]; then
+      printf "\n${Red}*** Checking Team Data in REDCap Process - ABORTED! ***${NC}\n";
+      enter_return_main_menu;
+      return 1;
+    fi
+  fi
+
+  VERIFY_TEAM_DATA_OUTPUT="/data/tom/TRASH/verify_team_data_${TEAM_ID}";
+  VERIFY_TEAM_DATA_ARG="${API_URL} ${API_TEAM_DATA_KEY} Verify_Team_Data ${VERIFY_TEAM_DATA_OUTPUT} ([team_id]='${TEAM_ID}')";
+
+  python3 export_redcap_data.py ${VERIFY_TEAM_DATA_ARG}
+
+  # 0 record_id|
+  # 1 team_id|
+  # 2 testing_session_date|
+  # 3 subject_id|
+  # 4 real_participant_attend|
+  # 5 real_participant_absent|
+  # 6 research_team_participation|
+  # 7 participants_issue
+  # 8 participants_issues_details|
+  # 9 equipment_issues|
+  # 10 equipment_issues_details|
+  # 11 additional_notes|
+  # 12 team_data_complete
+
+  LNUM=1; LINE1=""; DATA_LINES="";
+  while IFS= read -r line; do
+    if [[ "${LNUM}" == 1 ]]; then LINE1="${line}"; fi
+    if [[ "${LNUM}" -gt 1 ]]; then DATA_LINES="${DATA_LINES}${line}"; fi
+    LNUM=$((LNUM+1))
+  done < ${VERIFY_TEAM_DATA_OUTPUT}
+
+  rm "${VERIFY_TEAM_DATA_OUTPUT}";
+
+  if [[ "${DATA_LINES}" != "" ]]; then
+    IFS='|'; TEAM_DATA=($DATA_LINES); unset IFS;
+    printf "\n\n${Black}${On_Green}*** A record for Team ID: ${BYellow}${On_Green}${TEAM_ID}${Black}${On_Green} was found in REDCap! ***${NC}\n\n"
+    printf "${BGreen}The Team Data in record:${NC}\n";
+    printf "${Green}Record ID: ${Yellow}${TEAM_DATA[0]}${NC}\n";
+    printf "${Green}Team ID: ${Yellow}${TEAM_DATA[1]}${NC}\n";
+    printf "${Green}Experiment Date: ${Yellow}${TEAM_DATA[2]}${NC}\n";
+    printf "${Green}Subject's IDs: ${Yellow}${TEAM_DATA[3]}${NC}\n";
+    printf "${Green}Real Participants Attend: ${Yellow}${TEAM_DATA[4]}${Green}, Absent: ${Yellow}${TEAM_DATA[5]}${NC}\n";
+    printf "${Green}Research Team Participation: ${Yellow}${TEAM_DATA[6]}${NC}\n";
+    printf "${Green}Participants Issues: ${Yellow}${TEAM_DATA[7]}${Green}, Details:\n${Yellow}${TEAM_DATA[8]}${NC}\n\n";
+    printf "${Green}Equipment Issues: ${Yellow}${TEAM_DATA[9]}${Green}, Details:\n${Yellow}${TEAM_DATA[10]}${NC}\n\n";
+    printf "${Green}Additional Notes:\n${Yellow}${TEAM_DATA[11]}${NC}\n\n";
+    printf "${Green}Team Data Complete: ${Yellow}${TEAM_DATA[12]}${NC}\n\n";
+  else
+    printf "\n\n${Black}${On_Red}*** A record for Team ID: ${BYellow}${On_Red}${TEAM_ID}${Black}${On_Red} was not found in REDCap! ***${NC}\n"
+    printf "${Red}(This means that the Team Data has not been entered into REDCap yet!)${NC}\n\n";
+  fi
+  
+  enter_return_main_menu;
+}
+
+
+
+do_export(){
+  get_exp_dir;
+
+  get_team_id;
+  
+  get_subject_ids;
+
+  printf "\n${Yellow}Verify the following parameters:${NC}";
+  printf "\n${Green}Experiment Dir: ${Yellow}${EXP_DIR}${NC}";
+  printf "\n${Green}Team ID: ${Yellow}${TEAM_ID}${NC}";
+  printf "\n${Green}Lion's Subject ID: ${Yellow}${LION_SUBJECT_ID}${NC}";
+  printf "\n${Green}Tiger's Subject ID: ${Yellow}${TIGER_SUBJECT_ID}${NC}";
+  printf "\n${Green}Leopard's Subject ID: ${Yellow}${LEOPARD_SUBJECT_ID}${NC}";
+  printf "\n${Green}Query Filter Date: ${Yellow}${FILTER_DATE}${NC}";
+  printf "\n${Yellow}Are the export parameters correct?${NC}";
+  yes_no_question "\n${Yellow}DO YOU WANT TO CONTINUE WITH THE EXPORT?${NC}";
+  if [[ $? -ne 0 ]]; then
+    printf "\n${Red}*** Redcap Export - ABORTED! ***${NC}\n";
+    enter_return_main_menu;
+    return 1;
+  fi
+
+  set_output_vars;
+
+  set_export_vars;
+
+  python3 export_redcap_data.py ${LION_SELF_REPORT_ARG}
+  python3 export_redcap_data.py ${TIGER_SELF_REPORT_ARG}
+  python3 export_redcap_data.py ${LEOPARD_SELF_REPORT_ARG}
+
+  python3 export_redcap_data.py ${LION_POST_GAME_SURVEY_ARG}
+  python3 export_redcap_data.py ${TIGER_POST_GAME_SURVEY_ARG}
+  python3 export_redcap_data.py ${LEOPARD_POST_GAME_SURVEY_ARG}
+
+  python3 export_redcap_data.py ${TEAM_DATA_ARG}
+
+  printf "\n${Red}*** Exporting REDCap Data Files to the Experiment Directory Process Complete! ***${NC}\n";
+  
+  do_verify_export_files;
+    
+}
+
+
+do_verify_export_files(){
+  yes_no_question "\n${Red}Do want to verify each REDCap Data Export file created by opening them one by one in ${NC}vim ${Yellow}(READ ONLY)$Red}?
+When you close ${NC}vim${Red} by pressing ${NC}shift+ZQ${Red}, it will close and open the next file.
+${Green}File Order:${NC}
+${Green}LION: ${Yellow}${LION_SELF_REPORT_OUTPUT}${NC}
+      ${Yellow}${LION_POST_GAME_SURVEY_OUTPUT}\n${NC}
+${Green}TIGER: ${Yellow}${TIGER_SELF_REPORT_OUTPUT}${NC}
+       ${Yellow}${TIGER_POST_GAME_SURVEY_OUTPUT}\n${NC}
+${Green}LEOPARD: ${Yellow}${LEOPARD_SELF_REPORT_OUTPUT}${NC}
+         ${Yellow}${LEOPARD_POST_GAME_SURVEY_OUTPUT}\n${NC}
+${Green}TEAM: ${Yellow}${TEAM_DATA_OUTPUT}\n${NC}
+${Red}VERIFY FILES?${NC} ";
+  DO_VERIFY="$?";
+
+  if [[ "${DO_VERIFY}" == "0" ]]; then
+    vim -R "${LION_SELF_REPORT_OUTPUT}";
+    vim -R "${LION_POST_GAME_SURVEY_OUTPUT}";
+    vim -R "${TIGER_SELF_REPORT_OUTPUT}";
+    vim -R "${TIGER_POST_GAME_SURVEY_OUTPUT}";
+    vim -R "${LEOPARD_SELF_REPORT_OUTPUT}";
+    vim -R "${LEOPARD_POST_GAME_SURVEY_OUTPUT}";
+    vim -R "${TEAM_DATA_OUTPUT}";
+    printf "\n${Red}*** Verifing REDCap Data Files Process Complete! ***${NC}\n";
+    enter_return_main_menu;
+  fi
+}
+
+
+do_print_help(){
+  HELP_TEXT="$(<${MY_DIR}/export_redcap_help)";
+  eval "${HELP_TEXT}";
+  enter_return_main_menu;
+}
+
+
+show_menu;
+
+while [ "$opt" != '' ]
+  do
+  case $opt in
+    c) check_redcap_keys;
+       do_check_team_record;
+       show_menu;
+    ;;
+    e) check_redcap_keys;
+       do_export;
+       show_menu;
+    ;;
+    v) get_exp_dir;
+       set_output_vars;
+       do_verify_export_files;
+       show_menu;
+    ;;
+    h) do_print_help;
+       show_menu;
+    ;;
+    x)exit;
+    ;;
+    \n)exit;
+    ;;
+    *) printf "\n${Red}*** Not a valid option ***${NC}\n";
+      sleep 3;
+      show_menu;
+    ;;
+  esac
+done
+
+exit;
+

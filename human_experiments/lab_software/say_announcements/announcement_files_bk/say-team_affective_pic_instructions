@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+touch ${1}
+
+say -v Samantha "In this task, you will be showen each picture twice. The first time it comes up, please do not discuss with your teammates. The second time it comes up, you may discuss with your teammates."
+
+rm -f ${1}
+
