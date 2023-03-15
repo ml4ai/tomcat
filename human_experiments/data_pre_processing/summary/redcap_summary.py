@@ -75,17 +75,17 @@ class ParticipantREDCapSummary(REDCapSummary):
 
     @classmethod
     def from_experiment_directory(cls, experiment_dir: str, machine_name: str) -> ParticipantREDCapSummary:
-        redcap_files = []
+        redcap_filenames = []
         if os.path.exists(f"{experiment_dir}/{machine_name}/REDCap_data"):
-            redcap_files = [filepath for filepath in os.listdir(f"{experiment_dir}/{machine_name}/REDCap_data") if
-                               "post_game_survey" in filepath.lower()]
+            redcap_filenames = [filename for filename in os.listdir(f"{experiment_dir}/{machine_name}/REDCap_data") if
+                               "post_game_survey" in filename.lower()]
 
-        if len(redcap_files) == 0:
+        if len(redcap_filenames) == 0:
             return cls(
                 participant_id=MISSING_INFO
             )
         else:
-            redcap_filepath = redcap_files[0]
+            redcap_filepath = f"{experiment_dir}/{redcap_filenames[0]}"
             redcap_df = pd.read_csv(redcap_filepath, delimiter=",")
 
             return cls(
