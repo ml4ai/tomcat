@@ -29,23 +29,30 @@ class TeamREDCapSummary(REDCapSummary):
         redcap_filepath = f"{experiment_dir}/REDCap_data/Team_Data.csv"
 
         if os.path.exists(redcap_filepath):
-            redcap_df = pd.read_csv(redcap_filepath, delimiter=",")
+            try:
+                redcap_df = pd.read_csv(redcap_filepath, delimiter=",")
 
-            return cls(
-                experiment_date=redcap_df.iloc[0]["testing_session_date"],
-                team_number=redcap_df.iloc[0]["team_id"],
-                participants_issues_details=redcap_df.iloc[0]["participants_issues_details"],
-                equipment_issues_details=redcap_df.iloc[0]["equipment_issues_details"],
-                additional_notes=redcap_df.iloc[0]["additional_notes"]
-            )
+                return cls(
+                    experiment_date=redcap_df.iloc[0]["testing_session_date"],
+                    team_number=redcap_df.iloc[0]["team_id"],
+                    participants_issues_details=redcap_df.iloc[0]["participants_issues_details"],
+                    equipment_issues_details=redcap_df.iloc[0]["equipment_issues_details"],
+                    additional_notes=redcap_df.iloc[0]["additional_notes"]
+                )
+            except pd.errors.EmptyDataError:
+                return TeamREDCapSummary.empty_summary()
         else:
-            return cls(
-                experiment_date=MISSING_INFO,
-                team_number=MISSING_INFO,
-                participants_issues_details=MISSING_INFO,
-                equipment_issues_details=MISSING_INFO,
-                additional_notes=MISSING_INFO
-            )
+            return TeamREDCapSummary.empty_summary()
+
+    @classmethod
+    def empty_summary(cls) -> TeamREDCapSummary:
+        return cls(
+            experiment_date=MISSING_INFO,
+            team_number=MISSING_INFO,
+            participants_issues_details=MISSING_INFO,
+            equipment_issues_details=MISSING_INFO,
+            additional_notes=MISSING_INFO
+        )
 
     def to_data_frame(self) -> pd.DataFrame:
         headers = [
@@ -82,18 +89,26 @@ class ParticipantREDCapSummary(REDCapSummary):
                                 "post_game_survey" in filename.lower()]
 
         if len(redcap_filenames) == 0:
-            return cls(
-                participant_id=MISSING_INFO
-            )
+            return ParticipantREDCapSummary.empty_summary()
         else:
-            redcap_filepath = f"{redcap_dir}/{redcap_filenames[0]}"
-            redcap_df = pd.read_csv(redcap_filepath, delimiter=",")
+            try:
+                redcap_filepath = f"{redcap_dir}/{redcap_filenames[0]}"
+                redcap_df = pd.read_csv(redcap_filepath, delimiter=",")
 
-            return cls(
-                # If I don't explicitly transform to string, it will retrieve the participant id as a number, and it
-                # will erase leading zeros.
-                participant_id=str(redcap_df.iloc[0]["subject_id"])
-            )
+                return cls(
+                    # If I don't explicitly transform to string, it will retrieve the participant id as a number, and it
+                    # will erase leading zeros.
+                    participant_id=str(redcap_df.iloc[0]["subject_id"])
+                )
+
+            except pd.errors.EmptyDataError:
+                return ParticipantREDCapSummary.empty_summary()
+
+    @classmethod
+    def empty_summary(cls) -> ParticipantREDCapSummary:
+        return cls(
+            participant_id=MISSING_INFO
+        )
 
     def to_data_frame(self) -> pd.DataFrame:
         headers = [

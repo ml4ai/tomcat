@@ -23,25 +23,31 @@ class CooperativePingPongSummary(TaskSummary):
 
         if len(game_files) == 0:
             # There was some error during the experiment and the file was not created. Data was not saved for the task.
-            team_score = MISSING_INFO
-            ai_score = MISSING_INFO
+            return CooperativePingPongSummary.empty_summary()
         else:
-            game_filepath = game_files[-1]
-            game_df = pd.read_csv(game_filepath, delimiter=";")
+            try:
+                game_filepath = game_files[-1]
+                game_df = pd.read_csv(game_filepath, delimiter=";")
 
-            if "score_left" not in game_df.columns:
-                # Paulo Soares:
-                # Old format where some cells contain json data. This data is too old and it's not used since we
-                # started the true pilots. So I will not worry about extract data from it.
-                team_score = MISSING_INFO
-                ai_score = MISSING_INFO
-            else:
-                team_score = str(game_df.iloc[-1]["score_left"])
-                ai_score = str(game_df.iloc[-1]["score_right"])
+                if "score_left" not in game_df.columns:
+                    # Paulo Soares:
+                    # Old format where some cells contain json data. This data is too old and it's not used since we
+                    # started the true pilots. So I will not worry about extract data from it.
+                    return CooperativePingPongSummary.empty_summary()
+                else:
+                    return cls(
+                        team_score=str(game_df.iloc[-1]["score_left"]),
+                        ai_score=str(game_df.iloc[-1]["score_right"])
+                    )
 
+            except pd.errors.EmptyDataError:
+                return CooperativePingPongSummary.empty_summary()
+
+    @classmethod
+    def empty_summary(cls) -> CooperativePingPongSummary:
         return cls(
-            team_score=team_score,
-            ai_score=ai_score
+            team_score=MISSING_INFO,
+            ai_score=MISSING_INFO
         )
 
     def to_data_frame(self) -> pd.DataFrame:

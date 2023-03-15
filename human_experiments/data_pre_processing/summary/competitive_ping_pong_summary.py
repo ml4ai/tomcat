@@ -27,34 +27,37 @@ class CompetitivePingPongSummary(TaskSummary):
 
         if len(game_files) == 0:
             # There was some error during the experiment and the file was not created. Data was not saved for the task.
-            participant_id_left = MISSING_INFO
-            participant_id_right = MISSING_INFO
-            score_left = MISSING_INFO
-            score_right = MISSING_INFO
+            return CompetitivePingPongSummary.empty_summary()
         else:
-            game_filepath = game_files[-1]
-            game_df = pd.read_csv(game_filepath, delimiter=";")
+            try:
+                game_filepath = game_files[-1]
+                game_df = pd.read_csv(game_filepath, delimiter=";")
 
-            if "score_left" not in game_df.columns:
-                # Paulo Soares:
-                # Old format where some cells contain json data. This data is too old and it's not used since we
-                # started the true pilots. So I will not worry about extract data from it.
-                participant_id_left = MISSING_INFO
-                participant_id_right = MISSING_INFO
-                score_left = MISSING_INFO
-                score_right = MISSING_INFO
-            else:
-                participant_id_left = game_df.columns[-4].split("_")[0]  # Column named <participant_id1>_y
-                participant_id_right = game_df.columns[-3].split("_")[0]  # Column named <participant_id2>_x
-                score_left = str(game_df.iloc[-1]["score_left"])
-                score_right = str(game_df.iloc[-1]["score_right"])
+                if "score_left" not in game_df.columns:
+                    # Paulo Soares:
+                    # Old format where some cells contain json data. This data is too old and it's not used since we
+                    # started the true pilots. So I will not worry about extract data from it.
+                    return CompetitivePingPongSummary.empty_summary()
+                else:
+                    return cls(
+                        participant_id_left=game_df.columns[-4].split("_")[0],  # Column named <participant_id1>_y
+                        participant_id_right=game_df.columns[-3].split("_")[0],  # Column named <participant_id2>_x
+                        score_left=str(game_df.iloc[-1]["score_left"]),
+                        score_right=str(game_df.iloc[-1]["score_right"]),
+                        team_id=team_id
+                    )
 
+            except pd.errors.EmptyDataError:
+                return CompetitivePingPongSummary.empty_summary()
+
+    @classmethod
+    def empty_summary(cls) -> CompetitivePingPongSummary:
         return cls(
-            participant_id_left=participant_id_left,
-            participant_id_right=participant_id_right,
-            score_left=score_left,
-            score_right=score_right,
-            team_id=team_id
+            participant_id_left=MISSING_INFO,
+            participant_id_right=MISSING_INFO,
+            score_left=MISSING_INFO,
+            score_right=MISSING_INFO,
+            team_id=MISSING_INFO
         )
 
     def to_data_frame(self) -> pd.DataFrame:
