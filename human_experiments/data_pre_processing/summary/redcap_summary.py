@@ -26,19 +26,29 @@ class TeamREDCapSummary(REDCapSummary):
 
     @classmethod
     def from_experiment_directory(cls, experiment_dir: str) -> TeamREDCapSummary:
-        redcap_filepath = f"{experiment_dir}/REDCap_data/Team_Data.csv"
+        # Name of the directory containing REDCap data. We look for it in a list because the case changed over time.
+        redcap_dirs = [dir_name for dir_name in os.listdir(f"{experiment_dir}") if
+                       "redcap" in dir_name.lower()]
 
-        if os.path.exists(redcap_filepath):
+        if len(redcap_dirs) > 0:
             try:
-                redcap_df = pd.read_csv(redcap_filepath, delimiter=",")
+                # We need this logic because the folder and the file name changes case over the time.
+                redcap_dir = f"{experiment_dir}/{redcap_dirs[0]}"
+                redcap_filenames = [filename for filename in os.listdir(redcap_dir) if "team_data" in filename.lower()]
 
-                return cls(
-                    experiment_date=redcap_df.iloc[0]["testing_session_date"],
-                    team_number=redcap_df.iloc[0]["team_id"],
-                    participants_issues_details=redcap_df.iloc[0]["participants_issues_details"],
-                    equipment_issues_details=redcap_df.iloc[0]["equipment_issues_details"],
-                    additional_notes=redcap_df.iloc[0]["additional_notes"]
-                )
+                if len(redcap_filenames) == 0:
+                    return TeamREDCapSummary.empty_summary()
+                else:
+                    redcap_filepath = f"{redcap_dir}/{redcap_filenames[0]}"
+                    redcap_df = pd.read_csv(redcap_filepath, delimiter=",")
+
+                    return cls(
+                        experiment_date=redcap_df.iloc[0]["testing_session_date"],
+                        team_number=redcap_df.iloc[0]["team_id"],
+                        participants_issues_details=redcap_df.iloc[0]["participants_issues_details"],
+                        equipment_issues_details=redcap_df.iloc[0]["equipment_issues_details"],
+                        additional_notes=redcap_df.iloc[0]["additional_notes"]
+                    )
             except pd.errors.EmptyDataError:
                 return TeamREDCapSummary.empty_summary()
         else:
@@ -82,27 +92,32 @@ class ParticipantREDCapSummary(REDCapSummary):
 
     @classmethod
     def from_experiment_directory(cls, experiment_dir: str, machine_name: str) -> ParticipantREDCapSummary:
-        redcap_filenames = []
-        redcap_dir = f"{experiment_dir}/{machine_name}/REDCap_data/"
-        if os.path.exists(redcap_dir):
+        # Name of the directory containing REDCap data. We look for it in a list because the case changed over time.
+        redcap_dirs = [dir_name for dir_name in os.listdir(f"{experiment_dir}/{machine_name}") if
+                       "redcap" in dir_name.lower()]
+
+        if len(redcap_dirs) > 0:
+            redcap_dir = f"{experiment_dir}/{machine_name}/{redcap_dirs[0]}"
             redcap_filenames = [filename for filename in os.listdir(redcap_dir) if
                                 "post_game_survey" in filename.lower()]
 
-        if len(redcap_filenames) == 0:
-            return ParticipantREDCapSummary.empty_summary()
-        else:
-            try:
-                redcap_filepath = f"{redcap_dir}/{redcap_filenames[0]}"
-                redcap_df = pd.read_csv(redcap_filepath, delimiter=",")
-
-                return cls(
-                    # If I don't explicitly transform to string, it will retrieve the participant id as a number, and it
-                    # will erase leading zeros.
-                    participant_id=str(redcap_df.iloc[0]["subject_id"])
-                )
-
-            except pd.errors.EmptyDataError:
+            if len(redcap_filenames) == 0:
                 return ParticipantREDCapSummary.empty_summary()
+            else:
+                try:
+                    redcap_filepath = f"{redcap_dir}/{redcap_filenames[0]}"
+                    redcap_df = pd.read_csv(redcap_filepath, delimiter=",")
+
+                    return cls(
+                        # If I don't explicitly transform to string, it will retrieve the participant id as a number, and it
+                        # will erase leading zeros.
+                        participant_id=str(redcap_df.iloc[0]["subject_id"])
+                    )
+
+                except pd.errors.EmptyDataError:
+                    return ParticipantREDCapSummary.empty_summary()
+        else:
+            return ParticipantREDCapSummary.empty_summary()
 
     @classmethod
     def empty_summary(cls) -> ParticipantREDCapSummary:
