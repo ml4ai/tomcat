@@ -4,11 +4,12 @@ from glob import glob
 import pandas as pd
 
 from human_experiments.data_pre_processing.summary.task_summary import TaskSummary
+from human_experiments.data_pre_processing.common.constants import MISSING_INFO
 
 
 class CooperativePingPongSummary(TaskSummary):
 
-    def __init__(self, team_score: int, ai_score: int):
+    def __init__(self, team_score: str, ai_score: str):
         super().__init__("Cooperative Ping-Pong")
         self.team_score = team_score
         self.ai_score = ai_score
@@ -18,11 +19,18 @@ class CooperativePingPongSummary(TaskSummary):
         # We sort just in case there are multiple entries. This can happen if a game was interrupted, and we started
         # over. The timestamp appended after the team identifier in the filename help us to identify the latest file
         # recorded.
-        game_filepath = sorted(list(glob(f"{experiment_dir}/baseline_tasks/competitive_0_*.csv")))[-1]
-        game_df = pd.read_csv(game_filepath, delimiter=";")
+        game_files = sorted(list(glob(f"{experiment_dir}/baseline_tasks/cooperative_0_*.csv")))
 
-        team_score = int(game_df.iloc[-1]["score_left"])
-        ai_score = int(game_df.iloc[-1]["score_right"])
+        if len(game_files) == 0:
+            # There was some error during the experiment and the file was not created. Data was not saved for the task.
+            team_score = MISSING_INFO
+            ai_score = MISSING_INFO
+        else:
+            game_filepath = game_files[-1]
+            game_df = pd.read_csv(game_filepath, delimiter=";")
+
+            team_score = str(game_df.iloc[-1]["score_left"])
+            ai_score = str(game_df.iloc[-1]["score_right"])
 
         return cls(
             team_score=team_score,

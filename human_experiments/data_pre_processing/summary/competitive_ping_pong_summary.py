@@ -4,11 +4,12 @@ from glob import glob
 import pandas as pd
 
 from human_experiments.data_pre_processing.summary.task_summary import TaskSummary
+from human_experiments.data_pre_processing.common.constants import MISSING_INFO
 
 
 class CompetitivePingPongSummary(TaskSummary):
 
-    def __init__(self, participant_id_left: str, participant_id_right: str, score_left: int, score_right: int, team_id: int):
+    def __init__(self, participant_id_left: str, participant_id_right: str, score_left: str, score_right: str, team_id: int):
         super().__init__("Competitive Ping-Pong")
         self.participant_id_left = participant_id_left
         self.participant_id_right = participant_id_right
@@ -21,13 +22,22 @@ class CompetitivePingPongSummary(TaskSummary):
         # We sort just in case there are multiple entries. This can happen if a game was interrupted, and we started
         # over. The timestamp appended after the team identifier in the filename help us to identify the latest file
         # recorded.
-        game_filepath = sorted(list(glob(f"{experiment_dir}/baseline_tasks/competitive_{team_id - 1}_*.csv")))[-1]
-        game_df = pd.read_csv(game_filepath, delimiter=";")
+        game_files = sorted(list(glob(f"{experiment_dir}/baseline_tasks/competitive_{team_id - 1}_*.csv")))
 
-        participant_id_left = game_df.columns[-4].split("_")[0]  # Column named <participant_id1>_y
-        participant_id_right = game_df.columns[-3].split("_")[0]  # Column named <participant_id2>_x
-        score_left = int(game_df.iloc[-1]["score_left"])
-        score_right = int(game_df.iloc[-1]["score_right"])
+        if len(game_files) == 0:
+            # There was some error during the experiment and the file was not created. Data was not saved for the task.
+            participant_id_left = MISSING_INFO
+            participant_id_right = MISSING_INFO
+            score_left = MISSING_INFO
+            score_right = MISSING_INFO
+        else:
+            game_filepath = game_files[-1]
+            game_df = pd.read_csv(game_filepath, delimiter=";")
+
+            participant_id_left = game_df.columns[-4].split("_")[0]  # Column named <participant_id1>_y
+            participant_id_right = game_df.columns[-3].split("_")[0]  # Column named <participant_id2>_x
+            score_left = str(game_df.iloc[-1]["score_left"])
+            score_right = str(game_df.iloc[-1]["score_right"])
 
         return cls(
             participant_id_left=participant_id_left,

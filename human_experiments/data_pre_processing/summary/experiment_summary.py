@@ -61,4 +61,4 @@ class ExperimentSummary:
         ]
         dfs.extend([task_summary.to_data_frame() for task_summary in self.task_summaries])
 
-        return pd.merge(dfs, axis=1)
+        return pd.concat(dfs, axis=1)

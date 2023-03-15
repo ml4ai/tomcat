@@ -10,6 +10,7 @@ import logging
 import pandas as pd
 
 from human_experiments.data_pre_processing.summary.task_summary import TaskSummary
+from human_experiments.data_pre_processing.common.constants import MISSING_INFO
 
 logger = logging.getLogger()
 
@@ -40,14 +41,14 @@ class USARMissionSummary(TaskSummary):
     @property
     def trial_duration(self) -> str:
         if self.trial_start is None or self.trial_end is None:
-            return "unknown"
+            return MISSING_INFO
         else:
             return str((self.trial_end - self.trial_start).total_seconds())
 
     @property
     def mission_duration(self) -> str:
         if self.mission_start is None or self.mission_end is None:
-            return "unknown"
+            return MISSING_INFO
         else:
             return str((self.mission_end - self.mission_start).total_seconds())
 
@@ -134,7 +135,7 @@ class USARMissionSummary(TaskSummary):
         return self.map_name == "saturn_b"
 
     def has_completed(self) -> bool:
-        return self.mission_duration != "unknown"
+        return self.mission_duration != MISSING_INFO
 
     def to_data_frame(self) -> pd.DataFrame:
         header = [
@@ -156,11 +157,11 @@ class USARMissionSummary(TaskSummary):
         data = [
             self.trial_id,
             self.trial_number,
-            "unknown" if self.trial_start is None else self.trial_start.isoformat(),
-            "unknown" if self.trial_end is None else self.trial_end.isoformat(),
+            MISSING_INFO if self.trial_start is None else self.trial_start.isoformat(),
+            MISSING_INFO if self.trial_end is None else self.trial_end.isoformat(),
             self.trial_duration,
-            "unknown" if self.mission_start is None else self.mission_start.isoformat(),
-            "unknown" if self.mission_end is None else self.mission_end.isoformat(),
+            MISSING_INFO if self.mission_start is None else self.mission_start.isoformat(),
+            MISSING_INFO if self.mission_end is None else self.mission_end.isoformat(),
             self.mission_duration,
             self.team_score,
             self.num_messages,
@@ -208,14 +209,9 @@ class USARSummary(TaskSummary):
 
     def to_data_frame(self) -> pd.DataFrame:
         dfs = [
-            self.mission_summaries_dict["training"],
-            self.mission_summaries_dict["main1"],
-            self.mission_summaries_dict["main2"],
+            self.mission_summaries_dict["training"].to_data_frame().add_suffixes(f" ({self.task_name} - Training)"),
+            self.mission_summaries_dict["main1"].to_data_frame().add_suffixes(f" ({self.task_name} - Main 1)"),
+            self.mission_summaries_dict["main2"].to_data_frame().add_suffixes(f" ({self.task_name} - Main 2)")
         ]
 
-        suffixes = [
-            f" ({self.task_name} - Training)",
-            f" ({self.task_name} - Main 1)",
-            f" ({self.task_name} - Main 2)"
-        ]
-        return pd.merge(dfs, axis=1, suffixes=suffixes)
+        return pd.concat(dfs, axis=1)

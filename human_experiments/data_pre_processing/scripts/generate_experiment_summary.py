@@ -3,18 +3,19 @@ import argparse
 import os
 
 import pandas as pd
+from tqdm import tqdm
 
 from human_experiments.data_pre_processing.summary.experiment_summary import ExperimentSummary
 
 
 def generate_summary(experiments_dir: str, out_dir: str):
-    experiment_directories = os.listdir(experiments_dir)
+    experiment_directories = list(os.listdir(experiments_dir))
 
     dfs = []
-    for experiment_dir in experiment_directories:
-        dfs.append(ExperimentSummary.from_experiment_directory(experiment_dir))
+    for experiment_dir in tqdm(experiment_directories, total=len(experiment_directories), desc="Experiments"):
+        dfs.append(ExperimentSummary.from_experiment_directory(experiment_dir).to_data_frame())
 
-    summary_df = pd.merge(dfs, axis=0)
+    summary_df = pd.concat(dfs)
 
     summary_df.to_csv(f"{out_dir}/summary.csv")
 

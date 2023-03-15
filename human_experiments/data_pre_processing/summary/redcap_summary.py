@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 import pandas as pd
+import os.path
+
+from human_experiments.data_pre_processing.common.constants import MISSING_INFO
 
 
 class REDCapSummary:
@@ -23,15 +26,26 @@ class TeamREDCapSummary(REDCapSummary):
 
     @classmethod
     def from_experiment_directory(cls, experiment_dir: str) -> TeamREDCapSummary:
-        redcap_df = pd.read_csv(f"{experiment_dir}/REDCap_data/Team_Data.csv", delimiter=",")
+        redcap_filepath = f"{experiment_dir}/REDCap_data/Team_Data.csv"
 
-        return cls(
-            experiment_date=redcap_df.iloc[0]["testing_session_date"],
-            team_number=redcap_df.iloc[0]["team_id"],
-            participants_issues_details=redcap_df.iloc[0]["participants_issues_details"],
-            equipment_issues_details=redcap_df.iloc[0]["equipment_issues_details"],
-            additional_notes=redcap_df.iloc[0]["additional_notes"]
-        )
+        if os.path.exists(redcap_filepath):
+            redcap_df = pd.read_csv(redcap_filepath, delimiter=",")
+
+            return cls(
+                experiment_date=redcap_df.iloc[0]["testing_session_date"],
+                team_number=redcap_df.iloc[0]["team_id"],
+                participants_issues_details=redcap_df.iloc[0]["participants_issues_details"],
+                equipment_issues_details=redcap_df.iloc[0]["equipment_issues_details"],
+                additional_notes=redcap_df.iloc[0]["additional_notes"]
+            )
+        else:
+            return cls(
+                experiment_date=MISSING_INFO,
+                team_number=MISSING_INFO,
+                participants_issues_details=MISSING_INFO,
+                equipment_issues_details=MISSING_INFO,
+                additional_notes=MISSING_INFO
+            )
 
     def to_data_frame(self) -> pd.DataFrame:
         headers = [
@@ -61,11 +75,20 @@ class ParticipantREDCapSummary(REDCapSummary):
 
     @classmethod
     def from_experiment_directory(cls, experiment_dir: str, machine_name: str) -> ParticipantREDCapSummary:
-        redcap_df = pd.read_csv(f"{experiment_dir}/{machine_name}/REDCap_data/Team_Data.csv", delimiter=",")
+        redcap_files = [filepath for filepath in os.listdir(f"{experiment_dir}/{machine_name}/REDCap_data") if
+                           "post_game_survey" in filepath.lower()]
 
-        return cls(
-            participant_id=redcap_df.iloc[0]["subject_id"]
-        )
+        if len(redcap_files) == 0:
+            return cls(
+                participant_id=MISSING_INFO
+            )
+        else:
+            redcap_filepath = redcap_files[0]
+            redcap_df = pd.read_csv(redcap_filepath, delimiter=",")
+
+            return cls(
+                participant_id=redcap_df.iloc[0]["subject_id"]
+            )
 
     def to_data_frame(self) -> pd.DataFrame:
         headers = [
