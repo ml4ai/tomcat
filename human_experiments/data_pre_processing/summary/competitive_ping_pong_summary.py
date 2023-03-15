@@ -27,7 +27,7 @@ class CompetitivePingPongSummary(TaskSummary):
 
         if len(game_files) == 0:
             # There was some error during the experiment and the file was not created. Data was not saved for the task.
-            return CompetitivePingPongSummary.empty_summary()
+            return CompetitivePingPongSummary.empty_summary(team_id)
         else:
             try:
                 game_filepath = game_files[-1]
@@ -37,7 +37,7 @@ class CompetitivePingPongSummary(TaskSummary):
                     # Paulo Soares:
                     # Old format where some cells contain json data. This data is too old and it's not used since we
                     # started the true pilots. So I will not worry about extract data from it.
-                    return CompetitivePingPongSummary.empty_summary()
+                    return CompetitivePingPongSummary.empty_summary(team_id)
                 else:
                     return cls(
                         participant_id_left=game_df.columns[-4].split("_")[0],  # Column named <participant_id1>_y
@@ -48,16 +48,16 @@ class CompetitivePingPongSummary(TaskSummary):
                     )
 
             except pd.errors.EmptyDataError:
-                return CompetitivePingPongSummary.empty_summary()
+                return CompetitivePingPongSummary.empty_summary(team_id)
 
     @classmethod
-    def empty_summary(cls) -> CompetitivePingPongSummary:
+    def empty_summary(cls, team_id: int) -> CompetitivePingPongSummary:
         return cls(
             participant_id_left=MISSING_INFO,
             participant_id_right=MISSING_INFO,
             score_left=MISSING_INFO,
             score_right=MISSING_INFO,
-            team_id=MISSING_INFO
+            team_id=team_id
         )
 
     def to_data_frame(self) -> pd.DataFrame:
