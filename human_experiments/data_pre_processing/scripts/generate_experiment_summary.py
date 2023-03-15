@@ -16,8 +16,8 @@ def generate_summary(experiments_dir: str, out_dir: str):
     for experiment_dir in tqdm(experiment_directories, total=len(experiment_directories), desc="Experiments"):
         dfs.append(ExperimentSummary.from_experiment_directory(f"{experiments_dir}/{experiment_dir}").to_data_frame())
 
-        summary_df = pd.concat(dfs).reset_index(drop=True)
-        summary_df.to_csv(f"{out_dir}/summary.csv")
+    summary_df = pd.concat(dfs).reset_index(drop=True)
+    summary_df.to_csv(f"{out_dir}/summary.csv")
 
 
 if __name__ == "__main__":
