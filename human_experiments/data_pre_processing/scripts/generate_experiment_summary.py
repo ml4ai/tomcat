@@ -12,8 +12,12 @@ def generate_summary(experiments_dir: str, out_dir: str):
     experiment_directories = list(os.listdir(experiments_dir))
 
     dfs = []
+    i = 0
     for experiment_dir in tqdm(experiment_directories, total=len(experiment_directories), desc="Experiments"):
         dfs.append(ExperimentSummary.from_experiment_directory(experiment_dir).to_data_frame())
+        i += 1
+        if i == 2:
+            break
 
     summary_df = pd.concat(dfs)
 
