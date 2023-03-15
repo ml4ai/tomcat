@@ -3,8 +3,8 @@ from __future__ import annotations
 from glob import glob
 import pandas as pd
 
-from human_experiments.data_pre_processing.summary.task_summary import TaskSummary
-from human_experiments.data_pre_processing.common.constants import MISSING_INFO
+from summary.task_summary import TaskSummary
+from common.constants import MISSING_INFO
 
 
 class CooperativePingPongSummary(TaskSummary):

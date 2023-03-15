@@ -3,7 +3,7 @@ from __future__ import annotations
 import pandas as pd
 import os.path
 
-from human_experiments.data_pre_processing.common.constants import MISSING_INFO
+from common.constants import MISSING_INFO
 
 
 class REDCapSummary:

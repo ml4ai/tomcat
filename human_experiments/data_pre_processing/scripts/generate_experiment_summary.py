@@ -5,7 +5,7 @@ import os
 import pandas as pd
 from tqdm import tqdm
 
-from human_experiments.data_pre_processing.summary.experiment_summary import ExperimentSummary
+from summary.experiment_summary import ExperimentSummary
 
 
 def generate_summary(experiments_dir: str, out_dir: str):
@@ -14,7 +14,7 @@ def generate_summary(experiments_dir: str, out_dir: str):
     dfs = []
     i = 0
     for experiment_dir in tqdm(experiment_directories, total=len(experiment_directories), desc="Experiments"):
-        dfs.append(ExperimentSummary.from_experiment_directory(experiment_dir).to_data_frame())
+        dfs.append(ExperimentSummary.from_experiment_directory(f"{experiments_dir}/{experiment_dir}").to_data_frame())
         i += 1
         if i == 10:
             break

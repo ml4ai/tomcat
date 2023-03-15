@@ -9,8 +9,8 @@ import json
 import logging
 import pandas as pd
 
-from human_experiments.data_pre_processing.summary.task_summary import TaskSummary
-from human_experiments.data_pre_processing.common.constants import MISSING_INFO
+from summary.task_summary import TaskSummary
+from common.constants import MISSING_INFO
 
 logger = logging.getLogger()
 
@@ -25,9 +25,9 @@ class USARMissionSummary(TaskSummary):
     def __init__(self):
         super().__init__("Mission")
 
-        self.trial_id = ""
-        self.trial_number = ""
-        self.map_name = ""
+        self.trial_id = MISSING_INFO
+        self.trial_number = MISSING_INFO
+        self.map_name = MISSING_INFO
         self.trial_start: Optional[datetime] = None
         self.trial_end: Optional[datetime] = None
         self.mission_start: Optional[datetime] = None
@@ -36,7 +36,7 @@ class USARMissionSummary(TaskSummary):
         self.num_messages = 0
         self.num_asr_messages = 0
         self.num_dialog_messages = 0
-        self.intervention_agents = ""
+        self.intervention_agents = MISSING_INFO
 
     @property
     def trial_duration(self) -> str:
