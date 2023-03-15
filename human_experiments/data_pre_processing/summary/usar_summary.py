@@ -209,9 +209,9 @@ class USARSummary(TaskSummary):
 
     def to_data_frame(self) -> pd.DataFrame:
         dfs = [
-            self.mission_summaries_dict["training"].to_data_frame().add_suffixes(f" ({self.task_name} - Training)"),
-            self.mission_summaries_dict["main1"].to_data_frame().add_suffixes(f" ({self.task_name} - Main 1)"),
-            self.mission_summaries_dict["main2"].to_data_frame().add_suffixes(f" ({self.task_name} - Main 2)")
+            self.mission_summaries_dict["training"].to_data_frame().add_suffix(f" ({self.task_name} - Training)"),
+            self.mission_summaries_dict["main1"].to_data_frame().add_suffix(f" ({self.task_name} - Main 1)"),
+            self.mission_summaries_dict["main2"].to_data_frame().add_suffix(f" ({self.task_name} - Main 2)")
         ]
 
         return pd.concat(dfs, axis=1)
