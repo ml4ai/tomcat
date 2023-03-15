@@ -77,7 +77,7 @@ class ParticipantREDCapSummary(REDCapSummary):
     def from_experiment_directory(cls, experiment_dir: str, machine_name: str) -> ParticipantREDCapSummary:
         redcap_filenames = []
         redcap_dir = f"{experiment_dir}/{machine_name}/REDCap_data/{machine_name}"
-        if os.path.exists():
+        if os.path.exists(redcap_dir):
             redcap_filenames = [filename for filename in os.listdir(redcap_dir) if
                                 "post_game_survey" in filename.lower()]
 
