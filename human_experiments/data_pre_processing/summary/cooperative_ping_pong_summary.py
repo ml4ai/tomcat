@@ -19,7 +19,7 @@ class CooperativePingPongSummary(TaskSummary):
         # We sort just in case there are multiple entries. This can happen if a game was interrupted, and we started
         # over. The timestamp appended after the team identifier in the filename help us to identify the latest file
         # recorded.
-        game_files = sorted(list(glob(f"{experiment_dir}/baseline_tasks/cooperative_0_*.csv")))
+        game_files = sorted(list(glob(f"{experiment_dir}/baseline_tasks/ping_pong/cooperative_0_*.csv")))
 
         if len(game_files) == 0:
             # There was some error during the experiment and the file was not created. Data was not saved for the task.
