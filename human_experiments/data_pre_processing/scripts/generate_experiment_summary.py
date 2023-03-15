@@ -16,7 +16,7 @@ def generate_summary(experiments_dir: str, out_dir: str):
     for experiment_dir in tqdm(experiment_directories, total=len(experiment_directories), desc="Experiments"):
         dfs.append(ExperimentSummary.from_experiment_directory(f"{experiments_dir}/{experiment_dir}").to_data_frame())
         i += 1
-        if i == 10:
+        if i == 5:
             break
 
     summary_df = pd.concat(dfs)
