@@ -9,13 +9,14 @@ from summary.experiment_summary import ExperimentSummary
 
 
 def generate_summary(experiments_dir: str, out_dir: str):
+    os.makedirs(out_dir, exist_ok=True)
     experiment_directories = sorted(list(os.listdir(experiments_dir)))
 
     dfs = []
     for experiment_dir in tqdm(experiment_directories, total=len(experiment_directories), desc="Experiments"):
         dfs.append(ExperimentSummary.from_experiment_directory(f"{experiments_dir}/{experiment_dir}").to_data_frame())
 
-        summary_df = pd.concat(dfs)
+        summary_df = pd.concat(dfs).reset_index(drop=True)
         summary_df.to_csv(f"{out_dir}/summary.csv")
 
 
