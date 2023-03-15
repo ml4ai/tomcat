@@ -29,10 +29,10 @@ class CooperativePingPongSummary(TaskSummary):
             game_filepath = game_files[-1]
             game_df = pd.read_csv(game_filepath, delimiter=";")
 
-            if len(game_df.columns) < 4:
+            if "score_left" not in game_df.columns:
                 # Paulo Soares:
-                # Old format where there's only 2 columns and the second is a json. This data is too old and it's
-                # not used since we started the true pilots. So I will not worry about extract data from it.
+                # Old format where some cells contain json data. This data is too old and it's not used since we
+                # started the true pilots. So I will not worry about extract data from it.
                 team_score = MISSING_INFO
                 ai_score = MISSING_INFO
             else:
