@@ -29,8 +29,15 @@ class CooperativePingPongSummary(TaskSummary):
             game_filepath = game_files[-1]
             game_df = pd.read_csv(game_filepath, delimiter=";")
 
-            team_score = str(game_df.iloc[-1]["score_left"])
-            ai_score = str(game_df.iloc[-1]["score_right"])
+            if len(game_df.columns) < 4:
+                # Paulo Soares:
+                # Old format where there's only 2 columns and the second is a json. This data is too old and it's
+                # not used since we started the true pilots. So I will not worry about extract data from it.
+                team_score = MISSING_INFO
+                ai_score = MISSING_INFO
+            else:
+                team_score = str(game_df.iloc[-1]["score_left"])
+                ai_score = str(game_df.iloc[-1]["score_right"])
 
         return cls(
             team_score=team_score,

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from glob import glob
+import json
 import pandas as pd
 
 from summary.task_summary import TaskSummary
@@ -34,10 +35,19 @@ class CompetitivePingPongSummary(TaskSummary):
             game_filepath = game_files[-1]
             game_df = pd.read_csv(game_filepath, delimiter=";")
 
-            participant_id_left = game_df.columns[-4].split("_")[0]  # Column named <participant_id1>_y
-            participant_id_right = game_df.columns[-3].split("_")[0]  # Column named <participant_id2>_x
-            score_left = str(game_df.iloc[-1]["score_left"])
-            score_right = str(game_df.iloc[-1]["score_right"])
+            if len(game_df.columns) < 4:
+                # Paulo Soares:
+                # Old format where there's only 2 columns and the second is a json. This data is too old and it's
+                # not used since we started the true pilots. So I will not worry about extract data from it.
+                participant_id_left = MISSING_INFO
+                participant_id_right = MISSING_INFO
+                score_left = MISSING_INFO
+                score_right = MISSING_INFO
+            else:
+                participant_id_left = game_df.columns[-4].split("_")[0]  # Column named <participant_id1>_y
+                participant_id_right = game_df.columns[-3].split("_")[0]  # Column named <participant_id2>_x
+                score_left = str(game_df.iloc[-1]["score_left"])
+                score_right = str(game_df.iloc[-1]["score_right"])
 
         return cls(
             participant_id_left=participant_id_left,
