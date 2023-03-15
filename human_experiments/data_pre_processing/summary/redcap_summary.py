@@ -85,7 +85,7 @@ class ParticipantREDCapSummary(REDCapSummary):
                 participant_id=MISSING_INFO
             )
         else:
-            redcap_filepath = f"{experiment_dir}/{redcap_filenames[0]}"
+            redcap_filepath = f"{experiment_dir}/{machine_name}/{redcap_filenames[0]}"
             redcap_df = pd.read_csv(redcap_filepath, delimiter=",")
 
             return cls(
