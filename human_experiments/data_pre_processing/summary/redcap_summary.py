@@ -64,7 +64,7 @@ class TeamREDCapSummary(REDCapSummary):
             self.additional_notes
         ]
 
-        return pd.DataFrame(data, columns=headers)
+        return pd.DataFrame([data], columns=headers)
 
 
 class ParticipantREDCapSummary(REDCapSummary):
@@ -101,4 +101,4 @@ class ParticipantREDCapSummary(REDCapSummary):
             self.participant_id
         ]
 
-        return pd.DataFrame(data, columns=headers)
+        return pd.DataFrame([data], columns=headers)

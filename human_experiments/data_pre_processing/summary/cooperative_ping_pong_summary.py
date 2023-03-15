@@ -50,4 +50,4 @@ class CooperativePingPongSummary(TaskSummary):
             self.ai_score
         ]
 
-        return pd.DataFrame(data, columns=header)
+        return pd.DataFrame([data], columns=header)

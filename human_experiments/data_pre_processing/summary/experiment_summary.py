@@ -50,7 +50,7 @@ class ExperimentSummary:
             self.experiment_id
         ]
 
-        experiment_df = pd.DataFrame(data, columns=header)
+        experiment_df = pd.DataFrame([data], columns=header)
 
         dfs = [
             experiment_df,

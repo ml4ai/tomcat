@@ -64,4 +64,4 @@ class CompetitivePingPongSummary(TaskSummary):
             self.score_right
         ]
 
-        return pd.DataFrame(data, columns=header)
+        return pd.DataFrame([data], columns=header)

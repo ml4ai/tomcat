@@ -170,7 +170,7 @@ class USARMissionSummary(TaskSummary):
             self.intervention_agents
         ]
 
-        return pd.DataFrame(data, columns=header)
+        return pd.DataFrame([data], columns=header)
 
 
 class USARSummary(TaskSummary):
