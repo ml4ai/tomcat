@@ -90,7 +90,9 @@ class ParticipantREDCapSummary(REDCapSummary):
             redcap_df = pd.read_csv(redcap_filepath, delimiter=",")
 
             return cls(
-                participant_id=redcap_df.iloc[0]["subject_id"]
+                # If I don't explicitly transform to string, it will retrieve the participant id as a number, and it
+                # will erase leading zeros.
+                participant_id=str(redcap_df.iloc[0]["subject_id"])
             )
 
     def to_data_frame(self) -> pd.DataFrame:
