@@ -78,7 +78,7 @@ __stop_monitoring_program_cat() {
     padding="$padding "
   fi
   if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
-    ssh cat@cat "~/Desktop/image_timestamp_scripts/end_image_timestamp.sh"
+    ssh cat@cat "~/git/ML4AI/tomcat/human_experiments/scripts/cat/image_timestamp_scripts/end_image_timestamp.sh"
   fi
 }
 

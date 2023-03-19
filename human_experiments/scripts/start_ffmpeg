@@ -88,7 +88,7 @@ __launch_monitoring_program_cat() {
   fi
   if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
     echo -e "${padding} Starting ${EMPH}image timestamp monitoring program${NC}..."
-    ssh cat@cat "~/Desktop/image_timestamp_scripts/start_image_timestamp.sh $EXPERIMENT_DIR"
+    ssh cat@cat "~/git/ML4AI/tomcat/human_experiments/scripts/cat/image_timestamp_scripts/start_image_timestamp.sh $EXPERIMENT_DIR"
     sleep 1
   fi
 }
