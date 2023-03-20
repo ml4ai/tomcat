@@ -96,7 +96,7 @@ __remove_pupil_symlink() {
   num_unclosed_files=$(find "$pupil_dir" -name "*.writing" 2>/dev/null | wc -l)
 
   while [[ $num_unclosed_files -ne 0 ]]; do
-    msg="${padding}${YELLOW}${EMPH}Pupil Capture${EMPH} IS STILL RECORDING in ${EMPH}$client_name${EMPH}!!!. "
+    msg="${padding}${YELLOW}${EMPH}Pupil Capture${YELLOW} IS STILL RECORDING in ${EMPH}$client_name${YELLOW}!!!. "
     msg+="Stop recording before proceeding.${NC}"
     echo -e "$msg"
     if ! yes_no_question "${padding}Do you want to ${EMPH}RETRY${NC}?"; then
