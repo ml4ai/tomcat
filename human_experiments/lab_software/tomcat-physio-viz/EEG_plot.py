@@ -4,14 +4,13 @@ import sys
 from pylsl import StreamInlet, resolve_stream
 import argparse
 
-
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, *args, **kwargs):
         # initialize streams
 
         self.host_name = {
             "actiCHamp-20010205": "Tiger - EEG(200 10 205)",
-            "actiCHamp-21010477": "Lion - EEG(210 10 477)",
+            "actiCHamp-21010477": "Lion - EEG(210 10 477)", #Lions EEG amp is replaced with cheetah's amp.
             "actiCHamp-21020492": "Leopard - EEG(210 20 492)",
         }
 
@@ -51,9 +50,9 @@ class MainWindow(QtWidgets.QMainWindow):
             "F8",
             "AFF6h",
             "AFF2h",
-            "AUX_GSR",
-            "AUX_EKG",
-        ]
+            "GSR",
+            "EKG",
+        ] #AUX_EKG = EKG and AUX_GSR = GSR
 
         # Since 11/22 the lab decided to use the following channels:
 
@@ -79,8 +78,8 @@ class MainWindow(QtWidgets.QMainWindow):
             "FCz",
             "F8",
             "AFF2h",
-            "AUX_GSR",
-            "AUX_EKG",
+            "GSR",
+            "EKG",
         ]
 
         # Get the index of channel that are being used.
@@ -110,11 +109,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.graphWidgetLayout.setBackground("w")
 
-        self.pen = pg.mkPen(color=(0, 0, 0), width=2)  # black
+        self.pen = pg.mkPen(color=(0, 0, 0), width=1)  # black
 
         self.ch = []
 
-        label_style = {"color": (255, 0, 0), "font-size": "10pt"}
+        label_style = {"color": "black", "font-size": "8pt"}
 
         self.srate = 500  # 500Hz for EEG data
         self.timer = QtCore.QTimer()
@@ -124,7 +123,7 @@ class MainWindow(QtWidgets.QMainWindow):
         n_channels = len(self.channels_used)
 
         self.x = [0]
-        self.y = [[0] for _ in range(n_channels)]  # 34 channel data
+        self.y = [[0] for _ in range(n_channels)]  # 23 channel data
 
         self.dataLine = [[] for _ in range(n_channels)]
 
@@ -175,11 +174,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
             # Append the last sample
             for i in range(len(self.channels_used)):
-                self.y[i].append(sample[-1][self.channels_used_index[i]])
+                self.y[i].append(sample[-1][i])
 
             for i in range(0, len(self.channels_used)):
                 self.dataLine[i][0].setData(self.x, self.y[i])
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Plotting EEG signals via LSL")
