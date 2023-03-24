@@ -2,19 +2,11 @@
 
 set -u
 
-source configuration_helpers
-
-create_data_directory_structure() {
-  local data_root_dir=$1
-  local padding=$2
-
-  __create_directory $data_root_dir "$padding"
-  __create_directory $data_root_dir/minecraft "$padding"
-  __create_directory $data_root_dir/tmp "$padding"
-  __create_directory $data_root_dir/lion "$padding"
-  __create_directory $data_root_dir/tiger "$padding"
-  __create_directory $data_root_dir/leopard "$padding"
-}
+if [[ -z ${1+x} ]]; then
+  PADDING=""
+else
+  PADDING=$1
+fi
 
 __create_directory() {
   local directory=$1
@@ -27,12 +19,20 @@ __create_directory() {
     text+="in the above directory will be overridden.${NC}"
     echo -e "$text"
   else
-    mkdir -p "$directory" < /dev/null
-    if [[ $? -eq 0 ]]; then
+    if mkdir -p "$directory" < /dev/null; then
       echo -e "${padding}${GREEN}Directory ${EMPH}$directory${GREEN} created.${NC}"
     else
-      printf "${padding}${RED}Error while creating directory ${EMPH}$directory${RED}.${NC}"
+      echo -e "${padding}${RED}Error while creating directory ${EMPH}$directory${RED}.${NC}"
       exit 1
     fi
   fi
 }
+
+echo -e "${PADDING}Creating experiment directory structure..."
+
+__create_directory "$EXPERIMENT_DIR" "$PADDING "
+__create_directory "$EXPERIMENT_DIR/minecraft" "$PADDING "
+__create_directory "$EXPERIMENT_DIR/tmp" "$PADDING "
+__create_directory "$EXPERIMENT_DIR/lion" "$PADDING "
+__create_directory "$EXPERIMENT_DIR/tiger" "$PADDING "
+__create_directory "$EXPERIMENT_DIR/leopard" "$PADDING "

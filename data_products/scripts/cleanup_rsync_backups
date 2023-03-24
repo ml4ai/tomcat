@@ -1,0 +1,68 @@
+#!/bin/bash 
+
+##############################################################################
+#
+# Identification: 
+#     Clean up *RSYNC* files
+#     
+#
+# Description:
+#     Some ToMCAT backup processes create spurious *RSYNC* files. Ideally, we
+#     would not do that (but arranging this is work in progress), or less
+#     ideally, not backup at all (dangerous). Until we have resolved this, we
+#     can use this script to cleanup. 
+#
+#     This script hunts down files that have the string '-RSYNC-' in them.
+#     Sometimes, we will have multiple copies of the string. Irregardless, if
+#     such a file has a version without that string at the same place in the
+#     directory hierchy, AND the files are the same, then the '-RSYNC-' on is
+#     moved to LIMBO at the top level of volume. 
+#     
+#
+# Output:
+#     
+#
+# Exit status:
+#     Following unix convention, this script exits with 0 on success, and
+#     non-zero if there was an error. 
+#
+# Author:
+#     Kobus Barnard
+#
+##############################################################################
+
+set -u
+
+exit_status=0 
+
+# TOMCAT_DIR is either the github clone, a link to it, or a directory with
+# needed links that mimics the github clone structure where needed. 
+export TOMCAT_DIR="${HOME}/tomcat/" 
+
+source ${TOMCAT_DIR}shared_code/bash/ivi_preamble.bash  
+
+# We control the meaning of basic commands by limiting the path to standard root
+# controlled directories. We also add all the tomcat script directories we need. 
+export PATH="/usr/bin:/bin:${TOMCAT_DIR}data_products/scripts"
+
+source ${TOMCAT_DIR}shared_code/bash/ivi_error_trap.bash  
+
+volume_dir=`df . | grep '^[^ ]*:*/' | tr '\t' ' ' | sed 's#.* \(/.*\)$#\1/#' | sed 's#//*#/#'`
+export LIMBO_DIR="${volume_dir}LIMBO/"
+
+if [[ ${exit_status} -eq 0 ]]; then
+    mkdir -p "${LIMBO_DIR}"
+    $VERBOSE_ECHO "Limbo dir is ${LIMBO_DIR}"
+fi 
+
+if [[ ${exit_status} -eq 0 ]]; then
+    # Note that find will execute the command for all arguments, and return true
+    # even if some of them fail. There are alternatives, but none that I know of do
+    # the right thing in a partable way. Perhaps we just live with this behavior
+    # here.
+    #
+    find . -type f -name '*-RSYNC-*' -exec ${TOMCAT_DIR}data_products/scripts/cleanup_rsync_backups_2 {} \;
+fi 
+
+exit ${exit_status}
+

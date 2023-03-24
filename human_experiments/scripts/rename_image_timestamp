@@ -1,0 +1,18 @@
+#!/bin/bash
+
+__rename_image_timestamp() {
+    local monitoring_path=$1
+
+    echo "Renaming images in experiment $monitoring_path"
+
+    ssh cat@cat "~/git/ML4AI/tomcat/human_experiments/lab_software/tomcat-images-timestamp/scripts/timestampRename.py -d $monitoring_path/lion/face_images/"
+    ssh cat@cat "~/git/ML4AI/tomcat/human_experiments/lab_software/tomcat-images-timestamp/scripts/timestampRename.py -d $monitoring_path/lion/screenshots/"
+
+    ssh cat@cat "~/git/ML4AI/tomcat/human_experiments/lab_software/tomcat-images-timestamp/scripts/timestampRename.py -d $monitoring_path/tiger/face_images/"
+    ssh cat@cat "~/git/ML4AI/tomcat/human_experiments/lab_software/tomcat-images-timestamp/scripts/timestampRename.py -d $monitoring_path/tiger/screenshots/"
+
+    ssh cat@cat "~/git/ML4AI/tomcat/human_experiments/lab_software/tomcat-images-timestamp/scripts/timestampRename.py -d $monitoring_path/leopard/face_images/"
+    ssh cat@cat "~/git/ML4AI/tomcat/human_experiments/lab_software/tomcat-images-timestamp/scripts/timestampRename.py -d $monitoring_path/leopard/screenshots/"
+}
+
+__rename_image_timestamp $1

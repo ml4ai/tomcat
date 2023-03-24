@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+touch ${1}
+
+say -v Samantha "That completes the minecraft hands on training. We will now prepare for the minecraft first real mission, saturn a." 
+
+rm -f ${1}
+

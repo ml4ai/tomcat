@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+touch ${1}
+
+say -v Samantha "Move to the back wall and select your role by right clicking on the black box for your role. Red is for medic. Blue is for engineer. Green is for transporter. After selecting your role, please return to your original position." 
+
+rm -f ${1}
+

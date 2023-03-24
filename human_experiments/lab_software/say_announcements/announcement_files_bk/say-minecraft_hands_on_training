@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+touch ${1}
+
+say -v Samantha "That completes the baseline tasks.,,,,,,,,,,, We will now prepare for the minecraft hands on training." 
+
+rm -f ${1}
+

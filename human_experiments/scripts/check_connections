@@ -2,8 +2,6 @@
 
 set -u
 
-source configuration_helpers
-
 __check_connection_to_client(){
   local client_name=$1
   local client_address=$2
@@ -12,14 +10,12 @@ __check_connection_to_client(){
   error_text="${padding}Could not connect to ${EMPH}$client_name${NC}. "
   error_text+="Press any key to ${EMPH}RETRY${NC}: "
 
-  ssh -q $EXPERIMENT_USER@$client_address exit
-  while [[ $? -ne 0 ]]; do
+  while ! ssh -q "$EXPERIMENT_USER@$client_address" exit; do
     echo -e -n "$error_text"
     read -r
-    ssh -q $EXPERIMENT_USER@$client_address exit
   done
 
-  echo -e "${padding}${GREEN}Connection to ${EMPH}$client_name${GREEN} successfully established${NC}."
+  echo -e "${padding}${GREEN}Connection to ${EMPH}$client_name${GREEN} successfully established.${NC}"
 }
 
 echo -e "Checking connection with client machines..."

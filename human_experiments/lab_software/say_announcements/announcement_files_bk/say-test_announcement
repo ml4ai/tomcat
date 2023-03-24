@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+touch ${1}
+
+say -v Samantha "Hello, my name is Samantha and I will be your narrator for the experiment. If you need to adjust the volume, there is volume up and down keys in the upper right corner of your keyboard. Please do not mute your volume! This is a test announcement to make sure the experiment announcement system is working correctly. If you are hearing this announcement OK in your earbuds, please tell the experimenter in the room that your earbud sound is OK, thank you." 
+
+rm -f ${1}
+

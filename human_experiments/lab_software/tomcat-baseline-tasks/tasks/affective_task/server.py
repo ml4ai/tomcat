@@ -6,10 +6,10 @@ from common import record_metadata, request_clients_end
 from network import receive, send
 
 from .config import (BLANK_SCREEN_MILLISECONDS,
-                                    CROSS_SCREEN_MILLISECONDS,
-                                    DISCUSSION_TIMER, INDIVIDUAL_IMAGE_TIMER,
-                                    INDIVIDUAL_RATING_TIMER, TEAM_IMAGE_TIMER,
-                                    TEAM_RATING_TIMER)
+                     CROSS_SCREEN_MILLISECONDS,
+                     DISCUSSION_TIMER, INDIVIDUAL_IMAGE_TIMER,
+                     INDIVIDUAL_RATING_TIMER, TEAM_IMAGE_TIMER,
+                     TEAM_RATING_TIMER)
 from .utils import get_image_paths
 
 
@@ -77,10 +77,14 @@ class ServerAffectiveTask:
         log_first_timestap = True  # Log timestamp as soon as the experiment starts
 
         if log_first_timestap == True:
-            self._csv_writer.writerow({"time": time(), "monotonic_time": monotonic(),
+            self._csv_writer.writerow({"time": time(),
+                                       "monotonic_time": monotonic(),
                                        "human_readable_time": datetime.utcnow().isoformat() + "Z",
-                                       "image_path": None, "subject_id": None, "arousal_score": None,
-                                       "valence_score": None, "event_type": "start_affective_task"})
+                                       "image_path": None,
+                                       "subject_id": None,
+                                       "arousal_score": None,
+                                       "valence_score": None,
+                                       "event_type": "start_affective_task"})
             log_first_timestap == False
 
         for image_path in image_paths:
@@ -95,32 +99,46 @@ class ServerAffectiveTask:
                     data["state"]["selected"] = False
                 send([to_client_connection], data)
 
-            while(True):
+            rating_received = False
+            while(not rating_received):
                 responses = receive(self._from_client_connections)
-                response = list(responses.values())[0]
-                client_name = list(responses.keys())[0]
-                if response["type"] == "rating":
-                    break
-                else:
-                    if response["type"] == "update":
-                        # parse the updates from clients for cleaner CSV file
-                        if response["update"]["rating_type"] == 'arousal':
-                            arousal_score = response["update"]["rating_index"] - 2
-                            record_activity_scores = [arousal_score, None]
-                        else:
-                            valence_score = response["update"]["rating_index"] - 2
-                            record_activity_scores = [None, valence_score]
 
-                        self._csv_writer.writerow({"time": time(), "monotonic_time": monotonic(),
+                for client_name, response in responses.items():
+                    # When the rating is received, there should only be 1 response in responses.
+                    if response["type"] == "rating":
+                        rating_received = True
+                    elif response["type"] == "event":
+                        self._csv_writer.writerow({"time": time(),
+                                                   "monotonic_time": monotonic(),
                                                    'human_readable_time': datetime.utcnow().isoformat() + "Z",
-                                                   "image_path": image_path[-file_name_length:], "subject_id": client_name,
-                                                   "arousal_score": record_activity_scores[0],
-                                                   "valence_score": record_activity_scores[1], "event_type": 'intermediate_selection'})
+                                                   "image_path": image_path[-file_name_length:],
+                                                   "subject_id": client_name,
+                                                   "arousal_score": None,
+                                                   "valence_score": None,
+                                                   "event_type": response["event"]})
+                    else:
+                        if response["type"] == "update":
+                            # parse the updates from clients for cleaner CSV file
+                            if response["update"]["rating_type"] == 'arousal':
+                                arousal_score = response["update"]["rating_index"] - 2
+                                record_activity_scores = [arousal_score, None]
+                            else:
+                                valence_score = response["update"]["rating_index"] - 2
+                                record_activity_scores = [None, valence_score]
 
-                    # forward response to other clients
-                    for i, to_client_connection in enumerate(self._to_client_connections):
-                        if i != selected_rating_participant:
-                            send([to_client_connection], response)
+                            self._csv_writer.writerow({"time": time(),
+                                                       "monotonic_time": monotonic(),
+                                                       'human_readable_time': datetime.utcnow().isoformat() + "Z",
+                                                       "image_path": image_path[-file_name_length:],
+                                                       "subject_id": client_name,
+                                                       "arousal_score": record_activity_scores[0],
+                                                       "valence_score": record_activity_scores[1],
+                                                       "event_type": 'intermediate_selection'})
+
+                        # forward response to other clients
+                        for i, to_client_connection in enumerate(self._to_client_connections):
+                            if i != selected_rating_participant:
+                                send([to_client_connection], response)
 
             # record clients' responses
             current_time = time()
@@ -128,11 +146,14 @@ class ServerAffectiveTask:
 
             for client_name, response in responses.items():
                 if response["type"] == "rating":
-                    self._csv_writer.writerow({"time": current_time, "monotonic_time": monotonic_time,
+                    self._csv_writer.writerow({"time": current_time, 
+                                               "monotonic_time": monotonic_time,
                                                "human_readable_time": datetime.utcnow().isoformat() + "Z",
-                                               "image_path": image_path[-file_name_length:], "subject_id": client_name,
+                                               "image_path": image_path[-file_name_length:], 
+                                               "subject_id": client_name,
                                                "arousal_score": response["rating"]["arousal"],
-                                               "valence_score": response["rating"]["valence"], "event_type": "final_submission"})
+                                               "valence_score": response["rating"]["valence"], 
+                                               "event_type": "final_submission"})
 
                 else:
                     raise RuntimeError(

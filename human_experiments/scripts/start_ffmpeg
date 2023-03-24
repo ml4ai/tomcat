@@ -2,23 +2,12 @@
 
 set -u
 
-source configuration_helpers
-
 FRAME_RATE=10
 
 if [[ -z ${1+x} ]]; then
-  # In case the script is executed standalone.
-  text="${RED}Please provide an experiment directory as the first argument of "
-  text+="the call to this script.${NC}"
-  echo -e "$text"
-  exit 1
-fi
-EXPERIMENT_DIR=$1
-
-if [[ -z ${2+x} ]]; then
-  padding=""
+  PADDING=""
 else
-  padding=$2
+  PADDING=$1
 fi
 
 __start_recording() {
@@ -28,7 +17,8 @@ __start_recording() {
 
   local command="cd \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/macos/; ./$script_name "
   command+="$image_dir $FRAME_RATE"
-  ssh $EXPERIMENT_USER@$client_address "$command" >/dev/null
+  # shellcheck disable=SC2029
+  ssh "$EXPERIMENT_USER@$client_address" "$command" >/dev/null
   return $?
 }
 
@@ -40,7 +30,8 @@ __start_recording_with_applescript() {
 
   local command="cd \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/macos/; osascript $script_name "
   command+="$image_dir $FRAME_RATE"
-  ssh $EXPERIMENT_USER@$client_address "$command" >/dev/null
+  # shellcheck disable=SC2029
+  ssh "$EXPERIMENT_USER@$client_address" "$command" >/dev/null
   return $?
 }
 
@@ -53,8 +44,7 @@ __start_face_recording() {
   mkdir -p "$image_dir" >/dev/null
 
   echo -e "${padding}Starting ${EMPH}Face Recording${NC} on ${EMPH}$client_name${NC}..."
-  __start_recording_with_applescript "$client_address" "stream_webcam.scpt" "\$HOME$image_dir"
-  if [[ $? -eq 0 ]]; then
+  if __start_recording_with_applescript "$client_address" "stream_webcam.scpt" "\$HOME$image_dir"; then
     echo -e "${padding}${GREEN} ${EMPH}Face Recording${GREEN} successfully started.${NC}"
   fi
 }
@@ -68,8 +58,7 @@ __start_screen_recording() {
   mkdir -p "$image_dir" >/dev/null
 
   echo -e "${padding}Starting ${EMPH}Screen Recording${NC} on ${EMPH}$client_name${NC}..."
-  __start_recording "$client_address" "record_screen.sh" "\$HOME$image_dir"
-  if [[ $? -eq 0 ]]; then
+  if __start_recording "$client_address" "record_screen.sh" "\$HOME$image_dir"; then
     echo -e "${padding}${EMPH} Screen Recording${GREEN} successfully started.${NC}"
   fi
 }
@@ -90,6 +79,22 @@ __start_ffmpeg_on_client() {
   fi
 }
 
-__start_ffmpeg_on_client "lion" "lion.local" "$padding"
-__start_ffmpeg_on_client "tiger" "tiger.local" "$padding"
-__start_ffmpeg_on_client "leopard" "leopard.local" "$padding"
+__launch_monitoring_program_cat() {
+  local padding=$1
+  if [[ $ALL -ne 1 ]]; then
+    yes_no_question "${padding}Do you want to start image timestamp monitoring?"
+    ans=$?
+    padding="$padding "
+  fi
+  if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
+    echo -e "${padding} Starting ${EMPH}image timestamp monitoring program${NC}..."
+    ssh cat@cat "~/git/ML4AI/tomcat/human_experiments/scripts/cat/image_timestamp_scripts/start_image_timestamp.sh $EXPERIMENT_DIR"
+    sleep 1
+  fi
+}
+
+__launch_monitoring_program_cat "$PADDING"
+
+__start_ffmpeg_on_client "lion" "lion.local" "$PADDING"
+__start_ffmpeg_on_client "tiger" "tiger.local" "$PADDING"
+__start_ffmpeg_on_client "leopard" "leopard.local" "$PADDING"

@@ -1,0 +1,172 @@
+#!/bin/bash 
+
+##############################################################################
+#
+# Identification:
+#     
+#
+# Description:
+#      We backup tom can cat (IN TRANSITION) on i02 (v07-new) disk /backup
+#      which is mirrored on i01 by a cron job independing of this script.
+#      
+#      Eventually, this will run on the ToMCAT data server. The hardcoded
+#      locaations will need to change. 
+#
+# Output:
+#     
+#
+# Exit status:
+#     Following unix convention, this script exits with 0 on success, and
+#     non-zero if there was an error. 
+#
+# Author:
+#     Kobus Barnard
+#
+##############################################################################
+
+set -u
+
+echo "---------------------------------------------------------------------------------------------" 
+echo "Script backup_tom_and_cat_2 is starting: $(date)" 
+echo " "
+
+# This can work on any machine with the correct fancy .ssh/config file. 
+export ROOT_USER_ON_CAT="root@10.192.234.250"
+export ROOT_USER_ON_TOM="root@10.192.234.251"
+export SISTA_BACKUP_HOST="kobus@kraken.sista.arizona.edu"
+
+# These are typically symbolic links. 
+export MISC_BACKUP_DIR="${HOME}/tomcat/backup" 
+
+# This is relative to the external home. 
+export OFFSITE_BACKUP_DIR="tomcat/backup" 
+
+export TOMCAT_DATA_DIR="/data/tomcat/LangLab"
+
+# Our exit status will be that of the last command that failed. 
+exit_status=0
+
+# The initial commands in this script executes need to succeed, so we can
+# simplify error handling to trap failures to report them, and then ask bash to
+# exit. But at the begining we are not ready to report errors or do anything
+# else so we simply die with non-zero return code. 
+set -e
+
+# Revoke possible removal of group perms (if we are running as root) and don't
+# permit others any access. 
+umask 0007 
+
+source ${TOMCAT_DIR}shared_code/bash/ivi_error_trap.bash  
+
+date_stamp=$(date +%y-%m-%d-%H-%M) 2>&1
+backup_suffix="-RSYNC-${date_stamp}"
+
+if [[ "${IVI_VERBOSE_3}" != "0" ]]; then
+    rsync_verbose="-v -v -v" 
+    remote_verbose="-v3"
+elif [[ "${IVI_VERBOSE_2}" != "0" ]]; then
+    rsync_verbose="-v -v" 
+    remote_verbose="-v2"
+elif [[ "${IVI_VERBOSE}" != "0" ]]; then
+    rsync_verbose="-v" 
+    remote_verbose="-v"
+else  
+    rsync_verbose=""
+    remote_verbose=""
+fi 
+
+# If we get this far, there may be some value of doing subsequent rsyncs even if
+# previous ones failed. 
+set +e 
+
+base_rsync_options="-rlptD -u --modify-window=20 -b --suffix ${backup_suffix}"
+
+# # Backup experiments on SISTA 
+# rsync_options="${rsync_verbose} ${base_rsync_options} --chown=:tomcat-editor"
+# 
+# target_dir="${OFFSITE_BACKUP_DIR}/LangLab"
+# ${VERBOSE_ECHO} "Script backup_tom_and_cat_2 executing:"
+# ${VERBOSE_ECHO} "    ssh -n -x ${SISTA_BACKUP_HOST} sg tomcat-editor -c \"mkdir -p ${target_dir}\" "
+# ssh -n -x ${SISTA_BACKUP_HOST} sg tomcat-editor -c \"mkdir -p ${target_dir}\" 2>&1
+# rc=$?
+# ${VERBOSE_ECHO} "Remode mkdir return code was ${rc}"
+# ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+# ${VERBOSE_ECHO} ""
+# 
+# if [[ ${rc} -eq 0 ]]; then
+#     ${VERBOSE_ECHO} "Script backup_tom_and_cat_2 executing:"
+#     ${VERBOSE_ECHO} "    rsync ${rsync_options} ${TOMCAT_DATA_DIR}/ ${SISTA_BACKUP_HOST}:${target_dir}"    
+#     rsync ${rsync_options} ${TOMCAT_DATA_DIR}/ ${SISTA_BACKUP_HOST}:${target_dir} 2>&1 
+#     rc=$?
+#     ${VERBOSE_ECHO} "Rsync return code was ${rc}"
+#     ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+#     ${VERBOSE_ECHO} ""
+# else 
+#     ${VERBOSE_ECHO} "Script backup_tom_and_cat_2 skipping backup of ${TOMCAT_DATA_DIR} due to remote mkdir failure."
+# fi
+
+# Backup stuff other than experiments on IVILAB disks. Here we need some extra
+# excludes. 
+rsync_options="${rsync_verbose} ${base_rsync_options} --exclude=LIMBO --exclude=TRASH --exclude=trash --exclude=.[tT]rash --exclude=experiments"
+
+# No docker on cat on 22-09-29. Maybe in the future. 
+for cat_dir in /home /data/cat 
+do 
+    ${VERBOSE_ECHO} "Script backup_tom_and_cat_2 is working on cat directory: ${cat_dir}."
+    target_dir=${MISC_BACKUP_DIR}/cat/${cat_dir}
+    ${VERBOSE_ECHO} "Script backup_tom_and_cat_2 executing:"
+    ${VERBOSE_ECHO} "   mkdir -p ${target_dir}"
+    mkdir -p "${target_dir}" 2>&1
+    rc=$?
+    ${VERBOSE_ECHO} "mkdir return code was ${rc}"
+    ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+    ${VERBOSE_ECHO} ""
+
+    if [[ ${rc} -eq 0 ]]; then
+        ${VERBOSE_ECHO} "Script backup_tom_and_cat_2 executing:"
+        ${VERBOSE_ECHO} "    rsync ${rsync_options} ${ROOT_USER_ON_CAT}:${cat_dir}/ ${target_dir}"    
+        rsync ${rsync_options} ${ROOT_USER_ON_CAT}:${cat_dir}/ ${target_dir} 2>&1 
+        rc=$?
+        ${VERBOSE_ECHO} "Rsync return code was ${rc}"
+        ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+        ${VERBOSE_ECHO} ""
+    else 
+        ${VERBOSE_ECHO} "Script backup_tom_and_cat_2 skipping backup of cat directory ${cat_dir} due to remote mkdir failure."
+    fi
+done
+
+# Skip /data/tom for now.
+for tom_dir in /var/lib/docker /home/
+do 
+    ${VERBOSE_ECHO} "Script backup_tom_and_cat_2 is working on tom directory: ${tom_dir}."
+    target_dir=${MISC_BACKUP_DIR}/tom/${tom_dir}
+    ${VERBOSE_ECHO} "Script backup_tom_and_cat_2 executing:"
+    ${VERBOSE_ECHO} "     mkdir -p ${target_dir}"
+    mkdir -p "${target_dir}" 2>&1
+    rc=$?
+    ${VERBOSE_ECHO} "mkdir return code was ${rc}"
+    ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+    ${VERBOSE_ECHO} ""
+
+    if [[ ${rc} -eq 0 ]]; then
+        ${VERBOSE_ECHO} "Script backup_tom_and_cat_2 executing:"
+        ${VERBOSE_ECHO} "    rsync ${rsync_options} ${ROOT_USER_ON_TOM}:${tom_dir}/ ${target_dir}"
+        rsync ${rsync_options} ${ROOT_USER_ON_TOM}:${tom_dir}/ ${target_dir} 2>&1 
+        rc=$?
+        ${VERBOSE_ECHO} "Rsync return code was ${rc}"
+        ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+        ${VERBOSE_ECHO} ""
+    else 
+        ${VERBOSE_ECHO} "Script backup_tom_and_cat_2 skipping backup of tom directory ${tom_dir} due to remote mkdir failure."
+    fi
+done
+
+eval echo "Script backup_tom_and_cat_2 exiting with status ${exit_status} on: $(date)" 
+
+echo " "
+echo "Script backup_tom_and_cat_2 exiting with status ${exit_status}: $(date)" 
+echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" 
+
+exit ${exit_status} 
+
+

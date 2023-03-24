@@ -1,0 +1,371 @@
+#!/usr/bin/env bash
+
+echo -ne '\033]0;Announcement Menu\007'
+
+MY_DIR="$(dirname "$(realpath "$0")")"
+source "${MY_DIR}/say_announcement_helpers"
+
+IS_ANNOUNCING=""
+IS_OTF=""
+
+LION_ADDRESS="LabWorker@lion.local"
+TIGER_ADDRESS="LabWorker@tiger.local"
+LEOPARD_ADDRESS="LabWorker@leopard.local"
+TOM_ADDRESS="tom@tom.local"
+
+SAY_FILE_LOCATION="data/tom/LangLab/experiments/say_announcements/"
+
+LION_ENABLED="${White}${On_Green}ENABLED${Color_Off} "
+TIGER_ENABLED="${White}${On_Green}ENABLED${Color_Off} "
+LEOPARD_ENABLED="${White}${On_Green}ENABLED${Color_Off} "
+TOM_ENABLED="${White}${On_Green}ENABLED${Color_Off} "
+
+CL_OPT="";
+NO_MENU="";
+while getopts "h" cmd_ln_opt; do  # Loop: Get the next option;
+  case "${cmd_ln_opt}" in
+    h) CL_OPT="help";
+    ;;
+    :) echo "Error: -${OPTARG} requires an argument.";
+       exit;
+    ;;
+    *) exit;
+    ;;
+  esac
+done
+
+# A_$opt([0:Decription] [1:Say File] [2:For Lion] [3:For Tiger] [4:For Leopard] [5:For Tom] [6:Announced Checkmark]) 
+A_1=("Baseline Task - Rest Period" "say-rest_period" "y" "y" "y" "y" "  ")
+A_2=("Baseline Task - Finger Tapping" "say-finger_tapping" "y" "y" "y" "y" "  ")
+A_3=("Baseline Task - Individual Affective" "say-individual_affective" "y" "y" "y" "y" "  ")
+A_4=("Baseline Task - Team Affective" "say-team_affective" "y" "y" "y" "y" "  ")
+A_5=("Baseline Task - Team Affective Picture Instructions" "say-team_affective_pic_instructions" "y" "y" "y" "y" "  ")
+A_6=("Baseline Task - Compeditive Ping-Pong" "say-compeditive_ping-pong" "y" "y" "y" "y" "  ")
+A_7=("Baseline Task - Cooperative Ping-Pong" "say-cooperative_ping-pong" "y" "y" "y" "y" "  ")
+A_8=("Minecraft Mission - Hands on Training" "say-minecraft_hands_on_training" "y" "y" "y" "y" "  ")
+A_9=("Minecraft Mission - Saturn A" "say-minecraft_saturn_a" "y" "y" "y" "y" "  ")
+A_0=("Minecraft Mission - Saturn B" "say-minecraft_saturn_b" "y" "y" "y" "y" "  ")
+A_e=("Experiment End - Final Survay" "say-experiment_end_final_survay" "y" "y" "y" "y" "  ")
+A_g=("We will begin" "say-we_will_begin" "y" "y" "y" "y" "  ")
+A_r=("Minecraft - Select your role and return to your original position" "say-minecraft_select_role" "y" "y" "y" "y" "  ")
+A_n=("Minecraft - Do not click on a wall, you will loose your tools" "say-minecraft_do_not_click_on_wall" "y" "y" "y" "y" "  ")
+A_tl=("Announcement directly to ${BBlue}Lion" "say-on_the_fly" "y" "" "" "y" "  ")
+A_tt=("Announcement directly to ${BBlue}Tiger" "say-on_the_fly" "" "y" "" "y" "  ")
+A_te=("Announcement directly to ${BBlue}Leopard" "say-on_the_fly" "" "" "y" "y" "  ")
+A_ta=("Announcement directly to ${BBlue}ALL" "say-on_the_fly" "y" "y" "y" "y" "  ")
+A_test=("Test - Sound Check Announcement" "say-test_announcement" "y" "y" "y" "y" "  ")
+A_edit=("Edit/View: A Pre-set Announcement File" "say-view_edit_file" "y" "y" "y" "y" "  ")
+A_help=("Help: View the Help File" "say_announcement_help" "" "" "" "" "  ")
+
+A_PRE_SETS=("1" "2" "3" "4" "5" "6" "7" "8" "9" "0" "e" "g" "r" "n" "test")
+A_ON_THE_FLY=("tl" "tt" "te" "ta")
+
+show_menu(){
+  if [[ "${NO_MENU}" == "y" ]]; then exit; fi
+
+  if [[ "${CL_OPT}" == "" ]]; then
+    printf "\n${menu}***${Yellow}Enable/Disable Announcement Devices${menu}***************************************************${normal}\n"
+    printf "${menu}**${number} a) ${LION_ENABLED} ${menu}- ${BBlue}Lion ${normal}\n"
+    printf "${menu}**${number} b) ${TIGER_ENABLED} ${menu}- ${BBlue}Tiger ${normal}\n"
+    printf "${menu}**${number} c) ${LEOPARD_ENABLED} ${menu}- ${BBlue}Leopard ${normal}\n"
+    printf "${menu}**${number} d) ${TOM_ENABLED} ${menu}- ${BBlue}Server TOM ${normal}\n"
+    printf "\n${menu}***${Yellow}Experiment Step Announcements${menu}*********************************************************${normal}\n"
+    printf "${menu}**${number} 1) ${Green}${A_1[6]}${menu} Announce: ${A_1[0]}${normal}\n"
+    printf "${menu}**${number} 2) ${Green}${A_2[6]}${menu} Announce: ${A_2[0]}${normal}\n"
+    printf "${menu}**${number} 3) ${Green}${A_3[6]}${menu} Announce: ${A_3[0]}${normal}\n"
+    printf "${menu}**${number} 4) ${Green}${A_4[6]}${menu} Announce: ${A_4[0]}${normal}\n"
+    printf "${menu}**${number} 5) ${Green}${A_5[6]}${menu} Announce: ${A_5[0]}${normal}\n"
+    printf "${menu}**${number} 6) ${Green}${A_6[6]}${menu} Announce: ${A_6[0]}${normal}\n"
+    printf "${menu}**${number} 7) ${Green}${A_7[6]}${menu} Announce: ${A_7[0]}${normal}\n"
+    printf "${menu}**${number} 8) ${Green}${A_8[6]}${menu} Announce: ${A_8[0]}${normal}\n"
+    printf "${menu}**${number} 9) ${Green}${A_9[6]}${menu} Announce: ${A_9[0]}${normal}\n"
+    printf "${menu}**${number} 0) ${Green}${A_0[6]}${menu} Announce: ${A_0[0]}${normal}\n"
+    printf "${menu}**${number} e) ${Green}${A_e[6]}${menu} Announce: ${A_e[0]}${normal}\n"
+    printf "\n${menu}***${Yellow}Extra Instruction Announcements${menu}*******************************************************${normal}\n"
+    printf "${menu}**${number} g) ${Green}${A_g[6]}${menu} Announce: ${A_g[0]}${normal}\n"
+    printf "${menu}**${number} r) ${Green}${A_r[6]}${menu} Announce: ${A_r[0]}${normal}\n"
+    printf "${menu}**${number} n) ${Green}${A_n[6]}${menu} Announce: ${A_n[0]}${normal}\n"
+    printf "\n${menu}***${Yellow}On the Fly (Type-In) Announcements${menu}****************************************************${normal}\n"
+    printf "${menu}**${number} tl) ${Green}${A_tl[6]}${menu} Type-In: ${A_tl[0]}${normal}\n"
+    printf "${menu}**${number} tt) ${Green}${A_tt[6]}${menu} Type-In: ${A_tt[0]}${normal}\n"
+    printf "${menu}**${number} te) ${Green}${A_te[6]}${menu} Type-In: ${A_te[0]}${normal}\n"
+    printf "${menu}**${number} ta) ${Green}${A_ta[6]}${menu} Type-In: ${A_ta[0]}${normal}\n"
+    printf "\n${menu}***${Yellow}Announcement Tools${menu}********************************************************************${normal}\n"
+    printf "${menu}**${number} test) ${Green}${A_test[6]}${menu} Announce: ${A_test[0]}${normal}\n"
+    printf "${menu}**${number} edit) ${Green}${A_edit[6]}${menu} ${A_edit[0]}${normal}\n"
+    printf "${menu}**${number} help) ${Green}${A_help[6]}${menu} ${A_help[0]}${normal}\n"
+    printf "\n${menu}*****************************************************************************************${normal}\n"
+
+    if [[ "${IS_ANNOUNCING}" == "" ]]; then
+      printf "Please enter a menu option and enter ${fgred}(x to exit program): ${normal}"
+      read opt
+    fi
+  else
+    opt="${CL_OPT}";
+    NO_MENU="y";
+  fi
+
+  A_DESC="A_${opt}[0]"
+  A_FILE="A_${opt}[1]"
+  A_FOR_LION="A_${opt}[2]"
+  A_FOR_TIGER="A_${opt}[3]"
+  A_FOR_LEOPARD="A_${opt}[4]"
+  A_FOR_TOM="A_${opt}[5]"
+  A_CHECKMARK="A_${opt}[6]"
+}
+
+
+enter_return_main_menu(){
+  if [[ "${NO_MENU}" == "y" ]]; then exit; fi
+  printf "${NC}${BYellow}${Italic}";
+  read -n 1 -r -s -p $'(Press <Enter> to return to main menu)';
+  printf "${NC}";
+}
+
+
+option_picked(){
+  message=${@:-"${normal}Error: No message passed"}
+  printf "${msgcolor}${message}${normal}\n"
+}
+
+
+inc_checkmark(){
+  a_cnt=${!A_CHECKMARK:6:2};
+  a_cnt=$((a_cnt+1));
+  eval "${A_CHECKMARK}"="\\\u2714${a_cnt}";
+}
+
+
+say_announcement(){
+  if [[ "${LION_ENABLED}" == *"ENABLED"* && "${!A_FOR_LION}" == "y" ]]; then
+    ssh ${LION_ADDRESS} "DISPLAY=:1 ${SAY_FILE_LOCATION}./${!A_FILE} ${SAY_FILE_LOCATION}lion_announcing.txt &>/dev/null &";
+  fi
+
+  if [[ "${TIGER_ENABLED}" == *"ENABLED"* && "${!A_FOR_TIGER}" == "y" ]]; then
+    ssh ${TIGER_ADDRESS} "DISPLAY=:1 ${SAY_FILE_LOCATION}./${!A_FILE} ${SAY_FILE_LOCATION}tiger_announcing.txt &>/dev/null &";
+  fi
+
+  if [[ "${LEOPARD_ENABLED}" == *"ENABLED"* && "${!A_FOR_LEOPARD}" == "y" ]]; then
+    ssh ${LEOPARD_ADDRESS} "DISPLAY=:1 ${SAY_FILE_LOCATION}./${!A_FILE} ${SAY_FILE_LOCATION}leopard_announcing.txt &>/dev/null &";
+  fi
+
+  if [[ "${TOM_ENABLED}" == *"ENABLED"* && "${!A_FOR_TOM}" == "y" ]]; then
+    ssh ${TOM_ADDRESS} "DISPLAY=:1 /${SAY_FILE_LOCATION}./${!A_FILE} /${SAY_FILE_LOCATION}tom_announcing.txt &>/dev/null &";
+  fi
+
+  IS_ANNOUNCING="y";
+  x=0;
+  while [ "${IS_ANNOUNCING}" == "y" ]
+  do
+    x=$(( $x + 1 ));
+    if [ $x -gt 30 ]; then # avoid endless loop
+      break;
+    fi
+
+    sleep 1;
+    clear;
+    show_menu;
+    IS_ANNOUNCING="";
+
+    if [[ "${IS_OTF}" == "y" ]]; then
+      printf "${Color_Off}${Green}ANNOUNCING: ${!A_DESC}...${menu}";
+      printf "\n${Yellow}${a_input}${menu}\n";
+    fi
+
+    if [[ -f "/${SAY_FILE_LOCATION}lion_announcing.txt" ]]; then
+      printf "\n${BBlue}ANNOUNCING ON LION: ${Green}${!A_DESC}...${menu}";
+      IS_ANNOUNCING="y";
+    fi
+
+    if [[ -f "/${SAY_FILE_LOCATION}tiger_announcing.txt" ]]; then
+      printf "\n${BBlue}ANNOUNCING ON TIGER: ${Green}${!A_DESC}...${menu}";
+      IS_ANNOUNCING="y";
+    fi
+
+    if [[ -f "/${SAY_FILE_LOCATION}leopard_announcing.txt" ]]; then
+      printf "\n${BBlue}ANNOUNCING ON LEOPARD: ${Green}${!A_DESC}...${menu}";
+      IS_ANNOUNCING="y";
+    fi
+
+    if [[ -f "/${SAY_FILE_LOCATION}tom_announcing.txt" ]]; then
+      printf "\n${BBlue}ANNOUNCING ON TOM: ${Green}${!A_DESC}...${menu}";
+      IS_ANNOUNCING="y";
+    fi
+
+    if [ "${IS_ANNOUNCING}" == "y" ]; then
+      printf "\n${Red}Please wait...${menu}";
+    fi
+  done
+  inc_checkmark;
+  if [[ "${IS_OTF}" != "y" ]]; then
+    IS_ANNOUNCING="";
+    clear;
+    show_menu;
+  fi
+}
+
+
+edit_view(){
+  IS_ANNOUNCING="y";
+  clear;
+  show_menu;
+  printf "${Color_Off}${Green}${!A_DESC}...${menu}";
+  printf "\n${normal}Select the Announcement option you want to Edit/View and press enter\n${fgred}(x or cntl-c to cancel and return to menu)${normal}: ";
+  trap 'stty echo; IS_ANNOUNCING=""; IS_OTF=""; printf "${Color_Off}${menu}"; clear; show_menu; trap - SIGINT RETURN; echo; return' SIGINT RETURN
+  read e_opt;
+  if [[ "${e_opt}" == "" || "${e_opt}" == "x"  ]]; then
+    e_opt="";
+    IS_OTF="";
+    IS_ANNOUNCING="";
+    return;
+  fi
+
+  if ! [[ ${e_opt} = @(1|2|3|4|5|6|7|8|9|0|e|g|r|n|test) ]]; then
+  #  if ! [[ ${e_opt} = ${A_PRE_SETS} ]]; then
+    printf "\n${fgred}INVALID OPTION: That option that does not have a Pre-set Announcement File!${normal}";
+    sleep 8;
+    e_opt="";
+    IS_OTF="";
+    IS_ANNOUNCING="";
+    return;
+  fi
+
+  e_desc="A_${e_opt}[0]"
+  e_file="A_${e_opt}[1]"
+ 
+  IS_ANNOUNCING="y";
+  clear;
+  show_menu;
+
+  printf "${Green}You are about to Edit: ${Yellow}${e_opt}) ${menu}${!e_desc}\n${Yellow}File: ${menu}/${SAY_FILE_LOCATION}${!e_file}${normal}";
+  printf "\n${normal}Press enter to continue editing ${fgred}(x or cntl-c to cancel and return to menu)${normal}: ";
+  printf "\n${Italic}${BYellow}(CAUTION: Only edit text between double quotes on say line! 'say -v Samantha \"text\"')${normal}";
+  read e_edit;
+  if [[ "${e_edit}" == "x"  ]]; then
+    e_opt="";
+    IS_OTF="";
+    IS_ANNOUNCING="";
+    return;
+  fi
+
+  nano "/${SAY_FILE_LOCATION}${!e_file}";
+  
+  e_opt="";
+  IS_OTF="";
+  IS_ANNOUNCING="";
+}
+
+
+on_the_fly(){
+  a_input="input";
+   
+  while [[ "${a_input}" != "x" && "${a_input}" != "" ]]
+    do
+    IS_ANNOUNCING="y";
+    clear;
+    show_menu;
+    printf "${Green}On the Fly: ${!A_DESC}${menu}";
+    printf "\n${normal}Type your announcement and enter to deliver ${fgred}(x or cntl-c to cancel and return to menu): ${Black}${On_Yellow}\n";
+     
+    trap 'stty echo; IS_ANNOUNCING=""; IS_OTF=""; printf "${Color_Off}${menu}"; clear; show_menu; trap - SIGINT RETURN; echo; return' SIGINT RETURN
+    read a_input;
+    printf "${Color_Off}${menu}";
+
+    if [[ "${a_input}" == "" || "${a_input}" == "x"  ]]; then
+      break;
+    fi
+
+    sed -i 's#say.*#say -Samantha '"\"${a_input}\""'#' "/${SAY_FILE_LOCATION}${!A_FILE}";
+
+    IS_OTF="y";
+    say_announcement;
+  done
+
+  a_input="";
+  IS_OTF="";
+  IS_ANNOUNCING="";
+}
+
+
+do_print_help(){
+  HELP_TEXT="$(<${MY_DIR}/${!A_FILE})";
+  eval "${HELP_TEXT}";
+  enter_return_main_menu;
+}
+
+
+clear;
+show_menu;
+
+while [ "$opt" != '' ]
+    do
+    if [ "$opt" = '' ]; then
+      printf "return pressed!";
+      sleep 10;
+      clear;
+      show_menu;
+      continue;
+    else
+      if [[ " ${A_PRE_SETS[*]} " =~ " ${opt} " ]]; then
+        say_announcement;
+        continue;
+      fi
+        
+      if [[ " ${A_ON_THE_FLY[*]} " =~ " ${opt} " ]]; then
+        on_the_fly;
+        continue;
+      fi
+
+      case $opt in
+	a) clear;
+          if [[ "${LION_ENABLED}" == *"ENABLED"* ]]; then
+            LION_ENABLED="${Black}${On_Red}DISABLED${Color_Off}";
+          else
+            LION_ENABLED="${White}${On_Green}ENABLED${Color_Off} ";
+          fi
+          show_menu;
+        ;;
+        b) clear;
+          if [[ "${TIGER_ENABLED}" == *"ENABLED"* ]]; then
+            TIGER_ENABLED="${Black}${On_Red}DISABLED${Color_Off}";
+          else
+            TIGER_ENABLED="${White}${On_Green}ENABLED${Color_Off} ";
+          fi
+          show_menu;
+        ;;
+        c) clear;
+          if [[ "${LEOPARD_ENABLED}" == *"ENABLED"* ]]; then
+            LEOPARD_ENABLED="${Black}${On_Red}DISABLED${Color_Off}";
+          else
+            LEOPARD_ENABLED="${White}${On_Green}ENABLED${Color_Off} ";
+          fi
+          show_menu;
+        ;;
+        d) clear;
+          if [[ "${TOM_ENABLED}" == *"ENABLED"* ]]; then
+            TOM_ENABLED="${Black}${On_Red}DISABLED${Color_Off}";
+          else
+            TOM_ENABLED="${White}${On_Green}ENABLED${Color_Off} ";
+          fi
+          show_menu;
+        ;;
+        edit) edit_view;
+        ;;
+        help) do_print_help;
+              clear;
+              show_menu;
+        ;;
+        x)exit;
+        ;;
+        \n)exit;
+        ;;
+        *)clear;
+            option_picked "Pick an option from the menu";
+            show_menu;
+        ;;
+      esac
+    fi
+done
+
+exit;
+

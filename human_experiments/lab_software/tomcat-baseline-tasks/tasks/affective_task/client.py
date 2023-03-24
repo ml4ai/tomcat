@@ -5,8 +5,8 @@ from config import CLIENT_WINDOW_HEIGHT, CLIENT_WINDOW_WIDTH
 from network import receive, send
 
 from .config import (BLANK_SCREEN_MILLISECONDS,
-                    CROSS_SCREEN_MILLISECONDS,
-                    DISPLAY_AFFEC_DISCUSSION_MILLISECONDS)
+                     CROSS_SCREEN_MILLISECONDS,
+                     DISPLAY_AFFEC_DISCUSSION_MILLISECONDS)
 
 from .utils import (Button, render_image_center,
                     submit_button, timer,
@@ -39,7 +39,6 @@ class ClientAffectiveTask:
         print("[STATUS] Running affective task")
 
         while True:
-
             [data] = receive([self._from_server])
 
             if data["type"] == "request":
@@ -52,20 +51,46 @@ class ClientAffectiveTask:
                 continue
 
             # show a blank screen and a cross before showing an image
+            send([self._to_server], {
+                "type": "event",
+                "event": "show_blank_screen"
+            })
             render_blank_screen(self._screen, BLANK_SCREEN_MILLISECONDS)
 
+            send([self._to_server], {
+                "type": "event",
+                "event": "show_cross_screen"
+            })
             render_image_center(
                 "./tasks/affective_task/images/plus.png", self._screen, refresh=True)
             wait(CROSS_SCREEN_MILLISECONDS)
 
             if collaboration:
                 # displaying a slide asking subjects not to discuss
+                send([self._to_server], {
+                    "type": "event",
+                    "event": "show_blank_screen"
+                })
                 render_blank_screen(self._screen, BLANK_SCREEN_MILLISECONDS)
+
+                send([self._to_server], {
+                    "type": "event",
+                    "event": "show_observe_message"
+                })
                 display_msg_affective_disscussion(
                     self._screen, "Observe", DISPLAY_AFFEC_DISCUSSION_MILLISECONDS/2)
+
+                send([self._to_server], {
+                    "type": "event",
+                    "event": "show_blank_screen"
+                })
                 render_blank_screen(self._screen, BLANK_SCREEN_MILLISECONDS)
 
                 # show an image for team task for the team to analyze seperately
+                send([self._to_server], {
+                    "type": "event",
+                    "event": "show_image"
+                })
                 render_image_center(
                     state["image_path"], self._screen, refresh=True)
                 render_text_center(
@@ -74,12 +99,30 @@ class ClientAffectiveTask:
                 ], "Team: " if collaboration else "Individual: ", self._screen)
 
                 # displaying a slide asking subjects to discuss
+                send([self._to_server], {
+                    "type": "event",
+                    "event": "show_blank_screen"
+                })
                 render_blank_screen(self._screen, BLANK_SCREEN_MILLISECONDS)
+
+                send([self._to_server], {
+                    "type": "event",
+                    "event": "show_discuss_message"
+                })
                 display_msg_affective_disscussion(
                     self._screen, "Discuss", DISPLAY_AFFEC_DISCUSSION_MILLISECONDS/2)
+
+                send([self._to_server], {
+                    "type": "event",
+                    "event": "show_blank_screen"
+                })
                 render_blank_screen(self._screen, BLANK_SCREEN_MILLISECONDS)
 
                 # show the same image again for team task for the team to dicuss their findings
+                send([self._to_server], {
+                    "type": "event",
+                    "event": "show_image"
+                })
                 render_image_center(
                     state["image_path"], self._screen, refresh=True)
                 render_text_center(
@@ -88,6 +131,10 @@ class ClientAffectiveTask:
 
             else:
                 # show an image for individual task
+                send([self._to_server], {
+                    "type": "event",
+                    "event": "show_image"
+                })
                 render_image_center(
                     state["image_path"], self._screen, refresh=True)
                 # show timer above image until timer runs out
@@ -97,17 +144,40 @@ class ClientAffectiveTask:
             if collaboration:
                 if state["selected"]:
                     # slide before that shows up based on the client that is selected before the buttons are displayed
+                    send([self._to_server], {
+                        "type": "event",
+                        "event": "show_blank_screen"
+                    })
                     render_blank_screen(
                         self._screen, BLANK_SCREEN_MILLISECONDS)
+
+                    send([self._to_server], {
+                        "type": "event",
+                        "event": "show_rater_selected_message"
+                    })
                     display_msg_affective_disscussion(
                         self._screen, "You have been selected for rating the images", DISPLAY_AFFEC_DISCUSSION_MILLISECONDS)
+
+                    send([self._to_server], {
+                        "type": "event",
+                        "event": "show_blank_screen"
+                    })
                     render_blank_screen(
                         self._screen, BLANK_SCREEN_MILLISECONDS)
                 else:
+                    send([self._to_server], {
+                        "type": "event",
+                        "event": "show_blank_screen"
+                    })
                     render_blank_screen(
                         self._screen, 2 * BLANK_SCREEN_MILLISECONDS + DISPLAY_AFFEC_DISCUSSION_MILLISECONDS)
 
             # show valence and arousal scoring
+            send([self._to_server], {
+                "type": "event",
+                "event": "show_rating_screen"
+            })
+
             render_image_center("./tasks/affective_task/images/buttons_images/Valence.jpg",
                                 self._screen,
                                 y_offset=-150,
@@ -293,7 +363,6 @@ class ClientAffectiveTask:
                         "valence": valence
                     }
                 }
-
                 send([self._to_server], response)
 
         print("[STATUS] Affective task ended")
