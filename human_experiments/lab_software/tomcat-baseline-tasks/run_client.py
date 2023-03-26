@@ -4,7 +4,7 @@ import pygame
 
 from common import cursor_visibility, render_blank_screen
 from config import (BLANK_SCREEN_COUNT_DOWN_MILLISECONDS, DEFAULT_SERVER_ADDR,
-                    DEFAULT_SERVER_PORT)
+                    DEFAULT_SERVER_PORT, TASK_LIST)
 from instructions import (affective_task_instruction_individual,
                           affective_task_instruction_team, exit_instruction,
                           finger_tapping_task_instruction,
@@ -23,7 +23,7 @@ if __name__ == "__main__":
     parser.add_argument("-a", "--address", default=DEFAULT_SERVER_ADDR, help="IP address of server")
     parser.add_argument("-p", "--port", type=int, default=DEFAULT_SERVER_PORT, help="Port of server")
     parser.add_argument("-n", "--name", required=True, help="Name of client")
-    parser.add_argument("-t", "--task", choices=["rest_state", "finger_tapping", "affective", "ping_pong"],
+    parser.add_argument("-t", "--task", choices=TASK_LIST,
                         default="rest_state", help="The task we want to start from.")
     args = parser.parse_args()
 
@@ -36,12 +36,14 @@ if __name__ == "__main__":
     # screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
     screen = pygame.display.set_mode((0, 0))
 
-    #rest state
-    next_task = args.task
+    tasks = TASK_LIST.copy()
+
+    while args.task != tasks[0]:
+        tasks.pop(0)
 
     # Initial rest state
 
-    if next_task == "rest_state":
+    if tasks[0] == "rest_state":
 
         wait_for_experimenter(client.to_server, client.from_server, screen)
 
@@ -52,7 +54,7 @@ if __name__ == "__main__":
 
         render_blank_screen(screen, BLANK_SCREEN_COUNT_DOWN_MILLISECONDS)
 
-        next_task = "finger_tapping"
+        tasks.pop(0)
     
     # Introduction slides
 
@@ -60,7 +62,7 @@ if __name__ == "__main__":
     
     # Finger tapping task
 
-    if next_task == "finger_tapping":
+    if tasks[0] == "finger_tapping":
 
         finger_tapping_task_instruction(screen)
 
@@ -74,9 +76,9 @@ if __name__ == "__main__":
 
         render_blank_screen(screen, BLANK_SCREEN_COUNT_DOWN_MILLISECONDS)
 
-        next_task = "affective"
+        tasks.pop(0)
 
-    if next_task == "affective":
+    if tasks[0] == "affective":
         # Individual
         affective_task_instruction_individual(screen)
 
@@ -103,9 +105,9 @@ if __name__ == "__main__":
 
         render_blank_screen(screen, BLANK_SCREEN_COUNT_DOWN_MILLISECONDS)
 
-        next_task = "ping_pong"
+        tasks.pop(0)
 
-    if next_task == "ping_pong":
+    if tasks[0] == "ping_pong":
 
         # Ping pong competitive task
         ping_pong_task_competitive_instruction(screen)
@@ -134,6 +136,8 @@ if __name__ == "__main__":
         client_ping_pong_task.run()
 
         render_blank_screen(screen, BLANK_SCREEN_COUNT_DOWN_MILLISECONDS)
+
+        tasks.pop(0)
 
     exit_instruction(client.to_server, screen)
 

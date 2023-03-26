@@ -7,14 +7,12 @@ from multiprocessing import Process
 from common import client_ai_teaming, pairing_clients
 from common.lsl import LSLStringStream
 from config import (DEFAULT_DATA_SAVE_PATH, DEFAULT_SERVER_ADDR,
-                    DEFAULT_SERVER_PORT, DEFAULT_NUMBER_OF_HUMAN_SUBJECTS)
+                    DEFAULT_SERVER_PORT, DEFAULT_NUMBER_OF_HUMAN_SUBJECTS, TASK_LIST)
 from network import Server, send
 from tasks.affective_task import ServerAffectiveTask
 from tasks.finger_tapping_task import ServerFingerTappingTask
 from tasks.ping_pong_task import ServerPingPongTask
 from tasks.rest_state import ServerRestState
-
-TASK_LIST = ["rest_state", "finger_tapping", "affective", "ping_pong"]
 
 
 def _send_start(to_client_connections: list):

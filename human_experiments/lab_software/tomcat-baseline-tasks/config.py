@@ -11,3 +11,4 @@ BLANK_SCREEN_COUNT_DOWN_MILLISECONDS = 4000
 DEFAULT_DATA_SAVE_PATH = "/data/cat/Exp_test/baseline_tasks"
 
 DEFAULT_NUMBER_OF_HUMAN_SUBJECTS = 3
+TASK_LIST = ["rest_state", "finger_tapping", "affective", "ping_pong"]
