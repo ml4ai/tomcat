@@ -14,6 +14,8 @@ from tasks.finger_tapping_task import ServerFingerTappingTask
 from tasks.ping_pong_task import ServerPingPongTask
 from tasks.rest_state import ServerRestState
 
+TASK_LIST = ["rest_state", "finger_tapping", "affective", "ping_pong"]
+
 
 def _send_start(to_client_connections: list):
     data = {}
@@ -54,8 +56,7 @@ if __name__ == "__main__":
     parser.add_argument("-a", "--address", default=DEFAULT_SERVER_ADDR, help="IP address of server")
     parser.add_argument("-p", "--port", type=int, default=DEFAULT_SERVER_PORT, help="Port of server")
     parser.add_argument("-s", "--save", default=DEFAULT_DATA_SAVE_PATH, help="Specify where to save data")
-    parser.add_argument("-t", "--task", choices=["rest_state", "finger_tapping", "affective", "ping_pong"],
-                        default="rest_state", help="The task we want to start from.")
+    parser.add_argument("-t", "--task", choices=TASK_LIST, default="rest_state", help="The task we want to start from.")
     parser.add_argument("-g", "--group_size", type=int, choices=[2, 3, 4], default=DEFAULT_NUMBER_OF_HUMAN_SUBJECTS,
                         help="The number of subjects participating on the experiment.")
     args = parser.parse_args()
@@ -88,11 +89,14 @@ if __name__ == "__main__":
     affective_task_lsl_stream = LSLStringStream("Affective Task", "affective_task")
     ping_pong_lsl_stream = LSLStringStream("Ping-Pong", "ping_pong")
 
-    next_task = args.task
+    tasks = TASK_LIST.copy()
+
+    while args.task != tasks[0]:
+        tasks.pop(0)
 
     # Initial rest state
 
-    if next_task == "rest_state":
+    if tasks[0] == "rest_state":
         print("")
         print("----------------------------------------------")
         print("                  REST STATE                  ")
@@ -109,11 +113,11 @@ if __name__ == "__main__":
                                             lsl=rest_state_lsl_stream)
         server_rest_state.run()
 
-        next_task = "finger_tapping"
+        tasks.pop(0)
 
     # Finger tapping task
 
-    if next_task == "finger_tapping":
+    if tasks[0] == "finger_tapping":
         print("")
         print("----------------------------------------------")
         print("               FINGER TAPPING                 ")
@@ -130,10 +134,10 @@ if __name__ == "__main__":
                                                              lsl=finger_tapping_lsl_stream)
         server_finger_tapping_task.run()
 
-        next_task = "affective"
+        tasks.pop(0)
 
     # Individual affective task
-    if next_task == "affective":
+    if tasks[0] == "affective":
         print("")
         print("----------------------------------------------")
         print("               AFFECTIVE TASK                 ")
@@ -176,10 +180,10 @@ if __name__ == "__main__":
 
         server_affective_task.close_file()
 
-        next_task = "ping_pong"
+        tasks.pop(0)
 
     # Ping pong competitive
-    if next_task == "ping_pong":
+    if tasks[0] == "ping_pong":
         print("")
         print("----------------------------------------------")
         print("                  PING-PONG                   ")
@@ -241,6 +245,8 @@ if __name__ == "__main__":
 
         for process in ping_pong_processes:
             process.join()
+
+        tasks.pop(0)
 
     print("")
     input("This is the end of the Baseline Tasks phase. Press Enter to wrap it up.")
