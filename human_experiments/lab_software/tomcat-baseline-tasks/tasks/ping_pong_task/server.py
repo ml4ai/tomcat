@@ -1,11 +1,14 @@
+from typing import Optional
+
 import csv
-import json
 import threading
 from time import time, monotonic
 from datetime import datetime
 
 import pygame
 from common import record_metadata, request_clients_end
+from common.lsl import LSLStringStream
+from common.writer import Writer
 from config import CLIENT_WINDOW_HEIGHT, CLIENT_WINDOW_WIDTH, UPDATE_RATE
 from network import receive, send
 
@@ -21,7 +24,8 @@ class ServerPingPongTask:
                  from_client_connection_teams: dict,
                  easy_mode: bool = True,
                  session_name: str = '',
-                 data_save_path: str = '') -> None:
+                 data_save_path: str = '',
+                 lsl: Optional[LSLStringStream] = None) -> None:
         self._to_client_connections = to_client_connections
 
         if easy_mode:
@@ -117,9 +121,11 @@ class ServerPingPongTask:
         header.append("seconds")
 
         self._csv_file = open(csv_file_name + ".csv", 'w', newline='')
-        self._csv_writer = csv.DictWriter(
-            self._csv_file, delimiter=';', fieldnames=header)
-        self._csv_writer.writeheader()
+        self._writer = Writer(
+            csv_writer=csv.DictWriter(self._csv_file, delimiter=';', fieldnames=header),
+            lsl_writer=lsl
+        )
+        self._writer.write_header()
 
         metadata["client_window_height"] = CLIENT_WINDOW_HEIGHT
         metadata["client_window_width"] = CLIENT_WINDOW_WIDTH
@@ -278,7 +284,7 @@ class ServerPingPongTask:
             game_state["seconds"] = data["seconds"]
 
             # Record game data
-            self._csv_writer.writerow(game_state)
+            self._writer.write(game_state)
 
             # Send game data to clients
             send(self._to_client_connections, data)
