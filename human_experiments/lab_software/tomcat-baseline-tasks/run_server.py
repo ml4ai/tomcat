@@ -7,18 +7,12 @@ from multiprocessing import Process
 from common import client_ai_teaming, pairing_clients
 from common.lsl import LSLStringStream
 from config import (DEFAULT_DATA_SAVE_PATH, DEFAULT_SERVER_ADDR,
-                    DEFAULT_SERVER_PORT)
+                    DEFAULT_SERVER_PORT, DEFAULT_NUMBER_OF_HUMAN_SUBJECTS)
 from network import Server, send
 from tasks.affective_task import ServerAffectiveTask
 from tasks.finger_tapping_task import ServerFingerTappingTask
 from tasks.ping_pong_task import ServerPingPongTask
 from tasks.rest_state import ServerRestState
-
-REQUIRED_NUM_CONNECTIONS_REST_STATE = [1, 2, 3]
-REQUIRED_NUM_CONNECTIONS_FINGER_TAPPING_TASK = [1, 2, 3]
-REQUIRED_NUM_CONNECTIONS_AFFECTIVE_TASK = [1, 2, 3]
-REQUIRED_NUM_CONNECTIONS_COMPETITIVE_PING_PONG_TASK = [2, 4]
-REQUIRED_NUM_CONNECTIONS_COOPERATIVE_PING_PONG_TASK = [3, 4]
 
 
 def _send_start(to_client_connections: list):
@@ -62,6 +56,8 @@ if __name__ == "__main__":
     parser.add_argument("-s", "--save", default=DEFAULT_DATA_SAVE_PATH, help="Specify where to save data")
     parser.add_argument("-t", "--task", choices=["rest_state", "finger_tapping", "affective", "ping_pong"],
                         default="rest_state", help="The task we want to start from.")
+    parser.add_argument("-g", "--group_size", type=int, choices=[2, 3, 4], default=DEFAULT_NUMBER_OF_HUMAN_SUBJECTS,
+                        help="The number of subjects participating on the experiment.")
     args = parser.parse_args()
 
     data_path = args.save + "/rest_state"
@@ -81,6 +77,7 @@ if __name__ == "__main__":
         os.makedirs(data_path)
 
     server = Server(args.address, args.port)
+    num_participants = args.group_size
 
     # We need to start LSL Streams here so it becomes available on LabRecorder, otherwise it won't record the messages
     #  the individual tasks will broadcast. We pass this object down to the tasks so they can use it to send data
@@ -96,8 +93,13 @@ if __name__ == "__main__":
     # Initial rest state
 
     if next_task == "rest_state":
+        print("")
+        print("----------------------------------------------")
+        print("                  REST STATE                  ")
+        print("----------------------------------------------")
+        print("")
 
-        server.establish_connections(REQUIRED_NUM_CONNECTIONS_REST_STATE)
+        server.establish_connections(num_required_connections=num_participants)
 
         _send_start(list(server.to_client_connections.values()))
 
@@ -112,8 +114,13 @@ if __name__ == "__main__":
     # Finger tapping task
 
     if next_task == "finger_tapping":
+        print("")
+        print("----------------------------------------------")
+        print("               FINGER TAPPING                 ")
+        print("----------------------------------------------")
+        print("")
 
-        server.establish_connections(REQUIRED_NUM_CONNECTIONS_FINGER_TAPPING_TASK)
+        server.establish_connections(num_required_connections=num_participants)
 
         _send_start(list(server.to_client_connections.values()))
 
@@ -127,8 +134,13 @@ if __name__ == "__main__":
 
     # Individual affective task
     if next_task == "affective":
+        print("")
+        print("----------------------------------------------")
+        print("               AFFECTIVE TASK                 ")
+        print("----------------------------------------------")
+        print("")
 
-        server.establish_connections(REQUIRED_NUM_CONNECTIONS_AFFECTIVE_TASK)
+        server.establish_connections(num_required_connections=num_participants)
 
         _send_start(list(server.to_client_connections.values()))
 
@@ -137,7 +149,9 @@ if __name__ == "__main__":
             to_client_connection = server.to_client_connections[client_name]
             session_name = "individual_" + client_name
             process = Process(target=_run_affective_task,
-                              args=([to_client_connection], {from_client_connection: client_name}, session_name, args.save))
+                              args=(
+                                  [to_client_connection], {from_client_connection: client_name}, session_name,
+                                  args.save))
             affective_task_processes.append(process)
 
         for process in affective_task_processes:
@@ -148,7 +162,7 @@ if __name__ == "__main__":
 
         # Team affective task
 
-        server.establish_connections(REQUIRED_NUM_CONNECTIONS_AFFECTIVE_TASK)
+        server.establish_connections(num_required_connections=num_participants)
 
         _send_start(list(server.to_client_connections.values()))
 
@@ -166,8 +180,19 @@ if __name__ == "__main__":
 
     # Ping pong competitive
     if next_task == "ping_pong":
+        print("")
+        print("----------------------------------------------")
+        print("                  PING-PONG                   ")
+        print("----------------------------------------------")
+        print("")
 
-        server.establish_connections(REQUIRED_NUM_CONNECTIONS_COMPETITIVE_PING_PONG_TASK)
+        if num_participants % 2 != 0:
+            # If the number of participants is even, we need one more connection which should be an extra player or AI.
+            num_required_connections = num_participants + 1
+        else:
+            num_required_connections = num_participants
+
+        server.establish_connections(num_required_connections=num_required_connections)
 
         _send_start(list(server.to_client_connections.values()))
 
@@ -193,7 +218,7 @@ if __name__ == "__main__":
 
         # Ping pong cooperative
 
-        server.establish_connections(REQUIRED_NUM_CONNECTIONS_COOPERATIVE_PING_PONG_TASK)
+        server.establish_connections(num_required_connections=num_required_connections)
 
         _send_start(list(server.to_client_connections.values()))
 
@@ -207,7 +232,8 @@ if __name__ == "__main__":
 
             session_name = "cooperative_" + str(session_id)
             process = Process(target=_run_ping_pong,
-                              args=(to_client_connections, from_client_connection_teams, session_name, False, args.save))
+                              args=(
+                                  to_client_connections, from_client_connection_teams, session_name, False, args.save))
             ping_pong_processes.append(process)
 
         for process in ping_pong_processes:
@@ -216,5 +242,6 @@ if __name__ == "__main__":
         for process in ping_pong_processes:
             process.join()
 
-    server.establish_connections()
+    print("")
+    input("This is the end of the Baseline Tasks phase. Press Enter to wrap it up.")
     server.close_connections_listener()

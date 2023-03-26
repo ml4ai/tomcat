@@ -31,13 +31,14 @@ class Server:
         self.from_client_connections = {}   # Key: client connection, Value: client name
 
         self._establishing_connections = False
+        self._num_required_connections = 0
 
-    def establish_connections(self, required_num_connections: List[int] = []) -> None:
+    def establish_connections(self, num_required_connections: int) -> None:
         """Open to establishing new connections
         """
         self._establishing_connections = True
 
-        self._required_num_connections = required_num_connections
+        self._num_required_connections = num_required_connections
 
         to_client_request_thread = threading.Thread(target=self._dispatch_to_client_request, daemon=True)
         to_client_request_thread.start()
@@ -148,29 +149,18 @@ class Server:
                         num_connections = len(self.to_client_connections)
                         print(f"Closed connection to {sender_name}, {num_connections} connections remain")
                 elif data["type"] == "status" and data["status"] == "ready":
-                    print(f"[INFO] Client {sender_name} is ready")
+                    print(f"[INFO] Client {sender_name} is ready.")
+                    if len(self.from_client_connections) == self._num_required_connections:
+                        # Do not accept more connections and get ready to start the next task
+                        self._establishing_connections = False
 
     def _terminal_input(self) -> None:
         """Control the server 
         """
-        while self._establishing_connections:
-            command = get_terminal_command(wait_time=0.5)
+        # while self._establishing_connections:
+        while True:
 
-            if command is None:
-                continue
-
-            if command == "h" or command == "help":
-                print("-----")
-                print("close: Stop establishing new connections")
-                print("h or help: List available commands")
-                print("-----")
-
-            elif command == "close":
-                if self._required_num_connections and \
-                   len(self.from_client_connections) not in self._required_num_connections:
-                    print("[ERROR] Cannot close: must have " + str(self._required_num_connections) + " number of connections")
-                else:
-                    self._establishing_connections = False
-
-            else:
-                print("Unknown command")
+            if not self._establishing_connections:
+                print("")
+                input("[INFO] All clients have connected to the server. Press Enter to move on to the next task.")
+                break
