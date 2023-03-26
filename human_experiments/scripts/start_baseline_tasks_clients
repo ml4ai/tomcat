@@ -13,16 +13,6 @@ else
   PADDING=$1
 fi
 
-__start_server() {
-  # Start server in a new terminal
-  local data_dir="$EXPERIMENT_DIR/baseline_tasks"
-  mkdir -p "$data_dir" >/dev/null
-
-  local command="cd $HOME/$SYSTEMS_DIR/tomcat/human_experiments/lab_software/tomcat-baseline-tasks; "
-  command+="python3 run_server.py -s $data_dir"
-  gnome-terminal -- bash -c "$command"
-}
-
 __start_clients() {
   local padding=$1
   __start_on_client "lion" "lion.local" "$LION_PARTICIPANT_ID" "$padding"
@@ -90,14 +80,10 @@ __start_on_client() {
   fi
 }
 
-__start_baseline_tasks() {
+__start_baseline_task_clients() {
   local padding=$1
 
   source collect_participant_ids "${padding} "
-
-  if yes_no_question "${padding}Do you want to start the ${EMPH}server${NC}?"; then
-    __start_server
-  fi
 
   if yes_no_question "${padding}Do you want to start the ${EMPH}clients${NC}?"; then
     __start_clients "${padding} "
@@ -122,4 +108,4 @@ __start_baseline_tasks() {
   ssh "$EXPERIMENT_USER@leopard.local" "osascript -e 'set Volume 2'"
 }
 
-__start_baseline_tasks "$PADDING"
+__start_baseline_task_clients "$PADDING"

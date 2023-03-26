@@ -1,0 +1,25 @@
+#!/bin/bash
+
+set -u
+
+if [[ -z ${1+x} ]]; then
+  PADDING=""
+else
+  PADDING=$1
+fi
+
+__start_server() {
+  local padding=$1
+
+  if yes_no_question "${padding}Do you want to start the ${EMPH}server${NC}?"; then
+    # Start server in a new terminal
+    local data_dir="$EXPERIMENT_DIR/baseline_tasks"
+    mkdir -p "$data_dir" >/dev/null
+
+    local command="cd $HOME/$SYSTEMS_DIR/tomcat/human_experiments/lab_software/tomcat-baseline-tasks; "
+    command+="python3 run_server.py -s $data_dir"
+    gnome-terminal -- bash -c "$command"
+  fi
+}
+
+__start_server "$PADDING"
