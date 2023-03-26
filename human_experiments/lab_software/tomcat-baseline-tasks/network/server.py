@@ -150,8 +150,9 @@ class Server:
                         print(f"Closed connection to {sender_name}, {num_connections} connections remain")
                 elif data["type"] == "status" and data["status"] == "ready":
                     print(f"[INFO] Client {sender_name} is ready.")
-                    if len(self.from_client_connections) == self._num_required_connections:
-                        # Do not accept more connections and get ready to start the next task
+                    self._num_required_connections -= 1
+                    if self._num_required_connections <= 0:
+                        # Get ready to start the next task
                         self._establishing_connections = False
 
     def _terminal_input(self) -> None:
@@ -162,5 +163,5 @@ class Server:
 
             if not self._establishing_connections:
                 print("")
-                input("[INFO] All clients have connected to the server. Press Enter to move on to the next task.")
+                input("All clients have connected to the server. Press Enter to move on to the next task.")
                 break

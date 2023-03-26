@@ -33,8 +33,7 @@ if __name__ == "__main__":
 
     client = Client(args.address, args.port, args.name)
 
-    # screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-    screen = pygame.display.set_mode((0, 0))
+    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 
     tasks = TASK_LIST.copy()
 
