@@ -1,37 +1,41 @@
 import socket
 import threading
 from select import select
-from typing import List
-
-from common import get_terminal_command
 
 from .receive import receive
 from .send import send
+from .client import ClientPayload
 
 
 class Server:
     """Establish connection with client channels and handle requests
     """
+
     def __init__(self, host: str, port: int) -> None:
         # Establish connection where clients can get game state update
         self._to_client_request = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self._to_client_request.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) # Reuse socket
+        self._to_client_request.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # Reuse socket
         self._to_client_request.bind((host, port))
         self._to_client_request.setblocking(False)
 
         # Establish connection where clients send control commands
         self._from_client_request = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self._from_client_request.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) # Reuse socket
+        self._from_client_request.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # Reuse socket
         self._from_client_request.bind((host, port + 1))
         self._from_client_request.setblocking(False)
 
         print(f"Address: {host}, {port}")
 
-        self.to_client_connections = {}     # Key: client name, Value: client connection
-        self.from_client_connections = {}   # Key: client connection, Value: client name
+        self.to_client_connections = {}  # Key: client name, Value: client connection
+        self.from_client_connections = {}  # Key: client connection, Value: client name
 
         self._establishing_connections = False
         self._num_required_connections = 0
+
+        self._client_name_to_id = {}
+
+    def get_client_id(self, name: str) -> str:
+        return self._client_name_to_id.get(name, "")
 
     def establish_connections(self, num_required_connections: int) -> None:
         """Open to establishing new connections
@@ -81,16 +85,19 @@ class Server:
                 client_conn.setblocking(False)
 
                 # get connection name from client
-                [client_name] = receive([client_conn])
+                payload: ClientPayload
+                [payload] = receive([client_conn])
 
-                if client_name in self.to_client_connections:
+                if payload.client_name in self.to_client_connections:
                     data = {}
                     data["type"] = "status"
                     data["status"] = "failed"
                     send([client_conn], data)
-                    print(f"[WARNING] Connection name exists for {client_name}")
+                    print(f"[WARNING] Connection name exists for {payload.client_name}")
                 else:
-                    self.to_client_connections[client_name] = client_conn
+                    if payload.client_id not in self._client_name_to_id:
+                        self._client_name_to_id[payload.client_name] = payload.client_id
+                    self.to_client_connections[payload.client_name] = client_conn
                     data = {}
                     data["type"] = "status"
                     data["status"] = "succeeded"
@@ -112,21 +119,25 @@ class Server:
                 client_conn.setblocking(False)
 
                 # get connection name from client
-                [client_name] = receive([client_conn])
+                payload: ClientPayload
+                [payload] = receive([client_conn])
 
-                if client_name in self.to_client_connections.values():
+                if payload.client_name in self.to_client_connections.values():
                     data = {}
                     data["type"] = "status"
                     data["status"] = "failed"
                     send([client_conn], data)
-                    print(f"[WARNING] Connection name existed for {client_name}")
+                    print(f"[WARNING] Connection name existed for {payload.client_name}")
                 else:
-                    self.from_client_connections[client_conn] = client_name
+                    if payload.client_id not in self._client_name_to_id:
+                        self._client_name_to_id[payload.client_name] = payload.client_id
+                    self.from_client_connections[client_conn] = payload.client_name
                     data = {}
                     data["type"] = "status"
                     data["status"] = "succeeded"
                     send([client_conn], data)
-                    print("Receiving commands from [" + client_name + ", " + client_addr[0] + ", " + str(client_addr[1]) + ']')
+                    print("Receiving commands from [" + payload.client_name + ", " + client_addr[0] + ", " + str(
+                        client_addr[1]) + ']')
 
     def _from_clients(self) -> None:
         """Get request and status from clients

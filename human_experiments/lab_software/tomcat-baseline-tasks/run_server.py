@@ -143,7 +143,7 @@ if __name__ == "__main__":
             process = Process(target=_run_affective_task,
                               args=(
                                   [to_client_connection], {from_client_connection: client_name},
-                                  AFFECTIVE_CLIENT_NAMES[i],
+                                  server.get_client_id(client_name),
                                   session_name, args.save))
             affective_task_processes.append(process)
 

@@ -23,6 +23,7 @@ if __name__ == "__main__":
     parser.add_argument("-a", "--address", default=DEFAULT_SERVER_ADDR, help="IP address of server")
     parser.add_argument("-p", "--port", type=int, default=DEFAULT_SERVER_PORT, help="Port of server")
     parser.add_argument("-n", "--name", required=True, help="Name of client")
+    parser.add_argument("-i", "--id", required=True, help="Client's unique ID")
     parser.add_argument("-t", "--task", choices=TASK_LIST,
                         default="rest_state", help="The task we want to start from.")
     args = parser.parse_args()
@@ -31,7 +32,7 @@ if __name__ == "__main__":
 
     cursor_visibility(False)
 
-    client = Client(args.address, args.port, args.name)
+    client = Client(args.address, args.port, args.name, args.id)
 
     screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 
