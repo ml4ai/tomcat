@@ -1,4 +1,5 @@
 import socket
+import sys
 import threading
 from select import select
 
@@ -167,12 +168,11 @@ class Server:
                         self._establishing_connections = False
 
     def _terminal_input(self) -> None:
-        """Control the server 
-        """
-        # while self._establishing_connections:
         while True:
 
             if not self._establishing_connections:
+                # When all required clients have connected to the server.
                 print("")
-                input("All clients have connected to the server. Press Enter to move on to the next task.")
+                print("All clients have connected to the server. Press Enter to move on to the next task.")
+                input()
                 break

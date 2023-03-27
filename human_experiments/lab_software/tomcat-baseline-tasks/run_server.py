@@ -96,8 +96,6 @@ if __name__ == "__main__":
 
         server.establish_connections(num_required_connections=num_participants)
 
-        print(server.from_client_connections)
-
         _send_start(list(server.to_client_connections.values()))
 
         server_rest_state = ServerRestState(list(server.to_client_connections.values()),
