@@ -85,8 +85,8 @@ class Server:
                 client_conn.setblocking(False)
 
                 # get connection name from client
-                payload: ClientPayload
-                [payload] = receive([client_conn])
+                [serialized_payload] = receive([client_conn])
+                payload = ClientPayload.deserialize(serialized_payload)
 
                 if payload.client_name in self.to_client_connections:
                     data = {}
@@ -119,8 +119,8 @@ class Server:
                 client_conn.setblocking(False)
 
                 # get connection name from client
-                payload: ClientPayload
-                [payload] = receive([client_conn])
+                [serialized_payload] = receive([client_conn])
+                payload = ClientPayload.deserialize(serialized_payload)
 
                 if payload.client_name in self.to_client_connections.values():
                     data = {}

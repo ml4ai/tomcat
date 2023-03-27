@@ -12,4 +12,3 @@ DEFAULT_DATA_SAVE_PATH = "/data/cat/Exp_test/baseline_tasks"
 
 DEFAULT_NUMBER_OF_HUMAN_SUBJECTS = 3
 TASK_LIST = ["rest_state", "finger_tapping", "affective", "ping_pong"]
-AFFECTIVE_CLIENT_NAMES = ["lion", "tiger", "leopard"]

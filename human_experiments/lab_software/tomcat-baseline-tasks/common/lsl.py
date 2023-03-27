@@ -1,19 +1,10 @@
 from __future__ import annotations
 
-from typing import Any, Dict
-
-import json
 from pylsl import StreamInfo, StreamOutlet, IRREGULAR_RATE
 
-
-class PersistentStreamOutlet(StreamOutlet):
-    pass
-
-    # def __del__(self):
-    #     pass
-    #
-    # def force_deletion(self):
-    #     super().__del__()
+# We wait the number of seconds defined below after creating an LSL Stream such that LabRecorder has time to
+# detect the stream is online and gets ready to save data.
+TIMEOUT_LSL_STREAM_WAIT_FOR_CONSUMER = 30
 
 
 class LSLStringStream:
@@ -26,10 +17,13 @@ class LSLStringStream:
                                        channel_format="string",
                                        source_id=source_id)
 
-        self.outlet = PersistentStreamOutlet(self._stream_info)
+        self.outlet = StreamOutlet(self._stream_info)
+
+        print(f"Stream {name} is online. Waiting up to {TIMEOUT_LSL_STREAM_WAIT_FOR_CONSUMER} seconds for consumers.")
+        if self.outlet.wait_for_consumers(TIMEOUT_LSL_STREAM_WAIT_FOR_CONSUMER):
+            print(f"Consumer Detected.")
+        else:
+            print(f"Consumer undetected after timeout. Some data might be lost in the final .xdf file.")
 
     def send(self, sample: str):
         self.outlet.push_sample([sample])
-
-    # def force_deletion(self):
-    #     self.outlet.force_deletion()

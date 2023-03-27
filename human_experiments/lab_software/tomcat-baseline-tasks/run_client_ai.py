@@ -18,7 +18,7 @@ if __name__ == "__main__":
 
     pygame.init()
 
-    client = Client(args.address, args.port, args.name)
+    client = Client(args.address, args.port, args.name, "ai")
 
     wait_for_server(client.to_server, client.from_server)
 

@@ -4,7 +4,7 @@ from multiprocessing import Process
 
 from common import client_ai_teaming, pairing_clients
 from config import (DEFAULT_DATA_SAVE_PATH, DEFAULT_SERVER_ADDR,
-                    DEFAULT_SERVER_PORT, DEFAULT_NUMBER_OF_HUMAN_SUBJECTS, TASK_LIST, AFFECTIVE_CLIENT_NAMES)
+                    DEFAULT_SERVER_PORT, DEFAULT_NUMBER_OF_HUMAN_SUBJECTS, TASK_LIST)
 from network import Server, send
 from tasks.affective_task import ServerAffectiveTask
 from tasks.finger_tapping_task import ServerFingerTappingTask
