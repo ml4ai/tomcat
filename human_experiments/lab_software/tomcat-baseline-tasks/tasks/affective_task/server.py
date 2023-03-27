@@ -1,14 +1,11 @@
-from typing import Optional
-
 import csv
 from datetime import datetime
 from time import monotonic, sleep, time
 
 from common import record_metadata, request_clients_end
-from common.writer import Writer
 from common.lsl import LSLStringStream
+from common.writer import Writer
 from network import receive, send
-
 from .config import (BLANK_SCREEN_MILLISECONDS,
                      CROSS_SCREEN_MILLISECONDS,
                      DISCUSSION_TIMER, INDIVIDUAL_IMAGE_TIMER,
@@ -21,9 +18,9 @@ class ServerAffectiveTask:
     def __init__(self,
                  to_client_connections: list,
                  from_client_connections: dict,
+                 group_name: str,
                  session_name: str = '',
-                 data_save_path: str = '',
-                 lsl: Optional[LSLStringStream] = None) -> None:
+                 data_save_path: str = '') -> None:
         self._to_client_connections = to_client_connections
         self._from_client_connections = from_client_connections
 
@@ -37,7 +34,8 @@ class ServerAffectiveTask:
 
         self._writer = Writer(
             csv_writer=csv.DictWriter(self._csv_file, delimiter=';', fieldnames=header),
-            lsl_writer=lsl
+            lsl_writer=LSLStringStream(name=f"AffectiveTask_{group_name}", source_id=f"affective_task_{group_name}",
+                                       stream_type="affective_task")
         )
         self._writer.write_header()
 

@@ -1,21 +1,19 @@
-from typing import Optional
-
 import csv
 import threading
-from time import time, monotonic
 from datetime import datetime
+from time import time, monotonic
 
 import pygame
+
 from common import record_metadata, request_clients_end
 from common.lsl import LSLStringStream
 from common.writer import Writer
 from config import UPDATE_RATE
 from network import receive, send
-
 from .config import (COUNT_DOWN_MESSAGE,
-                                         SECONDS_COUNT_DOWN,
-                                         SECONDS_PER_SESSION, SESSION,
-                                         SQUARE_WIDTH)
+                     SECONDS_COUNT_DOWN,
+                     SECONDS_PER_SESSION, SESSION,
+                     SQUARE_WIDTH)
 from .utils import TAPPED, UNTAPPED
 
 
@@ -23,8 +21,7 @@ class ServerFingerTappingTask:
     def __init__(self,
                  to_client_connections: list,
                  from_client_connections: dict,
-                 data_save_path: str = '',
-                 lsl: Optional[LSLStringStream] = None) -> None:
+                 data_save_path: str = '') -> None:
         self._to_client_connections = to_client_connections
         self._from_client_connections = from_client_connections
 
@@ -47,7 +44,7 @@ class ServerFingerTappingTask:
         self._csv_file = open(csv_file_name + ".csv", 'w', newline='')
         self._writer = Writer(
             csv_writer=csv.DictWriter(self._csv_file, delimiter=';', fieldnames=header),
-            lsl_writer=lsl
+            lsl_writer=LSLStringStream(name="FingerTapping", source_id="finger_tapping", stream_type="finger_tapping")
         )
         self._writer.write_header()
 

@@ -1,19 +1,17 @@
-from typing import Optional
-
 import csv
-from time import time, monotonic, sleep
 from datetime import datetime
-from common import request_clients_end
-from common.writer import Writer
-from common.lsl import LSLStringStream
-from network import receive, send
+from time import time, monotonic, sleep
 
+from common import request_clients_end
+from common.lsl import LSLStringStream
+from common.writer import Writer
+from network import receive, send
 from .config import REST_TIMER
 
 
 class ServerRestState:
     def __init__(self, to_client_connections: list, from_client_connections: dict,
-                 data_save_path: str = '', lsl: Optional[LSLStringStream] = None) -> None:
+                 data_save_path: str = '') -> None:
         self._to_client_connections = to_client_connections
         self._from_client_connections = from_client_connections
 
@@ -26,7 +24,7 @@ class ServerRestState:
         self._csv_file = open(csv_file_name + ".csv", 'w', newline='')
         self._writer = Writer(
             csv_writer=csv.DictWriter(self._csv_file, delimiter=';', fieldnames=header),
-            lsl_writer=lsl
+            lsl_writer=LSLStringStream(name="RestState", source_id="rest_state", stream_type="rest_state")
         )
         self._writer.write_header()
 
@@ -55,6 +53,7 @@ class ServerRestState:
                              "event_type": "end_rest_state"}
 
                 self._writer.write(csv_entry)
+                self._csv_file.close()
 
                 request_clients_end(self._to_client_connections)
                 print("[STATUS] Rest state has ended")

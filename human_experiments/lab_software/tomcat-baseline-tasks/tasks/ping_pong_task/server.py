@@ -1,19 +1,17 @@
-from typing import Optional
-
 import csv
 import threading
-from time import time, monotonic
 from datetime import datetime
+from time import time, monotonic
 
 import pygame
+
 from common import record_metadata, request_clients_end
 from common.lsl import LSLStringStream
 from common.writer import Writer
 from config import CLIENT_WINDOW_HEIGHT, CLIENT_WINDOW_WIDTH, UPDATE_RATE
 from network import receive, send
-
 from .config import (COUNT_DOWN_MESSAGE, SECONDS_COUNT_DOWN,
-                                    SESSION_TIME_SECONDS)
+                     SESSION_TIME_SECONDS)
 from .utils import (BALL_SIZE, LEFT_TEAM, RIGHT_TEAM, WINDOW_HEIGHT,
                     WINDOW_WIDTH, Ball, Paddle)
 
@@ -22,10 +20,10 @@ class ServerPingPongTask:
     def __init__(self,
                  to_client_connections: list,
                  from_client_connection_teams: dict,
+                 group_name: str,
                  easy_mode: bool = True,
                  session_name: str = '',
-                 data_save_path: str = '',
-                 lsl: Optional[LSLStringStream] = None) -> None:
+                 data_save_path: str = '') -> None:
         self._to_client_connections = to_client_connections
 
         if easy_mode:
@@ -123,7 +121,8 @@ class ServerPingPongTask:
         self._csv_file = open(csv_file_name + ".csv", 'w', newline='')
         self._writer = Writer(
             csv_writer=csv.DictWriter(self._csv_file, delimiter=';', fieldnames=header),
-            lsl_writer=lsl
+            lsl_writer=LSLStringStream(name=f"PingPong_{group_name}", source_id=f"ping_pong_{group_name}",
+                                       stream_type="ping_pong")
         )
         self._writer.write_header()
 

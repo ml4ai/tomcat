@@ -1,13 +1,10 @@
-from typing import Optional
-
 import argparse
 import os
 from multiprocessing import Process
 
 from common import client_ai_teaming, pairing_clients
-from common.lsl import LSLStringStream
 from config import (DEFAULT_DATA_SAVE_PATH, DEFAULT_SERVER_ADDR,
-                    DEFAULT_SERVER_PORT, DEFAULT_NUMBER_OF_HUMAN_SUBJECTS, TASK_LIST)
+                    DEFAULT_SERVER_PORT, DEFAULT_NUMBER_OF_HUMAN_SUBJECTS, TASK_LIST, AFFECTIVE_CLIENT_NAMES)
 from network import Server, send
 from tasks.affective_task import ServerAffectiveTask
 from tasks.finger_tapping_task import ServerFingerTappingTask
@@ -24,29 +21,29 @@ def _send_start(to_client_connections: list):
 
 def _run_ping_pong(to_client_connections: list,
                    from_client_connections: dict,
+                   group_name: str,
                    session_name: str,
                    easy_mode: bool = True,
-                   data_save_path: str = '',
-                   lsl: Optional[LSLStringStream] = None):
+                   data_save_path: str = ''):
     server_ping_pong_task = ServerPingPongTask(to_client_connections,
                                                from_client_connections,
+                                               group_name=group_name,
                                                easy_mode=easy_mode,
                                                session_name=session_name,
-                                               data_save_path=data_save_path,
-                                               lsl=lsl)
+                                               data_save_path=data_save_path)
     server_ping_pong_task.run()
 
 
 def _run_affective_task(to_client_connections: list,
                         from_client_connections: dict,
+                        group_name: str,
                         session_name: str,
-                        data_save_path: str = '',
-                        lsl: Optional[LSLStringStream] = None):
+                        data_save_path: str = ''):
     server_affective_task = ServerAffectiveTask(to_client_connections,
                                                 from_client_connections,
+                                                group_name=group_name,
                                                 session_name=session_name,
-                                                data_save_path=data_save_path,
-                                                lsl=lsl)
+                                                data_save_path=data_save_path)
 
     server_affective_task.run("./tasks/affective_task/images/task_images", collaboration=False)
 
@@ -80,17 +77,6 @@ if __name__ == "__main__":
     server = Server(args.address, args.port)
     num_participants = args.group_size
 
-    # We need to start LSL Streams here so it becomes available on LabRecorder, otherwise it won't record the messages
-    #  the individual tasks will broadcast. We pass this object down to the tasks so they can use it to send data
-    # to LSL.
-    # Also, to make parsing the .xdf for a specific task easier, I decided to create individual streams per task.
-    rest_state_lsl_stream = LSLStringStream("Rest State", "rest_state")
-    finger_tapping_lsl_stream = LSLStringStream("Finger Tapping", "finger_tapping")
-    individual_affective_task_lsl_stream = LSLStringStream("Individual Affective Task", "individual_affective_task")
-    team_affective_affective_task_lsl_stream = LSLStringStream("Team Affective Task", "team_affective_task")
-    competitive_ping_pong_lsl_stream = LSLStringStream("Competitive Ping-Pong", "competitive_ping_pong")
-    cooperative_ping_pong_lsl_stream = LSLStringStream("Cooperative Ping-Pong", "cooperative_ping_pong")
-
     tasks = TASK_LIST.copy()
 
     while args.task != tasks[0]:
@@ -107,12 +93,13 @@ if __name__ == "__main__":
 
         server.establish_connections(num_required_connections=num_participants)
 
+        print(server.from_client_connections)
+
         _send_start(list(server.to_client_connections.values()))
 
         server_rest_state = ServerRestState(list(server.to_client_connections.values()),
                                             server.from_client_connections,
-                                            data_save_path=args.save,
-                                            lsl=rest_state_lsl_stream)
+                                            data_save_path=args.save)
         server_rest_state.run()
 
         tasks.pop(0)
@@ -132,8 +119,7 @@ if __name__ == "__main__":
 
         server_finger_tapping_task = ServerFingerTappingTask(list(server.to_client_connections.values()),
                                                              server.from_client_connections,
-                                                             data_save_path=args.save,
-                                                             lsl=finger_tapping_lsl_stream)
+                                                             data_save_path=args.save)
         server_finger_tapping_task.run()
 
         tasks.pop(0)
@@ -151,13 +137,14 @@ if __name__ == "__main__":
         _send_start(list(server.to_client_connections.values()))
 
         affective_task_processes = []
-        for from_client_connection, client_name in server.from_client_connections.items():
+        for i, (from_client_connection, client_name) in enumerate(server.from_client_connections.items()):
             to_client_connection = server.to_client_connections[client_name]
             session_name = "individual_" + client_name
             process = Process(target=_run_affective_task,
                               args=(
-                                  [to_client_connection], {from_client_connection: client_name}, session_name,
-                                  args.save, individual_affective_task_lsl_stream))
+                                  [to_client_connection], {from_client_connection: client_name},
+                                  AFFECTIVE_CLIENT_NAMES[i],
+                                  session_name, args.save))
             affective_task_processes.append(process)
 
         for process in affective_task_processes:
@@ -173,9 +160,9 @@ if __name__ == "__main__":
 
         server_affective_task = ServerAffectiveTask(list(server.to_client_connections.values()),
                                                     server.from_client_connections,
+                                                    group_name="team",
                                                     session_name="team",
-                                                    data_save_path=args.save,
-                                                    lsl=team_affective_affective_task_lsl_stream)
+                                                    data_save_path=args.save)
 
         server_affective_task.run("./tasks/affective_task/images/task_images", collaboration=True)
 
@@ -204,15 +191,15 @@ if __name__ == "__main__":
         client_pairs = pairing_clients(server.to_client_connections, server.from_client_connections)
 
         ping_pong_processes = []
-        for session_id, (to_client_connection_pair, from_client_connection_pair) in enumerate(client_pairs):
+        for i, (to_client_connection_pair, from_client_connection_pair) in enumerate(client_pairs):
             to_client_connections = []
             for to_client_connection_team in to_client_connection_pair:
                 to_client_connections = to_client_connections + list(to_client_connection_team.values())
 
-            session_name = "competitive_" + str(session_id)
+            session_name = "competitive_" + str(i)
             process = Process(target=_run_ping_pong,
-                              args=(to_client_connections, from_client_connection_pair, session_name, True, args.save,
-                                    competitive_ping_pong_lsl_stream))
+                              args=(to_client_connections, from_client_connection_pair,
+                                    session_name, session_name, True, args.save))
             ping_pong_processes.append(process)
 
         for process in ping_pong_processes:
@@ -229,16 +216,17 @@ if __name__ == "__main__":
         client_pairs = client_ai_teaming(server.to_client_connections, server.from_client_connections)
 
         ping_pong_processes = []
-        for session_id, (to_client_connection_teams, from_client_connection_teams) in enumerate(client_pairs):
+        for i, (to_client_connection_teams, from_client_connection_teams) in enumerate(client_pairs):
             to_client_connections = []
             for to_client_connection_team in to_client_connection_teams:
                 to_client_connections = to_client_connections + list(to_client_connection_team.values())
 
-            session_name = "cooperative_" + str(session_id)
+            session_name = "cooperative_" + str(i)
             process = Process(target=_run_ping_pong,
                               args=(
-                                  to_client_connections, from_client_connection_teams, session_name, False, args.save,
-                                  cooperative_ping_pong_lsl_stream))
+                                  to_client_connections, from_client_connection_teams,
+                                  session_name,
+                                  session_name, False, args.save))
             ping_pong_processes.append(process)
 
         for process in ping_pong_processes:
@@ -249,6 +237,5 @@ if __name__ == "__main__":
 
         tasks.pop(0)
 
-    print("")
-    input("This is the end of the Baseline Tasks phase. Press Enter to wrap it up.")
+    server.establish_connections(num_required_connections=num_participants)
     server.close_connections_listener()
