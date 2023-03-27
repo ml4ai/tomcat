@@ -53,10 +53,13 @@ class ServerRestState:
                              "event_type": "end_rest_state"}
 
                 self._writer.write(csv_entry)
-                self._csv_file.close()
 
                 request_clients_end(self._to_client_connections)
                 print("[STATUS] Rest state has ended")
                 break
             else:
                 print("[ERROR] Rest state clients didn't send STOP message for Rest state server to terminate")
+
+    def clean_up(self):
+        self._csv_file.close()
+        self._writer.close()

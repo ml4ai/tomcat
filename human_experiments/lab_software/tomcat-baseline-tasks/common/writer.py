@@ -19,7 +19,11 @@ class Writer:
         self._csv_writer.writerow(content)
 
         try:
-            self._lsl_writer.send(json.dumps(content))
+            if self._lsl_writer is not None:
+                self._lsl_writer.send(json.dumps(content))
         except Exception as ex:
             # Do not crash the program if we have an issue with LSL
             print(f"Could not send data to LSL. Error {ex}.")
+
+    def close(self):
+        del self._lsl_writer

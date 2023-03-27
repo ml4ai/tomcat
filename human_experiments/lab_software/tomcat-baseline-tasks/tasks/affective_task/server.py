@@ -170,5 +170,6 @@ class ServerAffectiveTask:
 
         print("[STATUS] Affective task ended")
 
-    def close_file(self):
+    def clean_up(self):
         self._csv_file.close()
+        self._writer.close()

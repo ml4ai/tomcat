@@ -32,6 +32,7 @@ def _run_ping_pong(to_client_connections: list,
                                                session_name=session_name,
                                                data_save_path=data_save_path)
     server_ping_pong_task.run()
+    server_ping_pong_task.clean_up()
 
 
 def _run_affective_task(to_client_connections: list,
@@ -39,6 +40,7 @@ def _run_affective_task(to_client_connections: list,
                         group_name: str,
                         session_name: str,
                         data_save_path: str = ''):
+
     server_affective_task = ServerAffectiveTask(to_client_connections,
                                                 from_client_connections,
                                                 group_name=group_name,
@@ -46,6 +48,7 @@ def _run_affective_task(to_client_connections: list,
                                                 data_save_path=data_save_path)
 
     server_affective_task.run("./tasks/affective_task/images/task_images", collaboration=False)
+    server_affective_task.clean_up()
 
 
 if __name__ == "__main__":
@@ -101,6 +104,7 @@ if __name__ == "__main__":
                                             server.from_client_connections,
                                             data_save_path=args.save)
         server_rest_state.run()
+        server_rest_state.clean_up()
 
         tasks.pop(0)
 
@@ -121,6 +125,7 @@ if __name__ == "__main__":
                                                              server.from_client_connections,
                                                              data_save_path=args.save)
         server_finger_tapping_task.run()
+        server_finger_tapping_task.clean_up()
 
         tasks.pop(0)
 
@@ -165,8 +170,7 @@ if __name__ == "__main__":
                                                     data_save_path=args.save)
 
         server_affective_task.run("./tasks/affective_task/images/task_images", collaboration=True)
-
-        server_affective_task.close_file()
+        server_affective_task.clean_up()
 
         tasks.pop(0)
 

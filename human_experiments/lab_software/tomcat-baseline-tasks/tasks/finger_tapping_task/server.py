@@ -85,11 +85,7 @@ class ServerFingerTappingTask:
         to_client_update_state_thread.join()
         from_client_commands_thread.join()
 
-        self._csv_file.close()
-
         request_clients_end(self._to_client_connections)
-
-        self._csv_file.close()
 
         print("[STATUS] Finger tapping task ended")
 
@@ -159,3 +155,7 @@ class ServerFingerTappingTask:
                         self._state[data["sender"]] = TAPPED
                     else:
                         self._state[data["sender"]] = UNTAPPED
+
+    def clean_up(self):
+        self._csv_file.close()
+        self._writer.close()

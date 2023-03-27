@@ -162,8 +162,6 @@ class ServerPingPongTask:
         to_client_update_state_thread.join()
         from_client_commands_thread.join()
 
-        self._csv_file.close()
-
         extra_data = {}
         extra_data["score_left"] = self._score_left
         extra_data["score_right"] = self._score_right
@@ -302,3 +300,7 @@ class ServerPingPongTask:
                 if data["type"] == "change":
                     self._paddles[data["sender"]].update_location(
                         data["change"])
+
+    def clean_up(self):
+        self._csv_file.close()
+        self._writer.close()
