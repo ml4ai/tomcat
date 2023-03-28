@@ -90,7 +90,7 @@ __start_server() {
   local log_path=$EXPERIMENT_DIR/tmp/baseline_tasks_server.log
 
   local command="cd $HOME/$SYSTEMS_DIR/tomcat/human_experiments/lab_software/tomcat-baseline-tasks; "
-  command+="python3 run_server.py -s $data_dir 2> $HOME$log_path"
+  command+="python3 run_server.py -s $data_dir 2> $log_path"
   gnome-terminal -- bash -c "$command"
 }
 
