@@ -1,7 +1,10 @@
-cmake_minimum_required(VERSION 3.16)
-set(CMAKE_CXX_STANDARD 20)
-
 project(mqtt_to_lsl)
+cmake_minimum_required(VERSION 3.10)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/tools/cmake/")
 
 find_package(FMT REQUIRED)
 find_package(nlohmann_json REQUIRED)
@@ -16,6 +19,4 @@ set(_libs
         fmt::fmt
         ${Mosquitto_LIBRARIES})
 
-add_executable(${PROJECT_NAME} sync_usar_data.cpp)
-target_include_directories(${PROJECT_NAME} PUBLIC src)
-target_link_libraries(${PROJECT_NAME} PRIVATE ${_libs})
+add_subdirectory(src)

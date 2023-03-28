@@ -3,9 +3,8 @@
 #include "fmt/format.h"
 #include <iostream>
 #include <thread>
-#include <unistd.h>
 
-#define MAX_NUM_RECONNECTIONS 5
+#define ONE_SECOND 1000 // in milliseconds
 
 using namespace std;
 
@@ -17,6 +16,9 @@ Mosquitto::Mosquitto() {
     this->mqtt_client = mosquitto_new(NULL, true, this);
     if (this->mqtt_client == NULL)
         throw "Error creating mosquitto instance";
+
+    mosquitto_connect_callback_set(this->mqtt_client, &on_connect_callback);
+    mosquitto_message_callback_set(this->mqtt_client, &on_message_callback);
 }
 
 Mosquitto::~Mosquitto() {
@@ -27,59 +29,29 @@ Mosquitto::~Mosquitto() {
 //----------------------------------------------------------------------
 // Defining callbacks
 //----------------------------------------------------------------------
-void Mosquitto::set_on_connect_callback(void (*callback_fn)(struct mosquitto*,
-                                                            void*,
-                                                            int*)) {
-    mosquitto_connect_callback_set(this->mqtt_client, callback_fn)
-}
-
-void Mosquitto::set_on_message_callback(void (*callback_fn)(struct mosquitto*,
-                                                            void*,
-                                                            int*)) {
-    mosquitto_message_callback_set(this->mqtt_client, callback_fn)
-}
-
-void Mosquitto::set_on_connect_callback(void (*callback_fn)(struct mosquitto*,
-                                                            void*,
-                                                            int*)) {
-    mosquitto_connect_callback_set(this->mqtt_client, callback_fn)
-}
-
-void Mosquitto::mosquitto_callback_on_connect(struct mosquitto* mqtt_client,
-                                              void* wrapper_instance,
-                                              int error_code) {
+void Mosquitto::on_connect_callback(struct mosquitto* mqtt_client,
+                                    void* wrapper_instance,
+                                    int error_code) {
 
     switch (error_code) {
     case 0:
-        // Connected
-        cout << "[MQTT] Connection successfully established.\n";
         break;
     case 1:
-        mosquitto->on_error(
-            "Connection refused (unacceptable protocol version)");
-        break;
+        throw "Connection refused (unacceptable protocol version)";
     case 2:
-        mosquitto->on_error("Connection refused (identifier rejected)");
-        break;
+        throw "Connection refused (identifier rejected)";
     case 3:
-        mosquitto->on_error("Connection refused (broker unavailable)");
-        break;
+        throw "Connection refused (broker unavailable)";
     case 5:
-        mosquitto->on_error("Connection refused (Username/Password wrong) ");
-        break;
+        throw "Connection refused (Username/Password wrong)";
     default:
-        stringstream ss;
-        ss << "Connection failed (Error code " << error_code << ")";
-        string msg = ss.str();
-        mosquitto->on_error(msg.c_str());
-        break;
+        throw fmt::format("Connection failed (Error code {})", error_code);
     }
 }
 
-void Mosquitto::mosquitto_callback_on_message(
-    struct mosquitto* mqtt_client,
-    void* wrapper_instance,
-    const struct mosquitto_message* message) {
+void Mosquitto::on_message_callback(struct mosquitto* mqtt_client,
+                                    void* wrapper_instance,
+                                    const struct mosquitto_message* message) {
 
     string topic(message->topic);
 
@@ -92,58 +64,42 @@ void Mosquitto::mosquitto_callback_on_message(
     }
 
     Mosquitto* mosquitto = (Mosquitto*)wrapper_instance;
-    mosquitto->last_updated_time = chrono::steady_clock::now();
-    mosquitto->on_message(topic, ss.str());
+    mosquitto->on_message_external_callback(topic, ss.str());
 }
 
-//----------------------------------------------------------------------
-// Virtual functions
-//----------------------------------------------------------------------
-void Mosquitto::on_connected() {}
-
-void Mosquitto::on_error(const string& error_message) {}
-
-void Mosquitto::on_message(const string& topic, const string& message) {}
+void Mosquitto::set_on_message_callback(void (*callback_fn)(const string&,
+                                                            const string&)) {
+    this->on_message_external_callback = callback_fn;
+}
 
 //----------------------------------------------------------------------
 // Member functions
 //----------------------------------------------------------------------
-void Mosquitto::copy_wrapper(const Mosquitto& mosquitto) {
-    this->mqtt_client = mosquitto.mqtt_client;
-    this->running = mosquitto.running;
-}
 
 void Mosquitto::connect(const string& address,
                         int port,
-                        int alive_delay,
-                        int trials,
-                        int milliseconds_before_retrial) {
-    while (!this->running && trials > 0) {
+                        int trials) {
+
+    while (trials > 0) {
         cout << "Trying to connect to " << address << ":" << port << "..."
              << endl;
-        this_thread::sleep_for(chrono::milliseconds(1000));
-        int error_code = mosquitto_connect(
-            this->mqtt_client, address.c_str(), port, alive_delay);
-        if (error_code != MOSQ_ERR_SUCCESS) {
+        this_thread::sleep_for(chrono::milliseconds(ONE_SECOND));
+        try {
+            // Our callback will throw an exception in case of fail to connect.
+            mosquitto_connect(
+                this->mqtt_client, address.c_str(), port, ONE_SECOND);
+            cout << "Connection established!" << endl;
+            trials = 0;
+        }
+        catch (const std::string& ex) {
+            cout << ex << endl;
             trials--;
             if (trials > 0) {
-                cout << "Fail! Waiting to retry once more..." << endl;
+                cout << "We will retry once more." << endl;
                 this_thread::sleep_for(
-                    chrono::milliseconds(milliseconds_before_retrial));
+                    chrono::milliseconds(ONE_SECOND));
             }
         }
-        else {
-            cout << "Connection established!" << endl;
-            this->running = true;
-        }
-    }
-
-    if (!this->running) {
-        stringstream ss;
-        ss << "It was not possible to establish connection with the "
-              "message broker at "
-           << address << ":" << port;
-        this->on_error(ss.str());
     }
 }
 
@@ -151,10 +107,12 @@ void Mosquitto::subscribe(const string& topic) {
     const int qos = 0;
     int error_code =
         mosquitto_subscribe(this->mqtt_client, NULL, topic.c_str(), qos);
+
     if (error_code != MOSQ_ERR_SUCCESS) {
-        stringstream ss;
-        ss << "It was not possible to subscribe to the topic " << topic;
-        this->on_error(ss.str());
+        throw fmt::format(
+            "It was not possible to subscribe to the topic {}. Error code {}.",
+            topic,
+            error_code);
     }
 }
 
@@ -170,70 +128,23 @@ void Mosquitto::publish(const string& topic, const string& message) {
                                        (const void*)payload,
                                        qos,
                                        false);
+
     if (error_code != MOSQ_ERR_SUCCESS) {
-        stringstream ss;
-        ss << "It was not possible to publish in the topic " << topic;
-        this->on_error(ss.str());
+        throw fmt::format(
+            "It was not possible to publish in the topic {}. Error code {}.",
+            topic,
+            error_code);
     }
 }
 
-void Mosquitto::loop(const bool try_reconnect) {
-    int error_counter = 0;
-    int max_packets = 10;
-    this->last_updated_time = chrono::steady_clock::now();
+void Mosquitto::loop_forever() {
+    int error_code = mosquitto_loop_forever(this->mqtt_client, -1, 1);
 
-    do {
-        int error_code = mosquitto_loop(this->mqtt_client, -1, 10);
-        if (this->time_out()) {
-            this->on_time_out();
-            this->running = false;
-        }
-
-        // A derived class can change this variable so it can stop running for
-        // extraneous reasons, not only because of timeout.
-        if (!this->running) {
-            return;
-        }
-
-        if (error_code != MOSQ_ERR_SUCCESS) {
-            sleep(10);
-            error_code = mosquitto_reconnect(this->mqtt_client);
-
-            if (error_code == MOSQ_ERR_SUCCESS) {
-                // Reconnect successfull
-                continue;
-            }
-            else {
-                // Reconnect failed. Increase counter
-                error_counter++;
-
-                if (error_counter > MAX_NUM_RECONNECTIONS) {
-                    this->on_error(
-                        "Maximum number of reconnection attempts was reached.");
-                    this->running = false;
-                }
-            }
-        }
-        else {
-            error_counter = 0;
-        }
-    } while (this->running && try_reconnect);
+    if (error_code != MOSQ_ERR_SUCCESS) {
+        throw fmt::format("Fail to loop forever. Error code {}.", error_code);
+    }
 }
 
-bool Mosquitto::time_out() const {
-    Time current_time = chrono::steady_clock::now();
-    long duration = chrono::duration_cast<chrono::seconds>(
-                        current_time - this->last_updated_time)
-                        .count();
-    return duration > this->max_seconds_without_messages;
-}
-
-void Mosquitto::close() {
-    this->running = false;
+void Mosquitto::stop() {
     mosquitto_disconnect(this->mqtt_client);
-}
-
-void Mosquitto::set_max_seconds_without_messages(
-    long max_seconds_without_messages) {
-    this->max_seconds_without_messages = max_seconds_without_messages;
 }
