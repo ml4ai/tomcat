@@ -13,7 +13,7 @@
 using namespace std;
 using namespace cv;
 
-const int WAIT_TIME_BEFORE_RECORDING = 5
+const int WAIT_TIME_BEFORE_RECORDING = 5;
 
 void create_output_directory(const std::filesystem::path p) {
     std::error_code ec;
@@ -32,14 +32,20 @@ void create_output_directory(const std::filesystem::path p) {
     }
 }
 
+string create_image_filename(unsigned long frame_count,
+                             const string& timestamp,
+                             size_t gap) {
+    return to_string(frame_count) + "_" + timestamp + to_string(gap) + ".png";
+}
+
 void webcam(const string directory,
-            const int frames_per_minute = 2,
+            const int frames_per_second,
             const int webcam_id = 0) {
     const std::filesystem::path p(directory);
     create_output_directory(p);
 
-    int frame_period = 1000 / frames_per_minute; // Milliseconds
-    cout << "\n\tCapturing " << frames_per_minute << " frames per minute.\n";
+    int frame_period = 1000 / frames_per_second; // Milliseconds
+    cout << "\n\tCapturing " << frames_per_second << " frames per second.\n";
     cout << "\tA frame is captured every " << frame_period
          << " milliseconds.\n\n";
 
@@ -67,9 +73,8 @@ void webcam(const string directory,
 
         cap.read(img);
         if (!img.empty()) {
-            // We need to check if the image is not empty because imshow crashes
-            // when that happens.
-            imshow("Webcam", img);
+            // We need to check if the image is not empty otherwise imwrite
+            // will crash.
 
             std::string date_time =
                 date::format("%F_%H-%M-%S.%p~", capture_start_time).c_str();
@@ -79,9 +84,9 @@ void webcam(const string directory,
             prev_frame_time = capture_start_time;
 
             std::filesystem::path file = p;
-            file /=
-                std::filesystem::path(to_string(i) + "_" + string(date_time) +
-                                      to_string(between_time.count()) + ".png");
+            string image_filename = create_image_filename(
+                i, string(date_time), size_t(between_time.count()));
+            file /= std::filesystem::path(image_filename);
             imwrite(file, img);
         }
 
@@ -90,6 +95,9 @@ void webcam(const string directory,
         std::chrono::duration<int, std::milli> capture_duration =
             capture_end_time - prev_frame_time;
 
+        // We cannot just wait for the frame_period time because there'' also
+        // the time it takes to capture the image. So, we have to discount that
+        // period from the final wait time.
         frame_period > capture_duration.count()
             ? waitKey(frame_period - capture_duration.count())
             : 0;
@@ -98,21 +106,21 @@ void webcam(const string directory,
 
 int main(int argc, const char* argv[]) {
     const string directory = argv[1];
-    int frames_per_minute = 2;
+    int frames_per_second = stoi(argv[2]);
     int webcam_id = 0;
 
     std::size_t pos{};
 
     try {
-        frames_per_minute = std::stoi(argv[2], &pos);
+        frames_per_second = std::stoi(argv[2], &pos);
     }
     catch (std::invalid_argument const& ex) {
-        cout << "\n\t**** ERROR: Invalid number of frames per minute entered: "
+        cout << "\n\t**** ERROR: Invalid number of frames per second entered: "
              << argv[2] << endl;
         return -1;
     }
     catch (std::out_of_range const& ex) {
-        cout << "\n\t**** ERROR: Frames per minute entered is too large: "
+        cout << "\n\t**** ERROR: Frames per second entered is too large: "
              << argv[2] << endl;
         return -1;
     }
@@ -133,7 +141,7 @@ int main(int argc, const char* argv[]) {
         }
     }
 
-    webcam(directory, frames_per_minute, webcam_id);
+    webcam(directory, frames_per_second, webcam_id);
 
     return 0;
 }
