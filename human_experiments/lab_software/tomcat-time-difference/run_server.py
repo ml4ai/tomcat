@@ -16,8 +16,9 @@ def _send_start(to_client_connections: list):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run time difference software.")
-    parser.add_argument("-a", "--address", default=DEFAULT_SERVER_ADDR, help="IP address of server")
+    parser.add_argument("-a", "--address", type=str, default=DEFAULT_SERVER_ADDR, help="IP address of server")
     parser.add_argument("-p", "--port", type=int, default=DEFAULT_SERVER_PORT, help="Port of server")
+    parser.add_argument("-f", "--file", type=str, help="File path to write report to")
     args = parser.parse_args()
 
     server = Server(args.address, args.port)
@@ -28,7 +29,7 @@ if __name__ == "__main__":
 
     server_latency_test = ServerLatencyTest(server.to_client_connections, 
                                             server.from_client_connections)
-    server_latency_test.run()
+    server_latency_test.run(out_file_path=args.file)
 
     server.establish_connections()
     server.close_connections_listener()
