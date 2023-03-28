@@ -9,6 +9,8 @@
     #set(CMAKE_OSX_SYSROOT /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk)
 #endif()
 
+list(APPEND CMAKE_PREFIX_PATH "/opt/local/libexec/opencv4/cmake/")
+
 find_package(OpenCV REQUIRED)
 add_executable(video_capture main.cpp)
 target_include_directories(video_capture PRIVATE ${OpenCV_INCLUDE_DIRS})

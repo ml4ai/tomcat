@@ -9,6 +9,7 @@
     #set(CMAKE_OSX_SYSROOT /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk)
 #endif()
 
+cmake_minimum_required(VERSION 3.21)
 project(video_capture)
 
 
