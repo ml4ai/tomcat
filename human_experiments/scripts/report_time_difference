@@ -5,7 +5,7 @@ set -u
 TIME_DIFFERENCE_SESSION_NAME="time-difference"
 TIME_DIFFERENCE_SERVER_NAME="time-difference-server"
 TIME_DIFFERENCE_CLIENT_NAME="time-difference-client"
-TIME_DIFFERENCE_FILE_NAME="$DATA_ROOT_DIR/time_difference.txt"
+TIME_DIFFERENCE_FILE_NAME="$EXPERIMENT_DIR/time_difference.txt"
 
 __launch_time_difference_tom_server() {
   local command="cd $HOME/$SYSTEMS_DIR/tomcat/human_experiments/lab_software/tomcat-time-difference; "
