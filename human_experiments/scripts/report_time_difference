@@ -14,7 +14,9 @@ __launch_time_difference_tom_server() {
 }
 
 __launch_time_difference_cat_client() {
-  ssh cat@cat "tmux new-session -d -s $TIME_DIFFERENCE_SESSION_NAME -n $TIME_DIFFERENCE_CLIENT_NAME; tmux send-keys -t $TIME_DIFFERENCE_SESSION_NAME:$TIME_DIFFERENCE_CLIENT_NAME 'python3 run_client.py -n CAT' Enter"
+  local command="cd $HOME/$SYSTEMS_DIR/tomcat/human_experiments/lab_software/tomcat-time-difference; "
+  command+="python3 run_client.py -n $TIME_DIFFERENCE_CLIENT_NAME"
+  ssh cat@cat "tmux new-session -d -s $TIME_DIFFERENCE_SESSION_NAME -n $TIME_DIFFERENCE_CLIENT_NAME $command"
 }
 
 __record_time_difference() {
