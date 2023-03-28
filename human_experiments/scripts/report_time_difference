@@ -14,9 +14,8 @@ __launch_time_difference_tom_server() {
 }
 
 __launch_time_difference_cat_client() {
-  command+="python3 run_client.py -n CAT"
-  # ssh cat@cat "tmux new-session -d -s $TIME_DIFFERENCE_SESSION_NAME -n $TIME_DIFFERENCE_CLIENT_NAME \"$command\""
-  ssh cat@cat "tmux new-session -d -s $TIME_DIFFERENCE_SESSION_NAME -n $TIME_DIFFERENCE_CLIENT_NAME"
+  local command="python3 run_client.py -n CAT"
+  ssh cat@cat "tmux new-session -d -s $TIME_DIFFERENCE_SESSION_NAME -n $TIME_DIFFERENCE_CLIENT_NAME \"$command\""
 }
 
 __record_time_difference() {
