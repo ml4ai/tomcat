@@ -10,12 +10,14 @@
 // date.h: https://howardhinnant.github.io/date/date.html
 #include "date.h"
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "EndlessLoop"
 using namespace std;
 using namespace cv;
 
 const int WAIT_TIME_BEFORE_RECORDING = 5;
 
-void create_output_directory(const std::filesystem::path p) {
+void create_output_directory(const std::filesystem::path& p) {
     std::error_code ec;
 
     if (std::filesystem::exists(p, ec)) {
@@ -38,9 +40,9 @@ string create_image_filename(unsigned long frame_count,
     return to_string(frame_count) + "_" + timestamp + to_string(gap) + ".png";
 }
 
-void webcam(const string directory,
-            const int frames_per_second,
-            const int webcam_id = 0) {
+void webcam(const string& directory,
+                         const int frames_per_second,
+                         const int webcam_id = 0) {
     const std::filesystem::path p(directory);
     create_output_directory(p);
 
@@ -77,7 +79,7 @@ void webcam(const string directory,
             // will crash.
 
             std::string date_time =
-                date::format("%F_%H-%M-%S.%p~", capture_start_time).c_str();
+                date::format("%F_%H-%M-%S.%p~", capture_start_time);
 
             std::chrono::duration<long, std::milli> between_time =
                 capture_start_time - prev_frame_time;
@@ -106,7 +108,7 @@ void webcam(const string directory,
 
 int main(int argc, const char* argv[]) {
     const string directory = argv[1];
-    int frames_per_second = stoi(argv[2]);
+    int frames_per_second;
     int webcam_id = 0;
 
     std::size_t pos{};
