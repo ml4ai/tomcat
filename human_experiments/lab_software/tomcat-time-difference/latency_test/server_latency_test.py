@@ -32,7 +32,7 @@ class ServerLatencyTest:
 
         message_stream = io.StringIO()
         for client_name, time_difference in self._latencies.items():
-            message_stream.write(f"{client_name}: {time_difference}")
+            message_stream.write(f"{client_name}: {time_difference} seconds")
 
         message_stream.seek(0)
         message = message_stream.read()

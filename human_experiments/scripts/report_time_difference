@@ -27,6 +27,7 @@ __record_time_difference() {
 }
 
 __report_time_difference() {
+  tmux send-keys -t "$TIME_DIFFERENCE_SESSION_NAME:$TIME_DIFFERENCE_SERVER_NAME" "close" Enter
   cat "$TIME_DIFFERENCE_FILE_NAME"
   sleep 1
 }
