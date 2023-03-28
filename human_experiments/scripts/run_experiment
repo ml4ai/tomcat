@@ -145,6 +145,12 @@ pushd "$SCRIPTS_DIR" >/dev/null || exit 1
     fi
   fi
 
+  if [[ $GOTO -le 2 ]]; then
+    echo " "
+    if yes_no_question "[3] Do you want to check ${EMPH}Time Difference between ToM and CAT${NC}?"; then
+      source report_time_difference
+    fi
+
   if [[ $GOTO -le 3 ]]; then
       echo " "
       if yes_no_question "[3] Do you want to start the ${EMPH}Face Analyzer${NC}?"; then
