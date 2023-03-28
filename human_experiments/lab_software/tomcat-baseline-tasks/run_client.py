@@ -4,7 +4,7 @@ import pygame
 
 from common import cursor_visibility, render_blank_screen
 from config import (BLANK_SCREEN_COUNT_DOWN_MILLISECONDS, DEFAULT_SERVER_ADDR,
-                    DEFAULT_SERVER_PORT)
+                    DEFAULT_SERVER_PORT, TASK_LIST)
 from instructions import (affective_task_instruction_individual,
                           affective_task_instruction_team, exit_instruction,
                           finger_tapping_task_instruction,
@@ -23,27 +23,38 @@ if __name__ == "__main__":
     parser.add_argument("-a", "--address", default=DEFAULT_SERVER_ADDR, help="IP address of server")
     parser.add_argument("-p", "--port", type=int, default=DEFAULT_SERVER_PORT, help="Port of server")
     parser.add_argument("-n", "--name", required=True, help="Name of client")
+    parser.add_argument("-i", "--id", required=True, help="Client's unique ID")
+    parser.add_argument("-t", "--task", choices=TASK_LIST,
+                        default="rest_state", help="The task we want to start from.")
     args = parser.parse_args()
 
     pygame.init()
 
     cursor_visibility(False)
 
-    client = Client(args.address, args.port, args.name)
+    client = Client(args.address, args.port, args.name, args.id)
 
     screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 
-    #rest state
+    tasks = TASK_LIST.copy()
 
-    wait_for_experimenter(client.to_server, client.from_server, screen)
+    while args.task != tasks[0]:
+        tasks.pop(0)
 
+    # Initial rest state
 
-    client_rest_state = ClientRestState(client.from_server, 
-                                        client.to_server, 
-                                        screen)
-    client_rest_state.run()
+    if tasks[0] == "rest_state":
 
-    render_blank_screen(screen, BLANK_SCREEN_COUNT_DOWN_MILLISECONDS)
+        wait_for_experimenter(client.to_server, client.from_server, screen)
+
+        client_rest_state = ClientRestState(client.from_server,
+                                            client.to_server,
+                                            screen)
+        client_rest_state.run()
+
+        render_blank_screen(screen, BLANK_SCREEN_COUNT_DOWN_MILLISECONDS)
+
+        tasks.pop(0)
     
     # Introduction slides
 
@@ -51,74 +62,82 @@ if __name__ == "__main__":
     
     # Finger tapping task
 
-    finger_tapping_task_instruction(screen)
+    if tasks[0] == "finger_tapping":
 
-    wait_for_experimenter(client.to_server, client.from_server, screen)
+        finger_tapping_task_instruction(screen)
 
-    client_finger_tapping_task = ClientFingerTappingTask(client.from_server, 
-                                                         client.to_server, 
-                                                         screen, 
-                                                         client.client_name)
-    client_finger_tapping_task.run()
+        wait_for_experimenter(client.to_server, client.from_server, screen)
 
-    render_blank_screen(screen, BLANK_SCREEN_COUNT_DOWN_MILLISECONDS)
+        client_finger_tapping_task = ClientFingerTappingTask(client.from_server,
+                                                             client.to_server,
+                                                             screen,
+                                                             client.client_name)
+        client_finger_tapping_task.run()
 
-    # Affective task
+        render_blank_screen(screen, BLANK_SCREEN_COUNT_DOWN_MILLISECONDS)
 
-    # Individual
-    affective_task_instruction_individual(screen)
+        tasks.pop(0)
 
-    wait_for_experimenter(client.to_server, client.from_server, screen)
+    if tasks[0] == "affective":
+        # Individual
+        affective_task_instruction_individual(screen)
 
-    client_affective_task = ClientAffectiveTask(client.from_server, 
-                                                client.to_server, 
-                                                screen)
+        wait_for_experimenter(client.to_server, client.from_server, screen)
 
-    client_affective_task.run()
+        client_affective_task = ClientAffectiveTask(client.from_server,
+                                                    client.to_server,
+                                                    screen)
 
-    render_blank_screen(screen, BLANK_SCREEN_COUNT_DOWN_MILLISECONDS)
+        client_affective_task.run()
 
-    # Team
-    affective_task_instruction_team(screen)
+        render_blank_screen(screen, BLANK_SCREEN_COUNT_DOWN_MILLISECONDS)
 
-    wait_for_experimenter(client.to_server, client.from_server, screen)
+        # Team
+        affective_task_instruction_team(screen)
 
-    client_affective_task = ClientAffectiveTask(client.from_server, 
-                                                client.to_server, 
-                                                screen)
+        wait_for_experimenter(client.to_server, client.from_server, screen)
 
-    client_affective_task.run(collaboration=True)
+        client_affective_task = ClientAffectiveTask(client.from_server,
+                                                    client.to_server,
+                                                    screen)
 
-    render_blank_screen(screen, BLANK_SCREEN_COUNT_DOWN_MILLISECONDS)
+        client_affective_task.run(collaboration=True)
 
-    # Ping pong competitive task
+        render_blank_screen(screen, BLANK_SCREEN_COUNT_DOWN_MILLISECONDS)
 
-    ping_pong_task_competitive_instruction(screen)
+        tasks.pop(0)
 
-    wait_for_experimenter(client.to_server, client.from_server, screen)
+    if tasks[0] == "ping_pong":
 
-    client_ping_pong_task = ClientPingPongTask(client.from_server, 
-                                               client.to_server, 
-                                               screen, 
-                                               client.client_name)
-    client_ping_pong_task.run()
+        # Ping pong competitive task
+        ping_pong_task_competitive_instruction(screen)
 
-    render_blank_screen(screen, BLANK_SCREEN_COUNT_DOWN_MILLISECONDS)
+        wait_for_experimenter(client.to_server, client.from_server, screen)
 
-    # Ping pong cooperative task
+        client_ping_pong_task = ClientPingPongTask(client.from_server,
+                                                   client.to_server,
+                                                   screen,
+                                                   client.client_name)
+        client_ping_pong_task.run()
 
-    ping_pong_task_cooperative_instruction(screen)
+        render_blank_screen(screen, BLANK_SCREEN_COUNT_DOWN_MILLISECONDS)
 
-    wait_for_experimenter(client.to_server, client.from_server, screen)
+        # Ping pong cooperative task
 
-    client_ping_pong_task = ClientPingPongTask(client.from_server, 
-                                               client.to_server, 
-                                               screen, 
-                                               client.client_name,
-                                               easy_mode=False)
-    client_ping_pong_task.run()
+        ping_pong_task_cooperative_instruction(screen)
 
-    render_blank_screen(screen, BLANK_SCREEN_COUNT_DOWN_MILLISECONDS)
+        wait_for_experimenter(client.to_server, client.from_server, screen)
+
+        client_ping_pong_task = ClientPingPongTask(client.from_server,
+                                                   client.to_server,
+                                                   screen,
+                                                   client.client_name,
+                                                   easy_mode=False)
+        client_ping_pong_task.run()
+
+        render_blank_screen(screen, BLANK_SCREEN_COUNT_DOWN_MILLISECONDS)
+
+        tasks.pop(0)
 
     exit_instruction(client.to_server, screen)
 

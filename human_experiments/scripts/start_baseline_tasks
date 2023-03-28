@@ -13,16 +13,6 @@ else
   PADDING=$1
 fi
 
-__start_server() {
-  # Start server in a new terminal
-  local data_dir="$EXPERIMENT_DIR/baseline_tasks"
-  mkdir -p "$data_dir" >/dev/null
-
-  local command="cd $HOME/$SYSTEMS_DIR/tomcat/human_experiments/lab_software/tomcat-baseline-tasks; "
-  command+="python3 run_server.py -s $data_dir"
-  gnome-terminal -- bash -c "$command"
-}
-
 __start_clients() {
   local padding=$1
   __start_on_client "lion" "lion.local" "$LION_PARTICIPANT_ID" "$padding"
@@ -40,7 +30,7 @@ __start_on_cheetah() {
   local log_path="$EXPERIMENT_DIR/tmp/baseline_tasks_cheetah_${log_suffix}.log"
 
   local command="cd \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/lab_software/tomcat-baseline-tasks "
-  command+="&& $PYTHON ${python_script_name} -n $experimenter &> \$HOME$log_path &"
+  command+="&& $PYTHON ${python_script_name} -n $experimenter -i cheetah &> \$HOME$log_path &"
   # shellcheck disable=SC2029
   if ssh "$EXPERIMENT_USER@$client_address" "$command"; then
     local text="${padding}${YELLOW}Check the server to see if the process"
@@ -76,7 +66,7 @@ __start_on_client() {
     ssh "$EXPERIMENT_USER@$client_address" "osascript -e 'set Volume 0'"
 
     local command="cd \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/lab_software/tomcat-baseline-tasks "
-    command+="&& $PYTHON run_client.py -n $participant_id  &> \$HOME$log_path &"
+    command+="&& $PYTHON run_client.py -n $participant_id -i $client_name  &> \$HOME$log_path &"
     # shellcheck disable=SC2029
     if ssh "$EXPERIMENT_USER@$client_address" "$command"; then
       local text="${padding}${YELLOW} Check the server to see if the "
@@ -90,13 +80,27 @@ __start_on_client() {
   fi
 }
 
+__start_server() {
+  local padding=$1
+
+  # Start server in a new terminal
+  local data_dir="$EXPERIMENT_DIR/baseline_tasks"
+  mkdir -p "$data_dir" >/dev/null
+
+  local log_path=$EXPERIMENT_DIR/tmp/baseline_tasks_server.log
+
+  local command="cd $HOME/$SYSTEMS_DIR/tomcat/human_experiments/lab_software/tomcat-baseline-tasks; "
+  command+="python3 run_server.py -s $data_dir 2> $log_path"
+  gnome-terminal -- bash -c "$command"
+}
+
 __start_baseline_tasks() {
   local padding=$1
 
   source collect_participant_ids "${padding} "
 
   if yes_no_question "${padding}Do you want to start the ${EMPH}server${NC}?"; then
-    __start_server
+    __start_server "${padding} "
   fi
 
   if yes_no_question "${padding}Do you want to start the ${EMPH}clients${NC}?"; then

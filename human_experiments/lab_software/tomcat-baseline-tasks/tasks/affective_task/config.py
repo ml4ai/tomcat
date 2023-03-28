@@ -1,8 +1,8 @@
 INDIVIDUAL_IMAGE_TIMER = 5.0
 INDIVIDUAL_RATING_TIMER = 20.0
 
-TEAM_IMAGE_TIMER = 5.0 #Team task where they cannot dicuss 
-DISCUSSION_TIMER = 20.0 #Team task where they have to dicuss
+TEAM_IMAGE_TIMER = 5.0  # Team task where they cannot discuss
+DISCUSSION_TIMER = 20.0  # Team task where they have to discuss
 TEAM_RATING_TIMER = 10.0
 
 BLANK_SCREEN_MILLISECONDS = 1000
