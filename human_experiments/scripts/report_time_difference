@@ -10,7 +10,7 @@ __launch_time_difference_tom_server() {
   echo "launching server on TOM ..."
   local command="cd $HOME/$SYSTEMS_DIR/tomcat/human_experiments/lab_software/tomcat-time-difference; "
   command+="python3 run_server.py -f $TIME_DIFFERENCE_FILE_NAME"
-  tmux new-session -d -s $TIME_DIFFERENCE_SESSION_NAME -n $TIME_DIFFERENCE_SERVER_NAME $command
+  tmux new-session -d -s $TIME_DIFFERENCE_SESSION_NAME -n $TIME_DIFFERENCE_SERVER_NAME "bash -c '$command'"
   sleep 1
 }
 
