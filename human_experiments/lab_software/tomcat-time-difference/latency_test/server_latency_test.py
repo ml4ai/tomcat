@@ -1,4 +1,5 @@
 import threading
+import io
 from time import time
 
 from network import receive, send
@@ -11,7 +12,7 @@ class ServerLatencyTest:
 
         self._latencies = {}
 
-    def run(self):
+    def run(self, out_file_path = None):
         data = {
             "type": "request",
             "request": "timestamp"
@@ -29,8 +30,19 @@ class ServerLatencyTest:
         for latency_thread in threads:
             latency_thread.join()
 
+        message_stream = io.StringIO()
         for client_name, time_difference in self._latencies.items():
-            print(f"{client_name}: {time_difference}")
+            message_stream.write(f"{client_name}: {time_difference}")
+
+        message_stream.seek(0)
+        message = message_stream.read()
+        message_stream.close()
+
+        if out_file_path is None:
+            print(message)
+        else:
+            with open(out_file_path, 'w') as file:
+                file.write(message)
 
     def _get_timestamp_difference(self, data, client_name, to_client_connection, from_client_connection):
         send([to_client_connection], data)
