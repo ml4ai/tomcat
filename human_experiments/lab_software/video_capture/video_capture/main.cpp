@@ -52,6 +52,8 @@ void webcam(const string& directory,
          << " milliseconds.\n\n";
 
     VideoCapture cap(webcam_id);
+    cap.set(CAP_PROP_FRAME_WIDTH, 1280);
+    cap.set(CAP_PROP_FRAME_HEIGHT, 720);
     cap.open(0); // turn on camera
 
     if (!cap.isOpened()) {
