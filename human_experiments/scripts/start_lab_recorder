@@ -46,11 +46,13 @@ CONFIG_DIR="\$HOME/$SYSTEMS_DIR/tomcat/human_experiments/config/LabRecorder_conf
 LION_CONFIG_FILE="${CONFIG_DIR}/LabRecorder_Lion_22345.cfg"
 TIGER_CONFIG_FILE="${CONFIG_DIR}/LabRecorder_Tiger_22346.cfg"
 LEOPARD_CONFIG_FILE="${CONFIG_DIR}/LabRecorder_Leopard_22347.cfg"
+BASELINE_CONFIG_FILE="${CONFIG_DIR}/LabRecorder_BaselineTasks.cfg"
 
 # Set vars with Lion, Tiger and Leopard data (StorageLocation) path/file.
 LION_STORAGE_LOCATION="${EXPERIMENT_DIR}/lion/eeg_fnirs_pupil/lion_eeg_fnirs_pupil.xdf"
 TIGER_STORAGE_LOCATION="${EXPERIMENT_DIR}/tiger/eeg_fnirs_pupil/tiger_eeg_fnirs_pupil.xdf"
 LEOPARD_STORAGE_LOCATION="${EXPERIMENT_DIR}/leopard/eeg_fnirs_pupil/leopard_eeg_fnirs_pupil.xdf"
+BASELINE_STORAGE_LOCATION="${EXPERIMENT_DIR}/baseline_tasks/lsl.xdf"
 
 
 echo " "
@@ -58,6 +60,7 @@ echo -e "Configuring LabRecorder's config files with data path/file:"
 echo -e "${GREEN}Lion: ${LION_STORAGE_LOCATION}${NC}"
 echo -e "${GREEN}Tiger: ${TIGER_STORAGE_LOCATION}${NC}"
 echo -e "${GREEN}Leopard: ${LEOPARD_STORAGE_LOCATION}${NC}"
+echo -e "${GREEN}Baseline Tasks: ${BASELINE_STORAGE_LOCATION}${NC}"
 
 # Change (string find and replace) "StorageLocation=" line in Lion, Tiger and Leopards
 # unique configuration files to have the Storage Location of the xdf file
@@ -65,6 +68,7 @@ echo -e "${GREEN}Leopard: ${LEOPARD_STORAGE_LOCATION}${NC}"
 ssh "$USER_ON_TARGET@$TARGET_IP" sed -i 's#StorageLocation=.*#StorageLocation='"$LION_STORAGE_LOCATION"'#' "$LION_CONFIG_FILE"
 ssh "$USER_ON_TARGET@$TARGET_IP" sed -i 's#StorageLocation=.*#StorageLocation='"$TIGER_STORAGE_LOCATION"'#' "$TIGER_CONFIG_FILE"
 ssh "$USER_ON_TARGET@$TARGET_IP" sed -i 's#StorageLocation=.*#StorageLocation='"$LEOPARD_STORAGE_LOCATION"'#' "$LEOPARD_CONFIG_FILE"
+ssh "$USER_ON_TARGET@$TARGET_IP" sed -i 's#StorageLocation=.*#StorageLocation='"$BASELINE_STORAGE_LOCATION"'#' "$BASELINE_CONFIG_FILE"
 
 # Kill any prior instances of LabRecorder on CAT so that fresh instances can be opened.
 ssh "$USER_ON_TARGET@$TARGET_IP" pkill LabRecorder
@@ -84,6 +88,8 @@ ssh "$USER_ON_TARGET@$TARGET_IP" "DISPLAY=:1 ${LAB_RECORDER_APP} -c ${LION_CONFI
 ssh "$USER_ON_TARGET@$TARGET_IP" "DISPLAY=:1 ${LAB_RECORDER_APP} -c ${TIGER_CONFIG_FILE} &>/dev/null &"
 # shellcheck disable=SC2029
 ssh "$USER_ON_TARGET@$TARGET_IP" "DISPLAY=:1 ${LAB_RECORDER_APP} -c ${LEOPARD_CONFIG_FILE} &>/dev/null &"
+# shellcheck disable=SC2029
+ssh "$USER_ON_TARGET@$TARGET_IP" "DISPLAY=:1 ${LAB_RECORDER_APP} -c ${BASELINE_CONFIG_FILE} &>/dev/null &"
 echo " "
 ssh "$USER_ON_TARGET@$TARGET_IP" ps -F -C LabRecorder
 echo " "
@@ -91,16 +97,18 @@ echo " "
 # After the 3 LabRecorder instances are open on CAT, restore the 3 modified LabRecorder config files
 # back to what is on the main git repository using the "git checkout <file>" command.
 # This is done so that git will not detect on any branch that the config files have been modified.
-echo -e "Restoring the 3 LabRecorder config files back to what is in the main git repository on CAT:"
-# shellcheck disable=SC2029
-#ssh "$USER_ON_TARGET@$TARGET_IP" "cd ${CONFIG_DIR} && git checkout LabRecorder_Lion_22345.cfg"
-# shellcheck disable=SC2029
-#ssh "$USER_ON_TARGET@$TARGET_IP" "cd ${CONFIG_DIR} && git checkout LabRecorder_Tiger_22346.cfg"
-# shellcheck disable=SC2029
-#ssh "$USER_ON_TARGET@$TARGET_IP" "cd ${CONFIG_DIR} && git checkout LabRecorder_Leopard_22347.cfg"
+echo -e "Restoring the LabRecorder config files back to what is in the main git repository on CAT:"
+#shellcheck disable=SC2029
+ssh "$USER_ON_TARGET@$TARGET_IP" "cd ${CONFIG_DIR} && git checkout LabRecorder_Lion_22345.cfg"
+#shellcheck disable=SC2029
+ssh "$USER_ON_TARGET@$TARGET_IP" "cd ${CONFIG_DIR} && git checkout LabRecorder_Tiger_22346.cfg"
+#shellcheck disable=SC2029
+ssh "$USER_ON_TARGET@$TARGET_IP" "cd ${CONFIG_DIR} && git checkout LabRecorder_Leopard_22347.cfg"
+#shellcheck disable=SC2029
+ssh "$USER_ON_TARGET@$TARGET_IP" "cd ${CONFIG_DIR} && git checkout LabRecorder_BaselineTasks.cfg"
 echo " "
 
-echo -e "${YELLOW}Verify that you have 3 LabRecorder windows open on CAT and that they are all recording the correct streams!${NC}"
-echo -e "${EMPH}(The 3 LabRecorder windows on CAT might be stacked on top of each other so, "
+echo -e "${YELLOW}Verify that you have 4 LabRecorder windows open on CAT and that they are all recording the correct streams!${NC}"
+echo -e "${EMPH}(The 4 LabRecorder windows on CAT might be stacked on top of each other so, "
 echo -e " you may have to use CAT's mouse to separate them!)${NC}"
 echo " "

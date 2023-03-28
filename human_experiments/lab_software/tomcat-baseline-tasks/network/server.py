@@ -1,43 +1,49 @@
 import socket
+import sys
 import threading
 from select import select
-from typing import List
-
-from common import get_terminal_command
 
 from .receive import receive
 from .send import send
+from .client import ClientPayload
 
 
 class Server:
     """Establish connection with client channels and handle requests
     """
+
     def __init__(self, host: str, port: int) -> None:
         # Establish connection where clients can get game state update
         self._to_client_request = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self._to_client_request.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) # Reuse socket
+        self._to_client_request.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # Reuse socket
         self._to_client_request.bind((host, port))
         self._to_client_request.setblocking(False)
 
         # Establish connection where clients send control commands
         self._from_client_request = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self._from_client_request.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) # Reuse socket
+        self._from_client_request.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # Reuse socket
         self._from_client_request.bind((host, port + 1))
         self._from_client_request.setblocking(False)
 
         print(f"Address: {host}, {port}")
 
-        self.to_client_connections = {}     # Key: client name, Value: client connection
-        self.from_client_connections = {}   # Key: client connection, Value: client name
+        self.to_client_connections = {}  # Key: client name, Value: client connection
+        self.from_client_connections = {}  # Key: client connection, Value: client name
 
         self._establishing_connections = False
+        self._num_required_connections = 0
 
-    def establish_connections(self, required_num_connections: List[int] = []) -> None:
+        self._client_name_to_id = {}
+
+    def get_client_id(self, name: str) -> str:
+        return self._client_name_to_id.get(name, "")
+
+    def establish_connections(self, num_required_connections: int) -> None:
         """Open to establishing new connections
         """
         self._establishing_connections = True
 
-        self._required_num_connections = required_num_connections
+        self._num_required_connections = num_required_connections
 
         to_client_request_thread = threading.Thread(target=self._dispatch_to_client_request, daemon=True)
         to_client_request_thread.start()
@@ -80,16 +86,19 @@ class Server:
                 client_conn.setblocking(False)
 
                 # get connection name from client
-                [client_name] = receive([client_conn])
+                [serialized_payload] = receive([client_conn])
+                payload = ClientPayload.deserialize(serialized_payload)
 
-                if client_name in self.to_client_connections:
+                if payload.client_name in self.to_client_connections:
                     data = {}
                     data["type"] = "status"
                     data["status"] = "failed"
                     send([client_conn], data)
-                    print(f"[WARNING] Connection name exists for {client_name}")
+                    print(f"[WARNING] Connection name exists for {payload.client_name}")
                 else:
-                    self.to_client_connections[client_name] = client_conn
+                    if payload.client_id not in self._client_name_to_id:
+                        self._client_name_to_id[payload.client_name] = payload.client_id
+                    self.to_client_connections[payload.client_name] = client_conn
                     data = {}
                     data["type"] = "status"
                     data["status"] = "succeeded"
@@ -111,21 +120,25 @@ class Server:
                 client_conn.setblocking(False)
 
                 # get connection name from client
-                [client_name] = receive([client_conn])
+                [serialized_payload] = receive([client_conn])
+                payload = ClientPayload.deserialize(serialized_payload)
 
-                if client_name in self.to_client_connections.values():
+                if payload.client_name in self.to_client_connections.values():
                     data = {}
                     data["type"] = "status"
                     data["status"] = "failed"
                     send([client_conn], data)
-                    print(f"[WARNING] Connection name existed for {client_name}")
+                    print(f"[WARNING] Connection name existed for {payload.client_name}")
                 else:
-                    self.from_client_connections[client_conn] = client_name
+                    if payload.client_id not in self._client_name_to_id:
+                        self._client_name_to_id[payload.client_name] = payload.client_id
+                    self.from_client_connections[client_conn] = payload.client_name
                     data = {}
                     data["type"] = "status"
                     data["status"] = "succeeded"
                     send([client_conn], data)
-                    print("Receiving commands from [" + client_name + ", " + client_addr[0] + ", " + str(client_addr[1]) + ']')
+                    print("Receiving commands from [" + payload.client_name + ", " + client_addr[0] + ", " + str(
+                        client_addr[1]) + ']')
 
     def _from_clients(self) -> None:
         """Get request and status from clients
@@ -148,29 +161,18 @@ class Server:
                         num_connections = len(self.to_client_connections)
                         print(f"Closed connection to {sender_name}, {num_connections} connections remain")
                 elif data["type"] == "status" and data["status"] == "ready":
-                    print(f"[INFO] Client {sender_name} is ready")
+                    print(f"[INFO] Client {sender_name} is ready.")
+                    self._num_required_connections -= 1
+                    if self._num_required_connections <= 0:
+                        # Get ready to start the next task
+                        self._establishing_connections = False
 
     def _terminal_input(self) -> None:
-        """Control the server 
-        """
-        while self._establishing_connections:
-            command = get_terminal_command(wait_time=0.5)
+        while True:
 
-            if command is None:
-                continue
-
-            if command == "h" or command == "help":
-                print("-----")
-                print("close: Stop establishing new connections")
-                print("h or help: List available commands")
-                print("-----")
-
-            elif command == "close":
-                if self._required_num_connections and \
-                   len(self.from_client_connections) not in self._required_num_connections:
-                    print("[ERROR] Cannot close: must have " + str(self._required_num_connections) + " number of connections")
-                else:
-                    self._establishing_connections = False
-
-            else:
-                print("Unknown command")
+            if not self._establishing_connections:
+                # When all required clients have connected to the server.
+                print("")
+                print("All clients have connected to the server. Press Enter to move on to the next task.")
+                input()
+                break

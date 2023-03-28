@@ -1,17 +1,19 @@
 import csv
 import threading
-from time import time, monotonic
 from datetime import datetime
+from time import time, monotonic
 
 import pygame
+
 from common import record_metadata, request_clients_end
+from common.lsl import LSLStringStream
+from common.writer import Writer
 from config import UPDATE_RATE
 from network import receive, send
-
 from .config import (COUNT_DOWN_MESSAGE,
-                                         SECONDS_COUNT_DOWN,
-                                         SECONDS_PER_SESSION, SESSION,
-                                         SQUARE_WIDTH)
+                     SECONDS_COUNT_DOWN,
+                     SECONDS_PER_SESSION, SESSION,
+                     SQUARE_WIDTH)
 from .utils import TAPPED, UNTAPPED
 
 
@@ -40,9 +42,11 @@ class ServerFingerTappingTask:
         csv_file_name = data_path + '/' + str(int(time()))
 
         self._csv_file = open(csv_file_name + ".csv", 'w', newline='')
-        self._csv_writer = csv.DictWriter(
-            self._csv_file, delimiter=';', fieldnames=header)
-        self._csv_writer.writeheader()
+        self._writer = Writer(
+            csv_writer=csv.DictWriter(self._csv_file, delimiter=';', fieldnames=header),
+            lsl_writer=LSLStringStream(name="FingerTapping", source_id="finger_tapping", stream_type="finger_tapping")
+        )
+        self._writer.write_header()
 
         metadata["session"] = SESSION
         metadata["seconds_per_session"] = SECONDS_PER_SESSION
@@ -69,28 +73,19 @@ class ServerFingerTappingTask:
 
         print("[STATUS] Running finger tapping task")
 
-        log_first_timestap = True  # Log timestamp as soon as the experiment starts
+        csv_entry = {"time": time(), "monotonic_time": monotonic(),
+                     "human_readable_time": datetime.utcnow().isoformat() + "Z",
+                     "event_type": "start_fingertapping_task", "countdown_timer": None}
+        for participant in self._state.keys():
+            csv_entry[participant] = None
 
-        if log_first_timestap == True:
-            csv_entry = {"time": time(), "monotonic_time": monotonic(),
-                         "human_readable_time": datetime.utcnow().isoformat() + "Z",
-                         "event_type": "start_fingertapping_task", "countdown_timer": None}
-            for participant in self._state.keys():
-                csv_entry[participant] = None
-
-            self._csv_writer.writerow(csv_entry)
-
-            log_first_timestap == False
+        self._writer.write(csv_entry)
 
         # Wait for threads to finish
         to_client_update_state_thread.join()
         from_client_commands_thread.join()
 
-        self._csv_file.close()
-
         request_clients_end(self._to_client_connections)
-
-        self._csv_file.close()
 
         print("[STATUS] Finger tapping task ended")
 
@@ -142,7 +137,7 @@ class ServerFingerTappingTask:
                 for participant, state in self._state.items():
                     csv_entry[participant] = state
 
-                self._csv_writer.writerow(csv_entry)
+                self._writer.write(csv_entry)
 
             send(self._to_client_connections, data)
 
@@ -160,3 +155,7 @@ class ServerFingerTappingTask:
                         self._state[data["sender"]] = TAPPED
                     else:
                         self._state[data["sender"]] = UNTAPPED
+
+    def clean_up(self):
+        self._csv_file.close()
+        self._writer.close()
