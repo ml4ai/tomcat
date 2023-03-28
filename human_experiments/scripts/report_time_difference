@@ -10,12 +10,12 @@ TIME_DIFFERENCE_FILE_NAME="$DATA_ROOT_DIR/time_difference.txt"
 __launch_time_difference_tom_server() {
   local command="cd $HOME/$SYSTEMS_DIR/tomcat/human_experiments/lab_software/tomcat-time-difference; "
   command+="python3 run_server.py -f $TIME_DIFFERENCE_FILE_NAME"
-  tmux new-session -d -s $IMAGE_TIMESTAMP_SESSION_NAME -n "$TIME_DIFFERENCE_SERVER_NAME" "$command"
+  tmux new-session -d -s $TIME_DIFFERENCE_SESSION_NAME -n "$TIME_DIFFERENCE_SERVER_NAME" "$command"
 }
 
 __launch_time_difference_cat_client() {
   command+="python3 run_client.py"
-  ssh -t cat@cat "tmux new-session -d -s $IMAGE_TIMESTAMP_SESSION_NAME -n $TIME_DIFFERENCE_CLIENT_NAME -n CAT"
+  ssh -t cat@cat "tmux new-session -d -s $TIME_DIFFERENCE_SESSION_NAME -n $TIME_DIFFERENCE_CLIENT_NAME -n CAT"
 }
 
 __record_time_difference() {
