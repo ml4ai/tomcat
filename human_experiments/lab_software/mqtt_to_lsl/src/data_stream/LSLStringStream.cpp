@@ -22,12 +22,19 @@ LSLStringStream::LSLStringStream(const std::string& name,
                 name,
                 WAIT_FOR_CONSUMER_TIMEOUT)
          << endl;
-    this->outlet->wait_for_consumers(WAIT_FOR_CONSUMER_TIMEOUT)
+    this->outlet->wait_for_consumers(WAIT_FOR_CONSUMER_TIMEOUT);
+    cout << "Consumer detected." << endl;
 }
 
 //----------------------------------------------------------------------
 // Other functions
 //----------------------------------------------------------------------
+void LSLStringStream::open() {
+    std::vector<std::string> string_vector;
+    string_vector.push_back(message);
+    this->outlet->push_sample(string_vector);
+}
+
 void LSLStringStream::send(const string& message) {
     std::vector<std::string> string_vector;
     string_vector.push_back(message);

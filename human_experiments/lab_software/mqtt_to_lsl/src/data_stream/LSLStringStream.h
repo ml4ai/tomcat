@@ -18,6 +18,12 @@ class LSLStringStream {
     LSLStringStream& operator=(LSLStringStream&&) = default;
 
     /**
+     * Opens the stream and wait for consumers.
+     *
+     */
+    void open();
+
+    /**
      * Pushes a message to LSL.
      *
      * @param message: string message

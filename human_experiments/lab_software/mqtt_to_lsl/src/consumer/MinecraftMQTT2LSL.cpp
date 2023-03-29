@@ -34,6 +34,8 @@ void MinecraftMQTT2LSL::start(const string& mqtt_address, int mqtt_port) {
     // to update the list in this program as well at each study upgrade. So we
     // just push all the topics to LSL.
     mosquitto.subscribe("#");
+
+    cout << "Monitoring Minecraft MQTT messages." << endl;
     mosquitto.loop_forever();
 }
 

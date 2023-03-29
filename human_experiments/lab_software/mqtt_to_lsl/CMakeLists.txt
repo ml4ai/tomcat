@@ -9,7 +9,11 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/tools/cmake/")
 find_package(LSL REQUIRED)
 find_package(FMT REQUIRED)
 find_package(nlohmann_json REQUIRED)
-find_package(nlohmann_json REQUIRED)
+find_package(
+        Boost 1.69
+        COMPONENTS
+        program_options
+        REQUIRED)
 
 # Finding the Mosquitto header and library
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
@@ -23,6 +27,6 @@ set(_libs
         fmt::fmt
         ${Mosquitto_LIBRARIES}
         LSL::lsl
-        nlohmann_json::nlohmann_json)
+        ${Boost_LIBRARIES})
 
 add_subdirectory(src)

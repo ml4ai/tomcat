@@ -2,7 +2,7 @@ file(GLOB_RECURSE project_sources CONFIGURE_DEPENDS
         ${CMAKE_CURRENT_SOURCE_DIR}/*.h ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 
 add_library(project_static_lib STATIC ${project_sources})
-target_include_directories(project_static_lib PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${LSL_DIR}/../../../include ${Mosquitto_INCLUDE_DIRS})
+target_include_directories(project_static_lib PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${LSL_DIR}/../../../include ${Mosquitto_INCLUDE_DIRS} ${Boost_INCLUDE_DIR})
 set(_all_libs ${_libs} project_static_lib)
 
 
