@@ -58,11 +58,11 @@ Now the XCode project is ready to compile and run.
 ### Command-line invocation:
 
 ```
-./video_capture <directory to store frames> <frames per minute>`
+./video_capture <directory to store frames> <frames per second>`
 ```
 
 - If the directory to store frames is not present, it will be created.
-- Frames per minute should be an integer. This number is used to compute the number of milliseconds to wait between capturing two frames (`= 1000 / frames per minute`).
+- Frames per minute should be an integer. This number is used to compute the number of milliseconds to wait between capturing two frames (`= 1000 / frames per second`).
 
 ### Testing using XCode
 
