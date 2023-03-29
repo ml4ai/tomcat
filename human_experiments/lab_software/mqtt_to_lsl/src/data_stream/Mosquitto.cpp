@@ -1,8 +1,13 @@
 #include "Mosquitto.h"
 
-#include "fmt/format.h"
 #include <iostream>
+#include <sstream>
+#include <stdexcept>
 #include <thread>
+
+#include "fmt/format.h"
+
+#include "common/GeneralException.h"
 
 #define ONE_SECOND 1000 // in milliseconds
 
@@ -13,9 +18,9 @@ using namespace std;
 //----------------------------------------------------------------------
 Mosquitto::Mosquitto() {
     mosquitto_lib_init();
-    this->mqtt_client = mosquitto_new(NULL, true, this);
-    if (this->mqtt_client == NULL)
-        throw "Error creating mosquitto instance";
+    this->mqtt_client = mosquitto_new(nullptr, true, this);
+    if (this->mqtt_client == nullptr)
+        throw GeneralException("Error creating mosquitto instance");
 
     mosquitto_connect_callback_set(this->mqtt_client, &on_connect_callback);
     mosquitto_message_callback_set(this->mqtt_client, &on_message_callback);
@@ -37,15 +42,17 @@ void Mosquitto::on_connect_callback(struct mosquitto* mqtt_client,
     case 0:
         break;
     case 1:
-        throw "Connection refused (unacceptable protocol version)";
+        throw GeneralException(
+            "Connection refused (unacceptable protocol version)");
     case 2:
-        throw "Connection refused (identifier rejected)";
+        throw GeneralException("Connection refused (identifier rejected)");
     case 3:
-        throw "Connection refused (broker unavailable)";
+        throw GeneralException("Connection refused (broker unavailable)");
     case 5:
-        throw "Connection refused (Username/Password wrong)";
+        throw GeneralException("Connection refused (Username/Password wrong)");
     default:
-        throw fmt::format("Connection failed (Error code {})", error_code);
+        throw GeneralException(
+            fmt::format("Connection failed (Error code {})", error_code));
     }
 }
 
@@ -63,12 +70,12 @@ void Mosquitto::on_message_callback(struct mosquitto* mqtt_client,
         ss << (char)(payload[i]);
     }
 
-    Mosquitto* mosquitto = (Mosquitto*)wrapper_instance;
+    auto* mosquitto = (Mosquitto*)wrapper_instance;
     mosquitto->on_message_external_callback(topic, ss.str());
 }
 
-void Mosquitto::set_on_message_callback(void (*callback_fn)(const string&,
-                                                            const string&)) {
+void Mosquitto::set_on_message_callback(
+    std::function<void(const std::string&, const std::string&)> callback_fn) {
     this->on_message_external_callback = callback_fn;
 }
 
@@ -76,9 +83,7 @@ void Mosquitto::set_on_message_callback(void (*callback_fn)(const string&,
 // Member functions
 //----------------------------------------------------------------------
 
-void Mosquitto::connect(const string& address,
-                        int port,
-                        int trials) {
+void Mosquitto::connect(const string& address, int port, int trials) {
 
     while (trials > 0) {
         cout << "Trying to connect to " << address << ":" << port << "..."
@@ -96,8 +101,7 @@ void Mosquitto::connect(const string& address,
             trials--;
             if (trials > 0) {
                 cout << "We will retry once more." << endl;
-                this_thread::sleep_for(
-                    chrono::milliseconds(ONE_SECOND));
+                this_thread::sleep_for(chrono::milliseconds(ONE_SECOND));
             }
         }
     }
@@ -106,13 +110,13 @@ void Mosquitto::connect(const string& address,
 void Mosquitto::subscribe(const string& topic) {
     const int qos = 0;
     int error_code =
-        mosquitto_subscribe(this->mqtt_client, NULL, topic.c_str(), qos);
+        mosquitto_subscribe(this->mqtt_client, nullptr, topic.c_str(), qos);
 
     if (error_code != MOSQ_ERR_SUCCESS) {
-        throw fmt::format(
+        throw GeneralException(fmt::format(
             "It was not possible to subscribe to the topic {}. Error code {}.",
             topic,
-            error_code);
+            error_code));
     }
 }
 
@@ -122,7 +126,7 @@ void Mosquitto::publish(const string& topic, const string& message) {
 
     const int qos = 0;
     int error_code = mosquitto_publish(this->mqtt_client,
-                                       NULL,
+                                       nullptr,
                                        topic.c_str(),
                                        len,
                                        (const void*)payload,
@@ -130,10 +134,10 @@ void Mosquitto::publish(const string& topic, const string& message) {
                                        false);
 
     if (error_code != MOSQ_ERR_SUCCESS) {
-        throw fmt::format(
+        throw GeneralException(fmt::format(
             "It was not possible to publish in the topic {}. Error code {}.",
             topic,
-            error_code);
+            error_code));
     }
 }
 
@@ -141,10 +145,9 @@ void Mosquitto::loop_forever() {
     int error_code = mosquitto_loop_forever(this->mqtt_client, -1, 1);
 
     if (error_code != MOSQ_ERR_SUCCESS) {
-        throw fmt::format("Fail to loop forever. Error code {}.", error_code);
+        throw GeneralException(
+            fmt::format("Fail to loop forever. Error code {}.", error_code));
     }
 }
 
-void Mosquitto::stop() {
-    mosquitto_disconnect(this->mqtt_client);
-}
+void Mosquitto::stop() { mosquitto_disconnect(this->mqtt_client); }

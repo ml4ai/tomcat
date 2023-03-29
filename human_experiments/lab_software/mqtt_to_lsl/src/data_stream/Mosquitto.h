@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include <chrono>
-#include <sstream>
 #include <string>
 
 #include <mosquitto.h>
@@ -21,8 +19,8 @@ class Mosquitto {
     Mosquitto();
     ~Mosquitto();
 
-    Mosquitto(const Mosquitto& mosquitto) = delete;
-    Mosquitto& operator=(const Mosquitto& mosquitto) = delete;
+    Mosquitto(const Mosquitto&) = delete;
+    Mosquitto& operator=(const Mosquitto&) = delete;
     Mosquitto(Mosquitto&&) = default;
     Mosquitto& operator=(Mosquitto&&) = default;
 
@@ -33,9 +31,7 @@ class Mosquitto {
      * @param port: remote broker port
      * @param num_trials: number of attempts to establish connection
      */
-    void connect(const std::string& address,
-                 int port,
-                 int num_trials=3);
+    void connect(const std::string& address, int port, int num_trials = 3);
 
     /**
      * Subscribes to a topic.
@@ -71,14 +67,15 @@ class Mosquitto {
      * @param callback_fn: function to be called with parameters const
      * std::string topic, const std::string message
      */
-    void set_on_message_callback(void (*callback_fn)(const std::string&,
-                                                     const std::string&));
+    void set_on_message_callback(
+        std::function<void(const std::string&, const std::string&)>
+            callback_fn);
 
   private:
     struct mosquitto* mqtt_client;
 
-    void (*on_message_external_callback)(const std::string&,
-                                         const std::string&);
+    std::function<void(const std::string&, const std::string&)>
+        on_message_external_callback{};
 
     /**
      * Callback function called upon the establishment of connection with the
