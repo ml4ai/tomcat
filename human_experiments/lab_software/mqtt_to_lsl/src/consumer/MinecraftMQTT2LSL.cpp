@@ -54,6 +54,5 @@ void MinecraftMQTT2LSL::push_to_lsl(const std::string& topic,
         output_data = fmt::format("[{}] {}", topic, message);
     }
 
-    cout << output_data << endl;
-    this->minecraft_lsl_stream->send(message);
+    this->minecraft_lsl_stream->send(output_data);
 }
