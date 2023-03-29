@@ -2,12 +2,14 @@
 
 #include <iostream>
 
+#include "video/Screen.h"
 #include "video/Webcam.h"
 
 using namespace std;
 namespace po = boost::program_options;
 
 int main(int argc, const char* argv[]) {
+    string device;
     string out_dir;
     int camera_index;
     int fps;
@@ -32,7 +34,10 @@ int main(int argc, const char* argv[]) {
         "Width of the images.")(
         "height",
         po::value<int>(&height)->default_value(720)->required(),
-        "Height of the images.");
+        "Height of the images.")(
+        "device",
+        po::value<string>(&device)->required(),
+        "Device to capture images from. It should be either webcam or screen.");
 
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, arguments), vm);
@@ -42,10 +47,21 @@ int main(int argc, const char* argv[]) {
         return 1;
     }
 
-    Webcam webcam(camera_index, width, height);
+    if (device != "webcam" and device != "screen") {
+        cerr << "Device ins not one in the list [webcam, screen]." << endl;
+    }
 
-    webcam.turn_on();
-    webcam.start_recording(out_dir, fps);
+    if (device == "webcam") {
+        cout << "Will record from the webcam" << endl;
+        Webcam webcam(camera_index, width, height);
+        webcam.turn_on();
+        webcam.start_recording(out_dir, fps);
+    }
+    else {
+        cout << "Will record from the screen" << endl;
+        Screen screen(width, height);
+        screen.start_recording(out_dir, fps);
+    }
 
     return 0;
 }

@@ -5,9 +5,9 @@
 # to the first project() command (see
 # https://cmake.org/cmake/help/latest/variable/CMAKE_OSX_SYSROOT.html for more
 # details).
-if(APPLE)
+if (APPLE)
     set(CMAKE_OSX_SYSROOT /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk)
-endif()
+endif ()
 
 project(video_capture)
 cmake_minimum_required(VERSION 3.21)
@@ -30,6 +30,8 @@ find_package(
         COMPONENTS
         program_options
         REQUIRED)
+
+set(CMAKE_EXE_LINKER_FLAGS "-framework CoreGraphics")
 
 # Finding the Mosquitto header and library
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
