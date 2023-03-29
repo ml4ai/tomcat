@@ -2,8 +2,8 @@
 
 #include <iostream>
 
-#include <nlohmann/json.hpp>
 #include <fmt/format.h>
+#include <nlohmann/json.hpp>
 
 #include "data_stream/Mosquitto.h"
 
@@ -29,6 +29,10 @@ void MinecraftMQTT2LSL::start(const string& mqtt_address, int mqtt_port) {
         this->push_to_lsl(t, m);
     };
     mosquitto.set_on_message_callback(callback_fn);
+    // Minecraft is the only system pushing to the message bus at the moment.
+    // The list of topics is very large and setting them manually would require
+    // to update the list in this program as well at each study upgrade. So we
+    // just push all the topics to LSL.
     mosquitto.subscribe("#");
     mosquitto.loop_forever();
 }
@@ -40,7 +44,8 @@ void MinecraftMQTT2LSL::push_to_lsl(const std::string& topic,
         json msg_json = json::parse(message);
         msg_json["topic"] = topic;
         output_data = msg_json.dump();
-    } catch (...) {
+    }
+    catch (...) {
         // Invalid json. We pass the topic and the message as is.
         output_data = fmt::format("[{}] {}", topic, message);
     }
