@@ -78,18 +78,6 @@ class Mosquitto {
         on_message_external_callback{};
 
     /**
-     * Callback function called upon the establishment of connection with the
-     * broker.
-     *
-     * @param mqtt_client: client instance
-     * @param wrapper_instance: instance of this class
-     * @param error_code: error code
-     */
-    static void on_connect_callback(struct mosquitto* mqtt_client,
-                                    void* wrapper_instance,
-                                    int error_code);
-
-    /**
      * Callback function called upon message arrivals.
      *
      * @param mqtt_client: client instance

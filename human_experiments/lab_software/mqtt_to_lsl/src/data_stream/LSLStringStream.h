@@ -31,5 +31,6 @@ class LSLStringStream {
     void send(const std::string& message);
 
   private:
+    lsl::stream_info stream_info;
     std::unique_ptr<lsl::stream_outlet> outlet;
 };

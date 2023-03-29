@@ -25,6 +25,14 @@ int main(int argc, char* argv[]) {
         po::value<int>(&mqtt_port)->default_value(1883)->required(),
         "Address of the MQTT server.");
 
+    po::variables_map vm;
+    po::store(po::parse_command_line(argc, argv, arguments), vm);
+    po::notify(vm);
+    if (vm.count("help")) {
+        cout << arguments << "\n";
+        return 1;
+    }
+
     try {
         MinecraftMQTT2LSL consumer = MinecraftMQTT2LSL();
         consumer.start(mqtt_address, mqtt_port);

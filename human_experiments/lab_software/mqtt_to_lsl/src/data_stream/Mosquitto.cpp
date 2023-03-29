@@ -9,7 +9,8 @@
 
 #include "common/GeneralException.h"
 
-#define ONE_SECOND 1000 // in milliseconds
+#define ONE_SECOND 1000   // in milliseconds
+#define FIVE_SECONDS 5000 // in milliseconds
 
 using namespace std;
 
@@ -22,7 +23,6 @@ Mosquitto::Mosquitto() {
     if (this->mqtt_client == nullptr)
         throw GeneralException("Error creating mosquitto instance");
 
-    mosquitto_connect_callback_set(this->mqtt_client, &on_connect_callback);
     mosquitto_message_callback_set(this->mqtt_client, &on_message_callback);
 }
 
@@ -34,28 +34,6 @@ Mosquitto::~Mosquitto() {
 //----------------------------------------------------------------------
 // Defining callbacks
 //----------------------------------------------------------------------
-void Mosquitto::on_connect_callback(struct mosquitto* mqtt_client,
-                                    void* wrapper_instance,
-                                    int error_code) {
-
-    switch (error_code) {
-    case 0:
-        break;
-    case 1:
-        throw GeneralException(
-            "Connection refused (unacceptable protocol version)");
-    case 2:
-        throw GeneralException("Connection refused (identifier rejected)");
-    case 3:
-        throw GeneralException("Connection refused (broker unavailable)");
-    case 5:
-        throw GeneralException("Connection refused (Username/Password wrong)");
-    default:
-        throw GeneralException(
-            fmt::format("Connection failed (Error code {})", error_code));
-    }
-}
-
 void Mosquitto::on_message_callback(struct mosquitto* mqtt_client,
                                     void* wrapper_instance,
                                     const struct mosquitto_message* message) {
@@ -75,8 +53,8 @@ void Mosquitto::on_message_callback(struct mosquitto* mqtt_client,
 }
 
 void Mosquitto::set_on_message_callback(
-    std::function<void(const std::string&, const std::string&)> callback_fn) {
-    this->on_message_external_callback = callback_fn;
+    function<void(const string&, const string&)> callback_fn) {
+    this->on_message_external_callback = move(callback_fn);
 }
 
 //----------------------------------------------------------------------
@@ -88,20 +66,40 @@ void Mosquitto::connect(const string& address, int port, int trials) {
     while (trials > 0) {
         cout << "Trying to connect to " << address << ":" << port << "..."
              << endl;
-        this_thread::sleep_for(chrono::milliseconds(ONE_SECOND));
+        int error_code = mosquitto_connect(
+            this->mqtt_client, address.c_str(), port, ONE_SECOND);
+
         try {
-            // Our callback will throw an exception in case of fail to connect.
-            mosquitto_connect(
-                this->mqtt_client, address.c_str(), port, ONE_SECOND);
-            cout << "Connection established!" << endl;
-            trials = 0;
+            switch (error_code) {
+            case MOSQ_ERR_SUCCESS:
+                cout << "Connection established!" << endl;
+                trials = 0; // no need to keep trying to connect.
+                break;
+            case MOSQ_ERR_PROTOCOL:
+                throw GeneralException(
+                    "Connection refused (unacceptable protocol version)");
+            case MOSQ_ERR_CONN_REFUSED:
+                throw GeneralException(
+                    "Connection refused (identifier rejected)");
+            case MOSQ_ERR_NO_CONN:
+                throw GeneralException(
+                    "Connection refused (broker unavailable)");
+            default:
+                throw GeneralException(fmt::format(
+                    "Connection failed (Error code {})", error_code));
+            }
         }
-        catch (const std::string& ex) {
-            cout << ex << endl;
+        catch (const GeneralException& ex) {
             trials--;
             if (trials > 0) {
-                cout << "We will retry once more." << endl;
-                this_thread::sleep_for(chrono::milliseconds(ONE_SECOND));
+                cout << fmt::format("Fail to connect. {}", ex.what()) << endl;
+                cout << fmt::format("We will try once more in {} seconds.",
+                                    FIVE_SECONDS / 1000)
+                     << endl;
+                this_thread::sleep_for(chrono::milliseconds(FIVE_SECONDS));
+            }
+            else {
+                throw ex;
             }
         }
     }

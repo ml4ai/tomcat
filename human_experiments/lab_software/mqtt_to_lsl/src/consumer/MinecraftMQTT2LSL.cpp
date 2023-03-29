@@ -35,6 +35,8 @@ void MinecraftMQTT2LSL::start(const string& mqtt_address, int mqtt_port) {
     // just push all the topics to LSL.
     mosquitto.subscribe("#");
 
+    this->minecraft_lsl_stream->open();
+
     cout << "Monitoring Minecraft MQTT messages." << endl;
     mosquitto.loop_forever();
 }
