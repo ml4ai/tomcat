@@ -77,3 +77,6 @@ To test the program within XCode editor
 
 - Time is in the *Universal Time Coordinated* (UTC)
 - gap is the approximate number of milliseconds elapsed since the last frame till this frame was captured.
+
+// https://stackoverflow.com/questions/12835577/how-to-convert-stdchronotime-point-to-calendar-datetime-string-with-fraction
+// date.h: https://howardhinnant.github.io/date/date.html
