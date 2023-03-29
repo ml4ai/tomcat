@@ -13,7 +13,7 @@
 
 using namespace std;
 
-const int WAIT_UNTIL_READY = 10; // in seconds
+const int WAIT_UNTIL_READY = 5; // in seconds
 
 //----------------------------------------------------------------------
 // Constructors & Destructor
@@ -97,19 +97,12 @@ void Webcam::start_recording(const std::string& out_dir, int fps) {
 }
 
 void Webcam::create_output_directory(const filesystem::path& p) {
-    error_code ec;
-
-    if (std::filesystem::exists(p, ec)) {
+    if (std::filesystem::exists(p)) {
         cout << "\n\tWriting frames to already existing path: " << p << endl;
     }
     else {
         cout << "\n\tDirectory: " << p << " does not exist. Creating it now.\n";
-
-        if (std::filesystem::create_directories(p, ec)) {
-            cerr << "\n\t**** ERROR: Directory " << p
-                 << " Could not be created. ****\n\n\t\tExiting!";
-            return;
-        }
+        std::filesystem::create_directories(p);
     }
 }
 
