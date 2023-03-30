@@ -2,13 +2,11 @@
 
 #include <iostream>
 
+#include <boost/algorithm/string.hpp>
+
 #include "video/Device.h"
 #include "video/Screen.h"
 #include "video/Webcam.h"
-
-#include <opencv2/highgui.hpp>
-
-#include <regex>
 
 using namespace std;
 namespace po = boost::program_options;
@@ -62,6 +60,9 @@ int main(int argc, const char* argv[]) {
         cout << arguments << "\n";
         return 1;
     }
+
+    boost::trim(device_name);
+    boost::trim(client_name);
 
     if (device_name != "webcam" and device_name != "screen") {
         cerr << "Device ins not one in the list [webcam, screen]." << endl;
