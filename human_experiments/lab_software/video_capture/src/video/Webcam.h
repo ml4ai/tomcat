@@ -1,7 +1,7 @@
 #pragma once
 
-#include <string>
 #include <fstream>
+#include <string>
 
 #include <opencv2/highgui.hpp>
 
@@ -9,8 +9,14 @@
 
 class Webcam : public Device {
   public:
-    Webcam(int camera_index, int frame_width, int frame_height);
-    Webcam(const std::string& camera_name, int frame_width, int frame_height);
+    Webcam(const std::string& unique_id,
+           int camera_index,
+           int frame_width,
+           int frame_height);
+    Webcam(const std::string& unique_id,
+           const std::string& camera_name,
+           int frame_width,
+           int frame_height);
     ~Webcam() override;
 
     Webcam(const Webcam&) = delete;
@@ -33,5 +39,4 @@ class Webcam : public Device {
   private:
     int camera_index = 0;
     cv::VideoCapture camera_device;
-
 };

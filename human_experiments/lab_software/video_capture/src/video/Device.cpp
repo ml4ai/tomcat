@@ -9,7 +9,7 @@
 
 using namespace std;
 
-Device::Device() {
+Device::Device(const string& unique_id) : unique_id(unique_id) {
     for (const auto& device : list_avfoundation_video_devices()) {
         video_device_name_to_index[device.name] = device.index;
     }

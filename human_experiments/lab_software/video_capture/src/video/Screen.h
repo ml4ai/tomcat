@@ -9,7 +9,7 @@
 
 class Screen : public Device {
   public:
-    Screen();
+    Screen(const std::string& unique_id);
     ~Screen() override = default;
 
     Screen(const Screen&) = delete;

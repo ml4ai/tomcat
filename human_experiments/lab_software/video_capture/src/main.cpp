@@ -14,6 +14,7 @@ using namespace std;
 namespace po = boost::program_options;
 
 int main(int argc, const char* argv[]) {
+    string client_name;
     string device_name;
     string out_dir;
     string camera_name;
@@ -46,7 +47,13 @@ int main(int argc, const char* argv[]) {
         "Height of the images.")(
         "device",
         po::value<string>(&device_name)->required(),
-        "Device to capture images from. It should be either webcam or screen.");
+        "Device to capture images from. It should be either webcam or screen.")(
+        "client",
+        po::value<string>(&client_name)->required(),
+        "Client name. It must be a string that uniquely identify the machine "
+        "where this script is running. It cannot contain any whitespaces. This "
+        "name will be used to uniquely identify the LSL stream for this "
+        "recording.");
 
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, arguments), vm);
@@ -65,15 +72,15 @@ int main(int argc, const char* argv[]) {
         cout << "Will record from the webcam" << endl;
         if (camera_name.empty()) {
             // Use camera index
-            device = make_unique<Webcam>(camera_index, width, height);
+            device = make_unique<Webcam>(client_name, camera_index, width, height);
         }
         else {
-            device = make_unique<Webcam>(camera_name, width, height);
+            device = make_unique<Webcam>(client_name, camera_name, width, height);
         }
     }
     else {
         cout << "Will record from the screen" << endl;
-        device = make_unique<Screen>();
+        device = make_unique<Screen>(client_name);
     }
 
     device->turn_on();

@@ -12,6 +12,7 @@
 
 #include "common/GeneralException.h"
 #include "common/date.h"
+#include "data_stream/LSLStringStream.h"
 
 using namespace std;
 
@@ -20,7 +21,7 @@ const int WAIT_UNTIL_READY = 10; // in seconds
 //----------------------------------------------------------------------
 // Constructors & Destructor
 //----------------------------------------------------------------------
-Screen::Screen() {}
+Screen::Screen(const string& unique_id) : Device(unique_id) {}
 
 //----------------------------------------------------------------------
 // Other functions
@@ -58,9 +59,14 @@ void Screen::start_recording(const std::string& out_dir, int fps) {
         color_space,
         kCGImageAlphaPremultipliedLast | kCGBitmapByteOrderDefault);
 
+    const string stream_name = "Screen_" + unique_id;
+    const string source_id = "screen_" + unique_id;
+    LSLStringStream lsl_stream(stream_name, source_id, "image_filename", fps);
+    lsl_stream.open();
+
+    cout << "Recording..." << endl;
     auto prev_frame_time = date::floor<std::chrono::milliseconds>(
         std::chrono::system_clock::now());
-
     for (unsigned long i = 1;; i++) {
         auto capture_start_time = date::floor<std::chrono::milliseconds>(
             std::chrono::system_clock::now());
@@ -83,6 +89,11 @@ void Screen::start_recording(const std::string& out_dir, int fps) {
             string image_filename = create_image_filename(
                 i, string(date_time), size_t(between_time.count()));
             file /= std::filesystem::path(image_filename);
+
+            // Send the string filename to LSL for synchronization with other
+            // streams. The image content will be saved to a subdirectory in
+            // the experiment folder.
+            lsl_stream.send(image_filename);
             imwrite(file, final_image);
         }
 

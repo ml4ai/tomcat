@@ -10,6 +10,7 @@
 
 #include "common/GeneralException.h"
 #include "common/date.h"
+#include "data_stream/LSLStringStream.h"
 
 using namespace std;
 
@@ -18,14 +19,22 @@ const int WAIT_UNTIL_READY = 5; // in seconds
 //----------------------------------------------------------------------
 // Constructors & Destructor
 //----------------------------------------------------------------------
-Webcam::Webcam(int camera_index, int frame_width, int frame_height) {
+Webcam::Webcam(const string& unique_id,
+               int camera_index,
+               int frame_width,
+               int frame_height)
+    : Device(unique_id) {
     this->camera_index = camera_index;
     this->camera_device = cv::VideoCapture(camera_index);
     this->camera_device.set(cv::CAP_PROP_FRAME_WIDTH, frame_width);
     this->camera_device.set(cv::CAP_PROP_FRAME_HEIGHT, frame_height);
 }
 
-Webcam::Webcam(const string& camera_name, int frame_width, int frame_height) {
+Webcam::Webcam(const string& unique_id,
+               const string& camera_name,
+               int frame_width,
+               int frame_height)
+    : Device(unique_id) {
     this->camera_device =
         cv::VideoCapture(this->video_device_name_to_index[camera_name]);
     this->camera_device.set(cv::CAP_PROP_FRAME_WIDTH, frame_width);
@@ -65,9 +74,14 @@ void Webcam::start_recording(const std::string& out_dir, int fps) {
 
     cv::Mat img;
 
+    const string stream_name = "Webcam_" + unique_id;
+    const string source_id = "webcam_" + unique_id;
+    LSLStringStream lsl_stream(stream_name, source_id, "image_filename", fps);
+    lsl_stream.open();
+
+    cout << "Recording..." << endl;
     auto prev_frame_time = date::floor<std::chrono::milliseconds>(
         std::chrono::system_clock::now());
-
     for (unsigned long i = 1;; i++) {
         auto capture_start_time = date::floor<std::chrono::milliseconds>(
             std::chrono::system_clock::now());
@@ -88,6 +102,11 @@ void Webcam::start_recording(const std::string& out_dir, int fps) {
             string image_filename = create_image_filename(
                 i, string(date_time), size_t(between_time.count()));
             file /= std::filesystem::path(image_filename);
+
+            // Send the string filename to LSL for synchronization with other
+            // streams. The image content will be saved to a subdirectory in
+            // the experiment folder.
+            lsl_stream.send(image_filename);
             imwrite(file, img);
         }
 
