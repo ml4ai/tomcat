@@ -25,6 +25,15 @@ Webcam::Webcam(int camera_index, int frame_width, int frame_height) {
     this->camera_device.set(cv::CAP_PROP_FRAME_HEIGHT, frame_height);
 }
 
+Webcam::Webcam(const string& camera_name, int frame_width, int frame_height) {
+    this->camera_device =
+        cv::VideoCapture(this->video_device_name_to_index[camera_name]);
+    this->camera_device.set(cv::CAP_PROP_FRAME_WIDTH, frame_width);
+    this->camera_device.set(cv::CAP_PROP_FRAME_HEIGHT, frame_height);
+}
+
+Webcam::~Webcam() { this->camera_device.release(); }
+
 //----------------------------------------------------------------------
 // Other functions
 //----------------------------------------------------------------------
@@ -94,20 +103,4 @@ void Webcam::start_recording(const std::string& out_dir, int fps) {
             ? cv::waitKey(frame_period - capture_duration.count())
             : 0;
     }
-}
-
-void Webcam::create_output_directory(const filesystem::path& p) {
-    if (std::filesystem::exists(p)) {
-        cout << "\n\tWriting frames to already existing path: " << p << endl;
-    }
-    else {
-        cout << "\n\tDirectory: " << p << " does not exist. Creating it now.\n";
-        std::filesystem::create_directories(p);
-    }
-}
-
-string Webcam::create_image_filename(unsigned long long frame_count,
-                                     const string& timestamp,
-                                     size_t gap) {
-    return to_string(frame_count) + "_" + timestamp + to_string(gap) + ".png";
 }

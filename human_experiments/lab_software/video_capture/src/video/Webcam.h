@@ -5,10 +5,13 @@
 
 #include <opencv2/highgui.hpp>
 
-class Webcam {
+#include "video/Device.h"
+
+class Webcam : public Device {
   public:
-    Webcam(int id, int frame_width, int frame_height);
-    ~Webcam() = default;
+    Webcam(int camera_index, int frame_width, int frame_height);
+    Webcam(const std::string& camera_name, int frame_width, int frame_height);
+    ~Webcam() override;
 
     Webcam(const Webcam&) = delete;
     Webcam& operator=(const Webcam&) = delete;
@@ -18,36 +21,17 @@ class Webcam {
     /**
      * Turns the webcam on
      */
-    void turn_on();
+    void turn_on() override;
 
     /**
      * Starts recording and saves the images to a folder.
      * @param out_dir: directory where images must be saved
      * @param fps: frames per second
      */
-    void start_recording(const std::string& out_dir, int fps);
+    void start_recording(const std::string& out_dir, int fps) override;
 
   private:
-    int camera_index;
+    int camera_index = 0;
     cv::VideoCapture camera_device;
 
-    /**
-     * Creates an output directory if it does not exist yet.
-     *
-     * @param p: path to the directory
-     */
-    static void create_output_directory(const std::filesystem::path& p);
-
-    /**
-     * Creates an image filename in an specific format
-     *
-     * @param frame_count: number of the frame
-     * @param timestamp: system timestamp when the image was captured
-     * @param gap: how many milliseconds since the last image was captured
-     *
-     * @return image filename
-     */
-    static std::string create_image_filename(unsigned long long frame_count,
-                                        const std::string& timestamp,
-                                        size_t gap);
 };

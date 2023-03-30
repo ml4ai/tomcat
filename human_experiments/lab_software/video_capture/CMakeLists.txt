@@ -31,7 +31,13 @@ find_package(
         program_options
         REQUIRED)
 
-set(CMAKE_EXE_LINKER_FLAGS "-framework CoreGraphics")
+# This is required for screen recording on a mac
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    set(CMAKE_EXE_LINKER_FLAGS "-framework CoreGraphics")
+else ()
+    message(STATUS "[WARNING]: The screen recording functionality is only available on Mac OSx systems.")
+endif ()
+
 
 # Finding the Mosquitto header and library
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}

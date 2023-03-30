@@ -20,7 +20,7 @@ const int WAIT_UNTIL_READY = 10; // in seconds
 //----------------------------------------------------------------------
 // Constructors & Destructor
 //----------------------------------------------------------------------
-Screen::Screen(int frame_width, int frame_height) {}
+Screen::Screen() {}
 
 //----------------------------------------------------------------------
 // Other functions
@@ -36,21 +36,26 @@ void Screen::start_recording(const std::string& out_dir, int fps) {
     cout << "\tA frame is captured every " << frame_period
          << " milliseconds.\n\n";
 
+    // Full size of the monitor we are recording from
     size_t width = CGDisplayPixelsWide(CGMainDisplayID());
     size_t height = CGDisplayPixelsHigh(CGMainDisplayID());
 
-    cv::Mat img(cv::Size(width, height), CV_8UC4);
-    cv::Mat bgrim(cv::Size(width, height), CV_8UC3);
-    cv::Mat resizedim(cv::Size(width, height), CV_8UC3);
+    // CV_8UC4: 8 bit unsigned ints 4 channels -> RGBA
+    cv::Mat img(cv::Size(int(width), int(height)), CV_8UC4);
 
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    CGContextRef contextRef = CGBitmapContextCreate(
+    // CV_8UC3: 8 bit unsigned ints 3 channels -> RGB
+    // Saving the image with the alpha channel, changes some colors (e.g. red
+    // becomes blue). We save the image without the alpha channel.
+    cv::Mat final_image(cv::Size(int(width), int(height)), CV_8UC3);
+
+    CGColorSpaceRef color_space = CGColorSpaceCreateDeviceRGB();
+    CGContextRef context_ref = CGBitmapContextCreate(
         img.data,
         img.cols,
         img.rows,
         8,
         img.step[0],
-        colorSpace,
+        color_space,
         kCGImageAlphaPremultipliedLast | kCGBitmapByteOrderDefault);
 
     auto prev_frame_time = date::floor<std::chrono::milliseconds>(
@@ -60,14 +65,13 @@ void Screen::start_recording(const std::string& out_dir, int fps) {
         auto capture_start_time = date::floor<std::chrono::milliseconds>(
             std::chrono::system_clock::now());
 
-        CGImageRef imageRef = CGDisplayCreateImage(CGMainDisplayID());
+        CGImageRef image_ref = CGDisplayCreateImage(CGMainDisplayID());
         CGContextDrawImage(
-            contextRef, CGRectMake(0, 0, width, height), imageRef);
-        cvtColor(img, bgrim, cv::COLOR_RGBA2BGR);
-        if (!bgrim.empty()) {
+            context_ref, CGRectMake(0, 0, int(width), int(height)), image_ref);
+        cvtColor(img, final_image, cv::COLOR_RGBA2BGR);
+        if (!img.empty()) {
             // We need to check if the image is not empty otherwise imwrite
             // will crash.
-
             std::string date_time =
                 date::format("%F_%H-%M-%S.%p~", capture_start_time);
 
@@ -79,7 +83,7 @@ void Screen::start_recording(const std::string& out_dir, int fps) {
             string image_filename = create_image_filename(
                 i, string(date_time), size_t(between_time.count()));
             file /= std::filesystem::path(image_filename);
-            imwrite(file, bgrim);
+            imwrite(file, final_image);
         }
 
         auto capture_end_time = date::floor<std::chrono::milliseconds>(
@@ -93,22 +97,6 @@ void Screen::start_recording(const std::string& out_dir, int fps) {
         frame_period > capture_duration.count()
             ? cv::waitKey(frame_period - capture_duration.count())
             : 0;
-        CGImageRelease(imageRef);
+        CGImageRelease(image_ref);
     }
-}
-
-void Screen::create_output_directory(const filesystem::path& p) {
-    if (std::filesystem::exists(p)) {
-        cout << "\n\tWriting frames to already existing path: " << p << endl;
-    }
-    else {
-        cout << "\n\tDirectory: " << p << " does not exist. Creating it now.\n";
-        std::filesystem::create_directories(p);
-    }
-}
-
-string Screen::create_image_filename(unsigned long long frame_count,
-                                     const string& timestamp,
-                                     size_t gap) {
-    return to_string(frame_count) + "_" + timestamp + to_string(gap) + ".png";
 }

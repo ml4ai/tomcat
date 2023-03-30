@@ -2,15 +2,21 @@
 
 #include <iostream>
 
+#include "video/Device.h"
 #include "video/Screen.h"
 #include "video/Webcam.h"
+
+#include <opencv2/highgui.hpp>
+
+#include <regex>
 
 using namespace std;
 namespace po = boost::program_options;
 
 int main(int argc, const char* argv[]) {
-    string device;
+    string device_name;
     string out_dir;
+    string camera_name;
     int camera_index;
     int fps;
     int width;
@@ -24,8 +30,11 @@ int main(int argc, const char* argv[]) {
         po::value<string>(&out_dir)->required(),
         "Directory where the images must be saved.")(
         "camera_index",
-        po::value<int>(&camera_index)->default_value(0)->required(),
-        "Index of the camera.")(
+        po::value<int>(&camera_index)->default_value(0),
+        "Index of the camera.")("camera_name",
+                                po::value<string>(&camera_name),
+                                "Name of the camera. If a name if passed, it "
+                                "has priority over the camera index.")(
         "fps",
         po::value<int>(&fps)->default_value(30)->required(),
         "Frames per secons.")(
@@ -36,7 +45,7 @@ int main(int argc, const char* argv[]) {
         po::value<int>(&height)->default_value(720)->required(),
         "Height of the images.")(
         "device",
-        po::value<string>(&device)->required(),
+        po::value<string>(&device_name)->required(),
         "Device to capture images from. It should be either webcam or screen.");
 
     po::variables_map vm;
@@ -47,21 +56,28 @@ int main(int argc, const char* argv[]) {
         return 1;
     }
 
-    if (device != "webcam" and device != "screen") {
+    if (device_name != "webcam" and device_name != "screen") {
         cerr << "Device ins not one in the list [webcam, screen]." << endl;
     }
 
-    if (device == "webcam") {
+    unique_ptr<Device> device;
+    if (device_name == "webcam") {
         cout << "Will record from the webcam" << endl;
-        Webcam webcam(camera_index, width, height);
-        webcam.turn_on();
-        webcam.start_recording(out_dir, fps);
+        if (camera_name.empty()) {
+            // Use camera index
+            device = make_unique<Webcam>(camera_index, width, height);
+        }
+        else {
+            device = make_unique<Webcam>(camera_name, width, height);
+        }
     }
     else {
         cout << "Will record from the screen" << endl;
-        Screen screen(width, height);
-        screen.start_recording(out_dir, fps);
+        device = make_unique<Screen>();
     }
+
+    device->turn_on();
+    device->start_recording(out_dir, fps);
 
     return 0;
 }
