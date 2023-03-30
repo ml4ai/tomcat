@@ -1,9 +1,10 @@
 #pragma once
 
+#include <atomic>
 #include <fstream>
 #include <string>
-#include <vector>
 #include <unordered_map>
+#include <vector>
 
 struct DeviceMetadata {
     std::string name;
@@ -34,7 +35,9 @@ class Device {
      * @param out_dir: directory where images must be saved
      * @param fps: frames per second
      */
-    virtual void start_recording(const std::string& out_dir, int fps) = 0;
+    virtual void start_recording(const std::string& out_dir,
+                                 int fps,
+                                 std::atomic<bool>* signal_watcher) = 0;
 
     /**
      * Uses popen and ffmpeg to list video AVFoundation video devices.
@@ -67,5 +70,4 @@ class Device {
     static std::string create_image_filename(unsigned long long frame_count,
                                              const std::string& timestamp,
                                              size_t gap);
-
 };

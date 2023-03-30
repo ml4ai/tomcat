@@ -4,15 +4,14 @@
 
 #include <chrono>
 #include <iostream>
-#include <unistd.h>
 
 #include <ApplicationServices/ApplicationServices.h>
 #include <fmt/format.h>
 #include <opencv2/opencv.hpp>
 
 #include "common/GeneralException.h"
-#include "common/date.h"
 #include "data_stream/LSLStringStream.h"
+#include "external/date.h"
 
 using namespace std;
 
@@ -28,7 +27,9 @@ Screen::Screen(const string& unique_id) : Device(unique_id) {}
 //----------------------------------------------------------------------
 void Screen::turn_on() {}
 
-void Screen::start_recording(const std::string& out_dir, int fps) {
+void Screen::start_recording(const std::string& out_dir,
+                             int fps,
+                             atomic<bool>* signal_watcher) {
     const filesystem::path p(out_dir);
     create_output_directory(p);
 
@@ -109,5 +110,11 @@ void Screen::start_recording(const std::string& out_dir, int fps) {
             ? cv::waitKey(frame_period - capture_duration.count())
             : 0;
         CGImageRelease(image_ref);
+
+        // Leave the loop so that the class destructor can be called and proper
+        // clean-up executed. It does not work if the program is terminated with
+        // signal 9.
+        if (signal_watcher->load())
+            break;
     }
 }

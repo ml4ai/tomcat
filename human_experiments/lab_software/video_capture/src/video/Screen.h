@@ -7,6 +7,8 @@
 
 #include "video/Device.h"
 
+#include <iostream>
+
 class Screen : public Device {
   public:
     Screen(const std::string& unique_id);
@@ -27,6 +29,9 @@ class Screen : public Device {
      *
      * @param out_dir: directory where images must be saved
      * @param fps: frames per second
+     * @param signal_watcher: atomic boolean to check for interruptions
      */
-    void start_recording(const std::string& out_dir, int fps) override;
+    void start_recording(const std::string& out_dir,
+                         int fps,
+                         std::atomic<bool>* signal_watcher) override;
 };

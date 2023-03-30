@@ -67,3 +67,7 @@ IMPORTANT:
 
 - Time is in the *Universal Time Coordinated* (UTC)
 - gap is the approximate number of milliseconds elapsed since the last frame till this frame was captured.
+
+# Stopping the program
+
+To stop the program, use either a SIGINT or SIGTERM interruption. The program will perform proper clean-up and end gracefully. Other kinds of interruptions are not handled by the program and might cause the last image not to be completely rendered before saving.

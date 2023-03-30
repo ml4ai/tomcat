@@ -33,8 +33,11 @@ class Webcam : public Device {
      * Starts recording and saves the images to a folder.
      * @param out_dir: directory where images must be saved
      * @param fps: frames per second
+     * @param signal_watcher: atomic boolean to check for interruptions
      */
-    void start_recording(const std::string& out_dir, int fps) override;
+    void start_recording(const std::string& out_dir,
+                         int fps,
+                         std::atomic<bool>* signal_watcher) override;
 
   private:
     int camera_index = 0;

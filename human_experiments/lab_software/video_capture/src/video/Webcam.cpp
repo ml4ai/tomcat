@@ -9,8 +9,8 @@
 #include "fmt/format.h"
 
 #include "common/GeneralException.h"
-#include "common/date.h"
 #include "data_stream/LSLStringStream.h"
+#include "external/date.h"
 
 using namespace std;
 
@@ -63,7 +63,9 @@ void Webcam::turn_on() {
     cout << "Webcam is ready." << endl;
 }
 
-void Webcam::start_recording(const std::string& out_dir, int fps) {
+void Webcam::start_recording(const std::string& out_dir,
+                             int fps,
+                             atomic<bool>* signal_watcher) {
     const filesystem::path p(out_dir);
     create_output_directory(p);
 
@@ -121,5 +123,11 @@ void Webcam::start_recording(const std::string& out_dir, int fps) {
         frame_period > capture_duration.count()
             ? cv::waitKey(frame_period - capture_duration.count())
             : 0;
+
+        // Leave the loop so that the class destructor can be called and proper
+        // clean-up executed. It does not work if the program is terminated with
+        // signal 9.
+        if (signal_watcher->load())
+            break;
     }
 }

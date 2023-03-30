@@ -1,12 +1,14 @@
 #include <boost/program_options.hpp>
 
 #include <iostream>
+#include <atomic>
 
 #include <boost/algorithm/string.hpp>
 
 #include "video/Device.h"
 #include "video/Screen.h"
 #include "video/Webcam.h"
+#include "common/SignalHandler.h"
 
 using namespace std;
 namespace po = boost::program_options;
@@ -84,8 +86,11 @@ int main(int argc, const char* argv[]) {
         device = make_unique<Screen>(client_name);
     }
 
+    // Signal handler in case the program is interrupted.
+    watch_for_signal();
+
     device->turn_on();
-    device->start_recording(out_dir, fps);
+    device->start_recording(out_dir, fps, &quit);
 
     return 0;
 }
