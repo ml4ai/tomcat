@@ -1,6 +1,8 @@
 #include <boost/program_options.hpp>
 
 #include <iostream>
+#include <stdlib.h>
+#include <wordexp.h>
 
 #include "video/Screen.h"
 #include "video/Webcam.h"
@@ -11,6 +13,8 @@ namespace po = boost::program_options;
 int main(int argc, const char* argv[]) {
     string device;
     string out_dir;
+    string expanded_dir;
+    wordexp_t p;
     int camera_index;
     int fps;
     int width;
@@ -51,16 +55,31 @@ int main(int argc, const char* argv[]) {
         cerr << "Device ins not one in the list [webcam, screen]." << endl;
     }
 
+    switch (wordexp (out_dir.c_str(), &p, 0)) {
+        case 0:            /* Successful.  */
+            expanded_dir = p.we_wordv[0];
+            wordfree(&p);
+            cout << "Saving images to: " << expanded_dir << endl;
+            break;
+        case WRDE_NOSPACE:
+            /* If the error was WRDE_NOSPACE,
+             then perhaps part of the result was allocated.  */
+            wordfree (&p);
+        default:                    /* Some other error.  */
+            cout << "Error: Could not interprete the path\n";
+            return -1;
+    }
+
     if (device == "webcam") {
         cout << "Will record from the webcam" << endl;
         Webcam webcam(camera_index, width, height);
         webcam.turn_on();
-        webcam.start_recording(out_dir, fps);
+        webcam.start_recording(expanded_dir, fps);
     }
     else {
         cout << "Will record from the screen" << endl;
         Screen screen(width, height);
-        screen.start_recording(out_dir, fps);
+        screen.start_recording(expanded_dir, fps);
     }
 
     return 0;
