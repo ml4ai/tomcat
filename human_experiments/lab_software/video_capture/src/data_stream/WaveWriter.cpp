@@ -7,6 +7,10 @@
 
 #include "common/GeneralException.h"
 
+// Position where the block of data starts in a .wav file
+#define CHUNK_SIZE_START_POS 4 // 4 bytes after the beginning of the file
+#define DATA_START_POS 44      // 44 bytes after the beginning of the file
+
 using namespace std;
 
 WaveWriter::WaveWriter(const std::string& audio_filepath,
@@ -43,24 +47,10 @@ WaveWriter::WaveWriter(const std::string& audio_filepath,
     // Data sub-chunk
     this->wave_file << "data"; // sub-chunk2 ID
     this->wave_file << "----"; // sub-chunk2 size (only known in the end)
-
-    this->start_audio_pos = this->wave_file.tellp();
 }
 
 WaveWriter::~WaveWriter() {
-    // Write the size related fields in the audio file
-
-    // Move 4 bytes above the start of the audio to fill the sub-chunk2 size.
-    long long end_audio_pos = this->wave_file.tellp();
-    this->wave_file.seekp(this->start_audio_pos - 4);
-    int data_size = end_audio_pos - start_audio_pos;
-
-    this->write_as_bytes(data_size, 4);
-
-    // Move 4 bytes after the beginning of the file.
-    this->wave_file.seekp(ios::beg + 4);
-    this->write_as_bytes(end_audio_pos - 8, 4);
-
+    this->update_header();
     this->wave_file.close();
 }
 
@@ -72,4 +62,18 @@ void WaveWriter::write_chunk(const std::vector<short>& chunk) {
 
 void WaveWriter::write_as_bytes(int value, int byte_size) {
     this->wave_file.write(reinterpret_cast<const char*>(&value), byte_size);
+}
+
+void WaveWriter::update_header() {
+    // Move 4 bytes above the start of the audio to fill the sub-chunk2 size.
+    long long end_audio_pos = this->wave_file.tellp();
+    int data_size = end_audio_pos - (ios::beg + DATA_START_POS);
+
+    this->wave_file.seekp(ios::beg + DATA_START_POS - 4);
+    this->write_as_bytes(data_size, 4);
+
+    // Move 4 bytes after the beginning of the file.
+    int chunk_size = end_audio_pos - 8;
+    this->wave_file.seekp(ios::beg + CHUNK_SIZE_START_POS);
+    this->write_as_bytes(chunk_size, 4);
 }

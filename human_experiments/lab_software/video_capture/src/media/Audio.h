@@ -6,7 +6,6 @@
 #include <memory>
 
 #include <portaudio.h>
-#include <sndfile.hh>
 
 #include "Device.h"
 #include "data_stream/WaveWriter.h"
@@ -39,11 +38,8 @@ class Audio : public Device {
     PaStream* audio_stream;
     std::thread audio_stream_thread;
     std::unique_ptr<WaveWriter> wave_file;
-//    SndfileHandle* wave_file;
 
     void loop();
 
     void create_audio_file(const std::string& out_dir, int sample_rate);
-
-    void write_chunk_to_file(const std::vector<int16_t>& chunk);
 };

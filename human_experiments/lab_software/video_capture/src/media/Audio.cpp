@@ -8,9 +8,7 @@
 
 using namespace std;
 
-Audio::Audio(int num_channels,
-             PaSampleFormat sample_format,
-             int chunk_size)
+Audio::Audio(int num_channels, PaSampleFormat sample_format, int chunk_size)
     : num_channels(num_channels), sample_format(sample_format),
       chunk_size(chunk_size) {}
 
@@ -124,19 +122,16 @@ void Audio::create_audio_file(const std::string& out_dir, int sample_rate) {
     }
     audio_filepath += "audio.wav";
 
-    int format;
+    int bits_per_sample;
     if (this->sample_format == paInt16) {
-        format = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
+        bits_per_sample = 16;
     }
     else {
-        format = SF_FORMAT_WAV | SF_FORMAT_PCM_24;
+        bits_per_sample = 24;
     }
 
-//    this->wave_file = new SndfileHandle(
-//        audio_filepath, SFM_WRITE, format, this->num_channels, sample_rate);
-
-        this->wave_file = make_unique<WaveWriter>(
-            audio_filepath, 16, this->num_channels, sample_rate);
+    this->wave_file = make_unique<WaveWriter>(
+        audio_filepath, bits_per_sample, this->num_channels, sample_rate);
 }
 
 void Audio::loop() {
@@ -144,16 +139,10 @@ void Audio::loop() {
     while ((err = Pa_IsStreamActive(this->audio_stream)) == 1 &&
            this->recording) {
         vector<int16_t> chunk(this->chunk_size);
-        Pa_ReadStream(
-            this->audio_stream, (void*)&chunk[0], this->chunk_size);
+        Pa_ReadStream(this->audio_stream, (void*)&chunk[0], this->chunk_size);
 
         // Send chunk to LSL
 
-        this->write_chunk_to_file(chunk);
+        this->wave_file->write_chunk(chunk);
     }
-}
-
-void Audio::write_chunk_to_file(const std::vector<int16_t>& chunk) {
-//    this->wave_file->write(&chunk[0], static_cast<sf_ count_t>(chunk.size()));
-    this->wave_file->write_chunk(chunk);
 }

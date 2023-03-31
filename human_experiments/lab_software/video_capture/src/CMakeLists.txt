@@ -7,8 +7,7 @@ target_include_directories(project_static_lib PRIVATE
         ${LSL_INCLUDE_DIR}
         ${Boost_INCLUDE_DIRS}
         ${OpenCV_INCLUDE_DIRS}
-        ${portaudio_INCLUDE_DIR}
-        ${LIBSNDFILE_INCLUDE_DIRS})
+        ${portaudio_INCLUDE_DIR})
 set(_all_libs ${_libs} project_static_lib)
 
 add_executable(video_capture video_capture.cpp)
