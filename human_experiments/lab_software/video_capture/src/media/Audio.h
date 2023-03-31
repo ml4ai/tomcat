@@ -1,26 +1,36 @@
 #pragma once
 
 #include <string>
-#include <vector>
 #include <thread>
+#include <vector>
+#include <memory>
 
 #include <portaudio.h>
 #include <sndfile.hh>
 
-class Audio {
+#include "Device.h"
+#include "data_stream/WaveWriter.h"
+
+class Audio : public Device {
   public:
     int num_channels;
-    int sample_rate;
     PaSampleFormat sample_format;
-    int frames_per_buffer;
+    int chunk_size;
 
     Audio(int num_channels,
-                  int sample_rate,
-                  PaSampleFormat sample_format,
-                  int frames_per_buffer);
+          PaSampleFormat sample_format,
+          int chunk_size);
     ~Audio() = default;
 
-    void start_recording(const std::string& audio_filepath);
+    /**
+     * Does initial setup for audio recording.
+     */
+    void turn_on() override;
+
+    void start_recording(const std::string& out_dir,
+                         int sample_rate,
+                         std::atomic<bool>* signal_watcher) override;
+
     void stop_recording();
 
   private:
@@ -28,11 +38,12 @@ class Audio {
 
     PaStream* audio_stream;
     std::thread audio_stream_thread;
-    SndfileHandle* wav_file;
+    std::unique_ptr<WaveWriter> wave_file;
+//    SndfileHandle* wave_file;
 
-    void loop_forever();
+    void loop();
 
-    void create_audio_file(const std::string& audio_filepath);
+    void create_audio_file(const std::string& out_dir, int sample_rate);
 
     void write_chunk_to_file(const std::vector<int16_t>& chunk);
 };

@@ -9,7 +9,7 @@
 
 using namespace std;
 
-Device::Device(const string& unique_id) : unique_id(unique_id) {
+Device::Device() {
     for (const auto& device : list_avfoundation_video_devices()) {
         video_device_name_to_index[device.name] = device.index;
     }
@@ -17,10 +17,10 @@ Device::Device(const string& unique_id) : unique_id(unique_id) {
 
 void Device::create_output_directory(const filesystem::path& p) {
     if (std::filesystem::exists(p)) {
-        cout << "\n\tWriting frames to already existing path: " << p << endl;
+        cout << "\n\tWriting frames to already existing path: " << p << "\n\n";
     }
     else {
-        cout << "\n\tDirectory: " << p << " does not exist. Creating it now.\n";
+        cout << "\n\tDirectory: " << p << " does not exist. Creating it now.\n\n";
         std::filesystem::create_directories(p);
     }
 }

@@ -6,7 +6,6 @@
 #include <boost/algorithm/string.hpp>
 
 #include "common/SignalHandler.h"
-#include "media/Audio.h"
 #include "media/Device.h"
 #include "media/Screen.h"
 #include "media/Webcam.h"
@@ -15,7 +14,6 @@ using namespace std;
 namespace po = boost::program_options;
 
 int main(int argc, const char* argv[]) {
-    string client_name;
     string device_name;
     string out_dir;
     string camera_name;
@@ -48,13 +46,7 @@ int main(int argc, const char* argv[]) {
         "Height of the images.")(
         "device",
         po::value<string>(&device_name)->required(),
-        "Device to capture images from. It should be either webcam or screen.")(
-        "client",
-        po::value<string>(&client_name)->required(),
-        "Client name. It must be a string that uniquely identify the machine "
-        "where this script is running. It cannot contain any whitespaces. This "
-        "name will be used to uniquely identify the LSL stream for this "
-        "recording.");
+        "Device to capture images from. It should be either webcam or screen.");
 
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, arguments), vm);
@@ -65,12 +57,11 @@ int main(int argc, const char* argv[]) {
     }
 
     boost::trim(device_name);
-    boost::trim(client_name);
 
-    if (device_name != "webcam" and device_name != "screen" and
-        device_name != "audio") {
+    if (device_name != "webcam" and device_name != "screen") {
         cerr << "Device ins not one in the list [webcam, screen, audio]."
              << endl;
+        return 1;
     }
 
     unique_ptr<Device> device;
@@ -79,17 +70,18 @@ int main(int argc, const char* argv[]) {
         if (camera_name.empty()) {
             // Use camera index
             device =
-                make_unique<Webcam>(client_name, camera_index, width, height);
+                make_unique<Webcam>(camera_index, width, height);
         }
         else {
             device =
-                make_unique<Webcam>(client_name, camera_name, width, height);
+                make_unique<Webcam>(camera_name, width, height);
         }
     }
     else if (device_name == "screen") {
         cout << "Will record from the screen." << endl;
-        device = make_unique<Screen>(client_name);
-    } else {
+        device = make_unique<Screen>();
+    }
+    else {
         cout << "Will record audio from the default microphone." << endl;
     }
 

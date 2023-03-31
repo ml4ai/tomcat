@@ -16,7 +16,7 @@ struct DeviceMetadata {
 
 class Device {
   public:
-    Device(const std::string& unique_id);
+    Device();
     virtual ~Device() = default;
 
     Device(const Device&) = delete;
@@ -47,8 +47,6 @@ class Device {
     static std::vector<DeviceMetadata> list_avfoundation_video_devices();
 
   protected:
-    std::string unique_id;
-
     std::unordered_map<std::string, int> video_device_name_to_index;
 
     /**

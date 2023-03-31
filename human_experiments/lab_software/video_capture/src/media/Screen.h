@@ -5,13 +5,13 @@
 
 #include <opencv2/highgui.hpp>
 
-#include "video/Device.h"
+#include "media/Device.h"
 
 #include <iostream>
 
 class Screen : public Device {
   public:
-    Screen(const std::string& unique_id);
+    Screen() = default;
     ~Screen() override = default;
 
     Screen(const Screen&) = delete;

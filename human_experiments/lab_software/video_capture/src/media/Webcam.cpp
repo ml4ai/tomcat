@@ -19,22 +19,14 @@ const int WAIT_UNTIL_READY = 5; // in seconds
 //----------------------------------------------------------------------
 // Constructors & Destructor
 //----------------------------------------------------------------------
-Webcam::Webcam(const string& unique_id,
-               int camera_index,
-               int frame_width,
-               int frame_height)
-    : Device(unique_id) {
+Webcam::Webcam(int camera_index, int frame_width, int frame_height) {
     this->camera_index = camera_index;
     this->camera_device = cv::VideoCapture(camera_index);
     this->camera_device.set(cv::CAP_PROP_FRAME_WIDTH, frame_width);
     this->camera_device.set(cv::CAP_PROP_FRAME_HEIGHT, frame_height);
 }
 
-Webcam::Webcam(const string& unique_id,
-               const string& camera_name,
-               int frame_width,
-               int frame_height)
-    : Device(unique_id) {
+Webcam::Webcam(const string& camera_name, int frame_width, int frame_height) {
     this->camera_device =
         cv::VideoCapture(this->video_device_name_to_index[camera_name]);
     this->camera_device.set(cv::CAP_PROP_FRAME_WIDTH, frame_width);
@@ -76,12 +68,10 @@ void Webcam::start_recording(const std::string& out_dir,
 
     cv::Mat img;
 
-    const string stream_name = "Webcam_" + unique_id;
-    const string source_id = "webcam_" + unique_id;
-    LSLStringStream lsl_stream(stream_name, source_id, "image_filename", fps);
+    LSLStringStream lsl_stream("Webcam", "webcam", "image_filename", fps);
     lsl_stream.open();
 
-    cout << "Recording..." << endl;
+    cout << "Recording from the webcam..." << endl;
     auto prev_frame_time = date::floor<std::chrono::milliseconds>(
         std::chrono::system_clock::now());
     for (unsigned long i = 1;; i++) {
@@ -127,7 +117,9 @@ void Webcam::start_recording(const std::string& out_dir,
         // Leave the loop so that the class destructor can be called and proper
         // clean-up executed. It does not work if the program is terminated with
         // signal 9.
-        if (signal_watcher->load())
+        if (signal_watcher->load()) {
+            cout << "Stop recording from the webcam..." << endl;
             break;
+        }
     }
 }

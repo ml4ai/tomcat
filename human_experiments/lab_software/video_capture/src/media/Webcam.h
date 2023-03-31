@@ -5,16 +5,14 @@
 
 #include <opencv2/highgui.hpp>
 
-#include "video/Device.h"
+#include "media/Device.h"
 
 class Webcam : public Device {
   public:
-    Webcam(const std::string& unique_id,
-           int camera_index,
+    Webcam(int camera_index,
            int frame_width,
            int frame_height);
-    Webcam(const std::string& unique_id,
-           const std::string& camera_name,
+    Webcam(const std::string& camera_name,
            int frame_width,
            int frame_height);
     ~Webcam() override;

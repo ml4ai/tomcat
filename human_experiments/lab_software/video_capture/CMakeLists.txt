@@ -28,6 +28,7 @@ find_package(OpenCV REQUIRED)
 find_package(Boost REQUIRED COMPONENTS program_options)
 find_package(Threads REQUIRED)
 find_package(portaudio REQUIRED)
+find_package(LibSndFile REQUIRED)
 
 # This is required for screen recording on a mac
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
@@ -46,6 +47,7 @@ set(_libs
         ${Boost_LIBRARIES}
         ${OpenCV_LIBRARIES}
         ${portaudio_LIBRARY}
+        ${LIBSNDFILE_LIBRARIES}
         -pthread)
 
 add_subdirectory(src)

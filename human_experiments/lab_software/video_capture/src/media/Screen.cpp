@@ -17,14 +17,6 @@ using namespace std;
 
 const int WAIT_UNTIL_READY = 10; // in seconds
 
-//----------------------------------------------------------------------
-// Constructors & Destructor
-//----------------------------------------------------------------------
-Screen::Screen(const string& unique_id) : Device(unique_id) {}
-
-//----------------------------------------------------------------------
-// Other functions
-//----------------------------------------------------------------------
 void Screen::turn_on() {}
 
 void Screen::start_recording(const std::string& out_dir,
@@ -60,12 +52,10 @@ void Screen::start_recording(const std::string& out_dir,
         color_space,
         kCGImageAlphaPremultipliedLast | kCGBitmapByteOrderDefault);
 
-    const string stream_name = "Screen_" + unique_id;
-    const string source_id = "screen_" + unique_id;
-    LSLStringStream lsl_stream(stream_name, source_id, "image_filename", fps);
+    LSLStringStream lsl_stream("Screen", "screen", "image_filename", fps);
     lsl_stream.open();
 
-    cout << "Recording..." << endl;
+    cout << "Recording screen images..." << endl;
     auto prev_frame_time = date::floor<std::chrono::milliseconds>(
         std::chrono::system_clock::now());
     for (unsigned long i = 1;; i++) {
@@ -114,7 +104,9 @@ void Screen::start_recording(const std::string& out_dir,
         // Leave the loop so that the class destructor can be called and proper
         // clean-up executed. It does not work if the program is terminated with
         // signal 9.
-        if (signal_watcher->load())
+        if (signal_watcher->load()) {
+            cout << "Stop recording screen images..." << endl;
             break;
+        }
     }
 }

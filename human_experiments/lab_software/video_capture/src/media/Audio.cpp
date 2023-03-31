@@ -1,5 +1,7 @@
 #include "Audio.h"
 
+#include <iostream>
+
 #include <fmt/format.h>
 
 #include "common/GeneralException.h"
@@ -7,13 +9,16 @@
 using namespace std;
 
 Audio::Audio(int num_channels,
-                             int sample_rate,
-                             PaSampleFormat sample_format,
-                             int frames_per_buffer)
-    : num_channels(num_channels), sample_rate(sample_rate),
-      sample_format(sample_format), frames_per_buffer(frames_per_buffer) {}
+             PaSampleFormat sample_format,
+             int chunk_size)
+    : num_channels(num_channels), sample_format(sample_format),
+      chunk_size(chunk_size) {}
 
-void Audio::start_recording(const string& audio_filepath) {
+void Audio::turn_on() {}
+
+void Audio::start_recording(const string& out_dir,
+                            int sample_rate,
+                            atomic<bool>* signal_watcher) {
     if (this->recording) {
         // Ignore if it's already recording.
         return;
@@ -21,7 +26,9 @@ void Audio::start_recording(const string& audio_filepath) {
 
     recording = true;
 
-    this->create_audio_file(audio_filepath);
+    const filesystem::path p(out_dir);
+    create_output_directory(p);
+    this->create_audio_file(out_dir, sample_rate);
 
     // Start portaudio stream
     PaStreamParameters input_parameters;
@@ -50,8 +57,8 @@ void Audio::start_recording(const string& audio_filepath) {
     err = Pa_OpenStream(&this->audio_stream,
                         &input_parameters,
                         nullptr,
-                        this->sample_rate,
-                        this->frames_per_buffer,
+                        sample_rate,
+                        this->chunk_size,
                         0,
                         nullptr,
                         nullptr);
@@ -65,7 +72,16 @@ void Audio::start_recording(const string& audio_filepath) {
             "Failure starting PortAudio stream: {}", Pa_GetErrorText(err)));
     }
 
-    this->audio_stream_thread = thread([this] { this->loop_forever(); });
+    cout << "Recording audio..." << endl;
+    this->audio_stream_thread = thread([this] { this->loop(); });
+
+    while (!signal_watcher->load()) {
+        // Do nothing. The audio recording thread will be active and running
+        // at this moment. When the variable signal_watcher changes to true by
+        // a program interruption, we leave this loop and stop recording.
+    }
+
+    this->stop_recording();
 }
 
 void Audio::stop_recording() {
@@ -73,6 +89,8 @@ void Audio::stop_recording() {
     if (!this->recording) {
         return;
     }
+
+    cout << "Stopping recording..." << endl;
     this->recording = false;
 
     // Wait for the thread to finish whatever it is doing.
@@ -93,24 +111,41 @@ void Audio::stop_recording() {
             "Failure shutting down PortAudio: {}", Pa_GetErrorText(err)));
     }
 
+    // The wav file object takes care of cleaning-up on its destructor. So, we
+    // don't need to explicitly close it.
+
     // Close LSL stream
 }
 
-void Audio::create_audio_file(const std::string& audio_filepath) {
-    this->wav_file = new SndfileHandle(audio_filepath,
-                                       SFM_WRITE,
-                                       SF_FORMAT_WAV | SF_FORMAT_PCM_16,
-                                       this->num_channels,
-                                       this->sample_rate);
+void Audio::create_audio_file(const std::string& out_dir, int sample_rate) {
+    string audio_filepath = out_dir;
+    if (audio_filepath.back() != '/') {
+        audio_filepath += "/";
+    }
+    audio_filepath += "audio.wav";
+
+    int format;
+    if (this->sample_format == paInt16) {
+        format = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
+    }
+    else {
+        format = SF_FORMAT_WAV | SF_FORMAT_PCM_24;
+    }
+
+//    this->wave_file = new SndfileHandle(
+//        audio_filepath, SFM_WRITE, format, this->num_channels, sample_rate);
+
+        this->wave_file = make_unique<WaveWriter>(
+            audio_filepath, 16, this->num_channels, sample_rate);
 }
 
-void Audio::loop_forever() {
+void Audio::loop() {
     PaError err;
     while ((err = Pa_IsStreamActive(this->audio_stream)) == 1 &&
            this->recording) {
-        vector<int16_t> chunk(this->frames_per_buffer);
+        vector<int16_t> chunk(this->chunk_size);
         Pa_ReadStream(
-            this->audio_stream, (void*)&chunk[0], this->frames_per_buffer);
+            this->audio_stream, (void*)&chunk[0], this->chunk_size);
 
         // Send chunk to LSL
 
@@ -119,5 +154,6 @@ void Audio::loop_forever() {
 }
 
 void Audio::write_chunk_to_file(const std::vector<int16_t>& chunk) {
-    this->wav_file->write(&chunk[0], chunk.size());
+//    this->wave_file->write(&chunk[0], static_cast<sf_ count_t>(chunk.size()));
+    this->wave_file->write_chunk(chunk);
 }
