@@ -1,25 +1,23 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <thread>
 #include <vector>
-#include <memory>
 
 #include <portaudio.h>
 
 #include "Device.h"
 #include "data_stream/WaveWriter.h"
+#include "data_stream/LSLAudioStream.h"
 
 class Audio : public Device {
   public:
     int num_channels;
-    PaSampleFormat sample_format;
     int chunk_size;
 
-    Audio(int num_channels,
-          PaSampleFormat sample_format,
-          int chunk_size);
-    ~Audio() = default;
+    Audio(int num_channels, int chunk_size);
+    ~Audio() override = default;
 
     /**
      * Does initial setup for audio recording.
@@ -38,6 +36,7 @@ class Audio : public Device {
     PaStream* audio_stream;
     std::thread audio_stream_thread;
     std::unique_ptr<WaveWriter> wave_file;
+    std::unique_ptr<LSLAudioStream> lsl_stream;
 
     void loop();
 

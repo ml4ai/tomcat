@@ -9,10 +9,7 @@
 // Mono is better for audio analysis. Stereo is better for music listeners.
 #define DEFAULT_CHANNEL_COUNT 1
 #define DEFAULT_SAMPLE_RATE 48000
-// We keep it at 16 for compatibility with Google Speech-to-Text API
-#define DEFAULT_SAMPLE_FORMAT 16
-#define DEFAULT_CHUNK_SIZE 4096
-//    8196
+#define DEFAULT_CHUNK_SIZE 8192
 
 using namespace std;
 namespace po = boost::program_options;
@@ -40,11 +37,6 @@ int main(int argc, const char* argv[]) {
                             ->default_value(DEFAULT_CHANNEL_COUNT)
                             ->required(),
                         "Number of channels. 1 for mono, 2 for stereo.")(
-        "sample_format",
-        po::value<int>(&sample_format)
-            ->default_value(DEFAULT_SAMPLE_FORMAT)
-            ->required(),
-        "16 or 24.")(
         "chunk_size",
         po::value<int>(&chunk_size)
             ->default_value(DEFAULT_CHUNK_SIZE)
@@ -64,20 +56,7 @@ int main(int argc, const char* argv[]) {
              << endl;
     }
 
-    PaSampleFormat pa_sample_format;
-    if (sample_format == 16) {
-        pa_sample_format = paInt16;
-    }
-    else if (sample_format == 24) {
-        pa_sample_format = paInt24;
-    }
-    else {
-        cerr << "Sample format not accepted. The values accepted are 16 or 24."
-             << endl;
-        return 1;
-    }
-
-    Audio audio(num_channels, pa_sample_format, chunk_size);
+    Audio audio(num_channels, chunk_size);
 
     // Signal handler in case the program is interrupted.
     watch_for_signal();

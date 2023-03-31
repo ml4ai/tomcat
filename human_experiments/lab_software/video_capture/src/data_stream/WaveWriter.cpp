@@ -54,10 +54,11 @@ WaveWriter::~WaveWriter() {
     this->wave_file.close();
 }
 
-void WaveWriter::write_chunk(const std::vector<short>& chunk) {
-    int chunk_size = chunk.size();
+void WaveWriter::write_chunk(const std::vector<int16_t>& chunk) {
+    size_t chunk_size = chunk.size();
+    size_t byte_size = chunk_size * sizeof(chunk[0]);
     this->wave_file.write(reinterpret_cast<const char*>(&chunk[0]),
-                          chunk_size * sizeof(chunk[0]));
+                          static_cast<long>(byte_size));
 }
 
 void WaveWriter::write_as_bytes(int value, int byte_size) {

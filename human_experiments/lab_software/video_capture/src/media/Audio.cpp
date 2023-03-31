@@ -6,11 +6,14 @@
 
 #include "common/GeneralException.h"
 
+// For compatibility with other modules
+#define SAMPLE_FORMAT paInt16
+#define BITS_PER_SAMPLE 16
+
 using namespace std;
 
-Audio::Audio(int num_channels, PaSampleFormat sample_format, int chunk_size)
-    : num_channels(num_channels), sample_format(sample_format),
-      chunk_size(chunk_size) {}
+Audio::Audio(int num_channels, int chunk_size)
+    : num_channels(num_channels), chunk_size(chunk_size) {}
 
 void Audio::turn_on() {}
 
@@ -46,7 +49,7 @@ void Audio::start_recording(const string& out_dir,
             "Failure getting default audio device: {}", Pa_GetErrorText(err)));
     }
     input_parameters.channelCount = this->num_channels;
-    input_parameters.sampleFormat = this->sample_format;
+    input_parameters.sampleFormat = SAMPLE_FORMAT;
     input_parameters.suggestedLatency =
         Pa_GetDeviceInfo(input_parameters.device)->defaultLowInputLatency;
     input_parameters.hostApiSpecificStreamInfo = nullptr;
@@ -69,6 +72,10 @@ void Audio::start_recording(const string& out_dir,
         throw GeneralException(fmt::format(
             "Failure starting PortAudio stream: {}", Pa_GetErrorText(err)));
     }
+
+    this->lsl_stream = make_unique<LSLAudioStream>(
+        "Audio", this->num_channels, "audio", "audio", sample_rate);
+    lsl_stream->open();
 
     cout << "Recording audio..." << endl;
     this->audio_stream_thread = thread([this] { this->loop(); });
@@ -111,8 +118,6 @@ void Audio::stop_recording() {
 
     // The wav file object takes care of cleaning-up on its destructor. So, we
     // don't need to explicitly close it.
-
-    // Close LSL stream
 }
 
 void Audio::create_audio_file(const std::string& out_dir, int sample_rate) {
@@ -122,16 +127,8 @@ void Audio::create_audio_file(const std::string& out_dir, int sample_rate) {
     }
     audio_filepath += "audio.wav";
 
-    int bits_per_sample;
-    if (this->sample_format == paInt16) {
-        bits_per_sample = 16;
-    }
-    else {
-        bits_per_sample = 24;
-    }
-
     this->wave_file = make_unique<WaveWriter>(
-        audio_filepath, bits_per_sample, this->num_channels, sample_rate);
+        audio_filepath, BITS_PER_SAMPLE, this->num_channels, sample_rate);
 }
 
 void Audio::loop() {
@@ -141,8 +138,7 @@ void Audio::loop() {
         vector<int16_t> chunk(this->chunk_size);
         Pa_ReadStream(this->audio_stream, (void*)&chunk[0], this->chunk_size);
 
-        // Send chunk to LSL
-
+        this->lsl_stream->send(chunk);
         this->wave_file->write_chunk(chunk);
     }
 }

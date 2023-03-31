@@ -15,7 +15,7 @@ class WaveWriter {
      *
      * @param chunk: data chunk
      */
-    void write_chunk(const std::vector<short>& chunk);
+    void write_chunk(const std::vector<int16_t>& chunk);
 
   private:
     std::ofstream wave_file;
