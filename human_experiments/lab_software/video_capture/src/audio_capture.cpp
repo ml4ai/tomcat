@@ -18,7 +18,6 @@ int main(int argc, const char* argv[]) {
     string out_dir;
     int sample_rate;
     int num_channels;
-    int sample_format;
     int chunk_size;
 
     po::options_description arguments("Program Options");

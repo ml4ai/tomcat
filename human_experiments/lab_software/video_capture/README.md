@@ -3,9 +3,9 @@
 
 ## Prerequisites
 
-Install OpenCV and ffmpeg. With MacPorts, you can use the invocation below.
+Install OpenCV, ffmpeg and portaudio. With MacPorts, you can use the invocation below.
 ```
-sudo port install opencv4 ffmpeg
+sudo port install opencv4 ffmpeg portaudio
 ```
 
 Install liblsl from source.
@@ -33,13 +33,13 @@ The project will be built and the executable placed at `build/bin/`.
 
 #### Recording from the webcam
 ```
-./video_capture --device="webcam" --out_dir<directory to store frames> --fps=<frames per second> --camera_index=<index of the camera device> --client="<unique name of the machine we are recording from>"`
+./video_capture --device="webcam" --out_dir<directory to store frames> --fps=<frames per second> --camera_index=<index of the camera device>
 ```
 
 or 
 
 ```
-./video_capture --device="webcam" --out_dir<directory to store frames> --fps=<frames per second> --camera_name=<name of the camera device> --client="<unique name of the machine we are recording from>"`
+./video_capture --device="webcam" --out_dir<directory to store frames> --fps=<frames per second> --camera_name=<name of the camera device>
 ```
 
 The camera's index and name can be found with the command below:
@@ -53,12 +53,17 @@ ffmpeg -hide_banner -f avfoundation  -list_devices true -i dummy
 ./video_capture --device="screen" --out_dir<directory to store frames> --fps=<frames per second> --client="<unique name of the machine we are recording from>"`
 ```
 
-- If the directory to store frames is not present, it will be created.
 - Frames per second should be an integer. This number is used to compute the number of milliseconds to wait between capturing two frames (`= 1000 / frames per second`).
-- The client must be a unique string that identifies the machine. The client name will be used to uniquely identify the LSL streams from the clients. The LSL streams will have the names Webcam_<client_name> and Screen_<client_name>. 
 
-IMPORTANT:
-- The client_name cannot have white spaces as the current implementation of the LSL library does not support stream names with white spaces.
+#### Recording from the screen
+
+```
+./audio_capture --out_dir<directory to store the audio file>
+```
+
+- If the directory to store the audio file is not present, it will be created.
+- Audio will be recorded by default with `1 channel (mono)`, at `48kHz` and `8192 chunk size`. It's possible to change this parameters with the extra program options. Do `./audio_capture -h` to see them.
+- The number of bits per sample cannot be parametrized and it's fixed in 16 bits per sample for compatibility with other modules and Google Speech-to-Text API.
 
 
 # Frame naming convention
@@ -70,4 +75,12 @@ IMPORTANT:
 
 # Stopping the program
 
-To stop the program, use either a SIGINT or SIGTERM interruption. The program will perform proper clean-up and end gracefully. Other kinds of interruptions are not handled by the program and might cause the last image not to be completely rendered before saving.
+To stop the program, use either a SIGINT or SIGTERM interruption. The program will perform proper clean-up and end gracefully. Other kinds of interruptions are not handled by the program and might cause loss of data.
+
+## LSL
+
+Each device creates its own LSL stream and pushes data to it. The LSL stream names are defined below:
+
+- Webcam
+- Screen
+- Audio
