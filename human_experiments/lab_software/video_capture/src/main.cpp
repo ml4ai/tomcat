@@ -1,14 +1,15 @@
 #include <boost/program_options.hpp>
 
-#include <iostream>
 #include <atomic>
+#include <iostream>
 
 #include <boost/algorithm/string.hpp>
 
-#include "video/Device.h"
-#include "video/Screen.h"
-#include "video/Webcam.h"
 #include "common/SignalHandler.h"
+#include "media/Audio.h"
+#include "media/Device.h"
+#include "media/Screen.h"
+#include "media/Webcam.h"
 
 using namespace std;
 namespace po = boost::program_options;
@@ -66,24 +67,30 @@ int main(int argc, const char* argv[]) {
     boost::trim(device_name);
     boost::trim(client_name);
 
-    if (device_name != "webcam" and device_name != "screen") {
-        cerr << "Device ins not one in the list [webcam, screen]." << endl;
+    if (device_name != "webcam" and device_name != "screen" and
+        device_name != "audio") {
+        cerr << "Device ins not one in the list [webcam, screen, audio]."
+             << endl;
     }
 
     unique_ptr<Device> device;
     if (device_name == "webcam") {
-        cout << "Will record from the webcam" << endl;
+        cout << "Will record from the webcam." << endl;
         if (camera_name.empty()) {
             // Use camera index
-            device = make_unique<Webcam>(client_name, camera_index, width, height);
+            device =
+                make_unique<Webcam>(client_name, camera_index, width, height);
         }
         else {
-            device = make_unique<Webcam>(client_name, camera_name, width, height);
+            device =
+                make_unique<Webcam>(client_name, camera_name, width, height);
         }
     }
-    else {
-        cout << "Will record from the screen" << endl;
+    else if (device_name == "screen") {
+        cout << "Will record from the screen." << endl;
         device = make_unique<Screen>(client_name);
+    } else {
+        cout << "Will record audio from the default microphone." << endl;
     }
 
     // Signal handler in case the program is interrupted.

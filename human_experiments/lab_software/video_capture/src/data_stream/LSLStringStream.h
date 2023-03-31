@@ -3,7 +3,6 @@
 #include <string>
 
 #include <lsl_cpp.h>
-#include <mosquitto.h>
 
 class LSLStringStream {
   public:

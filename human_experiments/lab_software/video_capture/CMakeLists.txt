@@ -5,9 +5,9 @@
 # to the first project() command (see
 # https://cmake.org/cmake/help/latest/variable/CMAKE_OSX_SYSROOT.html for more
 # details).
-if (APPLE)
-    set(CMAKE_OSX_SYSROOT /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk)
-endif ()
+#if (APPLE)
+#    set(CMAKE_OSX_SYSROOT /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk)
+#endif ()
 
 project(video_capture)
 cmake_minimum_required(VERSION 3.21)
@@ -16,6 +16,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/tools/cmake/")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake") # to find portaudio and sndfile
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/)
@@ -24,12 +25,9 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/)
 find_package(LSL REQUIRED)
 find_package(FMT REQUIRED)
 find_package(OpenCV REQUIRED)
-
-find_package(
-        Boost 1.69
-        COMPONENTS
-        program_options
-        REQUIRED)
+find_package(Boost REQUIRED COMPONENTS program_options)
+find_package(Threads REQUIRED)
+find_package(portaudio REQUIRED)
 
 # This is required for screen recording on a mac
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
@@ -37,7 +35,6 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 else ()
     message(STATUS "[WARNING]: The screen recording functionality is only available on Mac OSx systems.")
 endif ()
-
 
 # Finding the Mosquitto header and library
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
@@ -47,6 +44,8 @@ set(_libs
         fmt::fmt
         LSL::lsl
         ${Boost_LIBRARIES}
-        ${OpenCV_LIBRARIES})
+        ${OpenCV_LIBRARIES}
+        ${portaudio_LIBRARY}
+        -pthread)
 
 add_subdirectory(src)
