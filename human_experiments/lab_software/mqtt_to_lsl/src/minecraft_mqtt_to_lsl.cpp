@@ -4,6 +4,7 @@
 
 #include "common/GeneralException.h"
 #include "consumer/MinecraftMQTT2LSL.h"
+#include "common/SignalHandler.h"
 
 using namespace std;
 namespace po = boost::program_options;
@@ -34,8 +35,11 @@ int main(int argc, char* argv[]) {
     }
 
     try {
-        MinecraftMQTT2LSL consumer = MinecraftMQTT2LSL();
-        consumer.start(mqtt_address, mqtt_port);
+        MinecraftMQTT2LSL minecraft_consumer = MinecraftMQTT2LSL();
+
+        // Signal handler in case the program is interrupted.
+        watch_for_signal();
+        minecraft_consumer.start(mqtt_address, mqtt_port, &quit);
     }
     catch (const GeneralException& ex) {
         cout << ex.what() << endl;

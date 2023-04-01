@@ -8,6 +8,7 @@
 #pragma once
 
 #include <string>
+#include <thread>
 
 #include <mosquitto.h>
 
@@ -16,6 +17,8 @@
  */
 class Mosquitto {
   public:
+    bool running = false;
+
     Mosquitto();
     ~Mosquitto();
 
@@ -49,11 +52,9 @@ class Mosquitto {
     void publish(const std::string& topic, const std::string& message);
 
     /**
-     * Loop through messages. This call usually blocks until the connection is
-     * closed.
-     *
+     * Starts watching for messages.
      */
-    void loop_forever();
+    void start();
 
     /**
      * Closes the client's connection.
@@ -73,6 +74,7 @@ class Mosquitto {
 
   private:
     struct mosquitto* mqtt_client;
+    std::thread loop_thread;
 
     std::function<void(const std::string&, const std::string&)>
         on_message_external_callback{};
@@ -87,4 +89,10 @@ class Mosquitto {
     static void on_message_callback(struct mosquitto* mqtt_client,
                                     void* wrapper_instance,
                                     const struct mosquitto_message* message);
+
+    /**
+     * Loop until interruption.
+     *
+     */
+    void loop();
 };

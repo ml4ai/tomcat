@@ -1,5 +1,6 @@
 #pragma once
 
+#include <atomic>
 #include <string>
 
 #include "data_stream/LSLStringStream.h"
@@ -25,7 +26,7 @@ class MinecraftMQTT2LSL {
      * @param mqtt_address: address of the MQTT server
      * @param mqtt_port: port of the MQTT server
      */
-    void start(const std::string& mqtt_address, int mqtt_port);
+    void start(const std::string& mqtt_address, int mqtt_port, std::atomic<bool>* signal_watcher);
 
   private:
     std::unique_ptr<LSLStringStream> minecraft_lsl_stream;

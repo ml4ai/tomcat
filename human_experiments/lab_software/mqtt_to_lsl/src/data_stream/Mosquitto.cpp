@@ -139,13 +139,41 @@ void Mosquitto::publish(const string& topic, const string& message) {
     }
 }
 
-void Mosquitto::loop_forever() {
-    int error_code = mosquitto_loop_forever(this->mqtt_client, -1, 1);
-
-    if (error_code != MOSQ_ERR_SUCCESS) {
-        throw GeneralException(
-            fmt::format("Fail to loop forever. Error code {}.", error_code));
+void Mosquitto::start() {
+    // Ignore if it's already running
+    if (this->running) {
+        return;
     }
+
+    cout << "Watching MQTT messages...." << endl;
+
+    this->running = true;
+    this->loop_thread = thread([this] { this->loop(); });
 }
 
-void Mosquitto::stop() { mosquitto_disconnect(this->mqtt_client); }
+void Mosquitto::stop() {
+    // Ignore if it's not running
+    if (!this->running) {
+        return;
+    }
+
+    cout << "Stopping MQTT watcher..." << endl;
+
+    this->running = false;
+
+    // Wait for the thread to finish whatever it is doing.
+    this->loop_thread.join();
+
+    mosquitto_disconnect(this->mqtt_client);
+}
+
+void Mosquitto::loop() {
+    while(this->running) {
+        int error_code = mosquitto_loop(this->mqtt_client, -1, 1);
+
+        if (error_code != MOSQ_ERR_SUCCESS) {
+            throw GeneralException(
+                fmt::format("Fail to loop. Error code {}.", error_code));
+        }
+    }
+}

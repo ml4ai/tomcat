@@ -21,7 +21,9 @@ MinecraftMQTT2LSL::MinecraftMQTT2LSL() {
 //----------------------------------------------------------------------
 // Other functions
 //----------------------------------------------------------------------
-void MinecraftMQTT2LSL::start(const string& mqtt_address, int mqtt_port) {
+void MinecraftMQTT2LSL::start(const string& mqtt_address,
+                              int mqtt_port,
+                              std::atomic<bool>* signal_watcher) {
     Mosquitto mosquitto = Mosquitto();
 
     mosquitto.connect(mqtt_address, mqtt_port);
@@ -36,9 +38,15 @@ void MinecraftMQTT2LSL::start(const string& mqtt_address, int mqtt_port) {
     mosquitto.subscribe("#");
 
     this->minecraft_lsl_stream->open();
+    mosquitto.start();
 
-    cout << "Monitoring Minecraft MQTT messages." << endl;
-    mosquitto.loop_forever();
+    while (!signal_watcher->load()) {
+        // Do nothing. The MQTT loop thread will be active and running
+        // at this moment. When the variable signal_watcher changes to true by
+        // a program interruption, we leave this loop and stop the watcher.
+    }
+
+    mosquitto.stop();
 }
 
 void MinecraftMQTT2LSL::push_to_lsl(const std::string& topic,
