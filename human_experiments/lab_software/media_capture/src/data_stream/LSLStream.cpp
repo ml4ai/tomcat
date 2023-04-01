@@ -30,11 +30,16 @@ LSLStream::LSLStream(const std::string& name,
 void LSLStream::open() {
     this->outlet =
         make_unique<lsl::stream_outlet>(lsl::stream_outlet(this->stream_info));
-    cout << fmt::format(
-                "Stream {} is online.Waiting up to {} seconds for consumers",
-                this->stream_info.name(),
-                WAIT_FOR_CONSUMER_TIMEOUT)
+    cout << fmt::format("[INFO] LSL. Stream Online. {} Stream waiting up to {} "
+                        "seconds for consumers",
+                        this->stream_info.name(),
+                        WAIT_FOR_CONSUMER_TIMEOUT)
          << endl;
     this->outlet->wait_for_consumers(WAIT_FOR_CONSUMER_TIMEOUT);
-    cout << "Consumer detected." << endl;
+    if (this->outlet->have_consumers()) {
+        cout << "[INFO] LSL. Consumer detected." << endl;
+    } else {
+        cout << "[WARN] LSL. No consumer detected." << endl;
+    }
+
 }

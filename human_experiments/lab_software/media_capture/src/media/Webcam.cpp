@@ -71,7 +71,7 @@ void Webcam::start_recording(const std::string& out_dir,
     LSLStringStream lsl_stream("Webcam", "webcam", "image_filename", fps);
     lsl_stream.open();
 
-    cout << "Recording from the webcam..." << endl;
+    cout << "[INFO] Started. Recording from the webcam..." << endl;
     auto prev_frame_time = date::floor<std::chrono::milliseconds>(
         std::chrono::system_clock::now());
     for (unsigned long i = 1;; i++) {
@@ -118,7 +118,8 @@ void Webcam::start_recording(const std::string& out_dir,
         // clean-up executed. It does not work if the program is terminated with
         // signal 9.
         if (signal_watcher->load()) {
-            cout << "Stop recording from the webcam..." << endl;
+            cout << "[INFO] Stopped. No longer recording from the webcam."
+                 << endl;
             break;
         }
     }

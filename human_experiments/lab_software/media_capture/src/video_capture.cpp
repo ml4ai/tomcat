@@ -1,6 +1,7 @@
 #include <boost/program_options.hpp>
 
 #include <atomic>
+#include <exception>
 #include <iostream>
 
 #include <boost/algorithm/string.hpp>
@@ -69,27 +70,28 @@ int main(int argc, const char* argv[]) {
         cout << "Will record from the webcam." << endl;
         if (camera_name.empty()) {
             // Use camera index
-            device =
-                make_unique<Webcam>(camera_index, width, height);
+            device = make_unique<Webcam>(camera_index, width, height);
         }
         else {
-            device =
-                make_unique<Webcam>(camera_name, width, height);
+            device = make_unique<Webcam>(camera_name, width, height);
         }
     }
-    else if (device_name == "screen") {
+    else {
         cout << "Will record from the screen." << endl;
         device = make_unique<Screen>();
-    }
-    else {
-        cout << "Will record audio from the default microphone." << endl;
     }
 
     // Signal handler in case the program is interrupted.
     watch_for_signal();
 
-    device->turn_on();
-    device->start_recording(out_dir, fps, &quit);
+    try {
+        device->turn_on();
+        device->start_recording(out_dir, fps, &quit);
+    }
+    catch (const std::exception& ex) {
+        cerr << "[ERROR] Program crashed." << endl;
+        cerr << ex.what() << endl;
+    }
 
     return 0;
 }

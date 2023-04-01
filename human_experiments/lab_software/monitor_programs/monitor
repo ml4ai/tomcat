@@ -1,0 +1,98 @@
+#!/usr/bin/env bash
+
+MY_DIR="$(dirname "$(realpath "$0")")"
+source "${MY_DIR}/configuration_helpers"
+
+# Color legend
+NOT_STARTED="${BLACK}${ON_WHITE} Not Started ${COLOR_OFF}"
+STARTED="${BLACK}${ON_CYAN} Started ${COLOR_OFF}"
+RUNNING="${BLACK}${ON_GREEN} Running ${COLOR_OFF}"
+RUNNING_NO_LSL="${BLACK}${ON_YELLOW} No LSL ${COLOR_OFF}"
+ERROR="${BLACK}${ON_RED} Error ${COLOR_OFF}"
+
+export LION_WEBCAM=""
+export TIGER_WEBCAM=""
+export LEOPARD_WEBCAM=""
+
+export LION_SCREEN=""
+export TIGER_SCREEN=""
+export LEOPARD_SCREEN=""
+
+export LION_AUDIO=""
+export TIGER_AUDIO=""
+export LEOPARD_AUDIO=""
+export SERVER_AUDIO=""
+
+NOT_STARTED="${BLACK}${ON_WHITE} Not Started ${COLOR_OFF}"
+STARTED="${BLACK}${ON_CYAN} Started ${COLOR_OFF}"
+RUNNING="${BLACK}${ON_GREEN} Running ${COLOR_OFF}"
+RUNNING_NO_LSL="${BLACK}${ON_YELLOW} No LSL ${COLOR_OFF}"
+ERROR="${BLACK}${ON_RED} Error ${COLOR_OFF}"
+
+# Functions to add a stamp on a text. Since shell script functions cannot return a string, we change the value of a
+# global variable that can later be accessed.
+global_stamp=""
+not_started() {
+  local text=$1
+  global_stamp="${BLACK}${ON_WHITE} $text ${COLOR_OFF}"
+}
+
+started() {
+  local text=$1
+  global_stamp="${BLACK}${ON_CYAN} $text ${COLOR_OFF}"
+}
+
+running() {
+  local text=$1
+  global_stamp="${BLACK}${ON_GREEN} $text ${COLOR_OFF}"
+}
+
+running_no_lsl() {
+  local text=$1
+  global_stamp="${BLACK}${ON_YELLOW} $text ${COLOR_OFF}"
+}
+
+error() {
+  local text=$1
+  global_stamp="${BLACK}${ON_RED} $text ${COLOR_OFF}"
+}
+
+print_title() {
+  local title=$1
+  printf "%b%b%b\n" "$YELLOW" "$title" "$COLOR_OFF"
+}
+
+print_program_status() {
+  local number=$1
+  local name=$2
+  local lion=$3
+  local tiger=$4
+  local leopard=$5
+  local server=$6
+
+  printf "%b%s) %b%-10s %b %b %b %b %b\n" "$YELLOW" "$number" "$BBLUE" "$name" "$lion" "$tiger" "$leopard" "$server" "$COLOR_OFF"
+}
+
+show_program_list() {
+  print_title "Color Legend"
+  printf "%-30b - Program hasn't started yet.\n" "$NOT_STARTED"
+  printf "%-30b - Program started but it's not fully running.\n" "$STARTED"
+  printf "%-30b - Program is running with no issues.\n" "$RUNNING"
+  printf "%-30b - Program is running but started without detecting LabRecorder.\n" "$RUNNING_NO_LSL"
+  printf "%-30b - Program crashed.\n" "$ERROR"
+
+  print_title "\nProgram List"
+  print_program_status 1 "Webcam" "$LION_WEBCAM" "$TIGER_WEBCAM" "$LEOPARD_WEBCAM" ""
+  print_program_status 2 "Screen" "$LION_SCREEN" "$TIGER_SCREEN" "$LEOPARD_SCREEN" ""
+  print_program_status 3 "Audio" "$LION_AUDIO" "$TIGER_AUDIO" "$LEOPARD_AUDIO" "$SERVER_AUDIO"
+
+}
+
+while true; do
+  clear
+  source update_media_status
+  show_program_list
+  sleep 1
+done
+
+exit 0

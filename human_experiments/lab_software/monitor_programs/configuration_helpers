@@ -1,0 +1,31 @@
+#!/bin/bash
+
+export COLOR_OFF='\033[0m'       # Text Reset
+
+#Regular Colors
+export BLACK='\033[0;30m'        # Black
+export RED='\033[0;31m'          # Red
+export GREEN='\033[0;32m'        # Green
+export YELLOW='\033[0;33m'       # Yellow
+export BLUE='\033[0;34m'         # Blue
+export PURPLE='\033[0;35m'       # Purple
+export CYAN='\033[0;36m'         # Cyan
+export WHITE='\033[0;37m'        # White
+
+# Bold
+export BBLACK='\033[1;30m'       # Black
+export BRED='\033[1;31m'         # Red
+export BGREEN='\033[1;32m'       # Green
+export BYELLOW='\033[1;33m'      # Yellow
+export BBLUE='\033[1;34m'        # Blue
+export BPURPLE='\033[1;35m'      # Purple
+export BCYAN='\033[1;36m'        # Cyan
+export BWHITE='\033[1;37m'       # White
+
+# Background
+export ON_RED='\033[41m'         # Red
+export ON_GREEN='\033[42m'       # Green
+export ON_YELLOW='\033[43m'      # Yellow
+export ON_WHITE='\033[47m'       # White
+export ON_CYAN='\033[46m'       # White
+

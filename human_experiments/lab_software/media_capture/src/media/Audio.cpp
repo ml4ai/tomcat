@@ -38,15 +38,17 @@ void Audio::start_recording(const string& out_dir,
     // Initialize PortAudio
     err = Pa_Initialize();
     if (err != paNoError) {
-        throw GeneralException(fmt::format("Failure initializing PortAudio: {}",
-                                           Pa_GetErrorText(err)));
+        throw GeneralException(
+            fmt::format("[ERROR] Failure initializing PortAudio: {}",
+                        Pa_GetErrorText(err)));
     }
 
     // Set inputParameters
     input_parameters.device = Pa_GetDefaultInputDevice();
     if (input_parameters.device == paNoDevice) {
-        throw GeneralException(fmt::format(
-            "Failure getting default audio device: {}", Pa_GetErrorText(err)));
+        throw GeneralException(
+            fmt::format("[ERROR] Failure getting default audio device: {}",
+                        Pa_GetErrorText(err)));
     }
     input_parameters.channelCount = this->num_channels;
     input_parameters.sampleFormat = SAMPLE_FORMAT;
@@ -64,20 +66,22 @@ void Audio::start_recording(const string& out_dir,
                         nullptr,
                         nullptr);
     if (err != paNoError) {
-        throw GeneralException(fmt::format(
-            "Failure initializing PortAudio stream: {}", Pa_GetErrorText(err)));
+        throw GeneralException(
+            fmt::format("[ERROR] Failure initializing PortAudio stream: {}",
+                        Pa_GetErrorText(err)));
     }
     err = Pa_StartStream(this->audio_stream);
     if (err != paNoError) {
-        throw GeneralException(fmt::format(
-            "Failure starting PortAudio stream: {}", Pa_GetErrorText(err)));
+        throw GeneralException(
+            fmt::format("[ERROR] Failure starting PortAudio stream: {}",
+                        Pa_GetErrorText(err)));
     }
 
     this->lsl_stream = make_unique<LSLAudioStream>(
         "Audio", this->num_channels, "audio", "audio", sample_rate);
     lsl_stream->open();
 
-    cout << "Recording audio..." << endl;
+    cout << "[INFO] Started. Recording audio..." << endl;
     this->audio_stream_thread = thread([this] { this->loop(); });
 
     while (!signal_watcher->load()) {
@@ -95,7 +99,6 @@ void Audio::stop_recording() {
         return;
     }
 
-    cout << "Stopping recording..." << endl;
     this->recording = false;
 
     // Wait for the thread to finish whatever it is doing.
@@ -105,19 +108,23 @@ void Audio::stop_recording() {
     // Stop PortAudio stream
     err = Pa_StopStream(this->audio_stream);
     if (err != paNoError) {
-        throw GeneralException(fmt::format(
-            "Failure stopping PortAudio stream: {}", Pa_GetErrorText(err)));
+        throw GeneralException(
+            fmt::format("[ERROR] Failure stopping PortAudio stream: {}",
+                        Pa_GetErrorText(err)));
     }
 
     // shutdown PortAudio
     err = Pa_Terminate();
     if (err != paNoError) {
-        throw GeneralException(fmt::format(
-            "Failure shutting down PortAudio: {}", Pa_GetErrorText(err)));
+        throw GeneralException(
+            fmt::format("[ERROR] Failure shutting down PortAudio: {}",
+                        Pa_GetErrorText(err)));
     }
 
     // The wav file object takes care of cleaning-up on its destructor. So, we
     // don't need to explicitly close it.
+
+    cout << "[INFO] Stopped. No longer recording audio." << endl;
 }
 
 void Audio::create_audio_file(const std::string& out_dir, int sample_rate) {

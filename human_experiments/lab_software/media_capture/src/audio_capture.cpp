@@ -60,8 +60,14 @@ int main(int argc, const char* argv[]) {
     // Signal handler in case the program is interrupted.
     watch_for_signal();
 
-    audio.turn_on();
-    audio.start_recording(out_dir, sample_rate, &quit);
+    try {
+        audio.turn_on();
+        audio.start_recording(out_dir, sample_rate, &quit);
+    }
+    catch (const std::exception& ex) {
+        cerr << "[ERROR] Program crashed." << endl;
+        cerr << ex.what() << endl;
+    }
 
     return 0;
 }

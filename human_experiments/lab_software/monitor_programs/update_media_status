@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+
+device_status=""
+
+_update_device_status() {
+  local client_name=$1
+  local log_file=$2
+  local pid_file=$3
+
+  if [[ -e "$pid_file" ]]; then
+    started "$client_name"
+    device_status=$global_stamp
+
+    if [[ $(grep -c '\[ERROR\]' "$log_file") -ne 0 ]]; then
+      error "$client_name"
+      device_status=$global_stamp
+      return
+    fi
+
+    if [[ $(grep -c '\[INFO\] Stopped' "$log_file") -ne 0 ]]; then
+      not_started "$client_name"
+      device_status=$global_stamp
+      return
+    fi
+
+    if [[ $(grep -c '\[INFO\] Started' "$log_file") -ne 0 ]]; then
+      # Successfully recording from the device.
+      running "$client_name"
+      device_status=$global_stamp
+    fi
+
+    if [[ $(grep -c '\[WARN\] LSL' "$log_file") -ne 0 ]]; then
+      # Successfully recording from the device.
+      running_no_lsl "$client_name"
+      device_status=$global_stamp
+    fi
+  else
+    not_started "$client_name"
+    device_status=$global_stamp
+  fi
+}
+
+# Webcam
+_update_device_status "Lion" "$EXPERIMENT_DIR/tmp/webcam_lion.log" "$EXPERIMENT_DIR/tmp/webcam_lion.pid"
+LION_WEBCAM=$device_status
+
+_update_device_status "Tiger" "$EXPERIMENT_DIR/tmp/webcam_tiger.log" "$EXPERIMENT_DIR/tmp/webcam_tiger.pid"
+TIGER_WEBCAM=$device_status
+
+_update_device_status "Leopard" "$EXPERIMENT_DIR/tmp/webcam_leopard.log" "$EXPERIMENT_DIR/tmp/webcam_leopard.pid"
+LEOPARD_WEBCAM=$device_status
+
+# Screen
+_update_device_status "Lion" "$EXPERIMENT_DIR/tmp/screen_lion.log" "$EXPERIMENT_DIR/tmp/screen_lion.pid"
+LION_SCREEN=$device_status
+
+_update_device_status "Tiger" "$EXPERIMENT_DIR/tmp/screen_tiger.log" "$EXPERIMENT_DIR/tmp/screen_tiger.pid"
+TIGER_SCREEN=$device_status
+
+_update_device_status "Leopard" "$EXPERIMENT_DIR/tmp/screen_leopard.log" "$EXPERIMENT_DIR/tmp/screen_leopard.pid"
+LEOPARD_SCREEN=$device_status
+
+# Audio
+_update_device_status "Lion" "$EXPERIMENT_DIR/tmp/audio_lion.log" "$EXPERIMENT_DIR/tmp/audio_lion.pid"
+LION_AUDIO=$device_status
+
+_update_device_status "Tiger" "$EXPERIMENT_DIR/tmp/audio_tiger.log" "$EXPERIMENT_DIR/tmp/audio_tiger.pid"
+TIGER_AUDIO=$device_status
+
+_update_device_status "Leopard" "$EXPERIMENT_DIR/tmp/audio_leopard.log" "$EXPERIMENT_DIR/tmp/audio_leopard.pid"
+LEOPARD_AUDIO=$device_status
+
+_update_device_status "Cat" "$EXPERIMENT_DIR/tmp/audio_cat.log" "$EXPERIMENT_DIR/tmp/audio_cat.pid"
+SERVER_AUDIO=$device_status

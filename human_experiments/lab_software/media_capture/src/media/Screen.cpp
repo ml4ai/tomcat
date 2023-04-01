@@ -55,7 +55,7 @@ void Screen::start_recording(const std::string& out_dir,
     LSLStringStream lsl_stream("Screen", "screen", "image_filename", fps);
     lsl_stream.open();
 
-    cout << "Recording screen images..." << endl;
+    cout << "[INFO] Started. Recording from the screen..." << endl;
     auto prev_frame_time = date::floor<std::chrono::milliseconds>(
         std::chrono::system_clock::now());
     for (unsigned long i = 1;; i++) {
@@ -105,7 +105,8 @@ void Screen::start_recording(const std::string& out_dir,
         // clean-up executed. It does not work if the program is terminated with
         // signal 9.
         if (signal_watcher->load()) {
-            cout << "Stop recording screen images..." << endl;
+            cout << "[INFO] Stopped. No longer recording from the screen."
+                 << endl;
             break;
         }
     }
