@@ -10,6 +10,13 @@ RUNNING="${BLACK}${ON_GREEN} Running ${COLOR_OFF}"
 RUNNING_NO_LSL="${BLACK}${ON_YELLOW} No LSL ${COLOR_OFF}"
 ERROR="${BLACK}${ON_RED} Error ${COLOR_OFF}"
 
+# Program variables
+export LION_MC_PROG=""
+export TIGER_MC_PROG=""
+export LEOPARD_MC_PROG=""
+export SERVER_MC_PROG=""
+
+# data stream variables
 export LION_WEBCAM=""
 export TIGER_WEBCAM=""
 export LEOPARD_WEBCAM=""
@@ -23,11 +30,7 @@ export TIGER_AUDIO=""
 export LEOPARD_AUDIO=""
 export SERVER_AUDIO=""
 
-NOT_STARTED="${BLACK}${ON_WHITE} Not Started ${COLOR_OFF}"
-STARTED="${BLACK}${ON_CYAN} Started ${COLOR_OFF}"
-RUNNING="${BLACK}${ON_GREEN} Running ${COLOR_OFF}"
-RUNNING_NO_LSL="${BLACK}${ON_YELLOW} No LSL ${COLOR_OFF}"
-ERROR="${BLACK}${ON_RED} Error ${COLOR_OFF}"
+export SERVER_MC_DATA=""
 
 # Functions to add a stamp on a text. Since shell script functions cannot return a string, we change the value of a
 # global variable that can later be accessed.
@@ -81,16 +84,21 @@ show_program_list() {
   printf "%-30b - Program is running but started without detecting LabRecorder.\n" "$RUNNING_NO_LSL"
   printf "%-30b - Program crashed.\n" "$ERROR"
 
-  print_title "\nProgram List"
+  print_title "\nPrograms"
+  print_program_status 1 "Minecraft" "$LION_MC_PROG" "$TIGER_MC_PROG" "$LEOPARD_MC_PROG" "$SERVER_MC_PROG"
+
+  print_title "\nData Streams"
   print_program_status 1 "Webcam" "$LION_WEBCAM" "$TIGER_WEBCAM" "$LEOPARD_WEBCAM" ""
   print_program_status 2 "Screen" "$LION_SCREEN" "$TIGER_SCREEN" "$LEOPARD_SCREEN" ""
   print_program_status 3 "Audio" "$LION_AUDIO" "$TIGER_AUDIO" "$LEOPARD_AUDIO" "$SERVER_AUDIO"
+  print_program_status 4 "Minecraft" "$SERVER_MC_DATA"
 
 }
 
 while true; do
   clear
-  source update_media_status
+  source update_program_status
+  source update_data_stream_status
   show_program_list
   sleep 1
 done
