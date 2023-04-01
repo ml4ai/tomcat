@@ -1,0 +1,9 @@
+#! /bin/bash
+
+set -u
+
+pid=$1
+
+if ps -p "$pid" > /dev/null; then
+  kill -SIGTERM "$pid"
+fi

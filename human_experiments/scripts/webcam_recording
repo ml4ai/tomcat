@@ -1,0 +1,185 @@
+#!/bin/bash
+
+set -u
+
+# TODO - Remove
+source configuration_helpers
+
+# start or stop
+mode=$1
+
+if [[ -z ${2+x} ]]; then
+  padding=""
+else
+  padding=$2
+fi
+
+# Error codes
+never_launched_error_code=1
+on_launch_error_code=2
+stopped_error_code=3
+process_killed_error_code=4
+
+# Frame rates
+webcam_fps=10 # 10Hz
+
+wait_for_launch_timeout=300 # 5 minutes
+
+_monitor_webcam_launch() {
+  local log_file=$1
+  local pid_file=$2
+
+  if [[ ! -e "$pid_file" ]]; then
+    return $never_launched_error_code
+  fi
+
+  local num_seconds=0
+  while [ $num_seconds -lt $wait_for_launch_timeout ]; do
+    if [[ -e "$log_file" ]]; then
+      if [[ $(grep -c '\[ERROR\]' "$log_file") -ne 0 ]]; then
+        return $on_launch_error_code
+      fi
+
+      if [[ $(grep -c '\[INFO\] Stopped' "$log_file") -ne 0 ]]; then
+        return $stopped_error_code
+      fi
+
+      if [[ $(grep -c '\[INFO\] Started' "$log_file") -ne 0 ]]; then
+        # Successfully recording from the webcam.
+        return 0
+      fi
+    else
+      return $process_killed_error_code
+    fi
+
+    sleep 1
+    ((num_seconds++))
+  done
+}
+
+_webcam_recording_on_client() {
+  # Just calls the executable on a client machine and leaves. It does not wait for status.
+  local client_name=$1
+  local client_address=$2
+  local tmp_file_root_dir="$EXPERIMENT_DIR/tmp/webcam_$client_name"
+  local log_file="$tmp_file_root_dir".log
+  local pid_file="$tmp_file_root_dir".pid
+
+  local images_dir="$EXPERIMENT_DIR/$client_name/face_images/block_$EXPERIMENT_BLOCK"
+  # TODO - Uncomment
+  #      local exec_path="\$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/macos/record_from_webcam"
+  local exec_path="$HOME/code/tomcat/human_experiments/scripts/macos/record_from_webcam"
+  local command="$exec_path $images_dir $webcam_fps $log_file $pid_file"
+
+  # shellcheck disable=SC2029
+  # TODO - Uncomment
+  #      ssh "$EXPERIMENT_USER@$client_address" "$command"
+  $command
+}
+
+_start_webcam_recording_on_client() {
+  # Initial call to the executable on a client machine
+  local client_name=$1
+  local client_address=$2
+  local padding=$3
+
+  if [[ $ALL -ne 1 ]]; then
+    yes_no_question "${padding}Do you want to start ${EMPH}Webcam Recording${NC} on ${EMPH}$client_name${NC}?"
+    ans=$?
+    padding="$padding "
+  fi
+  if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
+    _webcam_recording_on_client "$client_name" "$client_address"
+  fi
+}
+
+_monitor_webcam_launch_on_client() {
+  # Monitors a previous call to the recording program in a client. Let's the user retry the program.
+  local client_name=$1
+  local client_address=$2
+  local padding=$3
+
+  echo -e "${padding}Waiting for the program to launch on ${EMPH}$client_name${NC}..."
+  padding="$padding "
+
+  while true; do
+    local tmp_file_root_dir="$EXPERIMENT_DIR/tmp/webcam_$client_name"
+    local log_file="$tmp_file_root_dir".log
+    local pid_file="$tmp_file_root_dir".pid
+
+    _monitor_webcam_launch "$log_file" "$pid_file"
+    local error_code=$?
+
+    if [[ $error_code -eq 0 ]]; then
+      echo -e "${padding}${GREEN}The program has successfully launched on ${EMPH}$client_name${GREEN}.${NC}"
+      return
+    elif [[ $error_code -eq $never_launched_error_code ]]; then
+      echo -e "${padding}${RED}The program was never launched.${NC}"
+    elif [[ $error_code -eq $on_launch_error_code ]]; then
+      echo -e "${padding}${RED}Error on program launch.${NC}"
+    elif [[ $error_code -eq $stopped_error_code ]]; then
+      echo -e "${padding}${RED}The program stopped running abruptly.${NC}"
+    elif [[ $error_code -eq $process_killed_error_code ]]; then
+      echo -e "${padding}${RED}The program was killed.${NC}"
+    fi
+
+    if [[ $error_code -ne 0 ]]; then
+      echo -e "${padding}Look at the logs in $log_file for more details."
+      retry_question "$padding"
+      retry=$?
+
+      if [[ $retry -eq 0 ]]; then
+        _webcam_recording_on_client "$client_name" "$client_address"
+      fi
+    fi
+  done
+}
+
+_monitor_webcam_launch_on_clients() {
+  echo -e "${padding}Waiting for the program to launch on the clients..."
+  _monitor_webcam_launch_on_client "lion" "lion.local" "$padding "
+  _monitor_webcam_launch_on_client "tiger" "tiger.local" "$padding "
+  _monitor_webcam_launch_on_client "leopard" "leopard.local" "$padding "
+}
+
+_stop_webcam_recording_on_client() {
+  local client_name=$1
+  local client_address=$2
+  local padding=$3
+
+  local pid_file="$EXPERIMENT_DIR/tmp/webcam_$client_name.pid"
+  local pid
+  pid=$(cat "$pid_file")
+
+  # TODO - Uncomment
+  #      local exec_path="\$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/macos/record_from_webcam"
+  local exec_path="$HOME/code/tomcat/human_experiments/scripts/macos/kill_program"
+  local command="$exec_path $pid"
+
+  # shellcheck disable=SC2029
+  # TODO - Uncomment
+  #      ssh "$EXPERIMENT_USER@$client_address" "$command"
+  $command
+}
+
+_start_webcam_recording() {
+  # Start at the same time in all clients
+  _start_webcam_recording_on_client "lion" "lion.local" "$padding "
+  _start_webcam_recording_on_client "tiger" "tiger.local" "$padding "
+  _start_webcam_recording_on_client "leopard" "leopard.local" "$padding "
+
+  # Wait until the program have launched in all the clients
+  _monitor_webcam_launch_on_clients "$padding"
+}
+
+_stop_webcam_recording() {
+  _stop_webcam_recording_on_client "lion" "lion.local" "$padding "
+  _stop_webcam_recording_on_client "tiger" "tiger.local" "$padding "
+  _stop_webcam_recording_on_client "leopard" "leopard.local" "$padding "
+}
+
+if [[ "$mode" == "start" ]]; then
+  _start_webcam_recording "$padding"
+else
+  _stop_webcam_recording "$padding"
+fi

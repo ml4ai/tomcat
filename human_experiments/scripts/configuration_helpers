@@ -21,6 +21,12 @@ yes_no_question() {
   fi
 }
 
+retry_question() {
+  local padding=$1
+  yes_no_question "${padding}Do you want to ${EMPH}RETRY${NC}?";
+  return $?
+}
+
 wait_for_key() {
   local text="$1"
   local key="$2"
