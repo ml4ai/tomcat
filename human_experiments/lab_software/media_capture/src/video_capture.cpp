@@ -2,6 +2,8 @@
 
 #include <atomic>
 #include <iostream>
+#include <stdlib.h>
+#include <wordexp.h>
 
 #include <boost/algorithm/string.hpp>
 
@@ -16,6 +18,8 @@ namespace po = boost::program_options;
 int main(int argc, const char* argv[]) {
     string device_name;
     string out_dir;
+    string expanded_dir;
+    wordexp_t p;
     string camera_name;
     int camera_index;
     int fps;
@@ -85,11 +89,26 @@ int main(int argc, const char* argv[]) {
         cout << "Will record audio from the default microphone." << endl;
     }
 
+    switch (wordexp (out_dir.c_str(), &p, 0)) {
+        case 0:            /* Successful.  */
+            expanded_dir = p.we_wordv[0];
+            wordfree(&p);
+            cout << "Saving images to: " << expanded_dir << endl;
+            break;
+        case WRDE_NOSPACE:
+            /* If the error was WRDE_NOSPACE,
+             then perhaps part of the result was allocated.  */
+            wordfree (&p);
+        default:                    /* Some other error.  */
+            cout << "Error: Could not interprete the path\n";
+            return -1;
+    }
+
     // Signal handler in case the program is interrupted.
     watch_for_signal();
 
     device->turn_on();
-    device->start_recording(out_dir, fps, &quit);
+    device->start_recording(expanded_dir, fps, &quit);
 
     return 0;
 }
