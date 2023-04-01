@@ -5,13 +5,21 @@ set -u
 # TODO - Remove
 source configuration_helpers
 
-# start or stop
-mode=$1
+device=$1 # webcam or screen
+mode=$2   # start or stop
 
-if [[ -z ${2+x} ]]; then
+if [[ -z ${3+x} ]]; then
   padding=""
 else
-  padding=$2
+  padding=$3
+fi
+
+if [[ "$device" != "webcam" ]] && [[ "$device" != "screen" ]]; then
+  echo -e "${RED}{$padding}The first parameter os this script must be a device form the list [webcam, screen].${NC}"
+fi
+
+if [[ "$mode" != "start" ]] && [[ "$mode" != "stop" ]]; then
+  echo -e "${RED}{$padding}The second parameter os this script must be a mode form the list [start, stop].${NC}"
 fi
 
 # Error codes
@@ -21,11 +29,11 @@ stopped_error_code=3
 process_killed_error_code=4
 
 # Frame rates
-webcam_fps=10 # 10Hz
+fps=10 # 10Hz
 
 wait_for_launch_timeout=300 # 5 minutes
 
-_monitor_webcam_launch() {
+_monitor_launch() {
   local log_file=$1
   local pid_file=$2
 
@@ -45,7 +53,7 @@ _monitor_webcam_launch() {
       fi
 
       if [[ $(grep -c '\[INFO\] Started' "$log_file") -ne 0 ]]; then
-        # Successfully recording from the webcam.
+        # Successfully recording from the device.
         return 0
       fi
     else
@@ -57,19 +65,24 @@ _monitor_webcam_launch() {
   done
 }
 
-_webcam_recording_on_client() {
+_record_on_client() {
   # Just calls the executable on a client machine and leaves. It does not wait for status.
   local client_name=$1
   local client_address=$2
-  local tmp_file_root_dir="$EXPERIMENT_DIR/tmp/webcam_$client_name"
+  local tmp_file_root_dir="$EXPERIMENT_DIR/tmp/${device}_$client_name"
   local log_file="$tmp_file_root_dir".log
   local pid_file="$tmp_file_root_dir".pid
 
-  local images_dir="$EXPERIMENT_DIR/$client_name/face_images/block_$EXPERIMENT_BLOCK"
+  if [[ "$device" == "screen" ]]; then
+    local images_dir="$EXPERIMENT_DIR/$client_name/screenshots/block_$EXPERIMENT_BLOCK"
+  else
+    local images_dir="$EXPERIMENT_DIR/$client_name/face_images/block_$EXPERIMENT_BLOCK"
+  fi
+
   # TODO - Uncomment
-  #      local exec_path="\$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/macos/record_from_webcam"
-  local exec_path="$HOME/code/tomcat/human_experiments/scripts/macos/record_from_webcam"
-  local command="$exec_path $images_dir $webcam_fps $log_file $pid_file"
+  #      local exec_path="\$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/macos/record_from_$device"
+  local exec_path="$HOME/code/tomcat/human_experiments/scripts/macos/record_from_$device"
+  local command="$exec_path $images_dir $fps $log_file $pid_file"
 
   # shellcheck disable=SC2029
   # TODO - Uncomment
@@ -77,23 +90,23 @@ _webcam_recording_on_client() {
   $command
 }
 
-_start_webcam_recording_on_client() {
+_start_recording_on_client() {
   # Initial call to the executable on a client machine
   local client_name=$1
   local client_address=$2
   local padding=$3
 
   if [[ $ALL -ne 1 ]]; then
-    yes_no_question "${padding}Do you want to start ${EMPH}Webcam Recording${NC} on ${EMPH}$client_name${NC}?"
+    yes_no_question "${padding}Do you want to start ${EMPH}Recording${NC} on ${EMPH}$client_name${NC}?"
     ans=$?
     padding="$padding "
   fi
   if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
-    _webcam_recording_on_client "$client_name" "$client_address"
+    _record_on_client "$client_name" "$client_address"
   fi
 }
 
-_monitor_webcam_launch_on_client() {
+_monitor_launch_on_client() {
   # Monitors a previous call to the recording program in a client. Let's the user retry the program.
   local client_name=$1
   local client_address=$2
@@ -103,11 +116,11 @@ _monitor_webcam_launch_on_client() {
   padding="$padding "
 
   while true; do
-    local tmp_file_root_dir="$EXPERIMENT_DIR/tmp/webcam_$client_name"
+    local tmp_file_root_dir="$EXPERIMENT_DIR/tmp/${device}_$client_name"
     local log_file="$tmp_file_root_dir".log
     local pid_file="$tmp_file_root_dir".pid
 
-    _monitor_webcam_launch "$log_file" "$pid_file"
+    _monitor_launch "$log_file" "$pid_file"
     local error_code=$?
 
     if [[ $error_code -eq 0 ]]; then
@@ -129,30 +142,29 @@ _monitor_webcam_launch_on_client() {
       retry=$?
 
       if [[ $retry -eq 0 ]]; then
-        _webcam_recording_on_client "$client_name" "$client_address"
+        _record_on_client "$client_name" "$client_address"
       fi
     fi
   done
 }
 
-_monitor_webcam_launch_on_clients() {
+_monitor_launch_on_clients() {
   echo -e "${padding}Waiting for the program to launch on the clients..."
-  _monitor_webcam_launch_on_client "lion" "lion.local" "$padding "
-  _monitor_webcam_launch_on_client "tiger" "tiger.local" "$padding "
-  _monitor_webcam_launch_on_client "leopard" "leopard.local" "$padding "
+  _monitor_launch_on_client "lion" "lion.local" "$padding "
+  _monitor_launch_on_client "tiger" "tiger.local" "$padding "
+  _monitor_launch_on_client "leopard" "leopard.local" "$padding "
 }
 
-_stop_webcam_recording_on_client() {
+_stop_record_on_client() {
   local client_name=$1
   local client_address=$2
   local padding=$3
 
-  local pid_file="$EXPERIMENT_DIR/tmp/webcam_$client_name.pid"
+  local pid_file="$EXPERIMENT_DIR/tmp/${device}_$client_name.pid"
   local pid
   pid=$(cat "$pid_file")
 
   # TODO - Uncomment
-  #      local exec_path="\$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/macos/record_from_webcam"
   local exec_path="$HOME/code/tomcat/human_experiments/scripts/macos/kill_program"
   local command="$exec_path $pid"
 
@@ -162,24 +174,24 @@ _stop_webcam_recording_on_client() {
   $command
 }
 
-_start_webcam_recording() {
+_start_recording() {
   # Start at the same time in all clients
-  _start_webcam_recording_on_client "lion" "lion.local" "$padding "
-  _start_webcam_recording_on_client "tiger" "tiger.local" "$padding "
-  _start_webcam_recording_on_client "leopard" "leopard.local" "$padding "
+  _start_recording_on_client "lion" "lion.local" "$padding "
+  _start_recording_on_client "tiger" "tiger.local" "$padding "
+  _start_recording_on_client "leopard" "leopard.local" "$padding "
 
   # Wait until the program have launched in all the clients
-  _monitor_webcam_launch_on_clients "$padding"
+  _monitor_launch_on_clients "$padding"
 }
 
-_stop_webcam_recording() {
-  _stop_webcam_recording_on_client "lion" "lion.local" "$padding "
-  _stop_webcam_recording_on_client "tiger" "tiger.local" "$padding "
-  _stop_webcam_recording_on_client "leopard" "leopard.local" "$padding "
+_stop_recording() {
+  _stop_record_on_client "lion" "lion.local" "$padding "
+  _stop_record_on_client "tiger" "tiger.local" "$padding "
+  _stop_record_on_client "leopard" "leopard.local" "$padding "
 }
 
 if [[ "$mode" == "start" ]]; then
-  _start_webcam_recording "$padding"
+  _start_recording "$padding"
 else
-  _stop_webcam_recording "$padding"
+  _stop_recording "$padding"
 fi

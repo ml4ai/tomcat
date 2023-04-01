@@ -1,5 +1,0 @@
-#!/bin/bash
-
-set -u
-
-"${White}${On_Green}ENABLED${Color_Off} "
