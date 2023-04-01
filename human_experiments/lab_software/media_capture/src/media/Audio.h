@@ -38,6 +38,9 @@ class Audio : public Device {
     std::unique_ptr<WaveWriter> wave_file;
     std::unique_ptr<LSLAudioStream> lsl_stream;
 
+    /**
+     * Loop until interruption.
+     */
     void loop();
 
     void create_audio_file(const std::string& out_dir, int sample_rate);
