@@ -27,5 +27,56 @@ export ON_RED='\033[41m'         # Red
 export ON_GREEN='\033[42m'       # Green
 export ON_YELLOW='\033[43m'      # Yellow
 export ON_WHITE='\033[47m'       # White
-export ON_CYAN='\033[46m'       # White
+export ON_CYAN='\033[46m'        # Cyan
+export ON_PURPLE='\033[45m'      # Purple
+
+# Functions to add a stamp on a text. Since shell script functions cannot return a string, we change the value of a
+# global variable that can later be accessed.
+export GLOBAL_STAMP=""
+not_started() {
+  local text=$1
+  GLOBAL_STAMP="${BLACK}${ON_WHITE} $text ${COLOR_OFF}"
+}
+
+started() {
+  local text=$1
+  GLOBAL_STAMP="${BLACK}${ON_CYAN} $text ${COLOR_OFF}"
+}
+
+running() {
+  local text=$1
+  GLOBAL_STAMP="${BLACK}${ON_GREEN} $text ${COLOR_OFF}"
+}
+
+running_no_lsl() {
+  local text=$1
+  GLOBAL_STAMP="${BLACK}${ON_YELLOW} $text ${COLOR_OFF}"
+}
+
+error() {
+  local text=$1
+  GLOBAL_STAMP="${BLACK}${ON_RED} $text ${COLOR_OFF}"
+}
+
+not_implemented() {
+  local text=$1
+  GLOBAL_STAMP="${BLACK}${ON_PURPLE} $text ${COLOR_OFF}"
+}
+
+print_title() {
+  local title=$1
+  printf "%b%b%b\n" "$YELLOW" "$title" "$COLOR_OFF"
+}
+
+print_program_status() {
+  local padding=$1
+  local number=$2
+  local name=$3
+  local lion=$4
+  local tiger=$5
+  local leopard=$6
+  local server=$7
+
+  printf "%b%s) %b%-${padding}s %b %b %b %b %b\n" "$YELLOW" "$number" "$BBLUE" "$name" "$lion" "$tiger" "$leopard" "$server" "$COLOR_OFF"
+}
 

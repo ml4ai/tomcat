@@ -2,6 +2,15 @@
 
 program_status=""
 
+_update_baseline_program_status() {
+  local client_name=$1
+  local log_file=$2
+  local pid_file=$3
+
+  not_implemented "$client_name"
+  program_status=$GLOBAL_STAMP
+}
+
 _update_minecraft_program_status() {
   local client_name=$1
   local log_file=$2
@@ -9,46 +18,83 @@ _update_minecraft_program_status() {
 
   if [[ -e "$pid_file" ]]; then
     started "$client_name"
-    program_status=$global_stamp
+    program_status=$GLOBAL_STAMP
 
-    if [[ $(grep -c '\[ERROR\]' "$log_file") -ne 0 ]]; then
+    if [[ $(grep -c 'launchClient FAILED' "$log_file") -ne 0 ]]; then
       error "$client_name"
-      program_status=$global_stamp
+      program_status=$GLOBAL_STAMP
       return
     fi
 
-    if [[ $(grep -c '\[INFO\] Stopped' "$log_file") -ne 0 ]]; then
-      not_started "$client_name"
-      program_status=$global_stamp
-      return
-    fi
-
-    if [[ $(grep -c '\[INFO\] Started' "$log_file") -ne 0 ]]; then
+    if [[ $(grep -c 'CLIENT enter state: DORMANT' "$log_file") -ne 0 ]]; then
       # Successfully recording from the device.
       running "$client_name"
-      program_status=$global_stamp
-    fi
-
-    if [[ $(grep -c '\[WARN\] LSL' "$log_file") -ne 0 ]]; then
-      # Successfully recording from the device.
-      running_no_lsl "$client_name"
-      program_status=$global_stamp
+      program_status=$GLOBAL_STAMP
     fi
   else
     not_started "$client_name"
-    program_status=$global_stamp
+    program_status=$GLOBAL_STAMP
   fi
 }
 
-# Webcam
-_update_minecraft_program_status "Lion" "$EXPERIMENT_DIR/tmp/webcam_lion.log" "$EXPERIMENT_DIR/tmp/webcam_lion.pid"
+_update_pupil_health_checker_program_status() {
+  local client_name=$1
+  local log_file=$2
+  local pid_file=$3
+
+  not_implemented "$client_name"
+  program_status=$GLOBAL_STAMP
+}
+
+_update_fnirs_health_checker_program_status() {
+  local client_name=$1
+  local log_file=$2
+  local pid_file=$3
+
+  not_implemented "$client_name"
+  program_status=$GLOBAL_STAMP
+}
+
+_update_eeg_health_checker_program_status() {
+  local client_name=$1
+  local log_file=$2
+  local pid_file=$3
+
+  not_implemented "$client_name"
+  program_status=$GLOBAL_STAMP
+}
+
+# Baseline
+_update_baseline_program_status "Lion" "$EXPERIMENT_DIR/tmp/minecraft_lion.log" "$EXPERIMENT_DIR/tmp/minecraft_lion.pid"
+LION_BL_PROG=$program_status
+
+_update_baseline_program_status "Tiger" "$EXPERIMENT_DIR/tmp/minecraft_tiger.log" "$EXPERIMENT_DIR/tmp/minecraft_tiger.pid"
+TIGER_BL_PROG=$program_status
+
+_update_baseline_program_status "Leopard" "$EXPERIMENT_DIR/tmp/minecraft_leopard.log" "$EXPERIMENT_DIR/tmp/minecraft_leopard.pid"
+LEOPARD_BL_PROG=$program_status
+
+# Minecraft
+_update_minecraft_program_status "Lion" "$EXPERIMENT_DIR/tmp/minecraft_lion.log" "$EXPERIMENT_DIR/tmp/minecraft_lion.pid"
 LION_MC_PROG=$program_status
 
-_update_minecraft_program_status "Tiger" "$EXPERIMENT_DIR/tmp/webcam_tiger.log" "$EXPERIMENT_DIR/tmp/webcam_tiger.pid"
+_update_minecraft_program_status "Tiger" "$EXPERIMENT_DIR/tmp/minecraft_tiger.log" "$EXPERIMENT_DIR/tmp/minecraft_tiger.pid"
 TIGER_MC_PROG=$program_status
 
-_update_minecraft_program_status "Leopard" "$EXPERIMENT_DIR/tmp/webcam_leopard.log" "$EXPERIMENT_DIR/tmp/webcam_leopard.pid"
+_update_minecraft_program_status "Leopard" "$EXPERIMENT_DIR/tmp/minecraft_leopard.log" "$EXPERIMENT_DIR/tmp/minecraft_leopard.pid"
 LEOPARD_MC_PROG=$program_status
 
-_update_minecraft_program_status "Tom" "$EXPERIMENT_DIR/tmp/webcam_leopard.log" "$EXPERIMENT_DIR/tmp/webcam_leopard.pid"
+_update_minecraft_program_status "Tom" "$EXPERIMENT_DIR/tmp/minecraft_server.log" "$EXPERIMENT_DIR/tmp/minecraft_server.pid"
 SERVER_MC_PROG=$program_status
+
+# Pupil health checker
+_update_pupil_health_checker_program_status "Tom" "$EXPERIMENT_DIR/tmp/minecraft_server.log" "$EXPERIMENT_DIR/tmp/minecraft_server.pid"
+SERVER_PUPIL_HC=$program_status
+
+# fNIRS health checker
+_update_fnirs_health_checker_program_status "Tom" "$EXPERIMENT_DIR/tmp/minecraft_server.log" "$EXPERIMENT_DIR/tmp/minecraft_server.pid"
+SERVER_FNIRS_HC=$program_status
+
+# Pupil health checker
+_update_eeg_health_checker_program_status "Tom" "$EXPERIMENT_DIR/tmp/minecraft_server.log" "$EXPERIMENT_DIR/tmp/minecraft_server.pid"
+SERVER_EEG_HC=$program_status
