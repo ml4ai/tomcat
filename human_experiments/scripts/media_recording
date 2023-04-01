@@ -14,8 +14,8 @@ else
   padding=$3
 fi
 
-if [[ "$device" != "webcam" ]] && [[ "$device" != "screen" ]]; then
-  echo -e "${RED}{$padding}The first parameter os this script must be a device form the list [webcam, screen].${NC}"
+if [[ "$device" != "webcam" ]] && [[ "$device" != "screen" ]] && [[ "$device" != "audio" ]]; then
+  echo -e "${RED}{$padding}The first parameter os this script must be a device form the list [webcam, screen, audio].${NC}"
 fi
 
 if [[ "$mode" != "start" ]] && [[ "$mode" != "stop" ]]; then
@@ -29,7 +29,7 @@ stopped_error_code=3
 process_killed_error_code=4
 
 # Frame rates
-fps=10 # 10Hz
+video_fps=10 # 10Hz
 
 wait_for_launch_timeout=300 # 5 minutes
 
@@ -73,16 +73,28 @@ _record_on_client() {
   local log_file="$tmp_file_root_dir".log
   local pid_file="$tmp_file_root_dir".pid
 
+  # TODO - Uncomment
+  #  local project_dir="\$HOME/$SYSTEMS_DIR"
+  local project_dir="$HOME/code"
+
+  local exec_path="$project_dir/tomcat/human_experiments/scripts/local/record_from_$device"
+
   if [[ "$device" == "screen" ]]; then
     local images_dir="$EXPERIMENT_DIR/$client_name/screenshots/block_$EXPERIMENT_BLOCK"
-  else
+    local command="$exec_path $images_dir $video_fps $log_file $pid_file"
+  elif [[ "$device" == "webcam" ]]; then
     local images_dir="$EXPERIMENT_DIR/$client_name/face_images/block_$EXPERIMENT_BLOCK"
+    local command="$exec_path $images_dir $video_fps $log_file $pid_file"
+  else
+    if [[ "$client_name" == "cat" ]] || [[ "$client_name" == "tom" ]]; then
+      local exec_path="$project_dir/tomcat/human_experiments/scripts/local/record_audio"
+    else
+      # If the client is one of the iMacs, we want to call the audio streamer instead.
+      local exec_path="$project_dir/tomcat/human_experiments/scripts/local/stream_audio"
+    fi
+    local audio_dir="$EXPERIMENT_DIR/$client_name/audio/block_$EXPERIMENT_BLOCK"
+    local command="$exec_path $audio_dir $log_file $pid_file"
   fi
-
-  # TODO - Uncomment
-  #      local exec_path="\$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/macos/record_from_$device"
-  local exec_path="$HOME/code/tomcat/human_experiments/scripts/macos/record_from_$device"
-  local command="$exec_path $images_dir $fps $log_file $pid_file"
 
   # shellcheck disable=SC2029
   # TODO - Uncomment
@@ -153,6 +165,10 @@ _monitor_launch_on_clients() {
   _monitor_launch_on_client "lion" "lion.local" "$padding "
   _monitor_launch_on_client "tiger" "tiger.local" "$padding "
   _monitor_launch_on_client "leopard" "leopard.local" "$padding "
+
+  if [[ "$device" == "audio" ]]; then
+    _monitor_launch_on_client "cat" "cat.local" "$padding "
+  fi
 }
 
 _stop_record_on_client() {
@@ -165,7 +181,10 @@ _stop_record_on_client() {
   pid=$(cat "$pid_file")
 
   # TODO - Uncomment
-  local exec_path="$HOME/code/tomcat/human_experiments/scripts/macos/kill_program"
+  #  local project_dir="\$HOME/$SYSTEMS_DIR"
+  local project_dir="$HOME/code"
+
+  local exec_path="$project_dir/tomcat/human_experiments/scripts/local/kill_program"
   local command="$exec_path $pid"
 
   # shellcheck disable=SC2029
@@ -180,6 +199,10 @@ _start_recording() {
   _start_recording_on_client "tiger" "tiger.local" "$padding "
   _start_recording_on_client "leopard" "leopard.local" "$padding "
 
+  if [[ "$device" == "audio" ]]; then
+    _start_recording_on_client "cat" "cat.local" "$padding "
+  fi
+
   # Wait until the program have launched in all the clients
   _monitor_launch_on_clients "$padding"
 }
@@ -188,6 +211,10 @@ _stop_recording() {
   _stop_record_on_client "lion" "lion.local" "$padding "
   _stop_record_on_client "tiger" "tiger.local" "$padding "
   _stop_record_on_client "leopard" "leopard.local" "$padding "
+
+  if [[ "$device" == "audio" ]]; then
+    _stop_record_on_client "cat" "cat.local" "$padding "
+  fi
 }
 
 if [[ "$mode" == "start" ]]; then
