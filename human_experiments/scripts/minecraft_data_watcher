@@ -1,0 +1,166 @@
+#!/bin/bash
+
+set -u
+
+# TODO - Remove
+source configuration_helpers
+
+mode=$1   # start or stop
+
+if [[ -z ${2+x} ]]; then
+  padding=""
+else
+  padding=$2
+fi
+
+
+if [[ "$mode" != "start" ]] && [[ "$mode" != "stop" ]]; then
+  echo -e "${RED}{$padding}The second parameter os this script must be a mode form the list [start, stop].${NC}"
+fi
+
+# Error codes
+never_launched_error_code=1
+on_launch_error_code=2
+stopped_error_code=3
+process_killed_error_code=4
+
+wait_for_launch_timeout=300 # 5 minutes
+
+_monitor_launch() {
+  local log_file=$1
+  local pid_file=$2
+
+  if [[ ! -e "$pid_file" ]]; then
+    return $never_launched_error_code
+  fi
+
+  local num_seconds=0
+  while [ $num_seconds -lt $wait_for_launch_timeout ]; do
+    if [[ -e "$log_file" ]]; then
+      if [[ $(grep -c '\[ERROR\]' "$log_file") -ne 0 ]]; then
+        return $on_launch_error_code
+      fi
+
+      if [[ $(grep -c '\[INFO\] Stopped' "$log_file") -ne 0 ]]; then
+        return $stopped_error_code
+      fi
+
+      if [[ $(grep -c '\[INFO\] Started' "$log_file") -ne 0 ]]; then
+        # Successfully recording from the device.
+        return 0
+      fi
+    else
+      return $process_killed_error_code
+    fi
+
+    sleep 1
+    ((num_seconds++))
+  done
+}
+
+_watch_on_server() {
+  # Just calls the executable on a client machine and leaves. It does not wait for status.
+  local server_address="localhost"
+  local server_port=1883
+  local tmp_file_root_dir="$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom"
+  local log_file="$tmp_file_root_dir.log"
+  local pid_file="$tmp_file_root_dir.pid"
+
+  # TODO - Uncomment
+  #  local project_dir="$HOME/$SYSTEMS_DIR"
+  local project_dir="$HOME/code"
+
+  local exec_path="$project_dir/tomcat/human_experiments/scripts/local/watch_minecraft_data"
+
+  local command="$exec_path $server_address $server_port $log_file $pid_file"
+
+  $command
+}
+
+_start_watcher_on_server() {
+  # Initial call to the executable on a client machine
+  local padding=$1
+
+  if [[ $ALL -ne 1 ]]; then
+    yes_no_question "${padding}Do you want to start watching on ${EMPH}tom${NC}?"
+    ans=$?
+    padding="$padding "
+  fi
+  if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
+    _watch_on_server
+  fi
+}
+
+_monitor_launch_on_server() {
+  # Monitors a previous call to the recording program in the server. Let's the user retry the program.
+  local padding=$1
+
+  echo -e "${padding}Waiting for the program to launch on ${EMPH}tom${NC}..."
+  padding="$padding "
+
+  while true; do
+    local tmp_file_root_dir="$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom"
+    local log_file="$tmp_file_root_dir.log"
+    local pid_file="$tmp_file_root_dir.pid"
+
+    _monitor_launch "$log_file" "$pid_file"
+    local error_code=$?
+
+    if [[ $error_code -eq 0 ]]; then
+      echo -e "${padding}${GREEN}The program has successfully launched on ${EMPH}tom${GREEN}.${NC}"
+      return
+    elif [[ $error_code -eq $never_launched_error_code ]]; then
+      echo -e "${padding}${RED}The program was never launched.${NC}"
+    elif [[ $error_code -eq $on_launch_error_code ]]; then
+      echo -e "${padding}${RED}Error on program launch.${NC}"
+    elif [[ $error_code -eq $stopped_error_code ]]; then
+      echo -e "${padding}${RED}The program stopped running abruptly.${NC}"
+    elif [[ $error_code -eq $process_killed_error_code ]]; then
+      echo -e "${padding}${RED}The program was killed.${NC}"
+    fi
+
+    if [[ $error_code -ne 0 ]]; then
+      echo -e "${padding}Look at the logs in $log_file for more details."
+      retry_question "$padding"
+      retry=$?
+
+      if [[ $retry -eq 0 ]]; then
+        _watch_on_server
+      fi
+    fi
+  done
+}
+
+_stop_watcher_on_server() {
+  local padding=$1
+
+  local pid_file="$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom.pid"
+  local pid
+  pid=$(cat "$pid_file")
+
+  # TODO - Uncomment
+  #  local project_dir="$HOME/$SYSTEMS_DIR"
+  local project_dir="$HOME/code"
+
+  local exec_path="$project_dir/tomcat/human_experiments/scripts/local/kill_program"
+  local command="$exec_path $pid"
+
+  $command
+}
+
+_start_watcher() {
+  _start_watcher_on_server "$padding"
+
+  # Wait until the program have launched on the server
+  _monitor_launch_on_server "$padding"
+}
+
+_stop_watcher() {
+  _stop_watcher_on_server "$padding"
+}
+
+if [[ "$mode" == "start" ]]; then
+  _start_watcher "$padding"
+else
+  _stop_watcher "$padding"
+fi

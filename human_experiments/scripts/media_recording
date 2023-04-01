@@ -70,8 +70,8 @@ _record_on_client() {
   local client_name=$1
   local client_address=$2
   local tmp_file_root_dir="$EXPERIMENT_DIR/tmp/${device}_$client_name"
-  local log_file="$tmp_file_root_dir".log
-  local pid_file="$tmp_file_root_dir".pid
+  local log_file="$tmp_file_root_dir.log"
+  local pid_file="$tmp_file_root_dir.pid"
 
   # TODO - Uncomment
   #  local project_dir="\$HOME/$SYSTEMS_DIR"
@@ -109,7 +109,7 @@ _start_recording_on_client() {
   local padding=$3
 
   if [[ $ALL -ne 1 ]]; then
-    yes_no_question "${padding}Do you want to start ${EMPH}Recording${NC} on ${EMPH}$client_name${NC}?"
+    yes_no_question "${padding}Do you want to start recording on ${EMPH}$client_name${NC}?"
     ans=$?
     padding="$padding "
   fi
@@ -129,8 +129,8 @@ _monitor_launch_on_client() {
 
   while true; do
     local tmp_file_root_dir="$EXPERIMENT_DIR/tmp/${device}_$client_name"
-    local log_file="$tmp_file_root_dir".log
-    local pid_file="$tmp_file_root_dir".pid
+    local log_file="$tmp_file_root_dir.log"
+    local pid_file="$tmp_file_root_dir.pid"
 
     _monitor_launch "$log_file" "$pid_file"
     local error_code=$?
@@ -195,12 +195,12 @@ _stop_record_on_client() {
 
 _start_recording() {
   # Start at the same time in all clients
-  _start_recording_on_client "lion" "lion.local" "$padding "
-  _start_recording_on_client "tiger" "tiger.local" "$padding "
-  _start_recording_on_client "leopard" "leopard.local" "$padding "
+  _start_recording_on_client "lion" "lion.local" "$padding"
+  _start_recording_on_client "tiger" "tiger.local" "$padding"
+  _start_recording_on_client "leopard" "leopard.local" "$padding"
 
   if [[ "$device" == "audio" ]]; then
-    _start_recording_on_client "cat" "cat.local" "$padding "
+    _start_recording_on_client "cat" "cat.local" "$padding"
   fi
 
   # Wait until the program have launched in all the clients
@@ -208,12 +208,12 @@ _start_recording() {
 }
 
 _stop_recording() {
-  _stop_record_on_client "lion" "lion.local" "$padding "
-  _stop_record_on_client "tiger" "tiger.local" "$padding "
-  _stop_record_on_client "leopard" "leopard.local" "$padding "
+  _stop_record_on_client "lion" "lion.local" "$padding"
+  _stop_record_on_client "tiger" "tiger.local" "$padding"
+  _stop_record_on_client "leopard" "leopard.local" "$padding"
 
   if [[ "$device" == "audio" ]]; then
-    _stop_record_on_client "cat" "cat.local" "$padding "
+    _stop_record_on_client "cat" "cat.local" "$padding"
   fi
 }
 
