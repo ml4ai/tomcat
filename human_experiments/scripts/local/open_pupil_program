@@ -2,4 +2,8 @@
 
 set -u
 
+# Close any instance that might still be open
+kill -SIGINT pupil
+
+# Open the program
 open -a "Pupil Capture"
