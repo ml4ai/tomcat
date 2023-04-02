@@ -27,7 +27,9 @@ _record_on_client() {
     python3 pupil_api_handler.py --action="start" --host="$client_address"
     local error_code=$?
 
-    if [[ $error_code -ne 0 ]]; then
+    if [[ $error_code -eq 0 ]]; then
+      break
+    else
       echo -e "${padding}Could not start recording programmatically. Please, proceed with manual recording or retry."
       retry_question "$padding"
       retry=$?
@@ -161,21 +163,21 @@ _open_on_client() {
 _open() {
   # Start at the same time in all clients
   _open_on_client "lion" "lion.local" "$padding"
-#  _open_on_client "tiger" "tiger.local" "$padding"
-#  _open_on_client "leopard" "leopard.local" "$padding"
+  #  _open_on_client "tiger" "tiger.local" "$padding"
+  #  _open_on_client "leopard" "leopard.local" "$padding"
 }
 
 _start_recording() {
   # Start at the same time in all clients
   _start_recording_on_client "lion" "lion.local" "$padding"
-#  _start_recording_on_client "tiger" "tiger.local" "$padding"
-#  _start_recording_on_client "leopard" "leopard.local" "$padding"
+  #  _start_recording_on_client "tiger" "tiger.local" "$padding"
+  #  _start_recording_on_client "leopard" "leopard.local" "$padding"
 }
 
 _stop_recording() {
   _stop_record_on_client "lion" "lion.local" "$padding"
-#  _stop_record_on_client "tiger" "tiger.local" "$padding"
-#  _stop_record_on_client "leopard" "leopard.local" "$padding"
+  #  _stop_record_on_client "tiger" "tiger.local" "$padding"
+  #  _stop_record_on_client "leopard" "leopard.local" "$padding"
 }
 
 if [[ "$action" == "open" ]]; then
