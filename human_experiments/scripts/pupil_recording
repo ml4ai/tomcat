@@ -109,7 +109,7 @@ _stop_on_client() {
 
     # Remove symbolic link
     while true; do
-      local exec_path="$project_dir/tomcat/human_experiments/scripts/local/remove_pupil_symlink"
+      local exec_path="$project_dir/human_experiments/scripts/local/remove_pupil_symlink"
       local command="$exec_path"
 
       # shellcheck disable=SC2029
