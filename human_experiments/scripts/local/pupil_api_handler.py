@@ -46,3 +46,5 @@ if __name__ == "__main__":
             # An empty string means it has already stopped recording
             if return_code != "" and "ok" not in return_code.lower():
                 raise "Could not stop recording."
+    else:
+        raise "Pupil Capture seems to be offline."
