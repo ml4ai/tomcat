@@ -221,6 +221,7 @@ if [[ $GOTO -le 8 ]]; then
   fi
 fi
 
+echo ""
 echo -e "${BLACK}${ON_CYAN}Wait for Okay from the Social Science team.${NC}"
 
 if [[ $GOTO -le 9 ]]; then
@@ -262,7 +263,7 @@ if [[ $GOTO -le 13 ]]; then
     if yes_no_question " [13.2] Do you want to stop recording from the ${EMPH}Eye-tracker${NC} program?"; then
       source pupil_recording "stop" " "
     fi
-    if yes_no_question " [13.3] Do you want to stop ${EMPH}LabRecorder and kill its instances on CAT${NC}?"; then
+    if yes_no_question " [13.3] Do you want to stop ${EMPH}LabRecorder${NC} and kill its instances on CAT?"; then
       source stop_lab_recorder
     fi
   fi
@@ -305,6 +306,7 @@ if [[ $GOTO -le 17 ]]; then
   fi
 fi
 
+echo ""
 echo -e "${BLACK}${ON_CYAN}Wait for the end of the Minecraft missions.${NC}"
 
 if [[ $GOTO -le 18 ]]; then
@@ -333,7 +335,7 @@ fi
 
 if [[ $GOTO -le 21 ]]; then
   echo " "
-  if yes_no_question "[21] Do you want to stop ${EMPH}LabRecorder (Block2) and kill its instances on CAT${NC}?"; then
+  if yes_no_question "[21] Do you want to stop ${EMPH}LabRecorder${NC} and kill its instances on CAT?"; then
     source stop_lab_recorder
   fi
 fi
@@ -352,6 +354,7 @@ if [[ $GOTO -le 23 ]]; then
   fi
 fi
 
+echo ""
 echo -e "${BLACK}${ON_CYAN}Wait for the participants to fill up the surveys.${NC}"
 
 if [[ $GOTO -le 24 ]]; then
