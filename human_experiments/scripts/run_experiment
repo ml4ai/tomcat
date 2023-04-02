@@ -110,7 +110,7 @@ export TMUX_ON
 
 # Open extra panes or terminal to display the monitor program and announcements menu.
 monitor_command="source $HOME/$SYSTEMS_DIR/tomcat/human_experiments/lab_software/monitor_programs/monitor"
-announcements_command="source $HOME/$SYSTEMS_DIR/tomcat/human_experiments/lab_software/say_announcements/say_announcements_menu"
+announcements_command="source $HOME/$SYSTEMS_DIR/tomcat/human_experiments/lab_software/say_announcements/say_announcement_menu"
 if [[ $TMUX_ON -eq 1 ]]; then
 # Split the screen in three panels. The uber script will be on the left, the monitor in the upper
   # right and the announcements in the bottom right
