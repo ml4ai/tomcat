@@ -65,7 +65,7 @@ _stop_on_client() {
   local padding=$3
 
   if [[ $ALL -ne 1 ]]; then
-    yes_no_question "${padding}Do you want to start Pupil Capture on ${EMPH}$client_name${NC}?"
+    yes_no_question "${padding}Do you want to stop Pupil Capture on ${EMPH}$client_name${NC}?"
     ans=$?
     padding="$padding "
   fi
