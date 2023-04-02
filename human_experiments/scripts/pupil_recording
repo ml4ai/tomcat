@@ -143,7 +143,9 @@ _open_on_client() {
       local command="$exec_path $target_dir"
 
       # shellcheck disable=SC2029
-      if ! ssh "$EXPERIMENT_USER@$client_address" "$command"; then
+      if ssh "$EXPERIMENT_USER@$client_address" "$command"; then
+        break
+      else
         echo -e "${padding}Could not create symlink."
         retry_question "$padding"
         retry=$?
