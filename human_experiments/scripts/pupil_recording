@@ -28,6 +28,7 @@ _record_on_client() {
     local error_code=$?
 
     if [[ $error_code -eq 0 ]]; then
+      echo -e "${padding}Recording from Pupil Capture."
       break
     else
       echo -e "${padding}Could not start recording programmatically. Please, proceed with manual recording or retry."
@@ -77,7 +78,10 @@ _stop_on_client() {
       python3 pupil_api_handler.py --action="stop" --host="$client_address"
       local error_code=$?
 
-      if [[ $error_code -ne 0 ]]; then
+      if [[ $error_code -eq 0 ]]; then
+        echo -e "${padding}Stopped recording from Pupil Capture, closed program and removed symlink."
+        break
+      else
         echo -e "${padding}Could not stop recording programmatically. Please, proceed with manual stop or retry."
         retry_question "$padding"
         retry=$?
@@ -146,6 +150,7 @@ _open_on_client() {
 
       # shellcheck disable=SC2029
       if ssh "$EXPERIMENT_USER@$client_address" "$command"; then
+        echo -e "${padding}Program successfully opened and symlink created."
         break
       else
         echo -e "${padding}Could not create symlink."
