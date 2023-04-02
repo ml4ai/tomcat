@@ -177,7 +177,7 @@ _stop_recording() {
 
 if [[ "$action" == "open" ]]; then
   # Opens the programs and creates symbolic links
-  _open_recording "$padding"
+  _open "$padding"
 elif [[ "$action" == "start" ]]; then
   _start_recording "$padding"
 elif [[ "$action" == "stop" ]]; then
