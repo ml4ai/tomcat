@@ -97,13 +97,13 @@ _update_data_stream_status "Leopard" "$EXPERIMENT_DIR/tmp/screen_leopard.log" "$
 LEOPARD_SCREEN=$data_stream_status
 
 # Audio
-_update_baseline_data_stream_status "Lion" "$EXPERIMENT_DIR/tmp/audio_lion.log" "$EXPERIMENT_DIR/tmp/audio_lion.pid"
+_update_data_stream_status "Lion" "$EXPERIMENT_DIR/tmp/audio_lion.log" "$EXPERIMENT_DIR/tmp/audio_lion.pid"
 LION_AUDIO=$data_stream_status
 
-_update_baseline_data_stream_status "Tiger" "$EXPERIMENT_DIR/tmp/audio_tiger.log" "$EXPERIMENT_DIR/tmp/audio_tiger.pid"
+_update_data_stream_status "Tiger" "$EXPERIMENT_DIR/tmp/audio_tiger.log" "$EXPERIMENT_DIR/tmp/audio_tiger.pid"
 TIGER_AUDIO=$data_stream_status
 
-_update_baseline_data_stream_status "Leopard" "$EXPERIMENT_DIR/tmp/audio_leopard.log" "$EXPERIMENT_DIR/tmp/audio_leopard.pid"
+_update_data_stream_status "Leopard" "$EXPERIMENT_DIR/tmp/audio_leopard.log" "$EXPERIMENT_DIR/tmp/audio_leopard.pid"
 LEOPARD_AUDIO=$data_stream_status
 
 _update_data_stream_status "Cat" "$EXPERIMENT_DIR/tmp/audio_cat.log" "$EXPERIMENT_DIR/tmp/audio_cat.pid"
