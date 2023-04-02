@@ -159,8 +159,21 @@ _open_on_client() {
     local exec_path="$project_dir/human_experiments/scripts/local/open_pupil_program"
     local command="$exec_path"
 
-    # shellcheck disable=SC2029
-    ssh "$EXPERIMENT_USER@$client_address" "$command"
+    while true; do
+      # shellcheck disable=SC2029
+      if ssh "$EXPERIMENT_USER@$client_address" "$command"; then
+        echo -e "${padding}${GREEN}Opened Pupil Capture${NC}"
+        break
+      else
+        echo -e "${padding}${RED}Could not open Pupil Capture.${NC}"
+        retry_question "$padding"
+        retry=$?
+
+        if [[ $retry -ne 0 ]]; then
+          break
+        fi
+      fi
+    done
 
     # Create symbolic link
     while true; do
