@@ -48,7 +48,7 @@ void WebsocketClient::Connect() {
     }
     catch (const std::exception& e) {
         BOOST_LOG_TRIVIAL(error)
-            << "Failure connecting to Websocket Server. Audio will still be "
+            << "[WARN] Failure connecting to Websocket Server. Audio will still be "
                "recorded, but will not be sent over Websocket.";
         BOOST_LOG_TRIVIAL(error) << " Error was: " << e.what();
     }
@@ -61,7 +61,7 @@ void WebsocketClient::SendChunk(vector<int16_t> chunk) {
         }
         catch (const std::exception& e) {
             BOOST_LOG_TRIVIAL(error)
-                << "Failure sending audio chunk. Websocket connection will be "
+                << "[ERROR] Failure sending audio chunk. Websocket connection will be "
                    "shutdown.";
             BOOST_LOG_TRIVIAL(error) << " Error was: " << e.what();
 

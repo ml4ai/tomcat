@@ -87,7 +87,7 @@ int main(int argc, char* argv[]) {
         }
     }
     catch (const po::error& ex) {
-        BOOST_LOG_TRIVIAL(error) << "Error parsing arguments!";
+        BOOST_LOG_TRIVIAL(error) << "[ERROR] Error parsing arguments!";
         return -1;
     }
 
@@ -100,16 +100,16 @@ int main(int argc, char* argv[]) {
                                save_audio,
                                recordings_directory);
         if (use_mqtt) {
-            BOOST_LOG_TRIVIAL(info) << "Starting audioStreamer in MQTT mode";
+            BOOST_LOG_TRIVIAL(info) << "[INFO] Starting audioStreamer in MQTT mode";
             run_mqtt(mqtt_host, mqtt_port, player_name, streamer);
         }
         else {
-            BOOST_LOG_TRIVIAL(info) << "Starting audioStreamer in normal mode "
+            BOOST_LOG_TRIVIAL(info) << "[INFO] Starting audioStreamer in normal mode "
                                        "(CTRL-C will stop streaming)";
             run(streamer);
         }
         BOOST_LOG_TRIVIAL(info)
-            << "Close signal received, shutting down audio streaming.";
+            << "[INFO] Close signal received, shutting down audio streaming.";
     }
     catch (const exception& ex) {
         BOOST_LOG_TRIVIAL(error) << ex.what();
@@ -149,7 +149,7 @@ void run_mqtt(string mqtt_host, string mqtt_port, string player_name,
         mqtt_client.connect(connOpts)->get_connect_response();
         mqtt_client.subscribe("trial", 2);
 
-        BOOST_LOG_TRIVIAL(info) << "Connection to MQTT broker successful, "
+        BOOST_LOG_TRIVIAL(info) << "[INFO] Connection to MQTT broker successful, "
                                    "awaiting Trial Start message";
 
         // Consume messages
@@ -170,7 +170,7 @@ void run_mqtt(string mqtt_host, string mqtt_port, string player_name,
     }
     catch (const mqtt::exception& e) {
         BOOST_LOG_TRIVIAL(error)
-            << "Failure in MQTT client. Error was: " << e.what();
+            << "[ERROR] Failure in MQTT client. Error was: " << e.what();
         return;
     }
 }
@@ -183,13 +183,13 @@ void mqtt_process_message(mqtt::const_message_ptr msg,
     string sub_type = message["msg"]["sub_type"];
     if (sub_type == "start") {
         BOOST_LOG_TRIVIAL(info)
-            << "Trial start message received, starting audio stream. ";
+            << "[INFO] Trial start message received, starting audio stream. ";
         streamer.GenerateAudioFilename(message);
         streamer.StartStreaming();
     }
     else if (sub_type == "stop") {
         BOOST_LOG_TRIVIAL(info)
-            << "Trial stop message received, stopping audio stream. ";
+            << "[INFO] Trial stop message received, stopping audio stream. ";
         streamer.StopStreaming();
     }
 }
