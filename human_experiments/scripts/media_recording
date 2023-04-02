@@ -75,10 +75,10 @@ _record_on_client() {
   local pid_file="$tmp_file_root_dir.pid"
 
   # TODO - Uncomment
-  #  local project_dir="\$HOME/$SYSTEMS_DIR"
-  local project_dir="$HOME/code"
+  #  local project_dir="\$HOME/$SYSTEMS_DIR/tomcat"
+  local project_dir="$HOME/code/tomcat"
 
-  local exec_path="$project_dir/tomcat/human_experiments/scripts/local/record_from_$device"
+  local exec_path="$project_dir/human_experiments/scripts/local/record_from_$device"
 
   if [[ "$device" == "screen" ]]; then
     local images_dir="$EXPERIMENT_DIR/$client_name/screenshots/block_$EXPERIMENT_BLOCK"
@@ -194,10 +194,10 @@ _stop_record_on_client() {
   fi
   if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
     # TODO - Uncomment
-    #  local project_dir="\$HOME/$SYSTEMS_DIR"
-    local project_dir="$HOME/code"
+    #  local project_dir="\$HOME/$SYSTEMS_DIR/tomcat"
+    local project_dir="$HOME/code/tomcat"
 
-    local exec_path="$project_dir/tomcat/human_experiments/scripts/local/kill_program"
+    local exec_path="$project_dir/human_experiments/scripts/local/kill_program"
     local command="$exec_path $pid"
 
     # shellcheck disable=SC2029
