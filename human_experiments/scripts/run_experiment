@@ -111,8 +111,8 @@ export TMUX_ON
 if [[ $TMUX_ON -eq 1 ]]; then
   # Split the screen in three panels. The uber script will be on the left, the monitor in the upper
   # right and the announcements in the bottom right
-  tmux split-window -v
   tmux split-window -h
+  tmux split-window -v
 
   # Open the monitor in the upper right pane
   tmux select-pane -t 1
