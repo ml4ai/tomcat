@@ -19,9 +19,9 @@ if __name__ == "__main__":
 
     if args.action == "start":
         pupil_remote.send_string(START_RECORDING)
-        if "ok" not in pupil_remote.recv_string().lower():
+        if "ok" not in pupil_remote.recv_string(zmq.NOBLOCK).lower():
             raise "Could not start recording."
     elif args.action == "stop":
         pupil_remote.send_string(STOP_RECORDING)
-        if "ok" not in pupil_remote.recv_string().lower():
+        if "ok" not in pupil_remote.recv_string(zmq.NOBLOCK).lower():
             raise "Could not stop recording."
