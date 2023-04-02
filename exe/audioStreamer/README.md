@@ -4,21 +4,25 @@ When using the audioStreamer with the Testbed, the ClientMap audio streaming fun
 `"DisableSpeechToText":  true` -> `"DisableSpeechToText":  false`
 
 ## Install dependencies:
-1. libsndfile
-2. portaudio
-3. boost
-4. nlohmann-json
-5. paho.mqtt.cpp
+1. portaudio
+2. boost
+3. nlohmann-json
+4. paho.mqtt.cpp
 
 ### MacOS
-All dependencies are available through MacPorts. They can be installed with the command:
-`sudo port install libsndfile portaudio boost nlohmann-json paho.mqtt.cpp`
+Almost all dependencies are available through MacPorts. They can be installed with the command:
+`sudo port install portaudio boost nlohmann-json paho.mqtt.cpp`
+
+Install liblsl from source.
+```
+./tomcat/tools/install_from_source/liblsl
+```
 
 ## Build audioStreamer
 ```bash
 mkdir build
 cd build
-cmake ..
+cmake .. -DLSL_INCLUDE_DIR=/usr/local/include
 make 
 ```
 
