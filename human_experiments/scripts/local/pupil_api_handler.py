@@ -1,6 +1,7 @@
 from typing import Any
 
 import argparse
+import time
 import zmq
 
 DEFAULT_PUPIL_PORT = 50020
@@ -9,14 +10,19 @@ STOP_RECORDING = "r"
 TIMESTAMP = "t"
 
 
-def is_alive(pupil_remote: Any) -> bool:
+def send_command(conn: Any, command: str) -> str:
     try:
-        pupil_remote.send_string(TIMESTAMP)
-        pupil_remote.recv_string(zmq.NOBLOCK)
+        conn.send_string(command)
+        time.sleep(5)
+        conn.recv_string(zmq.NOBLOCK)
     except zmq.ZMQError:
-        return False
+        return "error"
 
-    return True
+    return "ok"
+
+
+def is_alive(conn: Any) -> bool:
+    return send_command(conn, TIMESTAMP) == "ok"
 
 
 if __name__ == "__main__":
@@ -33,18 +39,10 @@ if __name__ == "__main__":
 
     if is_alive(pupil_remote):
         if args.action == "start":
-            pupil_remote.send_string(START_RECORDING)
-            return_code = pupil_remote.recv_string()
-
-            # An empty string means it's already recording
-            if return_code != "" and "ok" not in return_code.lower():
+            if send_command(pupil_remote, START_RECORDING) == "error":
                 raise "Could not start recording."
         elif args.action == "stop":
-            pupil_remote.send_string(STOP_RECORDING)
-            return_code = pupil_remote.recv_string()
-
-            # An empty string means it has already stopped recording
-            if return_code != "" and "ok" not in return_code.lower():
+            if send_command(pupil_remote, STOP_RECORDING) == "error":
                 raise "Could not stop recording."
     else:
         raise "Pupil Capture seems to be offline."
