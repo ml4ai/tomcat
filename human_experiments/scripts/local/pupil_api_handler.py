@@ -13,7 +13,7 @@ def is_alive(pupil_remote: Any) -> bool:
     try:
         pupil_remote.send_string(TIMESTAMP)
         pupil_remote.recv_string(zmq.NOBLOCK)
-    except zmq.ZMQERROR:
+    except zmq.ZMQError:
         return False
 
     return True
