@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MY_DIR="$(dirname "$(realpath "$0")")"
+MY_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 ${NC}source "${MY_DIR}/say_announcement_helpers"
 clear
 printf "

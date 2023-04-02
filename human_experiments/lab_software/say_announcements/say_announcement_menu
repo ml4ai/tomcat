@@ -2,7 +2,7 @@
 
 echo -ne '\033]0;Announcement Menu\007'
 
-MY_DIR="$(dirname "$(realpath "$0")")"
+MY_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 source "${MY_DIR}/say_announcement_helpers"
 
 IS_ANNOUNCING=""
