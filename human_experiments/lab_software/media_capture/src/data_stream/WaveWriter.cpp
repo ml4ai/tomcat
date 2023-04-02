@@ -21,7 +21,7 @@ WaveWriter::WaveWriter(const std::string& audio_filepath,
     this->wave_file.open(audio_filepath, ios::binary);
     if (!this->wave_file.is_open()) {
         throw GeneralException(
-            fmt::format("Could not create the file {}.", audio_filepath));
+            fmt::format("[ERROR] Could not create the file {}.", audio_filepath));
     }
 
     // WAVE PCM soundfile format: http://soundfile.sapp.org/doc/WaveFormat/

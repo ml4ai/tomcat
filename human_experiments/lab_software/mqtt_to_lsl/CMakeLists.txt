@@ -31,6 +31,7 @@ set(_libs
         fmt::fmt
         ${Mosquitto_LIBRARIES}
         LSL::lsl
-        ${Boost_LIBRARIES})
+        ${Boost_LIBRARIES}
+        -pthread)
 
 add_subdirectory(src)
