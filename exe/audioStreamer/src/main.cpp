@@ -1,25 +1,20 @@
 #include <cstdlib>
 #include <iostream>
-#include <mutex>
 #include <signal.h>
 #include <string>
 #include <thread>
-#include <unistd.h>
+#include <exception>
 
 #include <mqtt/async_client.h>
 #include <nlohmann/json.hpp>
 
-#include <boost/asio/connect.hpp>
-#include <boost/asio/ip/tcp.hpp>
-#include <boost/beast/core.hpp>
-#include <boost/beast/websocket.hpp>
+
 #include <boost/log/trivial.hpp>
 #include <boost/log/utility/setup/console.hpp>
 #include <boost/program_options.hpp>
 
 #include "AudioStreamer.h"
-#include "WebsocketClient.h"
-#include "portaudio.h"
+
 
 namespace po = boost::program_options;
 using namespace std;
@@ -36,6 +31,7 @@ void mqtt_process_message(mqtt::const_message_ptr msg, AudioStreamer& streamer);
 int main(int argc, char* argv[]) {
     // Create signal handler
     signal(SIGINT, signal_callback_handler);
+    signal(SIGTERM, signal_callback_handler);
 
     // Enable Boost logging
     boost::log::add_console_log(std::cout,
@@ -95,24 +91,30 @@ int main(int argc, char* argv[]) {
         return -1;
     }
 
-    // Create audio streamer
-    AudioStreamer streamer(ws_host,
-                           ws_port,
-                           player_name,
-                           sample_rate,
-                           save_audio,
-                           recordings_directory);
-    if (use_mqtt) {
-        BOOST_LOG_TRIVIAL(info) << "Starting audioStreamer in MQTT mode";
-        run_mqtt(mqtt_host, mqtt_port, player_name, streamer);
+    try {
+        // Create audio streamer
+        AudioStreamer streamer(ws_host,
+                               ws_port,
+                               player_name,
+                               sample_rate,
+                               save_audio,
+                               recordings_directory);
+        if (use_mqtt) {
+            BOOST_LOG_TRIVIAL(info) << "Starting audioStreamer in MQTT mode";
+            run_mqtt(mqtt_host, mqtt_port, player_name, streamer);
+        }
+        else {
+            BOOST_LOG_TRIVIAL(info) << "Starting audioStreamer in normal mode "
+                                       "(CTRL-C will stop streaming)";
+            run(streamer);
+        }
+        BOOST_LOG_TRIVIAL(info)
+            << "Close signal received, shutting down audio streaming.";
     }
-    else {
-        BOOST_LOG_TRIVIAL(info) << "Starting audioStreamer in normal mode "
-                                   "(CTRL-C will stop streaming)";
-        run(streamer);
+    catch (const exception& ex) {
+        BOOST_LOG_TRIVIAL(error) << ex.what();
     }
-    BOOST_LOG_TRIVIAL(info)
-        << "Close signal recieved, shutting down audio streaming.";
+
     exit(0);
 }
 
@@ -181,13 +183,13 @@ void mqtt_process_message(mqtt::const_message_ptr msg,
     string sub_type = message["msg"]["sub_type"];
     if (sub_type == "start") {
         BOOST_LOG_TRIVIAL(info)
-            << "Trial start message recieved, starting audio stream. ";
+            << "Trial start message received, starting audio stream. ";
         streamer.GenerateAudioFilename(message);
         streamer.StartStreaming();
     }
     else if (sub_type == "stop") {
         BOOST_LOG_TRIVIAL(info)
-            << "Trial stop message recieved, stopping audio stream. ";
+            << "Trial stop message received, stopping audio stream. ";
         streamer.StopStreaming();
     }
 }
