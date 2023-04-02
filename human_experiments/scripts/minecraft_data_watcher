@@ -2,9 +2,6 @@
 
 set -u
 
-# TODO - Remove
-source configuration_helpers
-
 action=$1 # start or stop
 
 if [[ -z ${2+x} ]]; then
@@ -65,9 +62,7 @@ _watch_on_server() {
   local log_file="$tmp_file_root_dir.log"
   local pid_file="$tmp_file_root_dir.pid"
 
-  # TODO - Uncomment
-  #  local project_dir="$HOME/$SYSTEMS_DIR/tomcat"
-  local project_dir="$HOME/code/tomcat"
+  local project_dir="$HOME/$SYSTEMS_DIR/tomcat"
 
   local exec_path="$project_dir/human_experiments/scripts/local/watch_minecraft_data"
 
@@ -145,9 +140,7 @@ _stop_watcher_on_server() {
     padding="$padding "
   fi
   if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
-    # TODO - Uncomment
-    #  local project_dir="$HOME/$SYSTEMS_DIR/tomcat"
-    local project_dir="$HOME/code/tomcat"
+    local project_dir="$HOME/$SYSTEMS_DIR/tomcat"
 
     local exec_path="$project_dir/human_experiments/scripts/local/kill_program"
     local command="$exec_path $pid"

@@ -146,6 +146,8 @@ __cleanup() {
   local padding=$1
   echo -e "${padding}Ending experiment..."
 
+  source minecraft_data_watcher "stop" "$padding "
+
   __cleanup_on_client "lion" "lion.local" "$padding "
   __cleanup_on_client "tiger" "tiger.local" "$padding "
   __cleanup_on_client "leopard" "leopard.local" "$padding "
