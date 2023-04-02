@@ -180,7 +180,7 @@ _start_recording() {
 }
 
 _stop_recording() {
-  _stop_record_on_client "lion" "lion.local" "$padding"
+  _stop_on_client "lion" "lion.local" "$padding"
   #  _stop_record_on_client "tiger" "tiger.local" "$padding"
   #  _stop_record_on_client "leopard" "leopard.local" "$padding"
 }
