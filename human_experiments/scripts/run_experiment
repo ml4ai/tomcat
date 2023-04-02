@@ -108,30 +108,21 @@ else
 fi
 export TMUX_ON
 
+# Open extra panes or terminal to display the monitor program and announcements menu.
+monitor_command="source $HOME/$SYSTEMS_DIR/tomcat/human_experiments/lab_software/monitor_programs/monitor"
+announcements_command="source $HOME/$SYSTEMS_DIR/tomcat/human_experiments/lab_software/say_announcements/say_announcements_menu"
 if [[ $TMUX_ON -eq 1 ]]; then
-  # Split the screen in three panels. The uber script will be on the left, the monitor in the upper
+# Split the screen in three panels. The uber script will be on the left, the monitor in the upper
   # right and the announcements in the bottom right
-  tmux split-window -h
-  tmux split-window -v
-
-  # Open the monitor in the upper right pane
-  tmux select-pane -t 1
-  pushd "$HOME/$SYSTEMS_DIR/tomcat/human_experiments/lab_software/monitor_programs" > /dev/null || exit
-    ./monitor
-  popd >/dev/null || exit
-
-  # Open the announcements menu in the bottom right pane
-  tmux select-pane -t 2
-  pushd "$HOME/$SYSTEMS_DIR/tomcat/human_experiments/lab_software/say_announcements" > /dev/null || exit
-    ./say_announcements_menu
-  popd >/dev/null || exit
+  tmux split-window -h "$monitor_command"
+  tmux split-window -v "$announcements_command"
 
   # Move back to the main pane
   tmux select-pane -t 0
 else
   # Open two extra terminals with the announcement menu and monitor programs
-  gnome-terminal -- bash -c "source $HOME/$SYSTEMS_DIR/tomcat/human_experiments/lab_software/say_announcements/say_announcements_menu"
-  gnome-terminal -- bash -c "source $HOME/$SYSTEMS_DIR/tomcat/human_experiments/lab_software/monitor_programs/monitor"
+  gnome-terminal -- bash -c "$monitor_command"
+  gnome-terminal -- bash -c "$announcements_command"
 fi
 
 if [[ $TEST -eq 1 ]]; then
