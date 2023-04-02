@@ -95,12 +95,17 @@ _stop_on_client() {
 
     local project_dir="\$HOME/$SYSTEMS_DIR/tomcat"
 
+    # Wait for a while just to be sure all the data was saved.
+    sleep 5
+
     # Closing the program
     local exec_path="$project_dir/human_experiments/scripts/local/close_pupil_program"
     local command="$exec_path"
 
     # shellcheck disable=SC2029
     ssh "$EXPERIMENT_USER@$client_address" "$command"
+
+    sleep 1
 
     # Remove symbolic link
     while true; do
