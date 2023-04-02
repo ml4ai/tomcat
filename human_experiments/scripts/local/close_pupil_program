@@ -1,0 +1,6 @@
+#! /bin/bash
+
+set -u
+
+# Pupil Capture doesn't do clean up on SIGTERM, but it does on SIGINT.
+pkill -SIGINT pupil

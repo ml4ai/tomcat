@@ -5,7 +5,7 @@ set -u
 # TODO - Remove
 source configuration_helpers
 
-mode=$1   # start or stop
+action=$1 # start or stop
 
 if [[ -z ${2+x} ]]; then
   padding=""
@@ -13,9 +13,8 @@ else
   padding=$2
 fi
 
-
-if [[ "$mode" != "start" ]] && [[ "$mode" != "stop" ]]; then
-  echo -e "${RED}{$padding}The second parameter os this script must be a mode form the list [start, stop].${NC}"
+if [[ "$action" != "start" ]] && [[ "$action" != "stop" ]]; then
+  echo -e "${RED}{$padding}The second parameter os this script must be a action form the list [start, stop].${NC}"
 fi
 
 # Error codes
@@ -126,6 +125,8 @@ _monitor_launch_on_server() {
 
       if [[ $retry -eq 0 ]]; then
         _watch_on_server
+      else
+        break
       fi
     fi
   done
@@ -138,14 +139,23 @@ _stop_watcher_on_server() {
   local pid
   pid=$(cat "$pid_file")
 
-  # TODO - Uncomment
-  #  local project_dir="$HOME/$SYSTEMS_DIR"
-  local project_dir="$HOME/code"
+  if [[ $ALL -ne 1 ]]; then
+    yes_no_question "${padding}Do you want to start recording on ${EMPH}tom${NC}?"
+    ans=$?
+    padding="$padding "
+  fi
+  if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
+    # TODO - Uncomment
+    #  local project_dir="$HOME/$SYSTEMS_DIR"
+    local project_dir="$HOME/code"
 
-  local exec_path="$project_dir/tomcat/human_experiments/scripts/local/kill_program"
-  local command="$exec_path $pid"
+    local exec_path="$project_dir/tomcat/human_experiments/scripts/local/kill_program"
+    local command="$exec_path $pid"
 
-  $command
+    $command
+
+    rm "$pid_file"
+  fi
 }
 
 _start_watcher() {
@@ -159,7 +169,7 @@ _stop_watcher() {
   _stop_watcher_on_server "$padding"
 }
 
-if [[ "$mode" == "start" ]]; then
+if [[ "$action" == "start" ]]; then
   _start_watcher "$padding"
 else
   _stop_watcher "$padding"

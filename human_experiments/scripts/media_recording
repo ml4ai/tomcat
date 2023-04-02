@@ -6,7 +6,7 @@ set -u
 source configuration_helpers
 
 device=$1 # webcam or screen
-mode=$2   # start or stop
+action=$2   # start or stop
 
 if [[ -z ${3+x} ]]; then
   padding=""
@@ -18,8 +18,8 @@ if [[ "$device" != "webcam" ]] && [[ "$device" != "screen" ]] && [[ "$device" !=
   echo -e "${RED}{$padding}The first parameter os this script must be a device form the list [webcam, screen, audio].${NC}"
 fi
 
-if [[ "$mode" != "start" ]] && [[ "$mode" != "stop" ]]; then
-  echo -e "${RED}{$padding}The second parameter os this script must be a mode form the list [start, stop].${NC}"
+if [[ "$action" != "start" ]] && [[ "$action" != "stop" ]]; then
+  echo -e "${RED}{$padding}The second parameter os this script must be a action form the list [start, stop].${NC}"
 fi
 
 # Error codes
@@ -69,6 +69,7 @@ _record_on_client() {
   # Just calls the executable on a client machine and leaves. It does not wait for status.
   local client_name=$1
   local client_address=$2
+  local participant_id=$3
   local tmp_file_root_dir="$EXPERIMENT_DIR/tmp/${device}_$client_name"
   local log_file="$tmp_file_root_dir.log"
   local pid_file="$tmp_file_root_dir.pid"
@@ -86,14 +87,16 @@ _record_on_client() {
     local images_dir="$EXPERIMENT_DIR/$client_name/face_images/block_$EXPERIMENT_BLOCK"
     local command="$exec_path $images_dir $video_fps $log_file $pid_file"
   else
+    local audio_dir="$EXPERIMENT_DIR/$client_name/audio/block_$EXPERIMENT_BLOCK"
+
     if [[ "$client_name" == "cat" ]] || [[ "$client_name" == "tom" ]]; then
       local exec_path="$project_dir/tomcat/human_experiments/scripts/local/record_audio"
+      local command="$exec_path $audio_dir $log_file $pid_file"
     else
       # If the client is one of the iMacs, we want to call the audio streamer instead.
       local exec_path="$project_dir/tomcat/human_experiments/scripts/local/stream_audio"
+      local command="$exec_path $audio_dir tom.local local.host $participant_id $log_file $pid_file"
     fi
-    local audio_dir="$EXPERIMENT_DIR/$client_name/audio/block_$EXPERIMENT_BLOCK"
-    local command="$exec_path $audio_dir $log_file $pid_file"
   fi
 
   # shellcheck disable=SC2029
@@ -106,7 +109,8 @@ _start_recording_on_client() {
   # Initial call to the executable on a client machine
   local client_name=$1
   local client_address=$2
-  local padding=$3
+  local participant_id=$3
+  local padding=$4
 
   if [[ $ALL -ne 1 ]]; then
     yes_no_question "${padding}Do you want to start recording on ${EMPH}$client_name${NC}?"
@@ -114,7 +118,7 @@ _start_recording_on_client() {
     padding="$padding "
   fi
   if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
-    _record_on_client "$client_name" "$client_address"
+    _record_on_client "$client_name" "$client_address" "$participant_id"
   fi
 }
 
@@ -122,7 +126,8 @@ _monitor_launch_on_client() {
   # Monitors a previous call to the recording program in a client. Let's the user retry the program.
   local client_name=$1
   local client_address=$2
-  local padding=$3
+  local participant_id=$3
+  local padding=$4
 
   echo -e "${padding}Waiting for the program to launch on ${EMPH}$client_name${NC}..."
   padding="$padding "
@@ -154,7 +159,9 @@ _monitor_launch_on_client() {
       retry=$?
 
       if [[ $retry -eq 0 ]]; then
-        _record_on_client "$client_name" "$client_address"
+        _record_on_client "$client_name" "$client_address" "$participant_id"
+      else
+        break
       fi
     fi
   done
@@ -162,12 +169,12 @@ _monitor_launch_on_client() {
 
 _monitor_launch_on_clients() {
   echo -e "${padding}Waiting for the program to launch on the clients..."
-  _monitor_launch_on_client "lion" "lion.local" "$padding "
-  _monitor_launch_on_client "tiger" "tiger.local" "$padding "
-  _monitor_launch_on_client "leopard" "leopard.local" "$padding "
+  _monitor_launch_on_client "lion" "lion.local" "$LION_PARTICIPANT_ID" "$padding "
+  _monitor_launch_on_client "tiger" "tiger.local" "$TIGER_PARTICIPANT_ID" "$padding "
+  _monitor_launch_on_client "leopard" "leopard.local" "$LEOPARD_PARTICIPANT_ID" "$padding "
 
   if [[ "$device" == "audio" ]]; then
-    _monitor_launch_on_client "cat" "cat.local" "$padding "
+    _monitor_launch_on_client "cat" "cat.local" "" "$padding "
   fi
 }
 
@@ -180,27 +187,36 @@ _stop_record_on_client() {
   local pid
   pid=$(cat "$pid_file")
 
-  # TODO - Uncomment
-  #  local project_dir="\$HOME/$SYSTEMS_DIR"
-  local project_dir="$HOME/code"
+  if [[ $ALL -ne 1 ]]; then
+    yes_no_question "${padding}Do you want to start recording on ${EMPH}$client_name${NC}?"
+    ans=$?
+    padding="$padding "
+  fi
+  if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
+    # TODO - Uncomment
+    #  local project_dir="\$HOME/$SYSTEMS_DIR"
+    local project_dir="$HOME/code"
 
-  local exec_path="$project_dir/tomcat/human_experiments/scripts/local/kill_program"
-  local command="$exec_path $pid"
+    local exec_path="$project_dir/tomcat/human_experiments/scripts/local/kill_program"
+    local command="$exec_path $pid"
 
-  # shellcheck disable=SC2029
-  # TODO - Uncomment
-  #      ssh "$EXPERIMENT_USER@$client_address" "$command"
-  $command
+    # shellcheck disable=SC2029
+    # TODO - Uncomment
+    #      ssh "$EXPERIMENT_USER@$client_address" "$command"
+    $command
+
+    rm "$pid_file"
+  fi
 }
 
 _start_recording() {
   # Start at the same time in all clients
-  _start_recording_on_client "lion" "lion.local" "$padding"
-  _start_recording_on_client "tiger" "tiger.local" "$padding"
-  _start_recording_on_client "leopard" "leopard.local" "$padding"
+  _start_recording_on_client "lion" "lion.local" "$LION_PARTICIPANT_ID" "$padding"
+  _start_recording_on_client "tiger" "tiger.local" "$TIGER_PARTICIPANT_ID" "$padding"
+  _start_recording_on_client "leopard" "leopard.local" "$LEOPARD_PARTICIPANT_ID" "$padding"
 
   if [[ "$device" == "audio" ]]; then
-    _start_recording_on_client "cat" "cat.local" "$padding"
+    _start_recording_on_client "cat" "cat.local" "" "$padding"
   fi
 
   # Wait until the program have launched in all the clients
@@ -217,7 +233,8 @@ _stop_recording() {
   fi
 }
 
-if [[ "$mode" == "start" ]]; then
+if [[ "$action" == "start" ]]; then
+  source collect_participant_ids "$padding"
   _start_recording "$padding"
 else
   _stop_recording "$padding"

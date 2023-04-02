@@ -1,0 +1,186 @@
+#!/bin/bash
+
+set -u
+
+# TODO - Remove
+source configuration_helpers
+
+action=$1 # start or stop
+
+if [[ -z ${2+x} ]]; then
+  padding=""
+else
+  padding=$2
+fi
+
+if [[ "$action" != "open" ]] && [[ "$action" != "start" ]] && [[ "$action" != "stop" ]]; then
+  echo -e "${RED}{$padding}The second parameter os this script must be a action form the list [start, stop].${NC}"
+fi
+
+_record_on_client() {
+  local client_address=$1
+
+  local project_dir="$HOME/$SYSTEMS_DIR"
+
+  pushd "$project_dir/human_experiments/scripts/local" >/dev/null || exit
+  while true; do
+    python3 pupil_api_handler.py --action="start" --host="$client_address"
+    local error_code=$?
+
+    if [[ $error_code -ne 0 ]]; then
+      echo -e "${padding}Could not start recording programmatically. Please, proceed with manual recording or retry."
+      retry_question "$padding"
+      retry=$?
+
+      if [[ $retry -ne 0 ]]; then
+        break
+      fi
+    fi
+  done
+  popd >/dev/null || exit
+}
+
+_start_recording_on_client() {
+  # Initial call to the executable on a client machine
+  local client_name=$1
+  local client_address=$2
+  local padding=$3
+
+  if [[ $ALL -ne 1 ]]; then
+    yes_no_question "${padding}Do you want to start Pupil Capture on ${EMPH}$client_name${NC}?"
+    ans=$?
+    padding="$padding "
+  fi
+  if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
+    _record_on_client "$client_address"
+  fi
+}
+
+_stop_on_client() {
+  local client_name=$1
+  local client_address=$2
+  local padding=$3
+
+  if [[ $ALL -ne 1 ]]; then
+    yes_no_question "${padding}Do you want to start Pupil Capture on ${EMPH}$client_name${NC}?"
+    ans=$?
+    padding="$padding "
+  fi
+  if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
+    local project_dir="$HOME/$SYSTEMS_DIR"
+
+    # Stop recording
+    pushd "$project_dir/human_experiments/scripts/local" >/dev/null || exit
+    while true; do
+      python3 pupil_api_handler.py --action="stop" --host="$client_address"
+      local error_code=$?
+
+      if [[ $error_code -ne 0 ]]; then
+        echo -e "${padding}Could not stop recording programmatically. Please, proceed with manual stop or retry."
+        retry_question "$padding"
+        retry=$?
+
+        if [[ $retry -ne 0 ]]; then
+          break
+        fi
+      fi
+    done
+    popd >/dev/null || exit
+
+    local project_dir="\$HOME/$SYSTEMS_DIR"
+
+    # Closing the program
+    local exec_path="$project_dir/tomcat/human_experiments/scripts/local/close_pupil_program"
+    local command="$exec_path"
+
+    # shellcheck disable=SC2029
+    ssh "$EXPERIMENT_USER@$client_address" "$command"
+
+    # Remove symbolic link
+    while true; do
+      local exec_path="$project_dir/tomcat/human_experiments/scripts/local/remove_pupil_symlink"
+      local command="$exec_path"
+
+      # shellcheck disable=SC2029
+      if ! ssh "$EXPERIMENT_USER@$client_address" "$command"; then
+        echo -e "${padding}Could not remove symlink."
+        retry_question "$padding"
+        retry=$?
+
+        if [[ $retry -ne 0 ]]; then
+          break
+        fi
+      fi
+    done
+  fi
+}
+
+_open_on_client() {
+  # Just opens the program on a client machine and leaves. It does not wait for status.
+  local client_name=$1
+  local client_address=$2
+  local padding=$3
+
+  if [[ $ALL -ne 1 ]]; then
+    yes_no_question "${padding}Do you want to open Pupil Capture on ${EMPH}$client_name${NC}?"
+    ans=$?
+    padding="$padding "
+  fi
+  if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
+    local project_dir="\$HOME/$SYSTEMS_DIR"
+
+    # Open program
+    local exec_path="$project_dir/tomcat/human_experiments/scripts/local/open_pupil_program"
+    local command="$exec_path"
+
+    # shellcheck disable=SC2029
+    ssh "$EXPERIMENT_USER@$client_address" "$command"
+
+    # Create symbolic link
+    while true; do
+      local exec_path="$project_dir/tomcat/human_experiments/scripts/local/create_pupil_symlink"
+      local command="$exec_path"
+
+      # shellcheck disable=SC2029
+      if ! ssh "$EXPERIMENT_USER@$client_address" "$command"; then
+        echo -e "${padding}Could not create symlink."
+        retry_question "$padding"
+        retry=$?
+
+        if [[ $retry -ne 0 ]]; then
+          break
+        fi
+      fi
+    done
+  fi
+}
+
+_open() {
+  # Start at the same time in all clients
+  _open_on_client "lion" "lion.local" "$padding"
+  _open_on_client "tiger" "tiger.local" "$padding"
+  _open_on_client "leopard" "leopard.local" "$padding"
+}
+
+_start_recording() {
+  # Start at the same time in all clients
+  _start_recording_on_client "lion" "lion.local" "$padding"
+  _start_recording_on_client "tiger" "tiger.local" "$padding"
+  _start_recording_on_client "leopard" "leopard.local" "$padding"
+}
+
+_stop_recording() {
+  _stop_record_on_client "lion" "lion.local" "$padding"
+  _stop_record_on_client "tiger" "tiger.local" "$padding"
+  _stop_record_on_client "leopard" "leopard.local" "$padding"
+}
+
+if [[ "$action" == "open" ]]; then
+  # Opens the programs and creates symbolic links
+  _open_recording "$padding"
+elif [[ "$action" == "start" ]]; then
+  _start_recording "$padding"
+elif [[ "$action" == "stop" ]]; then
+  # Stops recorder, closes the programs and removes the symbolic links
+  _stop_recording "$padding"
+fi
