@@ -158,21 +158,21 @@ _open_on_client() {
 _open() {
   # Start at the same time in all clients
   _open_on_client "lion" "lion.local" "$padding"
-  _open_on_client "tiger" "tiger.local" "$padding"
-  _open_on_client "leopard" "leopard.local" "$padding"
+#  _open_on_client "tiger" "tiger.local" "$padding"
+#  _open_on_client "leopard" "leopard.local" "$padding"
 }
 
 _start_recording() {
   # Start at the same time in all clients
   _start_recording_on_client "lion" "lion.local" "$padding"
-  _start_recording_on_client "tiger" "tiger.local" "$padding"
-  _start_recording_on_client "leopard" "leopard.local" "$padding"
+#  _start_recording_on_client "tiger" "tiger.local" "$padding"
+#  _start_recording_on_client "leopard" "leopard.local" "$padding"
 }
 
 _stop_recording() {
   _stop_record_on_client "lion" "lion.local" "$padding"
-  _stop_record_on_client "tiger" "tiger.local" "$padding"
-  _stop_record_on_client "leopard" "leopard.local" "$padding"
+#  _stop_record_on_client "tiger" "tiger.local" "$padding"
+#  _stop_record_on_client "leopard" "leopard.local" "$padding"
 }
 
 if [[ "$action" == "open" ]]; then
