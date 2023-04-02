@@ -90,11 +90,11 @@ _record_on_client() {
     local audio_dir="$EXPERIMENT_DIR/$client_name/audio/block_$EXPERIMENT_BLOCK"
 
     if [[ "$client_name" == "cat" ]] || [[ "$client_name" == "tom" ]]; then
-      local exec_path="$project_dir/tomcat/human_experiments/scripts/local/record_audio"
+      local exec_path="$project_dir/human_experiments/scripts/local/record_audio"
       local command="$exec_path $audio_dir $log_file $pid_file"
     else
       # If the client is one of the iMacs, we want to call the audio streamer instead.
-      local exec_path="$project_dir/tomcat/human_experiments/scripts/local/stream_audio"
+      local exec_path="$project_dir/human_experiments/scripts/local/stream_audio"
       local command="$exec_path $audio_dir tom.local local.host $participant_id $log_file $pid_file"
     fi
   fi
