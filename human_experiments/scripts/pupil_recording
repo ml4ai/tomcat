@@ -28,10 +28,10 @@ _record_on_client() {
     local error_code=$?
 
     if [[ $error_code -eq 0 ]]; then
-      echo -e "${padding}Recording from Pupil Capture."
+      echo -e "${padding}${GREEN}Recording from Pupil Capture.${NC}"
       break
     else
-      echo -e "${padding}Could not start recording programmatically. Please, proceed with manual recording or retry."
+      echo -e "${padding}${RED}Could not start recording programmatically. Please, proceed with manual recording or retry.${NC}"
       retry_question "$padding"
       retry=$?
 
@@ -79,10 +79,12 @@ _stop_on_client() {
       local error_code=$?
 
       if [[ $error_code -eq 0 ]]; then
-        echo -e "${padding}Stopped recording from Pupil Capture, closed program and removed symlink."
+        # Wait for a while just to be sure all the data was saved.
+        sleep 5
+        echo -e "${padding}${GREEN}Stopped recording from Pupil Capture.${NC}"
         break
       else
-        echo -e "${padding}Could not stop recording programmatically. Please, proceed with manual stop or retry."
+        echo -e "${padding}${RED}Could not stop recording programmatically. Please, proceed with manual stop or retry.${NC}"
         retry_question "$padding"
         retry=$?
 
@@ -95,17 +97,27 @@ _stop_on_client() {
 
     local project_dir="\$HOME/$SYSTEMS_DIR/tomcat"
 
-    # Wait for a while just to be sure all the data was saved.
-    sleep 5
-
     # Closing the program
     local exec_path="$project_dir/human_experiments/scripts/local/close_pupil_program"
     local command="$exec_path"
 
     # shellcheck disable=SC2029
-    ssh "$EXPERIMENT_USER@$client_address" "$command"
+    while true; do
+      if ssh "$EXPERIMENT_USER@$client_address" "$command"; then
+        # Wait a bit before proceeding.
+        sleep 1
+        echo -e "${padding}${GREEN}Closed Pupil Capture${NC}"
+        break
+      else
+        echo -e "${padding}${RED}Could not close Pupil Capture.${NC}"
+        retry_question "$padding"
+        retry=$?
 
-    sleep 1
+        if [[ $retry -ne 0 ]]; then
+          break
+        fi
+      fi
+    done
 
     # Remove symbolic link
     while true; do
@@ -113,8 +125,11 @@ _stop_on_client() {
       local command="$exec_path"
 
       # shellcheck disable=SC2029
-      if ! ssh "$EXPERIMENT_USER@$client_address" "$command"; then
-        echo -e "${padding}Could not remove symlink."
+      if ssh "$EXPERIMENT_USER@$client_address" "$command"; then
+        echo -e "${padding}${GREEN}Symlink removed${NC}"
+        break
+      else
+        echo -e "${padding}${RED}Could not remove symlink.${NC}"
         retry_question "$padding"
         retry=$?
 
@@ -155,10 +170,10 @@ _open_on_client() {
 
       # shellcheck disable=SC2029
       if ssh "$EXPERIMENT_USER@$client_address" "$command"; then
-        echo -e "${padding}Program successfully opened and symlink created."
+        echo -e "${padding}${GREEN}Program successfully opened and symlink created.${NC}"
         break
       else
-        echo -e "${padding}Could not create symlink."
+        echo -e "${padding}${RED}Could not create symlink.${NC}"
         retry_question "$padding"
         retry=$?
 
