@@ -87,7 +87,7 @@ _record_on_client() {
     # via ssh directly otherwise we won't be granted access to the camera and there's no option to grant that access
     # in the Mac's Privacy and Security settings. So, to make this work we encapsulate the call to the script in an
     # apple script, which we can below.
-    local command="osascript $macos_script $exec_path $images_dir $video_fps \$HOME/$log_file "\\$"HOME/$pid_file"
+    local command="osascript $macos_script $exec_path $images_dir $video_fps \$HOME/$log_file \$HOME/$pid_file"
   else
     local audio_dir="$EXPERIMENT_DIR/$client_name/audio/block_$EXPERIMENT_BLOCK"
 
@@ -214,6 +214,7 @@ _start_recording() {
   fi
 
   # Wait until the program have launched in all the clients
+  sleep 5  # Wait for a while to ensure the process IDs were written to files
   _monitor_launch_on_clients "$padding"
 }
 

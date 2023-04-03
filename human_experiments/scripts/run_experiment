@@ -56,9 +56,10 @@ __help() {
   echo " [11.2]: Screen"
   echo "[12]: Start the Baseline Tasks"
   echo "[13]: End Block 1"
-  echo " [13.1]: Stop Face and Screen recordings"
-  echo " [13.2]: Stop Eye-tracker recordings"
-  echo " [13.3]: Stop LabRecorder"
+  echo " [13.1]: Stop Face recordings"
+  echo " [13.2]: Stop Screen recordings"
+  echo " [13.3]: Stop Eye-tracker recordings"
+  echo " [13.4]: Stop LabRecorder"
   echo -e "${BLACK}${ON_YELLOW}Block 2                                  ${NC}"
   echo "[14]: Start the Lab Recorder"
   echo "[15]: Start Minecraft Data Watcher"
@@ -232,7 +233,7 @@ echo -e "${BLACK}${ON_CYAN}Wait for Okay from the Social Science team.${NC}"
 if [[ $GOTO -le 9 ]]; then
   echo " "
   if yes_no_question "[9] Do you want to start ${EMPH}Lab Recorder${NC}?"; then
-    source start_lab_recorder 1 " "
+    source start_lab_recorder " "
   fi
 fi
 
@@ -265,14 +266,16 @@ fi
 if [[ $GOTO -le 13 ]]; then
   echo " "
   if yes_no_question "[13] Do you want to finish ${EMPH}Block 1${NC}?"; then
-    if yes_no_question " [13.1] Do you want to stop ${EMPH}Face and Screen${NC} recordings?"; then
+    if yes_no_question " [13.1] Do you want to stop ${EMPH}Face${NC} recordings?"; then
       source media_recording "webcam" "stop" " "
+    fi
+    if yes_no_question " [13.2] Do you want to stop ${EMPH}Screen${NC} recordings?"; then
       source media_recording "screen" "stop" "  "
     fi
-    if yes_no_question " [13.2] Do you want to stop recording from the ${EMPH}Eye-tracker${NC} program?"; then
+    if yes_no_question " [13.3] Do you want to stop recording from the ${EMPH}Eye-tracker${NC} program?"; then
       source pupil_recording "stop" "  "
     fi
-    if yes_no_question " [13.3] Do you want to stop ${EMPH}LabRecorder${NC} and kill its instances on CAT?"; then
+    if yes_no_question " [13.4] Do you want to stop ${EMPH}LabRecorder${NC} and kill its instances on CAT?"; then
       source stop_lab_recorder
     fi
   fi
