@@ -80,7 +80,13 @@ _record_on_client() {
     local command="$exec_path $images_dir $video_fps $log_file $pid_file"
   elif [[ "$device" == "webcam" ]]; then
     local images_dir="$EXPERIMENT_DIR/$client_name/face_images/block_$EXPERIMENT_BLOCK"
-    local command="$exec_path $images_dir $video_fps $log_file $pid_file"
+    local macos_script="$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/macos/stream_webcam.scpt"
+
+    # To record from the webcam, we need to bypass security blocks from Apple. We cannot execute the capture program in
+    # via ssh directly otherwise we won't be granted access to the camera and there's no option to grant that access
+    # in the Mac's Privacy and Security settings. So, to make this work we encapsulate the call to the script in an
+    # apple script, which we can below.
+    local command="osascript $macos_script $exec_path $images_dir $video_fps $log_file $pid_file"
   else
     local audio_dir="$EXPERIMENT_DIR/$client_name/audio/block_$EXPERIMENT_BLOCK"
 
