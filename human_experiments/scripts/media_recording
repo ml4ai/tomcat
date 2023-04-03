@@ -96,7 +96,7 @@ _record_on_client() {
     else
       # If the client is one of the iMacs, we want to call the audio streamer instead.
       local exec_path="$project_dir/human_experiments/scripts/local/stream_audio"
-      local command="$exec_path $audio_dir tom.local local.host $participant_id $log_file $pid_file"
+      local command="$exec_path $audio_dir tom.local tom.local $participant_id $log_file $pid_file"
     fi
   fi
 
