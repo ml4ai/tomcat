@@ -13,7 +13,7 @@ TIMESTAMP = "t"
 def send_command(conn: Any, command: str) -> str:
     try:
         conn.send_string(command)
-        time.sleep(5)
+        time.sleep(2)
         conn.recv_string(zmq.NOBLOCK)
     except zmq.ZMQError:
         return "error"

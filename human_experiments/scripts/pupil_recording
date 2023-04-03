@@ -150,7 +150,7 @@ _open_on_client() {
     # Create symbolic link
     while true; do
       local exec_path="$project_dir/human_experiments/scripts/local/create_pupil_symlink"
-      local command="$exec_path $target_dir"
+      local command="$exec_path \$HOME/$target_dir"
 
       # shellcheck disable=SC2029
       if ssh "$EXPERIMENT_USER@$client_address" "$command"; then
