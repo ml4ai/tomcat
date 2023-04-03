@@ -27,12 +27,12 @@ find_package(Mosquitto REQUIRED)
 
 message(STATUS ${LSL_DIR})
 
-set(_libs
-        nlohmann_json::nlohmann_json
-        fmt::fmt
-        ${Mosquitto_LIBRARIES}
-        LSL::lsl
-        ${Boost_LIBRARIES}
-        -pthread)
+#set(_libs
+#        nlohmann_json::nlohmann_json
+#        fmt::fmt
+#        ${Mosquitto_LIBRARIES}
+#        LSL::lsl
+#        ${Boost_LIBRARIES}
+#        -pthread)
 
 add_subdirectory(src)
