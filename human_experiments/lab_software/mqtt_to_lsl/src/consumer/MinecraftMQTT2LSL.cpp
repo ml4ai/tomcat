@@ -1,6 +1,7 @@
 #include "MinecraftMQTT2LSL.h"
 
 #include <iostream>
+#include <memory>
 
 #include <fmt/format.h>
 #include <nlohmann/json.hpp>
