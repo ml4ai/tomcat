@@ -15,7 +15,7 @@ target_link_libraries(project_static_lib
         ${Boost_LIBRARIES}
         nlohmann_json::nlohmann_json
         fmt::fmt
-        -pthreads)
+        -pthread)
 
 add_executable(minecraft_mqtt_to_lsl minecraft_mqtt_to_lsl.cpp)
 target_include_directories(minecraft_mqtt_to_lsl PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
