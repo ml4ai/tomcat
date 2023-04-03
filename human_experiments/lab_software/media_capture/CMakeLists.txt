@@ -23,29 +23,21 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/)
 
 find_package(LSL REQUIRED)
-find_package(FMT REQUIRED)
+find_package(fmt REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(Boost REQUIRED COMPONENTS program_options)
 find_package(Threads REQUIRED)
 find_package(portaudio REQUIRED)
 
-# This is required for screen recording on a mac
+# This is required for screen recording on a Mac
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     set(CMAKE_EXE_LINKER_FLAGS "-framework CoreGraphics")
 else ()
-    message(STATUS "[WARNING]: The screen recording functionality is only available on Mac OSx systems.")
+    message(STATUS "[WARNING]: The screen recording functionality is only available on MacOS systems.")
 endif ()
 
 # Finding the Mosquitto header and library
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
         "${CMAKE_SOURCE_DIR}/../../../tools/cmake")
-
-set(_libs
-        fmt::fmt
-        LSL::lsl
-        ${Boost_LIBRARIES}
-        ${OpenCV_LIBRARIES}
-        ${portaudio_LIBRARY}
-        -pthread)
 
 add_subdirectory(src)

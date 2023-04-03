@@ -3,12 +3,23 @@
 
 ## Prerequisites
 
-Install OpenCV, ffmpeg and portaudio. With MacPorts, you can use the invocation below.
+Install OpenCV, ffmpeg, libfmt9, liblsl, and portaudio.
+
+### MacPorts
+
+With MacPorts, you can use the invocations below.
+
 ```
-sudo port install opencv4 ffmpeg portaudio
+sudo port selfupdate
+sudo port install opencv4 ffmpeg libfmt9 portaudio liblsl
 ```
 
-Install liblsl from source.
+
+### Installing LSL from source
+
+If you don't have MacPorts, you can use the invocation below to install liblsl
+from source.
+
 ```
 ./tomcat/tools/install_from_source/liblsl
 ```
@@ -21,7 +32,20 @@ you can use the commands below to build the project.
 ```
 mkdir build
 cd build
-cmake .. -DOpenCV_DIR=/opt/local/libexec/opencv4/cmake/ -DLSL_INCLUDE_DIR=/usr/local/include
+```
+
+Then, do the following.
+
+If you installed LSL using MacPorts:
+
+```
+cmake .. -Dfmt_DIR=/opt/local/lib/libfmt9/cmake/fmt -DOpenCV_DIR=/opt/local/libexec/opencv4/cmake
+make -j
+```
+
+If you installed LSL from source:
+```
+cmake .. -Dfmt_DIR=/opt/local/lib/libfmt9/cmake/fmt -DOpenCV_DIR=/opt/local/libexec/opencv4/cmake -DLSL_INCLUDE_DIR=/usr/local/include
 make -j
 ```
 
@@ -36,7 +60,7 @@ The project will be built and the executable placed at `build/bin/`.
 ./video_capture --device="webcam" --out_dir<directory to store frames> --fps=<frames per second> --camera_index=<index of the camera device>
 ```
 
-or 
+or
 
 ```
 ./video_capture --device="webcam" --out_dir<directory to store frames> --fps=<frames per second> --camera_name=<name of the camera device>
