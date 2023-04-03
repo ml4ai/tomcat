@@ -13,6 +13,12 @@ Device::Device() {
     for (const auto& device : list_avfoundation_video_devices()) {
         video_device_name_to_index[device.name] = device.index;
     }
+
+    cout << "\nDevice List\n" << endl;
+    for (const auto& [name, index] : this->video_device_name_to_index){
+        cout << name << ": " << index << endl;
+    }
+    cout << "******************************" << endl;
 }
 
 void Device::create_output_directory(const filesystem::path& p) {
