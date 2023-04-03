@@ -49,9 +49,11 @@ __help() {
   echo "[6]:  Open the Client Map"
   echo "[7]:  Open the Eye-tracker program"
   echo "[8]:  Open the Instructive Video"
-  echo "[9]:  Start recording from the Eye-tracker"
-  echo "[10]: Start the Lab Recorder"
+  echo "[9]:  Start the Lab Recorder"
+  echo "[10]: Start recording from the Eye-tracker"
   echo "[11]: Start Face and Screen recordings"
+  echo " [11.1]: Face"
+  echo " [11.2]: Screen"
   echo "[12]: Start the Baseline Tasks"
   echo "[13]: End Block 1"
   echo " [13.1]: Stop Face and Screen recordings"
@@ -61,6 +63,9 @@ __help() {
   echo "[14]: Start the Lab Recorder"
   echo "[15]: Start Minecraft Data Watcher"
   echo "[16]: Start the Audio, Face and Screen recordings"
+  echo " [16.1]: Audio"
+  echo " [16.2]: Face"
+  echo " [16.3]: Screen"
   echo "[17]: Start Eye-tracker recordings"
   echo "[18]: Stop Eye-tracker recordings"
   echo "[19]: Open the Final Survey"
@@ -226,23 +231,27 @@ echo -e "${BLACK}${ON_CYAN}Wait for Okay from the Social Science team.${NC}"
 
 if [[ $GOTO -le 9 ]]; then
   echo " "
-  if yes_no_question "[9] Do you want to start recording from the ${EMPH}Eye-tracker${NC} program?"; then
-    source pupil_recording "start" " "
+  if yes_no_question "[9] Do you want to start ${EMPH}Lab Recorder${NC}?"; then
+    source start_lab_recorder 1 " "
   fi
 fi
 
 if [[ $GOTO -le 10 ]]; then
   echo " "
-  if yes_no_question "[10] Do you want to start ${EMPH}Lab Recorder${NC}?"; then
-    source start_lab_recorder 1 " "
+  if yes_no_question "[10] Do you want to start recording from the ${EMPH}Eye-tracker${NC} program?"; then
+    source pupil_recording "start" " "
   fi
 fi
 
 if [[ $GOTO -le 11 ]]; then
   echo " "
   if yes_no_question "[11] Do you want to start ${EMPH}Face and Screen${NC} recordings?"; then
-    source media_recording "webcam" "start" " "
-    source media_recording "screen" "start" " "
+    if yes_no_question " [11.1] Do you want to start ${EMPH}Face${NC} recordings?"; then
+      source media_recording "webcam" "start" "  "
+    fi
+    if yes_no_question " [11.2] Do you want to start ${EMPH}Screen${NC} recordings?"; then
+      source media_recording "screen" "start" "  "
+    fi
   fi
 fi
 
@@ -292,9 +301,15 @@ fi
 if [[ $GOTO -le 16 ]]; then
   echo " "
   if yes_no_question "[16] Do you want to start ${EMPH}Audio, Face and Screen${NC} recordings?"; then
-    source media_recording "audio" "start" " "
-    source media_recording "webcam" "start" " "
-    source media_recording "screen" "start" " "
+    if yes_no_question " [16.1] Do you want to stop ${EMPH}Audio${NC} recordings?"; then
+      source media_recording "audio" "stop" "  "
+    fi
+    if yes_no_question " [16.2] Do you want to stop ${EMPH}Face${NC} recordings?"; then
+      source media_recording "webcam" "stop" "  "
+    fi
+    if yes_no_question " [16.3] Do you want to stop ${EMPH}Screen${NC} recordings?"; then
+      source media_recording "screen" "stop" "  "
+    fi
   fi
 fi
 
