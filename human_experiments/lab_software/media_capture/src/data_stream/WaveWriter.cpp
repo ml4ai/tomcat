@@ -1,7 +1,6 @@
 #include "WaveWriter.h"
 
 #include <iostream>
-#include <vector>
 
 #include <fmt/format.h>
 

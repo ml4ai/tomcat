@@ -1,6 +1,7 @@
 #pragma on
 
 #include <fstream>
+#include <vector>
 
 class WaveWriter {
   public:
