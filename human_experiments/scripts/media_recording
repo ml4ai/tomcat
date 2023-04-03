@@ -208,14 +208,13 @@ _stop_record_on_client() {
 
 _start_recording() {
   # Start at the same time in all clients
-  if [[ "$device" == "audio" ]]; then
-    source collect_participant_ids "$padding"
-    _start_recording_on_client "cat" "cat.local" "" "$padding"
-  fi
-
   _start_recording_on_client "lion" "lion.local" "$LION_PARTICIPANT_ID" "$padding"
   _start_recording_on_client "tiger" "tiger.local" "$TIGER_PARTICIPANT_ID" "$padding"
   _start_recording_on_client "leopard" "leopard.local" "$LEOPARD_PARTICIPANT_ID" "$padding"
+
+  if [[ "$device" == "audio" ]]; then
+    _start_recording_on_client "cat" "cat.local" "" "$padding"
+  fi
 
   # Wait until the program have launched in all the clients
   _monitor_launch_on_clients "$padding"
@@ -232,6 +231,7 @@ _stop_recording() {
 }
 
 if [[ "$action" == "start" ]]; then
+  source collect_participant_ids "$padding"
   _start_recording "$padding"
 else
   _stop_recording "$padding"
