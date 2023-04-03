@@ -131,25 +131,26 @@ _open_on_client() {
       fi
     done
 
+    local target_dir="\$HOME/$EXPERIMENT_DIR/$client_name/pupil_recorder"
+
+    while true; do
+      if mkdir -p "$target_dir"; then
+        break
+      else
+        echo -e "${padding}${RED}Error when trying to create the folder ${target_dir}.${NC}"
+        retry_question "$padding"
+        retry=$?
+
+        if [[ $retry -ne 0 ]]; then
+          break
+        fi
+      fi
+    done
+
     # Create symbolic link
     while true; do
       local exec_path="$project_dir/human_experiments/scripts/local/create_pupil_symlink"
-      local target_dir="\$HOME/$EXPERIMENT_DIR/$client_name/pupil_recorder"
       local command="$exec_path $target_dir"
-
-      while true; do
-        if mkdir -p "$target_dir"; then
-          break
-        else
-          echo -e "${padding}${RED}Error when trying to create the folder ${target_dir}.${NC}"
-          retry_question "$padding"
-          retry=$?
-
-          if [[ $retry -ne 0 ]]; then
-            break
-          fi
-        fi
-      done
 
       # shellcheck disable=SC2029
       if ssh "$EXPERIMENT_USER@$client_address" "$command"; then
