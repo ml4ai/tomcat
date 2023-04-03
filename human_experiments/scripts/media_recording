@@ -204,6 +204,10 @@ _stop_record_on_client() {
 }
 
 _start_recording() {
+  if [[ "$device" == "audio" ]]; then
+    source collect_participant_ids "$padding"
+  fi
+
   # Start at the same time in all clients
   _start_recording_on_client "lion" "lion.local" "$LION_PARTICIPANT_ID" "$padding"
   _start_recording_on_client "tiger" "tiger.local" "$TIGER_PARTICIPANT_ID" "$padding"
@@ -229,7 +233,6 @@ _stop_recording() {
 }
 
 if [[ "$action" == "start" ]]; then
-  source collect_participant_ids "$padding"
   _start_recording "$padding"
 else
   _stop_recording "$padding"
