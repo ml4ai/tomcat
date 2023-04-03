@@ -14,7 +14,7 @@ if [[ "$action" != "start" ]] && [[ "$action" != "stop" ]]; then
   echo -e "${RED}{$padding}The second parameter os this script must be a action form the list [start, stop].${NC}"
 fi
 
-_launch_monitoring_program_cat() {
+_start_monitoring_program_cat() {
   local padding=$1
 
   if [[ $ALL -ne 1 ]]; then
