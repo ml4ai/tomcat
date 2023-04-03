@@ -86,7 +86,9 @@ _record_on_client() {
     # via ssh directly otherwise we won't be granted access to the camera and there's no option to grant that access
     # in the Mac's Privacy and Security settings. So, to make this work we encapsulate the call to the script in an
     # apple script, which we can below.
-    local command="osascript $macos_script $exec_path \$HOME/$images_dir $video_fps \$HOME/$log_file \$HOME/$pid_file"
+    # We need \\$ for a two pass expansion. In the osascript this becomes \$ and in the script called by the applescript
+    # in the macs, this will finally be $HOME.
+    local command="osascript $macos_script $exec_path "\\$"HOME/$images_dir $video_fps "\\$"HOME/$log_file "\\$"HOME/$pid_file"
   else
     local audio_dir="$EXPERIMENT_DIR/$client_name/audio/block_$EXPERIMENT_BLOCK"
 
@@ -206,13 +208,14 @@ _stop_record_on_client() {
 
 _start_recording() {
   # Start at the same time in all clients
+  if [[ "$device" == "audio" ]]; then
+    source collect_participant_ids "$padding"
+    _start_recording_on_client "cat" "cat.local" "" "$padding"
+  fi
+
   _start_recording_on_client "lion" "lion.local" "$LION_PARTICIPANT_ID" "$padding"
   _start_recording_on_client "tiger" "tiger.local" "$TIGER_PARTICIPANT_ID" "$padding"
   _start_recording_on_client "leopard" "leopard.local" "$LEOPARD_PARTICIPANT_ID" "$padding"
-
-  if [[ "$device" == "audio" ]]; then
-    _start_recording_on_client "cat" "cat.local" "" "$padding"
-  fi
 
   # Wait until the program have launched in all the clients
   _monitor_launch_on_clients "$padding"
@@ -229,7 +232,6 @@ _stop_recording() {
 }
 
 if [[ "$action" == "start" ]]; then
-  source collect_participant_ids "$padding"
   _start_recording "$padding"
 else
   _stop_recording "$padding"
