@@ -36,7 +36,7 @@ Webcam::Webcam(const string& camera_name, int frame_width, int frame_height) {
     int camera_index = this->video_device_name_to_index[camera_name];
     cout << fmt::format(
         "Found index {} for camera {}.", camera_index, camera_name);
-    this->camera_device = cv::VideoCapture();
+    this->camera_device = cv::VideoCapture(camera_index);
     this->camera_device.set(cv::CAP_PROP_FRAME_WIDTH, frame_width);
     this->camera_device.set(cv::CAP_PROP_FRAME_HEIGHT, frame_height);
 }
