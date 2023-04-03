@@ -11,6 +11,6 @@ software_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../lab_software/media_capt
 
 pushd "$software_dir" > /dev/null || exit
   # Run video capture in background and save terminal outputs and pid to a file.
-  ./video_capture --device="webcam" --camera_index=0 --fps="$frame_rate" --out_dir="$out_dir" &> "$log_file" &
+  ./video_capture --device="webcam" --camera_name="FaceTime HD Camera (Built-in)" --fps="$frame_rate" --out_dir="$out_dir" &> "$log_file" &
   echo $! > "$pid_file"
 popd > /dev/null || exit

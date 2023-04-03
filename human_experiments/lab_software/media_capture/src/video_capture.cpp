@@ -60,7 +60,7 @@ int main(int argc, const char* argv[]) {
     boost::trim(device_name);
 
     if (device_name != "webcam" and device_name != "screen") {
-        cerr << "Device ins not one in the list [webcam, screen, audio]."
+        cerr << "Device is not one in the list [webcam, screen, audio]."
              << endl;
         return 1;
     }
