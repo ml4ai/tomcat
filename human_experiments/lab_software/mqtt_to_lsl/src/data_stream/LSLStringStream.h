@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <memory>
 
 #include <lsl_cpp.h>
 #include <mosquitto.h>

@@ -146,8 +146,6 @@ _stop_watcher_on_server() {
     local command="$exec_path $pid"
 
     $command
-
-    rm "$pid_file"
   fi
 }
 

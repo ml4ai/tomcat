@@ -12,6 +12,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/)
 
 find_package(LSL REQUIRED)
 find_package(FMT REQUIRED)
+find_package(Threads REQUIRED)
 find_package(nlohmann_json REQUIRED)
 find_package(
         Boost 1.69

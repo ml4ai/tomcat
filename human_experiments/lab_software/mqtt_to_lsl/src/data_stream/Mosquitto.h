@@ -9,6 +9,7 @@
 
 #include <string>
 #include <thread>
+#include <functional>
 
 #include <mosquitto.h>
 

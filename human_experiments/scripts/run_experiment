@@ -258,10 +258,10 @@ if [[ $GOTO -le 13 ]]; then
   if yes_no_question "[13] Do you want to finish ${EMPH}Block 1${NC}?"; then
     if yes_no_question " [13.1] Do you want to stop ${EMPH}Face and Screen${NC} recordings?"; then
 #      source media_recording "webcam" "stop" " "
-      source media_recording "screen" "stop" " "
+      source media_recording "screen" "stop" "  "
     fi
     if yes_no_question " [13.2] Do you want to stop recording from the ${EMPH}Eye-tracker${NC} program?"; then
-      source pupil_recording "stop" " "
+      source pupil_recording "stop" "  "
     fi
     if yes_no_question " [13.3] Do you want to stop ${EMPH}LabRecorder${NC} and kill its instances on CAT?"; then
       source stop_lab_recorder
@@ -279,7 +279,6 @@ if [[ $GOTO -le 14 ]]; then
   echo " "
   if yes_no_question "[14] Do you want to start ${EMPH}Lab Recorder${NC}?"; then
     source start_lab_recorder " "
-    source minecraft_data_watcher "start"
   fi
 fi
 

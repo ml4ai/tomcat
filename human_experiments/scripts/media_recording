@@ -188,7 +188,7 @@ _stop_record_on_client() {
   pid=$(cat "$pid_file")
 
   if [[ $ALL -ne 1 ]]; then
-    yes_no_question "${padding}Do you want to start recording on ${EMPH}$client_name${NC}?"
+    yes_no_question "${padding}Do you want to stop recording on ${EMPH}$client_name${NC}?"
     ans=$?
     padding="$padding "
   fi
@@ -200,8 +200,6 @@ _stop_record_on_client() {
 
     # shellcheck disable=SC2029
     ssh "$EXPERIMENT_USER@$client_address" "$command"
-
-    rm "$pid_file"
   fi
 }
 
