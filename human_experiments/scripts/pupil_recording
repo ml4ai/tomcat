@@ -131,7 +131,7 @@ _open_on_client() {
       fi
     done
 
-    local target_dir="\$HOME/$EXPERIMENT_DIR/$client_name/pupil_recorder"
+    local target_dir="$EXPERIMENT_DIR/$client_name/pupil_recorder"
 
     while true; do
       if mkdir -p "$target_dir"; then
