@@ -25,8 +25,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
         "${CMAKE_SOURCE_DIR}/../../../tools/cmake")
 find_package(Mosquitto REQUIRED)
 
-message(STATUS ${LSL_DIR})
-
 #set(_libs
 #        nlohmann_json::nlohmann_json
 #        fmt::fmt
