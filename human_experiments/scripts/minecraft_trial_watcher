@@ -31,6 +31,8 @@ _start_watcher_on_server() {
   local exec_path="$project_dir/human_experiments/scripts/local/watch_minecraft_trial_id"
 
   local command="$exec_path $server_address $server_port $EXPERIMENT_DIR $log_file $pid_file"
+
+  $command
 }
 
 _stop_watcher_on_server() {
@@ -47,7 +49,8 @@ _stop_watcher_on_server() {
   local exec_path="$project_dir/human_experiments/scripts/local/kill_program"
   local command="$exec_path $pid"
 
-  $command
+  # Execute in a tmux session such that the program keeps running even if we kill the uber script
+  tmux new-session -d -s "minecraft_data_watcher" "$command"
 }
 
 _start_watcher() {
