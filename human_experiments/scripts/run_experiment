@@ -62,7 +62,9 @@ __help() {
   echo " [13.4]: Stop LabRecorder"
   echo -e "${BLACK}${ON_YELLOW}Block 2                                  ${NC}"
   echo "[14]: Start the Lab Recorder"
-  echo "[15]: Start Minecraft Data Watcher"
+  echo "[15]: Start Minecraft Watcher"
+  echo " [15.1]: Start Data Watcher"
+  echo " [15.2]: Start Trial ID Watcher"
   echo "[16]: Start the Audio, Face and Screen recordings"
   echo " [16.1]: Audio"
   echo " [16.2]: Face"
@@ -298,8 +300,13 @@ fi
 
 if [[ $GOTO -le 15 ]]; then
   echo " "
-  if yes_no_question "[15] Do you want to start the ${EMPH}Minecraft Data Watcher${NC}?"; then
-    source minecraft_data_watcher "start" " "
+  if yes_no_question "[15] Do you want to start the ${EMPH}Minecraft Watcher${NC}?"; then
+    if yes_no_question " [15.1] Do you want to start the ${EMPH}Data Watcher${NC}?"; then
+      source minecraft_data_watcher "start" "  "
+    fi
+    if yes_no_question " [15.2] Do you want to start the ${EMPH}Trial ID Watcher${NC}?"; then
+      source minecraft_trial_watcher "start" "  "
+    fi
   fi
 fi
 

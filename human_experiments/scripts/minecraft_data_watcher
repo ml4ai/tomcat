@@ -74,7 +74,7 @@ _watch_on_server() {
 _start_watcher_on_server() {
   local padding=$1
 
-  if yes_no_question "${padding}Do you want to start watching on ${EMPH}tom${NC}?"; then
+  if yes_no_question "${padding}Do you want to start the watcher on ${EMPH}tom${NC}?"; then
     _watch_on_server
   fi
 }
@@ -128,7 +128,7 @@ _stop_watcher_on_server() {
   local pid
   pid=$(cat "$pid_file")
 
-  if yes_no_question "${padding}Do you want to stop recording on ${EMPH}tom${NC}?"; then
+  if yes_no_question "${padding}Do you want to stop the watcher on ${EMPH}tom${NC}?"; then
     echo -e "${padding} Stopping."
 
     local project_dir="$HOME/$SYSTEMS_DIR/tomcat"
