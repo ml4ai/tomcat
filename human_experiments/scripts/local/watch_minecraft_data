@@ -15,7 +15,8 @@ pushd "$software_dir" > /dev/null || exit
 
   # Write the PID of this script to the file. This script must be called in a tmux session to prevent it from stopping
   # if the uber script is interrupted.
-  echo $$ > "$pid_file"
-  ./minecraft_mqtt_to_lsl --mqtt_addr="$mqtt_address" --mqtt_port="$mqtt_port" &> "$log_file"
+#  echo $$ > "$pid_file"
+  ./minecraft_mqtt_to_lsl --mqtt_addr="$mqtt_address" --mqtt_port="$mqtt_port" &> "$log_file" &
+  echo $! > "$pid_file"
   sleep 5
 popd > /dev/null || exit

@@ -68,7 +68,7 @@ _watch_on_server() {
 
   local command="$exec_path $server_address $server_port $log_file $pid_file"
 
-  $command
+  tmux new-session -d -s "minecraft_data_watcher" "$command"
 }
 
 _start_watcher_on_server() {
