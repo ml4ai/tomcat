@@ -68,7 +68,7 @@ _watch_on_server() {
 
   local command="$exec_path $server_address $server_port $log_file $pid_file"
 
-  nohup "source $command"
+  $command
 }
 
 _start_watcher_on_server() {
