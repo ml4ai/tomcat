@@ -28,4 +28,4 @@ __tmux_start_image_timestamp() {
     tmux new-window -t $IMAGE_TIMESTAMP_SESSION_NAME:5 -n "leopard-screen" "~/git/ML4AI/tomcat/human_experiments/lab_software/tomcat-images-timestamp/build/fileChecker --out 1 --path $monitoring_leopard_screen"
 }
 
-__tmux_start_image_timestamp $1
+__tmux_start_image_timestamp $1 $2

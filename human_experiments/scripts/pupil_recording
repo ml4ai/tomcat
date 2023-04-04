@@ -2,9 +2,6 @@
 
 set -u
 
-# TODO - Remove
-source configuration_helpers
-
 action=$1 # start or stop
 
 if [[ -z ${2+x} ]]; then
@@ -55,6 +52,7 @@ _start_recording_on_client() {
     padding="$padding "
   fi
   if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
+    echo -e "${padding}Starting Pupil Capture recording on ${EMPH}$client_name${NC}..."
     _record_on_client "$client_address"
   fi
 }
@@ -70,6 +68,9 @@ _stop_on_client() {
     padding="$padding "
   fi
   if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
+    echo -e "${padding}Stopping Pupil Capture recording on ${EMPH}$client_name${NC}..."
+    padding="$padding "
+
     local project_dir="$HOME/$SYSTEMS_DIR/tomcat"
 
     # Stop recording
@@ -109,6 +110,9 @@ _open_on_client() {
     padding="$padding "
   fi
   if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
+    echo -e "${padding}Opening Pupil Capture on ${EMPH}$client_name${NC}..."
+    padding="$padding "
+
     local project_dir="\$HOME/$SYSTEMS_DIR/tomcat"
 
     # Open program
@@ -181,6 +185,9 @@ _close_on_client() {
     padding="$padding "
   fi
   if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
+    echo -e "${padding}Closing Pupil Capture on ${EMPH}$client_name${NC}..."
+    padding="$padding "
+
     local project_dir="\$HOME/$SYSTEMS_DIR/tomcat"
 
     # Closing the program
