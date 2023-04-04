@@ -3,7 +3,7 @@
 set -u
 
 device=$1 # webcam or screen
-action=$2   # start or stop
+action=$2 # start or stop
 
 if [[ -z ${3+x} ]]; then
   padding=""
@@ -11,8 +11,8 @@ else
   padding=$3
 fi
 
-if [[ "$device" != "webcam" ]] && [[ "$device" != "screen" ]] && [[ "$device" != "audio" ]]; then
-  echo -e "${RED}{$padding}The first parameter os this script must be a device form the list [webcam, screen, audio].${NC}"
+if [[ "$device" != "webcam" ]] && [[ "$device" != "screen" ]]; then
+  echo -e "${RED}{$padding}The first parameter os this script must be a device form the list [webcam, screen].${NC}"
 fi
 
 if [[ "$action" != "start" ]] && [[ "$action" != "stop" ]]; then
@@ -72,14 +72,12 @@ _record_on_client() {
   local pid_file="$tmp_file_root_dir.pid"
 
   local project_dir="\$HOME/$SYSTEMS_DIR/tomcat"
+  local exec_path="$project_dir/human_experiments/scripts/local/record_from_$device"
 
   if [[ "$device" == "screen" ]]; then
-    local exec_path="$project_dir/human_experiments/scripts/local/record_from_screen"
     local images_dir="\$HOME/$EXPERIMENT_DIR/$client_name/screenshots/block_$EXPERIMENT_BLOCK"
-
     local command="$exec_path $images_dir $video_fps \$HOME/$log_file \$HOME/$pid_file"
-  elif [[ "$device" == "webcam" ]]; then
-    local exec_path="$project_dir/human_experiments/scripts/local/record_from_webcam"
+  else
     local images_dir="\$HOME/$EXPERIMENT_DIR/$client_name/face_images/block_$EXPERIMENT_BLOCK"
     local macos_script="\$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/macos/stream_webcam.scpt"
 
@@ -88,17 +86,6 @@ _record_on_client() {
     # in the Mac's Privacy and Security settings. So, to make this work we encapsulate the call to the script in an
     # apple script, which we can below.
     local command="osascript $macos_script $exec_path $images_dir $video_fps \$HOME/$log_file \$HOME/$pid_file"
-  else
-    local audio_dir="$EXPERIMENT_DIR/$client_name/audio/block_$EXPERIMENT_BLOCK"
-
-    if [[ "$client_name" == "cat" ]]; then
-      local exec_path="$project_dir/human_experiments/scripts/local/record_audio"
-      local command="$exec_path $audio_dir $log_file $pid_file"
-    else
-      # If the client is one of the iMacs, we want to call the audio streamer instead.
-      local exec_path="$project_dir/human_experiments/scripts/local/stream_audio"
-      local command="$exec_path \$HOME/$audio_dir tom.local tom.local $participant_id \$HOME/$log_file \$HOME/$pid_file"
-    fi
   fi
 
   # shellcheck disable=SC2029
@@ -176,12 +163,15 @@ _monitor_launch_on_clients() {
   local padding=$1
 
   echo -e "${padding}Waiting for the program to launch on the clients..."
-  _monitor_launch_on_client "lion" "lion.local" "$LION_PARTICIPANT_ID" "$padding "
-  _monitor_launch_on_client "tiger" "tiger.local" "$TIGER_PARTICIPANT_ID" "$padding "
-  _monitor_launch_on_client "leopard" "leopard.local" "$LEOPARD_PARTICIPANT_ID" "$padding "
-
   if [[ "$device" == "audio" ]]; then
+    _monitor_launch_on_client "lion" "lion.local" "$LION_PARTICIPANT_ID" "$padding "
+    _monitor_launch_on_client "tiger" "tiger.local" "$TIGER_PARTICIPANT_ID" "$padding "
+    _monitor_launch_on_client "leopard" "leopard.local" "$LEOPARD_PARTICIPANT_ID" "$padding "
     _monitor_launch_on_client "cat" "cat.local" "" "$padding "
+  else
+    _monitor_launch_on_client "lion" "lion.local" "" "$padding "
+    _monitor_launch_on_client "tiger" "tiger.local" "" "$padding "
+    _monitor_launch_on_client "leopard" "leopard.local" "" "$padding "
   fi
 }
 
@@ -200,6 +190,8 @@ _stop_record_on_client() {
     padding="$padding "
   fi
   if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
+    echo -e "${padding}Stopping recording on ${EMPH}$client_name${NC}."
+
     local project_dir="\$HOME/$SYSTEMS_DIR/tomcat"
 
     local exec_path="$project_dir/human_experiments/scripts/local/kill_program"
@@ -214,20 +206,11 @@ _start_recording() {
   local padding=$1
 
   # Start at the same time in all clients
-  if [[ "$device" == "audio" ]]; then
-    source collect_participant_ids "$padding"
-    _start_recording_on_client "lion" "lion.local" "$LION_PARTICIPANT_ID" "$padding"
-    _start_recording_on_client "tiger" "tiger.local" "$TIGER_PARTICIPANT_ID" "$padding"
-    _start_recording_on_client "leopard" "leopard.local" "$LEOPARD_PARTICIPANT_ID" "$padding"
 
-    # CAT is responsible for recording the central audio from the omnidirectional microphone
-    _start_recording_on_client "cat" "cat.local" "" "$padding"
-  else
-    # The participant ID is only used on the audio streamer
-    _start_recording_on_client "lion" "lion.local" "" "$padding"
-    _start_recording_on_client "tiger" "tiger.local" "" "$padding"
-    _start_recording_on_client "leopard" "leopard.local" "" "$padding"
-  fi
+  # The participant ID is only used on the audio streamer
+  _start_recording_on_client "lion" "lion.local" "" "$padding"
+  _start_recording_on_client "tiger" "tiger.local" "" "$padding"
+  _start_recording_on_client "leopard" "leopard.local" "" "$padding"
 
   # Wait until the program have launched in all the clients
   _monitor_launch_on_clients "$padding"
@@ -237,10 +220,6 @@ _stop_recording() {
   _stop_record_on_client "lion" "lion.local" "$padding"
   _stop_record_on_client "tiger" "tiger.local" "$padding"
   _stop_record_on_client "leopard" "leopard.local" "$padding"
-
-  if [[ "$device" == "audio" ]]; then
-    _stop_record_on_client "cat" "cat.local" "$padding"
-  fi
 }
 
 if [[ "$action" == "start" ]]; then

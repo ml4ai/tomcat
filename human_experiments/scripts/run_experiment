@@ -249,10 +249,10 @@ if [[ $GOTO -le 11 ]]; then
   if yes_no_question "[11] Do you want to start ${EMPH}Face and Screen${NC} recordings?"; then
     source image_monitoring "start" "  "
     if yes_no_question " [11.1] Do you want to start ${EMPH}Face${NC} recordings?"; then
-      source media_recording "webcam" "start" "  "
+      source video_recording "webcam" "start" "  "
     fi
     if yes_no_question " [11.2] Do you want to start ${EMPH}Screen${NC} recordings?"; then
-      source media_recording "screen" "start" "  "
+      source video_recording "screen" "start" "  "
     fi
   fi
 fi
@@ -269,10 +269,10 @@ if [[ $GOTO -le 13 ]]; then
   if yes_no_question "[13] Do you want to finish ${EMPH}Block 1${NC}?"; then
     source image_monitoring "stop" "  "
     if yes_no_question " [13.1] Do you want to stop ${EMPH}Face${NC} recordings?"; then
-      source media_recording "webcam" "stop" " "
+      source video_recording "webcam" "stop" " "
     fi
     if yes_no_question " [13.2] Do you want to stop ${EMPH}Screen${NC} recordings?"; then
-      source media_recording "screen" "stop" "  "
+      source video_recording "screen" "stop" "  "
     fi
     if yes_no_question " [13.3] Do you want to stop recording from the ${EMPH}Eye-tracker${NC} program?"; then
       source pupil_recording "stop" "  "
@@ -308,13 +308,13 @@ if [[ $GOTO -le 16 ]]; then
   if yes_no_question "[16] Do you want to start ${EMPH}Audio, Face and Screen${NC} recordings?"; then
     source image_monitoring "start" "  "
     if yes_no_question " [16.1] Do you want to start ${EMPH}Audio${NC} recordings?"; then
-      source media_recording "audio" "start" "  "
+      source audio_recording "start" "  "
     fi
     if yes_no_question " [16.2] Do you want to start ${EMPH}Face${NC} recordings?"; then
-      source media_recording "webcam" "start" "  "
+      source video_recording "webcam" "start" "  "
     fi
     if yes_no_question " [16.3] Do you want to start ${EMPH}Screen${NC} recordings?"; then
-      source media_recording "screen" "start" "  "
+      source video_recording "screen" "start" "  "
     fi
   fi
 fi
@@ -349,13 +349,13 @@ if [[ $GOTO -le 20 ]]; then
   if yes_no_question "[20] Do you want to stop ${EMPH}Audio, Face and Screen${NC} recordings?"; then
     source image_monitoring "stop" "  "
     if yes_no_question " [20.1] Do you want to stop ${EMPH}Audio${NC} recordings?"; then
-      source media_recording "audio" "stop" "  "
+      source audio_recording "stop" "  "
     fi
     if yes_no_question " [20.2] Do you want to stop ${EMPH}Webcam${NC} recordings?"; then
-      source media_recording "webcam" "stop" "  "
+      source video_recording "webcam" "stop" "  "
     fi
     if yes_no_question " [20.3] Do you want to stop ${EMPH}Screen${NC} recordings?"; then
-      source media_recording "screen" "stop" "  "
+      source video_recording "screen" "stop" "  "
     fi
   fi
 fi
