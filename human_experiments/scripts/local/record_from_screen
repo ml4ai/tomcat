@@ -13,4 +13,5 @@ pushd "$software_dir" > /dev/null || exit
   # Run video capture in background and save terminal outputs and pid to a file.
   ./video_capture --device="screen" --fps="$frame_rate" --out_dir="$out_dir" &> "$log_file" &
   echo $! > "$pid_file"
+  sleep 5
 popd > /dev/null || exit

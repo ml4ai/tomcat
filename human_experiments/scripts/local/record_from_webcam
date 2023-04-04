@@ -13,5 +13,6 @@ pushd "$software_dir" >/dev/null || exit
 # Run video capture in background and save terminal outputs and pid to a file.
 #  ./video_capture --device="webcam" --camera_name="FaceTime HD Camera (Built-in)" --fps="$frame_rate" --out_dir="$out_dir" &> "$log_file" &
   ./video_capture --device="webcam" --camera_index=0 --fps="$frame_rate" --out_dir="$out_dir" &> "$log_file" &
-  echo $! >"$pid_file"
+  echo $! > "$pid_file"
+  sleep 5
 popd >/dev/null || exit

@@ -14,4 +14,5 @@ pushd "$software_dir" > /dev/null || exit
   # Run audio capture in background and save terminal outputs and pid to a file.
   ./minecraft_mqtt_to_lsl --mqtt_addr="$mqtt_address" --mqtt_port="$mqtt_port" &> "$log_file" &
   echo $! > "$pid_file"
+  sleep 5
 popd > /dev/null || exit

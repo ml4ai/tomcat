@@ -17,4 +17,5 @@ pushd "$software_dir" >/dev/null || exit
   ./audioStreamer --use_mqtt=true --mqtt_host="$mqtt_host" --ws_host="$ws_host" --player_name="$player_name" \
     --save_audio=true --recording_directory="$out_dir" &>"$log_file" &
   echo $! >"$pid_file"
+  sleep 5
 popd >/dev/null || exit

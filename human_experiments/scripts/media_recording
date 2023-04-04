@@ -23,7 +23,7 @@ fi
 never_launched_error_code=1
 on_launch_error_code=2
 stopped_error_code=3
-process_killed_error_code=4
+$log_file_deleted=4
 
 # Frame rates
 video_fps=10 # 10Hz
@@ -54,7 +54,7 @@ _monitor_launch() {
         return 0
       fi
     else
-      return $process_killed_error_code
+      return $log_file_deleted
     fi
 
     sleep 1
@@ -118,6 +118,8 @@ _start_recording_on_client() {
     padding="$padding "
   fi
   if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
+    echo -e "${padding}Starting recording on ${EMPH}$client_name${NC}."
+
     _record_on_client "$client_name" "$client_address" "$participant_id"
   fi
 }
@@ -144,13 +146,16 @@ _monitor_launch_on_client() {
       echo -e "${padding}${GREEN}The program has successfully launched on ${EMPH}$client_name${GREEN}.${NC}"
       return
     elif [[ $error_code -eq $never_launched_error_code ]]; then
-      echo -e "${padding}${RED}The program was never launched.${NC}"
+      # We don't treat as an error. Just show a warning.
+      echo -e "${padding}${YELLOW}The program was never launched.${NC}"
+      return
+    elif [[ $error_code -eq $log_file_deleted ]]; then
+      echo -e "${padding}${YELLOW}The log file was deleted. Cannot tell if the program was properly launched${NC}"
+      return
     elif [[ $error_code -eq $on_launch_error_code ]]; then
       echo -e "${padding}${RED}Error on program launch.${NC}"
     elif [[ $error_code -eq $stopped_error_code ]]; then
       echo -e "${padding}${RED}The program stopped running abruptly.${NC}"
-    elif [[ $error_code -eq $process_killed_error_code ]]; then
-      echo -e "${padding}${RED}The program was killed.${NC}"
     fi
 
     if [[ $error_code -ne 0 ]]; then
@@ -168,6 +173,8 @@ _monitor_launch_on_client() {
 }
 
 _monitor_launch_on_clients() {
+  local padding=$1
+
   echo -e "${padding}Waiting for the program to launch on the clients..."
   _monitor_launch_on_client "lion" "lion.local" "$LION_PARTICIPANT_ID" "$padding "
   _monitor_launch_on_client "tiger" "tiger.local" "$TIGER_PARTICIPANT_ID" "$padding "
@@ -204,17 +211,25 @@ _stop_record_on_client() {
 }
 
 _start_recording() {
-  # Start at the same time in all clients
-  _start_recording_on_client "lion" "lion.local" "$LION_PARTICIPANT_ID" "$padding"
-  _start_recording_on_client "tiger" "tiger.local" "$TIGER_PARTICIPANT_ID" "$padding"
-  _start_recording_on_client "leopard" "leopard.local" "$LEOPARD_PARTICIPANT_ID" "$padding"
+  local padding=$1
 
+  # Start at the same time in all clients
   if [[ "$device" == "audio" ]]; then
+    source collect_participant_ids "$padding"
+    _start_recording_on_client "lion" "lion.local" "$LION_PARTICIPANT_ID" "$padding"
+    _start_recording_on_client "tiger" "tiger.local" "$TIGER_PARTICIPANT_ID" "$padding"
+    _start_recording_on_client "leopard" "leopard.local" "$LEOPARD_PARTICIPANT_ID" "$padding"
+
+    # CAT is responsible for recording the central audio from the omnidirectional microphone
     _start_recording_on_client "cat" "cat.local" "" "$padding"
+  else
+    # The participant ID is only used on the audio streamer
+    _start_recording_on_client "lion" "lion.local" "" "$padding"
+    _start_recording_on_client "tiger" "tiger.local" "" "$padding"
+    _start_recording_on_client "leopard" "leopard.local" "" "$padding"
   fi
 
   # Wait until the program have launched in all the clients
-  sleep 5  # Wait for a while to ensure the process IDs were written to files
   _monitor_launch_on_clients "$padding"
 }
 
@@ -229,7 +244,6 @@ _stop_recording() {
 }
 
 if [[ "$action" == "start" ]]; then
-  source collect_participant_ids "$padding"
   _start_recording "$padding"
 else
   _stop_recording "$padding"
