@@ -180,10 +180,6 @@ _stop_record_on_client() {
   local client_address=$2
   local padding=$3
 
-  local pid_file="$EXPERIMENT_DIR/tmp/${device}_$client_name.pid"
-  local pid
-  pid=$(cat "$pid_file")
-
   if [[ $ALL -ne 1 ]]; then
     yes_no_question "${padding}Do you want to stop recording on ${EMPH}$client_name${NC}?"
     ans=$?
@@ -191,6 +187,10 @@ _stop_record_on_client() {
   fi
   if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
     echo -e "${padding}Stopping recording on ${EMPH}$client_name${NC}."
+
+    local pid_file="$EXPERIMENT_DIR/tmp/${device}_$client_name.pid"
+    local pid
+    pid=$(cat "$pid_file")
 
     local project_dir="\$HOME/$SYSTEMS_DIR/tomcat"
 
