@@ -18,42 +18,36 @@ _start_watcher_on_server() {
   # Initial call to the executable on a client machine
   local padding=$1
 
-  if yes_no_question "${padding}Do you want to start watching on ${EMPH}tom${NC}?"; then
-    local server_address="localhost"
-    local server_port=1883
-    local tmp_file_root_dir="$EXPERIMENT_DIR/tmp/minecraft_trial_id_watcher_tom"
-    local log_file="$tmp_file_root_dir.log"
-    local pid_file="$tmp_file_root_dir.pid"
+  echo -e "${padding}Starting."
 
-    local project_dir="$HOME/$SYSTEMS_DIR/tomcat"
+  local server_address="localhost"
+  local server_port=1883
+  local tmp_file_root_dir="$EXPERIMENT_DIR/tmp/minecraft_trial_id_watcher_tom"
+  local log_file="$tmp_file_root_dir.log"
+  local pid_file="$tmp_file_root_dir.pid"
 
-    local exec_path="$project_dir/human_experiments/scripts/local/watch_minecraft_trial_id"
+  local project_dir="$HOME/$SYSTEMS_DIR/tomcat"
 
-    local command="$exec_path $server_address $server_port $EXPERIMENT_DIR $log_file $pid_file"
+  local exec_path="$project_dir/human_experiments/scripts/local/watch_minecraft_trial_id"
 
-    if $command; then
-      echo -e "${padding} Watching."
-    else
-      echo -e "${padding}${RED} Error when executing program.${NC}"
-    fi
-  fi
+  local command="$exec_path $server_address $server_port $EXPERIMENT_DIR $log_file $pid_file"
 }
 
 _stop_watcher_on_server() {
   local padding=$1
 
-  if yes_no_question "${padding}Do you want to start recording on ${EMPH}tom${NC}?"; then
-    local pid_file="$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom.pid"
-    local pid
-    pid=$(cat "$pid_file")
+  echo -e "${padding}Stopping."
 
-    local project_dir="$HOME/$SYSTEMS_DIR/tomcat"
+  local pid_file="$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom.pid"
+  local pid
+  pid=$(cat "$pid_file")
 
-    local exec_path="$project_dir/human_experiments/scripts/local/kill_program"
-    local command="$exec_path $pid"
+  local project_dir="$HOME/$SYSTEMS_DIR/tomcat"
 
-    $command
-  fi
+  local exec_path="$project_dir/human_experiments/scripts/local/kill_program"
+  local command="$exec_path $pid"
+
+  $command
 }
 
 _start_watcher() {

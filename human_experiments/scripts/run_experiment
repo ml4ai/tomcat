@@ -269,13 +269,13 @@ fi
 if [[ $GOTO -le 13 ]]; then
   echo " "
   if yes_no_question "[13] Do you want to finish ${EMPH}Block 1${NC}?"; then
-    source image_monitoring "stop" "  "
     if yes_no_question " [13.1] Do you want to stop ${EMPH}Face${NC} recordings?"; then
       source video_recording "webcam" "stop" " "
     fi
     if yes_no_question " [13.2] Do you want to stop ${EMPH}Screen${NC} recordings?"; then
       source video_recording "screen" "stop" "  "
     fi
+    source image_monitoring "stop" "  "
     if yes_no_question " [13.3] Do you want to stop recording from the ${EMPH}Eye-tracker${NC} program?"; then
       source pupil_recording "stop" "  "
     fi
@@ -354,7 +354,6 @@ fi
 if [[ $GOTO -le 20 ]]; then
   echo " "
   if yes_no_question "[20] Do you want to stop ${EMPH}Audio, Face and Screen${NC} recordings?"; then
-    source image_monitoring "stop" "  "
     if yes_no_question " [20.1] Do you want to stop ${EMPH}Audio${NC} recordings?"; then
       source audio_recording "stop" "  "
     fi
@@ -364,6 +363,7 @@ if [[ $GOTO -le 20 ]]; then
     if yes_no_question " [20.3] Do you want to stop ${EMPH}Screen${NC} recordings?"; then
       source video_recording "screen" "stop" "  "
     fi
+    source image_monitoring "stop" "  "
   fi
 fi
 
