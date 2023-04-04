@@ -16,6 +16,7 @@ fi
 
 _record_on_client() {
   local client_address=$1
+  local padding=$2
 
   local project_dir="$HOME/$SYSTEMS_DIR/tomcat"
 
@@ -53,7 +54,9 @@ _start_recording_on_client() {
   fi
   if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
     echo -e "${padding}Starting Pupil Capture recording on ${EMPH}$client_name${NC}..."
-    _record_on_client "$client_address"
+    padding="$padding "
+
+    _record_on_client "$client_address" "$padding"
   fi
 }
 
