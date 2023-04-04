@@ -23,7 +23,7 @@ fi
 never_launched_error_code=1
 on_launch_error_code=2
 stopped_error_code=3
-$log_file_deleted=4
+log_file_deleted=4
 
 # Frame rates
 video_fps=10 # 10Hz
