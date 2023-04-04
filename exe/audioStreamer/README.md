@@ -1,5 +1,5 @@
 ## Disable ClientMap audio streaming:
-When using the audioStreamer with the Testbed, the ClientMap audio streaming functionality must be disabled to avoid interference. Make the following modification to the file testbed/local/AsistDataIngester/appsettings.json:
+When using the audioStreamer with the Testbed, the ClientMap audio streaming functionality must be disabled to avoid interference. Make the following modification to the file testbed/Local/AsistDataIngester/appsettings.json:
 
 `"DisableSpeechToText":  true` -> `"DisableSpeechToText":  false`
 

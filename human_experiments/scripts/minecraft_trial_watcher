@@ -1,0 +1,71 @@
+#!/bin/bash
+
+set -u
+
+action=$1 # start or stop
+
+if [[ -z ${2+x} ]]; then
+  padding=""
+else
+  padding=$2
+fi
+
+if [[ "$action" != "start" ]] && [[ "$action" != "stop" ]]; then
+  echo -e "${RED}{$padding}The second parameter os this script must be a action form the list [start, stop].${NC}"
+fi
+
+_start_watcher_on_server() {
+  # Initial call to the executable on a client machine
+  local padding=$1
+
+  if yes_no_question "${padding}Do you want to start watching on ${EMPH}tom${NC}?"; then
+    local server_address="localhost"
+    local server_port=1883
+    local tmp_file_root_dir="$EXPERIMENT_DIR/tmp/minecraft_trial_id_watcher_tom"
+    local log_file="$tmp_file_root_dir.log"
+    local pid_file="$tmp_file_root_dir.pid"
+
+    local project_dir="$HOME/$SYSTEMS_DIR/tomcat"
+
+    local exec_path="$project_dir/human_experiments/scripts/local/watch_minecraft_trial_id"
+
+    local command="$exec_path $server_address $server_port $EXPERIMENT_DIR $log_file $pid_file"
+
+    if $command; then
+      echo -e "${padding} Watching."
+    else
+      echo -e "${padding}${RED} Error when executing program.${NC}"
+    fi
+  fi
+}
+
+_stop_watcher_on_server() {
+  local padding=$1
+
+  if yes_no_question "${padding}Do you want to start recording on ${EMPH}tom${NC}?"; then
+    local pid_file="$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom.pid"
+    local pid
+    pid=$(cat "$pid_file")
+
+    local project_dir="$HOME/$SYSTEMS_DIR/tomcat"
+
+    local exec_path="$project_dir/human_experiments/scripts/local/kill_program"
+    local command="$exec_path $pid"
+
+    $command
+  fi
+}
+
+_start_watcher() {
+  _start_watcher_on_server "$padding"
+}
+
+_stop_watcher() {
+  _stop_watcher_on_server "$padding"
+}
+
+if [[ "$action" == "start" ]]; then
+  _start_watcher "$padding"
+else
+  _stop_watcher "$padding"
+fi
