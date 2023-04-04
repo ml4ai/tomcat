@@ -351,7 +351,7 @@ if [[ $GOTO -le 20 ]]; then
     if yes_no_question " [20.1] Do you want to stop ${EMPH}Audio${NC} recordings?"; then
       source audio_recording "stop" "  "
     fi
-    if yes_no_question " [20.2] Do you want to stop ${EMPH}Webcam${NC} recordings?"; then
+    if yes_no_question " [20.2] Do you want to stop ${EMPH}Face${NC} recordings?"; then
       source video_recording "webcam" "stop" "  "
     fi
     if yes_no_question " [20.3] Do you want to stop ${EMPH}Screen${NC} recordings?"; then

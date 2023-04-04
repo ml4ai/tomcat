@@ -89,7 +89,7 @@ _record_on_client() {
   fi
 
   # shellcheck disable=SC2029
-  ssh "$EXPERIMENT_USER@$client_address" "$command"
+  ssh "$EXPERIMENT_USER@$client_address" "$command" > /dev/null
 }
 
 _start_recording_on_client() {

@@ -18,14 +18,14 @@ _start_monitoring_program_cat() {
   local padding=$1
 
   if yes_no_question "${padding}Do you want to start image timestamp monitoring?"; then
+    echo -e "${padding} Starting."
+
     local project_dir="\$HOME/$SYSTEMS_DIR/tomcat"
     local exec_path="$project_dir/human_experiments/scripts/cat/image_timestamp_scripts/start_image_timestamp.sh"
     local command="$exec_path $EXPERIMENT_DIR $EXPERIMENT_BLOCK"
     # shellcheck disable=SC2029
     ssh cat@cat "$command"
     sleep 1
-
-    echo -e "${padding}${GREEN} Started${NC}"
   fi
 }
 
@@ -33,13 +33,13 @@ _stop_monitoring_program_cat() {
   local padding=$1
 
   if yes_no_question "${padding}Do you want to stop image timestamp monitoring?"; then
+    echo -e "${padding} Stopping."
+
     local project_dir="\$HOME/$SYSTEMS_DIR/tomcat"
     local exec_path="$project_dir/human_experiments/scripts/cat/image_timestamp_scripts/end_image_timestamp.sh"
     # shellcheck disable=SC2029
     ssh cat@cat "$exec_path"
     sleep 1
-
-    echo -e "${padding}${GREEN} Stopped${NC}"
   fi
 }
 
