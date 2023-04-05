@@ -50,6 +50,8 @@ std::vector<DeviceMetadata> Device::list_avfoundation_video_devices() {
     vector<DeviceMetadata> devices;
     bool row_contains_device = false;
     while (std::getline(ss, token, '\n')) {
+        cout << token << endl;
+
         if (row_contains_device) {
             if (std::regex_search(token, matches, device_regex)) {
                 // The first regex group is the index and the second the name.
