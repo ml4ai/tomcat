@@ -73,7 +73,7 @@ std::vector<DeviceMetadata> Device::list_avfoundation_video_devices() {
         }
     }
 
-    cout << "\n******************\n" << endl;
+    cout << "\n******************" << endl;
 
     return devices;
 }
