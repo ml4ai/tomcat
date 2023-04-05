@@ -38,7 +38,6 @@ class Webcam : public Device {
                          std::atomic<bool>* signal_watcher) override;
 
   private:
-    int camera_index = 0;
     cv::VideoCapture camera_device;
 
     void init_from_index(int camera_index, int frame_width, int frame_height);

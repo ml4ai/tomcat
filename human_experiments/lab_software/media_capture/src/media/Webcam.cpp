@@ -30,9 +30,8 @@ Webcam::Webcam(const string& camera_name, int frame_width, int frame_height) {
             fmt::format("Camera {} not found.", camera_name));
     }
 
-    this->init_from_index(this->video_device_name_to_index[camera_name],
-                          frame_width,
-                          frame_height);
+    int camera_index = this->video_device_name_to_index[camera_name];
+    this->init_from_index(camera_index, frame_width, frame_height);
 }
 
 Webcam::~Webcam() { this->camera_device.release(); }
@@ -43,10 +42,9 @@ Webcam::~Webcam() { this->camera_device.release(); }
 void Webcam::init_from_index(int camera_index,
                              int frame_width,
                              int frame_height) {
-    this->camera_index = camera_index;
-    this->camera_device = cv::VideoCapture(this->camera_index);
+    this->camera_device = cv::VideoCapture(camera_index);
     this->camera_device.set(cv::CAP_PROP_FRAME_WIDTH, frame_width);
-    this->camera_device.set(cv::CAP_PROP_FRAME_WIDTH, frame_height);
+    this->camera_device.set(cv::CAP_PROP_FRAME_HEIGHT, frame_height);
 
     // Print the resolution to confirm it was set properly
     int w = cvRound(this->camera_device.get(cv::CAP_PROP_FRAME_WIDTH));
@@ -59,8 +57,7 @@ void Webcam::turn_on() {
     // No need to call open. Camera opens when we create the object. If we call
     // open again, it will reset the pre-defined resolution.
     if (!this->camera_device.isOpened()) {
-        throw GeneralException(
-            fmt::format("Cannot open the webcam {}", this->camera_index));
+        throw GeneralException("Cannot open the webcam.");
     }
 
     // The camera takes a while to fire up. If we start recording immediately
