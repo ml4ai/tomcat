@@ -40,4 +40,6 @@ class Webcam : public Device {
   private:
     int camera_index = 0;
     cv::VideoCapture camera_device;
+
+    void init_from_index(int camera_index, int frame_width, int frame_height);
 };
