@@ -47,6 +47,10 @@ std::vector<DeviceMetadata> Device::list_avfoundation_video_devices() {
     regex device_regex("\\[(\\d+)\\]\\s+(.*$)");
     smatch matches;
 
+    cout << "\n******************" << endl;
+    cout << "ffmpeg device list" << endl;
+    cout << "******************\n" << endl;
+
     vector<DeviceMetadata> devices;
     bool row_contains_device = false;
     while (std::getline(ss, token, '\n')) {
@@ -68,6 +72,8 @@ std::vector<DeviceMetadata> Device::list_avfoundation_video_devices() {
             row_contains_device = true;
         }
     }
+
+    cout << "\n******************\n" << endl;
 
     return devices;
 }

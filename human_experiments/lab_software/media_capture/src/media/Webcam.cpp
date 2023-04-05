@@ -44,12 +44,14 @@ void Webcam::init_from_index(int camera_index,
                              int frame_width,
                              int frame_height) {
     this->camera_index = camera_index;
-    this->camera_device = cv::VideoCapture(camera_index);
+    this->camera_device.set(cv::CAP_PROP_FRAME_WIDTH, frame_width);
+    this->camera_device.set(cv::CAP_PROP_FRAME_WIDTH, frame_height);
 
     // Print the resolution to confirm it was set properly
     int w = cvRound(this->camera_device.get(cv::CAP_PROP_FRAME_WIDTH));
     int h = cvRound(this->camera_device.get(cv::CAP_PROP_FRAME_HEIGHT));
-    cout << fmt::format("[INFO] Camera resolution set to {} x {}.", w, h);
+    cout << fmt::format("[INFO] Camera resolution set to {} x {}.", w, h)
+         << endl;
 }
 
 void Webcam::turn_on() {
