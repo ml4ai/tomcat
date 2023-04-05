@@ -44,6 +44,7 @@ void Webcam::init_from_index(int camera_index,
                              int frame_width,
                              int frame_height) {
     this->camera_index = camera_index;
+    this->camera_device = cv::VideoCapture(this->camera_index);
     this->camera_device.set(cv::CAP_PROP_FRAME_WIDTH, frame_width);
     this->camera_device.set(cv::CAP_PROP_FRAME_WIDTH, frame_height);
 
