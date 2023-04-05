@@ -40,10 +40,10 @@ int main(int argc, const char* argv[]) {
         po::value<int>(&fps)->default_value(30)->required(),
         "Frames per secons.")(
         "width",
-        po::value<int>(&width)->default_value(640)->required(),
+        po::value<int>(&width)->default_value(1280)->required(),
         "Width of the images.")(
         "height",
-        po::value<int>(&height)->default_value(480)->required(),
+        po::value<int>(&height)->default_value(720)->required(),
         "Height of the images.")(
         "device",
         po::value<string>(&device_name)->required(),
