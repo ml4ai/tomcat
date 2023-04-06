@@ -6,6 +6,8 @@
 
 class LSLStream {
   public:
+    lsl::stream_info stream_info;
+
     LSLStream(const std::string& name,
               int num_channels,
               const std::string& source_id,
@@ -25,6 +27,5 @@ class LSLStream {
     void open();
 
   protected:
-    lsl::stream_info stream_info;
     std::unique_ptr<lsl::stream_outlet> outlet;
 };

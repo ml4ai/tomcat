@@ -27,15 +27,20 @@ void Screen::start_recording(const std::string& out_dir,
     create_output_directory(p);
 
     int frame_period = 1000 / fps; // Milliseconds
-    cout << "\n\tCapturing " << fps << " frames per second.\n";
-    cout << "\tA frame is captured every " << frame_period
-         << " milliseconds.\n\n";
+    cout << "[INFO] Capturing " << fps
+         << " frames per second. A frame is captured every " << frame_period
+         << " milliseconds." << endl;
 
     // Full size of the monitor we are recording from
-    //    size_t width = CGDisplayPixelsWide(CGMainDisplayID());
-    //    size_t height = CGDisplayPixelsHigh(CGMainDisplayID());
-    //    cout << width << endl;
-    //    cout << height << endl;
+    size_t max_width = CGDisplayPixelsWide(CGMainDisplayID());
+    size_t max_height = CGDisplayPixelsHigh(CGMainDisplayID());
+    cout << fmt::format(
+                "[INFO] Maximum resolution is %i x %i", max_width, max_height)
+         << endl;
+    cout << fmt::format("[INFO] Recording at %i x %i",
+                        this->frame_width,
+                        this->frame_height)
+         << endl;
 
     // CV_8UC4: 8 bit unsigned ints 4 channels -> RGBA
     cv::Mat img(cv::Size(this->frame_width, this->frame_height), CV_8UC4);
@@ -56,6 +61,8 @@ void Screen::start_recording(const std::string& out_dir,
         color_space,
         kCGImageAlphaPremultipliedLast | kCGBitmapByteOrderDefault);
 
+    // Create LSL stream to synchronize image names and add relevant metadata
+    // information
     LSLStringStream lsl_stream("Screen", "screen", "image_filename", fps);
     lsl_stream.open();
 

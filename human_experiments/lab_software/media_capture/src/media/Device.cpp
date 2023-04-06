@@ -23,10 +23,10 @@ Device::Device() {
 
 void Device::create_output_directory(const filesystem::path& p) {
     if (std::filesystem::exists(p)) {
-        cout << "\n\tWriting frames to already existing path: " << p << "\n\n";
+        cout << "[INFO] Writing frames to already existing path: " << p << endl;
     }
     else {
-        cout << "\n\tDirectory: " << p << " does not exist. Creating it now.\n\n";
+        cout << "[INFO] Directory: " << p << " does not exist. Creating it now." << endl;
         std::filesystem::create_directories(p);
     }
 }

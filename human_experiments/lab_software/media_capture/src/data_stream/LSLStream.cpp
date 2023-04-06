@@ -6,7 +6,7 @@
 
 using namespace std;
 
-const int WAIT_FOR_CONSUMER_TIMEOUT = 3; // in seconds
+const int WAIT_FOR_CONSUMER_TIMEOUT = 30; // in seconds
 
 //----------------------------------------------------------------------
 // Constructors & Destructor
@@ -41,5 +41,4 @@ void LSLStream::open() {
     } else {
         cout << "[WARN] LSL. No consumer detected." << endl;
     }
-
 }

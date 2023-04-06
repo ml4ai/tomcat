@@ -42,15 +42,18 @@ Webcam::~Webcam() { this->camera_device.release(); }
 void Webcam::init_from_index(int camera_index,
                              int frame_width,
                              int frame_height) {
+    int w = cvRound(this->camera_device.get(cv::CAP_PROP_FRAME_WIDTH));
+    int h = cvRound(this->camera_device.get(cv::CAP_PROP_FRAME_HEIGHT));
+    cout << fmt::format("[INFO] Maximum resolution is %i x %i", w, h) << endl;
+
     this->camera_device = cv::VideoCapture(camera_index);
     this->camera_device.set(cv::CAP_PROP_FRAME_WIDTH, frame_width);
     this->camera_device.set(cv::CAP_PROP_FRAME_HEIGHT, frame_height);
 
     // Print the resolution to confirm it was set properly
-    int w = cvRound(this->camera_device.get(cv::CAP_PROP_FRAME_WIDTH));
-    int h = cvRound(this->camera_device.get(cv::CAP_PROP_FRAME_HEIGHT));
-    cout << fmt::format("[INFO] Camera resolution set to {} x {}.", w, h)
-         << endl;
+    w = cvRound(this->camera_device.get(cv::CAP_PROP_FRAME_WIDTH));
+    h = cvRound(this->camera_device.get(cv::CAP_PROP_FRAME_HEIGHT));
+    cout << fmt::format("[INFO] Recording at %i x %i", w, h) << endl;
 
     // No need to call open. Camera opens when we create the object. If we call
     // open again, it will reset the pre-defined resolution.
