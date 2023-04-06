@@ -19,11 +19,6 @@ class Audio : public Device {
     Audio(int num_channels, int chunk_size);
     ~Audio() override = default;
 
-    /**
-     * Does initial setup for audio recording.
-     */
-    void turn_on() override;
-
     void start_recording(const std::string& out_dir,
                          int sample_rate,
                          std::atomic<bool>* signal_watcher) override;

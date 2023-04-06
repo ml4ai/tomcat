@@ -23,11 +23,6 @@ class Webcam : public Device {
     Webcam& operator=(Webcam&&) = default;
 
     /**
-     * Turns the webcam on
-     */
-    void turn_on() override;
-
-    /**
      * Starts recording and saves the images to a folder.
      * @param out_dir: directory where images must be saved
      * @param fps: frames per second

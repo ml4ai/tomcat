@@ -26,11 +26,6 @@ class Device {
     Device& operator=(Device&&) = default;
 
     /**
-     * Turns the device on
-     */
-    virtual void turn_on() = 0;
-
-    /**
      * Starts recording from the device and saves the images to a folder.
      *
      * @param out_dir: directory where images must be saved

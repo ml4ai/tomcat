@@ -15,8 +15,6 @@ using namespace std;
 Audio::Audio(int num_channels, int chunk_size)
     : num_channels(num_channels), chunk_size(chunk_size) {}
 
-void Audio::turn_on() {}
-
 void Audio::start_recording(const string& out_dir,
                             int sample_rate,
                             atomic<bool>* signal_watcher) {

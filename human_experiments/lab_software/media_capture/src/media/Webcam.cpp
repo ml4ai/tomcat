@@ -51,9 +51,7 @@ void Webcam::init_from_index(int camera_index,
     int h = cvRound(this->camera_device.get(cv::CAP_PROP_FRAME_HEIGHT));
     cout << fmt::format("[INFO] Camera resolution set to {} x {}.", w, h)
          << endl;
-}
 
-void Webcam::turn_on() {
     // No need to call open. Camera opens when we create the object. If we call
     // open again, it will reset the pre-defined resolution.
     if (!this->camera_device.isOpened()) {

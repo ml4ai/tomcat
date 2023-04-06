@@ -11,18 +11,13 @@
 
 class Screen : public Device {
   public:
-    Screen() = default;
+    Screen(int frame_width, int frame_height);
     ~Screen() override = default;
 
     Screen(const Screen&) = delete;
     Screen& operator=(const Screen&) = delete;
     Screen(Screen&&) = default;
     Screen& operator=(Screen&&) = default;
-
-    /**
-     * Does initial setup for screen recording.
-     */
-    void turn_on() override;
 
     /**
      * Starts recording and saves the images to a folder.
@@ -34,4 +29,8 @@ class Screen : public Device {
     void start_recording(const std::string& out_dir,
                          int fps,
                          std::atomic<bool>* signal_watcher) override;
+
+  private:
+    int frame_width;
+    int frame_height;
 };

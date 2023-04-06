@@ -17,7 +17,8 @@ using namespace std;
 
 const int WAIT_UNTIL_READY = 10; // in seconds
 
-void Screen::turn_on() {}
+Screen::Screen(int frame_width, int frame_height)
+    : frame_width(frame_width), frame_height(frame_height) {}
 
 void Screen::start_recording(const std::string& out_dir,
                              int fps,
@@ -31,16 +32,19 @@ void Screen::start_recording(const std::string& out_dir,
          << " milliseconds.\n\n";
 
     // Full size of the monitor we are recording from
-    size_t width = CGDisplayPixelsWide(CGMainDisplayID());
-    size_t height = CGDisplayPixelsHigh(CGMainDisplayID());
+    //    size_t width = CGDisplayPixelsWide(CGMainDisplayID());
+    //    size_t height = CGDisplayPixelsHigh(CGMainDisplayID());
+    //    cout << width << endl;
+    //    cout << height << endl;
 
     // CV_8UC4: 8 bit unsigned ints 4 channels -> RGBA
-    cv::Mat img(cv::Size(int(width), int(height)), CV_8UC4);
+    cv::Mat img(cv::Size(this->frame_width, this->frame_height), CV_8UC4);
 
     // CV_8UC3: 8 bit unsigned ints 3 channels -> RGB
     // Saving the image with the alpha channel, changes some colors (e.g. red
     // becomes blue). We save the image without the alpha channel.
-    cv::Mat final_image(cv::Size(int(width), int(height)), CV_8UC3);
+    cv::Mat final_image(cv::Size(this->frame_width, this->frame_height),
+                        CV_8UC3);
 
     CGColorSpaceRef color_space = CGColorSpaceCreateDeviceRGB();
     CGContextRef context_ref = CGBitmapContextCreate(
@@ -64,7 +68,9 @@ void Screen::start_recording(const std::string& out_dir,
 
         CGImageRef image_ref = CGDisplayCreateImage(CGMainDisplayID());
         CGContextDrawImage(
-            context_ref, CGRectMake(0, 0, int(width), int(height)), image_ref);
+            context_ref,
+            CGRectMake(0, 0, this->frame_width, this->frame_height),
+            image_ref);
         cvtColor(img, final_image, cv::COLOR_RGBA2BGR);
         if (!img.empty()) {
             // We need to check if the image is not empty otherwise imwrite

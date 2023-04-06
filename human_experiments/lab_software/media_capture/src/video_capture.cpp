@@ -78,7 +78,7 @@ int main(int argc, const char* argv[]) {
     }
     else {
         cout << "Will record from the screen." << endl;
-        device = make_unique<Screen>();
+        device = make_unique<Screen>(width, height);
     }
 
     // Signal handler in case the program is interrupted.
