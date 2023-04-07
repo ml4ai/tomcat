@@ -59,6 +59,7 @@ ffmpeg -hide_banner -f avfoundation  -list_devices true -i dummy
 
 `sequence#_yyyy-mm-dd_hh-mm-ss.milsec~gap.png`
 
+- Sequence is a string of 6 digits containing the frame count prepended with leading zeros.
 - Time is in the *Universal Time Coordinated* (UTC)
 - gap is the approximate number of milliseconds elapsed since the last frame till this frame was captured.
 

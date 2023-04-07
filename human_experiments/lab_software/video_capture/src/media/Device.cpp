@@ -9,6 +9,9 @@
 
 #include "common/Popen.h"
 
+// Number of digits in the frame number portion of the image filename
+const static int FRAME_NUMBER_NUM_DIGITS = 6;
+
 using namespace std;
 
 Device::Device() {
@@ -42,7 +45,12 @@ void Device::create_output_directory(const filesystem::path& p) {
 string Device::create_image_filename(unsigned long long frame_count,
                                      const string& timestamp,
                                      size_t gap) {
-    return to_string(frame_count) + "_" + timestamp + to_string(gap) + ".png";
+
+    string seq = to_string(frame_count);
+    int precision = FRAME_NUMBER_NUM_DIGITS -
+                    std::min(FRAME_NUMBER_NUM_DIGITS, int(seq.size()));
+    seq = std::string(precision, '0').append(seq);
+    return seq + "_" + timestamp + to_string(gap) + ".png";
 }
 
 std::vector<DeviceMetadata> Device::list_avfoundation_video_devices() {
