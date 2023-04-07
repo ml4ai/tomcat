@@ -12,14 +12,11 @@ jobs:
     runs-on: [ ubuntu-latest ]
 
     steps:
-#    - uses: actions/checkout@v2
     - uses: actions/checkout@v3
 
     - name: Build docs
       run: |
         sudo apt-get update
-#        sudo apt-get install -y python3-venv doxygen
-#        python3 -m venv tomcat_venv
         sudo apt-get install -y python2-venv doxygen
         python2 -m venv tomcat_venv
         source tomcat_venv/bin/activate
