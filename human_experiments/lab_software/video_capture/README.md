@@ -3,9 +3,9 @@
 
 ## Prerequisites
 
-Install OpenCV, ffmpeg and portaudio. With MacPorts, you can use the invocation below.
+Install OpenCV and ffmpeg. With MacPorts, you can use the invocation below.
 ```
-sudo port install opencv4 ffmpeg portaudio
+sudo port install opencv4 ffmpeg
 ```
 
 Install liblsl from source.
@@ -55,17 +55,6 @@ ffmpeg -hide_banner -f avfoundation  -list_devices true -i dummy
 
 - Frames per second should be an integer. This number is used to compute the number of milliseconds to wait between capturing two frames (`= 1000 / frames per second`).
 
-#### Recording from the screen
-
-```
-./audio_capture --out_dir<directory to store the audio file>
-```
-
-- If the directory to store the audio file is not present, it will be created.
-- Audio will be recorded by default with `1 channel (mono)`, at `48kHz` and `8192 chunk size`. It's possible to change this parameters with the extra program options. Do `./audio_capture -h` to see them.
-- The number of bits per sample cannot be parametrized and it's fixed in 16 bits per sample for compatibility with other modules and Google Speech-to-Text API.
-
-
 # Frame naming convention
 
 `sequence#_yyyy-mm-dd_hh-mm-ss.milsec~gap.png`
@@ -79,8 +68,7 @@ To stop the program, use either a SIGINT or SIGTERM interruption. The program wi
 
 ## LSL
 
-Each device creates its own LSL stream and pushes data to it. The LSL stream names are defined below:
+Each device creates its own LSL stream and pushes the image filenames to it. The LSL stream names are: 
 
 - Webcam
 - Screen
-- Audio
