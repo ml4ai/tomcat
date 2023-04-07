@@ -61,7 +61,6 @@ int main(int argc, const char* argv[]) {
     watch_for_signal();
 
     try {
-        audio.turn_on();
         audio.start_recording(out_dir, sample_rate, &quit);
     }
     catch (const std::exception& ex) {

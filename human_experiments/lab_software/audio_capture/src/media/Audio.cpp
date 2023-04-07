@@ -13,7 +13,8 @@
 using namespace std;
 
 Audio::Audio(int num_channels, int chunk_size)
-    : num_channels(num_channels), chunk_size(chunk_size) {}
+    : num_channels(num_channels), chunk_size(chunk_size),
+      audio_stream(nullptr) {}
 
 void Audio::start_recording(const string& out_dir,
                             int sample_rate,
@@ -75,8 +76,19 @@ void Audio::start_recording(const string& out_dir,
                         Pa_GetErrorText(err)));
     }
 
+    cout << fmt::format("[INFO] Default audio device is {}.",
+                        Pa_GetDeviceInfo(input_parameters.device)->name)
+         << endl;
+
     this->lsl_stream = make_unique<LSLAudioStream>(
         "Audio", this->num_channels, "audio", "audio", sample_rate);
+    lsl_stream->stream_info.desc()
+        .append_child("provider")
+        .append_child_value("api", "portaudio19");
+    lsl_stream->stream_info.desc().append_child_value(
+        "device", Pa_GetDeviceInfo(input_parameters.device)->name);
+    lsl_stream->stream_info.desc().append_child_value(
+        "channel_format", "int16");
     lsl_stream->open();
 
     cout << "[INFO] Started. Recording audio..." << endl;
@@ -145,5 +157,21 @@ void Audio::loop() {
 
         this->lsl_stream->send(chunk);
         this->wave_file->write_chunk(chunk);
+    }
+}
+
+void Audio::create_output_directory(const filesystem::path& p) {
+    if (std::filesystem::exists(p)) {
+        cout << fmt::format(
+                    "[INFO] Writing frames to already existing path: {}",
+                    p.string())
+             << endl;
+    }
+    else {
+        cout << fmt::format(
+                    "[INFO] Directory: {} does not exist. Creating it now.",
+                    p.string())
+             << endl;
+        std::filesystem::create_directories(p);
     }
 }
