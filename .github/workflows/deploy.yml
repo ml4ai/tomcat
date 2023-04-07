@@ -18,8 +18,10 @@ jobs:
     - name: Build docs
       run: |
         sudo apt-get update
-        sudo apt-get install -y python3-venv doxygen
-        python3 -m venv tomcat_venv
+#        sudo apt-get install -y python3-venv doxygen
+#        python3 -m venv tomcat_venv
+        sudo apt-get install -y python2-venv doxygen
+        python2 -m venv tomcat_venv
         source tomcat_venv/bin/activate
         pip install wheel
         pip install -r docs/requirements.txt
