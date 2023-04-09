@@ -21,4 +21,5 @@ target_link_libraries(
         ${portaudio_LIBRARY}
         ${Boost_LIBRARIES}
         LSL::lsl
+        -pthread
 )

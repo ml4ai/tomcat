@@ -25,4 +25,5 @@ target_link_libraries(
         project_static_lib
         fmt::fmt
         LSL::lsl
+        -pthread
 )
