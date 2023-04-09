@@ -107,6 +107,25 @@ _start_recording_on_client() {
   if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
     echo -e "${padding}Starting recording on ${EMPH}$client_name${NC}."
 
+    local tmp_file_root_dir="$EXPERIMENT_DIR/tmp/${device}_$client_name"
+    local log_file="$tmp_file_root_dir.log"
+    local pid_file="$tmp_file_root_dir.pid"
+
+    # Check if there's already a process running so we don't start the process twice.
+    if [[ -e "$pid_file" ]]; then
+      local pid
+      pid=$(cat "$pid_file")
+
+      local check_exec_path="\$HOME/$project_dir/human_experiments/scripts/local/is_process_active"
+      local command="$check_exec_path $pid"
+
+      # shellcheck disable=SC2029
+      if ssh "$EXPERIMENT_USER@$client_address" "$command" > /dev/null; then
+        echo -e "${YELLOW}${padding}Aborting. The process $pid is already recording.${NC}"
+        return
+      fi
+    fi
+
     _record_on_client "$client_name" "$client_address" "$participant_id"
   fi
 }
