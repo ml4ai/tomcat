@@ -14,7 +14,9 @@ pushd "$software_dir" > /dev/null || exit
   # Run audio capture in background and save terminal outputs and pid to a file.
 
   # Execute the script with nohup to prevent killing the process if the uber script is interrupted.
-  nohup ./minecraft_mqtt_to_lsl --mqtt_addr="$mqtt_address" --mqtt_port="$mqtt_port" &> "$log_file" &
-  echo $! > "$pid_file"
+  ./minecraft_mqtt_to_lsl --mqtt_addr="$mqtt_address" --mqtt_port="$mqtt_port" &> "$log_file" &
+  pid=$!
+  echo $pid > "$pid_file"
+  disown $pid
   sleep 5
 popd > /dev/null || exit

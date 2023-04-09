@@ -57,5 +57,5 @@ if __name__ == "__main__":
                         help="Directory where the file containing info about the trials must be saved.")
 
     args = parser.parse_args()
-    monitor = TrialMonitor(args.address, args.port, args.exp_dir)
+    monitor = TrialMonitor(args.address, int(args.port), args.exp_dir)
     monitor.start()

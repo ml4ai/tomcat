@@ -4,7 +4,7 @@ set -u
 
 mqtt_address=$1
 mqtt_port=$2
-experiment_id=$3
+experiment_dir=$3
 log_file=$4
 pid_file=$5
 
@@ -13,7 +13,9 @@ software_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 
 pushd "$software_dir" > /dev/null || exit
   # Run audio capture in background and save terminal outputs and pid to a file.
-  nohup python3 watch_for_trial_id --address="$mqtt_address" --port="$mqtt_port" --exp_id="$experiment_id" &> "$log_file" &
-  echo $! > "$pid_file"
+  python3 watch_for_trial_id.py --address="$mqtt_address" --port=$mqtt_port --exp_dir="$experiment_dir" &> "$log_file" &
+  pid=$!
+  echo $pid > "$pid_file"
+  disown $pid
   sleep 5
 popd > /dev/null || exit
