@@ -22,6 +22,12 @@ process_killed_error_code=4
 
 wait_for_launch_timeout=120 # 5 minutes
 
+_signal_handler() {
+  echo "SIGINT not doing anything"
+}
+
+trap _signal_handler SIGINT
+
 _monitor_launch() {
   local log_file=$1
   local pid_file=$2
