@@ -83,7 +83,7 @@ _start_watcher_on_server() {
     pid=$(cat "$pid_file")
 
     if ps -p "$pid" > /dev/null; then
-      echo -e "${YELLOW}${padding}Aborting. The process $pid is already watching for trial IDs."
+      echo -e "${YELLOW}${padding}Aborting. The process $pid is already watching for trial IDs.${NC}"
       return
     fi
   fi
