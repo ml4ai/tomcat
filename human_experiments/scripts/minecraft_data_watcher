@@ -69,12 +69,12 @@ _start_watcher_on_server() {
     pid=$(cat "$pid_file")
 
     if ps -p "$pid" > /dev/null; then
-      echo -e "{YELLOW}${padding}Aborting. The process {$pid} is already watching for trial IDs."
+      echo -e "${YELLOW}${padding}Aborting. The process $pid is already watching for trial IDs."
       return
     fi
   fi
 
-  echo -e "${padding}Starting."
+  echo -e "${padding}Starting..."
 
   local project_dir="$HOME/$SYSTEMS_DIR/tomcat"
 
