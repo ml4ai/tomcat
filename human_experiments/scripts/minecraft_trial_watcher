@@ -14,8 +14,6 @@ fi
 never_launched_error_code=1
 process_killed_error_code=2
 
-wait_for_launch_timeout=120 # 2 minutes
-
 if [[ "$action" != "start" ]] && [[ "$action" != "stop" ]]; then
   echo -e "${RED}{$padding}The second parameter os this script must be a action form the list [start, stop].${NC}"
 fi
@@ -28,18 +26,14 @@ _monitor_launch() {
     return $never_launched_error_code
   fi
 
-  local num_seconds=0
   local pid
   pid=$(cat "$pid_file")
-  while [ $num_seconds -lt $wait_for_launch_timeout ]; do
-    if ps -p "$pid"; then
-      return 0
-    else
-      return $process_killed_error_code
-    fi
-    sleep 1
-    ((num_seconds++))
-  done
+
+  if ps -p "$pid" >/dev/null; then
+    return 0
+  else
+    return $process_killed_error_code
+  fi
 }
 
 _watch_on_server() {
@@ -51,11 +45,11 @@ _watch_on_server() {
 
   local project_dir="$HOME/$SYSTEMS_DIR/tomcat"
 
-  pushd "$project_dir/human_experiments/scripts/local" > /dev/null || exit
-    python3 watch_for_trial_id.py --address="$mqtt_address" --port=$mqtt_port --exp_dir="$EXPERIMENT_DIR" &> "$log_file" &
-    echo $! > "$pid_file"
+  pushd "$project_dir/human_experiments/scripts/local" >/dev/null || exit
+    python3 watch_for_trial_id.py --address="$mqtt_address" --port=$mqtt_port --exp_dir="$EXPERIMENT_DIR" &>"$log_file" &
+    echo $! >"$pid_file"
     sleep 5
-  popd > /dev/null || exit
+  popd >/dev/null || exit
 }
 
 _monitor_launch_on_server() {
@@ -65,7 +59,7 @@ _monitor_launch_on_server() {
   padding="$padding "
 
   while true; do
-    local tmp_file_root_dir="$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom"
+    local tmp_file_root_dir="$EXPERIMENT_DIR/tmp/minecraft_trial_id_watcher_tom"
     local log_file="$tmp_file_root_dir.log"
     local pid_file="$tmp_file_root_dir.pid"
 
@@ -107,7 +101,7 @@ _start_watcher_on_server() {
     local pid
     pid=$(cat "$pid_file")
 
-    if ps -p "$pid" > /dev/null; then
+    if ps -p "$pid" >/dev/null; then
       echo -e "${YELLOW}${padding}Aborting. The process $pid is already watching for trial IDs.${NC}"
       return
     fi
