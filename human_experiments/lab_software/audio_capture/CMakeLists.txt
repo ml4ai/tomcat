@@ -24,7 +24,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/)
 
 find_package(LSL REQUIRED)
 find_package(fmt REQUIRED)
-find_package(Boost REQUIRED COMPONENTS program_options)
+find_package(Boost REQUIRED COMPONENTS program_options filesystem)
 find_package(Threads REQUIRED)
 find_package(portaudio REQUIRED)
 

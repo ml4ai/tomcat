@@ -1,7 +1,6 @@
 #include "Audio.h"
 
 #include <iostream>
-#include <experimental/filesystem>
 
 #include <fmt/format.h>
 
@@ -12,6 +11,7 @@
 #define BITS_PER_SAMPLE 16
 
 using namespace std;
+namespace fs = boost::filesystem;
 
 Audio::Audio(int num_channels, int chunk_size)
     : num_channels(num_channels), chunk_size(chunk_size),

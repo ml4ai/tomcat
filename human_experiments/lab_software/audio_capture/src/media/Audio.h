@@ -4,6 +4,7 @@
 #include <string>
 #include <thread>
 #include <vector>
+#include <filesystem>
 
 #include <portaudio.h>
 
