@@ -54,13 +54,27 @@ _monitor_launch() {
   done
 }
 
-_watch_on_server() {
-  # Just calls the executable on a client machine and leaves. It does not wait for status.
+_start_watcher_on_server() {
+  local padding=$1
+
   local server_address="localhost"
   local server_port=1883
   local tmp_file_root_dir="$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom"
   local log_file="$tmp_file_root_dir.log"
   local pid_file="$tmp_file_root_dir.pid"
+
+  # Check if there's already a trial watcher running so we don't start the process twice.
+  if [[ -e "$pid_file" ]]; then
+    local pid
+    pid=$(cat "$pid_file")
+
+    if ps -p "$pid" > /dev/null; then
+      echo -e "{YELLOW}${padding}Aborting. The process {$pid} is already watching for trial IDs."
+      return
+    fi
+  fi
+
+  echo -e "${padding}Starting."
 
   local project_dir="$HOME/$SYSTEMS_DIR/tomcat"
 
@@ -69,14 +83,6 @@ _watch_on_server() {
   local command="$exec_path $server_address $server_port $log_file $pid_file"
 
   $command
-}
-
-_start_watcher_on_server() {
-  local padding=$1
-
-  echo -e "${padding}Starting..."
-
-  _watch_on_server
 }
 
 _monitor_launch_on_server() {

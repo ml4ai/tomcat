@@ -13,7 +13,7 @@ software_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 
 pushd "$software_dir" > /dev/null || exit
   # Run audio capture in background and save terminal outputs and pid to a file.
-  python3 watch_for_trial_id --address="$mqtt_address" --port="$mqtt_port" --exp_id="$experiment_id" &> "$log_file" &
+  nohup python3 watch_for_trial_id --address="$mqtt_address" --port="$mqtt_port" --exp_id="$experiment_id" &> "$log_file" &
   echo $! > "$pid_file"
   sleep 5
 popd > /dev/null || exit

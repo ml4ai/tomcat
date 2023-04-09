@@ -15,25 +15,35 @@ if [[ "$action" != "start" ]] && [[ "$action" != "stop" ]]; then
 fi
 
 _start_watcher_on_server() {
-  # Initial call to the executable on a client machine
   local padding=$1
 
-  echo -e "${padding}Starting."
-
-  local server_address="localhost"
-  local server_port=1883
+  local mqtt_address="localhost"
+  local mqtt_port=1883
   local tmp_file_root_dir="$EXPERIMENT_DIR/tmp/minecraft_trial_id_watcher_tom"
   local log_file="$tmp_file_root_dir.log"
   local pid_file="$tmp_file_root_dir.pid"
+
+  # Check if there's already a trial watcher running so we don't start the process twice.
+  if [[ -e "$pid_file" ]]; then
+    local pid
+    pid=$(cat "$pid_file")
+
+    if ps -p "$pid" > /dev/null; then
+      echo -e "{YELLOW}${padding}Aborting. The process {$pid} is already watching for trial IDs."
+      return
+    fi
+  fi
+
+  echo -e "${padding}Starting."
 
   local project_dir="$HOME/$SYSTEMS_DIR/tomcat"
 
   local exec_path="$project_dir/human_experiments/scripts/local/watch_minecraft_trial_id"
 
-  local command="$exec_path $server_address $server_port $EXPERIMENT_DIR $log_file $pid_file"
+  local command="$exec_path $mqtt_address $mqtt_port $EXPERIMENT_DIR $log_file $pid_file"
 
   # Execute in a tmux session such that the program keeps running even if we kill the uber script
-  tmux new-session -d -s "minecraft_data_watcher" "$command"
+  $command
 }
 
 _stop_watcher_on_server() {
