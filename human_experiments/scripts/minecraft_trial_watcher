@@ -10,15 +10,94 @@ else
   padding=$2
 fi
 
+# Error codes
+never_launched_error_code=1
+process_killed_error_code=2
+
+wait_for_launch_timeout=120 # 2 minutes
+
 if [[ "$action" != "start" ]] && [[ "$action" != "stop" ]]; then
   echo -e "${RED}{$padding}The second parameter os this script must be a action form the list [start, stop].${NC}"
 fi
 
+_monitor_launch() {
+  local log_file=$1
+  local pid_file=$2
+
+  if [[ ! -e "$pid_file" ]]; then
+    return $never_launched_error_code
+  fi
+
+  local num_seconds=0
+  local pid
+  pid=$(cat "$pid_file")
+  while [ $num_seconds -lt $wait_for_launch_timeout ]; do
+    if ps -p "$pid"; then
+      return 0
+    else
+      return $process_killed_error_code
+    fi
+    sleep 1
+    ((num_seconds++))
+  done
+}
+
+_watch_on_server() {
+  local mqtt_address="localhost"
+  local mqtt_port=1883
+  local tmp_file_root_dir="$EXPERIMENT_DIR/tmp/minecraft_trial_id_watcher_tom"
+  local log_file="$tmp_file_root_dir.log"
+  local pid_file="$tmp_file_root_dir.pid"
+
+  local project_dir="$HOME/$SYSTEMS_DIR/tomcat"
+
+  local exec_path="$project_dir/human_experiments/scripts/local/watch_minecraft_trial_id"
+
+  local command="$exec_path $mqtt_address $mqtt_port $EXPERIMENT_DIR $log_file $pid_file"
+
+  $command
+}
+
+_monitor_launch_on_server() {
+  local padding=$1
+
+  echo -e "${padding}Waiting for the program to launch on ${EMPH}tom${NC}..."
+  padding="$padding "
+
+  while true; do
+    local tmp_file_root_dir="$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom"
+    local log_file="$tmp_file_root_dir.log"
+    local pid_file="$tmp_file_root_dir.pid"
+
+    _monitor_launch "$log_file" "$pid_file"
+    local error_code=$?
+
+    if [[ $error_code -eq 0 ]]; then
+      echo -e "${padding}${GREEN}The program has successfully launched on ${EMPH}tom${GREEN}.${NC}"
+      return
+    elif [[ $error_code -eq $never_launched_error_code ]]; then
+      echo -e "${padding}${RED}The program was never launched.${NC}"
+    elif [[ $error_code -eq $process_killed_error_code ]]; then
+      echo -e "${padding}${RED}The program was killed.${NC}"
+    fi
+
+    if [[ $error_code -ne 0 ]]; then
+      echo -e "${padding}Look at the logs in $log_file for more details."
+      retry_question "$padding"
+      retry=$?
+
+      if [[ $retry -eq 0 ]]; then
+        _watch_on_server
+      else
+        break
+      fi
+    fi
+  done
+}
+
 _start_watcher_on_server() {
   local padding=$1
 
-  local mqtt_address="localhost"
-  local mqtt_port=1883
   local tmp_file_root_dir="$EXPERIMENT_DIR/tmp/minecraft_trial_id_watcher_tom"
   local log_file="$tmp_file_root_dir.log"
   local pid_file="$tmp_file_root_dir.pid"
@@ -29,21 +108,13 @@ _start_watcher_on_server() {
     pid=$(cat "$pid_file")
 
     if ps -p "$pid" > /dev/null; then
-      echo -e "{YELLOW}${padding}Aborting. The process {$pid} is already watching for trial IDs."
+      echo -e "${YELLOW}${padding}Aborting. The process ($pid) is already watching for trial IDs."
       return
     fi
   fi
 
-  echo -e "${padding}Starting."
-
-  local project_dir="$HOME/$SYSTEMS_DIR/tomcat"
-
-  local exec_path="$project_dir/human_experiments/scripts/local/watch_minecraft_trial_id"
-
-  local command="$exec_path $mqtt_address $mqtt_port $EXPERIMENT_DIR $log_file $pid_file"
-
-  # Execute in a tmux session such that the program keeps running even if we kill the uber script
-  $command
+  _watch_on_server
+  _monitor_launch_on_server "$padding"
 }
 
 _stop_watcher_on_server() {

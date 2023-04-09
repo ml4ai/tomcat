@@ -20,7 +20,7 @@ on_launch_error_code=2
 stopped_error_code=3
 process_killed_error_code=4
 
-wait_for_launch_timeout=300 # 5 minutes
+wait_for_launch_timeout=120 # 5 minutes
 
 _monitor_launch() {
   local log_file=$1
@@ -54,11 +54,25 @@ _monitor_launch() {
   done
 }
 
+_watch_on_server() {
+  local server_address="localhost"
+  local server_port=1883
+  local tmp_file_root_dir="$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom"
+  local log_file="$tmp_file_root_dir.log"
+  local pid_file="$tmp_file_root_dir.pid"
+
+  local project_dir="$HOME/$SYSTEMS_DIR/tomcat"
+
+  local exec_path="$project_dir/human_experiments/scripts/local/watch_minecraft_data"
+
+  local command="$exec_path $server_address $server_port $log_file $pid_file"
+
+  $command
+}
+
 _start_watcher_on_server() {
   local padding=$1
 
-  local server_address="localhost"
-  local server_port=1883
   local tmp_file_root_dir="$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom"
   local log_file="$tmp_file_root_dir.log"
   local pid_file="$tmp_file_root_dir.pid"
@@ -74,15 +88,8 @@ _start_watcher_on_server() {
     fi
   fi
 
-  echo -e "${padding}Starting..."
-
-  local project_dir="$HOME/$SYSTEMS_DIR/tomcat"
-
-  local exec_path="$project_dir/human_experiments/scripts/local/watch_minecraft_data"
-
-  local command="$exec_path $server_address $server_port $log_file $pid_file"
-
-  $command
+  _watch_on_server
+  _monitor_launch_on_server "$padding"
 }
 
 _monitor_launch_on_server() {
@@ -147,9 +154,6 @@ _stop_watcher_on_server() {
 
 _start_watcher() {
   _start_watcher_on_server "$padding"
-
-  # Wait until the program have launched on the server
-  _monitor_launch_on_server "$padding"
 }
 
 _stop_watcher() {
