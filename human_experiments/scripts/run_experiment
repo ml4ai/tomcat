@@ -302,7 +302,7 @@ if [[ $GOTO -le 15 ]]; then
   echo " "
   if yes_no_question "[15] Do you want to start the ${EMPH}Minecraft Watcher${NC}?"; then
     if yes_no_question " [15.1] Do you want to start the ${EMPH}Data Watcher${NC}?"; then
-      source minecraft_data_watcher "start" "  "
+      minecraft_data_watcher "start" "  "
     fi
     if yes_no_question " [15.2] Do you want to start the ${EMPH}Trial ID Watcher${NC}?"; then
       source minecraft_trial_watcher "start" "  "
