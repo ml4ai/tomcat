@@ -301,7 +301,7 @@ fi
 if [[ $GOTO -le 15 ]]; then
   echo " "
   if yes_no_question "[15] Do you want to start the ${EMPH}Minecraft Watcher${NC}?"; then
-    echo -e "${YELLOW} Watchers will be closed if the Uber Script is interrupted. Make sure to start them again if needed."
+    echo -e "${YELLOW} Watchers will be closed if the Uber Script is interrupted. Make sure to start them again if needed.${NC}"
     if yes_no_question " [15.1] Do you want to start the ${EMPH}Data Watcher${NC}?"; then
       source minecraft_data_watcher "start" "  "
     fi
