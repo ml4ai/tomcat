@@ -55,19 +55,24 @@ _monitor_launch() {
 }
 
 _watch_on_server() {
-  local server_address="localhost"
-  local server_port=1883
+  local mqtt_address="localhost"
+  local mqtt_port=1883
   local tmp_file_root_dir="$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom"
   local log_file="$tmp_file_root_dir.log"
   local pid_file="$tmp_file_root_dir.pid"
 
   local project_dir="$HOME/$SYSTEMS_DIR/tomcat"
 
-  local exec_path="$project_dir/human_experiments/scripts/local/watch_minecraft_data"
+  pushd "$project_dir/human_experiments/lab_software/mqtt_to_lsl/build/bin" > /dev/null || exit
+    # Run audio capture in background and save terminal outputs and pid to a file.
 
-  local command="$exec_path $server_address $server_port $log_file $pid_file"
-
-  $command
+    # Execute the script with nohup to prevent killing the process if the uber script is interrupted.
+    ./minecraft_mqtt_to_lsl --mqtt_addr="$mqtt_address" --mqtt_port="$mqtt_port" &> "$log_file" &
+    pid=$!
+    echo $pid > "$pid_file"
+    disown $pid
+    sleep 5
+  popd > /dev/null || exit
 }
 
 _start_watcher_on_server() {
