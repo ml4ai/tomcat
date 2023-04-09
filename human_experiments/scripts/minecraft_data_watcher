@@ -70,13 +70,8 @@ _watch_on_server() {
   local project_dir="$HOME/$SYSTEMS_DIR/tomcat"
 
   pushd "$project_dir/human_experiments/lab_software/mqtt_to_lsl/build/bin" > /dev/null || exit
-    # Run audio capture in background and save terminal outputs and pid to a file.
-
-    # Execute the script with nohup to prevent killing the process if the uber script is interrupted.
     ./minecraft_mqtt_to_lsl --mqtt_addr="$mqtt_address" --mqtt_port="$mqtt_port" &> "$log_file" &
-    pid=$!
-    echo $pid > "$pid_file"
-    disown $pid
+    echo $! > "$pid_file"
     sleep 5
   popd > /dev/null || exit
 }
