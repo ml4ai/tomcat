@@ -39,8 +39,8 @@ export ROOT_USER_ON_TOM="root@10.192.234.251"
 # we are backing up does not appear on the main (fast) tomcat disks (tomcat_1,
 # tomcat_2). 
 #
-export MISC_BACKUP_DIR_1="/tomcat_B1" 
-export MISC_BACKUP_DIR_2="/tomcat_B2" 
+export MISC_BACKUP_DIR_1="/tom_and_cat_B1" 
+export MISC_BACKUP_DIR_2="/tom_and_cat_B2" 
 
 # This is relative to the external home. 
 ### Not currently used --- export OFFSITE_BACKUP_DIR="tomcat/backup" 
@@ -91,20 +91,19 @@ for tomcat_raw_volume in ${RAW_DATA_VOLUMES}; do
     ${VERBOSE_ECHO} "Script pull_tomcat_data_2 backing up ${tomcat_raw_volume}. "
 
     echo DEV rsync ${rsync_options} ${tomcat_raw_volume}/ ${tomcat_raw_volume}_B1/  
-    xxxecho DEV rsync ${rsync_options} ${tomcat_raw_volume}/ ${tomcat_raw_volume}_B1/  
+    rsync ${rsync_options} ${tomcat_raw_volume}/ ${tomcat_raw_volume}_B1/  
     rc=$?
     ${VERBOSE_ECHO} "Rsync return code was ${rc}"
     ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
     ${VERBOSE_ECHO} ""
  
     echo DEV rsync ${rsync_options} ${tomcat_raw_volume}/ ${tomcat_raw_volume}_B2/  
-    xxxecho DEV rsync ${rsync_options} ${tomcat_raw_volume}/ ${tomcat_raw_volume}_B2/  
+    DEV rsync ${rsync_options} ${tomcat_raw_volume}/ ${tomcat_raw_volume}_B2/  
     rc=$?
     ${VERBOSE_ECHO} "Rsync return code was ${rc}"
     ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
     ${VERBOSE_ECHO} ""
 done 
-
 
 
 # # Backup experiments on SISTA 
@@ -131,15 +130,13 @@ done
 #     ${VERBOSE_ECHO} "Script backup_tom_and_cat_2 skipping backup of ${TOMCAT_DATA_DIR} due to remote mkdir failure."
 # fi
 
-
-
-
 # Backup stuff other than experiments on IVILAB disks. Here we need some extra
-# excludes. 
-rsync_options="${rsync_verbose} ${base_rsync_options} --exclude=LIMBO --exclude=TRASH --exclude=trash --exclude=.[tT]rash --exclude=experiments"
+# excludes. Also, we want to follow symbolic links as we sometimes use them when
+# dodging spaces issues. Better to risk having duplicates. 
+rsync_options="${rsync_verbose} ${base_rsync_options} -L --exclude=LIMBO --exclude=TRASH --exclude=trash --exclude=.[tT]rash --exclude=experiments"
 
 # No docker on cat on 22-09-29. Maybe in the future. 
-for cat_dir in /home /data/cat 
+for cat_dir in /home /data/cat /data/dev /data/dry_runs 
 do 
     ${VERBOSE_ECHO} "Script backup_tom_and_cat_2 is working on cat directory: ${cat_dir}."
     target_dir=${MISC_BACKUP_DIR_1}/cat/${cat_dir}
@@ -193,7 +190,7 @@ done
 rsync_options="${rsync_verbose} ${base_rsync_options} 
 
 echo DEV rsync ${rsync_options} ${MISC_BACKUP_DIR_1}/ ${MISC_BACKUP_DIR_2}  
-xecho DEV rsync ${rsync_options} ${MISC_BACKUP_DIR_1}/ ${MISC_BACKUP_DIR_2}  
+rsync ${rsync_options} ${MISC_BACKUP_DIR_1}/ ${MISC_BACKUP_DIR_2}  
 rc=$?
 ${VERBOSE_ECHO} "Rsync return code was ${rc}"
 ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
