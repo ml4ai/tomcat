@@ -50,6 +50,7 @@ export MISC_BACKUP_DIR_2="/tom_and_cat_B2"
 # Our exit status will be that of the last command that failed. 
 exit_status=0
 
+source ${TOMCAT_DIR}shared_code/bash/ivi_error_trap.bash  
 # The initial commands in this script executes need to succeed, so we can
 # simplify error handling to trap failures to report them, and then ask bash to
 # exit. But at the begining we are not ready to report errors or do anything
@@ -85,26 +86,24 @@ set +e
 
 base_rsync_options="-rlptD -u --modify-window=20 -b --suffix ${backup_suffix}"
 
-rsync_options="${rsync_verbose} ${base_rsync_options} --exclude=LIMBO --exclude=TRASH --exclude=trash --exclude=.[tT]rash --exclude=experiments"
+rsync_options="${rsync_verbose} ${base_rsync_options}"
 
 for tomcat_raw_volume in ${RAW_DATA_VOLUMES}; do 
     ${VERBOSE_ECHO} "Script pull_tomcat_data_2 backing up ${tomcat_raw_volume}. "
-
-    echo DEV rsync ${rsync_options} ${tomcat_raw_volume}/ ${tomcat_raw_volume}_B1/  
+    ${VERBOSE_ECHO} "Script pull_tomcat_data_2 executing: rsync ${rsync_options} ${tomcat_raw_volume}/ ${tomcat_raw_volume}_B1/" 
     rsync ${rsync_options} ${tomcat_raw_volume}/ ${tomcat_raw_volume}_B1/  
     rc=$?
     ${VERBOSE_ECHO} "Rsync return code was ${rc}"
     ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
     ${VERBOSE_ECHO} ""
  
-    echo DEV rsync ${rsync_options} ${tomcat_raw_volume}/ ${tomcat_raw_volume}_B2/  
-    DEV rsync ${rsync_options} ${tomcat_raw_volume}/ ${tomcat_raw_volume}_B2/  
+    ${VERBOSE_ECHO} "Script pull_tomcat_data_2 executing: rsync ${rsync_options} ${tomcat_raw_volume}/ ${tomcat_raw_volume}_B2/" 
+    rsync ${rsync_options} ${tomcat_raw_volume}/ ${tomcat_raw_volume}_B2/  
     rc=$?
     ${VERBOSE_ECHO} "Rsync return code was ${rc}"
     ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
     ${VERBOSE_ECHO} ""
 done 
-
 
 # # Backup experiments on SISTA 
 # rsync_options="${rsync_verbose} ${base_rsync_options} --chown=:tomcat-editor"
@@ -189,7 +188,7 @@ done
 
 rsync_options="${rsync_verbose} ${base_rsync_options} 
 
-echo DEV rsync ${rsync_options} ${MISC_BACKUP_DIR_1}/ ${MISC_BACKUP_DIR_2}  
+${VERBOSE_ECHO} rsync ${rsync_options} ${MISC_BACKUP_DIR_1}/ ${MISC_BACKUP_DIR_2}  
 rsync ${rsync_options} ${MISC_BACKUP_DIR_1}/ ${MISC_BACKUP_DIR_2}  
 rc=$?
 ${VERBOSE_ECHO} "Rsync return code was ${rc}"
