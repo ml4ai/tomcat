@@ -105,7 +105,6 @@ _start_recording_on_client() {
     padding="$padding "
   fi
   if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
-    echo -e "${padding}Starting recording on ${EMPH}$client_name${NC}."
 
     local tmp_file_root_dir="$EXPERIMENT_DIR/tmp/${device}_$client_name"
     local log_file="$tmp_file_root_dir.log"
@@ -126,6 +125,7 @@ _start_recording_on_client() {
       fi
     fi
 
+    echo -e "${padding}Starting recording on ${EMPH}$client_name${NC}."
     _record_on_client "$client_name" "$client_address" "$participant_id"
   fi
 }
