@@ -28,8 +28,7 @@ add_executable(audioStreamer
         src/WebsocketClient.cpp
         src/LSLAudioStream.cpp
         src/LSLStream.cpp
-        src/WaveWriter.cpp
-        )
+        src/WaveWriter.cpp)
 
 target_include_directories(audioStreamer PRIVATE
         ${portaudio_INCLUDE_DIR}

@@ -99,6 +99,7 @@ int main(int argc, char* argv[]) {
                                sample_rate,
                                save_audio,
                                recordings_directory);
+        streamer.OpenLSL();
         if (use_mqtt) {
             BOOST_LOG_TRIVIAL(info) << "[INFO] Starting audioStreamer in MQTT mode";
             run_mqtt(mqtt_host, mqtt_port, player_name, streamer);

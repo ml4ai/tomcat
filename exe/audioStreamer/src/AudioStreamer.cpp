@@ -4,16 +4,15 @@
 #include <thread>
 #include <vector>
 
-#include "portaudio.h"
+#include <fmt/format.h>
 #include <nlohmann/json.hpp>
-#include <sndfile.hh>
+#include <portaudio.h>
 
 #include "AudioStreamer.h"
 
 using namespace std;
 
-AudioStreamer::AudioStreamer(const string& ws_host,
-                             const string& ws_port,
+AudioStreamer::AudioStreamer(const string& ws_host, const string& ws_port,
                              const string& player_name, int sample_rate,
                              bool save_audio,
                              const string& recordings_directory) {
@@ -32,6 +31,12 @@ AudioStreamer::AudioStreamer(const string& ws_host,
 }
 
 AudioStreamer::~AudioStreamer() { delete ws_client; }
+
+void AudioStreamer::OpenLSL() {
+    this->lsl_stream = make_unique<LSLAudioStream>(
+        "AudioStreamer", 1, "audio_streamer", "audio_streamer", sample_rate);
+    lsl_stream->open();
+}
 
 void AudioStreamer::StartStreaming() {
     // Check if already running
@@ -93,10 +98,6 @@ void AudioStreamer::StartStreaming() {
             << "[ERROR] Failure starting PortAudio stream: "
             << Pa_GetErrorText(err);
     }
-
-    this->lsl_stream = make_unique<LSLAudioStream>(
-        "AudioStreamer", 1, "audio_streamer", "audio_streamer", sample_rate);
-    lsl_stream->open();
 
     BOOST_LOG_TRIVIAL(info) << "[INFO] Started. Recording audio...";
     portaudio_stream_thread = thread([this] { this->Loop(); });
@@ -166,9 +167,23 @@ void AudioStreamer::GenerateAudioFilename(const nlohmann::json& message) {
 }
 void AudioStreamer::CreateAudioFile() {
     ValidateRecordingsDirectory();
-    string path = recordings_directory + recording_filename;
 
-    this->wave_file = make_unique<WaveWriter>(path, 16, 1, sample_rate);
+    const filesystem::path p(recordings_directory);
+    if (filesystem::exists(p)) {
+        BOOST_LOG_TRIVIAL(info)
+            << "[INFO] Writing frames to already existing path: " << p.string();
+    }
+    else {
+        BOOST_LOG_TRIVIAL(info)
+            << "[INFO] Directory: " << p.string()
+            << " does not exist. Creating it now." << p.string();
+
+        filesystem::create_directories(p);
+    }
+
+    string audio_filepath = recordings_directory + recording_filename;
+    this->wave_file =
+        make_unique<WaveWriter>(audio_filepath, 16, 1, sample_rate);
 }
 void AudioStreamer::WriteChunkToFile(const vector<int16_t>& chunk) {
     this->wave_file->write_chunk(chunk);

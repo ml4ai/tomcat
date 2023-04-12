@@ -5,7 +5,6 @@
 
 #include "portaudio.h"
 #include <nlohmann/json.hpp>
-#include <sndfile.hh>
 
 #include "WebsocketClient.h"
 #include "WaveWriter.h"
@@ -20,6 +19,7 @@ class AudioStreamer {
                   const std::string& recordings_directory);
     ~AudioStreamer();
 
+    void OpenLSL();
     void StartStreaming();
     void StopStreaming();
 
