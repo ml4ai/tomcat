@@ -23,7 +23,7 @@ fi
 never_launched_error_code=1
 on_launch_error_code=2
 stopped_error_code=3
-log_file_deleted=4
+log_file_deleted_error_code=4
 
 # Frame rates
 video_fps=10 # 10Hz
@@ -35,7 +35,12 @@ _monitor_launch() {
   local pid_file=$2
 
   if [[ ! -e "$pid_file" ]]; then
-    return $never_launched_error_code
+    # Wait a bit and check again
+    sleep 5
+
+    if [[ ! -e "$pid_file" ]]; then
+      return $never_launched_error_code
+    fi
   fi
 
   local num_seconds=0
@@ -54,12 +59,14 @@ _monitor_launch() {
         return 0
       fi
     else
-      return $log_file_deleted
+      return $log_file_deleted_error_code
     fi
 
     sleep 1
     ((num_seconds++))
   done
+
+  return $never_launched_error_code
 }
 
 _record_on_client() {
@@ -156,7 +163,7 @@ _monitor_launch_on_client() {
       # We don't treat as an error. Just show a warning.
       echo -e "${padding}${YELLOW}The program was never launched.${NC}"
       return
-    elif [[ $error_code -eq $log_file_deleted ]]; then
+    elif [[ $error_code -eq $log_file_deleted_error_code ]]; then
       echo -e "${padding}${YELLOW}The log file was deleted. Cannot tell if the program was properly launched${NC}"
       return
     elif [[ $error_code -eq $on_launch_error_code ]]; then
