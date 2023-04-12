@@ -46,3 +46,6 @@ ports:
 ./audioStreamer --use_mqtt true --mqtt_host  localhost --mqtt_port 1883 --player_name Player100
 ```
 
+## LSL
+
+An LSL stream named AudioStreamer will be created when the program is executed. The same audio chunks saved to the audio file are also sent to LSL through that stream.
