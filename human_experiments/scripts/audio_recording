@@ -70,15 +70,18 @@ _record_on_client() {
   if [[ "$client_name" == "cat" ]]; then
     local exec_path="$project_dir/human_experiments/scripts/local/record_audio"
     local command="$exec_path $audio_dir $log_file $pid_file"
+    local username="cat"
     # shellcheck disable=SC2029
     ssh "cat@$client_address" "$command"
   else
     # If the client is one of the iMacs, we want to call the audio streamer instead.
     local exec_path="$project_dir/human_experiments/scripts/local/stream_audio"
     local command="$exec_path \$HOME/$audio_dir tom.local tom.local $participant_id \$HOME/$log_file \$HOME/$pid_file"
-    # shellcheck disable=SC2029
-    ssh "$EXPERIMENT_USER@$client_address" "$command"
+    local username="$EXPERIMENT_USER"
   fi
+
+  # shellcheck disable=SC2029
+  ssh "$username@$client_address" "$command"
 }
 
 _start_recording_on_client() {
@@ -109,7 +112,7 @@ _start_recording_on_client() {
       local command="$check_exec_path $pid"
 
       # shellcheck disable=SC2029
-      if ssh "$EXPERIMENT_USER@$client_address" "$command" > /dev/null; then
+      if ssh "$username@$client_address" "$command" > /dev/null; then
         echo -e "${YELLOW}${padding}Aborting. The process $pid is already recording.${NC}"
         return
       fi
@@ -203,10 +206,13 @@ _stop_record_on_client() {
 
     # shellcheck disable=SC2029
     if [[ "$client_name" == "cat" ]]; then
-      ssh "cat@$client_address" "$command"
+      local username="cat"
     else
-      ssh "$EXPERIMENT_USER@$client_address" "$command"
+      local username="$EXPERIMENT_USER"
     fi
+
+    # shellcheck disable=SC2029
+    ssh "$username@$client_address" "$command"
   fi
 }
 
