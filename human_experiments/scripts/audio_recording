@@ -201,7 +201,11 @@ _stop_record_on_client() {
     local command="$exec_path $pid"
 
     # shellcheck disable=SC2029
-    ssh "$EXPERIMENT_USER@$client_address" "$command"
+    if [[ "$client_name" == "cat" ]]; then
+      ssh "cat@$client_address" "$command"
+    else
+      ssh "$EXPERIMENT_USER@$client_address" "$command"
+    fi
   fi
 }
 
