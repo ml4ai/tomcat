@@ -54,10 +54,6 @@ void Screen::start_recording(const std::string& out_dir,
                         this->frame_height)
          << endl;
 
-    vector<int> compression_params;
-    compression_params.push_back(cv::IMWRITE_PNG_COMPRESSION);
-    compression_params.push_back(9);
-
     // CV_8UC4: 8 bit unsigned ints 4 channels -> RGBA
     cv::Mat img(cv::Size(max_width, max_height), CV_8UC4);
 
