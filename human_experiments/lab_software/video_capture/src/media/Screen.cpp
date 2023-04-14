@@ -68,6 +68,9 @@ void Screen::start_recording(const std::string& out_dir,
     LSLStringStream lsl_stream("Screen", "screen", "image_filename", fps);
     lsl_stream.open();
 
+    bool resize =
+        (this->frame_width != max_width) || (this->frame_height != max_height);
+
     cout << "[INFO] Started. Recording from the screen..." << endl;
     auto prev_frame_time = date::floor<std::chrono::milliseconds>(
         std::chrono::system_clock::now());
@@ -80,12 +83,16 @@ void Screen::start_recording(const std::string& out_dir,
         CGContextDrawImage(context_ref, drawing_area, image_ref);
         cvtColor(img, img, cv::COLOR_RGBA2BGR);
 
-        // Resize to the desired resolution preserving aspect ratio
-        double scale = min((double)this->frame_width / final_image.cols,
-                           (double)this->frame_height / final_image.rows);
-        cv::Size resized_size(int(final_image.cols * scale),
-                              int(final_image.rows * scale));
-        cv::resize(img, final_image, resized_size);
+        if (resize) {
+            // Resize to the desired resolution preserving aspect ratio
+            double scale = min((double)this->frame_width / final_image.cols,
+                               (double)this->frame_height / final_image.rows);
+            cv::Size resized_size(int(final_image.cols * scale),
+                                  int(final_image.rows * scale));
+            cv::resize(img, final_image, resized_size);
+        } else {
+            final_image = img;
+        }
         if (!img.empty()) {
             // We need to check if the image is not empty otherwise imwrite
             // will crash.
