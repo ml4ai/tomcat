@@ -239,6 +239,9 @@ if [[ $GOTO -le 9 ]]; then
   fi
 fi
 
+echo ""
+echo -e "${BLACK}${ON_CYAN}Make sure to press the OK button on Lab Recorder to record anyway before proceeding.${NC}"
+
 if [[ $GOTO -le 10 ]]; then
   echo " "
   if yes_no_question "[10] Do you want to start recording from the ${EMPH}Eye-tracker${NC} program?"; then
@@ -297,6 +300,9 @@ if [[ $GOTO -le 14 ]]; then
     source start_lab_recorder " "
   fi
 fi
+
+echo ""
+echo -e "${BLACK}${ON_CYAN}Make sure to press the OK button on Lab Recorder to record anyway before proceeding.${NC}"
 
 if [[ $GOTO -le 15 ]]; then
   echo " "
