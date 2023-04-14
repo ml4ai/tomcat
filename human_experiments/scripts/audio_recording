@@ -50,6 +50,11 @@ _monitor_launch() {
         # Waiting for MQTT message to start recording. Successfully launched
         return 0
       fi
+
+      if [[ $(grep -c '\[INFO\] Started' "$log_file") -ne 0 ]]; then
+        # Started recording. Successfully launched
+        return 0
+      fi
     else
       return $log_file_deleted_error_code
     fi
