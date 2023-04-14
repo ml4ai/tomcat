@@ -36,6 +36,16 @@ void Screen::start_recording(const std::string& out_dir,
     // Full size of the monitor we are recording from
     int max_width = int(CGDisplayPixelsWide(CGMainDisplayID()));
     int max_height = int(CGDisplayPixelsHigh(CGMainDisplayID()));
+
+    if ((this->frame_width != max_width) ||
+        (this->frame_height != max_height)) {
+        // Keep the aspect ratio
+        double scale = min((double)this->frame_width / max_width,
+                           (double)this->frame_height / max_height);
+        this->frame_width = int(this->frame_width * scale);
+        this->frame_height = int(this->frame_height * scale);
+    }
+
     cout << fmt::format(
                 "[INFO] Maximum resolution is {} x {}.", max_width, max_height)
          << endl;
@@ -46,9 +56,6 @@ void Screen::start_recording(const std::string& out_dir,
 
     // CV_8UC4: 8 bit unsigned ints 4 channels -> RGBA
     cv::Mat img(cv::Size(max_width, max_height), CV_8UC4);
-
-    // CV_8UC4: 8 bit unsigned ints 4 channels -> RGBA
-    cv::Mat color_corrected_img(cv::Size(max_width, max_height), CV_8UC3);
 
     // CV_8UC3: 8 bit unsigned ints 3 channels -> RGB
     // Saving the image with the alpha channel, changes some colors (e.g. red
@@ -71,9 +78,6 @@ void Screen::start_recording(const std::string& out_dir,
     LSLStringStream lsl_stream("Screen", "screen", "image_filename", fps);
     lsl_stream.open();
 
-    bool resize =
-        (this->frame_width != max_width) || (this->frame_height != max_height);
-
     cout << "[INFO] Started. Recording from the screen..." << endl;
     auto prev_frame_time = date::floor<std::chrono::milliseconds>(
         std::chrono::system_clock::now());
@@ -81,21 +85,12 @@ void Screen::start_recording(const std::string& out_dir,
         auto capture_start_time = date::floor<std::chrono::milliseconds>(
             std::chrono::system_clock::now());
 
-        const auto drawing_area = CGRectMake(0, 0, img.cols, img.rows);
+        const auto drawing_area =
+            CGRectMake(0, 0, final_image.cols, final_image.rows);
         CGImageRef image_ref = CGDisplayCreateImage(CGMainDisplayID());
         CGContextDrawImage(context_ref, drawing_area, image_ref);
-        cvtColor(img, color_corrected_img, cv::COLOR_RGBA2BGR);
+        cvtColor(img, final_image, cv::COLOR_RGBA2BGR);
 
-        if (resize) {
-            // Resize to the desired resolution preserving aspect ratio
-            double scale = min((double)this->frame_width / final_image.cols,
-                               (double)this->frame_height / final_image.rows);
-            cv::Size resized_size(int(final_image.cols * scale),
-                                  int(final_image.rows * scale));
-            cv::resize(color_corrected_img, final_image, resized_size);
-        } else {
-            final_image = img;
-        }
         if (!img.empty()) {
             // We need to check if the image is not empty otherwise imwrite
             // will crash.
