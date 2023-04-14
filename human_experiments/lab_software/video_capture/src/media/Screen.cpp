@@ -48,6 +48,7 @@ void Screen::start_recording(const std::string& out_dir,
 
         resize = true;
     }
+    cv::Size resized_size(this->frame_width, this->frame_height);
 
     cout << fmt::format(
                 "[INFO] Maximum resolution is {} x {}.", max_width, max_height)
@@ -94,16 +95,17 @@ void Screen::start_recording(const std::string& out_dir,
         const auto drawing_area = CGRectMake(0, 0, img.cols, img.rows);
         CGImageRef image_ref = CGDisplayCreateImage(CGMainDisplayID());
         CGContextDrawImage(context_ref, drawing_area, image_ref);
-        cvtColor(img, color_corrected_img, cv::COLOR_RGBA2BGR);
 
-        if (resize) {
-            cv::Size resized_size(this->frame_width, this->frame_height);
-            cv::resize(color_corrected_img, final_image, resized_size);
-        }
-        else {
-            final_image = img;
-        }
         if (!img.empty()) {
+            cvtColor(img, color_corrected_img, cv::COLOR_RGBA2BGR);
+
+            if (resize) {
+                cv::resize(color_corrected_img, final_image, resized_size);
+            }
+            else {
+                final_image = color_corrected_img;
+            }
+
             // We need to check if the image is not empty otherwise imwrite
             // will crash.
             std::string date_time =
