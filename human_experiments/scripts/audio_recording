@@ -26,13 +26,20 @@ _monitor_launch() {
   local log_file=$1
   local pid_file=$2
 
-  if [[ ! -e "$pid_file" ]]; then
-    # Wait a bit and check again
-    sleep 5
-
+  # It can take a while for the file with the PID be saved on the experiment folder because of network delay.
+  # The iMACs save the file in a shared directory, so it's not readily available for the server. Here we try
+  # 3 times before assuming the file was never created.
+  local num_trials=0
+  while [ $num_trials -lt 3 ]; do
     if [[ ! -e "$pid_file" ]]; then
-      return $never_launched_error_code
+      # Wait a bit and check again
+      sleep 5
     fi
+    ((num_trials++))
+  done
+
+  if [[ ! -e "$pid_file" ]]; then
+    return $never_launched_error_code
   fi
 
   local num_seconds=0
