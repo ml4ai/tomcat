@@ -27,7 +27,7 @@ log_file_deleted_error_code=4
 
 # Frame rates
 webcam_fps=10 # 10Hz
-screen_fps=10 # 5Hz We cannot record at a higher frequency
+screen_fps=3 # 3Hz We cannot record reliably at a higher frequency
 
 wait_for_launch_timeout=300 # 5 minutes
 
