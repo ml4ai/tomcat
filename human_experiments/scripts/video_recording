@@ -39,7 +39,7 @@ _monitor_launch() {
   # 3 times before assuming the file was never created.
   local num_trials=0
   while [ $num_trials -lt 3 ]; do
-    if [[ -e "$pid_file" ]]; then
+    if [[ -e "$log_file" ]]; then
       break
     fi
 
@@ -48,7 +48,7 @@ _monitor_launch() {
     ((num_trials++))
   done
 
-  if [[ ! -e "$pid_file" ]]; then
+  if [[ ! -e "$log_file" ]]; then
     return $never_launched_error_code
   fi
 
