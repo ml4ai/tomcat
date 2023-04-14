@@ -37,6 +37,7 @@ void Screen::start_recording(const std::string& out_dir,
     int max_width = int(CGDisplayPixelsWide(CGMainDisplayID()));
     int max_height = int(CGDisplayPixelsHigh(CGMainDisplayID()));
 
+    bool resize = false;
     if ((this->frame_width != max_width) ||
         (this->frame_height != max_height)) {
         // Keep the aspect ratio
@@ -44,6 +45,8 @@ void Screen::start_recording(const std::string& out_dir,
                            (double)this->frame_height / max_height);
         this->frame_width = int(max_width * scale);
         this->frame_height = int(max_height * scale);
+
+        resize = true;
     }
 
     cout << fmt::format(
@@ -55,7 +58,10 @@ void Screen::start_recording(const std::string& out_dir,
          << endl;
 
     // CV_8UC4: 8 bit unsigned ints 4 channels -> RGBA
-    cv::Mat img(cv::Size(this->frame_width, this->frame_height), CV_8UC4);
+    cv::Mat img(cv::Size(max_width, max_height), CV_8UC4);
+
+    // CV_8UC4: 8 bit unsigned ints 4 channels -> RGBA
+    cv::Mat color_corrected_img(cv::Size(max_width, max_height), CV_8UC3);
 
     // CV_8UC3: 8 bit unsigned ints 3 channels -> RGB
     // Saving the image with the alpha channel, changes some colors (e.g. red
@@ -85,12 +91,18 @@ void Screen::start_recording(const std::string& out_dir,
         auto capture_start_time = date::floor<std::chrono::milliseconds>(
             std::chrono::system_clock::now());
 
-        const auto drawing_area =
-            CGRectMake(0, 0, this->frame_width, this->frame_height);
+        const auto drawing_area = CGRectMake(0, 0, img.cols, img.rows);
         CGImageRef image_ref = CGDisplayCreateImage(CGMainDisplayID());
         CGContextDrawImage(context_ref, drawing_area, image_ref);
-        cvtColor(img, final_image, cv::COLOR_RGBA2BGR);
+        cvtColor(img, color_corrected_img, cv::COLOR_RGBA2BGR);
 
+        if (resize) {
+            cv::Size resized_size(this->frame_width, this->frame_height);
+            cv::resize(color_corrected_img, final_image, resized_size);
+        }
+        else {
+            final_image = img;
+        }
         if (!img.empty()) {
             // We need to check if the image is not empty otherwise imwrite
             // will crash.
