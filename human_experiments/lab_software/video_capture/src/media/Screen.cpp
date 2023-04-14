@@ -42,8 +42,8 @@ void Screen::start_recording(const std::string& out_dir,
         // Keep the aspect ratio
         double scale = min((double)this->frame_width / max_width,
                            (double)this->frame_height / max_height);
-        this->frame_width = int(this->frame_width * scale);
-        this->frame_height = int(this->frame_height * scale);
+        this->frame_width = int(max_width * scale);
+        this->frame_height = int(max_height * scale);
     }
 
     cout << fmt::format(
