@@ -31,10 +31,12 @@ _monitor_launch() {
   # 3 times before assuming the file was never created.
   local num_trials=0
   while [ $num_trials -lt 3 ]; do
-    if [[ ! -e "$pid_file" ]]; then
-      # Wait a bit and check again
-      sleep 5
+    if [[ -e "$pid_file" ]]; then
+      break
     fi
+
+    # Wait a bit and check again
+    sleep 5
     ((num_trials++))
   done
 

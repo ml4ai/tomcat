@@ -39,10 +39,12 @@ _monitor_launch() {
   # 3 times before assuming the file was never created.
   local num_trials=0
   while [ $num_trials -lt 3 ]; do
-    if [[ ! -e "$pid_file" ]]; then
-      # Wait a bit and check again
-      sleep 5
+    if [[ -e "$pid_file" ]]; then
+      break
     fi
+
+    # Wait a bit and check again
+    sleep 5
     ((num_trials++))
   done
 
@@ -103,7 +105,7 @@ _record_on_client() {
   fi
 
   # shellcheck disable=SC2029
-  ssh "$EXPERIMENT_USER@$client_address" "$command" > /dev/null
+  ssh "$EXPERIMENT_USER@$client_address" "$command" >/dev/null
 }
 
 _start_recording_on_client() {
@@ -134,7 +136,7 @@ _start_recording_on_client() {
       local command="$check_exec_path $pid"
 
       # shellcheck disable=SC2029
-      if ssh "$EXPERIMENT_USER@$client_address" "$command" > /dev/null; then
+      if ssh "$EXPERIMENT_USER@$client_address" "$command" >/dev/null; then
         echo -e "${YELLOW}${padding}Aborting. The process $pid is already recording.${NC}"
         return
       fi
