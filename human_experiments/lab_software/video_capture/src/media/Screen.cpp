@@ -54,6 +54,10 @@ void Screen::start_recording(const std::string& out_dir,
                         this->frame_height)
          << endl;
 
+    vector<int> compression_params;
+    compression_params.push_back(cv::IMWRITE_PNG_COMPRESSION);
+    compression_params.push_back(0);
+
     // CV_8UC4: 8 bit unsigned ints 4 channels -> RGBA
     cv::Mat img(cv::Size(max_width, max_height), CV_8UC4);
 
@@ -110,7 +114,7 @@ void Screen::start_recording(const std::string& out_dir,
             // streams. The image content will be saved to a subdirectory in
             // the experiment folder.
             lsl_stream.send(image_filename);
-            imwrite(file, final_image);
+            imwrite(file, final_image, compression_params);
         }
 
         auto capture_end_time = date::floor<std::chrono::milliseconds>(
