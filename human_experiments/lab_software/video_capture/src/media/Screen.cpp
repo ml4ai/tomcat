@@ -34,8 +34,8 @@ void Screen::start_recording(const std::string& out_dir,
          << endl;
 
     // Full size of the monitor we are recording from
-    size_t max_width = CGDisplayPixelsWide(CGMainDisplayID());
-    size_t max_height = CGDisplayPixelsHigh(CGMainDisplayID());
+    int max_width = int(CGDisplayPixelsWide(CGMainDisplayID()));
+    int max_height = int(CGDisplayPixelsHigh(CGMainDisplayID()));
     cout << fmt::format(
                 "[INFO] Maximum resolution is {} x {}.", max_width, max_height)
          << endl;
@@ -45,7 +45,7 @@ void Screen::start_recording(const std::string& out_dir,
          << endl;
 
     // CV_8UC4: 8 bit unsigned ints 4 channels -> RGBA
-    cv::Mat img(cv::Size(this->frame_width, this->frame_height), CV_8UC4);
+    cv::Mat img(cv::Size(max_width, max_height), CV_8UC4);
 
     // CV_8UC3: 8 bit unsigned ints 3 channels -> RGB
     // Saving the image with the alpha channel, changes some colors (e.g. red
@@ -75,12 +75,17 @@ void Screen::start_recording(const std::string& out_dir,
         auto capture_start_time = date::floor<std::chrono::milliseconds>(
             std::chrono::system_clock::now());
 
+        const auto drawing_area = CGRectMake(0, 0, img.cols, img.rows);
         CGImageRef image_ref = CGDisplayCreateImage(CGMainDisplayID());
-        CGContextDrawImage(
-            context_ref,
-            CGRectMake(0, 0, this->frame_width, this->frame_height),
-            image_ref);
-        cvtColor(img, final_image, cv::COLOR_RGBA2BGR);
+        CGContextDrawImage(context_ref, drawing_area, image_ref);
+        cvtColor(img, img, cv::COLOR_RGBA2BGR);
+
+        // Resize to the desired resolution preserving aspect ratio
+        double scale = min((double)this->frame_width / final_image.cols,
+                           (double)this->frame_height / final_image.rows);
+        cv::Size resized_size(int(final_image.cols * scale),
+                              int(final_image.rows * scale));
+        cv::resize(img, final_image, resized_size);
         if (!img.empty()) {
             // We need to check if the image is not empty otherwise imwrite
             // will crash.
