@@ -123,8 +123,14 @@ _start_recording_on_client() {
       local check_exec_path="$project_dir/human_experiments/scripts/local/is_process_active"
       local command="$check_exec_path $pid"
 
+      if [[ "$client_name" == "cat" ]]; then
+        local username="cat"
+      else
+        local username="$EXPERIMENT_USER"
+      fi
+
       # shellcheck disable=SC2029
-      if ssh "$username@$client_address" "$command" > /dev/null; then
+      if ssh "$username@$client_address" "$command" >/dev/null; then
         echo -e "${YELLOW}${padding}Aborting. The process $pid is already recording.${NC}"
         return
       fi
@@ -216,7 +222,6 @@ _stop_record_on_client() {
     local exec_path="$project_dir/human_experiments/scripts/local/kill_program"
     local command="$exec_path $pid"
 
-    # shellcheck disable=SC2029
     if [[ "$client_name" == "cat" ]]; then
       local username="cat"
     else
