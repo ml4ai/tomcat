@@ -47,6 +47,9 @@ void Screen::start_recording(const std::string& out_dir,
     // CV_8UC4: 8 bit unsigned ints 4 channels -> RGBA
     cv::Mat img(cv::Size(max_width, max_height), CV_8UC4);
 
+    // CV_8UC4: 8 bit unsigned ints 4 channels -> RGBA
+    cv::Mat color_corrected_img(cv::Size(max_width, max_height), CV_8UC3);
+
     // CV_8UC3: 8 bit unsigned ints 3 channels -> RGB
     // Saving the image with the alpha channel, changes some colors (e.g. red
     // becomes blue). We save the image without the alpha channel.
@@ -81,7 +84,7 @@ void Screen::start_recording(const std::string& out_dir,
         const auto drawing_area = CGRectMake(0, 0, img.cols, img.rows);
         CGImageRef image_ref = CGDisplayCreateImage(CGMainDisplayID());
         CGContextDrawImage(context_ref, drawing_area, image_ref);
-        cvtColor(img, img, cv::COLOR_RGBA2BGR);
+        cvtColor(img, color_corrected_img, cv::COLOR_RGBA2BGR);
 
         if (resize) {
             // Resize to the desired resolution preserving aspect ratio
@@ -89,7 +92,7 @@ void Screen::start_recording(const std::string& out_dir,
                                (double)this->frame_height / final_image.rows);
             cv::Size resized_size(int(final_image.cols * scale),
                                   int(final_image.rows * scale));
-            cv::resize(img, final_image, resized_size);
+            cv::resize(color_corrected_img, final_image, resized_size);
         } else {
             final_image = img;
         }
