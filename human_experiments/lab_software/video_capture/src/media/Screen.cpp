@@ -55,7 +55,7 @@ void Screen::start_recording(const std::string& out_dir,
          << endl;
 
     // CV_8UC4: 8 bit unsigned ints 4 channels -> RGBA
-    cv::Mat img(cv::Size(max_width, max_height), CV_8UC4);
+    cv::Mat img(cv::Size(this->frame_width, this->frame_height), CV_8UC4);
 
     // CV_8UC3: 8 bit unsigned ints 3 channels -> RGB
     // Saving the image with the alpha channel, changes some colors (e.g. red
@@ -86,7 +86,7 @@ void Screen::start_recording(const std::string& out_dir,
             std::chrono::system_clock::now());
 
         const auto drawing_area =
-            CGRectMake(0, 0, final_image.cols, final_image.rows);
+            CGRectMake(0, 0, this->frame_width, this->frame_height);
         CGImageRef image_ref = CGDisplayCreateImage(CGMainDisplayID());
         CGContextDrawImage(context_ref, drawing_area, image_ref);
         cvtColor(img, final_image, cv::COLOR_RGBA2BGR);
