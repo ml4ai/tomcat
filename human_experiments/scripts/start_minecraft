@@ -25,6 +25,8 @@ __start_on_client() {
   if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
     enable_wifi "$client_name" "$client_address" "$padding"
 
+    sleep 5
+
     # Close instructive video if it's being displayed
     local command="osascript -e \"tell application \\\"QuickTime\\\" to quit\""
     # shellcheck disable=SC2029
