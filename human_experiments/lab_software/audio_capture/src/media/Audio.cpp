@@ -42,6 +42,26 @@ void Audio::start_recording(const string& out_dir,
                         Pa_GetErrorText(err)));
     }
 
+    int numDevices = Pa_GetDeviceCount();
+    const PaDeviceInfo* deviceInfo;
+    int chosenDeviceIndex = -1;
+
+    // iterate through all available devices and print their names
+    std::cout << "Available devices:" << std::endl;
+    for (int i = 0; i < numDevices; i++) {
+        deviceInfo = Pa_GetDeviceInfo(i);
+        std::cout << i << ": " << deviceInfo->name << std::endl;
+
+        // if the device has input capabilities, choose it as the input device
+        if (deviceInfo->maxInputChannels > 0) {
+            chosenDeviceIndex = i;
+        }
+    }
+
+    if (chosenDeviceIndex < 0) {
+        std::cout << "No input devices found." << std::endl;
+    }
+
     // Set inputParameters
     input_parameters.device = Pa_GetDefaultInputDevice();
     if (input_parameters.device == paNoDevice) {
