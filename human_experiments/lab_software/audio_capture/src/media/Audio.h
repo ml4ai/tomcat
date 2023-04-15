@@ -1,23 +1,25 @@
 #pragma once
 
 #include <atomic>
+#include <filesystem>
 #include <memory>
 #include <string>
 #include <thread>
+#include <unordered_map>
 #include <vector>
-#include <filesystem>
 
 #include <portaudio.h>
 
-#include "data_stream/WaveWriter.h"
 #include "data_stream/LSLAudioStream.h"
+#include "data_stream/WaveWriter.h"
 
 class Audio {
   public:
     int num_channels;
     int chunk_size;
 
-    Audio(int num_channels, int chunk_size);
+    Audio(int num_channels, int chunk_size, int device_index = -1);
+    Audio(int num_channels, int chunk_size, const std::string& device_name);
     ~Audio() = default;
 
     void start_recording(const std::string& out_dir,
@@ -28,11 +30,20 @@ class Audio {
 
   private:
     bool recording = false;
+    std::unordered_map<std::string, int> device_map;
+    int device_index;
 
     PaStream* audio_stream;
     std::thread audio_stream_thread;
     std::unique_ptr<WaveWriter> wave_file;
     std::unique_ptr<LSLAudioStream> lsl_stream;
+
+    /**
+     * Fills dictionary with the mapping between device name and indexed from
+     * the list of available devices.
+     *
+     */
+    void fill_device_map();
 
     /**
      * Loop until interruption.

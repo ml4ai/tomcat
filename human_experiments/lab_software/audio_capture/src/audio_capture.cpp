@@ -16,9 +16,11 @@ namespace po = boost::program_options;
 
 int main(int argc, const char* argv[]) {
     string out_dir;
+    string device_name;
     int sample_rate;
     int num_channels;
     int chunk_size;
+    int device_index;
 
     po::options_description arguments("Program Options");
     arguments.add_options()("help,h",
@@ -40,7 +42,13 @@ int main(int argc, const char* argv[]) {
         po::value<int>(&chunk_size)
             ->default_value(DEFAULT_CHUNK_SIZE)
             ->required(),
-        "Size of the buffer.");
+        "Size of the buffer.")(
+        "device_index",
+        po::value<int>(&device_index)->default_value(-1),
+        "Index of the input device. -1 for default.")("device_name",
+                                po::value<string>(&device_name),
+                                "Name of the input device. If a name if passed, it "
+                                "has priority over the device index.");
 
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, arguments), vm);
@@ -55,13 +63,18 @@ int main(int argc, const char* argv[]) {
              << endl;
     }
 
-    Audio audio(num_channels, chunk_size);
+    unique_ptr<Audio> audio;
+    if (device_name.empty()) {
+        audio = make_unique<Audio>(num_channels, chunk_size, device_index);
+    } else{
+        audio = make_unique<Audio>(num_channels, chunk_size, device_name);
+    }
 
     // Signal handler in case the program is interrupted.
     watch_for_signal();
 
     try {
-        audio.start_recording(out_dir, sample_rate, &quit);
+        audio->start_recording(out_dir, sample_rate, &quit);
     }
     catch (const std::exception& ex) {
         cerr << "[ERROR] Program crashed." << endl;

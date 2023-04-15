@@ -12,9 +12,47 @@
 
 using namespace std;
 
-Audio::Audio(int num_channels, int chunk_size)
+Audio::Audio(int num_channels, int chunk_size, int device_index)
     : num_channels(num_channels), chunk_size(chunk_size),
-      audio_stream(nullptr) {}
+      audio_stream(nullptr) {
+    this->fill_device_map();
+    this->device_index = device_index;
+}
+
+Audio::Audio(int num_channels, int chunk_size, const string& device_name)
+    : num_channels(num_channels), chunk_size(chunk_size),
+      audio_stream(nullptr) {
+    this->fill_device_map();
+    if (this->device_map.find(device_name) == this->device_map.end()) {
+        throw GeneralException(
+            fmt::format("Device {} not found.", device_name));
+    }
+    this->device_index = this->device_map[device_name];
+}
+
+void Audio::fill_device_map() {
+    // Initialize PortAudio
+    const auto err = Pa_Initialize();
+    if (err != paNoError) {
+        throw GeneralException(
+            fmt::format("[ERROR] Failure initializing PortAudio: {}",
+                        Pa_GetErrorText(err)));
+    }
+
+    int num_devices = Pa_GetDeviceCount();
+
+    // iterate through all available devices and print their names
+    std::cout << fmt::format("{} available input devices\n", num_devices) << std::endl;
+    for (int i = 0; i < num_devices; i++) {
+        const auto device_info = Pa_GetDeviceInfo(i);
+        if (device_info->maxInputChannels > 0) {
+            // if the device has input capabilities, add to the map
+            std::cout << i << ": " << device_info->name << std::endl;
+            this->device_map[device_info->name] = i;
+        }
+    }
+    cout << "******************************" << endl;
+}
 
 void Audio::start_recording(const string& out_dir,
                             int sample_rate,
@@ -34,36 +72,12 @@ void Audio::start_recording(const string& out_dir,
     PaStreamParameters input_parameters;
     PaError err;
 
-    // Initialize PortAudio
-    err = Pa_Initialize();
-    if (err != paNoError) {
-        throw GeneralException(
-            fmt::format("[ERROR] Failure initializing PortAudio: {}",
-                        Pa_GetErrorText(err)));
-    }
-
-    int numDevices = Pa_GetDeviceCount();
-    const PaDeviceInfo* deviceInfo;
-    int chosenDeviceIndex = -1;
-
-    // iterate through all available devices and print their names
-    std::cout << "Available devices:" << std::endl;
-    for (int i = 0; i < numDevices; i++) {
-        deviceInfo = Pa_GetDeviceInfo(i);
-        std::cout << i << ": " << deviceInfo->name << std::endl;
-
-        // if the device has input capabilities, choose it as the input device
-        if (deviceInfo->maxInputChannels > 0) {
-            chosenDeviceIndex = i;
-        }
-    }
-
-    if (chosenDeviceIndex < 0) {
-        std::cout << "No input devices found." << std::endl;
-    }
-
     // Set inputParameters
-    input_parameters.device = Pa_GetDefaultInputDevice();
+    if (this->device_index < 0) {
+        input_parameters.device = Pa_GetDefaultInputDevice();
+    } else {
+        input_parameters.device = this->device_index;
+    }
     if (input_parameters.device == paNoDevice) {
         throw GeneralException(
             fmt::format("[ERROR] Failure getting default audio device: {}",
@@ -107,8 +121,8 @@ void Audio::start_recording(const string& out_dir,
         .append_child_value("api", "portaudio19");
     lsl_stream->stream_info.desc().append_child_value(
         "device", Pa_GetDeviceInfo(input_parameters.device)->name);
-    lsl_stream->stream_info.desc().append_child_value(
-        "channel_format", "int16");
+    lsl_stream->stream_info.desc().append_child_value("channel_format",
+                                                      "int16");
     lsl_stream->open();
 
     cout << "[INFO] Started. Recording audio..." << endl;
