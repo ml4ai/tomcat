@@ -30,7 +30,7 @@ fi
 
 # Check if disk where /var/lib/docker is mounted has is at most 80% full. When this disk reaches 95% capacity, elastic
 # search stops recording data, and no Minecraft message will be recorded.
-perc_full="$(df -h /var/lib/docker --output=pcent | tail -n 1 | sed 's/%//')"
+perc_full="$(df -h /var/lib/docker --output=pcent | tail -n 1 | sed 's/%//' | awk '{$1=$1};1')"
 if [[ $perc_full -gt 80 ]]; then
   error_msg="${RED}There isn't enough space available in the disk where /var/lib/docker is mounted.\n"
   error_msg+="We require at least 20% available space on the disk. Currently, the disk is ${perc_full}% full.${NC}"
