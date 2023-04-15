@@ -30,7 +30,6 @@ class Audio {
 
   private:
     bool recording = false;
-    std::unordered_map<std::string, int> device_map;
     int device_index;
 
     PaStream* audio_stream;
