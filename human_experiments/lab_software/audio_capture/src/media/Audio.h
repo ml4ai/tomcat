@@ -43,7 +43,7 @@ class Audio {
      * the list of available devices.
      *
      */
-    void fill_device_map();
+    void init_portaudio();
 
     /**
      * Loop until interruption.
