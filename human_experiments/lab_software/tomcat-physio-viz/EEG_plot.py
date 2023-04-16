@@ -5,18 +5,8 @@ from pylsl import StreamInlet, resolve_stream
 import argparse
 
 class MainWindow(QtWidgets.QMainWindow):
+  
     def __init__(self, *args, **kwargs):
-        # initialize streams
-
-        self.host_name = {
-            "actiCHamp-20010205": "Tiger - EEG(200 10 205)",
-            "actiCHamp-21010477": "Lion - EEG(210 10 477)", #Lions EEG amp is replaced with cheetah's amp.
-            "actiCHamp-21020492": "Leopard - EEG(210 20 492)",
-        }
-
-        self.streams = resolve_stream("type", "EEG")
-        self.inlet = StreamInlet(self.streams[device_id])
-
         self.channel_list = [
             "AFF1h",
             "AFF5h",
@@ -94,9 +84,22 @@ class MainWindow(QtWidgets.QMainWindow):
 
         super(MainWindow, self).__init__(*args, **kwargs)
 
-        device_name = self.streams[device_id].name()
+        # initialize streams
+
+        self.host_name = {
+            "actiCHamp-20010205": "Tiger - EEG(200 10 205)",
+            "actiCHamp-21010477": "Lion - EEG(210 10 477)", #Lions EEG amp is replaced with cheetah's amp.
+            "actiCHamp-21020492": "Leopard - EEG(210 20 492)",
+        }
+
+        self.streams = resolve_stream()
+
+        for i in range(len(self.streams)):
+            if self.streams[i].type() == 'EEG' and self.streams[i].name() == device_id:
+                 self.inlet = StreamInlet(self.streams[i])
+
         for stream_name, stream_name_with_id in self.host_name.items():
-            if device_name in stream_name:
+            if device_id in stream_name:
                 self.setWindowTitle(stream_name_with_id)
 
         self.graphWidgetLayout = pg.GraphicsLayoutWidget()
@@ -183,7 +186,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Plotting EEG signals via LSL")
     parser.add_argument("--d", required=True, help="Enter number of EEG devices")
     arg = parser.parse_args()
-    device_id = int(arg.d)
+    device_id = str(arg.d)
 
     app = QtWidgets.QApplication(sys.argv)
     w = MainWindow()
