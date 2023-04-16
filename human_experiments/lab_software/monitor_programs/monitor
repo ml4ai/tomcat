@@ -1,0 +1,98 @@
+#!/usr/bin/env bash
+
+MY_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+
+source "${MY_DIR}/configuration_helpers"
+
+
+# Color legend
+NOT_STARTED="${BLACK}${ON_WHITE} Not Started ${COLOR_OFF}"
+STARTED="${BLACK}${ON_CYAN} Started ${COLOR_OFF}"
+RUNNING="${BLACK}${ON_GREEN} Running ${COLOR_OFF}"
+RUNNING_NO_LSL="${BLACK}${ON_YELLOW} No LSL ${COLOR_OFF}"
+ERROR="${BLACK}${ON_RED} Error ${COLOR_OFF}"
+NOT_IMPLEMENTED="${BLACK}${ON_PURPLE} Not Implemented ${COLOR_OFF}"
+
+# Program variables
+export LION_BL_PROG=""
+export TIGER_BL_PROG=""
+export LEOPARD_BL_PROG=""
+
+export LION_MC_PROG=""
+export TIGER_MC_PROG=""
+export LEOPARD_MC_PROG=""
+export SERVER_MC_PROG=""
+
+export SERVER_PUPIL_HC=""
+export SERVER_FNIRS_HC=""
+export SERVER_EEG_HC=""
+
+# data stream variables
+export LION_WEBCAM=""
+export TIGER_WEBCAM=""
+export LEOPARD_WEBCAM=""
+
+export LION_SCREEN=""
+export TIGER_SCREEN=""
+export LEOPARD_SCREEN=""
+
+export LION_AUDIO=""
+export TIGER_AUDIO=""
+export LEOPARD_AUDIO=""
+export SERVER_AUDIO=""
+
+export LION_PUPIL=""
+export TIGER_PUPIL=""
+export LEOPARD_PUPIL=""
+
+export LION_FNIRS=""
+export TIGER_FNIRS=""
+export LEOPARD_FNIRS=""
+
+export LION_EEG=""
+export TIGER_EEG=""
+export LEOPARD_EEG=""
+
+export SERVER_MC_DATA=""
+
+export LION_BL_DATA=""
+export TIGER_BL_DATA=""
+export LEOPARD_BL_DATA=""
+export SERVER_BL_DATA=""
+
+show_program_list() {
+  print_title "Color Legend"
+  printf "%-35b - Program hasn't started yet.\n" "$NOT_STARTED"
+  printf "%-35b - Program started but it's not fully running.\n" "$STARTED"
+  printf "%-35b - Program is running with no issues.\n" "$RUNNING"
+  printf "%-35b - Program is running but started without detecting LabRecorder.\n" "$RUNNING_NO_LSL"
+  printf "%-35b - Program crashed.\n" "$ERROR"
+  printf "%-35b - Not implemented yet.\n" "$NOT_IMPLEMENTED"
+
+  print_title "\nPrograms"
+  print_program_status 20 1 "Baseline"             "$LION_BL_PROG" "$TIGER_BL_PROG" "$LEOPARD_BL_PROG"
+  print_program_status 20 2 "Minecraft"            "$LION_MC_PROG" "$TIGER_MC_PROG" "$LEOPARD_MC_PROG" "$SERVER_MC_PROG"
+  print_program_status 20 3 "Pupil Health Checker" "$SERVER_PUPIL_HC"
+  print_program_status 20 4 "fNIRS Health Checker" "$SERVER_FNIRS_HC"
+  print_program_status 20 5 "EEG Health Checker"   "$SERVER_EEG_HC"
+
+  print_title "\nData Streams"
+  print_program_status 10 1 "Webcam"    "$LION_WEBCAM" "$TIGER_WEBCAM" "$LEOPARD_WEBCAM" ""
+  print_program_status 10 2 "Screen"    "$LION_SCREEN" "$TIGER_SCREEN" "$LEOPARD_SCREEN" ""
+  print_program_status 10 3 "Audio"     "$LION_AUDIO" "$TIGER_AUDIO" "$LEOPARD_AUDIO" "$SERVER_AUDIO"
+  print_program_status 10 4 "Pupil"     "$LION_PUPIL" "$TIGER_PUPIL" "$LEOPARD_PUPIL"
+  print_program_status 10 4 "fNIRS"     "$LION_FNIRS" "$TIGER_FNIRS" "$LEOPARD_FNIRS"
+  print_program_status 10 4 "EEG"       "$LION_EEG" "$TIGER_EEG" "$LEOPARD_EEG"
+  print_program_status 10 4 "Baseline"  "$LION_BL_DATA" "$TIGER_BL_DATA" "$LEOPARD_BL_DATA" "$SERVER_BL_DATA"
+  print_program_status 10 5 "Minecraft" "$SERVER_MC_DATA"
+}
+
+while true; do
+  clear
+  source update_program_status
+  source update_data_stream_status
+  show_program_list
+  sleep 1
+done
+
+exit 0

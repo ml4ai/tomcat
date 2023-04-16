@@ -1,0 +1,12 @@
+#! /bin/bash
+
+set -u
+
+# Close any instance that might still be open
+if pkill -SIGINT pupil; then
+  # Wait a little bit before opening another instance
+  sleep 5
+fi
+
+# Open the program
+open -a "Pupil Capture"

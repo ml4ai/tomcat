@@ -1,8 +1,8 @@
 #include <iostream>
+#include <exception>
 
 #include <boost/program_options.hpp>
 
-#include "common/GeneralException.h"
 #include "consumer/MinecraftMQTT2LSL.h"
 #include "common/SignalHandler.h"
 
@@ -41,8 +41,9 @@ int main(int argc, char* argv[]) {
         watch_for_signal();
         minecraft_consumer.start(mqtt_address, mqtt_port, &quit);
     }
-    catch (const GeneralException& ex) {
-        cout << ex.what() << endl;
+    catch (const std::exception& ex) {
+        cerr << "[ERROR] Program crashed." << endl;
+        cerr << ex.what() << endl;
     }
 
     return 0;

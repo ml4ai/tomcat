@@ -5,6 +5,10 @@ export GREEN="\033[32m"
 export YELLOW="\033[33m"
 export EMPH="\033[35m" # Emphasize color: purple
 export NC="\033[0m"
+export BLACK='\033[0;30m'        # Black
+
+export ON_YELLOW='\033[43m'      # Yellow
+export ON_CYAN='\033[46m'        # Cyan
 
 yes_no_question() {
   local question="$1 [y/n]: "
@@ -19,6 +23,12 @@ yes_no_question() {
   else
     return 1
   fi
+}
+
+retry_question() {
+  local padding=$1
+  yes_no_question "${padding}Do you want to ${EMPH}RETRY${NC}?";
+  return $?
 }
 
 wait_for_key() {

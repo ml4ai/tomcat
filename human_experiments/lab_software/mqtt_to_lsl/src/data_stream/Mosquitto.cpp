@@ -21,7 +21,8 @@ Mosquitto::Mosquitto() {
     mosquitto_lib_init();
     this->mqtt_client = mosquitto_new(nullptr, true, this);
     if (this->mqtt_client == nullptr)
-        throw GeneralException("Error creating mosquitto instance");
+        throw GeneralException(
+            "[ERROR] MQTT. Error creating mosquitto instance");
 
     mosquitto_message_callback_set(this->mqtt_client, &on_message_callback);
 }
@@ -64,20 +65,20 @@ void Mosquitto::set_on_message_callback(
 void Mosquitto::connect(const string& address, int port, int trials) {
 
     while (trials > 0) {
-        cout << "Trying to connect to " << address << ":" << port << "..."
-             << endl;
+        cout << "[INFO] MQTT. Trying to connect to " << address << ":" << port
+             << "..." << endl;
         int error_code = mosquitto_connect(
             this->mqtt_client, address.c_str(), port, ONE_SECOND);
 
         try {
             switch (error_code) {
             case MOSQ_ERR_SUCCESS:
-                cout << "Connection established!" << endl;
+                cout << "[INFO] MQTT. Connection established!" << endl;
                 trials = 0; // no need to keep trying to connect.
                 break;
             case MOSQ_ERR_PROTOCOL:
-                throw GeneralException(
-                    "Connection refused (unacceptable protocol version)");
+                throw GeneralException("Connection refused "
+                                       "(unacceptable protocol version)");
             case MOSQ_ERR_CONN_REFUSED:
                 throw GeneralException(
                     "Connection refused (identifier rejected)");
@@ -92,14 +93,18 @@ void Mosquitto::connect(const string& address, int port, int trials) {
         catch (const GeneralException& ex) {
             trials--;
             if (trials > 0) {
-                cout << fmt::format("Fail to connect. {}", ex.what()) << endl;
-                cout << fmt::format("We will try once more in {} seconds.",
-                                    FIVE_SECONDS / 1000)
+                cout << fmt::format("[WARN] MQTT. Fail to connect. {}",
+                                    ex.what())
+                     << endl;
+                cout << fmt::format(
+                            "[INFO] MQTT. We will try once more in {} seconds.",
+                            FIVE_SECONDS / 1000)
                      << endl;
                 this_thread::sleep_for(chrono::milliseconds(FIVE_SECONDS));
             }
             else {
-                throw ex;
+                throw GeneralException(
+                    fmt::format("[ERROR] MQTT. {}", ex.what()));
             }
         }
     }
@@ -111,10 +116,11 @@ void Mosquitto::subscribe(const string& topic) {
         mosquitto_subscribe(this->mqtt_client, nullptr, topic.c_str(), qos);
 
     if (error_code != MOSQ_ERR_SUCCESS) {
-        throw GeneralException(fmt::format(
-            "It was not possible to subscribe to the topic {}. Error code {}.",
-            topic,
-            error_code));
+        throw GeneralException(
+            fmt::format("[ERROR] MQTT. It was not possible to subscribe to the "
+                        "topic {}. Error code {}.",
+                        topic,
+                        error_code));
     }
 }
 
@@ -145,7 +151,7 @@ void Mosquitto::start() {
         return;
     }
 
-    cout << "Watching MQTT messages...." << endl;
+    cout << "[INFO] MQTT. Waiting for messages...." << endl;
 
     this->running = true;
     this->loop_thread = thread([this] { this->loop(); });
@@ -157,7 +163,7 @@ void Mosquitto::stop() {
         return;
     }
 
-    cout << "Stopping MQTT watcher..." << endl;
+    cout << "[INFO] MQTT. Stopping MQTT watcher..." << endl;
 
     this->running = false;
 
@@ -168,12 +174,12 @@ void Mosquitto::stop() {
 }
 
 void Mosquitto::loop() {
-    while(this->running) {
+    while (this->running) {
         int error_code = mosquitto_loop(this->mqtt_client, -1, 1);
 
         if (error_code != MOSQ_ERR_SUCCESS) {
-            throw GeneralException(
-                fmt::format("Fail to loop. Error code {}.", error_code));
+            throw GeneralException(fmt::format(
+                "[ERROR] MQTT. Fail to loop. Error code {}.", error_code));
         }
     }
 }

@@ -2,6 +2,8 @@
 
 set -u
 
+source wifi
+
 SECONDS_TO_WAIT=300
 
 if [[ -z ${1+x} ]]; then
@@ -21,6 +23,10 @@ __start_on_client() {
     padding="$padding "
   fi
   if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
+    enable_wifi "$client_name" "$client_address" "$padding"
+
+    sleep 5
+
     # Close instructive video if it's being displayed
     local command="osascript -e \"tell application \\\"QuickTime\\\" to quit\""
     # shellcheck disable=SC2029

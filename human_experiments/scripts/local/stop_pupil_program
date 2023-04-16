@@ -1,0 +1,18 @@
+#! /bin/bash
+
+set -u
+
+# This script must be executed in the client side.
+
+# Local directory where pupil data is saved in the client machines
+PUPIL_RECORDER_LOCAL_DIR="$HOME/recordings/$(date +%Y_%m_%d)"
+
+# Remove a previous link that might exist
+if [[ -d "$PUPIL_RECORDER_LOCAL_DIR" && -L "$PUPIL_RECORDER_LOCAL_DIR" ]]; then
+  if ! unlink "$PUPIL_RECORDER_LOCAL_DIR"; then
+    echo "Failed to remove the symbolic link $PUPIL_RECORDER_LOCAL_DIR."
+    exit 1
+  fi
+fi
+
+

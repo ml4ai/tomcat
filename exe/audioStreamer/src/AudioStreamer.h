@@ -5,17 +5,21 @@
 
 #include "portaudio.h"
 #include <nlohmann/json.hpp>
-#include <sndfile.hh>
 
 #include "WebsocketClient.h"
+#include "WaveWriter.h"
+#include "LSLAudioStream.h"
 
 class AudioStreamer {
   public:
-    AudioStreamer(std::string ws_host, std::string ws_port,
-                  std::string player_name, int sample_rate, bool save_audio,
-                  std::string recordings_directory);
+    AudioStreamer(const std::string& ws_host,
+                  const std::string& ws_port,
+                  const std::string& player_name, int sample_rate,
+                  bool save_audio,
+                  const std::string& recordings_directory);
     ~AudioStreamer();
 
+    void OpenLSL();
     void StartStreaming();
     void StopStreaming();
 
@@ -36,7 +40,8 @@ class AudioStreamer {
     void Loop();
 
     // Data for handling wav file writing
-    SndfileHandle* wav_file;
+    std::unique_ptr<WaveWriter> wave_file;
+    std::unique_ptr<LSLAudioStream> lsl_stream;
     bool save_audio;
     std::string recording_filename;
     std::string recordings_directory;

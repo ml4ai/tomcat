@@ -1,0 +1,13 @@
+#! /bin/bash
+
+set -u
+
+pid=$1
+
+if ! ps -p "$pid" > /dev/null; then
+  exit 1
+fi
+
+exit 0
+
+

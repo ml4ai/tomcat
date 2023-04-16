@@ -1,24 +1,28 @@
 ## Disable ClientMap audio streaming:
-When using the audioStreamer with the Testbed, the ClientMap audio streaming functionality must be disabled to avoid interference. Make the following modification to the file testbed/local/AsistDataIngester/appsettings.json:
+When using the audioStreamer with the Testbed, the ClientMap audio streaming functionality must be disabled to avoid interference. Make the following modification to the file testbed/Local/AsistDataIngester/appsettings.json:
 
 `"DisableSpeechToText":  true` -> `"DisableSpeechToText":  false`
 
 ## Install dependencies:
-1. libsndfile
-2. portaudio
-3. boost
-4. nlohmann-json
-5. paho.mqtt.cpp
+1. portaudio
+2. boost
+3. nlohmann-json
+4. paho.mqtt.cpp
 
 ### MacOS
-All dependencies are available through MacPorts. They can be installed with the command:
-`sudo port install libsndfile portaudio boost nlohmann-json paho.mqtt.cpp`
+Almost all dependencies are available through MacPorts. They can be installed with the command:
+`sudo port install portaudio boost nlohmann-json paho.mqtt.cpp`
+
+Install liblsl from source.
+```
+./tomcat/tools/install_from_source/liblsl
+```
 
 ## Build audioStreamer
 ```bash
 mkdir build
 cd build
-cmake ..
+cmake .. -DLSL_INCLUDE_DIR=/usr/local/include
 make 
 ```
 
@@ -42,3 +46,6 @@ ports:
 ./audioStreamer --use_mqtt true --mqtt_host  localhost --mqtt_port 1883 --player_name Player100
 ```
 
+## LSL
+
+An LSL stream named AudioStreamer will be created when the program is executed. The same audio chunks saved to the audio file are also sent to LSL through that stream.

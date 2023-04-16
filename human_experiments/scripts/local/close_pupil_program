@@ -1,0 +1,11 @@
+#! /bin/bash
+
+set -u
+
+# Pupil Capture doesn't do clean up on SIGTERM, but it does on SIGINT.
+# We close with SIGINT to guarantee all the files have been properly closed in case
+# the recording was not explicitly stopped previously.
+pkill -SIGINT pupil
+
+# Extra eye windows won't be closed with SIGINT. So we follow up with a SIGTERM to guarantee all the windows close.
+pkill pupil

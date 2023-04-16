@@ -1,21 +1,21 @@
 #include <filesystem>
+#include <iostream>
 #include <string>
 #include <thread>
 #include <vector>
 
-#include "portaudio.h"
+#include <fmt/format.h>
 #include <nlohmann/json.hpp>
-#include <sndfile.hh>
+#include <portaudio.h>
 
 #include "AudioStreamer.h"
-#include "WebsocketClient.h"
 
 using namespace std;
 
-AudioStreamer::AudioStreamer(std::string ws_host, std::string ws_port,
-                             std::string player_name, int sample_rate,
+AudioStreamer::AudioStreamer(const string& ws_host, const string& ws_port,
+                             const string& player_name, int sample_rate,
                              bool save_audio,
-                             std::string recordings_directory) {
+                             const string& recordings_directory) {
 
     this->ws_host = ws_host;
     this->ws_port = ws_port;
@@ -31,6 +31,12 @@ AudioStreamer::AudioStreamer(std::string ws_host, std::string ws_port,
 }
 
 AudioStreamer::~AudioStreamer() { delete ws_client; }
+
+void AudioStreamer::OpenLSL() {
+    this->lsl_stream = make_unique<LSLAudioStream>(
+        "AudioStreamer", 1, "audio_streamer", "audio_streamer", sample_rate);
+    lsl_stream->open();
+}
 
 void AudioStreamer::StartStreaming() {
     // Check if already running
@@ -55,35 +61,45 @@ void AudioStreamer::StartStreaming() {
     // Initialize PortAudio
     err = Pa_Initialize();
     if (err != paNoError) {
-        BOOST_LOG_TRIVIAL(error)
-            << "Failure initializing PortAudio: " << Pa_GetErrorText(err);
+        BOOST_LOG_TRIVIAL(error) << "[ERROR] Failure initializing PortAudio: "
+                                 << Pa_GetErrorText(err);
     }
 
     // Set inputParameters
     inputParameters.device = Pa_GetDefaultInputDevice();
     if (inputParameters.device == paNoDevice) {
         BOOST_LOG_TRIVIAL(error)
-            << "Failure getting default audio device: " << Pa_GetErrorText(err);
+            << "[ERROR] Failure getting default audio device: "
+            << Pa_GetErrorText(err);
     }
     inputParameters.channelCount = 1;
     inputParameters.sampleFormat = paInt16;
     inputParameters.suggestedLatency =
         Pa_GetDeviceInfo(inputParameters.device)->defaultLowInputLatency;
-    inputParameters.hostApiSpecificStreamInfo = NULL;
+    inputParameters.hostApiSpecificStreamInfo = nullptr;
 
     // Open PortAudio stream
-    err = Pa_OpenStream(
-        &stream, &inputParameters, NULL, sample_rate, 8196, NULL, NULL, NULL);
+    err = Pa_OpenStream(&stream,
+                        &inputParameters,
+                        nullptr,
+                        sample_rate,
+                        8196,
+                        0,
+                        nullptr,
+                        nullptr);
     if (err != paNoError) {
-        BOOST_LOG_TRIVIAL(error) << "Failure initializing PortAudio stream: "
-                                 << Pa_GetErrorText(err);
+        BOOST_LOG_TRIVIAL(error)
+            << "[ERROR] Failure initializing PortAudio stream: "
+            << Pa_GetErrorText(err);
     }
     err = Pa_StartStream(stream);
     if (err != paNoError) {
         BOOST_LOG_TRIVIAL(error)
-            << "Failure starting PortAudio stream: " << Pa_GetErrorText(err);
+            << "[ERROR] Failure starting PortAudio stream: "
+            << Pa_GetErrorText(err);
     }
 
+    BOOST_LOG_TRIVIAL(info) << "[INFO] Started. Recording audio...";
     portaudio_stream_thread = thread([this] { this->Loop(); });
 }
 
@@ -102,18 +118,21 @@ void AudioStreamer::StopStreaming() {
     err = Pa_StopStream(stream);
     if (err != paNoError) {
         BOOST_LOG_TRIVIAL(error)
-            << "Failure stopping PortAudio stream: " << Pa_GetErrorText(err);
+            << "[ERROR] Failure stopping PortAudio stream: "
+            << Pa_GetErrorText(err);
     }
 
     // shutdown PortAudio
     err = Pa_Terminate();
     if (err != paNoError) {
-        BOOST_LOG_TRIVIAL(error)
-            << "Failure shutting down PortAudio: " << Pa_GetErrorText(err);
+        BOOST_LOG_TRIVIAL(error) << "[ERROR] Failure shutting down PortAudio: "
+                                 << Pa_GetErrorText(err);
     }
 
     // shutdown websocket client
     ws_client->Shutdown();
+
+    BOOST_LOG_TRIVIAL(info) << "[INFO] Stopped. No longer streaming audio.";
 }
 
 void AudioStreamer::Loop() {
@@ -148,10 +167,24 @@ void AudioStreamer::GenerateAudioFilename(const nlohmann::json& message) {
 }
 void AudioStreamer::CreateAudioFile() {
     ValidateRecordingsDirectory();
-    string path = recordings_directory + recording_filename;
-    wav_file = new SndfileHandle(
-        path, SFM_WRITE, SF_FORMAT_WAV | SF_FORMAT_PCM_16, 1, sample_rate);
+
+    const filesystem::path p(recordings_directory);
+    if (filesystem::exists(p)) {
+        BOOST_LOG_TRIVIAL(info)
+            << "[INFO] Writing frames to already existing path: " << p.string();
+    }
+    else {
+        BOOST_LOG_TRIVIAL(info)
+            << "[INFO] Directory: " << p.string()
+            << " does not exist. Creating it now." << p.string();
+
+        filesystem::create_directories(p);
+    }
+
+    string audio_filepath = recordings_directory + recording_filename;
+    this->wave_file =
+        make_unique<WaveWriter>(audio_filepath, 16, 1, sample_rate);
 }
 void AudioStreamer::WriteChunkToFile(const vector<int16_t>& chunk) {
-    wav_file->write(&chunk[0], chunk.size());
+    this->wave_file->write_chunk(chunk);
 }

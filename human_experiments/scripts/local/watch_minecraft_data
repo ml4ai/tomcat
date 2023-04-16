@@ -1,0 +1,22 @@
+#! /bin/bash
+
+set -u
+
+mqtt_address=$1
+mqtt_port=$2
+log_file=$3
+pid_file=$4
+
+# Change this to call the audio streamer
+software_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../lab_software/mqtt_to_lsl/build/bin" >/dev/null 2>&1 && pwd)"
+
+pushd "$software_dir" > /dev/null || exit
+  # Run audio capture in background and save terminal outputs and pid to a file.
+
+  # Execute the script with nohup to prevent killing the process if the uber script is interrupted.
+  ./minecraft_mqtt_to_lsl --mqtt_addr="$mqtt_address" --mqtt_port="$mqtt_port" &> "$log_file" &
+  pid=$!
+  echo $pid > "$pid_file"
+  disown $pid
+  sleep 5
+popd > /dev/null || exit

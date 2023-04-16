@@ -1,0 +1,270 @@
+#!/bin/bash
+
+set -u
+
+device=$1 # webcam or screen
+action=$2 # start or stop
+
+if [[ -z ${3+x} ]]; then
+  padding=""
+else
+  padding=$3
+fi
+
+if [[ "$device" != "webcam" ]] && [[ "$device" != "screen" ]]; then
+  echo -e "${RED}{$padding}The first parameter os this script must be a device form the list [webcam, screen].${NC}"
+fi
+
+if [[ "$action" != "start" ]] && [[ "$action" != "stop" ]]; then
+  echo -e "${RED}{$padding}The second parameter os this script must be a action form the list [start, stop].${NC}"
+fi
+
+# Error codes
+never_launched_error_code=1
+on_launch_error_code=2
+stopped_error_code=3
+log_file_deleted_error_code=4
+
+# Frame rates
+webcam_fps=10 # 10Hz
+screen_fps=5 # 5Hz We cannot record reliably at a higher frequency
+
+wait_for_launch_timeout=300 # 5 minutes
+
+_monitor_launch() {
+  local log_file=$1
+  local pid_file=$2
+
+  # It can take a while for the file with the PID be saved on the experiment folder because of network delay.
+  # The iMACs save the file in a shared directory, so it's not readily available for the server. Here we try
+  # 3 times before assuming the file was never created.
+  local num_trials=0
+  while [ $num_trials -lt 3 ]; do
+    if [[ -e "$log_file" ]]; then
+      break
+    fi
+
+    # Wait a bit and check again
+    sleep 5
+    ((num_trials++))
+  done
+
+  if [[ ! -e "$log_file" ]]; then
+    return $never_launched_error_code
+  fi
+
+  local num_seconds=0
+  while [ $num_seconds -lt $wait_for_launch_timeout ]; do
+    if [[ -e "$log_file" ]]; then
+      if [[ $(grep -c '\[ERROR\]' "$log_file") -ne 0 ]]; then
+        return $on_launch_error_code
+      fi
+
+      if [[ $(grep -c '\[INFO\] Stopped' "$log_file") -ne 0 ]]; then
+        return $stopped_error_code
+      fi
+
+      if [[ $(grep -c '\[INFO\] Started' "$log_file") -ne 0 ]]; then
+        # Successfully recording from the device.
+        return 0
+      fi
+    else
+      return $log_file_deleted_error_code
+    fi
+
+    sleep 1
+    ((num_seconds++))
+  done
+
+  return $never_launched_error_code
+}
+
+_record_on_client() {
+  # Just calls the executable on a client machine and leaves. It does not wait for status.
+  local client_name=$1
+  local client_address=$2
+  local participant_id=$3
+  local tmp_file_root_dir="$EXPERIMENT_DIR/tmp/${device}_$client_name"
+  local log_file="$tmp_file_root_dir.log"
+  local pid_file="$tmp_file_root_dir.pid"
+
+  # Remove old files not to confuse the monitoring program
+  rm "$tmp_file_root_dir.log" &> /dev/null
+  rm "$tmp_file_root_dir.pid" &> /dev/null
+
+  local project_dir="\$HOME/$SYSTEMS_DIR/tomcat"
+  local exec_path="$project_dir/human_experiments/scripts/local/record_from_$device"
+
+  if [[ "$device" == "screen" ]]; then
+    local images_dir="\$HOME/$EXPERIMENT_DIR/$client_name/screenshots/block_$EXPERIMENT_BLOCK"
+    local command="$exec_path $images_dir $screen_fps \$HOME/$log_file \$HOME/$pid_file"
+  else
+    local images_dir="\$HOME/$EXPERIMENT_DIR/$client_name/face_images/block_$EXPERIMENT_BLOCK"
+    local macos_script="\$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/macos/stream_webcam.scpt"
+
+    # To record from the webcam, we need to bypass security blocks from Apple. We cannot execute the capture program in
+    # via ssh directly otherwise we won't be granted access to the camera and there's no option to grant that access
+    # in the Mac's Privacy and Security settings. So, to make this work we encapsulate the call to the script in an
+    # apple script, which we can below.
+    local command="osascript $macos_script $exec_path $images_dir $webcam_fps \$HOME/$log_file \$HOME/$pid_file"
+  fi
+
+  # shellcheck disable=SC2029
+  ssh "$EXPERIMENT_USER@$client_address" "$command" >/dev/null
+}
+
+_start_recording_on_client() {
+  # Initial call to the executable on a client machine
+  local client_name=$1
+  local client_address=$2
+  local participant_id=$3
+  local padding=$4
+
+  if [[ $ALL -ne 1 ]]; then
+    yes_no_question "${padding}Do you want to start recording on ${EMPH}$client_name${NC}?"
+    ans=$?
+    padding="$padding "
+  fi
+  if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
+
+    local tmp_file_root_dir="$EXPERIMENT_DIR/tmp/${device}_$client_name"
+    local log_file="$tmp_file_root_dir.log"
+    local pid_file="$tmp_file_root_dir.pid"
+
+    # Check if there's already a process running so we don't start the process twice.
+    if [[ -e "$pid_file" ]]; then
+      local pid
+      pid=$(cat "$pid_file")
+
+      local project_dir="\$HOME/$SYSTEMS_DIR/tomcat"
+      local check_exec_path="$project_dir/human_experiments/scripts/local/is_process_active"
+      local command="$check_exec_path $pid"
+
+      # shellcheck disable=SC2029
+      if ssh "$EXPERIMENT_USER@$client_address" "$command" >/dev/null; then
+        echo -e "${YELLOW}${padding}Aborting. The process $pid is already recording.${NC}"
+        return
+      fi
+    fi
+
+    echo -e "${padding}Starting recording on ${EMPH}$client_name${NC}."
+    _record_on_client "$client_name" "$client_address" "$participant_id"
+  fi
+}
+
+_monitor_launch_on_client() {
+  # Monitors a previous call to the recording program in a client. Let's the user retry the program.
+  local client_name=$1
+  local client_address=$2
+  local participant_id=$3
+  local padding=$4
+
+  echo -e "${padding}Waiting for the program to launch on ${EMPH}$client_name${NC}..."
+  padding="$padding "
+
+  while true; do
+    local tmp_file_root_dir="$EXPERIMENT_DIR/tmp/${device}_$client_name"
+    local log_file="$tmp_file_root_dir.log"
+    local pid_file="$tmp_file_root_dir.pid"
+
+    _monitor_launch "$log_file" "$pid_file"
+    local error_code=$?
+
+    if [[ $error_code -eq 0 ]]; then
+      echo -e "${padding}${GREEN}The program has successfully launched on ${EMPH}$client_name${GREEN}.${NC}"
+      return
+    elif [[ $error_code -eq $never_launched_error_code ]]; then
+      # We don't treat as an error. Just show a warning.
+      echo -e "${padding}${YELLOW}The program was never launched.${NC}"
+      return
+    elif [[ $error_code -eq $log_file_deleted_error_code ]]; then
+      echo -e "${padding}${YELLOW}The log file was deleted. Cannot tell if the program was properly launched${NC}"
+      return
+    elif [[ $error_code -eq $on_launch_error_code ]]; then
+      echo -e "${padding}${RED}Error on program launch.${NC}"
+    elif [[ $error_code -eq $stopped_error_code ]]; then
+      echo -e "${padding}${RED}The program stopped running abruptly.${NC}"
+    fi
+
+    if [[ $error_code -ne 0 ]]; then
+      echo -e "${padding}Look at the logs in $log_file for more details."
+      retry_question "$padding"
+      retry=$?
+
+      if [[ $retry -eq 0 ]]; then
+        _record_on_client "$client_name" "$client_address" "$participant_id"
+      else
+        break
+      fi
+    fi
+  done
+}
+
+_monitor_launch_on_clients() {
+  local padding=$1
+
+  echo -e "${padding}Waiting for the program to launch on the clients..."
+  if [[ "$device" == "audio" ]]; then
+    _monitor_launch_on_client "lion" "lion.local" "$LION_PARTICIPANT_ID" "$padding "
+    _monitor_launch_on_client "tiger" "tiger.local" "$TIGER_PARTICIPANT_ID" "$padding "
+    _monitor_launch_on_client "leopard" "leopard.local" "$LEOPARD_PARTICIPANT_ID" "$padding "
+    _monitor_launch_on_client "cat" "cat.local" "" "$padding "
+  else
+    _monitor_launch_on_client "lion" "lion.local" "" "$padding "
+    _monitor_launch_on_client "tiger" "tiger.local" "" "$padding "
+    _monitor_launch_on_client "leopard" "leopard.local" "" "$padding "
+  fi
+}
+
+_stop_record_on_client() {
+  local client_name=$1
+  local client_address=$2
+  local padding=$3
+
+  if [[ $ALL -ne 1 ]]; then
+    yes_no_question "${padding}Do you want to stop recording on ${EMPH}$client_name${NC}?"
+    ans=$?
+    padding="$padding "
+  fi
+  if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
+    echo -e "${padding}Stopping recording on ${EMPH}$client_name${NC}."
+
+    local pid_file="$EXPERIMENT_DIR/tmp/${device}_$client_name.pid"
+    local pid
+    pid=$(cat "$pid_file")
+
+    local project_dir="\$HOME/$SYSTEMS_DIR/tomcat"
+
+    local exec_path="$project_dir/human_experiments/scripts/local/kill_program"
+    local command="$exec_path $pid"
+
+    # shellcheck disable=SC2029
+    ssh "$EXPERIMENT_USER@$client_address" "$command"
+  fi
+}
+
+_start_recording() {
+  local padding=$1
+
+  # Start at the same time in all clients
+
+  # The participant ID is only used on the audio streamer
+  _start_recording_on_client "lion" "lion.local" "" "$padding"
+  _start_recording_on_client "tiger" "tiger.local" "" "$padding"
+  _start_recording_on_client "leopard" "leopard.local" "" "$padding"
+
+  # Wait until the program have launched in all the clients
+  _monitor_launch_on_clients "$padding"
+}
+
+_stop_recording() {
+  _stop_record_on_client "lion" "lion.local" "$padding"
+  _stop_record_on_client "tiger" "tiger.local" "$padding"
+  _stop_record_on_client "leopard" "leopard.local" "$padding"
+}
+
+if [[ "$action" == "start" ]]; then
+  _start_recording "$padding"
+else
+  _stop_recording "$padding"
+fi

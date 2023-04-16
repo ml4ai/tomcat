@@ -1,0 +1,167 @@
+#!/bin/bash
+
+set -u
+
+action=$1 # start or stop
+
+if [[ -z ${2+x} ]]; then
+  padding=""
+else
+  padding=$2
+fi
+
+if [[ "$action" != "start" ]] && [[ "$action" != "stop" ]]; then
+  echo -e "${RED}{$padding}The second parameter os this script must be a action form the list [start, stop].${NC}"
+fi
+
+# Error codes
+never_launched_error_code=1
+on_launch_error_code=2
+stopped_error_code=3
+process_killed_error_code=4
+
+wait_for_launch_timeout=120 # 5 minutes
+
+_monitor_launch() {
+  local log_file=$1
+  local pid_file=$2
+
+  if [[ ! -e "$pid_file" ]]; then
+    return $never_launched_error_code
+  fi
+
+  local num_seconds=0
+  while [ $num_seconds -lt $wait_for_launch_timeout ]; do
+    if [[ -e "$log_file" ]]; then
+      if [[ $(grep -c '\[ERROR\]' "$log_file") -ne 0 ]]; then
+        return $on_launch_error_code
+      fi
+
+      if [[ $(grep -c '\[INFO\] Stopped' "$log_file") -ne 0 ]]; then
+        return $stopped_error_code
+      fi
+
+      if [[ $(grep -c '\[INFO\] Started' "$log_file") -ne 0 ]]; then
+        # Successfully recording from the device.
+        return 0
+      fi
+    else
+      return $process_killed_error_code
+    fi
+
+    sleep 1
+    ((num_seconds++))
+  done
+}
+
+_watch_on_server() {
+  local mqtt_address="localhost"
+  local mqtt_port=1883
+  local tmp_file_root_dir="$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom"
+  local log_file="$tmp_file_root_dir.log"
+  local pid_file="$tmp_file_root_dir.pid"
+
+  local project_dir="$HOME/$SYSTEMS_DIR/tomcat"
+
+  pushd "$project_dir/human_experiments/lab_software/mqtt_to_lsl/build/bin" > /dev/null || exit
+    ./minecraft_mqtt_to_lsl --mqtt_addr="$mqtt_address" --mqtt_port="$mqtt_port" &> "$log_file" &
+    echo $! > "$pid_file"
+    sleep 5
+  popd > /dev/null || exit
+}
+
+_start_watcher_on_server() {
+  local padding=$1
+
+  local tmp_file_root_dir="$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom"
+  local log_file="$tmp_file_root_dir.log"
+  local pid_file="$tmp_file_root_dir.pid"
+
+  # Check if there's already a trial watcher running so we don't start the process twice.
+  if [[ -e "$pid_file" ]]; then
+    local pid
+    pid=$(cat "$pid_file")
+
+    if ps -p "$pid" > /dev/null; then
+      echo -e "${YELLOW}${padding}Aborting. The process $pid is already watching for trial IDs.${NC}"
+      return
+    fi
+  fi
+
+  _watch_on_server
+  _monitor_launch_on_server "$padding"
+}
+
+_monitor_launch_on_server() {
+  # Monitors a previous call to the recording program in the server. Let's the user retry the program.
+  local padding=$1
+
+  echo -e "${padding}Waiting for the program to launch on ${EMPH}tom${NC}..."
+  padding="$padding "
+
+  while true; do
+    local tmp_file_root_dir="$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom"
+    local log_file="$tmp_file_root_dir.log"
+    local pid_file="$tmp_file_root_dir.pid"
+
+    _monitor_launch "$log_file" "$pid_file"
+    local error_code=$?
+
+    if [[ $error_code -eq 0 ]]; then
+      echo -e "${padding}${GREEN}The program has successfully launched on ${EMPH}tom${GREEN}.${NC}"
+      return
+    elif [[ $error_code -eq $never_launched_error_code ]]; then
+      echo -e "${padding}${RED}The program was never launched.${NC}"
+    elif [[ $error_code -eq $on_launch_error_code ]]; then
+      echo -e "${padding}${RED}Error on program launch.${NC}"
+    elif [[ $error_code -eq $stopped_error_code ]]; then
+      echo -e "${padding}${RED}The program stopped running abruptly.${NC}"
+    elif [[ $error_code -eq $process_killed_error_code ]]; then
+      echo -e "${padding}${RED}The program was killed.${NC}"
+    fi
+
+    if [[ $error_code -ne 0 ]]; then
+      echo -e "${padding}Look at the logs in $log_file for more details."
+      retry_question "$padding"
+      retry=$?
+
+      if [[ $retry -eq 0 ]]; then
+        _watch_on_server
+      else
+        break
+      fi
+    fi
+  done
+}
+
+_stop_watcher_on_server() {
+  local padding=$1
+
+  local pid_file="$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom.pid"
+  local pid
+  pid=$(cat "$pid_file")
+
+  echo -e "${padding}Stopping..."
+
+  local project_dir="$HOME/$SYSTEMS_DIR/tomcat"
+
+  local exec_path="$project_dir/human_experiments/scripts/local/kill_program"
+  local command="$exec_path $pid"
+
+  $command
+
+}
+
+_start_watcher() {
+  _start_watcher_on_server "$padding"
+}
+
+_stop_watcher() {
+  _stop_watcher_on_server "$padding"
+}
+
+if [[ "$action" == "start" ]]; then
+  _start_watcher "$padding"
+else
+  _stop_watcher "$padding"
+fi

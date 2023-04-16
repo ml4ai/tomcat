@@ -12,6 +12,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/)
 
 find_package(LSL REQUIRED)
 find_package(FMT REQUIRED)
+find_package(Threads REQUIRED)
 find_package(nlohmann_json REQUIRED)
 find_package(
         Boost 1.69
@@ -24,13 +25,12 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
         "${CMAKE_SOURCE_DIR}/../../../tools/cmake")
 find_package(Mosquitto REQUIRED)
 
-message(STATUS ${LSL_DIR})
-
-set(_libs
-        nlohmann_json::nlohmann_json
-        fmt::fmt
-        ${Mosquitto_LIBRARIES}
-        LSL::lsl
-        ${Boost_LIBRARIES})
+#set(_libs
+#        nlohmann_json::nlohmann_json
+#        fmt::fmt
+#        ${Mosquitto_LIBRARIES}
+#        LSL::lsl
+#        ${Boost_LIBRARIES}
+#        -pthread)
 
 add_subdirectory(src)

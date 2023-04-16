@@ -1,6 +1,7 @@
 #include "MinecraftMQTT2LSL.h"
 
 #include <iostream>
+#include <memory>
 
 #include <fmt/format.h>
 #include <nlohmann/json.hpp>
@@ -38,7 +39,9 @@ void MinecraftMQTT2LSL::start(const string& mqtt_address,
     mosquitto.subscribe("#");
 
     this->minecraft_lsl_stream->open();
+
     mosquitto.start();
+    cout << "[INFO] Started. Watching Minecraft messages..." << endl;
 
     while (!signal_watcher->load()) {
         // Do nothing. The MQTT loop thread will be active and running
@@ -47,6 +50,7 @@ void MinecraftMQTT2LSL::start(const string& mqtt_address,
     }
 
     mosquitto.stop();
+    cout << "[INFO] Stopped. No longer watching Minecraft messages." << endl;
 }
 
 void MinecraftMQTT2LSL::push_to_lsl(const std::string& topic,

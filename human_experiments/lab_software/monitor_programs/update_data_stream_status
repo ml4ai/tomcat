@@ -1,0 +1,157 @@
+#!/usr/bin/env bash
+
+data_stream_status=""
+
+_update_data_stream_status() {
+  local client_name=$1
+  local log_file=$2
+  local pid_file=$3
+
+  if [[ -e "$pid_file" ]]; then
+    started "$client_name"
+    data_stream_status=$GLOBAL_STAMP
+
+    if [[ $(grep -c '\[ERROR\]' "$log_file") -ne 0 ]]; then
+      error "$client_name"
+      data_stream_status=$GLOBAL_STAMP
+      return
+    fi
+
+    if [[ $(grep -c '\[INFO\] Stopped' "$log_file") -ne 0 ]]; then
+      not_started "$client_name"
+      data_stream_status=$GLOBAL_STAMP
+      return
+    fi
+
+    if [[ $(grep -c '\[INFO\] Started' "$log_file") -ne 0 ]]; then
+      # Successfully recording from the device.
+      running "$client_name"
+      data_stream_status=$GLOBAL_STAMP
+    fi
+
+    if [[ $(grep -c '\[WARN\] LSL' "$log_file") -ne 0 ]]; then
+      # Successfully recording from the device.
+      running_no_lsl "$client_name"
+      data_stream_status=$GLOBAL_STAMP
+    fi
+  else
+    not_started "$client_name"
+    data_stream_status=$GLOBAL_STAMP
+  fi
+}
+
+_update_baseline_data_stream_status() {
+  local client_name=$1
+  local log_file=$2
+  local pid_file=$3
+
+  not_implemented "$client_name"
+  data_stream_status=$GLOBAL_STAMP
+}
+
+_update_fnirs_data_stream_status() {
+  local client_name=$1
+  local log_file=$2
+  local pid_file=$3
+
+  not_implemented "$client_name"
+  data_stream_status=$GLOBAL_STAMP
+}
+
+_update_eeg_data_stream_status() {
+  local client_name=$1
+  local log_file=$2
+  local pid_file=$3
+
+  not_implemented "$client_name"
+  data_stream_status=$GLOBAL_STAMP
+}
+
+_update_pupil_data_stream_status() {
+  local client_name=$1
+  local log_file=$2
+  local pid_file=$3
+
+  not_implemented "$client_name"
+  data_stream_status=$GLOBAL_STAMP
+}
+
+# Webcam
+_update_data_stream_status "Lion" "$EXPERIMENT_DIR/tmp/webcam_lion.log" "$EXPERIMENT_DIR/tmp/webcam_lion.pid"
+LION_WEBCAM=$data_stream_status
+
+_update_data_stream_status "Tiger" "$EXPERIMENT_DIR/tmp/webcam_tiger.log" "$EXPERIMENT_DIR/tmp/webcam_tiger.pid"
+TIGER_WEBCAM=$data_stream_status
+
+_update_data_stream_status "Leopard" "$EXPERIMENT_DIR/tmp/webcam_leopard.log" "$EXPERIMENT_DIR/tmp/webcam_leopard.pid"
+LEOPARD_WEBCAM=$data_stream_status
+
+# Screen
+_update_data_stream_status "Lion" "$EXPERIMENT_DIR/tmp/screen_lion.log" "$EXPERIMENT_DIR/tmp/screen_lion.pid"
+LION_SCREEN=$data_stream_status
+
+_update_data_stream_status "Tiger" "$EXPERIMENT_DIR/tmp/screen_tiger.log" "$EXPERIMENT_DIR/tmp/screen_tiger.pid"
+TIGER_SCREEN=$data_stream_status
+
+_update_data_stream_status "Leopard" "$EXPERIMENT_DIR/tmp/screen_leopard.log" "$EXPERIMENT_DIR/tmp/screen_leopard.pid"
+LEOPARD_SCREEN=$data_stream_status
+
+# Audio
+_update_data_stream_status "Lion" "$EXPERIMENT_DIR/tmp/audio_lion.log" "$EXPERIMENT_DIR/tmp/audio_lion.pid"
+LION_AUDIO=$data_stream_status
+
+_update_data_stream_status "Tiger" "$EXPERIMENT_DIR/tmp/audio_tiger.log" "$EXPERIMENT_DIR/tmp/audio_tiger.pid"
+TIGER_AUDIO=$data_stream_status
+
+_update_data_stream_status "Leopard" "$EXPERIMENT_DIR/tmp/audio_leopard.log" "$EXPERIMENT_DIR/tmp/audio_leopard.pid"
+LEOPARD_AUDIO=$data_stream_status
+
+_update_data_stream_status "Cat" "$EXPERIMENT_DIR/tmp/audio_cat.log" "$EXPERIMENT_DIR/tmp/audio_cat.pid"
+SERVER_AUDIO=$data_stream_status
+
+# Minecraft
+_update_data_stream_status "Tom" "$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom.log" "$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom.pid"
+SERVER_MC_DATA=$data_stream_status
+
+# Baseline
+_update_baseline_data_stream_status "Lion" "$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom.log" "$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom.pid"
+LION_BL_DATA=$data_stream_status
+
+_update_baseline_data_stream_status "Tiger" "$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom.log" "$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom.pid"
+TIGER_BL_DATA=$data_stream_status
+
+_update_baseline_data_stream_status "Leopard" "$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom.log" "$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom.pid"
+LEOPARD_BL_DATA=$data_stream_status
+
+_update_baseline_data_stream_status "Tom" "$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom.log" "$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom.pid"
+SERVER_BL_DATA=$data_stream_status
+
+# Pupil
+_update_pupil_data_stream_status "Lion" "$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom.log" "$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom.pid"
+LION_PUPIL=$data_stream_status
+
+_update_pupil_data_stream_status "Tiger" "$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom.log" "$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom.pid"
+TIGER_PUPIL=$data_stream_status
+
+_update_pupil_data_stream_status "Leopard" "$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom.log" "$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom.pid"
+LEOPARD_PUPIL=$data_stream_status
+
+# fNIRS
+_update_fnirs_data_stream_status "Lion" "$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom.log" "$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom.pid"
+LION_FNIRS=$data_stream_status
+
+_update_fnirs_data_stream_status "Tiger" "$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom.log" "$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom.pid"
+TIGER_FNIRS=$data_stream_status
+
+_update_fnirs_data_stream_status "Leopard" "$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom.log" "$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom.pid"
+LEOPARD_FNIRS=$data_stream_status
+
+# EEG
+_update_eeg_data_stream_status "Lion" "$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom.log" "$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom.pid"
+LION_EEG=$data_stream_status
+
+_update_eeg_data_stream_status "Tiger" "$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom.log" "$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom.pid"
+TIGER_EEG=$data_stream_status
+
+_update_eeg_data_stream_status "Leopard" "$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom.log" "$EXPERIMENT_DIR/tmp/minecraft_data_watcher_tom.pid"
+LEOPARD_EEG=$data_stream_status
