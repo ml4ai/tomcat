@@ -12,13 +12,14 @@ if __name__ == "__main__":
     parser.add_argument("-a", "--address", default=DEFAULT_SERVER_ADDR, help="IP address of server")
     parser.add_argument("-p", "--port", type=int, default=DEFAULT_SERVER_PORT, help="Port of server")
     parser.add_argument("-n", "--name", default="ai", metavar='', help="Name of client")
+    parser.add_argument("-i", "--id", required=True, help="Client's unique ID")
     args = parser.parse_args()
 
     assert "ai" in args.name
 
     pygame.init()
 
-    client = Client(args.address, args.port, args.name)
+    client = Client(args.address, args.port, args.name, args.id)
 
     wait_for_server(client.to_server, client.from_server)
 

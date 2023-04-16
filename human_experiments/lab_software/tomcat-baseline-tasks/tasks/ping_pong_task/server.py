@@ -1,16 +1,17 @@
 import csv
-import json
 import threading
-from time import time, monotonic
 from datetime import datetime
+from time import time, monotonic
 
 import pygame
+
 from common import record_metadata, request_clients_end
+from common.lsl import LSLStringStream
+from common.writer import Writer
 from config import CLIENT_WINDOW_HEIGHT, CLIENT_WINDOW_WIDTH, UPDATE_RATE
 from network import receive, send
-
 from .config import (COUNT_DOWN_MESSAGE, SECONDS_COUNT_DOWN,
-                                    SESSION_TIME_SECONDS)
+                     SESSION_TIME_SECONDS)
 from .utils import (BALL_SIZE, LEFT_TEAM, RIGHT_TEAM, WINDOW_HEIGHT,
                     WINDOW_WIDTH, Ball, Paddle)
 
@@ -19,6 +20,7 @@ class ServerPingPongTask:
     def __init__(self,
                  to_client_connections: list,
                  from_client_connection_teams: dict,
+                 group_name: str,
                  easy_mode: bool = True,
                  session_name: str = '',
                  data_save_path: str = '') -> None:
@@ -117,9 +119,12 @@ class ServerPingPongTask:
         header.append("seconds")
 
         self._csv_file = open(csv_file_name + ".csv", 'w', newline='')
-        self._csv_writer = csv.DictWriter(
-            self._csv_file, delimiter=';', fieldnames=header)
-        self._csv_writer.writeheader()
+        self._writer = Writer(
+            csv_writer=csv.DictWriter(self._csv_file, delimiter=';', fieldnames=header),
+            lsl_writer=LSLStringStream(name=f"PingPong_{group_name}", source_id=f"ping_pong_{group_name}",
+                                       stream_type="ping_pong")
+        )
+        self._writer.write_header()
 
         metadata["client_window_height"] = CLIENT_WINDOW_HEIGHT
         metadata["client_window_width"] = CLIENT_WINDOW_WIDTH
@@ -156,8 +161,6 @@ class ServerPingPongTask:
         # Wait for threads to finish
         to_client_update_state_thread.join()
         from_client_commands_thread.join()
-
-        self._csv_file.close()
 
         extra_data = {}
         extra_data["score_left"] = self._score_left
@@ -278,7 +281,7 @@ class ServerPingPongTask:
             game_state["seconds"] = data["seconds"]
 
             # Record game data
-            self._csv_writer.writerow(game_state)
+            self._writer.write(game_state)
 
             # Send game data to clients
             send(self._to_client_connections, data)
@@ -297,3 +300,7 @@ class ServerPingPongTask:
                 if data["type"] == "change":
                     self._paddles[data["sender"]].update_location(
                         data["change"])
+
+    def clean_up(self):
+        self._csv_file.close()
+        self._writer.close()

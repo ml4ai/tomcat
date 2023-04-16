@@ -3,8 +3,9 @@ from datetime import datetime
 from time import monotonic, sleep, time
 
 from common import record_metadata, request_clients_end
+from common.lsl import LSLStringStream
+from common.writer import Writer
 from network import receive, send
-
 from .config import (BLANK_SCREEN_MILLISECONDS,
                      CROSS_SCREEN_MILLISECONDS,
                      DISCUSSION_TIMER, INDIVIDUAL_IMAGE_TIMER,
@@ -17,6 +18,7 @@ class ServerAffectiveTask:
     def __init__(self,
                  to_client_connections: list,
                  from_client_connections: dict,
+                 group_name: str,
                  session_name: str = '',
                  data_save_path: str = '') -> None:
         self._to_client_connections = to_client_connections
@@ -29,9 +31,13 @@ class ServerAffectiveTask:
         self._csv_file = open(csv_file_name + ".csv", 'w', newline='')
         header = ['time', 'monotonic_time', 'human_readable_time', 'image_path', 'subject_id',
                   'arousal_score', 'valence_score', 'event_type']
-        self._csv_writer = csv.DictWriter(
-            self._csv_file, delimiter=';', fieldnames=header)
-        self._csv_writer.writeheader()
+
+        self._writer = Writer(
+            csv_writer=csv.DictWriter(self._csv_file, delimiter=';', fieldnames=header),
+            lsl_writer=LSLStringStream(name=f"AffectiveTask_{group_name}", source_id=f"affective_task_{group_name}",
+                                       stream_type="affective_task")
+        )
+        self._writer.write_header()
 
         metadata = {}
         metadata["participant_ids"] = list(from_client_connections.values())
@@ -74,18 +80,14 @@ class ServerAffectiveTask:
 
         selected_rating_participant = 0  # cycling through participant during collaboration
 
-        log_first_timestap = True  # Log timestamp as soon as the experiment starts
-
-        if log_first_timestap == True:
-            self._csv_writer.writerow({"time": time(),
-                                       "monotonic_time": monotonic(),
-                                       "human_readable_time": datetime.utcnow().isoformat() + "Z",
-                                       "image_path": None,
-                                       "subject_id": None,
-                                       "arousal_score": None,
-                                       "valence_score": None,
-                                       "event_type": "start_affective_task"})
-            log_first_timestap == False
+        self._writer.write({"time": time(),
+                            "monotonic_time": monotonic(),
+                            "human_readable_time": datetime.utcnow().isoformat() + "Z",
+                            "image_path": None,
+                            "subject_id": None,
+                            "arousal_score": None,
+                            "valence_score": None,
+                            "event_type": "start_affective_task"})
 
         for image_path in image_paths:
             data["state"]["image_path"] = image_path
@@ -100,7 +102,7 @@ class ServerAffectiveTask:
                 send([to_client_connection], data)
 
             rating_received = False
-            while(not rating_received):
+            while not rating_received:
                 responses = receive(self._from_client_connections)
 
                 for client_name, response in responses.items():
@@ -108,14 +110,14 @@ class ServerAffectiveTask:
                     if response["type"] == "rating":
                         rating_received = True
                     elif response["type"] == "event":
-                        self._csv_writer.writerow({"time": time(),
-                                                   "monotonic_time": monotonic(),
-                                                   'human_readable_time': datetime.utcnow().isoformat() + "Z",
-                                                   "image_path": image_path[-file_name_length:],
-                                                   "subject_id": client_name,
-                                                   "arousal_score": None,
-                                                   "valence_score": None,
-                                                   "event_type": response["event"]})
+                        self._writer.write({"time": time(),
+                                            "monotonic_time": monotonic(),
+                                            'human_readable_time': datetime.utcnow().isoformat() + "Z",
+                                            "image_path": image_path[-file_name_length:],
+                                            "subject_id": client_name,
+                                            "arousal_score": None,
+                                            "valence_score": None,
+                                            "event_type": response["event"]})
                     else:
                         if response["type"] == "update":
                             # parse the updates from clients for cleaner CSV file
@@ -126,14 +128,14 @@ class ServerAffectiveTask:
                                 valence_score = response["update"]["rating_index"] - 2
                                 record_activity_scores = [None, valence_score]
 
-                            self._csv_writer.writerow({"time": time(),
-                                                       "monotonic_time": monotonic(),
-                                                       'human_readable_time': datetime.utcnow().isoformat() + "Z",
-                                                       "image_path": image_path[-file_name_length:],
-                                                       "subject_id": client_name,
-                                                       "arousal_score": record_activity_scores[0],
-                                                       "valence_score": record_activity_scores[1],
-                                                       "event_type": 'intermediate_selection'})
+                            self._writer.write({"time": time(),
+                                                "monotonic_time": monotonic(),
+                                                'human_readable_time': datetime.utcnow().isoformat() + "Z",
+                                                "image_path": image_path[-file_name_length:],
+                                                "subject_id": client_name,
+                                                "arousal_score": record_activity_scores[0],
+                                                "valence_score": record_activity_scores[1],
+                                                "event_type": 'intermediate_selection'})
 
                         # forward response to other clients
                         for i, to_client_connection in enumerate(self._to_client_connections):
@@ -146,14 +148,14 @@ class ServerAffectiveTask:
 
             for client_name, response in responses.items():
                 if response["type"] == "rating":
-                    self._csv_writer.writerow({"time": current_time, 
-                                               "monotonic_time": monotonic_time,
-                                               "human_readable_time": datetime.utcnow().isoformat() + "Z",
-                                               "image_path": image_path[-file_name_length:], 
-                                               "subject_id": client_name,
-                                               "arousal_score": response["rating"]["arousal"],
-                                               "valence_score": response["rating"]["valence"], 
-                                               "event_type": "final_submission"})
+                    self._writer.write({"time": current_time,
+                                        "monotonic_time": monotonic_time,
+                                        "human_readable_time": datetime.utcnow().isoformat() + "Z",
+                                        "image_path": image_path[-file_name_length:],
+                                        "subject_id": client_name,
+                                        "arousal_score": response["rating"]["arousal"],
+                                        "valence_score": response["rating"]["valence"],
+                                        "event_type": "final_submission"})
 
                 else:
                     raise RuntimeError(
@@ -168,5 +170,6 @@ class ServerAffectiveTask:
 
         print("[STATUS] Affective task ended")
 
-    def close_file(self):
+    def clean_up(self):
         self._csv_file.close()
+        self._writer.close()

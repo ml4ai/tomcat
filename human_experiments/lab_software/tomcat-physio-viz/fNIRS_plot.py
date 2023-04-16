@@ -5,6 +5,7 @@ from pylsl import StreamInlet, resolve_stream
 import argparse
 
 class MainWindow(QtWidgets.QMainWindow):
+  
     def __init__(self, *args, **kwargs):
         self.channel_list = [
             "S1-D1",

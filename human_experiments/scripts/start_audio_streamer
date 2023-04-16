@@ -48,7 +48,7 @@ __start_on_client() {
 __start_audio_streamer() {
   local padding=$1
 
-  source collect_player_names "$EXPERIMENT_DIR" "$padding"
+  source collect_participant_ids "$padding"
   echo -e "${padding}Starting the ${EMPH}Audio Streamer${NC}..."
 
   __start_on_client "lion" "lion.local" "$LION_PARTICIPANT_ID" "$padding "
