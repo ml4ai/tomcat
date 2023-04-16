@@ -4,19 +4,8 @@ import sys
 from pylsl import StreamInlet, resolve_stream
 import argparse
 
-
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, *args, **kwargs):
-        # initialize streams
-        self.host_name = {
-            "tiger_0239": "Tiger - fNIRS(2101_0239_A)",
-            "lion_0297": "Lion - fNIRS(2118_0297_A)",
-            "leopard_0171": "Leopard - fNIRS(2010_0171_A)",
-        }
-
-        self.streams = resolve_stream("type", "NIRS")
-        self.inlet = StreamInlet(self.streams[device_id])
-
         self.channel_list = [
             "S1-D1",
             "S1-D2",
@@ -44,9 +33,21 @@ class MainWindow(QtWidgets.QMainWindow):
 
         super(MainWindow, self).__init__(*args, **kwargs)
 
-        device_name = self.streams[device_id].name()
+        # initialize streams
+        self.host_name = {
+            "tiger_0239": "Tiger - fNIRS(2101_0239_A)",
+            "lion_0297": "Lion - fNIRS(2118_0297_A)",
+            "leopard_0171": "Leopard - fNIRS(2010_0171_A)",
+        }
+
+        self.streams = resolve_stream()
+
+        for i in range(len(self.streams)):
+            if self.streams[i].type() == 'NIRS' and self.streams[i].name() == device_id:
+                 self.inlet = StreamInlet(self.streams[i])
+
         for stream_name, stream_name_with_id in self.host_name.items():
-            if device_name in stream_name:
+            if device_id in stream_name:
                 self.setWindowTitle(stream_name_with_id)
 
         self.graphWidgetLayout = pg.GraphicsLayoutWidget()
@@ -144,7 +145,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Plotting fNIRS signals via LSL")
     parser.add_argument("--d", required=True, help="Enter number of fNIRS devices")
     arg = parser.parse_args()
-    device_id = int(arg.d)
+    device_id = str(arg.d)
 
     app = QtWidgets.QApplication(sys.argv)
     w = MainWindow()
