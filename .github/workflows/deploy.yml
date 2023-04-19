@@ -16,6 +16,12 @@ jobs:
     - uses: actions/setup-python@v4
       with:
         python-version: '3.10'
+    - name: Install dependencies
+      run: |
+        pip install sphinx sphinx_rtd_theme
+    - name: Sphinx build
+      run: |
+        sphinx-build doc _build
 
     - name: Build docs
       run: |
