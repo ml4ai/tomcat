@@ -13,7 +13,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - uses: actions/setup-python@v4
+    - uses: actions/setup-python@v3
       with:
         python-version: '3.9'
     - name: Install dependencies
@@ -22,8 +22,8 @@ jobs:
     - name: Build docs
       run: |
         sudo apt-get update
-        sudo apt-get install -y python3.9-venv doxygen
-        python3.9 -m venv tomcat_venv
+        sudo apt-get install -y python3-venv doxygen
+        python3 -m venv tomcat_venv
         source tomcat_venv/bin/activate
         pip install wheel
         pip install -r docs/requirements.txt
