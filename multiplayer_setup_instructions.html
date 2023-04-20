@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Multiplayer setup instructions &mdash; ToMCAT 0.1 documentation</title>
@@ -30,11 +30,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> ToMCAT
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            ToMCAT
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -66,7 +70,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">Multiplayer setup instructions</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/multiplayer_setup_instructions.md.txt" rel="nofollow"> View page source</a>
@@ -95,7 +99,7 @@ listed in this file are connected.</p>
 to create an instance of the mission on the server side. We will hide the
 server agent later.  Use this command to launch the server-side mission
 instance.</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="p">.</span><span class="o">/</span><span class="n">external</span><span class="o">/</span><span class="n">malmo</span><span class="o">/</span><span class="n">Minecraft</span><span class="o">/</span><span class="n">launchClient</span><span class="p">.</span><span class="n">sh</span><span class="w"> </span><span class="o">-</span><span class="n">port</span><span class="w"> </span><span class="mi">10000</span><span class="w"></span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="p">.</span><span class="o">/</span><span class="n">external</span><span class="o">/</span><span class="n">malmo</span><span class="o">/</span><span class="n">Minecraft</span><span class="o">/</span><span class="n">launchClient</span><span class="p">.</span><span class="n">sh</span><span class="w"> </span><span class="o">-</span><span class="n">port</span><span class="w"> </span><span class="mi">10000</span>
 </pre></div>
 </div>
 <p>Here, <code class="docutils literal notranslate"><span class="pre">-port</span></code> specifies the port number for the server, which should be the
@@ -104,7 +108,7 @@ same as the one in the configuration file.</p>
 <section id="create-mission-instances-on-client-side">
 <h2>Create mission instances on client side<a class="headerlink" href="#create-mission-instances-on-client-side" title="Permalink to this heading"></a></h2>
 <p>To run the mission on a client machine, use this command:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="p">.</span><span class="o">/</span><span class="n">external</span><span class="o">/</span><span class="n">malmo</span><span class="o">/</span><span class="n">Minecraft</span><span class="o">/</span><span class="n">launchClient</span><span class="p">.</span><span class="n">sh</span><span class="w"> </span><span class="o">-</span><span class="n">port</span><span class="w"> </span><span class="n">x</span><span class="w"></span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="p">.</span><span class="o">/</span><span class="n">external</span><span class="o">/</span><span class="n">malmo</span><span class="o">/</span><span class="n">Minecraft</span><span class="o">/</span><span class="n">launchClient</span><span class="p">.</span><span class="n">sh</span><span class="w"> </span><span class="o">-</span><span class="n">port</span><span class="w"> </span><span class="n">x</span>
 </pre></div>
 </div>
 <p>Here, the <code class="docutils literal notranslate"><span class="pre">-port</span></code> option specifies the port numbers for the clients. Those
@@ -114,7 +118,7 @@ numbers need to be consistent with the ones in the configuration file as well.</
 <h2>Starting the mission<a class="headerlink" href="#starting-the-mission" title="Permalink to this heading"></a></h2>
 <p>After the server and all the client instances are ready, run this command on
 the server side to start your mission:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="p">.</span><span class="o">/</span><span class="n">build</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">runMission</span><span class="w"> </span><span class="o">--</span><span class="n">mission</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">--</span><span class="n">multiplayer</span><span class="w"></span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="p">.</span><span class="o">/</span><span class="n">build</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">runMission</span><span class="w"> </span><span class="o">--</span><span class="n">mission</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">--</span><span class="n">multiplayer</span>
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">--mission</span></code> flag specifies the mission to launch and the <code class="docutils literal notranslate"><span class="pre">--multiplayer</span></code>

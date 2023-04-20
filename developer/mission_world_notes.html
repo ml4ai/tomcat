@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Notes for The Mission Worlds &mdash; ToMCAT 0.1 documentation</title>
@@ -30,11 +30,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../index.html" class="icon icon-home"> ToMCAT
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            ToMCAT
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -66,7 +70,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a></li>
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">Notes for The Mission Worlds</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/developer/mission_world_notes.md.txt" rel="nofollow"> View page source</a>
@@ -98,22 +102,22 @@ be downloaded from this Drive link as the <code class="docutils literal notransl
 <p>The environment parameters modified in-game at the time the world was built were as follows:</p>
 <p>1. The day-night cycle was disabled with the <code class="docutils literal notranslate"><span class="pre">/gamerule</span> <span class="pre">doDaylightCycle</span></code>
 command. To re-enable day-night cycles, use the following command in-game:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">gamerule</span><span class="w"> </span><span class="n">doDaylightCycle</span><span class="w"> </span><span class="nb">true</span><span class="w"></span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">gamerule</span><span class="w"> </span><span class="n">doDaylightCycle</span><span class="w"> </span><span class="nb">true</span>
 </pre></div>
 </div>
 <p>2. The weather cycle was disabled with the <code class="docutils literal notranslate"><span class="pre">/gamerule</span> <span class="pre">doWeatherCycle</span></code>
 command. To re-enable weather cycles, use the following command in-game:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">gamerule</span><span class="w"> </span><span class="n">doWeatherCycle</span><span class="w"> </span><span class="nb">true</span><span class="w"></span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">gamerule</span><span class="w"> </span><span class="n">doWeatherCycle</span><span class="w"> </span><span class="nb">true</span>
 </pre></div>
 </div>
 <p>3. Mob spawning was disabled with the <code class="docutils literal notranslate"><span class="pre">/gamerule</span> <span class="pre">doMobSpawning</span></code> command.To
 re-enable mob spawning, use the following command in-game:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">gamerule</span><span class="w"> </span><span class="n">doMobSpawning</span><span class="w"> </span><span class="nb">true</span><span class="w"></span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">gamerule</span><span class="w"> </span><span class="n">doMobSpawning</span><span class="w"> </span><span class="nb">true</span>
 </pre></div>
 </div>
 <p>4. The world’s default spawnpoint for all players was set to <code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">=</span> <span class="pre">-623</span> <span class="pre">y</span> <span class="pre">=</span> <span class="pre">4</span> <span class="pre">z</span> <span class="pre">=</span> <span class="pre">1584</span></code> using the <code class="docutils literal notranslate"><span class="pre">/setworldspawn</span></code> command. To modify the spawnpoint, use new
 coordinates in the  <code class="docutils literal notranslate"><span class="pre">&lt;x&gt;</span> <span class="pre">&lt;y&gt;</span> <span class="pre">&lt;z&gt;</span></code> spaces (without &lt;&gt;) in the following command:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">setworldspawn</span><span class="w"> </span><span class="o">&lt;</span><span class="n">x</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&lt;</span><span class="n">y</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&lt;</span><span class="n">z</span><span class="o">&gt;</span><span class="w"></span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">setworldspawn</span><span class="w"> </span><span class="o">&lt;</span><span class="n">x</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&lt;</span><span class="n">y</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&lt;</span><span class="n">z</span><span class="o">&gt;</span>
 </pre></div>
 </div>
 </section>
@@ -127,17 +131,17 @@ be downloaded from this Drive link as the <code class="docutils literal notransl
 <p>The environment parameters modified in-game at the time the world was built were as follows:</p>
 <p>1. The day-night cycle was disabled with the <code class="docutils literal notranslate"><span class="pre">/gamerule</span> <span class="pre">doDaylightCycle</span></code>
 command. To re-enable day-night cycles, use the following command in-game:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">gamerule</span><span class="w"> </span><span class="n">doDaylightCycle</span><span class="w"> </span><span class="nb">true</span><span class="w"></span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">gamerule</span><span class="w"> </span><span class="n">doDaylightCycle</span><span class="w"> </span><span class="nb">true</span>
 </pre></div>
 </div>
 <p>2. The weather cycle was  disabled with the <code class="docutils literal notranslate"><span class="pre">/gamerule</span> <span class="pre">doWeatherCycle</span></code>
 command. To re-enable weather cycles, use the following command in-game:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">gamerule</span><span class="w"> </span><span class="n">doWeatherCycle</span><span class="w"> </span><span class="nb">true</span><span class="w"></span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">gamerule</span><span class="w"> </span><span class="n">doWeatherCycle</span><span class="w"> </span><span class="nb">true</span>
 </pre></div>
 </div>
 <p>3. The world’s default spawnpoint for all players was set to <code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">=</span> <span class="pre">22</span> <span class="pre">y</span> <span class="pre">=</span> <span class="pre">64</span> <span class="pre">z</span> <span class="pre">=</span> <span class="pre">73</span></code> using the <code class="docutils literal notranslate"><span class="pre">/setworldspawn</span></code> command. To modify the spawnpoint, use new
 coordinates in the  <code class="docutils literal notranslate"><span class="pre">&lt;x&gt;</span> <span class="pre">&lt;y&gt;</span> <span class="pre">&lt;z&gt;</span></code> spaces (without &lt;&gt;) in the following command:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">setworldspawn</span><span class="w"> </span><span class="o">&lt;</span><span class="n">x</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&lt;</span><span class="n">y</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&lt;</span><span class="n">z</span><span class="o">&gt;</span><span class="w"></span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">setworldspawn</span><span class="w"> </span><span class="o">&lt;</span><span class="n">x</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&lt;</span><span class="n">y</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&lt;</span><span class="n">z</span><span class="o">&gt;</span>
 </pre></div>
 </div>
 <p>It should be noted that the doors used in <code class="docutils literal notranslate"><span class="pre">sar_x_x_x</span></code> world are all iron doors.

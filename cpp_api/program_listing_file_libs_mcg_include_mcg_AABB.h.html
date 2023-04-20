@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Program Listing for File AABB.h &mdash; ToMCAT 0.1 documentation</title>
@@ -30,11 +30,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../index.html" class="icon icon-home"> ToMCAT
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            ToMCAT
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -66,7 +70,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a></li>
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">Program Listing for File AABB.h</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/cpp_api/program_listing_file_libs_mcg_include_mcg_AABB.h.rst.txt" rel="nofollow"> View page source</a>
@@ -82,142 +86,142 @@
 <p>↰ <a class="reference internal" href="file_libs_mcg_include_mcg_AABB.h.html#file-libs-mcg-include-mcg-aabb-h"><span class="std std-ref">Return to documentation for file</span></a> (<code class="docutils literal notranslate"><span class="pre">libs/mcg/include/mcg/AABB.h</span></code>)</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#pragma once</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Block.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Connection.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Door.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Entity.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Object.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;memory&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;random&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Block.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Connection.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Door.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Entity.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Object.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;memory&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;random&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">AABB</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AABB</span><span class="w"> </span><span class="p">{</span>
 
-<span class="w">  </span><span class="k">protected</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">id</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">material</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">type</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">Pos</span><span class="w"> </span><span class="n">topLeft</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">Pos</span><span class="w"> </span><span class="n">bottomRight</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">isHollow</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">hasRoof</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">autoAdjust</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Block</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">blockList</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Entity</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">entityList</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">objectList</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">AABB</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">aabbList</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Connection</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">connectionList</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">protected</span><span class="o">:</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">id</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">material</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">type</span><span class="p">;</span>
+<span class="w">    </span><span class="n">Pos</span><span class="w"> </span><span class="n">topLeft</span><span class="p">;</span>
+<span class="w">    </span><span class="n">Pos</span><span class="w"> </span><span class="n">bottomRight</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">isHollow</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">hasRoof</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">autoAdjust</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Block</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">blockList</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Entity</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">entityList</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">objectList</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">AABB</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">aabbList</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Connection</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">connectionList</span><span class="p">;</span>
 
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">recalculateOverallBoundary</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">recalculateOverallBoundary</span><span class="p">();</span>
 
-<span class="w">  </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">getID</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">getID</span><span class="p">();</span>
 
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">getMaterial</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">getMaterial</span><span class="p">();</span>
 
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">getType</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">getType</span><span class="p">();</span>
 
-<span class="w">    </span><span class="n">Pos</span><span class="w"> </span><span class="nf">getTopLeft</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">Pos</span><span class="w"> </span><span class="nf">getTopLeft</span><span class="p">();</span>
 
-<span class="w">    </span><span class="n">Pos</span><span class="w"> </span><span class="nf">getBottomRight</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">Pos</span><span class="w"> </span><span class="nf">getBottomRight</span><span class="p">();</span>
 
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Block</span><span class="o">&gt;&gt;&amp;</span><span class="w"> </span><span class="n">getBlockList</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Block</span><span class="o">&gt;&gt;&amp;</span><span class="w"> </span><span class="n">getBlockList</span><span class="p">();</span>
 
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Entity</span><span class="o">&gt;&gt;&amp;</span><span class="w"> </span><span class="n">getEntityList</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Entity</span><span class="o">&gt;&gt;&amp;</span><span class="w"> </span><span class="n">getEntityList</span><span class="p">();</span>
 
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;&gt;&amp;</span><span class="w"> </span><span class="n">getObjectList</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;&gt;&amp;</span><span class="w"> </span><span class="n">getObjectList</span><span class="p">();</span>
 
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">AABB</span><span class="o">&gt;&gt;&amp;</span><span class="w"> </span><span class="n">getAABBList</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">AABB</span><span class="o">&gt;&gt;&amp;</span><span class="w"> </span><span class="n">getAABBList</span><span class="p">();</span>
 
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Connection</span><span class="o">&gt;&gt;&amp;</span><span class="w"> </span><span class="n">getConnectionList</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Connection</span><span class="o">&gt;&gt;&amp;</span><span class="w"> </span><span class="n">getConnectionList</span><span class="p">();</span>
 
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">getMidpointX</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">getMidpointX</span><span class="p">();</span>
 
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">getMidpointY</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">getMidpointY</span><span class="p">();</span>
 
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">getMidpointZ</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">getMidpointZ</span><span class="p">();</span>
 
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">getSizeX</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">getSizeX</span><span class="p">();</span>
 
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">getSizeY</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">getSizeY</span><span class="p">();</span>
 
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">getSizeZ</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">getSizeZ</span><span class="p">();</span>
 
-<span class="w">    </span><span class="n">Pos</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">getRandomPos</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">mt19937_64</span><span class="o">&amp;</span><span class="w"> </span><span class="n">gen</span><span class="p">,</span><span class="w"></span>
-<span class="w">                             </span><span class="kt">int</span><span class="w"> </span><span class="n">offsetPosX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"></span>
-<span class="w">                             </span><span class="kt">int</span><span class="w"> </span><span class="n">offsetNegX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"></span>
-<span class="w">                             </span><span class="kt">int</span><span class="w"> </span><span class="n">offsetPosY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"></span>
-<span class="w">                             </span><span class="kt">int</span><span class="w"> </span><span class="n">offsetNegY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"></span>
-<span class="w">                             </span><span class="kt">int</span><span class="w"> </span><span class="n">offsetPosZ</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"></span>
-<span class="w">                             </span><span class="kt">int</span><span class="w"> </span><span class="n">offsetNegZ</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">Pos</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">getRandomPos</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">mt19937_64</span><span class="o">&amp;</span><span class="w"> </span><span class="n">gen</span><span class="p">,</span>
+<span class="w">                             </span><span class="kt">int</span><span class="w"> </span><span class="n">offsetPosX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">                             </span><span class="kt">int</span><span class="w"> </span><span class="n">offsetNegX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">                             </span><span class="kt">int</span><span class="w"> </span><span class="n">offsetPosY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">                             </span><span class="kt">int</span><span class="w"> </span><span class="n">offsetNegY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">                             </span><span class="kt">int</span><span class="w"> </span><span class="n">offsetPosZ</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">                             </span><span class="kt">int</span><span class="w"> </span><span class="n">offsetNegZ</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
 
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Pos</span><span class="o">&gt;</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">getEdgeMidpointAtBase</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Pos</span><span class="o">&gt;</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">getEdgeMidpointAtBase</span><span class="p">();</span>
 
-<span class="w">    </span><span class="n">AABB</span><span class="o">*</span><span class="w"> </span><span class="nf">getSubAABB</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">id</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">AABB</span><span class="o">*</span><span class="w"> </span><span class="nf">getSubAABB</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">id</span><span class="p">);</span>
 
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">setTopLeft</span><span class="p">(</span><span class="n">Pos</span><span class="o">&amp;</span><span class="w"> </span><span class="n">topLeft</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">setTopLeft</span><span class="p">(</span><span class="n">Pos</span><span class="o">&amp;</span><span class="w"> </span><span class="n">topLeft</span><span class="p">);</span>
 
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">setBottomRight</span><span class="p">(</span><span class="n">Pos</span><span class="o">&amp;</span><span class="w"> </span><span class="n">bottomRight</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">setBottomRight</span><span class="p">(</span><span class="n">Pos</span><span class="o">&amp;</span><span class="w"> </span><span class="n">bottomRight</span><span class="p">);</span>
 
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">setMaterial</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">material</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">setMaterial</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">material</span><span class="p">);</span>
 
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">addBlock</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Block</span><span class="o">&gt;</span><span class="w"> </span><span class="n">block</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">addBlock</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Block</span><span class="o">&gt;</span><span class="w"> </span><span class="n">block</span><span class="p">);</span>
 
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">addEntity</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Entity</span><span class="o">&gt;</span><span class="w"> </span><span class="n">entity</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">addEntity</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Entity</span><span class="o">&gt;</span><span class="w"> </span><span class="n">entity</span><span class="p">);</span>
 
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">addObject</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">object</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">addObject</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">object</span><span class="p">);</span>
 
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">addAABB</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">AABB</span><span class="o">&gt;</span><span class="w"> </span><span class="n">aabb</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">addAABB</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">AABB</span><span class="o">&gt;</span><span class="w"> </span><span class="n">aabb</span><span class="p">);</span>
 
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">addConnection</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Connection</span><span class="o">&gt;</span><span class="w"> </span><span class="n">connection</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">addConnection</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Connection</span><span class="o">&gt;</span><span class="w"> </span><span class="n">connection</span><span class="p">);</span>
 
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">intersects</span><span class="p">(</span><span class="n">AABB</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">intersects</span><span class="p">(</span><span class="n">AABB</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">);</span>
 
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">generateBox</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">material</span><span class="p">,</span><span class="w"></span>
-<span class="w">                             </span><span class="kt">int</span><span class="w"> </span><span class="n">offsetPosX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"></span>
-<span class="w">                             </span><span class="kt">int</span><span class="w"> </span><span class="n">offsetNegX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"></span>
-<span class="w">                             </span><span class="kt">int</span><span class="w"> </span><span class="n">offsetPosY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"></span>
-<span class="w">                             </span><span class="kt">int</span><span class="w"> </span><span class="n">offsetNegY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"></span>
-<span class="w">                             </span><span class="kt">int</span><span class="w"> </span><span class="n">offsetPosZ</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"></span>
-<span class="w">                             </span><span class="kt">int</span><span class="w"> </span><span class="n">offsetNegZ</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">generateBox</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">material</span><span class="p">,</span>
+<span class="w">                             </span><span class="kt">int</span><span class="w"> </span><span class="n">offsetPosX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">                             </span><span class="kt">int</span><span class="w"> </span><span class="n">offsetNegX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">                             </span><span class="kt">int</span><span class="w"> </span><span class="n">offsetPosY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">                             </span><span class="kt">int</span><span class="w"> </span><span class="n">offsetNegY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">                             </span><span class="kt">int</span><span class="w"> </span><span class="n">offsetPosZ</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">                             </span><span class="kt">int</span><span class="w"> </span><span class="n">offsetNegZ</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
 
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">addRandomBlocks</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"></span>
-<span class="w">                                 </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">material</span><span class="p">,</span><span class="w"></span>
-<span class="w">                                 </span><span class="n">std</span><span class="o">::</span><span class="n">mt19937_64</span><span class="o">&amp;</span><span class="w"> </span><span class="n">gen</span><span class="p">,</span><span class="w"></span>
-<span class="w">                                 </span><span class="kt">int</span><span class="w"> </span><span class="n">offsetPosX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"></span>
-<span class="w">                                 </span><span class="kt">int</span><span class="w"> </span><span class="n">offsetNegX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"></span>
-<span class="w">                                 </span><span class="kt">int</span><span class="w"> </span><span class="n">offsetPosY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"></span>
-<span class="w">                                 </span><span class="kt">int</span><span class="w"> </span><span class="n">offsetNegY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"></span>
-<span class="w">                                 </span><span class="kt">int</span><span class="w"> </span><span class="n">offsetPosZ</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"></span>
-<span class="w">                                 </span><span class="kt">int</span><span class="w"> </span><span class="n">offsetNegZ</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">addRandomBlocks</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span>
+<span class="w">                                 </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">material</span><span class="p">,</span>
+<span class="w">                                 </span><span class="n">std</span><span class="o">::</span><span class="n">mt19937_64</span><span class="o">&amp;</span><span class="w"> </span><span class="n">gen</span><span class="p">,</span>
+<span class="w">                                 </span><span class="kt">int</span><span class="w"> </span><span class="n">offsetPosX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">                                 </span><span class="kt">int</span><span class="w"> </span><span class="n">offsetNegX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">                                 </span><span class="kt">int</span><span class="w"> </span><span class="n">offsetPosY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">                                 </span><span class="kt">int</span><span class="w"> </span><span class="n">offsetNegY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">                                 </span><span class="kt">int</span><span class="w"> </span><span class="n">offsetPosZ</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">                                 </span><span class="kt">int</span><span class="w"> </span><span class="n">offsetNegZ</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
 
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">generateAllDoorsInAABB</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">generateAllDoorsInAABB</span><span class="p">();</span>
 
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">shiftX</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">shift</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">shiftX</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">shift</span><span class="p">);</span>
 
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">shiftY</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">shift</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">shiftY</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">shift</span><span class="p">);</span>
 
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">shiftZ</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">shift</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">shiftZ</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">shift</span><span class="p">);</span>
 
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">shift</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">shiftX</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">shiftY</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">shiftZ</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">shift</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">shiftX</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">shiftY</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">shiftZ</span><span class="p">);</span>
 
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">toSemanticMapJSON</span><span class="p">(</span><span class="n">nlohmann</span><span class="o">::</span><span class="n">json</span><span class="o">&amp;</span><span class="w"> </span><span class="n">json_base</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">toSemanticMapJSON</span><span class="p">(</span><span class="n">nlohmann</span><span class="o">::</span><span class="n">json</span><span class="o">&amp;</span><span class="w"> </span><span class="n">json_base</span><span class="p">);</span>
 
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">toLowLevelMapJSON</span><span class="p">(</span><span class="n">nlohmann</span><span class="o">::</span><span class="n">json</span><span class="o">&amp;</span><span class="w"> </span><span class="n">json_base</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">toLowLevelMapJSON</span><span class="p">(</span><span class="n">nlohmann</span><span class="o">::</span><span class="n">json</span><span class="o">&amp;</span><span class="w"> </span><span class="n">json_base</span><span class="p">);</span>
 
-<span class="w">    </span><span class="n">AABB</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"></span>
-<span class="w">         </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">type</span><span class="p">,</span><span class="w"></span>
-<span class="w">         </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">material</span><span class="p">,</span><span class="w"></span>
-<span class="w">         </span><span class="n">Pos</span><span class="o">&amp;</span><span class="w"> </span><span class="n">topLeft</span><span class="p">,</span><span class="w"></span>
-<span class="w">         </span><span class="n">Pos</span><span class="o">&amp;</span><span class="w"> </span><span class="n">bottomRight</span><span class="p">,</span><span class="w"></span>
-<span class="w">         </span><span class="kt">bool</span><span class="w"> </span><span class="n">isHollow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">,</span><span class="w"></span>
-<span class="w">         </span><span class="kt">bool</span><span class="w"> </span><span class="n">hasRoof</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">,</span><span class="w"></span>
-<span class="w">         </span><span class="kt">bool</span><span class="w"> </span><span class="n">autoAdjust</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">AABB</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">id</span><span class="p">,</span>
+<span class="w">         </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">type</span><span class="p">,</span>
+<span class="w">         </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">material</span><span class="p">,</span>
+<span class="w">         </span><span class="n">Pos</span><span class="o">&amp;</span><span class="w"> </span><span class="n">topLeft</span><span class="p">,</span>
+<span class="w">         </span><span class="n">Pos</span><span class="o">&amp;</span><span class="w"> </span><span class="n">bottomRight</span><span class="p">,</span>
+<span class="w">         </span><span class="kt">bool</span><span class="w"> </span><span class="n">isHollow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">,</span>
+<span class="w">         </span><span class="kt">bool</span><span class="w"> </span><span class="n">hasRoof</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">,</span>
+<span class="w">         </span><span class="kt">bool</span><span class="w"> </span><span class="n">autoAdjust</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">);</span>
 
-<span class="w">    </span><span class="n">AABB</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">id</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">AABB</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">id</span><span class="p">);</span>
 
-<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">AABB</span><span class="p">();</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">AABB</span><span class="p">();</span>
+<span class="p">};</span>
 </pre></div>
 </div>
 </section>

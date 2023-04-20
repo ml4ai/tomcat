@@ -11,7 +11,6 @@ Class Documentation
 
 
 .. doxygenclass:: Pos
-   :project: ToMCAT
    :members:
    :protected-members:
    :undoc-members:

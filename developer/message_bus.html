@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Working with the MQTT message bus &mdash; ToMCAT 0.1 documentation</title>
@@ -32,11 +32,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../index.html" class="icon icon-home"> ToMCAT
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            ToMCAT
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -94,7 +98,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a></li>
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="index.html">Developer documentation</a></li>
       <li class="breadcrumb-item active">Working with the MQTT message bus</li>
       <li class="wy-breadcrumbs-aside">
@@ -146,11 +150,11 @@ you).</p>
 <h3>MacOS<a class="headerlink" href="#macos" title="Permalink to this heading"></a></h3>
 <p>If you installed Mosquitto using MacPorts, you can start it up in the
 background with the default settings by invoking::</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">port</span><span class="w"> </span><span class="n">load</span><span class="w"> </span><span class="n">mosquitto</span><span class="w"></span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">port</span><span class="w"> </span><span class="n">load</span><span class="w"> </span><span class="n">mosquitto</span>
 </pre></div>
 </div>
 <p>If you used Homebrew, you can do::</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">brew</span><span class="w"> </span><span class="n">services</span><span class="w"> </span><span class="n">start</span><span class="w"> </span><span class="n">mosquitto</span><span class="w"></span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">brew</span><span class="w"> </span><span class="n">services</span><span class="w"> </span><span class="n">start</span><span class="w"> </span><span class="n">mosquitto</span>
 </pre></div>
 </div>
 </section>
@@ -186,12 +190,12 @@ bus. Let’s go through a small exercise in publishing/subscribing using client
 executables.</p>
 <p>Once you’ve started up the broker, you can subscribe to a topic called
 <code class="docutils literal notranslate"><span class="pre">example_topic</span></code> using the <code class="docutils literal notranslate"><span class="pre">mosquitto_sub</span></code> client::</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">mosquitto_sub</span><span class="w"> </span><span class="o">-</span><span class="n">t</span><span class="w"> </span><span class="n">example_topic</span><span class="w"></span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">mosquitto_sub</span><span class="w"> </span><span class="o">-</span><span class="n">t</span><span class="w"> </span><span class="n">example_topic</span>
 </pre></div>
 </div>
 <p>Then, in a separate terminal window, use the <code class="docutils literal notranslate"><span class="pre">mosquitto_pub</span></code> client to
 publish a message containing the string <code class="docutils literal notranslate"><span class="pre">Hello</span> <span class="pre">world</span></code> to <code class="docutils literal notranslate"><span class="pre">example_topic</span></code>.:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">mosquitto_pub</span><span class="w"> </span><span class="o">-</span><span class="n">t</span><span class="w"> </span><span class="n">example_topic</span><span class="w"> </span><span class="o">-</span><span class="n">m</span><span class="w"> </span><span class="s">&quot;Hello world&quot;</span><span class="w"></span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">mosquitto_pub</span><span class="w"> </span><span class="o">-</span><span class="n">t</span><span class="w"> </span><span class="n">example_topic</span><span class="w"> </span><span class="o">-</span><span class="n">m</span><span class="w"> </span><span class="s">&quot;Hello world&quot;</span>
 </pre></div>
 </div>
 <p>You should see <code class="docutils literal notranslate"><span class="pre">Hello</span> <span class="pre">world</span></code> printed to standard output in the terminal
@@ -226,19 +230,19 @@ into jq will be pretty-printed to the standard output stream.:</p>
 </pre></div>
 </div>
 <p>We will publish the following two JSON messages to <code class="docutils literal notranslate"><span class="pre">topic1</span></code>.:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s">&quot;key&quot;</span><span class="o">:</span><span class="w"> </span><span class="s">&quot;value1&quot;</span><span class="p">}</span><span class="w"></span>
-<span class="p">{</span><span class="s">&quot;key&quot;</span><span class="o">:</span><span class="w"> </span><span class="s">&quot;value2&quot;</span><span class="p">}</span><span class="w"></span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s">&quot;key&quot;</span><span class="o">:</span><span class="w"> </span><span class="s">&quot;value1&quot;</span><span class="p">}</span>
+<span class="p">{</span><span class="s">&quot;key&quot;</span><span class="o">:</span><span class="w"> </span><span class="s">&quot;value2&quot;</span><span class="p">}</span>
 </pre></div>
 </div>
 <p>For each one, we will extract the value stored in the key ‘<code class="docutils literal notranslate"><span class="pre">key</span></code>’ using
 <code class="docutils literal notranslate"><span class="pre">jq</span></code>, and publish that value to <code class="docutils literal notranslate"><span class="pre">topic2</span></code>.</p>
 <p>In one terminal window, run the following invocation to set up the <code class="docutils literal notranslate"><span class="pre">jq</span></code>
 processing ‘stream’.:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">mosquitto_sub</span><span class="w"> </span><span class="o">-</span><span class="n">t</span><span class="w"> </span><span class="n">topic1</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">jq</span><span class="w"> </span><span class="o">--</span><span class="n">unbuffered</span><span class="w"> </span><span class="p">.</span><span class="n">key</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">mosquitto_pub</span><span class="w"> </span><span class="o">-</span><span class="n">t</span><span class="w"> </span><span class="n">topic2</span><span class="w"> </span><span class="o">-</span><span class="n">l</span><span class="w"></span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">mosquitto_sub</span><span class="w"> </span><span class="o">-</span><span class="n">t</span><span class="w"> </span><span class="n">topic1</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">jq</span><span class="w"> </span><span class="o">--</span><span class="n">unbuffered</span><span class="w"> </span><span class="p">.</span><span class="n">key</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">mosquitto_pub</span><span class="w"> </span><span class="o">-</span><span class="n">t</span><span class="w"> </span><span class="n">topic2</span><span class="w"> </span><span class="o">-</span><span class="n">l</span>
 </pre></div>
 </div>
 <p>In another window, subscribe to <code class="docutils literal notranslate"><span class="pre">topic2</span></code>::</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">mosquitto_sub</span><span class="w"> </span><span class="o">-</span><span class="n">t</span><span class="w"> </span><span class="n">topic2</span><span class="w"></span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">mosquitto_sub</span><span class="w"> </span><span class="o">-</span><span class="n">t</span><span class="w"> </span><span class="n">topic2</span>
 </pre></div>
 </div>
 <p>Then, in a third window, publish two JSON messages to topic1::</p>

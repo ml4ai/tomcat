@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Installation &mdash; ToMCAT 0.1 documentation</title>
@@ -32,11 +32,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> ToMCAT
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            ToMCAT
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -71,7 +75,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">Installation</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/installation.md.txt" rel="nofollow"> View page source</a>
@@ -86,8 +90,8 @@
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h1>
 <p>The following commands should install ToMCAT and its dependencies for macOS and
 Ubuntu (tested with Ubuntu 18.04) users:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/ml4ai/tomcat
-<span class="nb">cd</span> tomcat <span class="o">&amp;&amp;</span> ./tools/install
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/ml4ai/tomcat
+<span class="nb">cd</span><span class="w"> </span>tomcat<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>./tools/install
 </pre></div>
 </div>
 <p>For people using other operating systems, note that ToMCAT depends on the
@@ -103,7 +107,7 @@ Windows support are welcome.</p>
 <h2>For developers<a class="headerlink" href="#for-developers" title="Permalink to this heading"></a></h2>
 <p>To speed up builds, create a file called gradle.properties and add
 <code class="docutils literal notranslate"><span class="pre">org.gradle.daemon=true</span></code> to it:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">echo</span><span class="w"> </span><span class="s">&quot;org.gradle.daemon=true&quot;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">~/</span><span class="p">.</span><span class="n">gradle</span><span class="o">/</span><span class="n">gradle</span><span class="p">.</span><span class="n">properties</span><span class="w"></span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">echo</span><span class="w"> </span><span class="s">&quot;org.gradle.daemon=true&quot;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">~/</span><span class="p">.</span><span class="n">gradle</span><span class="o">/</span><span class="n">gradle</span><span class="p">.</span><span class="n">properties</span>
 </pre></div>
 </div>
 </section>

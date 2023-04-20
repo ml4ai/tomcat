@@ -20,7 +20,6 @@ Class Documentation
 
 
 .. doxygenclass:: Door
-   :project: ToMCAT
    :members:
    :protected-members:
    :undoc-members:

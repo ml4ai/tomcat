@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Contributing &mdash; ToMCAT 0.1 documentation</title>
@@ -32,11 +32,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../index.html" class="icon icon-home"> ToMCAT
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            ToMCAT
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -83,7 +87,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a></li>
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="index.html">Developer documentation</a></li>
       <li class="breadcrumb-item active">Contributing</li>
       <li class="wy-breadcrumbs-aside">
@@ -114,7 +118,7 @@ the name of the feature is <code class="docutils literal notranslate"><span clas
 see the details of the changes to refresh your memory (and catch errant print
 statements!).</p></li>
 <li><p>Add the new/changed files by doing</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">git</span><span class="w"> </span><span class="n">add</span><span class="w"> </span><span class="o">&lt;</span><span class="n">filename1</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&lt;</span><span class="n">filename2</span><span class="o">&gt;</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="o">&lt;</span><span class="n">filenameN</span><span class="o">&gt;</span><span class="w"></span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">git</span><span class="w"> </span><span class="n">add</span><span class="w"> </span><span class="o">&lt;</span><span class="n">filename1</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&lt;</span><span class="n">filename2</span><span class="o">&gt;</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="o">&lt;</span><span class="n">filenameN</span><span class="o">&gt;</span>
 </pre></div>
 </div>
 <p>Remember:</p>
@@ -138,12 +142,12 @@ the automated test suite to fail.</p></li>
 </ul>
 </li>
 <li><p>Commit the changes:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">git</span><span class="w"> </span><span class="n">commit</span><span class="w"> </span><span class="o">-</span><span class="n">m</span><span class="w"> </span><span class="s">&quot;Description of features/changes that were implemented.&quot;</span><span class="w"></span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">git</span><span class="w"> </span><span class="n">commit</span><span class="w"> </span><span class="o">-</span><span class="n">m</span><span class="w"> </span><span class="s">&quot;Description of features/changes that were implemented.&quot;</span>
 </pre></div>
 </div>
 </li>
 <li><p>Push the changes:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">git</span><span class="w"> </span><span class="n">push</span><span class="w"></span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">git</span><span class="w"> </span><span class="n">push</span>
 </pre></div>
 </div>
 </li>
@@ -159,9 +163,9 @@ by going to the <a class="reference external" href="https://github.com/ml4ai/tom
 master branch.</p></li>
 <li><p>Once the feature branch is merged, do the following to update your master
 branch and delete your feature branch.</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">git</span><span class="w"> </span><span class="n">checkout</span><span class="w"> </span><span class="n">master</span><span class="w"></span>
-<span class="n">git</span><span class="w"> </span><span class="n">pull</span><span class="w"></span>
-<span class="n">git</span><span class="w"> </span><span class="n">branch</span><span class="w"> </span><span class="o">-</span><span class="n">D</span><span class="w"> </span><span class="n">new_feature</span><span class="w"></span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">git</span><span class="w"> </span><span class="n">checkout</span><span class="w"> </span><span class="n">master</span>
+<span class="n">git</span><span class="w"> </span><span class="n">pull</span>
+<span class="n">git</span><span class="w"> </span><span class="n">branch</span><span class="w"> </span><span class="o">-</span><span class="n">D</span><span class="w"> </span><span class="n">new_feature</span>
 </pre></div>
 </div>
 </li>
@@ -171,7 +175,7 @@ has been merged into the master branch, but you are in the middle of
 implementing your feature branch, make sure to pull the changes from master
 into your branch and resolve any merge conflicts (another reason to not
 delay PRs!). Assuming you are on the <code class="docutils literal notranslate"><span class="pre">new_feature</span></code> branch, you would do:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">git</span><span class="w"> </span><span class="n">pull</span><span class="w"> </span><span class="n">origin</span><span class="w"> </span><span class="n">master</span><span class="w"></span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">git</span><span class="w"> </span><span class="n">pull</span><span class="w"> </span><span class="n">origin</span><span class="w"> </span><span class="n">master</span>
 </pre></div>
 </div>
 </li>

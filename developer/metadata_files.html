@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Working with .metadata files &mdash; ToMCAT 0.1 documentation</title>
@@ -32,11 +32,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../index.html" class="icon icon-home"> ToMCAT
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            ToMCAT
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -87,7 +91,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a></li>
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="index.html">Developer documentation</a></li>
       <li class="breadcrumb-item active">Working with .metadata files</li>
       <li class="wy-breadcrumbs-aside">
@@ -113,12 +117,12 @@ message bus (if you are not familiar with the concept of a message bus, see
 <h2>JSON key reference convention<a class="headerlink" href="#json-key-reference-convention" title="Permalink to this heading"></a></h2>
 <p>In the rest of this writeup, we use the following convention to refer to values
 in JSON objects. Consider the following example JSON object:</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">     </span><span class="nt">&quot;key1&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;value1&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">     </span><span class="nt">&quot;key2&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">         </span><span class="nt">&quot;key3&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;value2&quot;</span><span class="w"></span>
-<span class="w">     </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="w"> </span><span class="p">{</span>
+<span class="w">     </span><span class="nt">&quot;key1&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;value1&quot;</span><span class="p">,</span>
+<span class="w">     </span><span class="nt">&quot;key2&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;key3&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;value2&quot;</span>
+<span class="w">     </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <p>In the above, the value at <code class="docutils literal notranslate"><span class="pre">.key1</span></code> is <code class="docutils literal notranslate"><span class="pre">value1</span></code>. We extend this pattern for
@@ -221,12 +225,12 @@ environment variable so that you can invoke it from any directory.</p></li>
 necessary Python packages (I have one named <code class="docutils literal notranslate"><span class="pre">tomcat</span></code> that I use for all my
 <code class="docutils literal notranslate"><span class="pre">tomcat</span></code> Python programming tasks). For the <code class="docutils literal notranslate"><span class="pre">elkless_replayer</span></code> you can install the
 prerequisites by running the following in your virtual environment:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span><span class="w"> </span><span class="n">install</span><span class="w"> </span><span class="n">paho</span><span class="o">-</span><span class="n">mqtt</span><span class="w"> </span><span class="n">tqdm</span><span class="w"> </span><span class="n">python</span><span class="o">-</span><span class="n">dateutil</span><span class="w"></span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span><span class="w"> </span><span class="n">install</span><span class="w"> </span><span class="n">paho</span><span class="o">-</span><span class="n">mqtt</span><span class="w"> </span><span class="n">tqdm</span><span class="w"> </span><span class="n">python</span><span class="o">-</span><span class="n">dateutil</span>
 </pre></div>
 </div>
 </li>
 <li><p>To see the help message and the command line options, run:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">elkless_replayer</span><span class="w"> </span><span class="o">-</span><span class="n">h</span><span class="w"></span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">elkless_replayer</span><span class="w"> </span><span class="o">-</span><span class="n">h</span>
 </pre></div>
 </div>
 </li>
