@@ -61,7 +61,7 @@ if [[ ${exit_status} -eq 0 ]]; then
     # the right thing in a partable way. Perhaps we just live with this behavior
     # here.
     #
-    find . -type f -name '*-RSYNC-*' -exec ${TOMCAT_DIR}data_products/scripts/cleanup_rsync_backups_2 {} \;
+    find . -type f ! -path '*LIMBO*' ! -path '*RSYNC_PREVIOUS*' -name '*-RSYNC-*' -exec ${TOMCAT_DIR}data_products/scripts/cleanup_rsync_backups_2 {} \;
 fi 
 
 exit ${exit_status}

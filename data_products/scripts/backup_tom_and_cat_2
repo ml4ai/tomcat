@@ -39,8 +39,8 @@ export ROOT_USER_ON_TOM="root@10.192.234.251"
 # we are backing up does not appear on the main (fast) tomcat disks (tomcat_1,
 # tomcat_2). 
 #
-export MISC_BACKUP_DIR_1="/tom_and_cat_B1" 
-export MISC_BACKUP_DIR_2="/tom_and_cat_B2" 
+export MISC_BACKUP_DIR_1="/tom_and_cat_shadow" 
+export MISC_BACKUP_DIR_2="/tom_and_cat_backup" 
 
 # This is relative to the external home. 
 ### Not currently used --- export OFFSITE_BACKUP_DIR="tomcat/backup" 
@@ -86,7 +86,7 @@ set +e
 
 base_rsync_options="-rlptD -u --modify-window=20 -b --suffix ${backup_suffix}"
 
-rsync_options="${rsync_verbose} ${base_rsync_options}"
+rsync_options="${rsync_verbose} ${base_rsync_options} -l"
 
 for tomcat_raw_volume in ${RAW_DATA_VOLUMES}; do 
     ${VERBOSE_ECHO} "Script pull_tomcat_data_2 backing up ${tomcat_raw_volume}. "
@@ -94,14 +94,14 @@ for tomcat_raw_volume in ${RAW_DATA_VOLUMES}; do
     rsync ${rsync_options} ${tomcat_raw_volume}/ ${tomcat_raw_volume}_B1/  
     rc=$?
     ${VERBOSE_ECHO} "Rsync return code was ${rc}"
-    ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+    ${VERBOSE_ECHO} "Pending exit status in backup_tom_and_cat_2 is ${exit_status}"
     ${VERBOSE_ECHO} ""
  
     ${VERBOSE_ECHO} "Script pull_tomcat_data_2 executing: rsync ${rsync_options} ${tomcat_raw_volume}/ ${tomcat_raw_volume}_B2/" 
     rsync ${rsync_options} ${tomcat_raw_volume}/ ${tomcat_raw_volume}_B2/  
     rc=$?
     ${VERBOSE_ECHO} "Rsync return code was ${rc}"
-    ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+    ${VERBOSE_ECHO} "Pending exit status in backup_tom_and_cat_2 is ${exit_status}"
     ${VERBOSE_ECHO} ""
 done 
 
@@ -131,12 +131,22 @@ done
 
 # Backup stuff other than experiments on IVILAB disks. Here we need some extra
 # excludes. Also, we want to follow symbolic links as we sometimes use them when
-# dodging spaces issues. Better to risk having duplicates. 
-rsync_options="${rsync_verbose} ${base_rsync_options} -L --exclude=LIMBO --exclude=TRASH --exclude=trash --exclude=.[tT]rash --exclude=experiments"
-
+# dodging spaces issues. Better to risk having duplicates. However, rsync
+# following links breaks if we have circular links. It actually reports "too
+# many levels" eventually, but still fills the disk. So we need to manually fix
+# them or exclude them. For now, we will only do this where we might need it,
+# and skip doing for /home, which is where all the problems arise. This means
+# that we have a special case for /home below. 
+#
 # No docker on cat on 22-09-29. Maybe in the future. 
 for cat_dir in /home /data/cat /data/dev /data/dry_runs 
 do 
+   if [[ "${cat_dir}" == "/home" ]]; then 
+        rsync_options="${rsync_verbose} ${base_rsync_options} -l --exclude=LIMBO --exclude=TRASH --exclude=.[tT]rash* --exclude=experiments"
+   else
+        rsync_options="${rsync_verbose} ${base_rsync_options} -L --exclude=LIMBO --exclude=TRASH --exclude=.[tT]rash* --exclude=experiments"
+   fi 
+
     ${VERBOSE_ECHO} "Script backup_tom_and_cat_2 is working on cat directory: ${cat_dir}."
     target_dir=${MISC_BACKUP_DIR_1}/cat/${cat_dir}
     ${VERBOSE_ECHO} "Script backup_tom_and_cat_2 executing:"
@@ -144,7 +154,7 @@ do
     mkdir -p "${target_dir}" 2>&1
     rc=$?
     ${VERBOSE_ECHO} "mkdir return code was ${rc}"
-    ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+    ${VERBOSE_ECHO} "Pending exit status in backup_tom_and_cat_2 is ${exit_status}"
     ${VERBOSE_ECHO} ""
 
     if [[ ${rc} -eq 0 ]]; then
@@ -153,14 +163,17 @@ do
         rsync ${rsync_options} ${ROOT_USER_ON_CAT}:${cat_dir}/ ${target_dir} 2>&1 
         rc=$?
         ${VERBOSE_ECHO} "Rsync return code was ${rc}"
-        ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+        ${VERBOSE_ECHO} "Pending exit status in backup_tom_and_cat_2 is ${exit_status}"
         ${VERBOSE_ECHO} ""
     else 
         ${VERBOSE_ECHO} "Script backup_tom_and_cat_2 skipping backup of cat directory ${cat_dir} due to remote mkdir failure."
     fi
 done
 
-# Skip /data/tom for now.
+rsync_options="${rsync_verbose} ${base_rsync_options} -l --exclude=LIMBO --exclude=TRASH --exclude=.[tT]rash* --exclude=experiments"
+
+# Skip /data/tom for now. Definately want '-l' in the options, as docker (at
+# least) has circular links. 
 for tom_dir in /var/lib/docker /home/
 do 
     ${VERBOSE_ECHO} "Script backup_tom_and_cat_2 is working on tom directory: ${tom_dir}."
@@ -170,7 +183,7 @@ do
     mkdir -p "${target_dir}" 2>&1
     rc=$?
     ${VERBOSE_ECHO} "mkdir return code was ${rc}"
-    ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+    ${VERBOSE_ECHO} "Pending exit status in backup_tom_and_cat_2 is ${exit_status}"
     ${VERBOSE_ECHO} ""
 
     if [[ ${rc} -eq 0 ]]; then
@@ -179,26 +192,26 @@ do
         rsync ${rsync_options} ${ROOT_USER_ON_TOM}:${tom_dir}/ ${target_dir} 2>&1 
         rc=$?
         ${VERBOSE_ECHO} "Rsync return code was ${rc}"
-        ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+        ${VERBOSE_ECHO} "Pending exit status in backup_tom_and_cat_2 is ${exit_status}"
         ${VERBOSE_ECHO} ""
     else 
         ${VERBOSE_ECHO} "Script backup_tom_and_cat_2 skipping backup of tom directory ${tom_dir} due to remote mkdir failure."
     fi
 done
 
-rsync_options="${rsync_verbose} ${base_rsync_options} 
+rsync_options="${rsync_verbose} ${base_rsync_options} -l"
 
 ${VERBOSE_ECHO} rsync ${rsync_options} ${MISC_BACKUP_DIR_1}/ ${MISC_BACKUP_DIR_2}  
 rsync ${rsync_options} ${MISC_BACKUP_DIR_1}/ ${MISC_BACKUP_DIR_2}  
 rc=$?
 ${VERBOSE_ECHO} "Rsync return code was ${rc}"
-${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+${VERBOSE_ECHO} "Pending exit status in backup_tom_and_cat_2 is ${exit_status}"
 ${VERBOSE_ECHO} ""
 
-eval echo "Script backup_tom_and_cat_2 exiting with status ${exit_status} on: $(date)" 
 
 echo " "
-echo "Script backup_tom_and_cat_2 exiting with status ${exit_status}: $(date)" 
+# eval echo "Script backup_tom_and_cat_2 exiting with status ${exit_status} on: $(date)" 
+eval echo "Script backup_tom_and_cat_2 exiting with status ${exit_status} on: $(date)" 
 echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" 
 
 exit ${exit_status} 

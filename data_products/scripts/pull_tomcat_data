@@ -21,17 +21,80 @@
 ##############################################################################
 
 set -u
+# set -x 
 
-num_tries=5
-sleep_time_between_tries=600
- 
 # TOMCAT_DIR is either the github clone, a link to it, or a directory with
 # needed links that mimics the github clone structure where needed. 
 export TOMCAT_DIR="${HOME}/tomcat/" 
 
-source ${TOMCAT_DIR}shared_code/bash/ivi_preamble.bash  
+# Our exit status will be that of the last command that failed. 
+exit_status=0
 
-tomcat_dirs_to_pull=tomcat_dirs_to_pull.$$
+failure_recipients="kobus@arizona.edu rchamplin@arizona.edu adarsh@arizona.edu" 
+success_recipients="kobus@arizona.edu rchamplin@arizona.edu" 
+
+message_body_file=${TOMCAT_DIR}/pull_tomcat_data_message.txt
+# Test writing to message_body_file.
+touch "${message_body_file}" 
+
+# Locking: This script is called via cron daily every evening..  Since it can
+# run for a long time, we make sure that we only running one copy. 
+
+# We test several things based on success/failure while locking. So we need to
+# carry on if there is error. 
+set +e 
+
+lock_file="${TOMCAT_DIR}/pull_tomcat_data.lock"
+
+if [[ -e "${lock_file}" ]]; then
+    pull_pid=$( cat "${lock_file}" )
+    cat_status=$?
+    if [[ ${cat_status} -ne 0 ]]; then
+        exit_status=1
+        echo "Lockfile ${lock_file} disappeared. Since this is unlikely, we assumme something is wrong."
+    else 
+        ps ${pull_pid} >& /dev/null
+        ps_status=$?
+
+        if [[ ${ps_status} -eq 0 ]]; then
+            echo "Previous pull_tomcat_data process ${pull_pid} is still running. Canceling this run."
+            echo "If this problem persists for more than 36 hours or so, check manually."
+            exit_status=1 
+        fi 
+    fi 
+fi 
+
+if [[ $exit_status -ne 0 ]]; then
+     which mutt >& /dev/null
+     if [[ $? -eq 0 ]]; then
+        prefix="ALERT: "
+        status="failed"
+
+        echo "Sending mail."
+        echo "Unable to get the lock. If this problem persists for more than 36 hours or so, check manually." > ${message_body_file}
+        eval echo executing mutt -F /dev/null -i ${message_body_file} -s "${prefix} $(date) : Script pull_tomcat_data ${status} on $(hostname)." -- ${failure_recipients} 
+        mutt -F /dev/null -i ${message_body_file} -s "${prefix} $(date) : Script pull_tomcat_data ${status} on $(hostname)." -- ${failure_recipients} < /dev/null
+        mail_rc=$?
+
+        if [[ ${mail_rc} -eq 0 ]]; then
+            eval echo "Arranging mail via mutt regarding status of pull_tomcat_data reported success." 
+        else
+            eval echo "Mailing regarding status of pull_tomcat_data reported error." 
+        fi 
+    else
+        echo "Unable to send mail regarding locking issue due to no 'mutt'."
+    fi 
+    exit ${exit_status}
+fi 
+
+# We now believe we are the only active pull_tomcat_data process.
+
+# We can try again a number of times if we fail. If we do that, we report the
+# success or failure of the last try. This is useful if there is momentary
+# network issue, that goes away within the sleep time. 
+#
+num_tries=3
+sleep_time_between_tries=600
 
 export CAT_USER_ON_CAT="cat@10.192.234.250"
 
@@ -52,19 +115,19 @@ export SENSOR_TOMCAT_DIR="/home/${SENSOR_USER}/tomcat/"
 
 export RAW_DATA_VOLUMES="/tomcat_raw_1 /tomcat_raw_2 /tomcat_raw_3 /tomcat_raw_4"
 
-# Our exit status will be that of the last command that failed. 
-exit_status=0
-
 # The initial commands in this script executes need to succeed, so we can
 # simplify error handling to trap failures to report them, and then ask bash to
-# exit. But at the begining we are not ready to report errors or do anything
+# exit. But at the vey begining we are not ready to report errors or do anything
 # else so we simply die with non-zero return code. 
 
 set -e
+source ${TOMCAT_DIR}shared_code/bash/ivi_preamble.bash  
 
 # Revoke possible removal of group perms (if we are running as root) and don't
 # permit others any access. 
 umask 0007 
+
+echo $$ > ${lock_file}
 
 log_dir=${TOMCAT_DIR}logs
 mkdir -p ${log_dir}
@@ -82,25 +145,27 @@ eval echo " " ${plumbing} ${log_file}
 set +e -o pipefail 
 
 # Sometimes remote rsync dies without explanation, possibly network issues. So,
-# try running this additional times if we fail. 
+# try running this additional times if we fail. Exit status is that of the last
+# try. So previoius failures do not lead to an overall failure if we eventually
+# succeed. 
 try=1
 while [[ 1 ]]; do
-    eval $VERBOSE_ECHO "" ${plumbing} ${log_file}
-    eval $VERBOSE_ECHO "Call $try to pull_tomcat_data_2 at $(date)." ${plumbing} ${log_file}
+    eval ${VERBOSE_ECHO} "" ${plumbing} ${log_file}
+    eval ${VERBOSE_ECHO} "Call $try to pull_tomcat_data_2 at $(date)." ${plumbing} ${log_file}
     eval pull_tomcat_data_2 ${plumbing} ${log_file}
 
     exit_status=$?
 
     if [[ $exit_status -eq 0 ]]; then break; fi
 
-    eval $VERBOSE_ECHO "" ${plumbing} ${log_file}
-    eval $VERBOSE_ECHO "Call $try to pull_tomcat_data_2 failed, noted at $(date)." ${plumbing} ${log_file}
+    eval ${VERBOSE_ECHO} "" ${plumbing} ${log_file}
+    eval ${VERBOSE_ECHO} "Call $try to pull_tomcat_data_2 failed with status ${exit_status}, noted at $(date)." ${plumbing} ${log_file}
 
     try=$(($try+1))
 
     if  [[ $try -le ${num_tries} ]]; then 
-        eval $VERBOSE_ECHO "" ${plumbing} ${log_file}
-        eval $VERBOSE_ECHO "Trying again after sleeping for ${sleep_time_between_tries}s." ${plumbing} ${log_file}
+        eval ${VERBOSE_ECHO} "" ${plumbing} ${log_file}
+        eval ${VERBOSE_ECHO} "Trying again after sleeping for ${sleep_time_between_tries}s." ${plumbing} ${log_file}
         sleep ${sleep_time_between_tries}
     else 
         break
@@ -108,23 +173,37 @@ while [[ 1 ]]; do
 done 
 
 end_time="$(date)"
+eval echo "Script pull_tomcat_data PID:$$ exiting with status ${exit_status} at ${end_time}" ${plumbing} ${log_file}
+eval echo "Script started at ${start_time}" ${plumbing} ${log_file}
+
 which mutt >& /dev/null
 if [[ $? -eq 0 ]]; then
+    eval echo "Attemping to send mail since we have mutt." ${plumbing} ${log_file}
     if [[ "${exit_status}" -ne 0 ]]; then
         prefix="ALERT: "
         status="failed"
-        recipients="kobus@arizona.edu rchamplin@arizona.edu adarsh@arizona.edu" 
+        recipients="${failure_recipients}" 
     else
         prefix="MEMO: "
         status="succeeded"
-        recipients="kobus@arizona.edu rchamplin@arizona.edu" 
+        recipients="${success_recipients}" 
     fi 
 
-    echo "Grep /scratch/langlab/logs/pull_tomcat_data.log for PID:$$ for details." | mutt -F /dev/null -s "${prefix} ${end_time} : Script pull_tomcat_data ${status}." ${recipients}
+    echo "Grep /scratch/langlab/logs/pull_tomcat_data.log for PID:$$ for details." > ${message_body_file}
+    eval echo executing mutt -F /dev/null -i ${message_body_file} -s "${prefix} ${end_time} : Script pull_tomcat_data ${status} on $(hostname)." -- ${recipients} ${plumbing} ${log_file}
+    mutt -F /dev/null -i ${message_body_file} -s "${prefix} ${end_time} : Script pull_tomcat_data ${status} on $(hostname)." -- ${recipients} < /dev/null
+    mail_rc=$?
+
+    if [[ ${mail_rc} -eq 0 ]]; then
+        eval echo "Arranging mail via mutt regarding status of pull_tomcat_data reported success." ${plumbing} ${log_file}
+    else
+        eval echo "Mailing regarding status of pull_tomcat_data reported error." ${plumbing} ${log_file}
+    fi 
+else 
+    eval echo "Skipping sending mail since we do not have mutt." ${plumbing} ${log_file}
 fi 
 
-eval echo "Script pull_tomcat_data PID:$$ exiting with status ${exit_status} at ${end_time}" ${plumbing} ${log_file}
-eval echo "Script started                                             at ${start_time}" ${plumbing} ${log_file}
+eval echo " " ${plumbing} ${log_file}
 eval echo "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" ${plumbing} ${log_file}
 eval echo " " ${plumbing} ${log_file}
 
