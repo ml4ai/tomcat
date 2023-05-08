@@ -33,20 +33,7 @@ sensor_dirs_to_pull=sensor_dirs_to_pull.$$
 sensor_dirs_to_move=sensor_dirs_to_move.$$
 
 # This is in minutes. 10000 is about a week. 
-last_modification_time=10000
-last_modification_time=4000
-
-
-# If we need to switch cat and tom, we need to do so in the next four lines, and
-# change lines in sync_tom_and_cat and/or sync_tom_and_cat_2 as well. 
-
-export SENSOR_USER="cat"
-export SENSOR_HOST="cat@10.192.234.250"
-export MIRROR_USER="tom"
-export MIRROR_HOST="tom@10.192.234.251"
-
-export SENSOR_TOMCAT_DIR="/home/${SENSOR_USER}/tomcat/" 
-export I01_HOST="root@150.135.82.167"
+last_modification_time=6000
 
 # Our exit status will be that of the last command that failed. 
 exit_status=0
@@ -120,57 +107,112 @@ do
     ${VERBOSE_ECHO} " "
     ${VERBOSE_ECHO} "Script pull_tomcat_data_2 working on ${exp_dir}"
     ${VERBOSE_ECHO} " "
-    i02_target_dir=$(echo $exp_dir | sed 's#/data/cat/#/space/tomcat/#')
-    ${VERBOSE_ECHO} "Script pull_tomcat_data_2 first target dir is ${i02_target_dir}"
+    target_sub_dir=$(echo $exp_dir | sed "s#/data/${SENSOR_USER}/##")
+    ${VERBOSE_ECHO} "Script pull_tomcat_data_2 initial target sub dir is ${target_sub_dir}"
 
-    mkdir -p "${i02_target_dir}" 2>&1
-    rc=$?
-    ${VERBOSE_ECHO} "Mkdir return code was ${rc}"
-    ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
-    ${VERBOSE_ECHO} ""
+    # First we see if this is updating an existing transfer. 
+    
+    test_volume=""
+    target_dir=""
 
-    if [[ ${rc} -eq 0 ]]; then
-        ${VERBOSE_ECHO} "Script pull_tomcat_data_2 executing:"
-        ${VERBOSE_ECHO} "    rsync ${rsync_options} ${SENSOR_HOST}:${exp_dir}/ ${i02_target_dir}"
-        rsync ${rsync_options} ${SENSOR_HOST}:${exp_dir}/ ${i02_target_dir} 2>&1 
-        rc=$?
-        ${VERBOSE_ECHO} "Rsync return code was ${rc}"
-        ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
-        ${VERBOSE_ECHO} ""
+    for test_volume in ${RAW_DATA_VOLUMES}; do 
+        ${VERBOSE_ECHO} "Script pull_tomcat_data_2 is seeing if ${target_sub_dir} exists on ${test_volume}. "
 
-        # We are not so uptight about fixing ownership and perms so we do less
-        # reporting here. 
-        #
-        chown -R :langlab ${i02_target_dir} 2>&1 
-        chmod -R g=rX,o=  ${i02_target_dir} 2>&1 
+        if [[ -e "${test_volume}/data/${target_sub_dir}" ]]; then 
+            target_dir="${test_volume}/data/${target_sub_dir}"
+            break
+        fi 
+    done 
+
+    if [[ "${target_dir}" != "" ]]; then 
+        ${VERBOSE_ECHO} "Script pull_tomcat_data_2 reusing existing target directory ${target_dir}. "
+    else
+        # If it is a new transfer, then give it to a disk that has space. If there
+        # is no such disk we report an error, but continue. 
+        
+        ${VERBOSE_ECHO} "Script pull_tomcat_data_2 looking for a place to add ${target_sub_dir}. "
+
+        for test_volume in ${RAW_DATA_VOLUMES}; do 
+            ${VERBOSE_ECHO} "Script pull_tomcat_data_2 considering ${test_volume}. "
+
+            # Sed string is more specfic than necessary to be more robust. 
+            bytes_left=$( df ${test_volume} | tail -1 | sed 's/^[^ ]* *[0-9][0-9]* *[0-9][0-9]* *\([0-9][0-9]*\)  *.*$/\1/')$ 
+            ${VERBOSE_ECHO} "Script pull_tomcat_data_2 reports that ${test_volume} has ${bytes_left} bytes left. "
+
+            if [[ ${bytes_left} > 1000000000 ]]; then 
+                tomcat_volume=test_volume
+                ${VERBOSE_ECHO} "Script pull_tomcat_data_2 reports that ${test_volume} qualifies as it has more than 1TB left. "
+                target_dir="${test_volume}/data/${target_sub_dir}"
+
+                break
+            else 
+                ${VERBOSE_ECHO} "Script pull_tomcat_data_2 reports that ${test_volume} has less than 1TB left and declining to use it. "
+            fi 
+        done 
+
+        if [[ "${target_dir}" == "" ]]; then 
+            echo "ERR: Script pull_tomcat_data_2 unable to find a raw data volume with more than 1TB left. "
+            echo "ERR: Skipping ${target_sub_dir}" 
+            exit_status=1
+            continue
+        else 
+            ${VERBOSE_ECHO} "Script pull_tomcat_data_2 is making directory ${target_dir}. "
+            mkdir -p "${target_dir}" 2>&1
+            rc=$?
+            ${VERBOSE_ECHO} "Mkdir ${target_dir} return code was ${rc}"
+            ${VERBOSE_ECHO} "Pending exit status in pull_tomcat_data_2 is ${exit_status}"
+            ${VERBOSE_ECHO} ""
+
+            chmod a+rX "${test_volume}" 2>&1
+            rc=$?
+            ${VERBOSE_ECHO} "Chmod ${test_volume} return code was ${rc}"
+            ${VERBOSE_ECHO} "Pending exit status in pull_tomcat_data_2 is ${exit_status}"
+            ${VERBOSE_ECHO} ""
+
+            chmod a+rX "${test_volume}/data" 2>&1
+            rc=$?
+            ${VERBOSE_ECHO} "Chmod ${test_volume}/data return code was ${rc}"
+            ${VERBOSE_ECHO} "Pending exit status in pull_tomcat_data_2 is ${exit_status}"
+            ${VERBOSE_ECHO} ""
+
+            # Permission and ownershop of ${target_dir} is handled below.
+
+            if [[ ${rc} -ne 0 ]]; then
+                continue
+            fi 
+        fi 
     fi 
 
-    ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
-    ${VERBOSE_ECHO} ""
-
-    i01_target_dir=$(echo $exp_dir | sed 's#/data/cat/#/data/tomcat/#')
-    ${VERBOSE_ECHO} "Script pull_tomcat_data_2 second target dir is ${i01_target_dir}"
-    ssh -n -x ${I01_HOST} mkdir -p "${i01_target_dir}" 2>&1
+    ${VERBOSE_ECHO} "Script pull_tomcat_data_2 executing:"
+    ${VERBOSE_ECHO} "    rsync ${rsync_options} ${SENSOR_HOST}:${exp_dir}/ ${target_dir}"
+    rsync ${rsync_options} ${SENSOR_HOST}:${exp_dir}/ ${target_dir} 2>&1 
     rc=$?
-    ${VERBOSE_ECHO} "Remode mkdir return code was ${rc}"
-    ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+    ${VERBOSE_ECHO} "Rsync return code was ${rc}"
+    ${VERBOSE_ECHO} "Pending exit status in pull_tomcat_data_2 is ${exit_status}"
+    ${VERBOSE_ECHO} ""
     ${VERBOSE_ECHO} ""
 
-    if [[ ${rc} -eq 0 ]]; then
-        ${VERBOSE_ECHO} "Script pull_tomcat_data_2 executing:"
-        ${VERBOSE_ECHO} "    rsync ${rsync_options} ${i02_target_dir}/ ${I01_HOST}:${i01_target_dir}"
-        rsync ${rsync_options} ${i02_target_dir}/ ${I01_HOST}:${i01_target_dir} 2>&1 
+    link_to_target_dir=$( echo ${target_dir} | sed 's#/tomcat_raw_./data#/tomcat/data/raw/#' )
+    ${VERBOSE_ECHO} "Script pull_tomcat_data_2 is checking for a link from ${target_dir} to ${link_to_target_dir}"
+    if [[ -e "${link_to_target_dir}" ]]; then
+        ${VERBOSE_ECHO} "Link ${link_to_target_dir} already exists. If it is wrong, manually remove it."
+    else 
+        ln -s "${target_dir}" "${link_to_target_dir}"
         rc=$?
-        ${VERBOSE_ECHO} "Rsync return code was ${rc}"
-        ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
-        ${VERBOSE_ECHO} ""
-
-        # We are not so uptight about fixing ownership and perms so we do less
-        # reporting here. 
-        #
-        ssh -n -x ${I01_HOST} chown -R :langlab ${i01_target_dir} 2>&1 
-        ssh -n -x ${I01_HOST} chmod -R g=rX,o= ${i01_target_dir} 2>&1 
+        ${VERBOSE_ECHO} "Link return code was ${rc}"
+        ${VERBOSE_ECHO} "Pending exit status in pull_tomcat_data_2 is ${exit_status}"
     fi 
+    ${VERBOSE_ECHO} ""
+
+    # We are not so uptight about fixing ownership and perms so we do less
+    # reporting here. However, since errors here will be trapped, we will end up
+    # with a non-zero exit status. 
+    #
+    chown -R :langlab ${target_dir} 2>&1 
+    chmod -R g=rX,o=  ${target_dir} 2>&1 
+
+    ${VERBOSE_ECHO} "Pending exit status in pull_tomcat_data_2 is ${exit_status}"
+    ${VERBOSE_ECHO} ""
 done < ${sensor_dirs_to_pull}
 
 rm -f ${sensor_dirs_to_pull}
@@ -181,6 +223,35 @@ ${VERBOSE_ECHO} ""
 backup_tom_and_cat_2 2>&1
 rc=$?
 ${VERBOSE_ECHO} "Backup_tom_and_cat_2 return code was ${rc}"
+${VERBOSE_ECHO} "Pending exit status in pull_tomcat_data_2 is ${exit_status}"
+${VERBOSE_ECHO} ""
+${VERBOSE_ECHO} "Script pull_tomcat_data_2 is now linking dry_run and dev experiments to raw data master directory."
+${VERBOSE_ECHO} ""
+
+    ${VERBOSE_ECHO} "Find without exclude"
+/usr/bin/find /tom_and_cat_shadow/cat/data -type d -name 'exp_*'
+    ${VERBOSE_ECHO} " "
+    ${VERBOSE_ECHO} "Find with exclude"
+/usr/bin/find /tom_and_cat_shadow/cat/data -type d ! -path '*/.[Tt][Rr][Aa][Ss][Hh]*/*' -name 'exp_*'
+    ${VERBOSE_ECHO} " "
+
+for dir_to_link in $(/usr/bin/find /tom_and_cat_shadow/cat/data -type d ! -path '*/.[Tt][Rr][Aa][Ss][Hh]*/*' -name 'exp_*')
+do
+    ${VERBOSE_ECHO} "Processing dir ${dir_to_link}"
+
+    target=$(echo $dir_to_link | sed 's#/tom_and_cat_shadow/cat/data/##' | sed 's#^cat/LangLab/##')
+    target=/tomcat/data/raw/${target}
+
+    if [[ -e ${target} ]]; then
+        ${VERBOSE_ECHO} ${target} already exists
+    else 
+        ${VERBOSE_ECHO} ln -s ${dir_to_link} ${target}
+        ln -s ${dir_to_link} ${target}
+        ln_rc=$?
+        ${VERBOSE_ECHO} "Link return code was ${ln_rc}"
+        ${VERBOSE_ECHO} "Pending exit status in pull_tomcat_data_2 is ${exit_status}"
+    fi 
+done
 
 if [[ ${exit_status} -ne 0 ]]; then
     ${VERBOSE_ECHO} ""
@@ -227,7 +298,7 @@ else
             ssh -n -x ${SENSOR_HOST} mkdir -p "${sensor_limbo_dir}" 
             rc=$?
             ${VERBOSE_ECHO} "Remote mkdir on ${SENSOR_HOST} return code was ${rc}"
-            ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+            ${VERBOSE_ECHO} "Pending exit status in pull_tomcat_data_2 is ${exit_status}"
             ${VERBOSE_ECHO} ""
 
             mirror_exp_dir=$(echo ${sensor_exp_dir} | sed "s#/${SENSOR_USER}/#/${MIRROR_USER}/#")
@@ -239,7 +310,7 @@ else
             ssh -n -x ${MIRROR_HOST} mkdir -p "${mirror_limbo_dir}" 
             rc=$?
             ${VERBOSE_ECHO} "Remote mkdir on ${MIRROR_HOST} return code was ${rc}"
-            ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+            ${VERBOSE_ECHO} "Pending exit status in pull_tomcat_data_2 is ${exit_status}"
             ${VERBOSE_ECHO} ""
 
             if [[ ${exit_status} -eq 0 ]]; then
@@ -248,7 +319,7 @@ else
                 ssh -n -x ${SENSOR_HOST} mv ${sensor_exp_dir} ${sensor_exp_limbo_dir}"
                 rc=$?
                 ${VERBOSE_ECHO} "mv of ${sensor_exp_dir} return code was ${rc}"
-                ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+                ${VERBOSE_ECHO} "Pending exit status in pull_tomcat_data_2 is ${exit_status}"
                 ${VERBOSE_ECHO} ""
 
                 ${VERBOSE_ECHO} "Script pull_tomcat_data_2 executing:"
@@ -256,7 +327,7 @@ else
                 ssh -n -x ${MIRROR_HOST} mv ${mirror_exp_dir} ${mirror_exp_limbo_dir}"
                 rc=$?
                 ${VERBOSE_ECHO} "mv ${mirror_exp_dir} return code was ${rc}"
-                ${VERBOSE_ECHO} "Pending exit status is ${exit_status}"
+                ${VERBOSE_ECHO} "Pending exit status in pull_tomcat_data_2 is ${exit_status}"
                 ${VERBOSE_ECHO} ""
             else 
                 # No need to add to the confusion by continuing if we cannot make
