@@ -1,0 +1,228 @@
+Experiment Directory: /data/cat/LangLab/experiments/study_3_pilot/group/exp_yyyy_mm_dd_hh/
+
+Status            |Description                                 |Directory                       |File(s)                   |Min_Size|Max_Size|Min_Count|Max_Count|File_Size|File_Count|
+------------------|--------------------------------------------|--------------------------------|--------------------------|--------|--------|---------|---------|---------|----------|
+Face Images:                                                   |                                |                          |        |        |         |         |         |          |
+(Unchecked)       |Lion Face Images Files Block 1              |lion/face_images/block_1        |*.png                     |730K    |1M      |15K      |22K      |         |          |
+(Unchecked)       |Lion Face Images outFile.csv Block 1        |lion/face_images/block_1        |outFile.csv               |1M      |5M      |1        |1        |         |          |
+(Unchecked)       |Lion Face Images Files Block 2              |lion/face_images/block_2        |*.png                     |730K    |1M      |15K      |38K      |         |          |
+(Unchecked)       |Lion Face Images outFile.csv Block 2        |lion/face_images/block_2        |outFile.csv               |1M      |5M      |1        |1        |         |          |
+(Unchecked)       |Tiger Face Images Files Block 1             |tiger/face_images/block_1       |*.png                     |730K    |1M      |15K      |22K      |         |          |
+(Unchecked)       |Tiger Face Images outFile.csv Block 1       |tiger/face_images/block_1       |outFile.csv               |1M      |5M      |1        |1        |         |          |
+(Unchecked)       |Tiger Face Images Files Block 2             |tiger/face_images/block_2       |*.png                     |730K    |1M      |15K      |38K      |         |          |
+(Unchecked)       |Tiger Face Images outFile.csv Block 2       |tiger/face_images/block_2       |outFile.csv               |1M      |5M      |1        |1        |         |          |
+(Unchecked)       |Leopard Face Images Files Block 1           |leopard/face_images/block_1     |*.png                     |730K    |1M      |15K      |22K      |         |          |
+(Unchecked)       |Leopard Face Images outFile.csv Block 1     |leopard/face_images/block_1     |outFile.csv               |1M      |5M      |1        |1        |         |          |
+(Unchecked)       |Leopard Face Images Files Block 2           |leopard/face_images/block_2     |*.png                     |730K    |1M      |15K      |38K      |         |          |
+(Unchecked)       |Leopard Face Images outFile.csv Block 2     |leopard/face_images/block_2     |outFile.csv               |1M      |5M      |1        |1        |         |          |
+-
+Screenshots Images:                                            |                                |                          |        |        |         |         |         |          |
+(Unchecked)       |Lion Screenshots Images Files Block 1       |lion/screenshots/block_1        |*.png                     |300K    |1M      |8K       |20K      |         |          |
+(Unchecked)       |Lion Screenshots outFile.csv Block 1        |lion/screenshots/block_1        |outFile.csv               |500K    |5M      |1        |1        |         |          |
+(Unchecked)       |Lion Screenshots Images Files Block 2       |lion/screenshots/block_2        |*.png                     |300K    |1M      |8K       |20K      |         |          |
+(Unchecked)       |Lion Screenshots outFile.csv Block 2        |lion/screenshots/block_2        |outFile.csv               |500K    |5M      |1        |1        |         |          |
+(Unchecked)       |Tiger Screenshots Images Files Block 1      |tiger/screenshots/block_1       |*.png                     |300K    |1M      |8K       |20K      |         |          |
+(Unchecked)       |Tiger Screenshots outFile.csv Block 1       |tiger/screenshots/block_1       |outFile.csv               |500K    |5M      |1        |1        |         |          |
+(Unchecked)       |Tiger Screenshots Images Files Block 2      |tiger/screenshots/block_2       |*.png                     |300K    |1M      |8K       |20K      |         |          |
+(Unchecked)       |Tiger Screenshots outFile.csv Block 2       |tiger/screenshots/block_2       |outFile.csv               |500K    |5M      |1        |1        |         |          |
+(Unchecked)       |Leopard Screenshots Images Files Block 1    |leopard/screenshots/block_1     |*.png                     |300K    |1M      |8K       |20K      |         |          |
+(Unchecked)       |Leopard Screenshots outFile.csv Block 1     |leopard/screenshots/block_1     |outFile.csv               |500K    |5M      |1        |1        |         |          |
+(Unchecked)       |Leopard Screenshots Images Files Block 2    |leopard/screenshots/block_2     |*.png                     |300K    |1M      |8K       |20K      |         |          |
+(Unchecked)       |Leopard Screenshots outFile.csv Block 2     |leopard/screenshots/block_2     |outFile.csv               |500K    |5M      |1        |1        |         |          |
+-
+Lion Pupil Recorder Files Block 000:                           |                                |                          |        |        |         |         |         |          |
+(Unchecked)       |Lion Pupil 000 - blinks.pldata              |lion/pupil_recorder/000         |blinks.pldata             |1M      |100M    |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 000 - blinks_timestamps.npy      |lion/pupil_recorder/000         |blinks_timestamps.npy     |1K      |100K    |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 000 - eye0.intrinsics            |lion/pupil_recorder/000         |eye0.intrinsics           |100     |400     |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 000 - eye0.mp4                   |lion/pupil_recorder/000         |eye0.mp4                  |1G      |6G      |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 000 - eye0_timestamps.npy        |lion/pupil_recorder/000         |eye0_timestamps.npy       |1M      |8M      |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 000 - eye1.intrinsics            |lion/pupil_recorder/000         |eye1.intrinsics           |100     |400     |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 000 - eye1.mp4                   |lion/pupil_recorder/000         |eye1.mp4                  |1G      |6G      |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 000 - eye1_timestamps.npy        |lion/pupil_recorder/000         |eye1_timestamps.npy       |1M      |8M      |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 000 - fixations.pldata           |lion/pupil_recorder/000         |fixations.pldata          |1M      |100M    |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 000 - fixations_timestamps.npy   |lion/pupil_recorder/000         |fixations_timestamps.npy  |10K     |500K    |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 000 - gaze.pldata                |lion/pupil_recorder/000         |gaze.pldata               |500M    |800M    |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 000 - gaze_timestamps.npy        |lion/pupil_recorder/000         |gaze_timestamps.npy       |2M      |7M      |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 000 - info.player.json           |lion/pupil_recorder/000         |info.player.json          |100     |800     |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 000 - notify.pldata              |lion/pupil_recorder/000         |notify.pldata             |1M      |5M      |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 000 - notify_timestamps.npy      |lion/pupil_recorder/000         |notify_timestamps.npy     |100     |400     |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 000 - pupil.pldata               |lion/pupil_recorder/000         |pupil.pldata              |100M    |800M    |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 000 - pupil_timestamps.npy       |lion/pupil_recorder/000         |pupil_timestamps.npy      |2M      |12M     |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 000 - surface_definitions_v01    |lion/pupil_recorder/000         |surface_definitions_v01   |500     |3K      |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 000 - surfaces.pldata            |lion/pupil_recorder/000         |surfaces.pldata           |80M     |300M    |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 000 - surfaces_timestamps.npy    |lion/pupil_recorder/000         |surfaces_timestamps.npy   |200K    |800K    |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 000 - user_info.csv              |lion/pupil_recorder/000         |user_info.csv             |10      |100K    |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 000 - world.intrinsics           |lion/pupil_recorder/000         |world.intrinsics          |100     |800     |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 000 - world.mp4                  |lion/pupil_recorder/000         |world.mp4                 |4G      |20G     |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 000 - world_timestamps.npy       |lion/pupil_recorder/000         |world_timestamps.npy      |200K    |900K    |1        |1        |         |          |
+-
+Tiger Pupil Recorder Files Block 000:                          |                                |                          |        |        |         |         |         |          |
+(Unchecked)       |Tiger Pupil 000 - blinks.pldata             |tiger/pupil_recorder/000        |blinks.pldata             |1M      |100M    |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 000 - blinks_timestamps.npy     |tiger/pupil_recorder/000        |blinks_timestamps.npy     |1K      |100K    |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 000 - eye0.intrinsics           |tiger/pupil_recorder/000        |eye0.intrinsics           |100     |400     |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 000 - eye0.mp4                  |tiger/pupil_recorder/000        |eye0.mp4                  |1G      |6G      |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 000 - eye0_timestamps.npy       |tiger/pupil_recorder/000        |eye0_timestamps.npy       |1M      |8M      |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 000 - eye1.intrinsics           |tiger/pupil_recorder/000        |eye1.intrinsics           |100     |400     |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 000 - eye1.mp4                  |tiger/pupil_recorder/000        |eye1.mp4                  |1G      |6G      |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 000 - eye1_timestamps.npy       |tiger/pupil_recorder/000        |eye1_timestamps.npy       |1M      |8M      |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 000 - fixations.pldata          |tiger/pupil_recorder/000        |fixations.pldata          |1M      |100M    |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 000 - fixations_timestamps.npy  |tiger/pupil_recorder/000        |fixations_timestamps.npy  |10K     |500K    |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 000 - gaze.pldata               |tiger/pupil_recorder/000        |gaze.pldata               |500M    |800M    |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 000 - gaze_timestamps.npy       |tiger/pupil_recorder/000        |gaze_timestamps.npy       |2M      |7M      |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 000 - info.player.json          |tiger/pupil_recorder/000        |info.player.json          |100     |800     |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 000 - notify.pldata             |tiger/pupil_recorder/000        |notify.pldata             |1M      |5M      |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 000 - notify_timestamps.npy     |tiger/pupil_recorder/000        |notify_timestamps.npy     |100     |400     |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 000 - pupil.pldata              |tiger/pupil_recorder/000        |pupil.pldata              |100M    |800M    |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 000 - pupil_timestamps.npy      |tiger/pupil_recorder/000        |pupil_timestamps.npy      |2M      |12M     |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 000 - surface_definitions_v01   |tiger/pupil_recorder/000        |surface_definitions_v01   |500     |3K      |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 000 - surfaces.pldata           |tiger/pupil_recorder/000        |surfaces.pldata           |80M     |300M    |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 000 - surfaces_timestamps.npy   |tiger/pupil_recorder/000        |surfaces_timestamps.npy   |200K    |800K    |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 000 - user_info.csv             |tiger/pupil_recorder/000        |user_info.csv             |10      |100K    |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 000 - world.intrinsics          |tiger/pupil_recorder/000        |world.intrinsics          |100     |800     |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 000 - world.mp4                 |tiger/pupil_recorder/000        |world.mp4                 |4G      |20G     |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 000 - world_timestamps.npy      |tiger/pupil_recorder/000        |world_timestamps.npy      |200K    |900K    |1        |1        |         |          |
+-
+Leopard Pupil Recorder Files Block 000:                        |                                |                          |        |        |         |         |         |          |
+(Unchecked)       |Leopard Pupil 000 - blinks.pldata           |leopard/pupil_recorder/000      |blinks.pldata             |1M      |100M    |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 000 - blinks_timestamps.npy   |leopard/pupil_recorder/000      |blinks_timestamps.npy     |1K      |100K    |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 000 - eye0.intrinsics         |leopard/pupil_recorder/000      |eye0.intrinsics           |100     |400     |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 000 - eye0.mp4                |leopard/pupil_recorder/000      |eye0.mp4                  |1G      |6G      |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 000 - eye0_timestamps.npy     |leopard/pupil_recorder/000      |eye0_timestamps.npy       |1M      |8M      |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 000 - eye1.intrinsics         |leopard/pupil_recorder/000      |eye1.intrinsics           |100     |400     |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 000 - eye1.mp4                |leopard/pupil_recorder/000      |eye1.mp4                  |1G      |6G      |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 000 - eye1_timestamps.npy     |leopard/pupil_recorder/000      |eye1_timestamps.npy       |1M      |8M      |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 000 - fixations.pldata        |leopard/pupil_recorder/000      |fixations.pldata          |1M      |100M    |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 000 - fixations_timestamps.npy|leopard/pupil_recorder/000      |fixations_timestamps.npy  |10K     |500K    |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 000 - gaze.pldata             |leopard/pupil_recorder/000      |gaze.pldata               |500M    |800M    |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 000 - gaze_timestamps.npy     |leopard/pupil_recorder/000      |gaze_timestamps.npy       |2M      |7M      |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 000 - info.player.json        |leopard/pupil_recorder/000      |info.player.json          |100     |800     |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 000 - notify.pldata           |leopard/pupil_recorder/000      |notify.pldata             |1M      |5M      |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 000 - notify_timestamps.npy   |leopard/pupil_recorder/000      |notify_timestamps.npy     |100     |400     |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 000 - pupil.pldata            |leopard/pupil_recorder/000      |pupil.pldata              |100M    |800M    |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 000 - pupil_timestamps.npy    |leopard/pupil_recorder/000      |pupil_timestamps.npy      |2M      |12M     |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 000 - surface_definitions_v01 |leopard/pupil_recorder/000      |surface_definitions_v01   |500     |3K      |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 000 - surfaces.pldata         |leopard/pupil_recorder/000      |surfaces.pldata           |80M     |300M    |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 000 - surfaces_timestamps.npy |leopard/pupil_recorder/000      |surfaces_timestamps.npy   |200K    |800K    |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 000 - user_info.csv           |leopard/pupil_recorder/000      |user_info.csv             |10      |100K    |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 000 - world.intrinsics        |leopard/pupil_recorder/000      |world.intrinsics          |100     |800     |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 000 - world.mp4               |leopard/pupil_recorder/000      |world.mp4                 |4G      |20G     |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 000 - world_timestamps.npy    |leopard/pupil_recorder/000      |world_timestamps.npy      |200K    |900K    |1        |1        |         |          |
+-
+Lion Pupil Recorder Files Block 001:                           |                                |                          |        |        |         |         |         |          |
+(Unchecked)       |Lion Pupil 001 - blinks.pldata              |lion/pupil_recorder/001         |blinks.pldata             |1M      |100M    |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 001 - blinks_timestamps.npy      |lion/pupil_recorder/001         |blinks_timestamps.npy     |1K      |100K    |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 001 - eye0.intrinsics            |lion/pupil_recorder/001         |eye0.intrinsics           |100     |400     |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 001 - eye0.mp4                   |lion/pupil_recorder/001         |eye0.mp4                  |1G      |6G      |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 001 - eye0_timestamps.npy        |lion/pupil_recorder/001         |eye0_timestamps.npy       |1M      |8M      |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 001 - eye1.intrinsics            |lion/pupil_recorder/001         |eye1.intrinsics           |100     |400     |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 001 - eye1.mp4                   |lion/pupil_recorder/001         |eye1.mp4                  |1G      |6G      |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 001 - eye1_timestamps.npy        |lion/pupil_recorder/001         |eye1_timestamps.npy       |1M      |8M      |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 001 - fixations.pldata           |lion/pupil_recorder/001         |fixations.pldata          |1M      |100M    |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 001 - fixations_timestamps.npy   |lion/pupil_recorder/001         |fixations_timestamps.npy  |10K     |500K    |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 001 - gaze.pldata                |lion/pupil_recorder/001         |gaze.pldata               |500M    |4G      |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 001 - gaze_timestamps.npy        |lion/pupil_recorder/001         |gaze_timestamps.npy       |2M      |20M     |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 001 - info.player.json           |lion/pupil_recorder/001         |info.player.json          |100     |800     |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 001 - notify.pldata              |lion/pupil_recorder/001         |notify.pldata             |1M      |5M      |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 001 - notify_timestamps.npy      |lion/pupil_recorder/001         |notify_timestamps.npy     |100     |400     |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 001 - pupil.pldata               |lion/pupil_recorder/001         |pupil.pldata              |100M    |800M    |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 001 - pupil_timestamps.npy       |lion/pupil_recorder/001         |pupil_timestamps.npy      |2M      |20M     |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 001 - surface_definitions_v01    |lion/pupil_recorder/001         |surface_definitions_v01   |500     |3K      |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 001 - surfaces.pldata            |lion/pupil_recorder/001         |surfaces.pldata           |80M     |300M    |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 001 - surfaces_timestamps.npy    |lion/pupil_recorder/001         |surfaces_timestamps.npy   |200K    |2G      |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 001 - user_info.csv              |lion/pupil_recorder/001         |user_info.csv             |10      |100K    |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 001 - world.intrinsics           |lion/pupil_recorder/001         |world.intrinsics          |100     |800     |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 001 - world.mp4                  |lion/pupil_recorder/001         |world.mp4                 |4G      |60G     |1        |1        |         |          |
+(Unchecked)       |Lion Pupil 001 - world_timestamps.npy       |lion/pupil_recorder/001         |world_timestamps.npy      |200K    |900K    |1        |1        |         |          |
+-
+Tiger Pupil Recorder Files Block 001:                          |                                |                          |        |        |         |         |         |          |
+(Unchecked)       |Tiger Pupil 001 - blinks.pldata             |tiger/pupil_recorder/001        |blinks.pldata             |1M      |100M    |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 001 - blinks_timestamps.npy     |tiger/pupil_recorder/001        |blinks_timestamps.npy     |1K      |100K    |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 001 - eye0.intrinsics           |tiger/pupil_recorder/001        |eye0.intrinsics           |100     |400     |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 001 - eye0.mp4                  |tiger/pupil_recorder/001        |eye0.mp4                  |1G      |6G      |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 001 - eye0_timestamps.npy       |tiger/pupil_recorder/001        |eye0_timestamps.npy       |1M      |8M      |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 001 - eye1.intrinsics           |tiger/pupil_recorder/001        |eye1.intrinsics           |100     |400     |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 001 - eye1.mp4                  |tiger/pupil_recorder/001        |eye1.mp4                  |1G      |6G      |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 001 - eye1_timestamps.npy       |tiger/pupil_recorder/001        |eye1_timestamps.npy       |1M      |8M      |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 001 - fixations.pldata          |tiger/pupil_recorder/001        |fixations.pldata          |1M      |100M    |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 001 - fixations_timestamps.npy  |tiger/pupil_recorder/001        |fixations_timestamps.npy  |10K     |500K    |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 001 - gaze.pldata               |tiger/pupil_recorder/001        |gaze.pldata               |500M    |4G      |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 001 - gaze_timestamps.npy       |tiger/pupil_recorder/001        |gaze_timestamps.npy       |2M      |20M     |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 001 - info.player.json          |tiger/pupil_recorder/001        |info.player.json          |100     |800     |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 001 - notify.pldata             |tiger/pupil_recorder/001        |notify.pldata             |1M      |5M      |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 001 - notify_timestamps.npy     |tiger/pupil_recorder/001        |notify_timestamps.npy     |100     |400     |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 001 - pupil.pldata              |tiger/pupil_recorder/001        |pupil.pldata              |100M    |800M    |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 001 - pupil_timestamps.npy      |tiger/pupil_recorder/001        |pupil_timestamps.npy      |2M      |20M     |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 001 - surface_definitions_v01   |tiger/pupil_recorder/001        |surface_definitions_v01   |500     |3K      |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 001 - surfaces.pldata           |tiger/pupil_recorder/001        |surfaces.pldata           |80M     |300M    |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 001 - surfaces_timestamps.npy   |tiger/pupil_recorder/001        |surfaces_timestamps.npy   |200K    |2G      |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 001 - user_info.csv             |tiger/pupil_recorder/001        |user_info.csv             |10      |100K    |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 001 - world.intrinsics          |tiger/pupil_recorder/001        |world.intrinsics          |100     |800     |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 001 - world.mp4                 |tiger/pupil_recorder/001        |world.mp4                 |4G      |60G     |1        |1        |         |          |
+(Unchecked)       |Tiger Pupil 001 - world_timestamps.npy      |tiger/pupil_recorder/001        |world_timestamps.npy      |200K    |900K    |1        |1        |         |          |
+-
+Leopard Pupil Recorder Files Block 001:                        |                                |                          |        |        |         |         |         |          |
+(Unchecked)       |Leopard Pupil 001 - blinks.pldata           |leopard/pupil_recorder/001      |blinks.pldata             |1M      |100M    |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 001 - blinks_timestamps.npy   |leopard/pupil_recorder/001      |blinks_timestamps.npy     |1K      |100K    |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 001 - eye0.intrinsics         |leopard/pupil_recorder/001      |eye0.intrinsics           |100     |400     |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 001 - eye0.mp4                |leopard/pupil_recorder/001      |eye0.mp4                  |1G      |6G      |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 001 - eye0_timestamps.npy     |leopard/pupil_recorder/001      |eye0_timestamps.npy       |1M      |8M      |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 001 - eye1.intrinsics         |leopard/pupil_recorder/001      |eye1.intrinsics           |100     |400     |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 001 - eye1.mp4                |leopard/pupil_recorder/001      |eye1.mp4                  |1G      |6G      |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 001 - eye1_timestamps.npy     |leopard/pupil_recorder/001      |eye1_timestamps.npy       |1M      |8M      |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 001 - fixations.pldata        |leopard/pupil_recorder/001      |fixations.pldata          |1M      |100M    |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 001 - fixations_timestamps.npy|leopard/pupil_recorder/001      |fixations_timestamps.npy  |10K     |500K    |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 001 - gaze.pldata             |leopard/pupil_recorder/001      |gaze.pldata               |500M    |4G      |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 001 - gaze_timestamps.npy     |leopard/pupil_recorder/001      |gaze_timestamps.npy       |2M      |20M     |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 001 - info.player.json        |leopard/pupil_recorder/001      |info.player.json          |100     |800     |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 001 - notify.pldata           |leopard/pupil_recorder/001      |notify.pldata             |1M      |5M      |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 001 - notify_timestamps.npy   |leopard/pupil_recorder/001      |notify_timestamps.npy     |100     |400     |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 001 - pupil.pldata            |leopard/pupil_recorder/001      |pupil.pldata              |100M    |800M    |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 001 - pupil_timestamps.npy    |leopard/pupil_recorder/001      |pupil_timestamps.npy      |2M      |20M     |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 001 - surface_definitions_v01 |leopard/pupil_recorder/001      |surface_definitions_v01   |500     |3K      |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 001 - surfaces.pldata         |leopard/pupil_recorder/001      |surfaces.pldata           |80M     |300M    |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 001 - surfaces_timestamps.npy |leopard/pupil_recorder/001      |surfaces_timestamps.npy   |200K    |2G      |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 001 - user_info.csv           |leopard/pupil_recorder/001      |user_info.csv             |10      |100K    |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 001 - world.intrinsics        |leopard/pupil_recorder/001      |world.intrinsics          |100     |800     |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 001 - world.mp4               |leopard/pupil_recorder/001      |world.mp4                 |4G      |60G     |1        |1        |         |          |
+(Unchecked)       |Leopard Pupil 001 - world_timestamps.npy    |leopard/pupil_recorder/001      |world_timestamps.npy      |200K    |900K    |1        |1        |         |          |
+-
+Audio Files:                                                   |                                |                          |        |        |         |         |         |          |
+(Unchecked)       |Lion Audio .wav Files Block 2               |lion/audio/block_2              |*.wav                     |80M     |200M    |3        |3        |         |          |
+(Unchecked)       |Tiger Audio .wav Files Block 2              |tiger/audio/block_2             |*.wav                     |80M     |200M    |3        |3        |         |          |
+(Unchecked)       |Leopard Audio .wav Files Block 2            |leopard/audio/block_2           |*.wav                     |80M     |200M    |3        |3        |         |          |
+(Unchecked)       |CAT Audio .wav File Block 2                 |cat/audio/block_2               |audio.wav                 |10M     |300M    |1        |1        |         |          |
+-
+LSL XDF Files:                                                 |                                |                          |        |        |         |         |         |          |
+(Unchecked)       |LSL .xdf File Block 1                       |lsl                             |block_1.xdf               |400M    |3G      |1        |1        |         |          |
+(Unchecked)       |LSL .xdf File Block 2                       |lsl                             |block_2.xdf               |400M    |3G      |1        |1        |         |          |
+-
+Baseline Tasks Files:                                          |                                |                          |        |        |         |         |         |          |
+(Unchecked)       |Rest State Task .csv File                   |baseline_tasks/rest_state       |*.csv                     |100     |1K      |1        |1        |         |          |
+(Unchecked)       |Finger Tapping Task .csv File               |baseline_tasks/finger_tapping   |*.csv                     |100     |1M      |1        |1        |         |          |
+(Unchecked)       |Finger Tapping Task .json Files             |baseline_tasks/finger_tapping   |*.json                    |100     |1K      |1        |1        |         |          |
+(Unchecked)       |Affective Task .csv Files                   |baseline_tasks/affective        |*.csv                     |100     |1M      |4        |4        |         |          |
+(Unchecked)       |Affective Task .json Files                  |baseline_tasks/affective        |*.json                    |100     |1K      |4        |4        |         |          |
+(Unchecked)       |Ping-Pong Task .csv Files                   |baseline_tasks/ping_pong        |*.csv                     |100     |2M      |3        |3        |         |          |
+(Unchecked)       |Ping-Pong Task .json Files                  |baseline_tasks/ping_pong        |*.json                    |100     |1K      |3        |3        |         |          |
+-
+Minecraft Metadata Files:                                      |                                |                          |        |        |         |         |         |          |
+(Unchecked)       |Minecraft Trial Info - trial_info.json      |                                |trial_info.json           |100     |300     |1        |1        |         |          |
+(Unchecked)       |Minecraft Metadata .metadata Files          |minecraft                       |*.metadata                |50M     |120M    |3        |3        |         |          |
+-
+Testbed Log Files:                                             |                                |                          |        |        |         |         |         |          |
+(Unchecked)       |Testbed Log - ihmc-logs.tar                 |testbed_logs/*                  |ihmc-logs.tar             |100M    |500M    |1        |1        |         |          |
+(Unchecked)       |Testbed ASR Agent Logs .log Files           |testbed_logs/*/ASR_Agent/logs   |*.log                     |1K      |50K     |1        |10       |         |          |
+(Unchecked)       |Testbed Dozzle Logs .log Files              |testbed_logs/*/dozzle_logs      |*.log                     |0       |200M    |1        |50       |         |          |
+(Unchecked)       |Testbed Speech Analyzer Agent - features.sql|testbed*/*/speech_analyzer_agent|features.sql              |0       |2G      |1        |1        |         |          |
+(Unchecked)       |Testbed Speech Analyzer Agent .log Files    |testbed*/*/speech*/logs         |*.log                     |1K      |2M      |1        |10       |         |          |
+(Unchecked)       |Time Difference - time_difference.txt       |                                |time_difference.txt       |10      |100     |1        |1        |         |          |
+-
+REDCap Data:                                                   |                                |                          |        |        |         |         |         |          |
+(Unchecked)       |REDCap Team Data - team_data.csv            |redcap_data                     |team_data.csv             |100     |5K      |1        |1        |         |          |
+(Unchecked)       |Lion - lion_self_report_data.csv            |lion/redcap_data                |lion_self*data.csv        |100     |10K     |1        |1        |         |          |
+(Unchecked)       |Lion - lion_post_game_survey_Data.csv       |lion/redcap_data                |lion_post_game*Data.csv   |100     |10K     |1        |1        |         |          |
+(Unchecked)       |Tiger - tiger_self_report_data.csv          |tiger/redcap_data               |tiger_self*data.csv       |100     |10K     |1        |1        |         |          |
+(Unchecked)       |Tiger - tiger_post_game_survey_Data.csv     |tiger/redcap_data               |tiger_post_game*Data.csv  |100     |10K     |1        |1        |         |          |
+(Unchecked)       |Leopard - leopard_self_report_data.csv      |leopard/redcap_data             |leopard_self*data.csv     |100     |10K     |1        |1        |         |          |
+(Unchecked)       |Leopard - leopard_post_game_survey_Data.csv |leopard/redcap_data             |leopard_post_game*Data.csv|100     |10K     |1        |1        |         |          |
+-
