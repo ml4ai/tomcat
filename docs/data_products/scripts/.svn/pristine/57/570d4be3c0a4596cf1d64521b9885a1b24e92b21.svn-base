@@ -1,0 +1,51 @@
+#!/bin/tcsh 
+
+# The master copy of this file lives in
+#   svn+ssh://vision.cs.arizona.edu/home/svn/ivilab/scripts
+# For it to do its job it needs to be copied to 
+#   vision:/home/svn/src/hooks/post-commit
+
+setenv PATH "/bin:/usr/bin"
+rehash
+
+set repo_path = "$1"
+set commit_id = `whoami`
+
+# We spawn a process in a background, so we do not expect any terminal output. 
+# Also, post-commit scripts only give terminal output if we exit with error.
+# This is a property of SVN. 
+
+echo "-------------------------------------------------------" >> /home/svn/src/hooks/post-commit.log
+# echo "repo_path: $repo_path" >> /home/svn/src/hooks/post-commit.log
+echo "commit_id: $commit_id" >> /home/svn/src/hooks/post-commit.log
+echo "Process $$ is initiating post-commit-src at `date '+%Y-%m-%H:%M'` as `whoami`" >> /home/svn/src/hooks/post-commit.log
+echo "Since we run it in the background, and do not want to hold up commits," >> /home/svn/src/hooks/post-commit.log
+echo "messages from other commits can be interspersed with this one." >> /home/svn/src/hooks/post-commit.log
+echo " " >> /home/svn/src/hooks/post-commit.log
+echo "See /home/svn/src/hooks/repo-sync.log for detailed loging." >> /home/svn/src/hooks/post-commit.log
+echo " " >> /home/svn/src/hooks/post-commit.log
+
+echo "Executing 'svn up /home/ivilab/ivilab/scripts'" >>& /home/svn/src/hooks/post-commit.log
+# If this fails, we carry on optimistically. 
+svn up /home/ivilab/ivilab/scripts >>& /home/svn/src/hooks/post-commit.log
+
+# A good incantation for feeding the path as an argument is hard to come by, so
+# we just hard code it in the script. Also, we must redirect all output (even
+# though there should not be any) otherwise svn will wait on all its children.
+#
+nohup /usr/bin/sudo -b -u ivilab /home/ivilab/ivilab/scripts/post-commit-src >& /dev/null
+
+if ($status) then
+    # Since we are running the above in the background, we should get here long
+    # before the command is done. So no big need for output, except to check that fact. 
+     
+    # We do not 'tee' here or even exit with failure status because we do not
+    # expect to provide any terminal output as we run in background, etc.
+    #
+    echo "Initiation of post-commit-src by process $$ FAILED." >>& /home/svn/src/hooks/post-commit.log 
+else 
+    echo "Initiation of post-commit-src by process $$ succeeded." >>& /home/svn/src/hooks/post-commit.log 
+endif 
+
+echo "vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" >> /home/svn/src/hooks/post-commit.log
+

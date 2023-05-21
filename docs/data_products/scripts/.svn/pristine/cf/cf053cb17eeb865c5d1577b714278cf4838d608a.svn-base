@@ -1,0 +1,82 @@
+#!/bin/bash --norc
+
+# The "--norc" says do not source .bashrc, etc. We also used to add '-u' at the
+# end of the above line, which seems fine, but it does not work on vision!!! 
+
+# Obsolete? The standard script latexmk with options:
+#   '-g -latexoption=-interaction=batchmode'
+# does roughly the same thing. 
+
+build_dir=""
+if [[ $# == 2  ]]; then
+   build_dir="$2"
+   build_dir=`echo "${build_dir}" | sed 's#/*$##'`
+   build_dir="${build_dir}"/
+elif [[ $# != 1  ]]; then
+   echo "Script do_latex needs either one or two arguments."
+   exit 1
+fi
+
+input_file=`echo "$1" | sed 's/\.tex$//'`
+
+# Is it safe to assume that if *.aux is stale, it will be rebuilt? 
+#
+# Irregardless, we at least kill the log file because later we grep them all,
+# and if there is one kicking around that has nothing to do with this build,
+# there could be issues. Awaiting a bitter solution. 
+#
+# find . \( -name '*.log' -or -name '*.aux' \) -exec /bin/rm {} \;
+find . -name '*.log' -exec /bin/rm {} \;
+
+if [[ "${build_dir}" -eq "" ]]; then
+    output_option=""
+else
+    mkdir -p ${build_dir}
+    output_option="-output-directory=${build_dir}"
+fi 
+
+# Fanciness:If LATEX is set and not null, the default in quotes is used".
+latex=${LATEX:="pdflatex -interaction=nonstopmode ${output_option}"}
+
+echo latex: $latex
+
+echo "====> LaTeX first pass"
+echo ${latex} "${input_file}"
+${latex} "${input_file}" < /dev/null
+
+if [[ $? != 0 ]]; then
+    echo " "
+    echo "Command failed:"
+    echo "    ${latex} ${input_file}"
+    exit 1
+fi 
+
+echo "====> LaTeX first pass COMPLETE"
+
+# Hacked from one of Ernesto's Makefiles. I do not know if we need all this
+# stuff or even if it is bug free.  
+
+# set echo
+# 
+# if [[ "${build_dir}" != "" ]]; then pushd "${build_dir}" > /dev/null; fi
+#     bibtex="bibtex"
+
+    if egrep -q 'No file.*\.bbl|Citation.*undefined' ${build_dir}*.log ; then echo "====> BibTex" && ${bibtex} ${input_file} && echo "====> LaTeX BibTeX pass" && ${latex} ${input_file} && ${latex} ${input_file}; fi
+    if egrep -q 'There were undefined references|Rerun to get (cross-references|the bars) right' ${build_dir}*.log ; then echo "====> LaTeX rerun" && ${latex} ${input_file}; fi
+    if egrep -q 'There were undefined references|Rerun to get (cross-references|the bars) right' ${build_dir}*.log ; then echo "====> LaTeX rerun" && ${latex} ${input_file}; fi
+
+    echo "====> Undefined references and citations:"
+    egrep -i '((Reference|Citation).*undefined)|(Label.*multiply defined)' ${build_dir}*.log || echo "None."
+
+    # I do not know what this is about. 
+    # echo "====> Dimensions:"
+    # grep "dimension:" *.log || echo "None."
+# if [[ "${build_dir}" != "" ]]; then popd  > /dev/null; fi
+
+if [[ "${build_dir}" != "" ]]; then 
+    if [[ -e "${build_dir}/${input}.pdf" ]]; then
+        # echo "Linking ${build_dir}/${input}.pdf to this directory."
+        cp "${build_dir}/${input}.pdf" .
+    fi 
+fi 
+
