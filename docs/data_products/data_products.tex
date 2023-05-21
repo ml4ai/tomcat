@@ -1,0 +1,222 @@
+
+
+\documentclass[12pt,letterpaper,oneside,openany]{article}
+
+\usepackage{graphicx}
+\usepackage{authblk}
+\usepackage{hyperref}
+\usepackage{upquote}
+\usepackage{verbatim}
+\usepackage{url}
+\usepackage{subcaption}
+\usepackage{amsmath}
+
+\usepackage{listings}
+\lstset{language=bash,
+ % How/what to match
+    sensitive=true,
+    % Border 
+	frame=single,
+    % Put extra space under caption
+    belowcaptionskip=1\baselineskip,
+    % Colors
+    backgroundcolor=\color{sbase3},
+    basicstyle=\small\color{sbase00}\ttfamily,
+    keywordstyle=\color{scyan},
+    commentstyle=\itshape\color{sbase1},
+    stringstyle=\color{sblue},
+    numberstyle=\scriptsize\color{sviolet},
+    identifierstyle=\color{sbase00},
+    % Break long lines into multiple lines?
+    breaklines=true,
+    tabsize=2
+} 
+
+\usepackage[normalem]{ulem}  % provides strikeout with \sout{...}
+
+\usepackage[T1]{fontenc}
+\usepackage[scaled=0.85]{beramono}
+
+\newcommand{\code}[1]{\lstinline{#1}}
+
+\usepackage{xcolor}
+
+\def\marrow{{\marginpar[\hfill$\longrightarrow$]{$\longleftarrow$}}}
+
+\def\kobus #1 {{\textcolor{red}{ \sc \newline\newline Kobus says: }{\marrow\sf #1 \newline\newline}}}
+\def\jinyan #1 {{\textcolor{green}{ \sc \newline\newline Jinyan says: }{\marrow\sf #1 \newline\newline}}}
+\def\clay #1 {{\textcolor{blue}{ \sc \newline\newline Clay says: }{\marrow\sf #1 \newline\newline}}}
+\newcommand{\Adarsh}[1]{{\color{Maroon} \sc Adarsh:} {\sf #1}}
+
+
+% I am not sure what these do for us, and when. Maroon and RoyalBlue should be
+% defined by package xcolor.
+%
+\definecolor{webgreen}{rgb}{0,.5,0}
+\definecolor{webbrown}{rgb}{.6,0,0}
+\definecolor{Maroon}{cmyk}{0, 0.87, 0.68, 0.32}
+\definecolor{RoyalBlue}{cmyk}{1, 0.50, 0, 0}
+\definecolor{Black}{cmyk}{0, 0, 0, 0}
+\definecolor{shadecolor}{gray}{0.9}
+\definecolor{sbase03}{HTML}{002B36}
+\definecolor{sbase02}{HTML}{073642}
+\definecolor{sbase01}{HTML}{586E75}
+\definecolor{sbase00}{HTML}{657B83}
+\definecolor{sbase0}{HTML}{839496}
+\definecolor{sbase1}{HTML}{93A1A1}
+\definecolor{sbase2}{HTML}{EEE8D5}
+\definecolor{sbase3}{HTML}{FDF6E3}
+\definecolor{syellow}{HTML}{B58900}
+\definecolor{sorange}{HTML}{CB4B16}
+\definecolor{sred}{HTML}{DC322F}
+\definecolor{smagenta}{HTML}{D33682}
+\definecolor{sviolet}{HTML}{6C71C4}
+\definecolor{sblue}{HTML}{268BD2}
+\definecolor{scyan}{HTML}{2AA198}
+\definecolor{sgreen}{HTML}{859900}
+
+
+\PassOptionsToPackage{dvipsnames}{xcolor}
+    \RequirePackage{xcolor} % [dvipsnames] 
+
+\PassOptionsToPackage{pdftex,hyperfootnotes=false,pdfpagelabels=true}{hyperref}
+    \usepackage{hyperref}  % backref linktocpage pagebackref
+
+\hypersetup{%
+    colorlinks=true, linktocpage=true, pdfstartpage=3, pdfstartview=FitV,%
+    breaklinks=true, pdfpagemode=UseNone, pageanchor=true, pdfpagemode=UseOutlines,%
+    plainpages=false, bookmarksnumbered, bookmarksopen=true, bookmarksopenlevel=1,%
+    hypertexnames=true, pdfhighlight=/O,%nesting=true,%frenchlinks,%
+    urlcolor=webbrown, linkcolor=RoyalBlue, citecolor=webgreen, %pagecolor=RoyalBlue,%
+    pdftitle={IVILAB Manifesto},%
+    pdfcreator={pdfLaTeX},%
+    pdfproducer={LaTeX}%
+}   
+
+\def\sectionautorefname{\S}
+\def\subsectionautorefname{\S}
+
+
+%%% % Most of this preamble stuff is copied from the IVILAB preambles
+%%% 
+%%% \documentclass[12pt,letterpaper,oneside,openany]{book}
+%%% 
+%%% \usepackage{graphicx}
+%%% \usepackage{authblk}
+%%% \usepackage{hyperref}
+%%% \usepackage{upquote}
+%%% \usepackage{verbatim}
+%%% \usepackage{url}
+%%% \usepackage{subcaption}
+%%% \usepackage{amsmath}
+%%% 
+%%% \newcommand{\code}[1]{\lstinline{#1}}
+%%% 
+%%% \usepackage{xcolor}
+%%% 
+%%% \def\marrow{{\marginpar[\hfill$\longrightarrow$]{$\longleftarrow$}}}
+%%% 
+%%% \def\kobus #1 {{\textcolor{red}{ \sc \newline\newline Kobus says: }{\marrow\sf #1 \newline\newline}}}
+%%% \newcommand{\Adarsh}[1]{{\color{Maroon} \sc Adarsh:} {\sf #1}}
+%%% 
+%%% \def\sectionautorefname{\S}
+%%% \def\subsectionautorefname{\S}
+
+\title{ToMCAT data products}
+
+\author{Adarsh Pyarelal, Rick Champlin, Paulo Soares, Eric Duong, Caleb
+Jones, Chinmai Basavaraj, Kobus Barnard}
+
+\date{\today}
+
+\begin{document}
+\maketitle
+\setcounter{page}{2}
+
+\section{Overview}
+
+The main experiment involves a three person team participating in one or two
+search and rescue (SAR) missions simulated in the Minecraft environment. 
+Before participants execute this experiment, they individually attend a
+presession where 1) we measure their head circumference to enable setting up brain data caps
+before they arrive at the main session; 2) we ask them to do XXX to calibrate
+their speech; 3) XXX. The main session typically occurs a few days to few weeks
+later. 
+
+The main experiment collects data from multiple phases, consisting of a training
+session lasting for XXX minutes, three baseline activities, and one or two SAR
+missions, depending on whether the experiment has gone well enough that there is
+time for a second SAR mission.  The first baseline activities is XXX. The second
+baseline is XXX.  The third baseline is XXX.  During all these phases, for each
+participant, we collect a variety of physiological measures including EKG, EEG,
+and fNIRS, Minecraft game data, audio recordings, eye tracking data, face data,
+and what is on their screen. 
+
+\section{Raw data}
+
+In what follows, upper case indicates
+a placeholder for a more specific string (i.e., variables), whereas lower case or mixed case
+indicates actual strings (i.e., verbatim).
+We break the directory structure for raw ToMCAT data into three parts
+\code{ROOT\/EXPERIMENT\_INFO\/RAW\_DATA}. 
+As the experiment is run, data is written to the LangLab linux computer called
+``cat''. The root directory (ROOT) on cat is
+\code{/data/cat}. The data gets mirrored onto the LangLab linux computer called
+``tom'', by the script \code{sync\_tom\_and\_cat}, which is called by the script 
+\code{pull\_tomcat\_data}. Ideally, \code{sync\_tom\_and\_cat} should also be
+called from the main driver script as soon as the experiment is over, but
+currently we do not do this. 
+
+The
+script \code{pull\_tomcat\_data} transfers the data to the IVILAB machine
+\textit{i03.cs.arizona.edu}, and makes two backups of it. 
+Ideally, we will create one or two off-site backups, but we do not do this yet.
+The data is is written to
+\code{/tomcat\_raw\_NNN} where NNN is 1, 2, 3, or 4, and backed up to 
+\code{/tomcat\_raw\_NNN\_B1} and \code{/tomcat\_raw\_NNN\_B2}.  
+The script \code{pull\_tomcat\_data} then makes links to those multiple data
+locations from \code{/tomcat/data/raw} and provides access via NFS to the compute
+servers \textit{laplace.cs.arizona.edu} and \textit{gauss.cs.arizona.edu}.
+Thus, on those IVILAB machines, ROOT is \code{/tomcat/data/raw}.
+
+The directory structure pattern for EXPERIMENT\_INFO under the root directory is
+\code{FACILTY/experiments/EXPERIMENT\_NAME}. For this experiment, FACILITY is
+\textit{LangLab}, and EXPERIMENT\_NAME is \textit{study\_3\_pilot}.
+This experiment name is a bit misleading, but makes senses as this experiment
+gradually morphed from an initial pilot study to a real one as we developed the
+system, but all data is informative. 
+
+RAW\_DATA has two subdirectories, ``presession'' and ``group'', containing data
+from the presessions and main experiments separately. In both cases, we put the
+data from one experimental instance into a directory named
+\code{exp\_YEAR\_MM\_DD\_HOUR}. Since we only run one session at a time, and
+they last from most of an hour to over three hours, hourly time resolution
+suffices to disambiguate them. To further clarify, on the IVILAB cpu servers, data for the first precession
+experimental session is in:\\
+\code{/tomcat/data/raw/data/LangLab/experiments/study\_3\_pilot/presession/exp\_2022\_09\_14\_07}\\
+However, this might be reported differently because of the linking described
+above as:\\
+\code{/tomcat_raw_1/data/LangLab/experiments/study\_3\_pilot/presession/exp\_2022\_09\_14\_07}\\
+Similarly, the data for the first group session, which would occur after all
+three participants had done a presession \kobus{But this is not the case!!} is in:\\
+\code{/tomcat/data/raw/LangLab/experiments/study\_3\_pilot/group/exp\_2022\_04\_01\_13}\\
+
+\subsection{Raw data structure for presessions.}
+
+\subsection{Raw data structure for group sessions.}
+
+
+\section{Exported data formats}
+
+
+
+
+
+
+
+\end{document}
+
+
+
+
+

@@ -1,0 +1,11 @@
+#!/bin/bash 
+
+while  true ; do
+    read p1;
+
+    if [[ $? -ne 0 ]] ; then break; fi
+
+    echo -n "${IVI_OUTPUT_PREFIX}"
+    echo $p1 
+done 
+

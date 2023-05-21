@@ -1,0 +1,48 @@
+#!/bin/tcsh
+
+# This script name is misleading, because we have changed it to make every
+# directory get a .gitkeep. 
+
+set source_dir = "$1"
+set script_status = 0
+
+pushd "${source_dir}" > /dev/null
+    # We set the depth in the next svn command simply because in testing we
+    # might have done a shallow checkout. 
+    svn up --set-depth=infinity > svn.res
+    if (${status}) then
+        ${P_STDERR} "Scipt make_svn_dirs_non_empty command 'svn up --set-depth=infinity' failed in `pwd`"
+        set script_status = 1
+        goto cleanup_up 
+    endif 
+
+    # Before we focused on empty directories, but this means that we can have
+    # directories that should be exactly the same that differ only by .gitkeep,
+    # which makes validation more difficult. Also, if we termporarily empty a
+    # directory, and push to git, then we could have an error. So we experiment
+    # with the alternative of simply adding .gitkeep to everything, which is
+    # fine, excpet it is SLOW, probably due to the large number of script calls. 
+    #
+    # find . -mindepth 1 -type d -empty ! -name .svn -a ! -path ./.svn/\* -exec make_svn_dir_non_empty {} \; 
+    # find . -mindepth 1 -type d ! -name .svn -a ! -path ./.svn/\* -exec make_svn_dir_non_empty {} \; 
+    find . -type d ! -name .svn -a ! -path ./.svn/\* -exec make_svn_dir_non_empty {} \; 
+    if (${status}) then
+        ${P_STDERR} "Scipt make_svn_dirs_non_empty command 'find ...' failed in `pwd`"
+        set script_status = 1
+        goto cleanup_up 
+    endif 
+
+    svn commit -m "Making svn dirs stay non-empty by adding '.gitkeep' if needed"
+    if (${status}) then
+        ${P_STDERR} "Scipt make_svn_dirs_non_empty command 'svn commit' failed in `pwd`"
+        set script_status = 1
+        goto cleanup_up 
+    endif 
+popd > /dev/null
+
+cleanup_up: 
+
+exit ${script_status}
+
+
+
