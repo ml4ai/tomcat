@@ -1,0 +1,168 @@
+\section{Raw data}
+
+In what follows, upper case indicates
+a placeholder for a more specific string (i.e., variables), whereas lower case or mixed case
+indicates actual strings (i.e., verbatim).
+We break the directory structure for raw ToMCAT data into three parts
+\code{ROOT\/STUDY\/RAW\_DATA}. 
+As an experiment is run, data is written to the LangLab linux computer called
+``cat''. ROOT on cat is
+\code{/data/cat}. The data gets mirrored onto the LangLab linux computer called
+``tom'', where ROOT is \code{/data/tom}. 
+This is done by the script \code{sync\_tom\_and\_cat}, which is called by the script 
+\code{pull\_tomcat\_data}. Ideally, \code{sync\_tom\_and\_cat} should also be
+called from the main driver script as soon as the experiment is over, but
+currently we do not do this. 
+
+The script \code{pull\_tomcat\_data} transfers the data to the IVILAB machine
+\textit{i03.cs.arizona.edu}, and makes two backups of it.  Ideally, we would
+also create off-site backups, but we do not do this yet. The data is is
+written to
+\code{/tomcat\_raw\_NNN} where NNN is 1, 2, 3, or 4, and backed up to 
+\code{/tomcat\_raw\_NNN\_B1} and \code{/tomcat\_raw\_NNN\_B2}.  
+The script \code{pull\_tomcat\_data} then makes links to those multiple data
+locations from \code{/tomcat/data/raw} and provides access via NFS to the compute
+servers \textit{laplace.cs.arizona.edu} and \textit{gauss.cs.arizona.edu}.
+Thus, on those IVILAB machines, ROOT is \code{/tomcat/data/raw}.
+
+The directory structure pattern for STUDY under the root directory is
+\code{FACILTY/experiments/STUDY\_NAME}. For this experiment, FACILITY is
+\textit{LangLab}, and STUDY\_NAME is \textit{study\_3\_pilot}.
+This study name is a bit misleading, but makes senses as this study
+gradually morphed from an initial pilot study to a real one as we developed the
+system, but most data is informative. 
+
+RAW\_DATA has two subdirectories, ``presession'' and ``group'', containing data
+from the presession experiments and main experiments separately. In both cases, we put the
+data from one experimental instance into a directory named
+\code{exp\_YEAR\_MM\_DD\_HOUR}. Since we only run one main session at a time, and
+they last from most of an hour to over three hours, hourly time resolution
+suffices to disambiguate them. However, presessions take only 15 to 30 minutes,
+and so a presession directory can hold data for multiple participants. 
+
+The group session runs are post processed so that all presession data for the
+participants in the group are linked from the group data directory. This
+matching cannot be done after the group experiment is finished because we do not
+know in advance whether there will be no-shows or other last minute changes. 
+
+To further clarify directory naming, on the IVILAB cpu servers,
+the data for the first valid group session 
+is in:\\
+\code{/tomcat/data/raw/LangLab/experiments/study\_3\_pilot/group/exp\_2022\_09\_30\_10}
+However, this might be reported  differently because of the linking described
+above. Specifically, the previous example is equivalent to :\\
+\code{/tomcat_raw_1/data/LangLab/experiments/study\_3\_pilot/group/exp\_2022\_09\_30\_10}\\
+There are some group experiment directories with time strings earlier than this
+one, but those are all preliminary pilot experiments. We keep the raw data
+irregardless, but all directories with serious issues are filtered out when we
+create derived data sets for general consumption.
+
+\subsection{Raw data structure for group sessions.}
+
+As mentioned above, a post-processing step links all needed presession files into
+the group experimental runs. We describe the final group session data with
+needed presession data included. 
+
+\kobus{Chinmai used <> for variables, except also YYYY, MM, etc. I am not sure
+whether we should try to make it all consistent.}
+
+Each of the three participants are associated by the name of the iMac device
+they use during the experiment.
+The iMac devices are named as lion, tiger, and
+leopard. We define 
+<cat> $\in \{leopard, lion, tiger\}$ 
+and <Cat> $\in \{Leopard, Lion, Tiger\}$,
+and use <cat> or <Cat> to represent the three instances. 
+
+\kobus{Some of this is from a very old document. And the rest is from me quickly looking
+at both early and recent data directories. Please check and update!! And include
+details!!!}
+
+\kobus{Also, I understand we changed formats mid stream. We need to specify
+these differences here.}
+
+Underneath each experiment (RAW\_DATA) directory (i.e.,
+\code{ROOT/STUDY/group/exp_YYYY_MM_DD_HH}), we have the following structures:
+\begin{verbatim}
+redcap_data/
+    team_data.csv 
+
+baseline_tasks/
+    affective/
+        individual_<cat>_<participantID>_<timestamp>.csv
+        individual_<cat>_<participantID>_<timestamp>_metadata.json
+        team_<timestamp>.csv
+        team_<timestamp>_metadata.json
+    finger_tapping/
+        <timestamp>.csv
+        <timestamp>_metadata.json
+    ping_pong/
+         competitive_0_<timestamp>.csv
+         competitive_0_<timestamp>_metadata.json
+         competitive_1_<timestamp>.csv
+         competitive_1_<timestamp>_metadata.json
+         cooperative_0_<timestamp>.csv
+         cooperative_0_<timestamp>_metadata.json
+    rest_state/
+        <timestamp>.csv
+
+lsl/
+    block_1.xdf
+    block_2.xdf
+       
+minecraft/
+    MinecraftData_Trial-T00073_ID-<fancy_string>.metadata
+    MinecraftData_Trial-Training_ID-<fancy_string>.metadata
+
+<cat>/
+    audio/
+    face_images/
+    pupil_recorder/
+    redcap_data/
+    screen_shots/
+
+testbed_logs/
+    asist_logs_<timestamp>/
+
+tmp/
+    
+data_inventory.log
+data_inventory.run
+time_difference.txt
+
+trial_info.json
+\end{verbatim}
+
+\subsubsection{Description of the files.}
+
+\noindent 
+Excluding log files, debugging, and other infrastructure files, the format and
+the data for each file listed
+above is detailed as follows: \\
+
+
+\begin{description}
+\item{redcap\_data/team\_data.csv}\\
+describe the format and the data
+
+\item{baseline\_tasks/affective/individual\_<cat>\_<participantID>\_<timestamp>.csv}\\
+describe the format and the data
+
+\item{baseline\_tasks/affective/individual\_<cat>\_<participantID>\_<timestamp>\_metadata.json}\\
+describe the format and the data
+
+\item{baseline\_tasks/affective/team\_<timestamp>.csv}\\
+describe the format and the data
+
+\item{baseline\_tasks/affective/team\_<timestamp>\_metadata.json}\\
+describe the format and the data
+
+\kobus{Many more files}
+\end{description}
+
+
+
+
+
+
+
