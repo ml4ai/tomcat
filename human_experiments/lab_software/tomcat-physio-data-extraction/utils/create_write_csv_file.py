@@ -6,22 +6,21 @@ from .baseline_tasks_timestamps import read_baseline_tasks_time
 from .minecraft_timestamps import read_minecraft_time
 from .NIRS_filtering import check_cv, filter_NIRS
 
-
 def get_timestamps_from_dict(
     df, state, dict, column_name, data, stream_type, output_path, pth
 ):
     df_temp = df
     state_temp = state
     rest_state_time_start, rest_state_time_stop = dict["start_time"], dict["end_time"]
-    iloc_idx_start = df_temp["human_readable_time"].searchsorted(
-        ctime(round(rest_state_time_start, 5))
+    iloc_idx_start = df_temp["unix_time"].searchsorted(
+        round(rest_state_time_start, 7)
     )
-    iloc_idx_end = df_temp["human_readable_time"].searchsorted(
-        ctime(round(rest_state_time_stop, 5))
+    iloc_idx_end = df_temp["unix_time"].searchsorted(
+        round(rest_state_time_stop, 7)
     )
     state_start = df_temp.index[iloc_idx_start]
     state_end = df_temp.index[
-        iloc_idx_end - 1
+        iloc_idx_end
     ]  # reduce index by 1 as the index sometimes overflows
     range_ = list(range(state_start, state_end))
     state = [state] * len(range_)
@@ -40,7 +39,7 @@ def sync_timestamps_with_df(df, final_state, header, df_remove_before, df_remove
     end of saturn b minecraft mission.
     """
     df[header] = df.index.map(final_state)
-    return df.loc[df_remove_before:df_remove_after]
+    return df.loc[df_remove_before:df_remove_after], df
 
 
 def dataframe_to_csv(
@@ -483,7 +482,7 @@ def dataframe_to_csv(
 
     df_remove_before = list(get_state_rest.keys())[0]
     df_remove_after = list(mincraft_saturn_b.keys())[-1]
-    df_final = sync_timestamps_with_df(
+    df_final,df_original = sync_timestamps_with_df(
         df, final_state, header[2], df_remove_before, df_remove_after
     )
 
@@ -496,7 +495,7 @@ def dataframe_to_csv(
             os.makedirs(csv_file_name)
 
     if extract_csv == True:
-        df_final.to_csv(csv_file_name + ".csv", sep="\t", encoding="utf-8")
+        df_original.to_csv(csv_file_name + ".csv", sep="\t", encoding="utf-8")
         print(
             colored("[INFO]", "green", attrs=["bold"]),
             colored("Sucessfully generated csv file at", "green", attrs=["bold"]),

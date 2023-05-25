@@ -11,7 +11,6 @@ from utils import (
     str2bool,
 )
 
-
 def read_xdf(
     xdf_file_paths,
     rootdir_baseline_task,
@@ -64,9 +63,7 @@ def read_xdf(
                         time_distribution_human_readable_nirs,
                         time_distribution_unix_nirs,
                     ) = create_time_distribution(
-                        time_start_streams_nirs,
-                        time_end_streams_nirs,
-                        len(data[i]["time_series"]),
+                        data[i],
                     )
                     dataframe_to_csv(
                         path,
@@ -105,9 +102,7 @@ def read_xdf(
                         time_distribution_human_readable_eeg,
                         time_distribution_unix_eeg,
                     ) = create_time_distribution(
-                        time_start_streams_eeg,
-                        time_end_streams_eeg,
-                        len(data[i]["time_series"]),
+                        data[i],
                     )
                     dataframe_to_csv(
                         path,
@@ -121,6 +116,7 @@ def read_xdf(
                         extract_pkl,
                         extract_csv,
                         filter,
+                        output_path,
                     )
 
                 elif data[i]["info"]["type"] == ["Gaze"]:
@@ -138,9 +134,7 @@ def read_xdf(
                         time_distribution_human_readable_gaze,
                         time_distribution_unix_gaze,
                     ) = create_time_distribution(
-                        time_start_streams_gaze,
-                        time_end_streams_gaze,
-                        len(data[i]["time_series"]),
+                       data[i],
                     )
                     dataframe_to_csv(
                         path,
@@ -154,6 +148,7 @@ def read_xdf(
                         extract_pkl,
                         extract_csv,
                         filter,
+                        output_path,
                     )
 
                 elif data[i]["info"]["type"] == ["Accelerometer"]:
