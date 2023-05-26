@@ -1,6 +1,18 @@
 
 
-\documentclass[12pt,letterpaper,oneside,openany]{article}
+\documentclass[11pt,letterpaper,oneside,openany,article]{memoir}
+
+% =====================
+% Memoir package config
+% =====================
+\counterwithout{section}{chapter}
+\setulmarginsandblock{1in}{1in}{*}
+\setlrmarginsandblock{1in}{1in}{*}
+\tightlists
+
+\checkandfixthelayout
+% =====================
+
 
 \usepackage{graphicx}
 \usepackage{authblk}
@@ -17,7 +29,7 @@
 \lstset{language=bash,
  % How/what to match
     sensitive=true,
-    % Border 
+    % Border
 	frame=single,
     % Put extra space under caption
     belowcaptionskip=1\baselineskip,
@@ -32,7 +44,7 @@
     % Break long lines into multiple lines?
     breaklines=true,
     tabsize=2
-} 
+}
 
 \usepackage[normalem]{ulem}  % provides strikeout with \sout{...}
 
@@ -45,10 +57,9 @@
 
 \def\marrow{{\marginpar[\hfill$\longrightarrow$]{$\longleftarrow$}}}
 
-\def\kobus #1 {{\textcolor{red}{ \sc \newline\newline Kobus says: }{\marrow\sf #1 \newline\newline}}}
-\def\jinyan #1 {{\textcolor{green}{ \sc \newline\newline Jinyan says: }{\marrow\sf #1 \newline\newline}}}
-\def\clay #1 {{\textcolor{blue}{ \sc \newline\newline Clay says: }{\marrow\sf #1 \newline\newline}}}
-\newcommand{\Adarsh}[1]{{\color{Maroon} \sc Adarsh:} {\sf #1}}
+\def\kobus #1 {{\textcolor{red}{ \scshape \newline\newline Kobus says: }{\marrow\sffamily #1 \newline\newline}}}
+\def\clay #1 {{\textcolor{blue}{ \scshape \newline\newline Clay says: }{\marrow\sffamily #1 \newline\newline}}}
+\newcommand{\Adarsh}[1]{{\color{Maroon} \scshape Adarsh:} {\sffamily #1}}
 
 
 % I am not sure what these do for us, and when. Maroon and RoyalBlue should be
@@ -79,7 +90,7 @@
 
 
 \PassOptionsToPackage{dvipsnames}{xcolor}
-    \RequirePackage{xcolor} % [dvipsnames] 
+    \RequirePackage{xcolor} % [dvipsnames]
 
 \PassOptionsToPackage{pdftex,hyperfootnotes=false,pdfpagelabels=true}{hyperref}
     \usepackage{hyperref}  % backref linktocpage pagebackref
@@ -93,16 +104,16 @@
     pdftitle={IVILAB Manifesto},%
     pdfcreator={pdfLaTeX},%
     pdfproducer={LaTeX}%
-}   
+}
 
 \def\sectionautorefname{\S}
 \def\subsectionautorefname{\S}
 
 
 %%% % Most of this preamble stuff is copied from the IVILAB preambles
-%%% 
+%%%
 %%% \documentclass[12pt,letterpaper,oneside,openany]{book}
-%%% 
+%%%
 %%% \usepackage{graphicx}
 %%% \usepackage{authblk}
 %%% \usepackage{hyperref}
@@ -111,16 +122,16 @@
 %%% \usepackage{url}
 %%% \usepackage{subcaption}
 %%% \usepackage{amsmath}
-%%% 
+%%%
 %%% \newcommand{\code}[1]{\lstinline{#1}}
-%%% 
+%%%
 %%% \usepackage{xcolor}
-%%% 
+%%%
 %%% \def\marrow{{\marginpar[\hfill$\longrightarrow$]{$\longleftarrow$}}}
-%%% 
+%%%
 %%% \def\kobus #1 {{\textcolor{red}{ \sc \newline\newline Kobus says: }{\marrow\sf #1 \newline\newline}}}
 %%% \newcommand{\Adarsh}[1]{{\color{Maroon} \sc Adarsh:} {\sf #1}}
-%%% 
+%%%
 %%% \def\sectionautorefname{\S}
 %%% \def\subsectionautorefname{\S}
 
@@ -137,18 +148,18 @@ Jones, Chinmai Basavaraj, Kobus Barnard}
 
 
 This document describes in detail the structure and semantics of experiment data
-collected as a part of the ASIST ToMCAT project. 
+collected as a part of the ASIST ToMCAT project.
 
 
 \section{Overview}
 
 The main experiment involves a three person team participating in one or two
-search and rescue (SAR) missions simulated in the Minecraft environment. 
+search and rescue (SAR) missions simulated in the Minecraft environment.
 Before participants execute this experiment, they individually attend a
 presession where 1) they fill consent forms; 2) we measure their head circumference to enable setting up brain data caps
 before they arrive at the main session; 3) we ask them to do XXX to calibrate
 their speech; 4) XXX. The main session typically occurs a few days to few weeks
-later. 
+later.
 
 The main experiment collects data from multiple phases, consisting of a training
 session lasting for XXX minutes, three baseline activities, and one or two SAR
@@ -157,7 +168,7 @@ time for a second SAR mission.  The first baseline activities is XXX. The second
 baseline is XXX.  The third baseline is XXX.  During all these phases, for each
 participant, we collect a variety of physiological measures including EKG, EEG,
 and fNIRS, Minecraft game data, audio recordings, eye tracking data, face data,
-and images of what is on their screen. 
+and images of what is on their screen.
 
 \section{Raw data}
 
@@ -165,22 +176,22 @@ In what follows, upper case indicates
 a placeholder for a more specific string (i.e., variables), whereas lower case or mixed case
 indicates actual strings (i.e., verbatim).
 We break the directory structure for raw ToMCAT data into three parts
-\code{ROOT\/STUDY\/RAW\_DATA}. 
+\code{ROOT\/STUDY\/RAW\_DATA}.
 As an experiment is run, data is written to the LangLab linux computer called
 ``cat''. ROOT on cat is
 \code{/data/cat}. The data gets mirrored onto the LangLab linux computer called
-``tom'', where ROOT is \code{/data/tom}. 
-This is done by the script \code{sync\_tom\_and\_cat}, which is called by the script 
+``tom'', where ROOT is \code{/data/tom}.
+This is done by the script \code{sync\_tom\_and\_cat}, which is called by the script
 \code{pull\_tomcat\_data}. Ideally, \code{sync\_tom\_and\_cat} should also be
 called from the main driver script as soon as the experiment is over, but
-currently we do not do this. 
+currently we do not do this.
 
 The script \code{pull\_tomcat\_data} transfers the data to the IVILAB machine
 \textit{i03.cs.arizona.edu}, and makes two backups of it.  Ideally, we would
 also create off-site backups, but we do not do this yet. The data is is
 written to
-\code{/tomcat\_raw\_NNN} where NNN is 1, 2, 3, or 4, and backed up to 
-\code{/tomcat\_raw\_NNN\_B1} and \code{/tomcat\_raw\_NNN\_B2}.  
+\code{/tomcat\_raw\_NNN} where NNN is 1, 2, 3, or 4, and backed up to
+\code{/tomcat\_raw\_NNN\_B1} and \code{/tomcat\_raw\_NNN\_B2}.
 The script \code{pull\_tomcat\_data} then makes links to those multiple data
 locations from \code{/tomcat/data/raw} and provides access via NFS to the compute
 servers \textit{laplace.cs.arizona.edu} and \textit{gauss.cs.arizona.edu}.
@@ -191,7 +202,7 @@ The directory structure pattern for STUDY under the root directory is
 \textit{LangLab}, and STUDY\_NAME is \textit{study\_3\_pilot}.
 This study name is a bit misleading, but makes senses as this study
 gradually morphed from an initial pilot study to a real one as we developed the
-system, but most data is informative. 
+system, but most data is informative.
 
 RAW\_DATA has two subdirectories, ``presession'' and ``group'', containing data
 from the presession experiments and main experiments separately. In both cases, we put the
@@ -199,15 +210,15 @@ data from one experimental instance into a directory named
 \code{exp\_YEAR\_MM\_DD\_HOUR}. Since we only run one main session at a time, and
 they last from most of an hour to over three hours, hourly time resolution
 suffices to disambiguate them. However, presessions take only 15 to 30 minutes,
-and so a presession directory can hold data for multiple participants. 
+and so a presession directory can hold data for multiple participants.
 
 The group session runs are post processed so that all presession data for the
 participants in the group are linked from the group data directory. This
 matching cannot be done after the group experiment is finished because we do not
-know in advance whether there will be no-shows or other last minute changes. 
+know in advance whether there will be no-shows or other last minute changes.
 
 To further clarify directory naming, on the IVILAB cpu servers,
-the data for the first valid group session 
+the data for the first valid group session
 is in:\\
 \code{/tomcat/data/raw/LangLab/experiments/study\_3\_pilot/group/exp\_2022\_09\_30\_10}
 However, this might be reported  differently because of the linking described
@@ -222,7 +233,7 @@ create derived data sets for general consumption.
 
 As mentioned above, a post-processing step links all needed presession files into
 the group experimental runs. We describe the final group session data with
-needed presession data included. 
+needed presession data included.
 
 \kobus{Chinmai used <> for variables, except also YYYY, MM, etc. I am not sure
 whether we should try to make it all consistent.}
@@ -230,10 +241,10 @@ whether we should try to make it all consistent.}
 Each of the three participants are associated by the name of the iMac device
 they use during the experiment.
 The iMac devices are named as lion, tiger, and
-leopard. We define 
-<cat> $\in \{leopard, lion, tiger\}$ 
+leopard. We define
+<cat> $\in \{leopard, lion, tiger\}$
 and <Cat> $\in \{Leopard, Lion, Tiger\}$,
-and use <cat> or <Cat> to represent the three instances. 
+and use <cat> or <Cat> to represent the three instances.
 
 \kobus{Some of this is from a very old document. And the rest is from me quickly looking
 at both early and recent data directories. Please check and update!! And include
@@ -246,7 +257,7 @@ Underneath each experiment (RAW\_DATA) directory (i.e.,
 \code{ROOT/STUDY/group/exp_YYYY_MM_DD_HH}), we have the following structures:
 \begin{verbatim}
 redcap_data/
-    team_data.csv 
+    team_data.csv
 
 baseline_tasks/
     affective/
@@ -270,7 +281,7 @@ baseline_tasks/
 lsl/
     block_1.xdf
     block_2.xdf
-       
+
 minecraft/
     MinecraftData_Trial-T00073_ID-<fancy_string>.metadata
     MinecraftData_Trial-Training_ID-<fancy_string>.metadata
@@ -286,7 +297,7 @@ testbed_logs/
     asist_logs_<timestamp>/
 
 tmp/
-    
+
 data_inventory.log
 data_inventory.run
 time_difference.txt
@@ -296,7 +307,7 @@ trial_info.json
 
 \subsubsection{Description of the files.}
 
-\noindent 
+\noindent
 Excluding log files, debugging, and other infrastructure files, the format and
 the data for each file listed
 above is detailed as follows: \\
@@ -324,8 +335,3 @@ describe the format and the data
 
 
 \end{document}
-
-
-
-
-
