@@ -19,6 +19,7 @@ def read_xdf(
     subject_id,
     extract_pkl,
     extract_csv,
+    extract_hdf5,
     exclude,
     filter,
     output_path,
@@ -77,6 +78,7 @@ def read_xdf(
                         subject_id,
                         extract_pkl,
                         extract_csv,
+                        extract_hdf5,
                         filter,
                         output_path,
                     )
@@ -120,6 +122,7 @@ def read_xdf(
                         subject_id,
                         extract_pkl,
                         extract_csv,
+                        extract_hdf5,
                         filter,
                         output_path
                     )
@@ -153,6 +156,7 @@ def read_xdf(
                         subject_id,
                         extract_pkl,
                         extract_csv,
+                        extract_hdf5,
                         filter,
                         output_path,
                     )
@@ -178,6 +182,7 @@ def look_for_XDF_files(
     subject_id,
     extract_pkl,
     extract_csv,
+    extract_hdf5,
     exclude,
     filter,
     output_path,
@@ -202,6 +207,7 @@ def look_for_XDF_files(
         subject_id,
         extract_pkl,
         extract_csv,
+        extract_hdf5,
         exclude,
         filter,
         output_path,
@@ -246,6 +252,13 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
+        "--hdf5",
+        default=False,
+        type=str2bool,
+        help="By setting hdf5 to True you extract xdf files as hdf5 file",
+    )
+
+    parser.add_argument(
         "--exclude",
         required=False,
         default=None,
@@ -274,6 +287,7 @@ if __name__ == "__main__":
     rootdir_minecraft_data = arg.p3
     subject_id = arg.s
     extract_pkl = arg.pkl
+    extract_hdf5 = arg.hdf5
     extract_csv = arg.csv
     exclude = str(arg.exclude)
     filter = str(arg.filter)
@@ -291,6 +305,7 @@ if __name__ == "__main__":
             subject_id,
             extract_pkl,
             extract_csv,
+            extract_hdf5,
             exclude,
             filter,
             output_path,

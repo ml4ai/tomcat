@@ -1,4 +1,5 @@
 import os
+import h5py
 import pandas as pd
 from time import ctime
 from termcolor import colored
@@ -55,6 +56,7 @@ def dataframe_to_csv(
     subject_id,
     extract_pkl,
     extract_csv,
+    extract_hdf5,
     filter,
     output_path,
 ):
@@ -483,6 +485,7 @@ def dataframe_to_csv(
     if not os.path.exists(os.path.dirname(new_csv_file_path)):
         os.makedirs(os.path.dirname(new_csv_file_path))
 
+    # Save as CSV file
     if extract_csv == True:
         df_original.to_csv(new_csv_file_path + ".csv", sep="\t", encoding="utf-8")
         print(
@@ -521,18 +524,19 @@ def dataframe_to_csv(
                 colored(new_csv_file_path + '_filtered' + ".csv", "blue"),
             )
 
+    # Save as pickle file
     if extract_pkl == True:
         df_final.to_pickle(csv_file_name + ".pkl")
         print(
             colored("[INFO]", "green", attrs=["bold"]),
             colored("Sucessfully generated pickle file at", "green", attrs=["bold"]),
-            colored(csv_file_name + ".pkl", "blue"),
+            colored(new_csv_file_path + ".pkl", "blue"),
         )
 
         if bool(filter) == True and stream_type == "NIRS":
             df_final_filtered = filter_NIRS(df_final)
             df_final_filtered.to_pickle(
-                csv_file_name + "_filtered" + ".pkl", sep="\t", encoding="utf-8"
+                new_csv_file_path + "_filtered" + ".pkl", sep="\t", encoding="utf-8"
             )
             print(
                 colored("[INFO]", "green", attrs=["bold"]),
@@ -541,5 +545,59 @@ def dataframe_to_csv(
                     "green",
                     attrs=["bold"],
                 ),
-                colored(csv_file_name + ".csv", "blue"),
+                colored(new_csv_file_path + ".pkl", "blue"),
+            )
+
+        if bool(filter) == True and stream_type == "EEG":
+            df_final_filtered = filter_EEG(df_final)
+            df_final_filtered.to_pickle(
+                new_csv_file_path + "_filtered" + ".pkl", sep="\t", encoding="utf-8"
+            )
+            print(
+                colored("[INFO]", "green", attrs=["bold"]),
+                colored(
+                    "Sucessfully generated csv file with filtered data at",
+                    "green",
+                    attrs=["bold"],
+                ),
+                colored(new_csv_file_path + ".pkl", "blue"),
+            )
+
+    # Save as hdf5 file
+    if extract_hdf5 == True:
+        df_final.to_hdf(new_csv_file_path + ".h5", key="df", mode="w")
+        print(
+            colored("[INFO]", "green", attrs=["bold"]),
+            colored("Sucessfully generated hdf5 file at", "green", attrs=["bold"]),
+            colored(new_csv_file_path + ".h5", "blue"),
+        )
+
+        if bool(filter) == True and stream_type == "NIRS":
+            df_final_filtered = filter_NIRS(df_final)
+            df_final_filtered.to_hdf(
+                new_csv_file_path + "_filtered" + ".h5", key="df", mode="w"
+            )
+            print(
+                colored("[INFO]", "green", attrs=["bold"]),
+                colored(
+                    "Sucessfully generated csv file with filtered data at",
+                    "green",
+                    attrs=["bold"],
+                ),
+                colored(new_csv_file_path + ".h5", "blue"),
+            )
+
+        if bool(filter) == True and stream_type == "EEG":
+            df_final_filtered = filter_EEG(df_final)
+            df_final_filtered.to_hdf(
+                new_csv_file_path + "_filtered" + ".h5", key="df", mode="w"
+            )
+            print(
+                colored("[INFO]", "green", attrs=["bold"]),
+                colored(
+                    "Sucessfully generated csv file with filtered data at",
+                    "green",
+                    attrs=["bold"],
+                ),
+                colored(new_csv_file_path + ".h5", "blue"),
             )
