@@ -49,46 +49,46 @@ def read_xdf(
                 )
 
             for i in range(0, len(data)):
-                # if data[i]["info"]["type"] == ["NIRS"]:
-                #     print(
-                #         colored("[Status] Reading ", "green", attrs=["bold"]),
-                #         colored(data[i]["info"]["type"], "blue"),
-                #     )
-                #     (
-                #         time_start_streams_nirs,
-                #         time_end_streams_nirs,
-                #     ) = get_start_stop_time_from_xdf(
-                #         data[i]
-                #     )  # get the unix time
-                #     (
-                #         time_distribution_human_readable_nirs,
-                #         time_distribution_unix_nirs,
-                #     ) = create_time_distribution(
-                #         data[i],
-                #     )
-                #     dataframe_to_csv(
-                #         path,
-                #         data[i]["time_series"],
-                #         "NIRS",
-                #         time_distribution_human_readable_nirs,
-                #         time_distribution_unix_nirs,
-                #         rootdir_baseline_task,
-                #         rootdir_minecraft_data,
-                #         subject_id,
-                #         extract_pkl,
-                #         extract_csv,
-                #         filter,
-                #         output_path,
-                #     )
+                if data[i]["info"]["type"] == ["NIRS"]:
+                    print(
+                        colored("[Status] Reading ", "green", attrs=["bold"]),
+                        colored(data[i]["info"]["type"], "blue"),
+                    )
+                    (
+                        time_start_streams_nirs,
+                        time_end_streams_nirs,
+                    ) = get_start_stop_time_from_xdf(
+                        data[i]
+                    )  # get the unix time
+                    (
+                        time_distribution_human_readable_nirs,
+                        time_distribution_unix_nirs,
+                    ) = create_time_distribution(
+                        data[i],
+                    )
+                    dataframe_to_csv(
+                        path,
+                        data[i]["time_series"],
+                        "NIRS",
+                        time_distribution_human_readable_nirs,
+                        time_distribution_unix_nirs,
+                        rootdir_baseline_task,
+                        rootdir_minecraft_data,
+                        subject_id,
+                        extract_pkl,
+                        extract_csv,
+                        filter,
+                        output_path,
+                    )
 
-                # elif data[i]["info"]["type"] == ["Markers"]:
-                #     # Our experiments don't use physical marker for the physio data
-                #     print(
-                #         colored("[Status] Skipping ", "green", attrs=["bold"]),
-                #         colored(data[i]["info"]["type"], "blue"),
-                #     )
+                elif data[i]["info"]["type"] == ["Markers"]:
+                    # Our experiments don't use physical marker for the physio data
+                    print(
+                        colored("[Status] Skipping ", "green", attrs=["bold"]),
+                        colored(data[i]["info"]["type"], "blue"),
+                    )
 
-                if data[i]["info"]["type"] == ["EEG"]:
+                elif data[i]["info"]["type"] == ["EEG"]:
                     print(colored("[Status] Reading ", "green", attrs=["bold"]),
                         colored(data[i]["info"]["type"], "blue"),
                     )
@@ -104,7 +104,7 @@ def read_xdf(
                         "AFF1h", "F7", "FC5", "C3", "T7", "TP9", "Pz", "P3", "P7", "O1", "O2", "P8",
                         "P4", "TP10", "Cz", "C4", "T8", "FC6", "FCz", "F8", "AFF2h", "AUX_GSR", "AUX_EKG"
                     ]
-                    
+
                     exclude_channels = [(i, ch) for i, ch in enumerate(EEG_channels) if ch not in channels_used]
                     exclude_indices = [index for index, _ in exclude_channels]
                     EEG_data = np.delete(data[i]['time_series'].T, exclude_indices, axis=0)
@@ -125,43 +125,43 @@ def read_xdf(
                     )
 
 
-                # elif data[i]["info"]["type"] == ["Gaze"]:
-                #     print(
-                #         colored("[Status] Reading ", "green", attrs=["bold"]),
-                #         colored(data[i]["info"]["type"], "blue"),
-                #     )
-                #     (
-                #         time_start_streams_gaze,
-                #         time_end_streams_gaze,
-                #     ) = get_start_stop_time_from_xdf(
-                #         data[i]
-                #     )  # get the unix time
-                #     (
-                #         time_distribution_human_readable_gaze,
-                #         time_distribution_unix_gaze,
-                #     ) = create_time_distribution(
-                #        data[i],
-                #     )
-                #     dataframe_to_csv(
-                #         path,
-                #         data[i]["time_series"],
-                #         "Gaze",
-                #         time_distribution_human_readable_gaze,
-                #         time_distribution_unix_gaze,
-                #         rootdir_baseline_task,
-                #         rootdir_minecraft_data,
-                #         subject_id,
-                #         extract_pkl,
-                #         extract_csv,
-                #         filter,
-                #         output_path,
-                #     )
+                elif data[i]["info"]["type"] == ["Gaze"]:
+                    print(
+                        colored("[Status] Reading ", "green", attrs=["bold"]),
+                        colored(data[i]["info"]["type"], "blue"),
+                    )
+                    (
+                        time_start_streams_gaze,
+                        time_end_streams_gaze,
+                    ) = get_start_stop_time_from_xdf(
+                        data[i]
+                    )  # get the unix time
+                    (
+                        time_distribution_human_readable_gaze,
+                        time_distribution_unix_gaze,
+                    ) = create_time_distribution(
+                       data[i],
+                    )
+                    dataframe_to_csv(
+                        path,
+                        data[i]["time_series"],
+                        "Gaze",
+                        time_distribution_human_readable_gaze,
+                        time_distribution_unix_gaze,
+                        rootdir_baseline_task,
+                        rootdir_minecraft_data,
+                        subject_id,
+                        extract_pkl,
+                        extract_csv,
+                        filter,
+                        output_path,
+                    )
 
-                # elif data[i]["info"]["type"] == ["Accelerometer"]:
-                #     print(
-                #         colored("[Status] Skipping ", "green", attrs=["bold"]),
-                #         colored(data[i]["info"]["type"], "blue"),
-                #     )
+                elif data[i]["info"]["type"] == ["Accelerometer"]:
+                    print(
+                        colored("[Status] Skipping ", "green", attrs=["bold"]),
+                        colored(data[i]["info"]["type"], "blue"),
+                    )
                     # create_csv_file(path, 'Accelerometer')
                     # time_start_streams_accel, time_end_streams_accel = get_start_stop_time_from_xdf(data[i]) #get the unix time
         else:
