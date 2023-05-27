@@ -6,6 +6,19 @@ from .baseline_tasks_timestamps import read_baseline_tasks_time
 from .minecraft_timestamps import read_minecraft_time
 from .NIRS_filtering import check_cv, filter_NIRS
 
+def get_new_file_paths(output_path, csv_file_name):
+    # Get common prefix
+    common_prefix = os.path.commonprefix([output_path, csv_file_name])
+
+    # Get the unique part of csv_file_name
+    unique_path = csv_file_name.replace(common_prefix, "").strip("/")
+
+    # Now append unique_path to output_path
+    new_csv_file_path = os.path.join(output_path, unique_path) + ".csv"
+    new_csv_file_path_filtered = os.path.join(output_path, unique_path) + "_filtered.csv"
+
+    return new_csv_file_path, new_csv_file_path_filtered
+
 def get_timestamps_from_dict(
     df, state, dict, column_name, data, stream_type, output_path, pth
 ):
@@ -486,26 +499,24 @@ def dataframe_to_csv(
         df, final_state, header[2], df_remove_before, df_remove_after
     )
 
-    if output_path != None:
-        """
-        Write extracted Physio data to a diff path
-        """
-        csv_file_name = output_path + csv_file_name
-        if not os.path.exists(csv_file_name):
-            os.makedirs(csv_file_name)
+    new_csv_file_path, new_csv_file_path_filtered = get_new_file_paths(output_path, csv_file_name)
+
+    # Ensure the directory exists
+    if not os.path.exists(os.path.dirname(new_csv_file_path)):
+        os.makedirs(os.path.dirname(new_csv_file_path))
 
     if extract_csv == True:
-        df_original.to_csv(csv_file_name + ".csv", sep="\t", encoding="utf-8")
+        df_original.to_csv(new_csv_file_path, sep="\t", encoding="utf-8")
         print(
             colored("[INFO]", "green", attrs=["bold"]),
             colored("Sucessfully generated csv file at", "green", attrs=["bold"]),
-            colored(csv_file_name + ".csv", "blue"),
+            colored(new_csv_file_path + ".csv", "blue"),
         )
 
         if bool(filter) == True and stream_type == "NIRS":
             df_final_filtered = filter_NIRS(df_final)
             df_final_filtered.to_csv(
-                csv_file_name + "_filtered" + ".csv", sep="\t", encoding="utf-8"
+                new_csv_file_path_filtered, sep="\t", encoding="utf-8"
             )
             print(
                 colored("[INFO]", "green", attrs=["bold"]),
@@ -514,7 +525,7 @@ def dataframe_to_csv(
                     "green",
                     attrs=["bold"],
                 ),
-                colored(csv_file_name + ".csv", "blue"),
+                colored(new_csv_file_path_filtered, "blue"),
             )
 
     if extract_pkl == True:
