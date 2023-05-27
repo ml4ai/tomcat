@@ -6,6 +6,7 @@ from .folder_name_manipulation import get_new_file_paths
 from .baseline_tasks_timestamps import read_baseline_tasks_time
 from .minecraft_timestamps import read_minecraft_time
 from .NIRS_filtering import check_cv, filter_NIRS
+from .EEG_filter import filter_EEG
 
 def get_timestamps_from_dict(
     df, state, dict, column_name, data, stream_type, output_path, pth
@@ -117,36 +118,25 @@ def dataframe_to_csv(
             "human_readable_time",
             "event_type",
             "AFF1h",
-            "AFF5h",
             "F7",
             "FC5",
-            "FC1",
             "C3",
             "T7",
             "TP9",
-            "CP5",
-            "CP1",
             "Pz",
             "P3",
             "P7",
-            "PO9",
             "O1",
-            "Oz",
             "O2",
-            "PO10",
             "P8",
             "P4",
             "TP10",
-            "CP6",
-            "CP2",
             "Cz",
             "C4",
             "T8",
             "FC6",
-            "FC2",
             "FCz",
             "F8",
-            "AFF6h",
             "AFF2h",
             "AUX_GSR",
             "AUX_EKG",
@@ -503,6 +493,21 @@ def dataframe_to_csv(
 
         if bool(filter) == True and stream_type == "NIRS":
             df_final_filtered = filter_NIRS(df_final)
+            df_final_filtered.to_csv(
+                new_csv_file_path + '_filtered' + ".csv", sep="\t", encoding="utf-8"
+            )
+            print(
+                colored("[INFO]", "green", attrs=["bold"]),
+                colored(
+                    "Sucessfully generated csv file with filtered data at",
+                    "green",
+                    attrs=["bold"],
+                ),
+                colored(new_csv_file_path + '_filtered' + ".csv", "blue"),
+            )
+
+        if bool(filter) == True and stream_type == "EEG":
+            df_final_filtered = filter_EEG(df_final)
             df_final_filtered.to_csv(
                 new_csv_file_path + '_filtered' + ".csv", sep="\t", encoding="utf-8"
             )
