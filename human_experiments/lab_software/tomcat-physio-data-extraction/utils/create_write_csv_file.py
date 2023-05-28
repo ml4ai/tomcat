@@ -479,7 +479,7 @@ def dataframe_to_csv(
     )
 
     print('[Debug]', output_path, csv_file_name)
-    new_csv_file_path, _ = get_new_file_paths(output_path, csv_file_name)
+    new_csv_file_path = get_new_file_paths(output_path, csv_file_name)
 
     # Ensure the directory exists
     if not os.path.exists(os.path.dirname(new_csv_file_path)):

@@ -31,7 +31,7 @@ def check_cv(
     This function recives raw+HbO data but will use raw W1 to calculate
     the cv.
     """
-    new_csv_file_path, _ = get_new_file_paths(output_path, path)
+    new_csv_file_path = get_new_file_paths(output_path, path)
 
     # Ensure the directory exists
     if not os.path.exists(os.path.dirname(new_csv_file_path)):
