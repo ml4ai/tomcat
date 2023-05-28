@@ -42,6 +42,9 @@ execute_python_script() {
 
 for dir in "${directories[@]}"; do
     # Extract the base directory name
+    max_jobs=6
+    active_jobs=0
+
     base_dir=$(basename "$dir")
 
     # Check if directory is in ignore list
@@ -66,6 +69,15 @@ for dir in "${directories[@]}"; do
 
     # Start a separate process to execute the Python script
     execute_python_script "$dir" "${str_array[0]}" "${str_array[1]}" "${str_array[2]}" &
+
+    # Count the number of active jobs
+    active_jobs=$((active_jobs+1))
+
+    # If we've hit the maximum number of jobs, wait until they're all done
+    if [[ active_jobs -ge max_jobs ]]; then
+        wait  # Wait for all background jobs to finish
+        active_jobs=0  # Reset the job count
+    fi
 
 done
 
