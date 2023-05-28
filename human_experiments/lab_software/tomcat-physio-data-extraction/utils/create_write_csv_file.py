@@ -478,6 +478,7 @@ def dataframe_to_csv(
         df, final_state, header[2], df_remove_before, df_remove_after
     )
 
+    print('[Debu], output_path, csv_file_name')
     new_csv_file_path, _ = get_new_file_paths(output_path, csv_file_name)
 
     # Ensure the directory exists
