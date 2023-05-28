@@ -43,7 +43,7 @@ execute_python_script() {
 
 for dir in "${directories[@]}"; do
     # Extract the base directory name
-    max_jobs=6
+    max_jobs=12
     active_jobs=0
 
     base_dir=$(basename "$dir")
