@@ -190,13 +190,13 @@ def look_for_XDF_files(
     """
     Walk through root directory, looking for the xdf files.
     """
-    xdf_file_paths = (
-        os.path.join(root, file)
-        for root, dirs, files in os.walk(rootdir_xdf)
-        for file in files
-        if file.endswith(".xdf")
-    )
-
+    xdf_file_paths = [
+    os.path.join(root, file)
+    for root, dirs, files in os.walk(rootdir_xdf)
+    for file in files
+    if file.endswith(".xdf")
+    ]
+    
     for file_path in xdf_file_paths:
         print(
             colored("[Status] xdf file found at ", "green", attrs=["bold"]),
