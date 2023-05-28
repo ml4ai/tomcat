@@ -221,7 +221,19 @@ def dataframe_to_csv(
     We will use the same dictionary baseline_task_time
     and add minecraft timestamp. 
     """
-    all_task_time = read_minecraft_time(baseline_task_time, rootdir_minecraft_data)
+    try:
+        all_task_time = read_minecraft_time(baseline_task_time, rootdir_minecraft_data)
+    except Exception as e:
+        print(
+                colored("[Error]", "red", attrs=["bold"]),
+                colored(stream_type, "blue"),
+                colored(
+                    "Minecraft timestamp extraction failed: " + str(e),
+                    "red",
+                    attrs=["bold"],
+                ),
+            )
+        all_task_time = baseline_task_time
 
     # 5. Sync rest state timestamp with xdf timestamp
     """
@@ -459,21 +471,38 @@ def dataframe_to_csv(
                 pth=data_path + "/",
             )
 
-    final_state = {
-        **get_state_rest,
-        **get_state_fingertap,
-        **affective_task_individual,
-        **get_state_affective_team,
-        **get_state_pingpong_coop_0,
-        **get_state_pingpong_comp_0,
-        **get_state_pingpong_comp_1,
-        **mincraft_handson_training,
-        **mincraft_saturn_a,
-        **mincraft_saturn_b,
-    }
+    try:
+        final_state = {
+            **get_state_rest,
+            **get_state_fingertap,
+            **affective_task_individual,
+            **get_state_affective_team,
+            **get_state_pingpong_coop_0,
+            **get_state_pingpong_comp_0,
+            **get_state_pingpong_comp_1,
+            **mincraft_handson_training,
+            **mincraft_saturn_a,
+            **mincraft_saturn_b,
+        }
+    except NameError:
+        final_state = {
+            **get_state_rest,
+            **get_state_fingertap,
+            **affective_task_individual,
+            **get_state_affective_team,
+            **get_state_pingpong_coop_0,
+            **get_state_pingpong_comp_0,
+            **get_state_pingpong_comp_1
+        }
 
     df_remove_before = list(get_state_rest.keys())[0]
-    df_remove_after = list(mincraft_saturn_b.keys())[-1]
+    try:
+        # Minecraft Saturn B timestamps exists
+        df_remove_after = list(mincraft_saturn_b.keys())[-1]
+    except NameError:
+        # Minecraft Saturn B timestamps does not exist
+        df_remove_after = list(get_state_affective_team.keys())[-1]
+
     df_final,df_original = sync_timestamps_with_df(
         df, final_state, header[2], df_remove_before, df_remove_after
     )
