@@ -20,12 +20,6 @@ if [ -z "$rootdir" ] || [ -z "$outputdir" ]; then
   exit 1
 fi
 
-# Create a log file for error messages
-error_log="$outputdir/error_log.txt"
-
-# Clear the error log file if it already exists
-> "$error_log"
-
 # Search for directories starting with exp_ under the root directory
 directories=($(find "$rootdir" -type d -name "exp_*"))
 
@@ -33,6 +27,12 @@ directories=($(find "$rootdir" -type d -name "exp_*"))
 execute_python_script() {
     local dir="$1"
     local str_array=("$2" "$3" "$4")
+    local experiment_output_dir="$outputdir/data/${base_dir}"
+
+    # Create the directory if it does not exist
+    mkdir -p "$experiment_output_dir"
+
+    local error_log="$experiment_output_dir/error_log.txt"
 
     # Call python script and save stderr to error log
     if ! python3 run_physio_data_extraction.py --p1 "$dir" --p2 "$dir/baseline_tasks/" --p3 "$dir/minecraft/" --s "${str_array[0]}" --s "${str_array[1]}" --s "${str_array[2]}" --filter True --hdf5 True --output_path "$outputdir" 2>> "$error_log"; then
@@ -40,7 +40,6 @@ execute_python_script() {
     fi
 }
 
-# Iterate over the directories and start a separate process for each
 for dir in "${directories[@]}"; do
     # Extract the base directory name
     base_dir=$(basename "$dir")
