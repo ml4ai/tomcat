@@ -27,7 +27,8 @@ directories=($(ls -d $rootdir/exp_*))
 execute_python_script() {
     local dir="$1"
     local str_array=("$2" "$3" "$4")
-    local experiment_output_dir="$outputdir/data/${base_dir}"
+    # local experiment_output_dir="$outputdir/data/${base_dir}" #for local /data is needed/
+    local experiment_output_dir="$outputdir/${base_dir}"
 
     # Create the directory if it does not exist
     mkdir -p "$experiment_output_dir"
