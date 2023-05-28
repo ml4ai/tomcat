@@ -16,8 +16,8 @@ def get_new_file_paths(output_path, csv_file_name):
     # Include only the parts of the path after 'study_3_pilot'
     csv_file_name = "/".join(path_parts[start_index + 1:])
     
-    # Ignore 'eeg_fnirs_pupil' in the path
-    csv_file_name = csv_file_name.replace("eeg_fnirs_pupil/", "")
+    # Ignore 'eeg_fnirs_pupil' and 'group' in the path
+    csv_file_name = csv_file_name.replace("eeg_fnirs_pupil/", "").replace("group/", "")
     
     # Now append csv_file_name to output_path
     new_csv_file_path = os.path.join(output_path, csv_file_name)
