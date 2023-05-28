@@ -1,5 +1,4 @@
 import os
-import h5py
 import pandas as pd
 from time import ctime
 from termcolor import colored
