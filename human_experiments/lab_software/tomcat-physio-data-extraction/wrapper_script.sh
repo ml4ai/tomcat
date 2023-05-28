@@ -21,7 +21,7 @@ if [ -z "$rootdir" ] || [ -z "$outputdir" ]; then
 fi
 
 # Search for directories starting with exp_ under the root directory
-directories=($(find "$rootdir" -type d -name "exp_*"))
+directories=($(ls -d $rootdir/exp_*))
 
 # Define the function to execute the Python script
 execute_python_script() {
