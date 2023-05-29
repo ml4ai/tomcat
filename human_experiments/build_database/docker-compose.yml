@@ -1,0 +1,13 @@
+
+version: '3.7'
+
+services:
+
+  datasette:
+    image: datasetteproject/datasette
+    ports:
+        - "8001:8001"
+    volumes:
+        - .:/mnt
+
+    entrypoint: datasette -p 8001 -h 0.0.0.0 /mnt/test.db
