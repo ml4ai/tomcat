@@ -2,24 +2,26 @@
 
 import contextlib
 import os
+import sys
 import json
 from dataclasses import dataclass
 from glob import glob
 import logging
 from logging import info, warning
-from typing import List, Optional
-from sqlalchemy import create_engine, String
-from sqlalchemy.orm import (
-    DeclarativeBase,
-    Mapped,
-    mapped_column,
-    relationship,
-    MappedAsDataclass,
-    Session,
-)
 from tqdm import tqdm
+import sqlite3
 
-logging.basicConfig(level=logging.INFO)
+
+file_handler = logging.FileHandler(filename='build_database.log')
+stderr_handler = logging.StreamHandler(stream=sys.stderr)
+handlers = [file_handler, stderr_handler]
+
+logging.basicConfig(
+    level=logging.INFO,
+    # format='[%(asctime)s] {%(filename)s:%(lineno)d} %(levelname)s - %(message)s',
+    handlers=handlers
+)
+
 
 
 @contextlib.contextmanager
@@ -32,21 +34,7 @@ def cd(path):
         os.chdir(old_path)
 
 
-class Base(DeclarativeBase, MappedAsDataclass):
-    pass
-
-
-class TrialInfo(Base):
-    __tablename__ = "trial_info"
-    trial_uuid: Mapped[str] = mapped_column(primary_key=True)
-    mission: Mapped[str]
-    trial_start_timestamp: Mapped[str]
-    trial_stop_timestamp: Mapped[str]
-    testbed_version: Mapped[str]
-    final_team_score: Mapped[Optional[int]]
-
-
-def process_metadata_file(filepath, engine):
+def process_metadata_file(filepath, db_connection):
     trial_uuid = None
     mission = None
     trial_start_timestamp = None
@@ -60,6 +48,7 @@ def process_metadata_file(filepath, engine):
             message = json.loads(line)
             topic = message["topic"]
             if topic == "trial":
+                print(message["msg"]["sub_type"], message["msg"]["trial_id"])
                 trial_uuid = message["msg"]["trial_id"]
                 if message["msg"]["sub_type"] == "start":
                     mission = message["data"]["experiment_mission"]
@@ -72,28 +61,42 @@ def process_metadata_file(filepath, engine):
                 score = message["data"]["scoreboard"]["TeamScore"]
                 scores.append(score)
 
+
+
     if len(scores) != 0:
-        warning(f"No scoreboard messages found in {filepath}!")
+        warning(f"\tNo scoreboard messages found!")
         final_team_score = scores[-1]
 
-    trial_info = TrialInfo(
-        trial_uuid,
-        mission,
-        trial_start_timestamp,
-        trial_stop_timestamp,
-        testbed_version,
-        final_team_score,
-    )
+    data = [
+        (
+            trial_uuid,
+            mission,
+            trial_start_timestamp,
+            trial_stop_timestamp,
+            testbed_version,
+            final_team_score,
+        )
+    ]
 
-    with Session(engine) as session:
-        session.add(trial_info)
-        session.commit()
+    # try:
+    with db_connection:
+        db_connection.executemany(
+            "INSERT into trial_info VALUES(?, ?, ?, ?, ?, ?)", data
+        )
+    # info(f"Inserted row: {data}")
+    # except sqlite3.IntegrityError:
+        # info(f"Unable to insert row: {data}")
 
 
 if __name__ == "__main__":
     info("Processing directories...")
-    engine = create_engine("sqlite:///test.db")
-    Base.metadata.create_all(engine)
+    db_connection = sqlite3.connect("test.db")
+    with open("schema.sql") as f:
+        schema = f.read()
+
+    with db_connection:
+        db_connection.execute(schema)
+
     with cd("/tomcat/data/raw/LangLab/experiments/study_3_pilot/group"):
         for session in tqdm(sorted(os.listdir("."))):
             year, month, day, hour = [int(x) for x in session.split("_")[1:]]
@@ -105,14 +108,26 @@ if __name__ == "__main__":
                 )
                 continue
 
+            if (year, month, day) == (2023, 4, 20):
+                info(
+                    f"Ignoring {session}. Since only one participant showed up, the session was cancelled."
+                )
+                continue
+
+            if (year, month, day, hour) == (2023, 2, 20, 1):
+                info(
+                    f"Ignoring {session}, since its data is duplicated in the"
+                    "exp_2023_02_20_13 directory."
+                )
+                continue
+
             try:
                 with cd(session + "/minecraft"):
                     info(f"Processing directory {session}")
                     metadata_files = sorted(glob("*.metadata"))
-                    # print(metadata_files)
                     for metadata_file in metadata_files:
-                        info(f"Processing file {metadata_file}")
-                        process_metadata_file(metadata_file, engine)
+                        info(f"\tProcessing file {metadata_file}")
+                        process_metadata_file(metadata_file, db_connection)
 
             except FileNotFoundError:
                 warning(f"minecraft directory not in {session}")

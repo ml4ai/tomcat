@@ -1,2 +1,5 @@
 # Ignore SQLite databases
 *.db
+
+# Ignore log files
+*.log
