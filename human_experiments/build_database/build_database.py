@@ -33,8 +33,9 @@ def cd(path):
         os.chdir(old_path)
 
 
-def process_metadata_file(filepath, team_id, db_connection):
+def process_metadata_file(filepath, session_id, team_id, db_connection):
     trial_uuid = None
+    session_id = None
     mission = None
     trial_start_timestamp = None
     trial_stop_timestamp = None
@@ -66,6 +67,7 @@ def process_metadata_file(filepath, team_id, db_connection):
     data = [
         (
             trial_uuid,
+            session_id,
             team_id,
             mission,
             trial_start_timestamp,
@@ -78,7 +80,7 @@ def process_metadata_file(filepath, team_id, db_connection):
     # try:
     with db_connection:
         db_connection.executemany(
-            "INSERT into trial_info VALUES(?, ?, ?, ?, ?, ?, ?)", data
+            "INSERT into trial_info VALUES(?, ?, ?, ?, ?, ?, ?, ?)", data
         )
     # info(f"Inserted row: {data}")
     # except sqlite3.IntegrityError:
@@ -105,16 +107,22 @@ if __name__ == "__main__":
                 )
                 continue
 
-            elif (year, month, day) == (2023, 4, 20):
+            elif session == "exp_2023_04_20_14":
                 info(
                     f"Ignoring {session}. Since only one participant showed up, the session was cancelled."
                 )
                 continue
 
-            elif (year, month, day, hour) == (2023, 2, 20, 1):
+            elif session == "exp_2023_02_20_01":
                 info(
                     f"Ignoring {session}, since its data is duplicated in the"
                     "exp_2023_02_20_13 directory."
+                )
+                continue
+
+            elif session in {"exp_2022_12_05_15", "exp_2023_04_26_10"}:
+                info(
+                    f"Ignoring {session}, since it was cancelled (no participants showed up.)"
                 )
                 continue
 
@@ -130,6 +138,8 @@ if __name__ == "__main__":
                                 "More than one record found in team_data.csv!"
                             )
                         team_id = int(row["team_id"])
+                        real_participant_absent = row["real_participant_absent"]
+                        # participants = row["subject_id"].split()
                         participants = [
                             int(x) for x in row["subject_id"].split(",")
                         ]
@@ -138,16 +148,19 @@ if __name__ == "__main__":
                             for participant_id in participants
                         ]
 
-                        try:
-                            with db_connection:
-                                db_connection.executemany(
-                                    "INSERT into participant VALUES(?, ?)",
-                                    data,
-                                )
-                                info(f"Inserted rows: {data}")
-                        except sqlite3.IntegrityError:
-                            error(f"Unable to insert rows: {data}")
-                            raise
+                        # The code below has been commented out since there are
+                        # some issues with the REDCap data. Perhaps we will
+                        # simply use Rick's spreadsheet?
+                        # try:
+                            # with db_connection:
+                                # db_connection.executemany(
+                                    # "INSERT into participant VALUES(?, ?)",
+                                    # data,
+                                # )
+                                # info(f"Inserted rows: {data}")
+                        # except sqlite3.IntegrityError:
+                            # error(f"Unable to insert rows: {data}")
+                            # raise
 
                 try:
                     with cd(f"{session}/minecraft"):
@@ -155,7 +168,7 @@ if __name__ == "__main__":
                         for metadata_file in metadata_files:
                             info(f"\tProcessing file {metadata_file}")
                             process_metadata_file(
-                                metadata_file, team_id, db_connection
+                                metadata_file, session, team_id, db_connection
                             )
 
                 except FileNotFoundError:

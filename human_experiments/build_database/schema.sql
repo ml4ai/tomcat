@@ -1,5 +1,6 @@
 CREATE TABLE trial_info (
 	trial_uuid VARCHAR NOT NULL,
+    session_id VARCHAR NOT NULL,
     team_id INTEGER NOT NULL,
 	mission VARCHAR NOT NULL,
 	trial_start_timestamp VARCHAR NOT NULL,
