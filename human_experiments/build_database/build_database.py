@@ -35,7 +35,6 @@ def cd(path):
 
 def process_metadata_file(filepath, session_id, team_id, db_connection):
     trial_uuid = None
-    session_id = None
     mission = None
     trial_start_timestamp = None
     trial_stop_timestamp = None
@@ -97,7 +96,7 @@ if __name__ == "__main__":
         db_connection.executescript(schema)
 
     with cd("/tomcat/data/raw/LangLab/experiments/study_3_pilot/group"):
-        for session in tqdm(sorted(os.listdir(".")[20:])):
+        for session in tqdm(sorted(os.listdir("."))):
             year, month, day, hour = [int(x) for x in session.split("_")[1:]]
 
             if year == 2022 and ((month < 9) or (month == 9 and day < 30)):
@@ -148,19 +147,18 @@ if __name__ == "__main__":
                             for participant_id in participants
                         ]
 
-                        # The code below has been commented out since there are
-                        # some issues with the REDCap data. Perhaps we will
-                        # simply use Rick's spreadsheet?
-                        # try:
-                            # with db_connection:
-                                # db_connection.executemany(
-                                    # "INSERT into participant VALUES(?, ?)",
-                                    # data,
-                                # )
-                                # info(f"Inserted rows: {data}")
-                        # except sqlite3.IntegrityError:
-                            # error(f"Unable to insert rows: {data}")
-                            # raise
+                        # The code below should be replaced with code that uses
+                        # Rick's spreadsheet or something, since we know the
+                        # REDCap data has issues.
+                        try:
+                            with db_connection:
+                                db_connection.executemany(
+                                    "INSERT into participant VALUES(?, ?)",
+                                    data,
+                                )
+                                info(f"Inserted rows: {data}")
+                        except sqlite3.IntegrityError:
+                            error(f"Unable to insert rows: {data}")
 
                 try:
                     with cd(f"{session}/minecraft"):
