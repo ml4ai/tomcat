@@ -12,14 +12,13 @@ from tqdm import tqdm
 import sqlite3
 
 
-file_handler = logging.FileHandler(filename='build_database.log')
+file_handler = logging.FileHandler(filename='build_database.log', mode='w')
 stderr_handler = logging.StreamHandler(stream=sys.stderr)
 handlers = [file_handler, stderr_handler]
 
 logging.basicConfig(
     level=logging.INFO,
-    # format='[%(asctime)s] {%(filename)s:%(lineno)d} %(levelname)s - %(message)s',
-    handlers=handlers
+    handlers=handlers,
 )
 
 
@@ -48,7 +47,6 @@ def process_metadata_file(filepath, db_connection):
             message = json.loads(line)
             topic = message["topic"]
             if topic == "trial":
-                print(message["msg"]["sub_type"], message["msg"]["trial_id"])
                 trial_uuid = message["msg"]["trial_id"]
                 if message["msg"]["sub_type"] == "start":
                     mission = message["data"]["experiment_mission"]
@@ -64,7 +62,7 @@ def process_metadata_file(filepath, db_connection):
 
 
     if len(scores) != 0:
-        warning(f"\tNo scoreboard messages found!")
+        warning(f"\t\tNo scoreboard messages found!")
         final_team_score = scores[-1]
 
     data = [
