@@ -57,9 +57,9 @@ if [[ -e "${lock_file}" ]]; then
         ps_status=$?
 
         if [[ ${ps_status} -eq 0 ]]; then
+            exit_status=1 
             echo "Previous pull_tomcat_data process ${pull_pid} is still running. Canceling this run."
             echo "If this problem persists for more than 36 hours or so, check manually."
-            exit_status=1 
         fi 
     fi 
 fi 
