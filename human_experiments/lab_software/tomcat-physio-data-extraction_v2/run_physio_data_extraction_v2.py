@@ -21,6 +21,7 @@ from utils import (
     read_affective_task_timestamps_team,
     read_ping_pong_timestamps,
     read_minecraft_timestamps,
+    create_time_distribution,
 )
 
 def read_xdf(
@@ -41,21 +42,26 @@ def read_xdf(
     columns = shutil.get_terminal_size().columns
     for path in xdf_file_paths:
         if "block_1" in path:
-            print('block_1')
-            # block_1, _ = pyxdf.load_xdf(path)
+            print(
+                    colored("block_1 ", "magenta", attrs=["bold", "blink"]).center(columns)
+                )
+            block_1, _ = pyxdf.load_xdf(path)
             
-            # block_1_NIRS  = read_nirs(block_1) # 1. Read NIRS data
-            # rest_state = read_rest_state_timestamps(block_1) # 2. Read RestState timestamps
-            # finger_tapping = read_finger_tapping_time(block_1) # 3. Read FingerTapping timestamps
-            # AffectiveTask_tiger_individual, AffectiveTask_lion_individual, AffectiveTask_leopard_individual = read_affective_task_timestamps_individual(block_1) # 4. Read AffectiveTask timestamps
-            # AffectiveTask_team = read_affective_task_timestamps_team(block_1) # 5. Read AffectiveTask timestamps
-            # PingPong_competitive_0, PingPong_competitive_1, PingPong_cooperative_0 = read_ping_pong_timestamps(block_1) # 6. Read PingPong timestamps   
-        
+            lion_0297_block_1, tiger_0239_block_1, leopard_0171_block_1  = read_nirs(block_1) # 1. Read NIRS data
+            rest_state = read_rest_state_timestamps(block_1) # 2. Read RestState timestamps
+            finger_tapping = read_finger_tapping_time(block_1) # 3. Read FingerTapping timestamps
+            AffectiveTask_tiger_individual, AffectiveTask_lion_individual, AffectiveTask_leopard_individual = read_affective_task_timestamps_individual(block_1) # 4. Read AffectiveTask timestamps
+            AffectiveTask_team = read_affective_task_timestamps_team(block_1) # 5. Read AffectiveTask timestamps
+            PingPong_competitive_0, PingPong_competitive_1, PingPong_cooperative_0 = read_ping_pong_timestamps(block_1) # 6. Read PingPong timestamps   
+
         elif "block_2" in path:
-            print('block_2')
-            block_2, _ = pyxdf.load_xdf(path)
-            block_2_NIRS  = read_nirs(block_2) # 1. Read NIRS data
-            minecraft_timestamps = read_minecraft_timestamps(block_2) # 2. Read Minecraft timestamps
+             print(
+                    colored("block_2 ", "magenta", attrs=["bold", "blink"]).center(columns)
+                )
+            # print('block_2')
+            # block_2, _ = pyxdf.load_xdf(path)
+            # lion_0297_block_2, tiger_0239_block_2, leopard_0171_block_2  = read_nirs(block_2) # 1. Read NIRS data
+            # minecraft_timestamps = read_minecraft_timestamps(block_2) # 2. Read Minecraft timestamps
     
     
     # for path in xdf_file_paths:
