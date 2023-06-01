@@ -17,6 +17,9 @@ from utils import (
     read_nirs,
     read_rest_state_timestamps, 
     read_finger_tapping_time,
+    read_affective_task_timestamps_individual,
+    read_affective_task_timestamps_team,
+    read_ping_pong_timestamps
 #     combine_blocks,
 )
 
@@ -40,12 +43,13 @@ def read_xdf(
         if "block_1" in path:
             print('block_1')
             block_1, _ = pyxdf.load_xdf(path)
+            
             block_1_NIRS  = read_nirs(block_1) # 1. Read NIRS data
             rest_state = read_rest_state_timestamps(block_1) # 2. Read RestState timestamps
             finger_tapping = read_finger_tapping_time(block_1) # 3. Read FingerTapping timestamps
-            
-            
-
+            AffectiveTask_tiger_individual, AffectiveTask_lion_individual, AffectiveTask_leopard_individual = read_affective_task_timestamps_individual(block_1) # 4. Read AffectiveTask timestamps
+            AffectiveTask_team = read_affective_task_timestamps_team(block_1) # 5. Read AffectiveTask timestamps
+            PingPong_competitive_0, PingPong_competitive_1, PingPong_cooperative_0 = read_ping_pong_timestamps(block_1) # 6. Read PingPong timestamps   
         # elif "block_2" in path:
         #     print('block_2')
         #     block_2, _ = pyxdf.load_xdf(path)

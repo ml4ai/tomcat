@@ -2,6 +2,8 @@ import argparse
 from .read_NIRS import read_nirs
 from .read_rest_state_timestamps import read_rest_state_timestamps
 from .read_finger_tapping_time import read_finger_tapping_time
+from .read_affective_task_timestamps import read_affective_task_timestamps_individual, read_affective_task_timestamps_team
+from .read_ping_pong_timestamps import read_ping_pong_timestamps
 
 def str2bool(v):
     if isinstance(v, bool):
