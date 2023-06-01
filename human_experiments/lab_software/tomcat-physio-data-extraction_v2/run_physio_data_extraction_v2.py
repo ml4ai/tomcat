@@ -10,11 +10,14 @@ import argparse
 import numpy as np
 from termcolor import colored
 from utils import (
-    get_start_stop_time_from_xdf,
-    dataframe_to_csv,
-    create_time_distribution,
+#     get_start_stop_time_from_xdf,
+#     dataframe_to_csv,
+#     create_time_distribution,
     str2bool,
-    combine_blocks,
+    read_nirs,
+    read_rest_state_timestamps, 
+    read_finger_tapping_time,
+#     combine_blocks,
 )
 
 def read_xdf(
@@ -37,16 +40,16 @@ def read_xdf(
         if "block_1" in path:
             print('block_1')
             block_1, _ = pyxdf.load_xdf(path)
-        elif "block_2" in path:
-            print('block_2')
-            block_2, _ = pyxdf.load_xdf(path)
-    
-    # Combine the blocks
-    blocks = block_1 + block_2
-    
-    combine_blocks(blocks, block_1)
+            block_1_NIRS  = read_nirs(block_1) # 1. Read NIRS data
+            rest_state = read_rest_state_timestamps(block_1) # 2. Read RestState timestamps
+            finger_tapping = read_finger_tapping_time(block_1) # 3. Read FingerTapping timestamps
+            
+            
 
-
+        # elif "block_2" in path:
+        #     print('block_2')
+        #     block_2, _ = pyxdf.load_xdf(path)
+    
     
     # for path in xdf_file_paths:
     #     data, header = pyxdf.load_xdf(path)

@@ -8,6 +8,7 @@ from .create_time_distribution import create_time_distribution
 from .convert_datetime_timezone import change_time_zone
 from .NIRS_filtering import check_cv, filter_NIRS
 from .folder_name_manipulation import get_new_file_paths
+from .combine_blocks import combine_blocks
 
 def str2bool(v):
     if isinstance(v, bool):
