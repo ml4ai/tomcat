@@ -2,6 +2,8 @@
 
 # Script to install plugins into datasette container
 
+docker pull datasetteproject/datasette
+
 docker run datasetteproject/datasette \
     pip install datasette-auth-passwords
 
