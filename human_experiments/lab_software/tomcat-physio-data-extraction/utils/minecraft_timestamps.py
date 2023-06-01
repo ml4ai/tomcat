@@ -18,7 +18,7 @@ def read_minecraft_time(baseline_task_dict, rootdir_minecraft_data):
     minecraft_dict_temp = {"state": [], "start_time": [], "end_time": []}
     minecraft_dict = baseline_task_dict
     idx_minecraft_dict = len(minecraft_dict)
-    for x in os.listdir(rootdir_minecraft_data):
+    for x in sorted(os.listdir(rootdir_minecraft_data)):
         if x.endswith(".metadata"):
             root_dir = os.path.join(rootdir_minecraft_data, x)
             TrialMessages = []
@@ -104,13 +104,13 @@ def read_minecraft_time(baseline_task_dict, rootdir_minecraft_data):
     """
     sorted_idx = np.argsort(minecraft_dict_temp["start_time"])
     if len(sorted_idx) == 3:
-        minecraft_dict_temp["state"][2] = "hands_on_training"
+        minecraft_dict_temp["state"][2] = "saturn_b"
         minecraft_dict_temp["state"][1] = "saturn_a"
-        minecraft_dict_temp["state"][0] = "saturn_b"
+        minecraft_dict_temp["state"][0] = "hands_on_training"
     else:
         # sometimes due to time constraints the participants play only 1 misson
-        minecraft_dict_temp["state"][2] = "hands_on_training"
-        minecraft_dict_temp["state"][1] = "saturn_a"
+        minecraft_dict_temp["state"][2] = "saturn_a"
+        minecraft_dict_temp["state"][1] = "hands_on_training"
 
     for s_idx in sorted_idx:
         minecraft_dict[idx_minecraft_dict] = {
