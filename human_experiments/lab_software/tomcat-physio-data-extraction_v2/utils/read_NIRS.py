@@ -47,4 +47,4 @@ def read_nirs(block):
             leopard_0171_block_df['unix_time'] = leopard_0171_block['time_stamps']
             print(colored("[Status] Merged NIRS timestamps with NIRS dataframe ", "green", attrs=["bold"]))
 
-    return lion_0297_block, tiger_0239_block, leopard_0171_block
+    return lion_0297_block_df, tiger_0239_block_df, leopard_0171_block_df

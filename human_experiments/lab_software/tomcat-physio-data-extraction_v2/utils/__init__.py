@@ -6,6 +6,7 @@ from .read_affective_task_timestamps import read_affective_task_timestamps_indiv
 from .read_ping_pong_timestamps import read_ping_pong_timestamps
 from .read_minecraft_timestamps import read_minecraft_timestamps
 from .create_time_distribution import create_time_distribution
+from .NIRS_tasks_merge import NIRS_tasks_merge
 
 def str2bool(v):
     if isinstance(v, bool):
