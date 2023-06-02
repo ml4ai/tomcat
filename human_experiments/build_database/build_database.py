@@ -12,10 +12,11 @@ from tqdm import tqdm
 import sqlite3
 import csv
 
-
-file_handler = logging.FileHandler(filename="build_database.log", mode="w")
-stderr_handler = logging.StreamHandler(stream=sys.stderr)
-handlers = [file_handler, stderr_handler]
+LOG_FILE_PATH = "/space/adarsh/tomcat/build_database.log"
+DB_PATH = "/space/adarsh/tomcat/test.db"
+FILE_HANDLER = logging.FileHandler(filename=LOG_FILE_PATH, mode="w")
+STDERR_HANDLER = logging.StreamHandler(stream=sys.stderr)
+handlers = [FILE_HANDLER, STDERR_HANDLER]
 
 logging.basicConfig(
     level=logging.INFO,
@@ -86,9 +87,40 @@ def process_metadata_file(filepath, session_id, team_id, db_connection):
     # info(f"Unable to insert row: {data}")
 
 
+def should_ignore_directory(session) -> bool:
+    """Returns true if this directory should be ignored."""
+    year, month, day, hour = [int(x) for x in session.split("_")[1:]]
+
+    if year == 2022 and ((month < 9) or (month == 9 and day < 30)):
+        info(
+            f"Ignoring {session} since our first pilot with real "
+            "participants was on 9/30/2022"
+        )
+        return True
+    elif session == "exp_2023_04_20_14":
+        info(
+            f"Ignoring {session}. Since only one participant showed up, the session was cancelled."
+        )
+        return True
+
+    elif session == "exp_2023_02_20_01":
+        info(
+            f"Ignoring {session}, since its data is duplicated in the"
+            "exp_2023_02_20_13 directory."
+        )
+        return True
+
+    elif session in {"exp_2022_12_05_15", "exp_2023_04_26_10"}:
+        info(
+            f"Ignoring {session}, since it was cancelled (no participants showed up.)"
+        )
+        return True
+    else:
+        return False
+
 if __name__ == "__main__":
     info("Processing directories...")
-    db_connection = sqlite3.connect("test.db")
+    db_connection = sqlite3.connect(DB_PATH)
     with open("schema.sql") as f:
         schema = f.read()
 
@@ -97,34 +129,8 @@ if __name__ == "__main__":
 
     with cd("/tomcat/data/raw/LangLab/experiments/study_3_pilot/group"):
         for session in tqdm(sorted(os.listdir("."))):
-            year, month, day, hour = [int(x) for x in session.split("_")[1:]]
-
-            if year == 2022 and ((month < 9) or (month == 9 and day < 30)):
-                info(
-                    f"Ignoring {session} since our first pilot with real "
-                    "participants was on 9/30/2022"
-                )
+            if should_ignore_directory(session):
                 continue
-
-            elif session == "exp_2023_04_20_14":
-                info(
-                    f"Ignoring {session}. Since only one participant showed up, the session was cancelled."
-                )
-                continue
-
-            elif session == "exp_2023_02_20_01":
-                info(
-                    f"Ignoring {session}, since its data is duplicated in the"
-                    "exp_2023_02_20_13 directory."
-                )
-                continue
-
-            elif session in {"exp_2022_12_05_15", "exp_2023_04_26_10"}:
-                info(
-                    f"Ignoring {session}, since it was cancelled (no participants showed up.)"
-                )
-                continue
-
             else:
                 info(f"Processing directory {session}")
                 team_id = None
