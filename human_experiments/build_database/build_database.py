@@ -36,7 +36,7 @@ def cd(path):
         os.chdir(old_path)
 
 
-def process_metadata_file(filepath, session_id, team_id, db_connection):
+def process_metadata_file(filepath, session, db_connection):
     trial_uuid = None
     mission = None
     trial_start_timestamp = None
@@ -66,28 +66,22 @@ def process_metadata_file(filepath, session_id, team_id, db_connection):
         warning(f"\t\tNo scoreboard messages found!")
         final_team_score = scores[-1]
 
-    data = [
-        (
+    data = (
             trial_uuid,
-            session_id,
-            team_id,
+            session,
             mission,
-            trial_start_timestamp,
-            trial_stop_timestamp,
             testbed_version,
             final_team_score,
         )
-    ]
 
-    # try:
-    with db_connection:
-        db_connection.execute("PRAGMA foreign_keys = 1")
-        db_connection.executemany(
-            "INSERT into trial_info VALUES(?, ?, ?, ?, ?, ?, ?, ?)", data
-        )
-    # info(f"Inserted row: {data}")
-    # except sqlite3.IntegrityError:
-    # info(f"Unable to insert row: {data}")
+    try:
+        with db_connection:
+            db_connection.execute("PRAGMA foreign_keys = 1")
+            db_connection.execute(
+                "INSERT into mission VALUES(?, ?, ?, ?, ?)", data
+            )
+    except sqlite3.IntegrityError:
+        raise sqlite3.IntegrityError(f"Unable to insert row: {data}")
 
 
 def should_ignore_directory(session) -> bool:
@@ -106,10 +100,10 @@ def should_ignore_directory(session) -> bool:
         )
         return True
 
-    elif session == "exp_2023_02_20_01":
+    elif session == "exp_2023_02_20_13":
         info(
-            f"Ignoring {session}, since its data is duplicated in the"
-            "exp_2023_02_20_13 directory."
+            f"Ignoring {session}, since it is a duplicate of the "
+            "exp_2023_02_20_01 directory."
         )
         return True
 
@@ -124,44 +118,13 @@ def should_ignore_directory(session) -> bool:
 
 def process_directory(session, db_connection):
     info(f"Processing directory {session}")
-    team_id = None
-    info(f"\tProcessing redcap_data/team_data.csv")
-    with open(f"{session}/redcap_data/team_data.csv") as f:
-        reader = csv.DictReader(f)
-        for i, row in enumerate(reader):
-            if i != 0:
-                raise ValueError(
-                    "More than one record found in team_data.csv!"
-                )
-            team_id = int(row["team_id"])
-            real_participant_absent = row["real_participant_absent"]
-            # participants = row["subject_id"].split()
-            participants = [int(x) for x in row["subject_id"].split(",")]
-            data = [
-                (participant_id, team_id) for participant_id in participants
-            ]
-
-            # The code below should be replaced with code that uses
-            # Rick's spreadsheet or something, since we know the
-            # REDCap data has issues.
-            try:
-                with db_connection:
-                    db_connection.execute("PRAGMA foreign_keys = 1")
-                    db_connection.executemany(
-                        "INSERT into participant VALUES(?, ?)",
-                        data,
-                    )
-                    info(f"Inserted rows: {data}")
-            except sqlite3.IntegrityError:
-                error(f"Unable to insert rows: {data}")
-
     try:
         with cd(f"{session}/minecraft"):
             metadata_files = sorted(glob("*.metadata"))
             for metadata_file in metadata_files:
                 info(f"\tProcessing file {metadata_file}")
                 process_metadata_file(
-                    metadata_file, session, team_id, db_connection
+                    metadata_file, session, db_connection
                 )
 
     except FileNotFoundError:
@@ -222,6 +185,6 @@ def process_rick_workbook():
 
 
 if __name__ == "__main__":
-    # process_directories()
     initialize_database()
     process_rick_workbook()
+    process_directories()

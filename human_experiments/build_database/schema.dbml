@@ -3,7 +3,7 @@
 
 Table participant {
   id varchar [primary key]
-  is_confederate integer [default: 0]
+  is_confederate integer [default: false]
 }
 
 Table group_session {
@@ -14,7 +14,7 @@ Table group_session {
 }
 
 Table mission {
-  id integer [primary key]
+  id varchar [primary key]
   group_session_id varchar [ref:> group_session.id]
   name varchar
   testbed_version varchar [note: "The version of the testbed used for the mission."]
