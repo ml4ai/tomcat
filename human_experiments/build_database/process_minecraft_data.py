@@ -3,16 +3,10 @@ import json
 from glob import glob
 import sqlite3
 from utils import cd, should_ignore_directory, logging_handlers
+import logging
 from logging import info, warning, error, debug
 from tqdm import tqdm
-from config import DB_PATH, logging_handlers
-
-
-
-logging.basicConfig(
-    level=logging.DEBUG,
-    handlers=logging_handlers,
-)
+from config import DB_PATH
 
 def get_key_messages(metadata_file):
     """Get key messages from a .metadata file."""
