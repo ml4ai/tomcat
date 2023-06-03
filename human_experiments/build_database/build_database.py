@@ -11,16 +11,12 @@ from dbml_sqlite import toSQLite
 from pprint import pprint
 from process_minecraft_data import process_minecraft_data
 from utils import cd
+from config import DB_PATH, logging_handlers
 
-LOG_FILE_PATH = "/space/adarsh/tomcat/build_database.log"
-DB_PATH = "/space/adarsh/tomcat/test.db"
-FILE_HANDLER = logging.FileHandler(filename=LOG_FILE_PATH, mode="w")
-STDERR_HANDLER = logging.StreamHandler(stream=sys.stderr)
-handlers = [FILE_HANDLER, STDERR_HANDLER]
 
 logging.basicConfig(
     level=logging.DEBUG,
-    handlers=handlers,
+    handlers=logging_handlers,
 )
 
 def process_rick_workbook():
