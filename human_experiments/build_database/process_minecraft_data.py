@@ -15,6 +15,7 @@ def get_key_messages(metadata_file):
         "trial_stop": [],
         "mission_start": [],
         "mission_stop": [],
+        "approximate_mission_start": None,
     }
 
     with open(metadata_file) as f:
@@ -41,6 +42,10 @@ def get_key_messages(metadata_file):
                     key_messages["mission_stop"].append(message)
                 else:
                     pass
+            elif topic == "observations/state" and not key_messages["approximate_mission_start"]:
+                mission_timer = str(message["data"]["mission_timer"])
+                if "not initialized" not in mission_timer.lower():
+                    key_messages["approximate_mission_start"] = message
 
     return key_messages
 
@@ -52,7 +57,7 @@ def collect_files_to_process(metadata_files):
     for metadata_file in metadata_files:
         key_messages = get_key_messages(metadata_file)
 
-        if len(key_messages["mission_start"]) != 1:
+        if len(key_messages["mission_start"]) > 1:
             error(
                 "[ANOMALY]: We expected exactly 1 mission start message, but"
                 f" found {len(key_messages['mission_start'])} instead!"
@@ -73,6 +78,25 @@ def collect_files_to_process(metadata_files):
                 " Skipping this file since we do not know the cause of this error."
             )
             continue
+
+        if len(key_messages["mission_start"]) == 0:
+            if key_messages["approximate_mission_start"]:
+                error(
+                    "[ANOMALY]: We expected exactly 1 mission start message, but"
+                    f" found 0 instead!"
+                    " Using the timestamp of the first observations/state message as the mission start."
+                )
+                approximate_timestamp = key_messages['approximate_mission_start']['header']['timestamp']
+
+                # Create a fake mission start message with the approximate timestamp
+                key_messages['mission_start'].append({'header': {'timestamp': approximate_timestamp}})
+            else:
+                error(
+                    "[ANOMALY]: We expected exactly 1 mission start message, but"
+                    " found 0 instead and no observation messages detected!"
+                    " Skipping this file since we do not know the cause of this error."
+                )
+                continue
 
         if len(key_messages["trial_start"]) > 1:
             error(
