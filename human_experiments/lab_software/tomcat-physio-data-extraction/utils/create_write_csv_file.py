@@ -241,6 +241,8 @@ def dataframe_to_csv(
     *_state_time_stop from our dataframe. Then insert
     the state value to df
     """
+    ping_pong_competetive_1_activate = False
+
     for idx, dict in all_task_time.items():
         if "rest_state" in dict.values():
             print(
@@ -382,8 +384,8 @@ def dataframe_to_csv(
                 output_path,
                 pth=data_path + "/",
             )
-
-        if "ping_pong_competetive_1" in dict.values():
+            
+        if "ping_pong_competetive_1" in dict.values() and "leopard" in path:
             print(
                 colored("[INFO]", "green", attrs=["bold"]),
                 colored(stream_type, "blue"),
@@ -404,6 +406,7 @@ def dataframe_to_csv(
                 output_path,
                 pth=data_path + "/",
             )
+            ping_pong_competetive_1_activate = True
 
         if "hands_on_training" in dict.values():
             print(
@@ -472,28 +475,54 @@ def dataframe_to_csv(
             )
 
     try:
-        final_state = {
-            **get_state_rest,
-            **get_state_fingertap,
-            **affective_task_individual,
-            **get_state_affective_team,
-            **get_state_pingpong_coop_0,
-            **get_state_pingpong_comp_0,
-            **get_state_pingpong_comp_1,
-            **mincraft_handson_training,
-            **mincraft_saturn_a,
-            **mincraft_saturn_b,
-        }
+        if ping_pong_competetive_1_activate == True:
+            # Flag to just to make sure the script labels leopard with ping pong competetive 1
+            final_state = {
+                **get_state_rest,
+                **get_state_fingertap,
+                **affective_task_individual,
+                **get_state_affective_team,
+                **get_state_pingpong_coop_0,
+                **get_state_pingpong_comp_0,
+                **get_state_pingpong_comp_1,
+                **mincraft_handson_training,
+                **mincraft_saturn_a,
+                **mincraft_saturn_b,
+            }
+        else:
+            final_state = {
+                **get_state_rest,
+                **get_state_fingertap,
+                **affective_task_individual,
+                **get_state_affective_team,
+                **get_state_pingpong_coop_0,
+                **get_state_pingpong_comp_0,
+                **mincraft_handson_training,
+                **mincraft_saturn_a,
+                **mincraft_saturn_b,
+            }
     except NameError:
-        final_state = {
-            **get_state_rest,
-            **get_state_fingertap,
-            **affective_task_individual,
-            **get_state_affective_team,
-            **get_state_pingpong_coop_0,
-            **get_state_pingpong_comp_0,
-            **get_state_pingpong_comp_1
-        }
+        #  If there is an error parsing minecraft timestamps, just ignore it and label the rest of the data
+        if ping_pong_competetive_1_activate == True:
+            # Flag to just to make sure the script labels leopard with ping pong competetive 1
+            final_state = {
+                **get_state_rest,
+                **get_state_fingertap,
+                **affective_task_individual,
+                **get_state_affective_team,
+                **get_state_pingpong_coop_0,
+                **get_state_pingpong_comp_0,
+                **get_state_pingpong_comp_1
+            }
+        else:
+            final_state = {
+                **get_state_rest,
+                **get_state_fingertap,
+                **affective_task_individual,
+                **get_state_affective_team,
+                **get_state_pingpong_coop_0,
+                **get_state_pingpong_comp_0,
+            }
 
     df_remove_before = list(get_state_rest.keys())[0]
     try:
