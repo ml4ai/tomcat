@@ -22,7 +22,7 @@ STDERR_HANDLER = logging.StreamHandler(stream=sys.stderr)
 handlers = [FILE_HANDLER, STDERR_HANDLER]
 
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,
     handlers=handlers,
 )
 
@@ -37,40 +37,54 @@ def cd(path):
         os.chdir(old_path)
 
 
-def process_metadata_file(filepath, session, db_connection):
+def process_metadata_file(
+    filepath, session, file_to_key_messages_mapping, db_connection
+):
     trial_uuid = None
     mission = None
-    trial_start_timestamp = None
-    trial_stop_timestamp = None
+    start_timestamp = None
+    stop_timestamp = None
     testbed_version = None
     final_team_score = None
     scores = []
+    key_messages = file_to_key_messages_mapping[filepath]
 
     with open(filepath) as f:
         for line in f:
             message = json.loads(line)
             topic = message["topic"]
-            if topic == "trial":
-                trial_uuid = message["msg"]["trial_id"]
-                if message["msg"]["sub_type"] == "start":
-                    trial_start_timestamp = message["header"]["timestamp"]
-                    mission = message["data"]["experiment_mission"]
-                    testbed_version = message["data"]["testbed_version"]
-                elif message["msg"]["sub_type"] == "stop":
-                    trial_stop_timestamp = message["header"]["timestamp"]
-
             if topic == "observations/events/scoreboard":
                 score = message["data"]["scoreboard"]["TeamScore"]
                 scores.append(score)
+            else:
+                continue
+
+    start_timestamp = key_messages["mission_start"][0]["header"]["timestamp"]
+
+    stop_timestamp = (
+        key_messages["mission_stop"][0]["header"]["timestamp"]
+        if len(key_messages["mission_stop"]) == 1
+        else key_messages["trial_stop"][0]["header"]["timestamp"]
+    )
+
+    mission_name = key_messages["mission_start"][0]["data"]["mission"]
+    testbed_version = key_messages["trial_start"][-1]["data"][
+        "testbed_version"
+    ]
 
     if len(scores) != 0:
-        error(f"[MISSING DATA]:\t\tNo scoreboard messages found!")
+        error(
+            f"[MISSING DATA]: No scoreboard messages found in {filepath}!"
+            " This could be a bug in the testbed."
+        )
         final_team_score = scores[-1]
 
     data = (
-        trial_uuid,
+        key_messages["mission_start"][0]["msg"]["trial_id"],
         session,
-        mission,
+        mission_name,
+        start_timestamp,
+        stop_timestamp,
         final_team_score,
         testbed_version,
     )
@@ -79,7 +93,7 @@ def process_metadata_file(filepath, session, db_connection):
         with db_connection:
             db_connection.execute("PRAGMA foreign_keys = 1")
             db_connection.execute(
-                "INSERT into mission VALUES(?, ?, ?, ?, ?)", data
+                "INSERT into mission VALUES(?, ?, ?, ?, ?, ?, ?)", data
             )
     except sqlite3.IntegrityError:
         raise sqlite3.IntegrityError(f"Unable to insert row: {data}")
@@ -115,49 +129,115 @@ def should_ignore_directory(session) -> bool:
         return True
     elif (year, month) >= (2023, 4):
         info(
-            f"Ignoring {session}, since we have not implemented processing the new unified XDF files yet."
+            f"[FIXME]: Ignoring {session}, since we have not implemented processing the new unified XDF files yet."
         )
         return True
     else:
         return False
 
 
+def get_key_messages(metadata_file):
+    """Get key messages from a .metadata file."""
+    key_messages = {
+        "trial_start": [],
+        "trial_stop": [],
+        "mission_start": [],
+        "mission_stop": [],
+    }
+
+    with open(metadata_file) as f:
+        debug(f"Inspecting {metadata_file} to get key messages.")
+        for line in f:
+            message = json.loads(line)
+            topic = message["topic"]
+            if topic == "trial":
+                sub_type = message["msg"]["sub_type"]
+                if sub_type == "start":
+                    key_messages["trial_start"].append(message)
+                elif sub_type == "stop":
+                    key_messages["trial_stop"].append(message)
+                else:
+                    pass
+            elif topic == "observations/events/mission":
+                mission_state = message["data"]["mission_state"]
+                if mission_state == "Start":
+                    key_messages["mission_start"].append(message)
+                    debug(
+                        f"Mission start message detected ({message['data']['mission']})"
+                    )
+                elif mission_state == "Stop":
+                    key_messages["mission_stop"].append(message)
+                else:
+                    pass
+
+    return key_messages
+
+
 def collect_files_to_process(metadata_files):
     missions = {}
-    # all_key_message_types = {"trial_start", "trial_stop"}
+    file_to_key_messages_mapping = {}
+
     for metadata_file in metadata_files:
-        # key_messages = {"trial_start": []}
-        with open(metadata_file) as f:
-            debug(f"Inspecting {metadata_file} to get key messages.")
-            for line in f:
-                message = json.loads(line)
-                topic = message["topic"]
-                if topic == "trial":
-                    if message["msg"]["sub_type"] == "start":
-                        trial_start_timestamp = message["header"]["timestamp"]
-                        mission = message["data"]["experiment_mission"]
-                        if mission not in missions:
-                            missions[mission] = {metadata_file: trial_start_timestamp}
-                        else:
-                            missions[mission][metadata_file] = trial_start_timestamp
-                        break
+        key_messages = get_key_messages(metadata_file)
 
-            # Check whether we have all the key messages (trial start/stop, mission start/stop)
+        if len(key_messages["mission_start"]) != 1:
+            error(
+                "[ANOMALY]: We expected exactly 1 mission start message, but"
+                f" found {len(key_messages['mission_start'])} instead!"
+                " Skipping this file since we do not know the cause of this error."
+            )
+            continue
 
-            # for message_type, messages in key_messages.items():
-                # if len(messages) != 1:
-                    # error(f"{len(messages)} {message_type} messages found!")
-                    # for message in messages:
-                        # debug(
-                            # f"Timestamp: {message['header']['timestamp']}"
-                            # + f"\ttrial_id: {message['msg']['trial_id']}"
-                        # )
+        if len(key_messages["trial_start"]) == 0:
+            error(
+                "[ANOMALY]: We expected at least 1 trial start message but found 0."
+                " Skipping this file since we do not know the cause of this error."
+            )
+            continue
 
-            # missing_key_messages = all_key_message_types - set(key_messages)
-            # if len(missing_key_messages) != 0:
-            # # if missing_key_messages == {"mission_stop"}:
-            # warning(f"Missing key messages: {missing_key_messages}.")
+        if len(key_messages["trial_stop"]) == 0:
+            error(
+                f"[ANOMALY]: We expected at least 1 trial stop message, but found 0."
+                " Skipping this file since we do not know the cause of this error."
+            )
+            continue
 
+        if len(key_messages["trial_start"]) > 1:
+            error(
+                "[ANOMALY]: Ideally there would only be 1 trial start message,"
+                f" but we found {len(key_messages['trial_start'])}."
+                " We think this is due to a an older version of Paulo's Elasticsearch export"
+                " script being run. But we do *not* skip this file, we will simply"
+                " use the most recent trial start message"
+            )
+
+        if len(key_messages["trial_stop"]) > 1:
+            error(
+                "[ANOMALY]: Ideally there would only be 1 trial stop message,"
+                f" but we found {len(key_messages['trial_stop'])}."
+                " We think this is due to a an older version of Paulo's Elasticsearch export"
+                " script being run. But we do *not* skip this file, we will simply"
+                " use the most recent trial stop message"
+            )
+
+        if len(key_messages["mission_stop"]) != 1:
+            error(
+                f"[ANOMALY]: {len(key_messages['mission_stop'])} mission stop messages found!"
+                " This could be because of a participant getting sick, or some other reason."
+                " Thus, we do *not* skip this file."
+            )
+
+        file_to_key_messages_mapping.update({metadata_file: key_messages})
+        mission = key_messages["mission_start"][0]["data"]["mission"]
+        start_timestamp = key_messages["mission_start"][0]["header"][
+            "timestamp"
+        ]
+
+        if mission not in missions:
+            missions[mission] = {metadata_file: key_messages}
+        else:
+            missions[mission][metadata_file] = key_messages
+        break
 
     for mission, files in missions.items():
         files_to_ignore = []
@@ -165,13 +245,19 @@ def collect_files_to_process(metadata_files):
             info(
                 f"More than one .metadata file matches the {mission} mission."
             )
-            for file, timestamp in sorted(files.items()):
-                print(f"{timestamp}\t{file}")
+            for file, key_messages in sorted(files.items()):
+                print(
+                    f"{key_messages['mission_start'][0]['header']['timestamp']}\t{file}"
+                )
 
             files_sorted_by_timestamp_in_descending_order = [
                 file
-                for (file, timestamp) in sorted(
-                    files.items(), key=lambda x: x[1], reverse=True
+                for (file, key_messages) in sorted(
+                    files.items(),
+                    key=lambda x: x[1]["mission_start"][0]["header"][
+                        "timestamp"
+                    ],
+                    reverse=True,
                 )
             ]
 
@@ -192,10 +278,13 @@ def collect_files_to_process(metadata_files):
     all_missions = {"Hands-on Training", "Saturn_A", "Saturn_B"}
     missing_missions = all_missions - set(missions.keys())
     if len(missing_missions) != 0:
-        info(f"\tMissing missions: {missing_missions}")
+        info(f"[MISSING DATA]: Missing missions: {missing_missions}")
 
-    files_to_process = [list(x[1].keys())[0] for x in [item for item in missions.items()]]
-    return files_to_process
+    return file_to_key_messages_mapping
+    # files_to_process = [
+    # list(x[1].keys())[0] for x in [item for item in missions.items()]
+    # ]
+    return file_to_key_messages_mapping
 
 
 def process_directory_v1(session, db_connection):
@@ -205,12 +294,22 @@ def process_directory_v1(session, db_connection):
     try:
         with cd(f"{session}/minecraft"):
             metadata_files = sorted(glob("*.metadata"))
-            files_to_process = collect_files_to_process(metadata_files)
-            for metadata_file in files_to_process:
+            file_to_key_messages_mapping = collect_files_to_process(
+                metadata_files
+            )
+            for metadata_file in file_to_key_messages_mapping:
                 info(f"\tProcessing {metadata_file}")
-                process_metadata_file(metadata_file, session, db_connection)
+                process_metadata_file(
+                    metadata_file,
+                    session,
+                    file_to_key_messages_mapping,
+                    db_connection,
+                )
     except FileNotFoundError:
-        error(f"[MISSING DATA]: No 'minecraft' directory found in {session}. Skipping the directory!")
+        error(
+            f"[MISSING DATA]: No 'minecraft' directory found in {session}. Skipping the directory!"
+        )
+
 
 def initialize_database():
     schema = toSQLite("schema.dbml")
@@ -227,11 +326,13 @@ def process_directories():
         db_connection.execute(
             """
             CREATE TABLE mission (
-                id TEXT PRIMARY KEY,
-                group_session_id TEXT,
-                name TEXT,
+                id TEXT PRIMARY KEY NOT NULL,
+                group_session_id TEXT NOT NULL,
+                name TEXT NOT NULL,
+                start_timestamp TEXT NOT NULL,
+                stop_timestamp TEXT NOT NULL,
                 final_team_score TEXT,
-                testbed_version TEXT,
+                testbed_version TEXT NOT NULL,
                 FOREIGN KEY(group_session_id) REFERENCES group_session(id)
             );"""
         )
@@ -243,7 +344,9 @@ def process_directories():
             if not should_ignore_directory(directory)
         ]
 
-        for session in tqdm(sorted(directories_to_process), unit = "directories"):
+        for session in tqdm(
+            sorted(directories_to_process), unit="directories"
+        ):
             if should_ignore_directory(session):
                 continue
             else:
