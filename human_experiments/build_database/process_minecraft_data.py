@@ -2,11 +2,17 @@ import os
 import json
 from glob import glob
 import sqlite3
-from utils import cd, should_ignore_directory, logging_handlers
+from utils import (
+    cd,
+    should_ignore_directory,
+    logging_handlers,
+    convert_iso8601_timestamp_to_unix,
+)
 import logging
 from logging import info, warning, error, debug
 from tqdm import tqdm
 from config import DB_PATH
+
 
 def get_key_messages(metadata_file):
     """Get key messages from a .metadata file."""
@@ -42,7 +48,10 @@ def get_key_messages(metadata_file):
                     key_messages["mission_stop"].append(message)
                 else:
                     pass
-            elif topic == "observations/state" and not key_messages["approximate_mission_start"]:
+            elif (
+                topic == "observations/state"
+                and not key_messages["approximate_mission_start"]
+            ):
                 mission_timer = str(message["data"]["mission_timer"])
                 if "not initialized" not in mission_timer.lower():
                     key_messages["approximate_mission_start"] = message
@@ -86,10 +95,14 @@ def collect_files_to_process(metadata_files):
                     f" found 0 instead!"
                     " Using the timestamp of the first observations/state message as the mission start."
                 )
-                approximate_timestamp = key_messages['approximate_mission_start']['header']['timestamp']
+                approximate_timestamp = key_messages[
+                    "approximate_mission_start"
+                ]["header"]["timestamp"]
 
                 # Create a fake mission start message with the approximate timestamp
-                key_messages['mission_start'].append({'header': {'timestamp': approximate_timestamp}})
+                key_messages["mission_start"].append(
+                    {"header": {"timestamp": approximate_timestamp}}
+                )
             else:
                 error(
                     "[ANOMALY]: We expected exactly 1 mission start message, but"
@@ -178,6 +191,7 @@ def collect_files_to_process(metadata_files):
 
     return file_to_key_messages_mapping
 
+
 def process_directory_v1(session, db_connection):
     """Process directory assuming it is from before we had the unified XDF files."""
 
@@ -200,6 +214,7 @@ def process_directory_v1(session, db_connection):
         error(
             f"[MISSING DATA]: No 'minecraft' directory found in {session}. Skipping the directory!"
         )
+
 
 def process_metadata_file(
     filepath, session, file_to_key_messages_mapping, db_connection
@@ -248,7 +263,9 @@ def process_metadata_file(
         session,
         mission_name,
         start_timestamp,
+        convert_iso8601_timestamp_to_unix(start_timestamp),
         stop_timestamp,
+        convert_iso8601_timestamp_to_unix(stop_timestamp),
         final_team_score,
         testbed_version,
     )
@@ -257,10 +274,11 @@ def process_metadata_file(
         with db_connection:
             db_connection.execute("PRAGMA foreign_keys = 1")
             db_connection.execute(
-                "INSERT into mission VALUES(?, ?, ?, ?, ?, ?, ?)", data
+                "INSERT into mission VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", data
             )
     except sqlite3.IntegrityError:
         raise sqlite3.IntegrityError(f"Unable to insert row: {data}")
+
 
 def process_minecraft_data():
     info("Processing directories...")
@@ -274,8 +292,10 @@ def process_minecraft_data():
                 id TEXT PRIMARY KEY NOT NULL,
                 group_session_id TEXT NOT NULL,
                 name TEXT NOT NULL,
-                start_timestamp TEXT NOT NULL,
-                stop_timestamp TEXT NOT NULL,
+                start_timestamp_iso8601 TEXT NOT NULL,
+                start_timestamp_unix TEXT NOT NULL,
+                stop_timestamp_iso8601 TEXT NOT NULL,
+                stop_timestamp_unix TEXT NOT NULL,
                 final_team_score TEXT,
                 testbed_version TEXT NOT NULL,
                 FOREIGN KEY(group_session_id) REFERENCES group_session(id)

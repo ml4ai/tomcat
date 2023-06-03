@@ -32,8 +32,8 @@ def process_fnirs_data():
         db_connection.execute(
             """
             CREATE TABLE fnirs (
-                unix_timestamp TEXT NOT NULL,
-                iso8601_timestamp TEXT NOT NULL,
+                timestamp_unix TEXT NOT NULL,
+                timestamp_iso8601 TEXT NOT NULL,
                 participant_id TEXT NOT NULL,
                 group_session_id TEXT NOT NULL,
                 S1_D1_HbO REAL NOT NULL,
