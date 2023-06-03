@@ -3,7 +3,12 @@
 import os
 import sys
 import sqlite3
-from utils import cd, should_ignore_directory, logging_handlers
+from utils import (
+    cd,
+    should_ignore_directory,
+    logging_handlers,
+    convert_unix_timestamp_to_iso8601,
+)
 import pyxdf
 import logging
 from logging import info
@@ -12,7 +17,7 @@ from tqdm import tqdm
 
 
 logging.basicConfig(
-    level=logging.ERROR,
+    level=logging.INFO,
     handlers=logging_handlers,
 )
 
@@ -22,52 +27,55 @@ def process_fnirs_data():
 
     db_connection = sqlite3.connect(DB_PATH)
     with db_connection:
+        info("Dropping fnirs table")
         db_connection.execute("DROP TABLE IF EXISTS fnirs")
         db_connection.execute(
             """
             CREATE TABLE fnirs (
+                unix_timestamp TEXT NOT NULL,
+                iso8601_timestamp TEXT NOT NULL,
                 participant_id TEXT NOT NULL,
                 group_session_id TEXT NOT NULL,
-                S1-D1_HbO REAL NOT NULL,
-                S1-D2_HbO REAL NOT NULL,
-                S2-D1_HbO REAL NOT NULL,
-                S2-D3_HbO REAL NOT NULL,
-                S3-D1_HbO REAL NOT NULL,
-                S3-D3_HbO REAL NOT NULL,
-                S3-D4_HbO REAL NOT NULL,
-                S4-D2_HbO REAL NOT NULL,
-                S4-D4_HbO REAL NOT NULL,
-                S4-D5_HbO REAL NOT NULL,
-                S5-D3_HbO REAL NOT NULL,
-                S5-D4_HbO REAL NOT NULL,
-                S5-D6_HbO REAL NOT NULL,
-                S6-D4_HbO REAL NOT NULL,
-                S6-D6_HbO REAL NOT NULL,
-                S6-D7_HbO REAL NOT NULL,
-                S7-D5_HbO REAL NOT NULL,
-                S7-D7_HbO REAL NOT NULL,
-                S8-D6_HbO REAL NOT NULL,
-                S8-D7_HbO REAL NOT NULL,
-                S1-D1_HbR REAL NOT NULL,
-                S1-D2_HbR REAL NOT NULL,
-                S2-D1_HbR REAL NOT NULL,
-                S2-D3_HbR REAL NOT NULL,
-                S3-D1_HbR REAL NOT NULL,
-                S3-D3_HbR REAL NOT NULL,
-                S3-D4_HbR REAL NOT NULL,
-                S4-D2_HbR REAL NOT NULL,
-                S4-D4_HbR REAL NOT NULL,
-                S4-D5_HbR REAL NOT NULL,
-                S5-D3_HbR REAL NOT NULL,
-                S5-D4_HbR REAL NOT NULL,
-                S5-D6_HbR REAL NOT NULL,
-                S6-D4_HbR REAL NOT NULL,
-                S6-D6_HbR REAL NOT NULL,
-                S6-D7_HbR REAL NOT NULL,
-                S7-D5_HbR REAL NOT NULL,
-                S7-D7_HbR REAL NOT NULL,
-                S8-D6_HbR REAL NOT NULL,
-                S8-D7_HbR REAL NOT NULL,
+                S1_D1_HbO REAL NOT NULL,
+                S1_D2_HbO REAL NOT NULL,
+                S2_D1_HbO REAL NOT NULL,
+                S2_D3_HbO REAL NOT NULL,
+                S3_D1_HbO REAL NOT NULL,
+                S3_D3_HbO REAL NOT NULL,
+                S3_D4_HbO REAL NOT NULL,
+                S4_D2_HbO REAL NOT NULL,
+                S4_D4_HbO REAL NOT NULL,
+                S4_D5_HbO REAL NOT NULL,
+                S5_D3_HbO REAL NOT NULL,
+                S5_D4_HbO REAL NOT NULL,
+                S5_D6_HbO REAL NOT NULL,
+                S6_D4_HbO REAL NOT NULL,
+                S6_D6_HbO REAL NOT NULL,
+                S6_D7_HbO REAL NOT NULL,
+                S7_D5_HbO REAL NOT NULL,
+                S7_D7_HbO REAL NOT NULL,
+                S8_D6_HbO REAL NOT NULL,
+                S8_D7_HbO REAL NOT NULL,
+                S1_D1_HbR REAL NOT NULL,
+                S1_D2_HbR REAL NOT NULL,
+                S2_D1_HbR REAL NOT NULL,
+                S2_D3_HbR REAL NOT NULL,
+                S3_D1_HbR REAL NOT NULL,
+                S3_D3_HbR REAL NOT NULL,
+                S3_D4_HbR REAL NOT NULL,
+                S4_D2_HbR REAL NOT NULL,
+                S4_D4_HbR REAL NOT NULL,
+                S4_D5_HbR REAL NOT NULL,
+                S5_D3_HbR REAL NOT NULL,
+                S5_D4_HbR REAL NOT NULL,
+                S5_D6_HbR REAL NOT NULL,
+                S6_D4_HbR REAL NOT NULL,
+                S6_D6_HbR REAL NOT NULL,
+                S6_D7_HbR REAL NOT NULL,
+                S7_D5_HbR REAL NOT NULL,
+                S7_D7_HbR REAL NOT NULL,
+                S8_D6_HbR REAL NOT NULL,
+                S8_D7_HbR REAL NOT NULL,
                 FOREIGN KEY(participant_id) REFERENCES participant(id)
                 FOREIGN KEY(group_session_id) REFERENCES group_session(id)
             );"""
@@ -85,6 +93,7 @@ def process_fnirs_data():
         ):
             process_directory_v1(session, db_connection)
 
+
 def process_directory_v1(session, db_connection):
     info(f"Processing directory {session}")
     with cd(f"{session}"):
@@ -93,58 +102,41 @@ def process_directory_v1(session, db_connection):
             participant_id = None
             with db_connection:
                 participant_id = db_connection.execute(
-                        f"SELECT {directory}_participant_id FROM group_session WHERE group_session.id = '{session}'"
+                    f"SELECT {directory}_participant_id FROM group_session WHERE group_session.id = '{session}'"
                 ).fetchone()[0]
 
-            xdf_file = f"{directory}/eeg_fnirs_pupil/{directory}_eeg_fnirs_pupil.xdf"
-            streams, header = pyxdf.load_xdf(xdf_file, select_streams = [{"type": "NIRS"}])
-            for i in range(3):
-                with db_connection:
-                    db_connection.execute(
-                       f"INSERT into fnirs VALUES(
-                ) 
-                S1-D2_HbO REAL NOT NULL,
-                S2-D1_HbO REAL NOT NULL,
-                S2-D3_HbO REAL NOT NULL,
-                S3-D1_HbO REAL NOT NULL,
-                S3-D3_HbO REAL NOT NULL,
-                S3-D4_HbO REAL NOT NULL,
-                S4-D2_HbO REAL NOT NULL,
-                S4-D4_HbO REAL NOT NULL,
-                S4-D5_HbO REAL NOT NULL,
-                S5-D3_HbO REAL NOT NULL,
-                S5-D4_HbO REAL NOT NULL,
-                S5-D6_HbO REAL NOT NULL,
-                S6-D4_HbO REAL NOT NULL,
-                S6-D6_HbO REAL NOT NULL,
-                S6-D7_HbO REAL NOT NULL,
-                S7-D5_HbO REAL NOT NULL,
-                S7-D7_HbO REAL NOT NULL,
-                S8-D6_HbO REAL NOT NULL,
-                S8-D7_HbO REAL NOT NULL,
-                S1-D1_HbR REAL NOT NULL,
-                S1-D2_HbR REAL NOT NULL,
-                S2-D1_HbR REAL NOT NULL,
-                S2-D3_HbR REAL NOT NULL,
-                S3-D1_HbR REAL NOT NULL,
-                S3-D3_HbR REAL NOT NULL,
-                S3-D4_HbR REAL NOT NULL,
-                S4-D2_HbR REAL NOT NULL,
-                S4-D4_HbR REAL NOT NULL,
-                S4-D5_HbR REAL NOT NULL,
-                S5-D3_HbR REAL NOT NULL,
-                S5-D4_HbR REAL NOT NULL,
-                S5-D6_HbR REAL NOT NULL,
-                S6-D4_HbR REAL NOT NULL,
-                S6-D6_HbR REAL NOT NULL,
-                S6-D7_HbR REAL NOT NULL,
-                S7-D5_HbR REAL NOT NULL,
-                S7-D7_HbR REAL NOT NULL,
-                S8-D6_HbR REAL NOT NULL,
-                S8-D7_HbR REAL NOT NULL,
-
-                       )
+            xdf_file = (
+                f"{directory}/eeg_fnirs_pupil/{directory}_eeg_fnirs_pupil.xdf"
+            )
+            streams, header = pyxdf.load_xdf(
+                xdf_file, select_streams=[{"type": "NIRS"}]
+            )
+            fnirs_stream = streams[0]
+            data = [
+                [
+                    timestamp,
+                    convert_unix_timestamp_to_iso8601(timestamp),
+                    participant_id,
+                    session,
+                    *list(map(str, fnirs_stream["time_series"][i][41:])),
+                ]
+                for i, timestamp in enumerate(fnirs_stream["time_stamps"][0:2])
+            ]
+            with db_connection:
+                query = (
+                    "INSERT into fnirs VALUES(?, ?, ?, ?, "
+                    + ",".join(
+                        [
+                            "?"
+                            for i in streams[0]["info"]["desc"][0]["channels"][
+                                0
+                            ]["channel"][41:]
+                        ]
                     )
+                    + ")"
+                )
+                db_connection.executemany(query, data)
+
 
 if __name__ == "__main__":
     process_fnirs_data()

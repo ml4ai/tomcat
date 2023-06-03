@@ -4,7 +4,8 @@ import contextlib
 import logging
 from logging import info
 from config import logging_handlers
-
+import dateutil
+from datetime import datetime
 
 @contextlib.contextmanager
 def cd(path):
@@ -50,3 +51,12 @@ def should_ignore_directory(session) -> bool:
         return True
     else:
         return False
+
+def convert_unix_timestamp_to_iso8601(unix_timestamp):
+    iso8601_timestamp = datetime.fromtimestamp(unix_timestamp).isoformat()+"Z"
+    return iso8601_timestamp
+
+def convert_iso8601_timestamp_to_unix(iso8601_timestamp):
+    d = dateutil.parser.parse(iso8601_timestamp)
+    unix_timestamp = d.timestamp()
+    return unix_timestamp

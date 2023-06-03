@@ -13,3 +13,5 @@ services:
     entrypoint: |
         datasette -p 8001 -h 0.0.0.0 /mnt/test.db 
         --metadata /mnt/metadata.json
+        --setting sql_time_limit_ms 10000
+        --setting num_sql_threads 10
