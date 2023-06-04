@@ -16,15 +16,16 @@ def utc_time_ns(seconds):
     return dt_object.strftime("%Y-%m-%d %H:%M:%S.") + nanosec_str
 
 def create_time_distribution(data):
-    time_distribution_unix_list = data['time_stamps']
+    # time_distribution_unix_list = data['unix_time']
 
     ctime_list = []
 
-    for i in range(len(data['time_stamps'])):
-        timestamp_s = float(data['time_stamps'][i])
+    for i in range(len(data['unix_time'])):
+        timestamp_s = float(data['unix_time'][i])
         ctimestamp = utc_time_ns(timestamp_s)
         ctime_list.append(ctimestamp)
 
     time_distribution_human_readable = ctime_list
+    data['human_readable_time'] = time_distribution_human_readable
 
-    return time_distribution_human_readable, time_distribution_unix_list
+    return data

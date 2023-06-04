@@ -64,7 +64,9 @@ def read_xdf(
             minecraft_timestamps = read_minecraft_timestamps(block_2, PingPong_markers) # 2. Read Minecraft timestamps
     
     # Merge NIRS data with tasks timestamps
-    NIRS_tasks_merge(lion_0297_block_1, tiger_0239_block_1, leopard_0171_block_1, lion_0297_block_2, tiger_0239_block_2, leopard_0171_block_2)
+    lion_0297_block, tiger_0239_block, leopard_0171_block = NIRS_tasks_merge(lion_0297_block_1, tiger_0239_block_1, leopard_0171_block_1, lion_0297_block_2, tiger_0239_block_2, leopard_0171_block_2)
+    
+    # Label the NIRS data with tasks timestamps: RestState, FingerTapping, AffectiveTask, PingPong, Minecraft
     
     # for path in xdf_file_paths:
     #     data, header = pyxdf.load_xdf(path)
