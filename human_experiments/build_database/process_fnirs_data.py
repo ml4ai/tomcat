@@ -11,7 +11,7 @@ from utils import (
 )
 import pyxdf
 import logging
-from logging import info
+from logging import info, error
 from config import DB_PATH, logging_handlers
 from tqdm import tqdm
 
@@ -28,7 +28,7 @@ def process_fnirs_data():
     db_connection = sqlite3.connect(DB_PATH)
     with db_connection:
         info("Dropping fnirs table")
-        db_connection.execute("DROP TABLE IF EXISTS fnirs")
+        db_connection.execute("DROP TABLE IF EXISTS fnirs_raw")
         db_connection.execute(
             """
             CREATE TABLE fnirs_raw (
@@ -109,9 +109,18 @@ def process_directory_v1(session, db_connection):
             xdf_file = (
                 f"{directory}/eeg_fnirs_pupil/{directory}_eeg_fnirs_pupil.xdf"
             )
-            streams, header = pyxdf.load_xdf(
-                xdf_file, select_streams=[{"type": "NIRS"}]
-            )
+            try:
+                streams, header = pyxdf.load_xdf(
+                    xdf_file, select_streams=[{"type": "NIRS"}]
+                )
+            except ValueError as e:
+                error(f"[MISSING DATA]: No fNIRS stream found in {xdf_file}!")
+                print(e)
+                continue
+            except Exception as e:
+                error(f"[MISSING DATA]: {e}")
+                continue
+
             fnirs_stream = streams[0]
             block = "Unknown"
             data = [
@@ -123,7 +132,7 @@ def process_directory_v1(session, db_connection):
                     block,
                     *list(map(str, fnirs_stream["time_series"][i][41:])),
                 ]
-                for i, timestamp in enumerate(fnirs_stream["time_stamps"][0:2])
+                for i, timestamp in enumerate(fnirs_stream["time_stamps"][0:1])
             ]
             with db_connection:
                 query = (
