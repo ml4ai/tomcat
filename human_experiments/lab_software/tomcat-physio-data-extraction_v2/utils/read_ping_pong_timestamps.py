@@ -2,7 +2,10 @@ import json
 import pandas as pd
 from termcolor import colored
 
-def read_ping_pong_timestamps(block):
+def read_ping_pong_timestamps(block, AffectiveTask_team_marker):
+    idx = len(AffectiveTask_team_marker)
+    markers = AffectiveTask_team_marker
+
     for i in range(0,len(block)):
         if block[i]['info']['name'][0] == 'PingPong_competitive_0':
             #Lion and Tiger compete against each other.
@@ -19,6 +22,13 @@ def read_ping_pong_timestamps(block):
 
             # Convert list of dictionaries to DataFrame
             PingPong_competitive_0 = pd.DataFrame(data)
+            PingPong_competitive_0['lsl_timestamp']  =  block[i]['time_stamps']
+            
+            markers[idx] = {"state":"ping_pong_competetive_0", 
+                            "participant":{'lion', 'tiger'},
+                       "start_time":PingPong_competitive_0['lsl_timestamp'].iloc[0],
+                       "end_time":PingPong_competitive_0['lsl_timestamp'].iloc[-1]}
+            idx += 1
 
         if block[i]['info']['name'][0] == 'PingPong_competitive_1':
             #Leopard and experimentor compete with each other. 
@@ -35,6 +45,13 @@ def read_ping_pong_timestamps(block):
 
             # Convert list of dictionaries to DataFrame
             PingPong_competitive_1 = pd.DataFrame(data)
+            PingPong_competitive_1['lsl_timestamp']  =  block[i]['time_stamps']
+
+            markers[idx] = {"state":"ping_pong_competetive_1",
+                            "participant":{'leopard'},
+                          "start_time":PingPong_competitive_1['lsl_timestamp'].iloc[0],
+                            "end_time":PingPong_competitive_1['lsl_timestamp'].iloc[-1]}
+            idx += 1
 
         if block[i]['info']['name'][0] == 'PingPong_cooperative_0':
             #Lion, Tiger and Leopard cooperate and compete againsts an AI. 
@@ -51,6 +68,13 @@ def read_ping_pong_timestamps(block):
 
             # Convert list of dictionaries to DataFrame
             PingPong_cooperative_0 = pd.DataFrame(data)
+            PingPong_cooperative_0['lsl_timestamp']  =  block[i]['time_stamps']
 
-    return PingPong_competitive_0, PingPong_competitive_1, PingPong_cooperative_0
+            markers[idx] = {"state":"ping_pong_cooperative_0",
+                            "participant":None,
+                            "start_time":PingPong_cooperative_0['lsl_timestamp'].iloc[0],
+                            "end_time":PingPong_cooperative_0['lsl_timestamp'].iloc[-1]}
+            idx += 1
+
+    return markers
             

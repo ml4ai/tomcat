@@ -2,7 +2,10 @@ import json
 import pandas as pd
 from termcolor import colored
 
-def read_affective_task_timestamps_individual(block):
+def read_affective_task_timestamps_individual(block, finger_tapping_marker):
+    idx = len(finger_tapping_marker)
+    markers = finger_tapping_marker
+
     for i in range(0,len(block)):
         if block[i]['info']['name'][0] == 'AffectiveTask_tiger':
 
@@ -19,6 +22,13 @@ def read_affective_task_timestamps_individual(block):
 
             # Convert list of dictionaries to DataFrame
             AffectiveTask_tiger = pd.DataFrame(data)
+            AffectiveTask_tiger['lsl_timestamp']  =  block[i]['time_stamps']
+
+            markers[idx] = {"state":"affective_task_individual",
+                            "participant": "tiger",
+                        "start_time":AffectiveTask_tiger['lsl_timestamp'].iloc[0],
+                        "end_time":AffectiveTask_tiger['lsl_timestamp'].iloc[-1]}
+            idx += 1
 
         if block[i]['info']['name'][0] == 'AffectiveTask_lion':
 
@@ -35,6 +45,13 @@ def read_affective_task_timestamps_individual(block):
 
             # Convert list of dictionaries to DataFrame
             AffectiveTask_lion = pd.DataFrame(data)
+            AffectiveTask_lion['lsl_timestamp']  =  block[i]['time_stamps']
+
+            markers[idx] = {"state":"affective_task_individual",
+                            "participant": "lion",
+                        "start_time":AffectiveTask_lion['lsl_timestamp'].iloc[0],
+                        "end_time":AffectiveTask_lion['lsl_timestamp'].iloc[-1]}
+            idx += 1
 
         if block[i]['info']['name'][0] == 'AffectiveTask_leopard':
                 
@@ -51,10 +68,19 @@ def read_affective_task_timestamps_individual(block):
     
                 # Convert list of dictionaries to DataFrame
                 AffectiveTask_leopard = pd.DataFrame(data)
+                AffectiveTask_leopard['lsl_timestamp']  =  block[i]['time_stamps']
 
-    return AffectiveTask_tiger, AffectiveTask_lion, AffectiveTask_leopard
+                markers[idx] = {"state":"affective_task_individual",
+                                "participant": "leopard",
+                            "start_time":AffectiveTask_leopard['lsl_timestamp'].iloc[0],
+                            "end_time":AffectiveTask_leopard['lsl_timestamp'].iloc[-1]}
+                idx += 1
+    return markers
 
-def read_affective_task_timestamps_team(block):
+def read_affective_task_timestamps_team(block, AffectiveTask_individual_marker):
+    idx = len(AffectiveTask_individual_marker)
+    markers = AffectiveTask_individual_marker
+
     for i in range(0,len(block)):
         if block[i]['info']['name'][0] == 'AffectiveTask_team':
 
@@ -71,5 +97,11 @@ def read_affective_task_timestamps_team(block):
 
             # Convert list of dictionaries to DataFrame
             AffectiveTask_team = pd.DataFrame(data)
+            AffectiveTask_team['lsl_timestamp']  =  block[i]['time_stamps']
 
-            return AffectiveTask_team
+            markers[idx] = {"state":"affective_task_team",
+                            "participant": None,
+                        "start_time":AffectiveTask_team['lsl_timestamp'].iloc[0],
+                        "end_time":AffectiveTask_team['lsl_timestamp'].iloc[-1]}
+            idx += 1
+            return markers
