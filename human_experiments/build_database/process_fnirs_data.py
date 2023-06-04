@@ -31,11 +31,12 @@ def process_fnirs_data():
         db_connection.execute("DROP TABLE IF EXISTS fnirs")
         db_connection.execute(
             """
-            CREATE TABLE fnirs (
+            CREATE TABLE fnirs_raw (
                 timestamp_unix TEXT NOT NULL,
                 timestamp_iso8601 TEXT NOT NULL,
                 participant_id TEXT NOT NULL,
                 group_session_id TEXT NOT NULL,
+                block TEXT NOT NULL,
                 S1_D1_HbO REAL NOT NULL,
                 S1_D2_HbO REAL NOT NULL,
                 S2_D1_HbO REAL NOT NULL,
@@ -112,19 +113,21 @@ def process_directory_v1(session, db_connection):
                 xdf_file, select_streams=[{"type": "NIRS"}]
             )
             fnirs_stream = streams[0]
+            block = "Unknown"
             data = [
                 [
                     timestamp,
                     convert_unix_timestamp_to_iso8601(timestamp),
                     participant_id,
                     session,
+                    block,
                     *list(map(str, fnirs_stream["time_series"][i][41:])),
                 ]
                 for i, timestamp in enumerate(fnirs_stream["time_stamps"][0:2])
             ]
             with db_connection:
                 query = (
-                    "INSERT into fnirs VALUES(?, ?, ?, ?, "
+                    "INSERT into fnirs_raw VALUES(?, ?, ?, ?, ?, "
                     + ",".join(
                         [
                             "?"
