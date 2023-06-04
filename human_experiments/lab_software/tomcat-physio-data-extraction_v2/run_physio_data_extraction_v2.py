@@ -22,7 +22,8 @@ from utils import (
     read_ping_pong_timestamps,
     read_minecraft_timestamps,
     create_time_distribution,
-    NIRS_tasks_merge
+    NIRS_tasks_merge, 
+    label_data,
 )
 
 def read_xdf(
@@ -61,13 +62,13 @@ def read_xdf(
                 )
             block_2, _ = pyxdf.load_xdf(path)
             lion_0297_block_2, tiger_0239_block_2, leopard_0171_block_2  = read_nirs(block_2) # 1. Read NIRS data
-            minecraft_timestamps = read_minecraft_timestamps(block_2, PingPong_markers) # 2. Read Minecraft timestamps
+            minecraft_markers = read_minecraft_timestamps(block_2, PingPong_markers) # 2. Read Minecraft timestamps
     
     # Merge NIRS data with tasks timestamps
     lion_0297_block, tiger_0239_block, leopard_0171_block = NIRS_tasks_merge(lion_0297_block_1, tiger_0239_block_1, leopard_0171_block_1, lion_0297_block_2, tiger_0239_block_2, leopard_0171_block_2)
-    
+    label_data(lion_0297_block, tiger_0239_block, leopard_0171_block, minecraft_markers)
     # Label the NIRS data with tasks timestamps: RestState, FingerTapping, AffectiveTask, PingPong, Minecraft
-    
+
     # for path in xdf_file_paths:
     #     data, header = pyxdf.load_xdf(path)
 

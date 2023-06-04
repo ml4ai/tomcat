@@ -8,6 +8,7 @@ from .read_minecraft_timestamps import read_minecraft_timestamps
 from .create_time_distribution import create_time_distribution
 from .NIRS_tasks_merge import NIRS_tasks_merge
 from .create_time_distribution import create_time_distribution
+from .label_data import label_data
 
 def str2bool(v):
     if isinstance(v, bool):
