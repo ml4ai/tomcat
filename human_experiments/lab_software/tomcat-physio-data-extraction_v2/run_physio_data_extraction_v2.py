@@ -10,9 +10,6 @@ import argparse
 import numpy as np
 from termcolor import colored
 from utils import (
-#     get_start_stop_time_from_xdf,
-#     dataframe_to_csv,
-#     create_time_distribution,
     str2bool,
     read_nirs,
     read_rest_state_timestamps, 
@@ -21,9 +18,9 @@ from utils import (
     read_affective_task_timestamps_team,
     read_ping_pong_timestamps,
     read_minecraft_timestamps,
-    create_time_distribution,
     NIRS_tasks_merge, 
     label_data,
+    save_NIRS,
 )
 
 def read_xdf(
@@ -37,6 +34,7 @@ def read_xdf(
     exclude,
     filter,
     output_path,
+    rootdir_xdf
 ):
     """
     Read the XDF files.
@@ -49,7 +47,7 @@ def read_xdf(
                 )
             block_1, _ = pyxdf.load_xdf(path)
             
-            lion_0297_block_1, tiger_0239_block_1, leopard_0171_block_1  = read_nirs(block_1) # 1. Read NIRS timerseries data and its timestamps
+            lion_0297_block_1, tiger_0239_block_1, leopard_0171_block_1, lion_0297_raw_w1, tiger_0239_raw_w1, leopard_0171_raw_w1  = read_nirs(block_1) # 1. Read NIRS timerseries data and its timestamps
             rest_state_marker = read_rest_state_timestamps(block_1) # 2. Read RestState timestamps
             finger_tapping_marker = read_finger_tapping_time(block_1, rest_state_marker) # 3. Read FingerTapping timestamps
             AffectiveTask_individual_marker = read_affective_task_timestamps_individual(block_1, finger_tapping_marker) # 4. Read AffectiveTask timestamps
@@ -61,12 +59,17 @@ def read_xdf(
                     colored("block_2 ", "magenta", attrs=["bold", "blink"]).center(columns)
                 )
             block_2, _ = pyxdf.load_xdf(path)
-            lion_0297_block_2, tiger_0239_block_2, leopard_0171_block_2  = read_nirs(block_2) # 1. Read NIRS data
+            lion_0297_block_2, tiger_0239_block_2, leopard_0171_block_2, _, _, _  = read_nirs(block_2) # 1. Read NIRS data
             minecraft_markers = read_minecraft_timestamps(block_2, PingPong_markers) # 2. Read Minecraft timestamps
     
-    # Merge NIRS data with tasks timestamps
-    lion_0297_block, tiger_0239_block, leopard_0171_block = NIRS_tasks_merge(lion_0297_block_1, tiger_0239_block_1, leopard_0171_block_1, lion_0297_block_2, tiger_0239_block_2, leopard_0171_block_2)
-    label_data(lion_0297_block, tiger_0239_block, leopard_0171_block, minecraft_markers)
+    # Merge NIRS block 1 and block 2
+    lion_0297_block_NIRS, tiger_0239_block_NIRS, leopard_0171_block_NIRS = NIRS_tasks_merge(lion_0297_block_1, tiger_0239_block_1, leopard_0171_block_1, lion_0297_block_2, tiger_0239_block_2, leopard_0171_block_2)
+    lion_0297_block_NIRS_labeled, tiger_0239_block_NIRS_labeled, leopard_0171_block_NIRS_labeled = label_data(lion_0297_block_NIRS, tiger_0239_block_NIRS, leopard_0171_block_NIRS, minecraft_markers)
+
+    save_NIRS(lion_0297_block_NIRS_labeled, tiger_0239_block_NIRS_labeled, leopard_0171_block_NIRS_labeled, lion_0297_raw_w1, tiger_0239_raw_w1, leopard_0171_raw_w1 ,rootdir_xdf, output_path, extract_pkl, extract_csv, extract_hdf5, filter)
+    #Filter and save the data
+
+
     # Label the NIRS data with tasks timestamps: RestState, FingerTapping, AffectiveTask, PingPong, Minecraft
 
     # for path in xdf_file_paths:
@@ -256,6 +259,7 @@ def look_for_XDF_files(
         exclude,
         filter,
         output_path,
+        rootdir_xdf,
     )  # 1. read all the XDF files
 
 

@@ -9,6 +9,7 @@ from .create_time_distribution import create_time_distribution
 from .NIRS_tasks_merge import NIRS_tasks_merge
 from .create_time_distribution import create_time_distribution
 from .label_data import label_data
+from .filter_save_NIRS import save_NIRS
 
 def str2bool(v):
     if isinstance(v, bool):

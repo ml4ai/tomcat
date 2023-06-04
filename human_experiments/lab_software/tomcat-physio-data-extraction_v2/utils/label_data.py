@@ -17,3 +17,5 @@ def label_data(lion_0297_block, tiger_0239_block, leopard_0171_block, markers):
         for participant in participants:
             if participant in block_mapping:
                 update_state(block_mapping[participant], state, value['start_time'], value['end_time'])
+
+    return lion_0297_block, tiger_0239_block, leopard_0171_block
