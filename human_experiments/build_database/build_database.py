@@ -15,7 +15,7 @@ from config import DB_PATH, logging_handlers
 
 
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.INFO,
     handlers=logging_handlers,
 )
 

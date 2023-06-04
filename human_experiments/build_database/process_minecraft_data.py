@@ -7,11 +7,13 @@ from utils import (
     should_ignore_directory,
     logging_handlers,
     convert_iso8601_timestamp_to_unix,
+    is_directory_with_unified_xdf_files
 )
 import logging
 from logging import info, warning, error, debug
 from tqdm import tqdm
 from config import DB_PATH
+import pyxdf
 
 
 def get_key_messages(metadata_file):
@@ -279,6 +281,27 @@ def process_metadata_file(
     except sqlite3.IntegrityError:
         raise sqlite3.IntegrityError(f"Unable to insert row: {data}")
 
+def process_directory_v2(session, db_connection):
+    with cd(f"{session}/lsl"):
+        streams, header = pyxdf.load_xdf("block_2.xdf", select_streams=[{"type": "minecraft"}])
+        stream = streams[0]
+        info(f"Processing block_2.xdf for {session}.")
+        for i, timestamp in enumerate(stream["time_stamps"]):
+            text = stream["time_series"][i][0]
+            try:
+                message = json.loads(text)
+                topic = message["topic"]
+            except json.decoder.JSONDecodeError as e:
+                topic = text.split()[0][1:-1]
+                error_message = f"Unable to parse message number {i+1} (topic: {topic} as JSON!"
+                if topic in {"agent/ac/belief_diff", "agent/ac/threat_room_coordination"}:
+                    error_message += ("\n The message is from one of the Rutgers ACs "
+                            "(belief difference and threat room coordination),"
+                            "which are known to be buggy")
+                else:
+                    error_message += f"\n Message text: {text}"
+                error(error_message)
+                continue
 
 def process_minecraft_data():
     info("Processing directories...")
@@ -312,7 +335,8 @@ def process_minecraft_data():
         for session in tqdm(
             sorted(directories_to_process), unit="directories"
         ):
-            if should_ignore_directory(session):
-                continue
+            if not is_directory_with_unified_xdf_files(session):
+                # process_directory_v1(session, db_connection)
+                pass
             else:
-                process_directory_v1(session, db_connection)
+                process_directory_v2(session, db_connection)
