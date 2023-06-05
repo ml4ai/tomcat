@@ -101,7 +101,7 @@ def save_EEG(lion_0297_block_EEG_labeled, tiger_0239_block_EEG_labeled, leopard_
             colored("Saving unfiltered EEG to", "green", attrs=["bold"]),
             colored(file_path, "green", attrs=["bold"]),
             )
-            df[0].to_hdf(file_path, key="df", mode="w")
+            df.to_hdf(file_path, key="df", mode="w")
     
         if filter:
             filter_EEG(df, full_output_path)
