@@ -146,7 +146,7 @@ def save_NIRS(lion_0297_block_NIRS_labeled, tiger_0239_block_NIRS_labeled, leopa
         
         if extract_hdf5:
             # Create the full file path
-            file_path = os.path.join(full_output_path, "NIRS.hdf5")
+            file_path = os.path.join(full_output_path, "NIRS.h5")
             
             # Save the dataframe to a hdf5 file
             print("Saving NIRS data to: {}".format(file_path))

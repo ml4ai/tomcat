@@ -44,7 +44,7 @@ def save_Gaze(lion_0297_block_Gaze_labeled, tiger_0239_block_Gaze_labeled, leopa
         
         if extract_hdf5:
             # Create the full file path
-            file_path = os.path.join(full_output_path, "Gaze.hdf5")
+            file_path = os.path.join(full_output_path, "Gaze.h5")
             
             # Save the dataframe to a hdf5 file
             print("Saving Gaze data to: {}".format(file_path))
@@ -53,4 +53,4 @@ def save_Gaze(lion_0297_block_Gaze_labeled, tiger_0239_block_Gaze_labeled, leopa
             colored("Saving unfiltered Gaze to", "green", attrs=["bold"]),
             colored(file_path, "green", attrs=["bold"]),
             )
-            df[0].to_hdf(file_path, key="df", mode="w")
+            df.to_hdf(file_path, key="df", mode="w")

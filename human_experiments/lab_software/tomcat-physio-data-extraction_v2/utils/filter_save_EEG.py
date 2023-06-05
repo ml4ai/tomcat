@@ -92,7 +92,7 @@ def save_EEG(lion_0297_block_EEG_labeled, tiger_0239_block_EEG_labeled, leopard_
         
         if extract_hdf5:
             # Create the full file path
-            file_path = os.path.join(full_output_path, "EEG.hdf5")
+            file_path = os.path.join(full_output_path, "EEG.h5")
             
             # Save the dataframe to a hdf5 file
             print("Saving EEG data to: {}".format(file_path))
