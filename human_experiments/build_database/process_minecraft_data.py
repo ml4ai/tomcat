@@ -180,7 +180,7 @@ def collect_files_to_process(metadata_files):
                 f"More than one .metadata file matches the {mission} mission."
             )
             for file, key_messages in sorted(files.items()):
-                print(
+                info(
                     f"{key_messages['mission_start'][0]['header']['timestamp']}\t{file}"
                 )
 
@@ -253,15 +253,27 @@ def process_metadata_file(
     scores = []
     key_messages = file_to_key_messages_mapping[filepath]
 
+    messages_to_insert_into_db = []
     with open(filepath) as f:
+        mission_in_progress = False
         for line in f:
             message = json.loads(line)
             topic = message["topic"]
+
+            if topic == "observations/events/mission":
+                if message["data"]["mission_state"] == "Start":
+                    mission_in_progress = True
+
+            if topic == "observations/events/mission":
+                if message["data"]["mission_state"] == "Stop":
+                    mission_in_progress = False
+
             if topic == "observations/events/scoreboard":
                 score = message["data"]["scoreboard"]["TeamScore"]
                 scores.append(score)
-            else:
-                continue
+
+            if mission_in_progress:
+                messages_to_insert_into_db.append(message)
 
     start_timestamp = key_messages["mission_start"][0]["header"]["timestamp"]
 
@@ -283,7 +295,7 @@ def process_metadata_file(
         )
         final_team_score = scores[-1]
 
-    data = (
+    mission_data = (
         key_messages["mission_start"][0]["msg"]["trial_id"],
         session,
         mission_name,
@@ -299,10 +311,35 @@ def process_metadata_file(
         with db_connection:
             db_connection.execute("PRAGMA foreign_keys = 1")
             db_connection.execute(
-                "INSERT into mission VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", data
+                "INSERT into mission VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                mission_data
             )
     except sqlite3.IntegrityError:
         raise sqlite3.IntegrityError(f"Unable to insert row: {data}")
+
+    messages = [
+        (
+            convert_iso8601_timestamp_to_unix(message["header"]["timestamp"]),
+            message["header"]["timestamp"],
+            key_messages["mission_start"][0]["msg"]["trial_id"],
+            message.pop("topic"),
+            json.dumps(message),
+        )
+        for message in messages_to_insert_into_db
+    ]
+
+    with db_connection:
+        db_connection.execute("PRAGMA foreign_keys = 1")
+        try:
+            db_connection.executemany(
+                "INSERT into testbed_message VALUES(?, ?, ?, ?, ?)",
+                messages,
+            )
+        except sqlite3.IntegrityError as e:
+            raise sqlite3.IntegrityError(
+                f"Unable to insert row {data}, skipping. {e}"
+            )
+
 
 
 def process_directory_v2(session, db_connection):
@@ -383,13 +420,16 @@ def process_directory_v2(session, db_connection):
             print(mission, "\t", len(messages))
 
             if messages:
+                trial_id = messages[0][1]["msg"]["trial_id"]
                 assert len(messages) >= 2
+
 
                 scoreboard_messages = [
                     message[1]
                     for message in messages
                     if message[1]["topic"] == "observations/events/scoreboard"
                 ]
+
                 final_team_score = None
 
                 if scoreboard_messages:
@@ -397,13 +437,12 @@ def process_directory_v2(session, db_connection):
                         "scoreboard"
                     ]["TeamScore"]
                 else:
-                    error("No scoreboard messages found!")
+                    error("[MISSING DATA]: No scoreboard messages found!")
 
                 start_timestamp_lsl = stream["time_stamps"][messages[0][0]]
                 stop_timestamp_lsl = stream["time_stamps"][messages[-1][0]]
-                trial_id = messages[0][1]["msg"]["trial_id"]
 
-                data = (
+                mission_data = (
                     trial_id,
                     session,
                     mission,
@@ -420,13 +459,37 @@ def process_directory_v2(session, db_connection):
                         db_connection.execute("PRAGMA foreign_keys = 1")
                         db_connection.execute(
                             "INSERT into mission VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                            data,
+                            mission_data,
                         )
                 except sqlite3.IntegrityError as e:
-                    error(
-                        f"Unable to insert row: {data} into table 'mission'"
-                    )
+                    error(f"Unable to insert row: {data} into table 'mission'")
                     raise sqlite3.IntegrityError(e)
+
+                message_data = [
+                    (
+                        stream["time_stamps"][i],
+                        convert_unix_timestamp_to_iso8601(
+                            stream["time_stamps"][i]
+                        ),
+                        trial_id,
+                        message.pop("topic"),
+                        json.dumps(message),
+                    )
+                    for i, message in messages
+                ]
+
+                with db_connection:
+                    db_connection.execute("PRAGMA foreign_keys = 1")
+                    try:
+                        db_connection.executemany(
+                            "INSERT into testbed_message VALUES(?, ?, ?, ?, ?)",
+                            message_data,
+                        )
+                    except sqlite3.IntegrityError as e:
+                        raise sqlite3.IntegrityError(
+                            f"Unable to insert row {data}, skipping. {e}"
+                        )
+
 
 
 def process_minecraft_data():
@@ -452,6 +515,20 @@ def process_minecraft_data():
             );"""
         )
 
+        db_connection.execute("DROP TABLE IF EXISTS testbed_message")
+        db_connection.execute(
+            """
+            CREATE TABLE testbed_message (
+                timestamp_unix TEXT,
+                timestamp_iso8601 TEXT,
+                mission_id TEXT,
+                topic TEXT,
+                message JSON,
+                FOREIGN KEY(mission_id) REFERENCES mission(id)
+            );
+            """
+        )
+
     with cd("/tomcat/data/raw/LangLab/experiments/study_3_pilot/group"):
         directories_to_process = [
             directory
@@ -463,6 +540,7 @@ def process_minecraft_data():
             sorted(directories_to_process), unit="directories"
         ):
             if not is_directory_with_unified_xdf_files(session):
-                process_directory_v1(session, db_connection)
+                # process_directory_v1(session, db_connection)
+                pass
             else:
                 process_directory_v2(session, db_connection)

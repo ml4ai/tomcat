@@ -99,6 +99,35 @@ def process_fnirs_data():
                 process_directory_v2(session, db_connection)
 
 
+def insert_data_into_table(stream, participant_id, session, db_connection):
+    block = None
+    data = [
+        [
+            timestamp,
+            convert_unix_timestamp_to_iso8601(timestamp),
+            participant_id,
+            session,
+            block,
+            *list(map(str, stream["time_series"][i][41:])),
+        ]
+        for i, timestamp in enumerate(stream["time_stamps"])
+    ]
+    with db_connection:
+        query = (
+            "INSERT into fnirs_raw VALUES(?, ?, ?, ?, ?, "
+            + ",".join(
+                [
+                    "?"
+                    for i in stream["info"]["desc"][0]["channels"][0][
+                        "channel"
+                    ][41:]
+                ]
+            )
+            + ")"
+        )
+        db_connection.executemany(query, data)
+
+
 def process_directory_v1(session, db_connection):
     info(f"Processing directory {session}")
     with cd(f"{session}"):
@@ -111,7 +140,9 @@ def process_directory_v1(session, db_connection):
                 ).fetchone()[0]
 
             if "99999" in participant_id:
-                info(f"Participant ID '{participant_id}' is a confederate, so we skip processing their fNIRS data.")
+                info(
+                    f"Participant ID '{participant_id}' is a confederate, so we skip processing their fNIRS data."
+                )
                 continue
 
             xdf_file = (
@@ -129,40 +160,17 @@ def process_directory_v1(session, db_connection):
                 error(f"[MISSING DATA]: {e}")
                 continue
 
-            fnirs_stream = streams[0]
-            block = None
-            data = [
-                [
-                    timestamp,
-                    convert_unix_timestamp_to_iso8601(timestamp),
-                    participant_id,
-                    session,
-                    block,
-                    *list(map(str, fnirs_stream["time_series"][i][41:])),
-                ]
-                for i, timestamp in enumerate(fnirs_stream["time_stamps"][0:1])
-            ]
-            with db_connection:
-                query = (
-                    "INSERT into fnirs_raw VALUES(?, ?, ?, ?, ?, "
-                    + ",".join(
-                        [
-                            "?"
-                            for i in streams[0]["info"]["desc"][0]["channels"][
-                                0
-                            ]["channel"][41:]
-                        ]
-                    )
-                    + ")"
-                )
-                db_connection.executemany(query, data)
+            stream = streams[0]
+            insert_data_into_table(
+                stream, participant_id, session, db_connection
+            )
+
 
 def process_directory_v2(session, db_connection):
     """Process directory assuming unified XDF files."""
     info(f"Processing directory {session}")
     with cd(f"{session}/lsl"):
         for xdf_file in ("block_1.xdf", "block_2.xdf"):
-
             try:
                 streams, header = pyxdf.load_xdf(
                     xdf_file, select_streams=[{"type": "NIRS"}]
@@ -185,35 +193,14 @@ def process_directory_v2(session, db_connection):
                     ).fetchone()[0]
 
                 if "99999" in participant_id:
-                    info(f"Participant ID '{participant_id}' is a confederate, so we skip processing their fNIRS data.")
+                    info(
+                        f"Participant ID '{participant_id}' is a confederate, so we skip processing their fNIRS data."
+                    )
                     continue
 
-                block = None
-                data = [
-                    [
-                        timestamp,
-                        convert_unix_timestamp_to_iso8601(timestamp),
-                        participant_id,
-                        session,
-                        block,
-                        *list(map(str, stream["time_series"][i][41:])),
-                    ]
-                    for i, timestamp in enumerate(stream["time_stamps"])
-                ]
-                with db_connection:
-                    query = (
-                        "INSERT into fnirs_raw VALUES(?, ?, ?, ?, ?, "
-                        + ",".join(
-                            [
-                                "?"
-                                for i in streams[0]["info"]["desc"][0]["channels"][
-                                    0
-                                ]["channel"][41:]
-                            ]
-                        )
-                        + ")"
-                    )
-                    db_connection.executemany(query, data)
+                insert_data_into_table(
+                    stream, participant_id, session, db_connection
+                )
 
 
 if __name__ == "__main__":
