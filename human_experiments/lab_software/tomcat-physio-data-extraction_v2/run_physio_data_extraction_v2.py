@@ -103,9 +103,6 @@ def read_xdf(
 
 def look_for_XDF_files(
     rootdir_xdf,
-    rootdir_baseline_task,
-    rootdir_minecraft_data,
-    subject_id,
     extract_pkl,
     extract_csv,
     extract_hdf5,
@@ -132,9 +129,6 @@ def look_for_XDF_files(
 
     read_xdf(
         sorted(xdf_file_paths),
-        rootdir_baseline_task,
-        rootdir_minecraft_data,
-        subject_id,
         extract_pkl,
         extract_csv,
         extract_hdf5,
