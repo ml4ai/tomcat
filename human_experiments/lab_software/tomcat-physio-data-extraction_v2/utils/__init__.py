@@ -1,15 +1,17 @@
 import argparse
 from .read_NIRS import read_nirs
+from .read_EEG import read_eeg
 from .read_rest_state_timestamps import read_rest_state_timestamps
 from .read_finger_tapping_time import read_finger_tapping_time
 from .read_affective_task_timestamps import read_affective_task_timestamps_individual, read_affective_task_timestamps_team
 from .read_ping_pong_timestamps import read_ping_pong_timestamps
 from .read_minecraft_timestamps import read_minecraft_timestamps
 from .create_time_distribution import create_time_distribution
-from .NIRS_tasks_merge import NIRS_tasks_merge
+from .tasks_merge import NIRS_tasks_merge, EEG_tasks_merge
 from .create_time_distribution import create_time_distribution
 from .label_data import label_data
 from .filter_save_NIRS import save_NIRS
+from .filter_save_EEG import save_EEG
 
 def str2bool(v):
     if isinstance(v, bool):

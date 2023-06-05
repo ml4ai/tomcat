@@ -12,6 +12,7 @@ from termcolor import colored
 from utils import (
     str2bool,
     read_nirs,
+    read_eeg,
     read_rest_state_timestamps, 
     read_finger_tapping_time,
     read_affective_task_timestamps_individual,
@@ -19,8 +20,10 @@ from utils import (
     read_ping_pong_timestamps,
     read_minecraft_timestamps,
     NIRS_tasks_merge, 
+    EEG_tasks_merge,
     label_data,
     save_NIRS,
+    save_EEG,
 )
 
 def read_xdf(
@@ -47,7 +50,10 @@ def read_xdf(
                 )
             block_1, _ = pyxdf.load_xdf(path)
             
-            lion_0297_block_1, tiger_0239_block_1, leopard_0171_block_1, lion_0297_raw_w1, tiger_0239_raw_w1, leopard_0171_raw_w1  = read_nirs(block_1) # 1. Read NIRS timerseries data and its timestamps
+            lion_0297_block_1_NIRS, tiger_0239_block_1_NIRS, leopard_0171_block_1_NIRS, lion_0297_raw_w1, tiger_0239_raw_w1, leopard_0171_raw_w1  = read_nirs(block_1) # 1.1 Read NIRS timerseries data and its timestamps
+
+            lion_0297_block_1_EEG, tiger_0239_block_1_EEG, leopard_0171_block_1_EEG = read_eeg(block_1) # 1.2 Read EEG timerseries data and its timestamps
+
             rest_state_marker = read_rest_state_timestamps(block_1) # 2. Read RestState timestamps
             finger_tapping_marker = read_finger_tapping_time(block_1, rest_state_marker) # 3. Read FingerTapping timestamps
             AffectiveTask_individual_marker = read_affective_task_timestamps_individual(block_1, finger_tapping_marker) # 4. Read AffectiveTask timestamps
@@ -59,15 +65,29 @@ def read_xdf(
                     colored("block_2 ", "magenta", attrs=["bold", "blink"]).center(columns)
                 )
             block_2, _ = pyxdf.load_xdf(path)
-            lion_0297_block_2, tiger_0239_block_2, leopard_0171_block_2, _, _, _  = read_nirs(block_2) # 1. Read NIRS data
+            lion_0297_block_2_NIRS, tiger_0239_block_2_NIRS, leopard_0171_block_2_NIRS, _, _, _  = read_nirs(block_2) # 1.1 Read NIRS data
+
+            lion_0297_block_2_EEG, tiger_0239_block_2_EEG, leopard_0171_block_2_EEG = read_eeg(block_2) # 1.2 Read EEG data
+
             minecraft_markers = read_minecraft_timestamps(block_2, PingPong_markers) # 2. Read Minecraft timestamps
     
     # Merge NIRS block 1 and block 2
-    lion_0297_block_NIRS, tiger_0239_block_NIRS, leopard_0171_block_NIRS = NIRS_tasks_merge(lion_0297_block_1, tiger_0239_block_1, leopard_0171_block_1, lion_0297_block_2, tiger_0239_block_2, leopard_0171_block_2)
+    lion_0297_block_NIRS, tiger_0239_block_NIRS, leopard_0171_block_NIRS = NIRS_tasks_merge(lion_0297_block_1_NIRS, tiger_0239_block_1_NIRS, leopard_0171_block_1_NIRS, lion_0297_block_2_NIRS, tiger_0239_block_2_NIRS, leopard_0171_block_2_NIRS)
+
+    # Merge EEG block 1 and block 2
+    lion_0297_block_EEG, tiger_0239_block_EEG, leopard_0171_block_EEG = EEG_tasks_merge(lion_0297_block_1_EEG, tiger_0239_block_1_EEG, leopard_0171_block_1_EEG, lion_0297_block_2_EEG, tiger_0239_block_2_EEG, leopard_0171_block_2_EEG)
+
+    # Label the NIRS data with tasks timestamps: RestState, FingerTapping, AffectiveTask, PingPong, Minecraft
     lion_0297_block_NIRS_labeled, tiger_0239_block_NIRS_labeled, leopard_0171_block_NIRS_labeled = label_data(lion_0297_block_NIRS, tiger_0239_block_NIRS, leopard_0171_block_NIRS, minecraft_markers)
 
+    # Label the EEG data with tasks timestamps: RestState, FingerTapping, AffectiveTask, PingPong, Minecraft
+    lion_0297_block_EEG_labeled, tiger_0239_block_EEG_labeled, leopard_0171_block_EEG_labeled = label_data(lion_0297_block_EEG, tiger_0239_block_EEG, leopard_0171_block_EEG, minecraft_markers)
+    
+    #Filter and save the NIRS data
     save_NIRS(lion_0297_block_NIRS_labeled, tiger_0239_block_NIRS_labeled, leopard_0171_block_NIRS_labeled, lion_0297_raw_w1, tiger_0239_raw_w1, leopard_0171_raw_w1 ,rootdir_xdf, output_path, extract_pkl, extract_csv, extract_hdf5, filter)
-    #Filter and save the data
+    
+    #Filter and save the EEG data
+    save_EEG(lion_0297_block_EEG_labeled, tiger_0239_block_EEG_labeled, leopard_0171_block_EEG_labeled, rootdir_xdf, output_path, extract_pkl, extract_csv, extract_hdf5, filter)
 
 
     # Label the NIRS data with tasks timestamps: RestState, FingerTapping, AffectiveTask, PingPong, Minecraft

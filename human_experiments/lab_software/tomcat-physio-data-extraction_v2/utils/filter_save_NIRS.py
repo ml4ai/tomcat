@@ -82,7 +82,7 @@ def calculate_cv(df_hbo_hbr, df_w1, full_output_path):
         colored("calulating coeffecient of variance of NIRS", "green", attrs=["bold"]),
     )
 
-    rest_state_indices = df_hbo_hbr[df_hbo_hbr['state'] == 'rest_state'].index
+    rest_state_indices = df_hbo_hbr[df_hbo_hbr['event_type'] == 'rest_state'].index
 
     cv = lambda x: np.std(x, ddof=1) / np.mean(x) * 100
     coef_var = cv(df_w1[rest_state_indices[0]:rest_state_indices[-1]])
@@ -118,10 +118,6 @@ def save_NIRS(lion_0297_block_NIRS_labeled, tiger_0239_block_NIRS_labeled, leopa
         
         # Ensure the directory exists
         os.makedirs(full_output_path, exist_ok=True)
-
-        if filter:
-            calculate_cv(df[0], df[1], full_output_path)
-            filter_NIRS(df[0], full_output_path)
 
         if extract_csv:
             # Create the full file path
@@ -160,4 +156,8 @@ def save_NIRS(lion_0297_block_NIRS_labeled, tiger_0239_block_NIRS_labeled, leopa
             colored(file_path, "green", attrs=["bold"]),
             )
             df[0].to_hdf(file_path, key="df", mode="w")
+
+        if filter:
+            calculate_cv(df[0], df[1], full_output_path)
+            filter_NIRS(df[0], full_output_path)
     

@@ -1,7 +1,7 @@
 def update_state(block, state, start_time, end_time):
     start_index = block["unix_time"].searchsorted(start_time)
     end_index = block["unix_time"].searchsorted(end_time)
-    block.loc[start_index:end_index, 'state'] = state
+    block.loc[start_index:end_index, 'event_type'] = state
 
 def label_data(lion_0297_block, tiger_0239_block, leopard_0171_block, markers):
     block_mapping = {'lion': lion_0297_block, 'tiger': tiger_0239_block, 'leopard': leopard_0171_block}
