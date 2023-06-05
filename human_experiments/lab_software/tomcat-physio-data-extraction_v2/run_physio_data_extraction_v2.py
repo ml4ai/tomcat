@@ -13,6 +13,7 @@ from utils import (
     str2bool,
     read_nirs,
     read_eeg,
+    read_gaze,
     read_rest_state_timestamps, 
     read_finger_tapping_time,
     read_affective_task_timestamps_individual,
@@ -24,13 +25,11 @@ from utils import (
     label_data,
     save_NIRS,
     save_EEG,
+    save_Gaze,
 )
 
 def read_xdf(
     xdf_file_paths,
-    rootdir_baseline_task,
-    rootdir_minecraft_data,
-    subject_id,
     extract_pkl,
     extract_csv,
     extract_hdf5,
@@ -54,6 +53,8 @@ def read_xdf(
 
             lion_0297_block_1_EEG, tiger_0239_block_1_EEG, leopard_0171_block_1_EEG = read_eeg(block_1) # 1.2 Read EEG timerseries data and its timestamps
 
+            lion_0297_block_1_Gaze, tiger_0239_block_1_Gaze, leopard_0171_block_1_Gaze = read_gaze(block_1) # 1.3 Read Gaze timerseries data and its timestamps
+
             rest_state_marker = read_rest_state_timestamps(block_1) # 2. Read RestState timestamps
             finger_tapping_marker = read_finger_tapping_time(block_1, rest_state_marker) # 3. Read FingerTapping timestamps
             AffectiveTask_individual_marker = read_affective_task_timestamps_individual(block_1, finger_tapping_marker) # 4. Read AffectiveTask timestamps
@@ -69,6 +70,8 @@ def read_xdf(
 
             lion_0297_block_2_EEG, tiger_0239_block_2_EEG, leopard_0171_block_2_EEG = read_eeg(block_2) # 1.2 Read EEG data
 
+            lion_0297_block_2_Gaze, tiger_0239_block_2_Gaze, leopard_0171_block_2_Gaze = read_gaze(block_2) # 1.3 Read Gaze data
+
             minecraft_markers = read_minecraft_timestamps(block_2, PingPong_markers) # 2. Read Minecraft timestamps
     
     # Merge NIRS block 1 and block 2
@@ -77,11 +80,17 @@ def read_xdf(
     # Merge EEG block 1 and block 2
     lion_0297_block_EEG, tiger_0239_block_EEG, leopard_0171_block_EEG = EEG_tasks_merge(lion_0297_block_1_EEG, tiger_0239_block_1_EEG, leopard_0171_block_1_EEG, lion_0297_block_2_EEG, tiger_0239_block_2_EEG, leopard_0171_block_2_EEG)
 
+    # Merge Gaze block 1 and block 2
+    lion_0297_block_Gaze, tiger_0239_block_Gaze, leopard_0171_block_Gaze = EEG_tasks_merge(lion_0297_block_1_Gaze, tiger_0239_block_1_Gaze, leopard_0171_block_1_Gaze, lion_0297_block_2_Gaze, tiger_0239_block_2_Gaze, leopard_0171_block_2_Gaze)
+
     # Label the NIRS data with tasks timestamps: RestState, FingerTapping, AffectiveTask, PingPong, Minecraft
     lion_0297_block_NIRS_labeled, tiger_0239_block_NIRS_labeled, leopard_0171_block_NIRS_labeled = label_data(lion_0297_block_NIRS, tiger_0239_block_NIRS, leopard_0171_block_NIRS, minecraft_markers)
 
     # Label the EEG data with tasks timestamps: RestState, FingerTapping, AffectiveTask, PingPong, Minecraft
     lion_0297_block_EEG_labeled, tiger_0239_block_EEG_labeled, leopard_0171_block_EEG_labeled = label_data(lion_0297_block_EEG, tiger_0239_block_EEG, leopard_0171_block_EEG, minecraft_markers)
+
+    # Label the Gaze data with tasks timestamps: RestState, FingerTapping, AffectiveTask, PingPong, Minecraft
+    lion_0297_block_Gaze_labeled, tiger_0239_block_Gaze_labeled, leopard_0171_block_Gaze_labeled = label_data(lion_0297_block_Gaze, tiger_0239_block_Gaze, leopard_0171_block_Gaze, minecraft_markers)
     
     #Filter and save the NIRS data
     save_NIRS(lion_0297_block_NIRS_labeled, tiger_0239_block_NIRS_labeled, leopard_0171_block_NIRS_labeled, lion_0297_raw_w1, tiger_0239_raw_w1, leopard_0171_raw_w1 ,rootdir_xdf, output_path, extract_pkl, extract_csv, extract_hdf5, filter)
@@ -89,155 +98,8 @@ def read_xdf(
     #Filter and save the EEG data
     save_EEG(lion_0297_block_EEG_labeled, tiger_0239_block_EEG_labeled, leopard_0171_block_EEG_labeled, rootdir_xdf, output_path, extract_pkl, extract_csv, extract_hdf5, filter)
 
-
-    # Label the NIRS data with tasks timestamps: RestState, FingerTapping, AffectiveTask, PingPong, Minecraft
-
-    # for path in xdf_file_paths:
-    #     data, header = pyxdf.load_xdf(path)
-
-    #     if exclude not in path:
-    #         if "lion" in path:
-    #             print(
-    #                 colored("Lion ", "magenta", attrs=["bold", "blink"]).center(columns)
-    #             )
-    #         elif "leopard" in path:
-    #             print(
-    #                 colored("Leopard ", "magenta", attrs=["bold", "blink"]).center(
-    #                     columns
-    #                 )
-    #             )
-    #         else:
-    #             print(
-    #                 colored(
-    #                     "Tiger ", "magenta", "on_blue", attrs=["bold", "blink"]
-    #                 ).center(columns)
-    #             )
-
-    #         for i in range(0, len(data)):
-    #             if data[i]["info"]["type"] == ["NIRS"]:
-    #                 print(
-    #                     colored("[Status] Reading ", "green", attrs=["bold"]),
-    #                     colored(data[i]["info"]["type"], "blue"),
-    #                 )
-    #                 (
-    #                     time_start_streams_nirs,
-    #                     time_end_streams_nirs,
-    #                 ) = get_start_stop_time_from_xdf(
-    #                     data[i]
-    #                 )  # get the unix time
-    #                 (
-    #                     time_distribution_human_readable_nirs,
-    #                     time_distribution_unix_nirs,
-    #                 ) = create_time_distribution(
-    #                     data[i],
-    #                 )
-    #                 dataframe_to_csv(
-    #                     path,
-    #                     data[i]["time_series"],
-    #                     "NIRS",
-    #                     time_distribution_human_readable_nirs,
-    #                     time_distribution_unix_nirs,
-    #                     rootdir_baseline_task,
-    #                     rootdir_minecraft_data,
-    #                     subject_id,
-    #                     extract_pkl,
-    #                     extract_csv,
-    #                     extract_hdf5,
-    #                     filter,
-    #                     output_path,
-    #                 )
-
-    #             elif data[i]["info"]["type"] == ["Markers"]:
-    #                 # Our experiments don't use physical marker for the physio data
-    #                 print(
-    #                     colored("[Status] Skipping ", "green", attrs=["bold"]),
-    #                     colored(data[i]["info"]["type"], "blue"),
-    #                 )
-
-    #             elif data[i]["info"]["type"] == ["EEG"]:
-    #                 print(colored("[Status] Reading ", "green", attrs=["bold"]),
-    #                     colored(data[i]["info"]["type"], "blue"),
-    #                 )
-    #                 time_start_streams_eeg, time_end_streams_eeg = get_start_stop_time_from_xdf(data[i])
-    #                 time_distribution_human_readable_eeg, time_distribution_unix_eeg = create_time_distribution(data[i])
-                    
-    #                 # Create a list of channel names
-    #                 EEG_channels = []
-    #                 for channel_dict in data[i]['info']['desc'][0]['channels'][0]['channel']:
-    #                     EEG_channels.append(channel_dict['label'][0])
-
-    #                 channels_used = [
-    #                     "AFF1h", "F7", "FC5", "C3", "T7", "TP9", "Pz", "P3", "P7", "O1", "O2", "P8",
-    #                     "P4", "TP10", "Cz", "C4", "T8", "FC6", "FCz", "F8", "AFF2h", "AUX_GSR", "AUX_EKG"
-    #                 ]
-
-    #                 exclude_channels = [(i, ch) for i, ch in enumerate(EEG_channels) if ch not in channels_used]
-    #                 exclude_indices = [index for index, _ in exclude_channels]
-    #                 EEG_data = np.delete(data[i]['time_series'].T, exclude_indices, axis=0)
-
-    #                 dataframe_to_csv(
-    #                     path,
-    #                     EEG_data.T,  # Use EEG data with channels we want
-    #                     "EEG",
-    #                     time_distribution_human_readable_eeg,
-    #                     time_distribution_unix_eeg,
-    #                     rootdir_baseline_task,
-    #                     rootdir_minecraft_data,
-    #                     subject_id,
-    #                     extract_pkl,
-    #                     extract_csv,
-    #                     extract_hdf5,
-    #                     filter,
-    #                     output_path
-    #                 )
-
-
-    #             elif data[i]["info"]["type"] == ["Gaze"]:
-    #                 print(
-    #                     colored("[Status] Reading ", "green", attrs=["bold"]),
-    #                     colored(data[i]["info"]["type"], "blue"),
-    #                 )
-    #                 (
-    #                     time_start_streams_gaze,
-    #                     time_end_streams_gaze,
-    #                 ) = get_start_stop_time_from_xdf(
-    #                     data[i]
-    #                 )  # get the unix time
-    #                 (
-    #                     time_distribution_human_readable_gaze,
-    #                     time_distribution_unix_gaze,
-    #                 ) = create_time_distribution(
-    #                    data[i],
-    #                 )
-    #                 dataframe_to_csv(
-    #                     path,
-    #                     data[i]["time_series"],
-    #                     "Gaze",
-    #                     time_distribution_human_readable_gaze,
-    #                     time_distribution_unix_gaze,
-    #                     rootdir_baseline_task,
-    #                     rootdir_minecraft_data,
-    #                     subject_id,
-    #                     extract_pkl,
-    #                     extract_csv,
-    #                     extract_hdf5,
-    #                     filter,
-    #                     output_path,
-    #                 )
-
-    #             elif data[i]["info"]["type"] == ["Accelerometer"]:
-    #                 print(
-    #                     colored("[Status] Skipping ", "green", attrs=["bold"]),
-    #                     colored(data[i]["info"]["type"], "blue"),
-    #                 )
-    #                 # create_csv_file(path, 'Accelerometer')
-    #                 # time_start_streams_accel, time_end_streams_accel = get_start_stop_time_from_xdf(data[i]) #get the unix time
-    #     else:
-    #         print(
-    #             colored("[Status] Skipping ", "yellow", attrs=["bold"]),
-    #             colored(exclude, "red"),
-    #         )
-
+    #Filter and save the Gaze data
+    save_Gaze(lion_0297_block_Gaze_labeled, tiger_0239_block_Gaze_labeled, leopard_0171_block_Gaze_labeled, rootdir_xdf, output_path, extract_pkl, extract_csv, extract_hdf5, filter)
 
 def look_for_XDF_files(
     rootdir_xdf,
@@ -288,22 +150,7 @@ if __name__ == "__main__":
         description="Post experiment script for xdf to csv file conversion"
     )
     parser.add_argument(
-        "--p1", required=True, help="Path to the directory with the XDF files"
-    )
-
-    parser.add_argument(
-        "--p2", required=True, help="Enter the Path to folder with baseline task data"
-    )
-
-    parser.add_argument(
-        "--p3", required=True, help="Enter the Path to folder with minecraft data"
-    )
-
-    parser.add_argument(
-        "--s",
-        required=True,
-        action="append",
-        help="Enter the Path to folder with baseline task data",
+        "--p", required=True, help="Path to the directory with the XDF files"
     )
 
     parser.add_argument(
@@ -351,10 +198,7 @@ if __name__ == "__main__":
 
     arg = parser.parse_args()
 
-    rootdir_xdf = arg.p1
-    rootdir_baseline_task = arg.p2
-    rootdir_minecraft_data = arg.p3
-    subject_id = arg.s
+    rootdir_xdf = arg.p
     extract_pkl = arg.pkl
     extract_hdf5 = arg.hdf5
     extract_csv = arg.csv
@@ -369,9 +213,6 @@ if __name__ == "__main__":
     sys.exit(
         look_for_XDF_files(
             rootdir_xdf,
-            rootdir_baseline_task,
-            rootdir_minecraft_data,
-            subject_id,
             extract_pkl,
             extract_csv,
             extract_hdf5,

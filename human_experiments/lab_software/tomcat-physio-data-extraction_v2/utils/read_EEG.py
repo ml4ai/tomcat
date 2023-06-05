@@ -37,9 +37,9 @@ def read_eeg(block):
             lion_EEG_block = block[i]
             lion_EEG_block_df = pd.DataFrame(lion_EEG_block['time_series'], columns=headers) #Get channel data
             
-            print(colored("[Status] Extracted timeseries from NIRS as dataframe ", "green", attrs=["bold"]))
+            print(colored("[Status] Extracted timeseries from EEG as dataframe ", "green", attrs=["bold"]))
             lion_EEG_block_df['unix_time'] = lion_EEG_block['time_stamps'] #Get Unix time from XDF
-            print(colored("[Status] Merged NIRS timestamps with NIRS dataframe ", "green", attrs=["bold"]))
+            print(colored("[Status] Merged EEG timestamps with EEG dataframe ", "green", attrs=["bold"]))
 
         if block[i]['info']['name'][0] == 'actiCHamp-20010205' and block[i]['info']['type'][0] == 'EEG':
             print(colored("[Status] Reading ", "green", attrs=["bold"]),
@@ -49,9 +49,9 @@ def read_eeg(block):
             tiger_EEG_block = block[i]
             tiger_EEG_block_df = pd.DataFrame(tiger_EEG_block['time_series'], columns=headers)
             
-            print(colored("[Status] Extracted timeseries from NIRS as dataframe ", "green", attrs=["bold"]))
+            print(colored("[Status] Extracted timeseries from EEG as dataframe ", "green", attrs=["bold"]))
             tiger_EEG_block_df['unix_time'] = tiger_EEG_block['time_stamps'] #Get Unix time from XDF
-            print(colored("[Status] Merged NIRS timestamps with NIRS dataframe ", "green", attrs=["bold"]))
+            print(colored("[Status] Merged EEG timestamps with EEG dataframe ", "green", attrs=["bold"]))
         
         if block[i]['info']['name'][0] == 'actiCHamp-21020492' and block[i]['info']['type'][0] == 'EEG':
             print(colored("[Status] Reading ", "green", attrs=["bold"]),
@@ -61,8 +61,8 @@ def read_eeg(block):
             leopard_EEG_block = block[i]
             leopard_EEG_block_df = pd.DataFrame(leopard_EEG_block['time_series'], columns=headers)
             
-            print(colored("[Status] Extracted timeseries from NIRS as dataframe ", "green", attrs=["bold"]))
+            print(colored("[Status] Extracted timeseries from EEG as dataframe ", "green", attrs=["bold"]))
             leopard_EEG_block_df['unix_time'] = leopard_EEG_block['time_stamps'] #Get Unix time from XDF
-            print(colored("[Status] Merged NIRS timestamps with NIRS dataframe ", "green", attrs=["bold"]))
+            print(colored("[Status] Merged EEG timestamps with EEG dataframe ", "green", attrs=["bold"]))
 
     return lion_EEG_block_df, tiger_EEG_block_df, leopard_EEG_block_df

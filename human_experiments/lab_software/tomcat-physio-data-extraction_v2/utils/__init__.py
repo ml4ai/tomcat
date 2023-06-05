@@ -1,6 +1,7 @@
 import argparse
 from .read_NIRS import read_nirs
 from .read_EEG import read_eeg
+from .read_Gaze import read_gaze
 from .read_rest_state_timestamps import read_rest_state_timestamps
 from .read_finger_tapping_time import read_finger_tapping_time
 from .read_affective_task_timestamps import read_affective_task_timestamps_individual, read_affective_task_timestamps_team
@@ -12,6 +13,7 @@ from .create_time_distribution import create_time_distribution
 from .label_data import label_data
 from .filter_save_NIRS import save_NIRS
 from .filter_save_EEG import save_EEG
+from .filter_save_Gaze import save_Gaze
 
 def str2bool(v):
     if isinstance(v, bool):
