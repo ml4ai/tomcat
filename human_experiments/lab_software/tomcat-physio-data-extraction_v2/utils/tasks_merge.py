@@ -3,22 +3,19 @@ import pandas as pd
 from termcolor import colored
 from utils.create_time_distribution import create_time_distribution
 
-def NIRS_tasks_merge(lion_0297_block_1_NIRS, tiger_0239_block_1_NIRS, leopard_0171_block_1_NIRS, lion_0297_block_2_NIRS, tiger_0239_block_2_NIRS, leopard_0171_block_2_NIRS):
-    lion_0297_block_NIRS = pd.concat([lion_0297_block_1_NIRS, lion_0297_block_2_NIRS], ignore_index=True)
-    tiger_0239_block_NIRS = pd.concat([tiger_0239_block_1_NIRS, tiger_0239_block_2_NIRS], ignore_index=True)
-    leopard_0171_block_NIRS = pd.concat([leopard_0171_block_1_NIRS, leopard_0171_block_2_NIRS], ignore_index=True)
+def tasks_merge(lion_block_1, tiger_block_1, leopard_block_1, lion_block_2, tiger_block_2, leopard_block_2):
+    # If block 2 is empty, keep block 1 as is. If not, concatenate blocks 1 and 2
+    lion_block = lion_block_1 if lion_block_2.empty else pd.concat([lion_block_1, lion_block_2], ignore_index=True)
+    tiger_block = tiger_block_1 if tiger_block_2.empty else pd.concat([tiger_block_1, tiger_block_2], ignore_index=True)
+    leopard_block = leopard_block_1 if leopard_block_2.empty else pd.concat([leopard_block_1, leopard_block_2], ignore_index=True)
+    
+    # Create time distribution only if the final blocks are not empty
+    if not lion_block.empty:
+        lion_block = create_time_distribution(lion_block)
+    if not tiger_block.empty:
+        tiger_block = create_time_distribution(tiger_block)
+    if not leopard_block.empty:
+        leopard_block = create_time_distribution(leopard_block)
 
-    lion_0297_block_NIRS = create_time_distribution(lion_0297_block_NIRS)
-    tiger_0239_block_NIRS = create_time_distribution(tiger_0239_block_NIRS)
-    leopard_0171_block_NIRS = create_time_distribution(leopard_0171_block_NIRS)
-    return lion_0297_block_NIRS, tiger_0239_block_NIRS, leopard_0171_block_NIRS
+    return lion_block, tiger_block, leopard_block
 
-def EEG_tasks_merge(lion_0297_block_1_EEG, tiger_0239_block_1_EEG, leopard_0171_block_1_EEG, lion_0297_block_2_EEG, tiger_0239_block_2_EEG, leopard_0171_block_2_EEG):
-    lion_0297_block_EEG = pd.concat([lion_0297_block_1_EEG, lion_0297_block_2_EEG], ignore_index=True)
-    tiger_0239_block_EEG = pd.concat([tiger_0239_block_1_EEG, tiger_0239_block_2_EEG], ignore_index=True)
-    leopard_0171_block_EEG = pd.concat([leopard_0171_block_1_EEG, leopard_0171_block_2_EEG], ignore_index=True)
-
-    lion_0297_block_EEG = create_time_distribution(lion_0297_block_EEG)
-    tiger_0239_block_EEG = create_time_distribution(tiger_0239_block_EEG)
-    leopard_0171_block_EEG = create_time_distribution(leopard_0171_block_EEG)
-    return lion_0297_block_EEG, tiger_0239_block_EEG, leopard_0171_block_EEG

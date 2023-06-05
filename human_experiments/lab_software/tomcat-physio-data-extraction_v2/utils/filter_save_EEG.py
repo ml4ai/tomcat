@@ -55,7 +55,6 @@ def save_EEG(lion_0297_block_EEG_labeled, tiger_0239_block_EEG_labeled, leopard_
     df_dict = {"lion": lion_0297_block_EEG_labeled, "tiger": tiger_0239_block_EEG_labeled, "leopard": leopard_0171_block_EEG_labeled}
     
     # Extract the folder name from the input path
-    print("Input path: {}".format(input_path))
     folder_name = os.path.basename(input_path)
 
     for iMac, df in df_dict.items():

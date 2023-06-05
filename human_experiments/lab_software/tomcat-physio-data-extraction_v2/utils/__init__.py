@@ -8,7 +8,7 @@ from .read_affective_task_timestamps import read_affective_task_timestamps_indiv
 from .read_ping_pong_timestamps import read_ping_pong_timestamps
 from .read_minecraft_timestamps import read_minecraft_timestamps
 from .create_time_distribution import create_time_distribution
-from .tasks_merge import NIRS_tasks_merge, EEG_tasks_merge
+from .tasks_merge import tasks_merge
 from .create_time_distribution import create_time_distribution
 from .label_data import label_data
 from .filter_save_NIRS import save_NIRS

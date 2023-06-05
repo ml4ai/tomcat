@@ -20,8 +20,7 @@ from utils import (
     read_affective_task_timestamps_team,
     read_ping_pong_timestamps,
     read_minecraft_timestamps,
-    NIRS_tasks_merge, 
-    EEG_tasks_merge,
+    tasks_merge,
     label_data,
     save_NIRS,
     save_EEG,
@@ -75,13 +74,13 @@ def read_xdf(
             minecraft_markers = read_minecraft_timestamps(block_2, PingPong_markers) # 2. Read Minecraft timestamps
     
     # Merge NIRS block 1 and block 2
-    lion_0297_block_NIRS, tiger_0239_block_NIRS, leopard_0171_block_NIRS = NIRS_tasks_merge(lion_0297_block_1_NIRS, tiger_0239_block_1_NIRS, leopard_0171_block_1_NIRS, lion_0297_block_2_NIRS, tiger_0239_block_2_NIRS, leopard_0171_block_2_NIRS)
+    lion_0297_block_NIRS, tiger_0239_block_NIRS, leopard_0171_block_NIRS = tasks_merge(lion_0297_block_1_NIRS, tiger_0239_block_1_NIRS, leopard_0171_block_1_NIRS, lion_0297_block_2_NIRS, tiger_0239_block_2_NIRS, leopard_0171_block_2_NIRS)
 
     # Merge EEG block 1 and block 2
-    lion_0297_block_EEG, tiger_0239_block_EEG, leopard_0171_block_EEG = EEG_tasks_merge(lion_0297_block_1_EEG, tiger_0239_block_1_EEG, leopard_0171_block_1_EEG, lion_0297_block_2_EEG, tiger_0239_block_2_EEG, leopard_0171_block_2_EEG)
+    lion_0297_block_EEG, tiger_0239_block_EEG, leopard_0171_block_EEG = tasks_merge(lion_0297_block_1_EEG, tiger_0239_block_1_EEG, leopard_0171_block_1_EEG, lion_0297_block_2_EEG, tiger_0239_block_2_EEG, leopard_0171_block_2_EEG)
 
     # Merge Gaze block 1 and block 2
-    lion_0297_block_Gaze, tiger_0239_block_Gaze, leopard_0171_block_Gaze = EEG_tasks_merge(lion_0297_block_1_Gaze, tiger_0239_block_1_Gaze, leopard_0171_block_1_Gaze, lion_0297_block_2_Gaze, tiger_0239_block_2_Gaze, leopard_0171_block_2_Gaze)
+    lion_0297_block_Gaze, tiger_0239_block_Gaze, leopard_0171_block_Gaze = tasks_merge(lion_0297_block_1_Gaze, tiger_0239_block_1_Gaze, leopard_0171_block_1_Gaze, lion_0297_block_2_Gaze, tiger_0239_block_2_Gaze, leopard_0171_block_2_Gaze)
 
     # Label the NIRS data with tasks timestamps: RestState, FingerTapping, AffectiveTask, PingPong, Minecraft
     lion_0297_block_NIRS_labeled, tiger_0239_block_NIRS_labeled, leopard_0171_block_NIRS_labeled = label_data(lion_0297_block_NIRS, tiger_0239_block_NIRS, leopard_0171_block_NIRS, minecraft_markers)
