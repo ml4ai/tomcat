@@ -7,11 +7,62 @@ from utils import (
     should_ignore_directory,
     logging_handlers,
     convert_iso8601_timestamp_to_unix,
+    convert_unix_timestamp_to_iso8601,
+    is_directory_with_unified_xdf_files,
 )
 import logging
 from logging import info, warning, error, debug
 from tqdm import tqdm
 from config import DB_PATH
+import pyxdf
+
+
+def update_key_messages_dict(message, key_messages):
+    """Populate key messages dictionary."""
+    topic = message["topic"]
+    if topic == "trial":
+        sub_type = message["msg"]["sub_type"]
+        if sub_type == "start":
+            info(
+                "Trial start message detected"
+                f" ({message['data']['experiment_mission']}) with"
+                f" .header.timestamp {message['header']['timestamp']}"
+            )
+            key_messages["trial_start"].append(message)
+        elif sub_type == "stop":
+            info(
+                "Trial stop message detected"
+                f" ({message['data']['experiment_mission']}) with"
+                f" .header.timestamp {message['header']['timestamp']}"
+            )
+            key_messages["trial_stop"].append(message)
+        else:
+            pass
+    elif topic == "observations/events/mission":
+        mission_state = message["data"]["mission_state"]
+        if mission_state == "Start":
+            info(
+                "Mission start message detected"
+                f" ({message['data']['mission']}) with"
+                f" .header.timestamp {message['header']['timestamp']}"
+            )
+            key_messages["mission_start"].append(message)
+        elif mission_state == "Stop":
+            info(
+                "Mission stop message detected"
+                f" ({message['data']['mission']}) with"
+                f" .header.timestamp {message['header']['timestamp']}"
+            )
+            key_messages["mission_stop"].append(message)
+        else:
+            pass
+    elif (
+        topic == "observations/state"
+        and not key_messages["approximate_mission_start"]
+    ):
+        mission_timer = str(message["data"]["mission_timer"])
+        if "not initialized" not in mission_timer.lower():
+            key_messages["approximate_mission_start"] = message
 
 
 def get_key_messages(metadata_file):
@@ -28,33 +79,7 @@ def get_key_messages(metadata_file):
         debug(f"Inspecting {metadata_file} to get key messages.")
         for line in f:
             message = json.loads(line)
-            topic = message["topic"]
-            if topic == "trial":
-                sub_type = message["msg"]["sub_type"]
-                if sub_type == "start":
-                    key_messages["trial_start"].append(message)
-                elif sub_type == "stop":
-                    key_messages["trial_stop"].append(message)
-                else:
-                    pass
-            elif topic == "observations/events/mission":
-                mission_state = message["data"]["mission_state"]
-                if mission_state == "Start":
-                    key_messages["mission_start"].append(message)
-                    debug(
-                        f"Mission start message detected ({message['data']['mission']})"
-                    )
-                elif mission_state == "Stop":
-                    key_messages["mission_stop"].append(message)
-                else:
-                    pass
-            elif (
-                topic == "observations/state"
-                and not key_messages["approximate_mission_start"]
-            ):
-                mission_timer = str(message["data"]["mission_timer"])
-                if "not initialized" not in mission_timer.lower():
-                    key_messages["approximate_mission_start"] = message
+            update_key_messages_dict(message, key_messages)
 
     return key_messages
 
@@ -155,7 +180,7 @@ def collect_files_to_process(metadata_files):
                 f"More than one .metadata file matches the {mission} mission."
             )
             for file, key_messages in sorted(files.items()):
-                print(
+                info(
                     f"{key_messages['mission_start'][0]['header']['timestamp']}\t{file}"
                 )
 
@@ -228,15 +253,27 @@ def process_metadata_file(
     scores = []
     key_messages = file_to_key_messages_mapping[filepath]
 
+    messages_to_insert_into_db = []
     with open(filepath) as f:
+        mission_in_progress = False
         for line in f:
             message = json.loads(line)
             topic = message["topic"]
+
+            if topic == "observations/events/mission":
+                if message["data"]["mission_state"] == "Start":
+                    mission_in_progress = True
+
+            if topic == "observations/events/mission":
+                if message["data"]["mission_state"] == "Stop":
+                    mission_in_progress = False
+
             if topic == "observations/events/scoreboard":
                 score = message["data"]["scoreboard"]["TeamScore"]
                 scores.append(score)
-            else:
-                continue
+
+            if mission_in_progress:
+                messages_to_insert_into_db.append(message)
 
     start_timestamp = key_messages["mission_start"][0]["header"]["timestamp"]
 
@@ -258,7 +295,7 @@ def process_metadata_file(
         )
         final_team_score = scores[-1]
 
-    data = (
+    mission_data = (
         key_messages["mission_start"][0]["msg"]["trial_id"],
         session,
         mission_name,
@@ -274,10 +311,185 @@ def process_metadata_file(
         with db_connection:
             db_connection.execute("PRAGMA foreign_keys = 1")
             db_connection.execute(
-                "INSERT into mission VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", data
+                "INSERT into mission VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                mission_data
             )
     except sqlite3.IntegrityError:
         raise sqlite3.IntegrityError(f"Unable to insert row: {data}")
+
+    messages = [
+        (
+            convert_iso8601_timestamp_to_unix(message["header"]["timestamp"]),
+            message["header"]["timestamp"],
+            key_messages["mission_start"][0]["msg"]["trial_id"],
+            message.pop("topic"),
+            json.dumps(message),
+        )
+        for message in messages_to_insert_into_db
+    ]
+
+    with db_connection:
+        db_connection.execute("PRAGMA foreign_keys = 1")
+        try:
+            db_connection.executemany(
+                "INSERT into testbed_message VALUES(?, ?, ?, ?, ?)",
+                messages,
+            )
+        except sqlite3.IntegrityError as e:
+            raise sqlite3.IntegrityError(
+                f"Unable to insert row {data}, skipping. {e}"
+            )
+
+
+
+def process_directory_v2(session, db_connection):
+    """Process directory assuming it contains unified XDF files."""
+
+    with cd(f"{session}/lsl"):
+        streams, header = pyxdf.load_xdf(
+            "block_2.xdf", select_streams=[{"type": "minecraft"}]
+        )
+        stream = streams[0]
+        info(f"Processing block_2.xdf for {session}.")
+        key_messages = {
+            "trial_start": [],
+            "trial_stop": [],
+            "mission_start": [],
+            "mission_stop": [],
+            "approximate_mission_start": None,
+        }
+
+        messages = {"Hands-on Training": [], "Saturn_A": [], "Saturn_B": []}
+
+        current_mission = None
+        testbed_version = None
+        for i, timestamp in enumerate(stream["time_stamps"]):
+            text = stream["time_series"][i][0]
+            try:
+                message = json.loads(text)
+
+            except json.decoder.JSONDecodeError as e:
+                topic = text.split()[0][1:-1]
+                error_message = f"Unable to parse message number {i+1} (topic: {topic} as JSON!"
+                if topic in {
+                    "agent/ac/belief_diff",
+                    "agent/ac/threat_room_coordination",
+                }:
+                    error_message += (
+                        "\n The message is from one of the Rutgers ACs "
+                        "(belief difference and threat room coordination),"
+                        "which are known to be buggy"
+                    )
+                else:
+                    error_message += f"\n Message text: {text}"
+
+                debug(error_message)
+                continue
+
+            topic = message["topic"]
+
+            if topic == "observations/events/mission":
+                mission_state = message["data"]["mission_state"]
+                if mission_state == "Start":
+                    current_mission = message["data"]["mission"]
+                    if messages[current_mission]:
+                        info(
+                            f"There was already a mission of type {current_mission}"
+                            f" so we clear all {len(messages[current_mission])} messages from that mission"
+                        )
+                        messages[current_mission].clear()
+                    messages[current_mission].append((i, message))
+                elif mission_state == "Stop":
+                    messages[current_mission].append((i, message))
+                    current_mission = None
+                else:
+                    pass
+            elif (
+                topic == "trial"
+                and message["msg"]["sub_type"] == "start"
+                and testbed_version is None
+                # The line above assumes that we do not update the testbed in
+                # the middle of a trial.
+            ):
+                testbed_version = message["data"]["testbed_version"]
+            else:
+                if current_mission is not None:
+                    messages[current_mission].append((i, message))
+
+        for mission, messages in messages.items():
+            print(mission, "\t", len(messages))
+
+            if messages:
+                trial_id = messages[0][1]["msg"]["trial_id"]
+                assert len(messages) >= 2
+
+
+                scoreboard_messages = [
+                    message[1]
+                    for message in messages
+                    if message[1]["topic"] == "observations/events/scoreboard"
+                ]
+
+                final_team_score = None
+
+                if scoreboard_messages:
+                    final_team_score = scoreboard_messages[-1]["data"][
+                        "scoreboard"
+                    ]["TeamScore"]
+                else:
+                    error("[MISSING DATA]: No scoreboard messages found!")
+
+                start_timestamp_lsl = stream["time_stamps"][messages[0][0]]
+                stop_timestamp_lsl = stream["time_stamps"][messages[-1][0]]
+
+                mission_data = (
+                    trial_id,
+                    session,
+                    mission,
+                    convert_unix_timestamp_to_iso8601(start_timestamp_lsl),
+                    start_timestamp_lsl,
+                    convert_unix_timestamp_to_iso8601(stop_timestamp_lsl),
+                    stop_timestamp_lsl,
+                    final_team_score,
+                    testbed_version,
+                )
+
+                try:
+                    with db_connection:
+                        db_connection.execute("PRAGMA foreign_keys = 1")
+                        db_connection.execute(
+                            "INSERT into mission VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                            mission_data,
+                        )
+                except sqlite3.IntegrityError as e:
+                    error(f"Unable to insert row: {data} into table 'mission'")
+                    raise sqlite3.IntegrityError(e)
+
+                message_data = [
+                    (
+                        stream["time_stamps"][i],
+                        convert_unix_timestamp_to_iso8601(
+                            stream["time_stamps"][i]
+                        ),
+                        trial_id,
+                        message.pop("topic"),
+                        json.dumps(message),
+                    )
+                    for i, message in messages
+                ]
+
+                with db_connection:
+                    db_connection.execute("PRAGMA foreign_keys = 1")
+                    try:
+                        db_connection.executemany(
+                            "INSERT into testbed_message VALUES(?, ?, ?, ?, ?)",
+                            message_data,
+                        )
+                    except sqlite3.IntegrityError as e:
+                        raise sqlite3.IntegrityError(
+                            f"Unable to insert row {data}, skipping. {e}"
+                        )
+
 
 
 def process_minecraft_data():
@@ -285,6 +497,7 @@ def process_minecraft_data():
 
     db_connection = sqlite3.connect(DB_PATH)
     with db_connection:
+        info("Dropping mission table!")
         db_connection.execute("DROP TABLE IF EXISTS mission")
         db_connection.execute(
             """
@@ -302,6 +515,20 @@ def process_minecraft_data():
             );"""
         )
 
+        db_connection.execute("DROP TABLE IF EXISTS testbed_message")
+        db_connection.execute(
+            """
+            CREATE TABLE testbed_message (
+                timestamp_unix TEXT,
+                timestamp_iso8601 TEXT,
+                mission_id TEXT,
+                topic TEXT,
+                message JSON,
+                FOREIGN KEY(mission_id) REFERENCES mission(id)
+            );
+            """
+        )
+
     with cd("/tomcat/data/raw/LangLab/experiments/study_3_pilot/group"):
         directories_to_process = [
             directory
@@ -312,7 +539,8 @@ def process_minecraft_data():
         for session in tqdm(
             sorted(directories_to_process), unit="directories"
         ):
-            if should_ignore_directory(session):
-                continue
+            if not is_directory_with_unified_xdf_files(session):
+                # process_directory_v1(session, db_connection)
+                pass
             else:
-                process_directory_v1(session, db_connection)
+                process_directory_v2(session, db_connection)

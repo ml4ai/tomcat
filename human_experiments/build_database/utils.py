@@ -44,13 +44,12 @@ def should_ignore_directory(session) -> bool:
             f"Ignoring {session}, since it was cancelled (no participants showed up.)"
         )
         return True
-    elif (year, month) >= (2023, 4):
-        info(
-            f"[FIXME]: Ignoring {session}, since we have not implemented processing the new unified XDF files yet."
-        )
-        return True
     else:
         return False
+
+def is_directory_with_unified_xdf_files(session):
+    year, month, day, hour = [int(x) for x in session.split("_")[1:]]
+    return (year, month) >= (2023, 4)
 
 def convert_unix_timestamp_to_iso8601(unix_timestamp):
     iso8601_timestamp = datetime.fromtimestamp(unix_timestamp).isoformat()+"Z"
