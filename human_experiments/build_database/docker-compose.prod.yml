@@ -11,7 +11,7 @@ services:
         - .:/mnt
 
     entrypoint: |
-        datasette -p 8001 -h 0.0.0.0 /mnt/tomcat.db
-        --metadata /mnt/metadata.json
+        datasette -p 8001 -h 0.0.0.0 -i /mnt/tomcat.db
+        --metadata /mnt/metadata.yml
         --setting sql_time_limit_ms 10000
         --setting num_sql_threads 10

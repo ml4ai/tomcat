@@ -1,4 +1,8 @@
-plugins:
-    datasette-auth-passwords:
-        someusername_password_hash:
-            $env: PASSWORD_HASH_1
+title: The ToMCAT Dataset
+description: Multimodal dataset for human-machine teaming research.
+license: TBD
+tables:
+  mission:
+    name: The name of the mission (Hands-on Training, Saturn A, or Saturn B)
+    start_timestamp_unix: The starting Unix timestamp of the mission.
+    stop_timestamp_unix: The stopping Unix timestamp of the mission.
