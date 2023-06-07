@@ -1,3 +1,4 @@
+"""Script to process testbed messages"""
 import os
 import json
 from glob import glob
@@ -13,9 +14,13 @@ from utils import (
 import logging
 from logging import info, warning, error, debug
 from tqdm import tqdm
-from config import DB_PATH
+from config import DB_PATH, logging_handlers
 import pyxdf
 
+logging.basicConfig(
+    level=logging.INFO,
+    handlers=logging_handlers,
+)
 
 def update_key_messages_dict(message, key_messages):
     """Populate key messages dictionary."""
@@ -492,7 +497,7 @@ def process_directory_v2(session, db_connection):
 
 
 
-def process_minecraft_data():
+def process_testbed_messages():
     info("Processing directories...")
 
     db_connection = sqlite3.connect(DB_PATH)
@@ -543,3 +548,6 @@ def process_minecraft_data():
                 process_directory_v1(session, db_connection)
             else:
                 process_directory_v2(session, db_connection)
+
+if __name__ == "__main__":
+    process_testbed_messages()
