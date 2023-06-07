@@ -34,7 +34,7 @@ def process_directory_v1(session, db_connection):
         team_csv_files = glob("team_*.csv")
         csv_files = {
             "individual": individual_csv_files,
-            "team": team_csv_files
+            "team": team_csv_files,
         }
 
         # We expect exactly 3 CSV file.
@@ -43,12 +43,31 @@ def process_directory_v1(session, db_connection):
 
         for csv_file in individual_csv_files:
             participant_id = csv_file.split("_")[1]
-            df = pd.read_csv(csv_file, delimiter=";")
+            df = pd.read_csv(
+                csv_file,
+                delimiter=";",
+                usecols=[
+                    "time",
+                    "image_path",
+                    "subject_id",
+                    "arousal_score",
+                    "valence_score",
+                    "event_type",
+                ],
+                dtype={
+                    "time": str,
+                    "image_path": str,
+                    "subject_id": str,
+                    "arousal_score": str,
+                    "valence_score": str,
+                    }
+            )
 
             rows = [
                 (
                     session,
                     participant_id,
+                    "individual",
                     row["time"],
                     convert_unix_timestamp_to_iso8601(df["time"].iloc[i]),
                     row["event_type"],
@@ -61,17 +80,36 @@ def process_directory_v1(session, db_connection):
 
             with db_connection:
                 db_connection.executemany(
-                    "INSERT into affective_task_event VALUES(?, ?, ?, ?, ?, ?, ?, ?);",
+                    "INSERT into affective_task_event VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);",
                     rows,
                 )
 
         for csv_file in team_csv_files:
-            df = pd.read_csv(csv_file, delimiter=";")
+            df = pd.read_csv(
+                csv_file,
+                delimiter=";",
+                usecols=[
+                    "time",
+                    "image_path",
+                    "subject_id",
+                    "arousal_score",
+                    "valence_score",
+                    "event_type",
+                ],
+                dtype={
+                    "time": str,
+                    "image_path": str,
+                    "subject_id": str,
+                    "arousal_score": str,
+                    "valence_score": str,
+                    }
+            )
 
             rows = [
                 (
                     session,
                     row["subject_id"],
+                    "team",
                     row["time"],
                     convert_unix_timestamp_to_iso8601(df["time"].iloc[i]),
                     row["event_type"],
@@ -84,7 +122,7 @@ def process_directory_v1(session, db_connection):
 
             with db_connection:
                 db_connection.executemany(
-                    "INSERT into affective_task_event VALUES(?, ?, ?, ?, ?, ?, ?, ?);",
+                    "INSERT into affective_task_event VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);",
                     rows,
                 )
 
@@ -96,14 +134,16 @@ def process_directory_v2(session, db_connection):
         streams, header = pyxdf.load_xdf(
             "block_1.xdf", select_streams=[{"type": "affective_task"}]
         )
-        for stream in streams:
-        # start_timestamp_lsl = stream["time_stamps"][0]
-        # stop_timestamp_lsl = stream["time_stamps"][-1]
+        for i, stream in enumerate(streams):
+            # start_timestamp_lsl = stream["time_stamps"][0]
+            # stop_timestamp_lsl = stream["time_stamps"][-1]
 
+            task_type = "individual" if i != 3 else "team"
             rows = [
                 (
                     session,
                     json.loads(data[0])["subject_id"],
+                    task_type,
                     timestamp,
                     convert_unix_timestamp_to_iso8601(timestamp),
                     json.loads(data[0])["event_type"],
@@ -111,14 +151,15 @@ def process_directory_v2(session, db_connection):
                     json.loads(data[0])["arousal_score"],
                     json.loads(data[0])["valence_score"],
                 )
-                for timestamp, data in zip(stream["time_stamps"], stream["time_series"])
+                for timestamp, data in zip(
+                    stream["time_stamps"], stream["time_series"]
+                )
             ]
-
 
             with db_connection:
                 db_connection.executemany(
-                    "INSERT into affective_task_event VALUES(?, ?, ?, ?, ?, ?, ?, ?);",
-                    rows
+                    "INSERT into affective_task_event VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);",
+                    rows,
                 )
 
 
@@ -132,14 +173,13 @@ def process_rest_state_task_data():
             "DROP TABLE IF EXISTS individual_affective_task_event"
         )
 
-        db_connection.execute(
-            "DROP TABLE IF EXISTS affective_task_event"
-        )
+        db_connection.execute("DROP TABLE IF EXISTS affective_task_event")
         db_connection.execute(
             """
             CREATE TABLE affective_task_event (
                 group_session_id TEXT NOT NULL,
                 participant_id TEXT,
+                task_type TEXT NOT NULL,
                 timestamp_unix TEXT NOT NULL,
                 timestamp_iso8601 TEXT NOT NULL,
                 event_type TEXT NOT NULL,
