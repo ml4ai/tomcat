@@ -1,6 +1,6 @@
 title: The ToMCAT Dataset
 description: Multimodal dataset for human-machine teaming research.
-license: CC BY-NC-A 4.0
+license: CC BY-NC-SA 4.0
 tables:
   mission:
     name: The name of the mission (Hands-on Training, Saturn A, or Saturn B)
