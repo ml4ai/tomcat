@@ -5,7 +5,12 @@ import logging
 from logging import info
 from config import logging_handlers
 import dateutil
-from datetime import datetime
+import datetime
+from pytz import timezone
+import time
+
+MST = timezone("US/Arizona")
+
 
 @contextlib.contextmanager
 def cd(path):
@@ -15,6 +20,7 @@ def cd(path):
         yield
     finally:
         os.chdir(old_path)
+
 
 def should_ignore_directory(session) -> bool:
     """Returns true if this directory should be ignored."""
@@ -47,13 +53,18 @@ def should_ignore_directory(session) -> bool:
     else:
         return False
 
+
 def is_directory_with_unified_xdf_files(session):
     year, month, day, hour = [int(x) for x in session.split("_")[1:]]
     return (year, month) >= (2023, 4)
 
+
 def convert_unix_timestamp_to_iso8601(unix_timestamp):
-    iso8601_timestamp = datetime.fromtimestamp(unix_timestamp).isoformat()+"Z"
+    iso8601_timestamp = datetime.datetime.fromtimestamp(
+        float(unix_timestamp), tz=MST
+    ).astimezone(tz=datetime.timezone.utc).isoformat(timespec='microseconds')
     return iso8601_timestamp
+
 
 def convert_iso8601_timestamp_to_unix(iso8601_timestamp):
     d = dateutil.parser.parse(iso8601_timestamp)

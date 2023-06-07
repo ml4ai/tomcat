@@ -76,7 +76,7 @@ def get_key_messages(metadata_file):
     }
 
     with open(metadata_file) as f:
-        debug(f"Inspecting {metadata_file} to get key messages.")
+        info(f"Inspecting {metadata_file} to get key messages.")
         for line in f:
             message = json.loads(line)
             update_key_messages_dict(message, key_messages)
@@ -171,7 +171,6 @@ def collect_files_to_process(metadata_files):
             missions[mission] = {metadata_file: key_messages}
         else:
             missions[mission][metadata_file] = key_messages
-        break
 
     for mission, files in missions.items():
         files_to_ignore = []
@@ -205,6 +204,7 @@ def collect_files_to_process(metadata_files):
                 " value of the first trial start message in the .metadata file."
                 f"\nMost recent .metadata file: {most_recent_file}"
             )
+            info(f"Ignoring files: {files_to_ignore}")
 
         for file in files_to_ignore:
             del files[file]
@@ -509,7 +509,7 @@ def process_minecraft_data():
                 start_timestamp_unix TEXT NOT NULL,
                 stop_timestamp_iso8601 TEXT NOT NULL,
                 stop_timestamp_unix TEXT NOT NULL,
-                final_team_score TEXT,
+                final_team_score INTEGER,
                 testbed_version TEXT NOT NULL,
                 FOREIGN KEY(group_session_id) REFERENCES group_session(id)
             );"""
@@ -534,13 +534,12 @@ def process_minecraft_data():
             directory
             for directory in os.listdir(".")
             if not should_ignore_directory(directory)
-        ]
+            ]
 
         for session in tqdm(
             sorted(directories_to_process), unit="directories"
         ):
             if not is_directory_with_unified_xdf_files(session):
-                # process_directory_v1(session, db_connection)
-                pass
+                process_directory_v1(session, db_connection)
             else:
                 process_directory_v2(session, db_connection)
