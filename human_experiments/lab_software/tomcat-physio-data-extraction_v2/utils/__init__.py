@@ -14,6 +14,7 @@ from .label_data import label_data
 from .filter_save_NIRS import save_NIRS
 from .filter_save_EEG import save_EEG
 from .filter_save_Gaze import save_Gaze
+from .create_baseline_task_directory import create_baseline_task_directory
 
 def str2bool(v):
     if isinstance(v, bool):

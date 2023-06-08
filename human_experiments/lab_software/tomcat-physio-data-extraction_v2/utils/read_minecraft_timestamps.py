@@ -1,4 +1,5 @@
 import json
+from termcolor import colored
 
 def read_minecraft_timestamps(block, PingPong_markers):
     idx = len(PingPong_markers)
@@ -10,6 +11,9 @@ def read_minecraft_timestamps(block, PingPong_markers):
     condition = []
     for i in range(len(block)):
         if block[i]['info']['name'][0] == 'Minecraft':
+            print(colored("[Info] Reading ", "green", attrs=["bold"]),
+                colored(block[i]['info']['name'][0], "blue"),
+            )
             for ind, line in enumerate(block[i]['time_series']):
                 try:
                     json_message = json.loads(line[0])
@@ -75,6 +79,8 @@ def read_minecraft_timestamps(block, PingPong_markers):
             "start_time": data["start_time"],
             "end_time": data["end_time"]
         }
+        print(colored("[Status] Reading Minecraft state to", "green", attrs=["bold"]), 
+              colored(markers[idx], "blue"))
         idx += 1
 
     print(markers)

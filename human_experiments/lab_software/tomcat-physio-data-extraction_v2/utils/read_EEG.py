@@ -36,7 +36,7 @@ def read_eeg(block):
     for i in range(0,len(block)):
         try:
             if block[i]['info']['name'][0] == 'actiCHamp-21030529' and block[i]['info']['type'][0] == 'EEG':
-                print(colored("[Status] Reading ", "green", attrs=["bold"]),
+                print(colored("[Info] Reading ", "green", attrs=["bold"]),
                     colored(block[i]["info"]["type"], "blue"),
                     colored(block[i]["info"]["name"], "blue"),
                 )
@@ -48,7 +48,7 @@ def read_eeg(block):
                 print(colored("[Status] Merged EEG timestamps with EEG dataframe ", "green", attrs=["bold"]))
 
             if block[i]['info']['name'][0] == 'actiCHamp-20010205' and block[i]['info']['type'][0] == 'EEG':
-                print(colored("[Status] Reading ", "green", attrs=["bold"]),
+                print(colored("[Info] Reading ", "green", attrs=["bold"]),
                     colored(block[i]["info"]["type"], "blue"),
                     colored(block[i]["info"]["name"], "blue"),
                 )
@@ -60,7 +60,7 @@ def read_eeg(block):
                 print(colored("[Status] Merged EEG timestamps with EEG dataframe ", "green", attrs=["bold"]))
             
             if block[i]['info']['name'][0] == 'actiCHamp-21020492' and block[i]['info']['type'][0] == 'EEG':
-                print(colored("[Status] Reading ", "green", attrs=["bold"]),
+                print(colored("[Info] Reading ", "green", attrs=["bold"]),
                     colored(block[i]["info"]["type"], "blue"),
                     colored(block[i]["info"]["name"], "blue"),
                 )

@@ -25,6 +25,7 @@ from utils import (
     save_NIRS,
     save_EEG,
     save_Gaze,
+    create_baseline_task_directory,
 )
 
 def read_xdf(
@@ -54,11 +55,12 @@ def read_xdf(
 
             lion_0297_block_1_Gaze, tiger_0239_block_1_Gaze, leopard_0171_block_1_Gaze = read_gaze(block_1) # 1.3 Read Gaze timerseries data and its timestamps
 
-            rest_state_marker = read_rest_state_timestamps(block_1) # 2. Read RestState timestamps
-            finger_tapping_marker = read_finger_tapping_time(block_1, rest_state_marker) # 3. Read FingerTapping timestamps
-            AffectiveTask_individual_marker = read_affective_task_timestamps_individual(block_1, finger_tapping_marker) # 4. Read AffectiveTask timestamps
-            AffectiveTask_team_marker = read_affective_task_timestamps_team(block_1, AffectiveTask_individual_marker) # 5. Read AffectiveTask timestamps
-            PingPong_markers = read_ping_pong_timestamps(block_1, AffectiveTask_team_marker) # 6. Read PingPong timestamps   
+            create_baseline_task_directory(rootdir_xdf, output_path) # 0. Create directories for each task
+            rest_state_marker = read_rest_state_timestamps(block_1, rootdir_xdf, output_path) # 2. Read RestState timestamps
+            finger_tapping_marker = read_finger_tapping_time(block_1, rest_state_marker, rootdir_xdf, output_path) # 3. Read FingerTapping timestamps
+            AffectiveTask_individual_marker = read_affective_task_timestamps_individual(block_1, finger_tapping_marker, rootdir_xdf, output_path) # 4. Read AffectiveTask timestamps
+            AffectiveTask_team_marker = read_affective_task_timestamps_team(block_1, AffectiveTask_individual_marker, rootdir_xdf, output_path) # 5. Read AffectiveTask timestamps
+            PingPong_markers = read_ping_pong_timestamps(block_1, AffectiveTask_team_marker, rootdir_xdf, output_path) # 6. Read PingPong timestamps   
 
         elif "block_2" in path:
             print(
