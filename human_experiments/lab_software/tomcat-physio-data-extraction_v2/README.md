@@ -1,4 +1,4 @@
-# Extraction for old data acquisition pipeline:
+# Physio data extraction for new data acquisition pipeline developed after 04/17/2023:
 
 ## Usage 
 To run the code, you need to provide the required flags:

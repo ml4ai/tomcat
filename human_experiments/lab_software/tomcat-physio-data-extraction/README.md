@@ -1,4 +1,4 @@
-# Extraction for old data acquisition pipeline:
+# Physio data extraction for old data acquisition pipeline:
 
 ## Usage
 To run the code, you need to provide the required flags:
