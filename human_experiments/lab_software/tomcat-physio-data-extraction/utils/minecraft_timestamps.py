@@ -55,8 +55,10 @@ def read_minecraft_time(baseline_task_dict, rootdir_minecraft_data):
 
                 for i in range(len(TrialMessages)):
                     try:
-                        testbed_version = TrialMessages[i]['data']['testbed_version']
-                        map_name = TrialMessages[i]['data']['experiment_mission'].lower()
+                        testbed_version = TrialMessages[i]["data"]["testbed_version"]
+                        map_name = TrialMessages[i]["data"][
+                            "experiment_mission"
+                        ].lower()
                         if map_name == "hands-on training":
                             map_name = "hands_on_training"
                         for idx, sub in enumerate(TrialMessages[i]["data"]["subjects"]):

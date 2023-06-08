@@ -8,18 +8,15 @@ from .minecraft_timestamps import read_minecraft_time
 from .NIRS_filtering import check_cv, filter_NIRS
 from .EEG_filter import filter_EEG
 
+
 def get_timestamps_from_dict(
     df, state, dict, column_name, data, stream_type, output_path, pth
 ):
     df_temp = df
     state_temp = state
     rest_state_time_start, rest_state_time_stop = dict["start_time"], dict["end_time"]
-    iloc_idx_start = df_temp["unix_time"].searchsorted(
-        round(rest_state_time_start, 7)
-    )
-    iloc_idx_end = df_temp["unix_time"].searchsorted(
-        round(rest_state_time_stop, 7)
-    )
+    iloc_idx_start = df_temp["unix_time"].searchsorted(round(rest_state_time_start, 7))
+    iloc_idx_end = df_temp["unix_time"].searchsorted(round(rest_state_time_stop, 7))
     state_start = df_temp.index[iloc_idx_start]
     state_end = df_temp.index[
         iloc_idx_end
@@ -225,14 +222,14 @@ def dataframe_to_csv(
         all_task_time = read_minecraft_time(baseline_task_time, rootdir_minecraft_data)
     except Exception as e:
         print(
-                colored("[Error]", "red", attrs=["bold"]),
-                colored(stream_type, "blue"),
-                colored(
-                    "Minecraft timestamp extraction failed: " + str(e),
-                    "red",
-                    attrs=["bold"],
-                ),
-            )
+            colored("[Error]", "red", attrs=["bold"]),
+            colored(stream_type, "blue"),
+            colored(
+                "Minecraft timestamp extraction failed: " + str(e),
+                "red",
+                attrs=["bold"],
+            ),
+        )
         all_task_time = baseline_task_time
 
     # 5. Sync rest state timestamp with xdf timestamp
@@ -384,7 +381,7 @@ def dataframe_to_csv(
                 output_path,
                 pth=data_path + "/",
             )
-            
+
         if "ping_pong_competetive_1" in dict.values() and "leopard" in path:
             print(
                 colored("[INFO]", "green", attrs=["bold"]),
@@ -512,7 +509,7 @@ def dataframe_to_csv(
                 **get_state_affective_team,
                 **get_state_pingpong_coop_0,
                 **get_state_pingpong_comp_0,
-                **get_state_pingpong_comp_1
+                **get_state_pingpong_comp_1,
             }
         else:
             final_state = {
@@ -532,11 +529,11 @@ def dataframe_to_csv(
         # Minecraft Saturn B timestamps does not exist
         df_remove_after = list(get_state_affective_team.keys())[-1]
 
-    df_final,df_original = sync_timestamps_with_df(
+    df_final, df_original = sync_timestamps_with_df(
         df, final_state, header[2], df_remove_before, df_remove_after
     )
 
-    print('[Debug]', output_path, csv_file_name)
+    print("[Debug]", output_path, csv_file_name)
     new_csv_file_path = get_new_file_paths(output_path, csv_file_name)
 
     # Ensure the directory exists
@@ -555,7 +552,7 @@ def dataframe_to_csv(
         if bool(filter) == True and stream_type == "NIRS":
             df_final_filtered = filter_NIRS(df_final)
             df_final_filtered.to_csv(
-                new_csv_file_path + '_filtered' + ".csv", sep="\t", encoding="utf-8"
+                new_csv_file_path + "_filtered" + ".csv", sep="\t", encoding="utf-8"
             )
             print(
                 colored("[INFO]", "green", attrs=["bold"]),
@@ -564,13 +561,13 @@ def dataframe_to_csv(
                     "green",
                     attrs=["bold"],
                 ),
-                colored(new_csv_file_path + '_filtered' + ".csv", "blue"),
+                colored(new_csv_file_path + "_filtered" + ".csv", "blue"),
             )
 
         if bool(filter) == True and stream_type == "EEG":
             df_final_filtered = filter_EEG(df_final)
             df_final_filtered.to_csv(
-                new_csv_file_path + '_filtered' + ".csv", sep="\t", encoding="utf-8"
+                new_csv_file_path + "_filtered" + ".csv", sep="\t", encoding="utf-8"
             )
             print(
                 colored("[INFO]", "green", attrs=["bold"]),
@@ -579,7 +576,7 @@ def dataframe_to_csv(
                     "green",
                     attrs=["bold"],
                 ),
-                colored(new_csv_file_path + '_filtered' + ".csv", "blue"),
+                colored(new_csv_file_path + "_filtered" + ".csv", "blue"),
             )
 
     # Save as pickle file

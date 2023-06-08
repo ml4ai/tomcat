@@ -79,7 +79,7 @@ def check_cv(
         list(zip(channels, cv_vals, channel_good_or_bad)),
         columns=["Channels", "coeff_of_var", "status"],
     )
-    df.to_csv(new_csv_file_path + '/' +"NIRS_channel_quality.csv", index=False)
+    df.to_csv(new_csv_file_path + "/" + "NIRS_channel_quality.csv", index=False)
 
 
 def filter_NIRS(data):

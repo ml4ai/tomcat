@@ -9,6 +9,7 @@ from .convert_datetime_timezone import change_time_zone
 from .NIRS_filtering import check_cv, filter_NIRS
 from .folder_name_manipulation import get_new_file_paths
 
+
 def str2bool(v):
     if isinstance(v, bool):
         return v
@@ -18,4 +19,3 @@ def str2bool(v):
         return False
     else:
         raise argparse.ArgumentTypeError("Boolean value expected.")
-    

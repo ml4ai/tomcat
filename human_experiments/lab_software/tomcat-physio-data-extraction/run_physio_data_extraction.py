@@ -12,6 +12,7 @@ from utils import (
     str2bool,
 )
 
+
 def read_xdf(
     xdf_file_paths,
     rootdir_baseline_task,
@@ -91,25 +92,61 @@ def read_xdf(
                     )
 
                 elif data[i]["info"]["type"] == ["EEG"]:
-                    print(colored("[Status] Reading ", "green", attrs=["bold"]),
+                    print(
+                        colored("[Status] Reading ", "green", attrs=["bold"]),
                         colored(data[i]["info"]["type"], "blue"),
                     )
-                    time_start_streams_eeg, time_end_streams_eeg = get_start_stop_time_from_xdf(data[i])
-                    time_distribution_human_readable_eeg, time_distribution_unix_eeg = create_time_distribution(data[i])
-                    
+                    (
+                        time_start_streams_eeg,
+                        time_end_streams_eeg,
+                    ) = get_start_stop_time_from_xdf(data[i])
+                    (
+                        time_distribution_human_readable_eeg,
+                        time_distribution_unix_eeg,
+                    ) = create_time_distribution(data[i])
+
                     # Create a list of channel names
                     EEG_channels = []
-                    for channel_dict in data[i]['info']['desc'][0]['channels'][0]['channel']:
-                        EEG_channels.append(channel_dict['label'][0])
+                    for channel_dict in data[i]["info"]["desc"][0]["channels"][0][
+                        "channel"
+                    ]:
+                        EEG_channels.append(channel_dict["label"][0])
 
                     channels_used = [
-                        "AFF1h", "F7", "FC5", "C3", "T7", "TP9", "Pz", "P3", "P7", "O1", "O2", "P8",
-                        "P4", "TP10", "Cz", "C4", "T8", "FC6", "FCz", "F8", "AFF2h", "AUX_GSR", "AUX_EKG"
+                        "AFF1h",
+                        "F7",
+                        "FC5",
+                        "C3",
+                        "T7",
+                        "TP9",
+                        "Pz",
+                        "P3",
+                        "P7",
+                        "O1",
+                        "O2",
+                        "P8",
+                        "P4",
+                        "TP10",
+                        "Cz",
+                        "C4",
+                        "T8",
+                        "FC6",
+                        "FCz",
+                        "F8",
+                        "AFF2h",
+                        "AUX_GSR",
+                        "AUX_EKG",
                     ]
 
-                    exclude_channels = [(i, ch) for i, ch in enumerate(EEG_channels) if ch not in channels_used]
+                    exclude_channels = [
+                        (i, ch)
+                        for i, ch in enumerate(EEG_channels)
+                        if ch not in channels_used
+                    ]
                     exclude_indices = [index for index, _ in exclude_channels]
-                    EEG_data = np.delete(data[i]['time_series'].T, exclude_indices, axis=0)
+                    EEG_data = np.delete(
+                        data[i]["time_series"].T, exclude_indices, axis=0
+                    )
 
                     dataframe_to_csv(
                         path,
@@ -124,9 +161,8 @@ def read_xdf(
                         extract_csv,
                         extract_hdf5,
                         filter,
-                        output_path
+                        output_path,
                     )
-
 
                 elif data[i]["info"]["type"] == ["Gaze"]:
                     print(
@@ -143,7 +179,7 @@ def read_xdf(
                         time_distribution_human_readable_gaze,
                         time_distribution_unix_gaze,
                     ) = create_time_distribution(
-                       data[i],
+                        data[i],
                     )
                     dataframe_to_csv(
                         path,
@@ -191,18 +227,17 @@ def look_for_XDF_files(
     Walk through root directory, looking for the xdf files.
     """
     xdf_file_paths = [
-    os.path.join(root, file)
-    for root, dirs, files in os.walk(rootdir_xdf)
-    for file in files
-    if file.endswith(".xdf")
+        os.path.join(root, file)
+        for root, dirs, files in os.walk(rootdir_xdf)
+        for file in files
+        if file.endswith(".xdf")
     ]
-    
+
     for file_path in xdf_file_paths:
         print(
             colored("[Status] xdf file found at ", "green", attrs=["bold"]),
             colored(file_path, "blue"),
         )
-
 
     read_xdf(
         sorted(xdf_file_paths),
