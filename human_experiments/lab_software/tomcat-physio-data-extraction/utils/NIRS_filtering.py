@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import pandas as pd
+from .folder_name_manipulation import get_new_file_paths
 from termcolor import colored
 from scipy.signal import butter, lfilter_zi, lfilter
 
@@ -30,10 +31,11 @@ def check_cv(
     This function recives raw+HbO data but will use raw W1 to calculate
     the cv.
     """
-    if output_path != None:
-        path = output_path + path
-        if not os.path.exists(path):
-            os.makedirs(path)
+    new_csv_file_path = get_new_file_paths(output_path, path)
+
+    # Ensure the directory exists
+    if not os.path.exists(os.path.dirname(new_csv_file_path)):
+        os.makedirs(os.path.dirname(new_csv_file_path))
 
     channels = {
         "S1-D1",
@@ -77,7 +79,7 @@ def check_cv(
         list(zip(channels, cv_vals, channel_good_or_bad)),
         columns=["Channels", "coeff_of_var", "status"],
     )
-    df.to_csv(path + "NIRS_channel_quality.csv", index=False)
+    df.to_csv(new_csv_file_path + "/" + "NIRS_channel_quality.csv", index=False)
 
 
 def filter_NIRS(data):
