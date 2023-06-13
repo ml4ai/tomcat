@@ -1,9 +1,0 @@
-{
-    "plugins": {
-        "datasette-auth-passwords": {
-            "someusername_password_hash": {
-                "$env": "PASSWORD_HASH_1"
-            }
-        }
-    }
-}
