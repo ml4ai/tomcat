@@ -6,6 +6,7 @@ databases:
     tomcat:
         tables:
             mission:
+                description: "Mission information"
                 columns:
                     name: The name of the mission (Hands-on Training, Saturn A, or Saturn B)
                     start_timestamp_unix: The starting Unix timestamp of the mission.
