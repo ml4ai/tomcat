@@ -13,7 +13,8 @@
     <h1>{{ metadata.title or "Datasette" }}{% if private %} 🔒{% endif %}</h1>
 
 <p>Welcome to the ToMCAT dataset!
-The dataset currently is served via one SQLite database, but we may add
+The dataset currently is served via a single SQLite database
+(<a href="/tomcat">tomcat</a>), but we may add
 additional ones in the future. <p>
 
 <p> Currently, there are tables for the participant information, group session,
@@ -36,7 +37,7 @@ page.)</p>
 <p> Sign up for our mailing list to get notifications whenever the dataset is
 updated. To subscribe, send an email to <a
     href="mailto:list@list.arizona.edu">list@list.arizona.edu</a> with a blank
-message body and the following subject line <strong>subscribe tomcat-dataset-updates firstname lastname</strong>
+message body and the following subject line: <strong>subscribe tomcat-dataset-updates firstname lastname</strong>
 (replace firstname and lastname with your own first name and last name).
 
 {% for database in databases %}

@@ -20,13 +20,14 @@ databases:
             testbed_message:
                 description: Messages sent over the the testbed's message bus during missions.
                 columns:
-                    mission_id: The ID of the mission during which the message was published.
-                    topic: The topic the message was published on.
-                    group_session_id: The group session that the mission was a part of.
-                    name: The name of the mission (Hands-on Training, Saturn A, or Saturn B).
                     timestamp_unix: The Unix timestamp of the message.
                     timestamp_iso8601: The timestamp of the message in ISO-8601 format.
-                    message: The contents of the message.
+                    mission_id: The ID of the mission during which the message was published.
+                    topic: The topic the message was published on.
+                    message: >
+                      The contents of the message. The messages are in JSON
+                      format, so you can leverage SQLite JSON functions and operators
+                      in your queries.
 
 extra_css_urls:
     # Custom CSS
