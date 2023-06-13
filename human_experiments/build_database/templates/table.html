@@ -52,6 +52,7 @@
 
 
 <dl class="column-descriptions">
+    <h2>Column descriptions</h2>
     {% for column_name, column_description in metadata
         .get("databases", {})
         .get(database, {})
@@ -59,7 +60,8 @@
         .get(table, {})
         .get("columns", {})
         .items() %}
-        <dt>{{ column_name }}</dt><dd>{{ column_description }}</dd>
+        <dt>{{ column_name }}</dt>
+        <dd>{{ column_description }}</dd>
     {% endfor %}
 </dl>
 

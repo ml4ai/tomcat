@@ -850,11 +850,14 @@ svg.dropdown-menu-icon {
     background-repeat: no-repeat;
 }
 
+.column-descriptions {
+    padding-bottom: 1.1rem;
+}
 dl.column-descriptions dt {
     font-weight: bold;
 }
 dl.column-descriptions dd {
-    padding-left: 1.5em;
+    padding-left: 1.8em;
     white-space: pre-wrap;
     line-height: 1.1em;
     color: #666;
