@@ -6,17 +6,28 @@ databases:
     tomcat:
         tables:
             mission:
-                description: "Mission information"
+                description: Metadata about the Minecraft missions.
                 columns:
+                    id: The unique ID of the mission.
+                    group_session_id: The group session that the mission was a part of.
                     name: The name of the mission (Hands-on Training, Saturn A, or Saturn B)
+                    start_timestamp_iso8601: The starting timestamp of the mission in ISO-8601 format.
                     start_timestamp_unix: The starting Unix timestamp of the mission.
+                    stop_timestamp_iso8601: The stop timestamp of the mission in ISO-8601 format.
                     stop_timestamp_unix: The stopping Unix timestamp of the mission.
+                    final_team_score: The final mission score achieved by the team.
+                    testbed_version: The version of the testbed used for the mission.
+            testbed_message:
+                description: Messages sent over the the testbed's message bus during missions.
+                columns:
+                    mission_id: The ID of the mission during which the message was published.
+                    topic: The topic the message was published on.
+                    group_session_id: The group session that the mission was a part of.
+                    name: The name of the mission (Hands-on Training, Saturn A, or Saturn B).
+                    timestamp_unix: The Unix timestamp of the message.
+                    timestamp_iso8601: The timestamp of the message in ISO-8601 format.
+                    message: The contents of the message.
 
 extra_css_urls:
     # Custom CSS
     - /assets/app.css
-    #- url: "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      #sri: "sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
-#extra_js_urls:
-    #- url: "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
-      #sri: "sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
