@@ -14,8 +14,8 @@ services:
         datasette -p 8001 -h 0.0.0.0 -i /mnt/tomcat.db
         --metadata /mnt/metadata.json
         --template-dir=/mnt/templates
-        --plugins-dir=plugins/ \
-        --inspect-file=inspect-data.json
+        --plugins-dir=/mnt/plugins/ \
+        --inspect-file=/mnt/inspect-data.json
         --setting sql_time_limit_ms 1000
         --setting num_sql_threads 10
         --setting max_csv_mb 4000
