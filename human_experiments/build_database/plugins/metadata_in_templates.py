@@ -1,5 +1,6 @@
 """Plugin to get metadata information into custom page templates"""
 
+from pathlib import Path
 from datasette import hookimpl
 import yaml
 try:
@@ -9,6 +10,8 @@ except ImportError:
 
 @hookimpl
 def extra_template_vars():
-    with open("metadata.yml") as f:
+    # We do the convoluted way to find the metadata.yml file below to work with
+    # Docker Compose mounts.
+    with open((Path(__file__).parents[1]/"metadata.yml").resolve()) as f:
         metadata = yaml.safe_load(f.read())
     return {"metadata": metadata}
