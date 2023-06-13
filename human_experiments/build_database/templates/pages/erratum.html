@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block body_class %}index{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+    <div class="row">
+    <h1>Erratum</h1>
+    </div>
+
+<p>Welcome to the ToMCAT dataset!
+The dataset currently is served via one SQLite database, but we may add
+additional ones in the future. <p>
+
+<p> Currently, there are tables for the participant information, group session,
+raw fNIRS data, the testbed messages, the affective task, rest state task. More
+tables will be added in the future.</p>
+
+<p>For users who are not familiar with SQL,  we will provide some sample SQL
+queries to demonstrate how to use this database and the associated Datasette
+interface.</p>
+
+<p>For more advanced users, feel free to try different queries, use the
+programmatic APIs provided by Datasette, or simply download the whole SQLite
+database (see the link at the bottom of the https://tomcat.ivilab.org/tomcat
+page.)</p>
+
+{% block description_source_license %}
+    {% include "_description_source_license.html" %}
+{% endblock %}
+
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

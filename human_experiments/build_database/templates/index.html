@@ -1,10 +1,15 @@
 {% extends "base.html" %}
 
-{% block title %}{{ metadata.title or "Datasette" }}: {% for database in databases %}{{ database.name }}{% if not loop.last %}, {% endif %}{% endfor %}{% endblock %}
+{% block title %}
+    {{ metadata.title or "Datasette" }}: {% for database in databases %}{{ database.name }}{% if not loop.last %}, {% endif %}{% endfor %}
+{% endblock %}
 
 {% block body_class %}index{% endblock %}
 
 {% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col">
 <h1>{{ metadata.title or "Datasette" }}{% if private %} 🔒{% endif %}</h1>
 
 <p>Welcome to the ToMCAT dataset!
@@ -24,7 +29,9 @@ programmatic APIs provided by Datasette, or simply download the whole SQLite
 database (see the link at the bottom of the https://tomcat.ivilab.org/tomcat
 page.)</p>
 
-{% block description_source_license %}{% include "_description_source_license.html" %}{% endblock %}
+{% block description_source_license %}
+    {% include "_description_source_license.html" %}
+{% endblock %}
 
 
 {% for database in databases %}
@@ -44,5 +51,9 @@ page.)</p>
     </p>
     <p>{% for table in database.tables_and_views_truncated %}<a href="{{ urls.table(database.name, table.name) }}"{% if table.count %} title="{{ table.count }} rows"{% endif %}>{{ table.name }}</a>{% if table.private %} 🔒{% endif %}{% if not loop.last %}, {% endif %}{% endfor %}{% if database.tables_and_views_more %}, <a href="{{ urls.database(database.name) }}">...</a>{% endif %}</p>
 {% endfor %}
+
+        </div>
+    </div>
+</div>
 
 {% endblock %}
