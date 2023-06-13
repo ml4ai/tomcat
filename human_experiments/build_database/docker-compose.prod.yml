@@ -12,10 +12,12 @@ services:
 
     entrypoint: |
         datasette -p 8001 -h 0.0.0.0 -i /mnt/tomcat.db
+        --reload
         --metadata=/mnt/metadata.yml
         --template-dir=/mnt/templates
         --plugins-dir=/mnt/plugins/
         --inspect-file=/mnt/inspect-data.json
+        --static assets:/mnt/static/
         --setting sql_time_limit_ms 10000
         --setting num_sql_threads 10
         --setting max_csv_mb 12000
