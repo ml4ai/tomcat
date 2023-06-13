@@ -10,7 +10,7 @@
 <div class="container">
     <div class="row">
         <div class="col">
-<h1>{{ metadata.title or "Datasette" }}{% if private %} 🔒{% endif %}</h1>
+    <h1>{{ metadata.title or "Datasette" }}{% if private %} 🔒{% endif %}</h1>
 
 <p>Welcome to the ToMCAT dataset!
 The dataset currently is served via one SQLite database, but we may add
@@ -28,6 +28,8 @@ interface.</p>
 programmatic APIs provided by Datasette, or simply download the whole SQLite
 database (see the link at the bottom of the https://tomcat.ivilab.org/tomcat
 page.)</p>
+
+<p> Errata will be published here: <a href="/errata">Errata</a></p>
 
 {% block description_source_license %}
     {% include "_description_source_license.html" %}
