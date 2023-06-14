@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block body_class %}index{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+{{ render_markdown("""
+# Schema
+
+The diagram below shows the structure of the database and the relationships
+between the tables.
+
+![Database diagram](/assets/db_diagram.png)
+""") }}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

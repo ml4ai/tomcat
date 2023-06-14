@@ -37,16 +37,3 @@ def get_structured_metadata():
 @hookimpl
 def register_routes():
     return [("/-/structured_metadata.json", get_structured_metadata)]
-
-@hookimpl
-def menu_links(datasette):
-    return [
-            {
-                "href": datasette.urls.path("/errata"),
-                "label": "Errata"
-            },
-            {
-                "href": datasette.urls.path("/updates"),
-                "label": "Updates"
-            },
-        ]

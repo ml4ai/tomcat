@@ -17,37 +17,39 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col">
-            <h1>{{ metadata.title or "Datasette" }}{% if private %} 🔒{% endif %}</h1>
+<h1>{{ metadata.title or "Datasette" }}{% if private %} 🔒{% endif %}</h1>
+{{ render_markdown("""
+Welcome to the ToMCAT dataset!
+The dataset currently is served via a [single SQLite database](/tomcat),
+but we may add additional ones in the future.
 
-            <p>Welcome to the ToMCAT dataset!
-            The dataset currently is served via a single SQLite database
-            (<a href="/tomcat">tomcat</a>), but we may add
-            additional ones in the future. <p>
+Currently, there are tables for the participant information, group session,
+raw fNIRS data, the testbed messages, the affective task, rest state task. More
+tables will be added in the future.
 
-            <p> Currently, there are tables for the participant information, group session,
-            raw fNIRS data, the testbed messages, the affective task, rest state task. More
-            tables will be added in the future.</p>
+For users who are not familiar with SQL, we will provide some sample SQL
+queries to demonstrate how to use this database and the associated Datasette
+interface.
 
-            <p>For users who are not familiar with SQL,  we will provide some sample SQL
-            queries to demonstrate how to use this database and the associated Datasette
-            interface.</p>
+For more advanced users, feel free to try different queries, use the
+programmatic APIs provided by Datasette, or simply [download the whole SQLite
+database](https://tomcat.ivilab.org/tomcat.db).
 
-            <p>For more advanced users, feel free to try different queries, use the
-            programmatic APIs provided by Datasette, or simply download the whole SQLite
-            database (see the link at the bottom of the https://tomcat.ivilab.org/tomcat
-            page.)</p>
+The database schema diagram is available here: [Database
+diagram](/assets/db_diagram.png).
 
-            <p> The database schema diagram is available here: <a href="/assets/db_diagram.png">Database diagram.</a></p>
+## Mailing lists
 
-            <h2>Mailing lists</h2>
+To contact the maintainers:
+[tomcat-dataset-maintainers@list.arizona.edu](mailto:tomcat-dataset-maintainers@list.arizona.edu)
 
-            <p> To contact the maintainers: <a href="mailto:tomcat-dataset-maintainers@list.arizona.edu">tomcat-dataset-maintainers@list.arizona.edu</a>
-            <p> Sign up for our mailing list to get notifications whenever the dataset is
-            updated. To subscribe, send an email to <a
-                href="mailto:list@list.arizona.edu">list@list.arizona.edu</a> with a blank
-            message body and the following subject line: <strong>subscribe tomcat-dataset-updates firstname lastname</strong>
-            (replace firstname and lastname with your own first name and last name).
-
+Sign up for our mailing list to get notifications whenever the dataset is
+updated. To subscribe, send an email to
+[list@list.arizona.edu](mailto:list@list.arizona.edu) with a blank
+message body and the following subject line: **subscribe tomcat-dataset-updates
+firstname lastname**
+(replace firstname and lastname with your own first name and last name).
+""") }}
             {% for database in databases %}
                 <h2 style="padding-left: 10px; border-left: 10px solid #{{ database.color }}">
                     <a href="{{ urls.database(database.name) }}">{{ database.name }}</a>

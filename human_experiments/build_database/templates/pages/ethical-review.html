@@ -6,14 +6,14 @@
 <div class="container">
     <div class="row">
         <div class="col">
-                <h1>Ethical Review</h1>
-                <p>Supporting documentation for ethical review.</p>
-                <ul>
-                    <li>
-                        <a href="assets/supporting-material/pyarelal_consent_r1_2023_03_08.pdf">
-                            Consent form
-                        </a>
-                </ul>
+            {{ render_markdown("""
+# Ethical Review
+
+Supporting documentation on the ethical review process.
+
+- [Consent form](/assets/supporting-material/pyarelal_consent_r1_2023_03_08.pdf)
+- [Recruitment materials](/assets/supporting-material/pyarelal_recruitment_material_r1_2023_02_25.pdf)
+            """) }}
         </div>
     </div>
 </div>
