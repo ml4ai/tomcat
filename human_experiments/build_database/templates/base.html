@@ -16,38 +16,28 @@
 {%- block extra_head %}{% endblock -%}
 </head>
 <body class="{% block body_class %}{% endblock %}">
-<div class="not-footer">
-<header><nav>{% block nav %}{% block crumbs %}{{ crumbs.nav(request=request) }}{% endblock %}
-
-    {% set links = menu_links() %}{% if links or show_logout %}
-    <details class="nav-menu details-menu">
-        <summary><svg aria-labelledby="nav-menu-svg-title" role="img"
-            fill="currentColor" stroke="currentColor" xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 16 16" width="16" height="16">
-                <title id="nav-menu-svg-title">Menu</title>
-                <path fill-rule="evenodd" d="M1 2.75A.75.75 0 011.75 2h12.5a.75.75 0 110 1.5H1.75A.75.75 0 011 2.75zm0 5A.75.75 0 011.75 7h12.5a.75.75 0 110 1.5H1.75A.75.75 0 011 7.75zM1.75 12a.75.75 0 100 1.5h12.5a.75.75 0 100-1.5H1.75z"></path>
-        </svg></summary>
-        <div class="nav-menu-inner">
-            {% if links %}
-            <ul>
-                {% for link in links %}
-                <li><a href="{{ link.href }}">{{ link.label }}</a></li>
-                {% endfor %}
+    <nav class="navbar navbar-expand-lg border-bottom" style="margin-bottom:1rem;">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/updates">Updates</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/ethical-review">Ethical Review</a>
+                </li>
             </ul>
-            {% endif %}
-            {% if show_logout %}
-            <form action="{{ urls.logout() }}" method="post">
-                <input type="hidden" name="csrftoken" value="{{ csrftoken() }}">
-                <button class="button-as-link">Log out</button>
-            </form>{% endif %}
         </div>
-    </details>{% endif %}
-    {% if actor %}
-    <div class="actor">
-        <strong>{{ display_actor(actor) }}</strong>
-    </div>
-    {% endif %}
-{% endblock %}</nav></header>
+    </nav>
 
 {% block messages %}
 {% if show_messages %}
