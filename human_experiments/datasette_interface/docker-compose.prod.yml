@@ -1,0 +1,24 @@
+# Docker-compose file for Datasette interface
+version: '3.7'
+
+services:
+
+  datasette:
+    image: datasette-with-plugins
+    ports:
+        - "8001:8001"
+    volumes:
+        - /work/ivilab/public_html/data/tomcat:/mnt
+        - .:/repo
+
+    entrypoint: |
+        datasette -p 8001 -h 0.0.0.0 -i /mnt/tomcat.db
+        --reload
+        --metadata /repo/metadata.yml
+        --template-dir /repo/templates
+        --plugins-dir /repo/plugins
+        --inspect-file /repo/inspect-data.json
+        --static assets:/repo/static
+        --setting sql_time_limit_ms 10000
+        --setting num_sql_threads 10
+        --setting max_csv_mb 12000

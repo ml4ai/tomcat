@@ -2,9 +2,11 @@ import os
 import pandas as pd
 from time import ctime
 from termcolor import colored
+from .folder_name_manipulation import get_new_file_paths
 from .baseline_tasks_timestamps import read_baseline_tasks_time
 from .minecraft_timestamps import read_minecraft_time
 from .NIRS_filtering import check_cv, filter_NIRS
+from .EEG_filter import filter_EEG
 
 
 def get_timestamps_from_dict(
@@ -13,15 +15,11 @@ def get_timestamps_from_dict(
     df_temp = df
     state_temp = state
     rest_state_time_start, rest_state_time_stop = dict["start_time"], dict["end_time"]
-    iloc_idx_start = df_temp["human_readable_time"].searchsorted(
-        ctime(round(rest_state_time_start, 5))
-    )
-    iloc_idx_end = df_temp["human_readable_time"].searchsorted(
-        ctime(round(rest_state_time_stop, 5))
-    )
+    iloc_idx_start = df_temp["unix_time"].searchsorted(round(rest_state_time_start, 7))
+    iloc_idx_end = df_temp["unix_time"].searchsorted(round(rest_state_time_stop, 7))
     state_start = df_temp.index[iloc_idx_start]
     state_end = df_temp.index[
-        iloc_idx_end - 1
+        iloc_idx_end
     ]  # reduce index by 1 as the index sometimes overflows
     range_ = list(range(state_start, state_end))
     state = [state] * len(range_)
@@ -40,7 +38,7 @@ def sync_timestamps_with_df(df, final_state, header, df_remove_before, df_remove
     end of saturn b minecraft mission.
     """
     df[header] = df.index.map(final_state)
-    return df.loc[df_remove_before:df_remove_after]
+    return df.loc[df_remove_before:df_remove_after], df
 
 
 def dataframe_to_csv(
@@ -54,6 +52,7 @@ def dataframe_to_csv(
     subject_id,
     extract_pkl,
     extract_csv,
+    extract_hdf5,
     filter,
     output_path,
 ):
@@ -117,36 +116,25 @@ def dataframe_to_csv(
             "human_readable_time",
             "event_type",
             "AFF1h",
-            "AFF5h",
             "F7",
             "FC5",
-            "FC1",
             "C3",
             "T7",
             "TP9",
-            "CP5",
-            "CP1",
             "Pz",
             "P3",
             "P7",
-            "PO9",
             "O1",
-            "Oz",
             "O2",
-            "PO10",
             "P8",
             "P4",
             "TP10",
-            "CP6",
-            "CP2",
             "Cz",
             "C4",
             "T8",
             "FC6",
-            "FC2",
             "FCz",
             "F8",
-            "AFF6h",
             "AFF2h",
             "AUX_GSR",
             "AUX_EKG",
@@ -230,7 +218,19 @@ def dataframe_to_csv(
     We will use the same dictionary baseline_task_time
     and add minecraft timestamp. 
     """
-    all_task_time = read_minecraft_time(baseline_task_time, rootdir_minecraft_data)
+    try:
+        all_task_time = read_minecraft_time(baseline_task_time, rootdir_minecraft_data)
+    except Exception as e:
+        print(
+            colored("[Error]", "red", attrs=["bold"]),
+            colored(stream_type, "blue"),
+            colored(
+                "Minecraft timestamp extraction failed: " + str(e),
+                "red",
+                attrs=["bold"],
+            ),
+        )
+        all_task_time = baseline_task_time
 
     # 5. Sync rest state timestamp with xdf timestamp
     """
@@ -238,6 +238,8 @@ def dataframe_to_csv(
     *_state_time_stop from our dataframe. Then insert
     the state value to df
     """
+    ping_pong_competetive_1_activate = False
+
     for idx, dict in all_task_time.items():
         if "rest_state" in dict.values():
             print(
@@ -380,7 +382,7 @@ def dataframe_to_csv(
                 pth=data_path + "/",
             )
 
-        if "ping_pong_competetive_1" in dict.values():
+        if "ping_pong_competetive_1" in dict.values() and "leopard" in path:
             print(
                 colored("[INFO]", "green", attrs=["bold"]),
                 colored(stream_type, "blue"),
@@ -401,6 +403,7 @@ def dataframe_to_csv(
                 output_path,
                 pth=data_path + "/",
             )
+            ping_pong_competetive_1_activate = True
 
         if "hands_on_training" in dict.values():
             print(
@@ -468,45 +471,88 @@ def dataframe_to_csv(
                 pth=data_path + "/",
             )
 
-    final_state = {
-        **get_state_rest,
-        **get_state_fingertap,
-        **affective_task_individual,
-        **get_state_affective_team,
-        **get_state_pingpong_coop_0,
-        **get_state_pingpong_comp_0,
-        **get_state_pingpong_comp_1,
-        **mincraft_handson_training,
-        **mincraft_saturn_a,
-        **mincraft_saturn_b,
-    }
+    try:
+        if ping_pong_competetive_1_activate == True:
+            # Flag to just to make sure the script labels leopard with ping pong competetive 1
+            final_state = {
+                **get_state_rest,
+                **get_state_fingertap,
+                **affective_task_individual,
+                **get_state_affective_team,
+                **get_state_pingpong_coop_0,
+                **get_state_pingpong_comp_0,
+                **get_state_pingpong_comp_1,
+                **mincraft_handson_training,
+                **mincraft_saturn_a,
+                **mincraft_saturn_b,
+            }
+        else:
+            final_state = {
+                **get_state_rest,
+                **get_state_fingertap,
+                **affective_task_individual,
+                **get_state_affective_team,
+                **get_state_pingpong_coop_0,
+                **get_state_pingpong_comp_0,
+                **mincraft_handson_training,
+                **mincraft_saturn_a,
+                **mincraft_saturn_b,
+            }
+    except NameError:
+        #  If there is an error parsing minecraft timestamps, just ignore it and label the rest of the data
+        if ping_pong_competetive_1_activate == True:
+            # Flag to just to make sure the script labels leopard with ping pong competetive 1
+            final_state = {
+                **get_state_rest,
+                **get_state_fingertap,
+                **affective_task_individual,
+                **get_state_affective_team,
+                **get_state_pingpong_coop_0,
+                **get_state_pingpong_comp_0,
+                **get_state_pingpong_comp_1,
+            }
+        else:
+            final_state = {
+                **get_state_rest,
+                **get_state_fingertap,
+                **affective_task_individual,
+                **get_state_affective_team,
+                **get_state_pingpong_coop_0,
+                **get_state_pingpong_comp_0,
+            }
 
     df_remove_before = list(get_state_rest.keys())[0]
-    df_remove_after = list(mincraft_saturn_b.keys())[-1]
-    df_final = sync_timestamps_with_df(
+    try:
+        # Minecraft Saturn B timestamps exists
+        df_remove_after = list(mincraft_saturn_b.keys())[-1]
+    except NameError:
+        # Minecraft Saturn B timestamps does not exist
+        df_remove_after = list(get_state_affective_team.keys())[-1]
+
+    df_final, df_original = sync_timestamps_with_df(
         df, final_state, header[2], df_remove_before, df_remove_after
     )
 
-    if output_path != None:
-        """
-        Write extracted Physio data to a diff path
-        """
-        csv_file_name = output_path + csv_file_name
-        if not os.path.exists(csv_file_name):
-            os.makedirs(csv_file_name)
+    print("[Debug]", output_path, csv_file_name)
+    new_csv_file_path = get_new_file_paths(output_path, csv_file_name)
 
+    # Ensure the directory exists
+    if not os.path.exists(os.path.dirname(new_csv_file_path)):
+        os.makedirs(os.path.dirname(new_csv_file_path))
+
+    # Save as CSV file
     if extract_csv == True:
-        df_final.to_csv(csv_file_name + ".csv", sep="\t", encoding="utf-8")
+        df_original.to_csv(new_csv_file_path + ".csv", sep="\t", encoding="utf-8")
         print(
             colored("[INFO]", "green", attrs=["bold"]),
             colored("Sucessfully generated csv file at", "green", attrs=["bold"]),
-            colored(csv_file_name + ".csv", "blue"),
+            colored(new_csv_file_path + ".csv", "blue"),
         )
 
         if bool(filter) == True and stream_type == "NIRS":
             df_final_filtered = filter_NIRS(df_final)
             df_final_filtered.to_csv(
-                csv_file_name + "_filtered" + ".csv", sep="\t", encoding="utf-8"
+                new_csv_file_path + "_filtered" + ".csv", sep="\t", encoding="utf-8"
             )
             print(
                 colored("[INFO]", "green", attrs=["bold"]),
@@ -515,21 +561,37 @@ def dataframe_to_csv(
                     "green",
                     attrs=["bold"],
                 ),
-                colored(csv_file_name + ".csv", "blue"),
+                colored(new_csv_file_path + "_filtered" + ".csv", "blue"),
             )
 
+        if bool(filter) == True and stream_type == "EEG":
+            df_final_filtered = filter_EEG(df_final)
+            df_final_filtered.to_csv(
+                new_csv_file_path + "_filtered" + ".csv", sep="\t", encoding="utf-8"
+            )
+            print(
+                colored("[INFO]", "green", attrs=["bold"]),
+                colored(
+                    "Sucessfully generated csv file with filtered data at",
+                    "green",
+                    attrs=["bold"],
+                ),
+                colored(new_csv_file_path + "_filtered" + ".csv", "blue"),
+            )
+
+    # Save as pickle file
     if extract_pkl == True:
         df_final.to_pickle(csv_file_name + ".pkl")
         print(
             colored("[INFO]", "green", attrs=["bold"]),
             colored("Sucessfully generated pickle file at", "green", attrs=["bold"]),
-            colored(csv_file_name + ".pkl", "blue"),
+            colored(new_csv_file_path + ".pkl", "blue"),
         )
 
         if bool(filter) == True and stream_type == "NIRS":
             df_final_filtered = filter_NIRS(df_final)
             df_final_filtered.to_pickle(
-                csv_file_name + "_filtered" + ".pkl", sep="\t", encoding="utf-8"
+                new_csv_file_path + "_filtered" + ".pkl", sep="\t", encoding="utf-8"
             )
             print(
                 colored("[INFO]", "green", attrs=["bold"]),
@@ -538,5 +600,59 @@ def dataframe_to_csv(
                     "green",
                     attrs=["bold"],
                 ),
-                colored(csv_file_name + ".csv", "blue"),
+                colored(new_csv_file_path + ".pkl", "blue"),
+            )
+
+        if bool(filter) == True and stream_type == "EEG":
+            df_final_filtered = filter_EEG(df_final)
+            df_final_filtered.to_pickle(
+                new_csv_file_path + "_filtered" + ".pkl", sep="\t", encoding="utf-8"
+            )
+            print(
+                colored("[INFO]", "green", attrs=["bold"]),
+                colored(
+                    "Sucessfully generated csv file with filtered data at",
+                    "green",
+                    attrs=["bold"],
+                ),
+                colored(new_csv_file_path + ".pkl", "blue"),
+            )
+
+    # Save as hdf5 file
+    if extract_hdf5 == True:
+        df_final.to_hdf(new_csv_file_path + ".h5", key="df", mode="w")
+        print(
+            colored("[INFO]", "green", attrs=["bold"]),
+            colored("Sucessfully generated hdf5 file at", "green", attrs=["bold"]),
+            colored(new_csv_file_path + ".h5", "blue"),
+        )
+
+        if bool(filter) == True and stream_type == "NIRS":
+            df_final_filtered = filter_NIRS(df_final)
+            df_final_filtered.to_hdf(
+                new_csv_file_path + "_filtered" + ".h5", key="df", mode="w"
+            )
+            print(
+                colored("[INFO]", "green", attrs=["bold"]),
+                colored(
+                    "Sucessfully generated csv file with filtered data at",
+                    "green",
+                    attrs=["bold"],
+                ),
+                colored(new_csv_file_path + ".h5", "blue"),
+            )
+
+        if bool(filter) == True and stream_type == "EEG":
+            df_final_filtered = filter_EEG(df_final)
+            df_final_filtered.to_hdf(
+                new_csv_file_path + "_filtered" + ".h5", key="df", mode="w"
+            )
+            print(
+                colored("[INFO]", "green", attrs=["bold"]),
+                colored(
+                    "Sucessfully generated csv file with filtered data at",
+                    "green",
+                    attrs=["bold"],
+                ),
+                colored(new_csv_file_path + ".h5", "blue"),
             )

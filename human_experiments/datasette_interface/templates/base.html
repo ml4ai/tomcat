@@ -1,0 +1,78 @@
+{% import "_crumbs.html" as crumbs with context %}<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ urls.static('app.css') }}?{{ app_css_hash }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+{% for url in extra_css_urls %}
+    <link rel="stylesheet" href="{{ url.url }}"{% if url.get("sri") %} integrity="{{ url.sri }}" crossorigin="anonymous"{% endif %}>
+{% endfor %}
+{% for url in extra_js_urls %}
+    <script {% if url.module %}type="module" {% endif %}src="{{ url.url }}"{% if url.get("sri") %} integrity="{{ url.sri }}" crossorigin="anonymous"{% endif %}></script>
+{% endfor %}
+{%- if alternate_url_json -%}
+    <link rel="alternate" type="application/json+datasette" href="{{ alternate_url_json }}">
+{%- endif -%}
+{%- block extra_head %}{% endblock -%}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+    <nav class="navbar navbar-expand-lg border-bottom" style="margin-bottom:1rem;">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/ethical-review">Ethical Review</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/derived-data-products">Derived Data Products</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/updates">Updates</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/errata">Errata</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/schema">Schema</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+{% block messages %}
+{% if show_messages %}
+    {% for message, message_type in show_messages() %}
+        <p class="message-{% if message_type == 1 %}info{% elif message_type == 2 %}warning{% elif message_type == 3 %}error{% endif %}">{{ message }}</p>
+    {% endfor %}
+{% endif %}
+{% endblock %}
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+
+{% block content %}
+{% endblock %}
+        </div>
+    </div>
+</div>
+<footer class="ft">{% block footer %}{% include "_footer.html" %}{% endblock %}</footer>
+
+{% include "_close_open_menus.html" %}
+
+{% for body_script in body_scripts %}
+    <script{% if body_script.module %} type="module"{% endif %}>{{ body_script.script }}</script>
+{% endfor %}
+
+{% if select_templates %}<!-- Templates considered: {{ select_templates|join(", ") }} -->{% endif %}
+</body>
+</html>
