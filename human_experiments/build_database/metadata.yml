@@ -1,3 +1,5 @@
+# Metadata for the Datasette instance.
+
 title: The ToMCAT Dataset
 description: Multimodal dataset for human-machine teaming research.
 license: CC BY-NC-SA 4.0
@@ -28,7 +30,39 @@ databases:
                       The contents of the message. The messages are in JSON
                       format, so you can leverage SQLite JSON functions and operators
                       in your queries.
-
+# Custom CSS
 extra_css_urls:
-    # Custom CSS
     - /assets/app.css
+
+# Structured metadata, as required by the NeurIPS 2023 Datasets and Benchmarks
+# track.
+structured_metadata:
+  '@context': https://schema.org/
+  '@type': Dataset
+  name: The ToMCAT Dataset
+  description: Multimodal dataset for human-machine teaming research.
+  url: https://tomcat.ivilab.org
+  keywords:
+    - fNIRS
+    - EEG
+    - EKG
+    - GSR
+    - Eye tracking
+    - Minecraft
+    - Human-machine teaming
+  license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+  isAccessibleForFree: true
+  creator:
+    - '@type': Person
+      sameAs: https://orcid.org/0000-0002-1602-0386
+      name: Adarsh Pyarelal
+  citation: https://openreview.net/forum?id=ZJWQfgXQb6
+  funder:
+    '@type': Organization
+    sameAs: https://ror.org/02caytj08
+    name: Defense Advanced Research Projects Agency
+  distribution:
+    - '@type': DataDownload
+      encodingFormat: SQLite
+      contentUrl: https://tomcat.ivilab.org/tomcat.db
+  temporalCoverage: 2022-09-30/2023-05-03
