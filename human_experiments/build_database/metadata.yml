@@ -92,6 +92,9 @@ structured_metadata:
     - '@type': Person
       sameAs: https://orcid.org/0000-0002-8568-9518
       name: Kobus Barnard
+    - '@type': Organization
+      sameAs: https://ror.org/03m2x1q45
+      name: University of Arizona
   citation: https://openreview.net/forum?id=ZJWQfgXQb6
   funder:
     '@type': Organization
