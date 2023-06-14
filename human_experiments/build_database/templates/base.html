@@ -30,13 +30,19 @@
                     <a class="nav-link" href="/">Home</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="/ethical-review">Ethical Review</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/derived-data-products">Derived Data Products</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="/updates">Updates</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/database-diagram">Schema Diagram</a>
+                    <a class="nav-link" href="/errata">Errata</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/ethical-review">Ethical Review</a>
+                    <a class="nav-link" href="/schema">Schema</a>
                 </li>
             </ul>
         </div>
@@ -50,10 +56,14 @@
 {% endif %}
 {% endblock %}
 
-<section class="content">
+<div class="container">
+    <div class="row">
+        <div class="col">
+
 {% block content %}
 {% endblock %}
-</section>
+        </div>
+    </div>
 </div>
 <footer class="ft">{% block footer %}{% include "_footer.html" %}{% endblock %}</footer>
 
