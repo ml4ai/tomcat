@@ -1,4 +1,5 @@
-"""Plugin to get metadata information into custom page templates"""
+"""Plugin to get metadata information into custom page templates and set up a
+route (/-/structured_metadata.json) to get DCAT-style structured metadata."""
 
 from pathlib import Path
 from datasette import hookimpl, Response
@@ -21,6 +22,10 @@ def extra_template_vars():
 def get_structured_metadata():
     # We do the convoluted way to find the metadata.yml file below to work with
     # Docker Compose mounts.
+
+    # Adarsh: The two lines below overlap with the extra_template_vars function, but I
+    # got some errors when I tried to refactor, so I'm living with the code
+    # duplication for now.
     with open((Path(__file__).parents[1]/"metadata.yml").resolve()) as f:
         metadata = yaml.safe_load(f.read())
 
