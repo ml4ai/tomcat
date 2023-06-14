@@ -1,5 +1,8 @@
-"""Plugin to get metadata information into custom page templates and set up a
-route (/-/structured_metadata.json) to get DCAT-style structured metadata."""
+"""Plugin to do the following:
+1. Get metadata information into custom page templates
+2. Set up a route (/-/structured_metadata.json) to get structured metadata.
+3. Add extra menu links.
+"""
 
 from pathlib import Path
 from datasette import hookimpl, Response
@@ -34,3 +37,16 @@ def get_structured_metadata():
 @hookimpl
 def register_routes():
     return [("/-/structured_metadata.json", get_structured_metadata)]
+
+@hookimpl
+def menu_links(datasette):
+    return [
+            {
+                "href": datasette.urls.path("/errata"),
+                "label": "Errata"
+            },
+            {
+                "href": datasette.urls.path("/updates"),
+                "label": "Updates"
+            },
+        ]
