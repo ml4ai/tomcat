@@ -56,6 +56,42 @@ structured_metadata:
     - '@type': Person
       sameAs: https://orcid.org/0000-0002-1602-0386
       name: Adarsh Pyarelal
+    - '@type': Person
+      sameAs: https://orcid.org/0000-0003-3277-5145
+      name: Eric Duong
+    - '@type': Person
+      sameAs: https://orcid.org/0000-0002-3141-5669
+      name: Caleb Jones Shibu
+    - '@type': Person
+      sameAs: https://orcid.org/0000-0002-0646-037X
+      name: Paulo Ricardo da Silva Soares
+    - '@type': Person
+      name: Savannah Boyd
+    - '@type': Person
+      name: Payal Khosla
+    - '@type': Person
+      name: Valeria Pfeifer
+    - '@type': Person
+      sameAs: https://orcid.org/0000-0001-8878-8952
+      name: Diheng Zhang
+    - '@type': Person
+      sameAs: https://orcid.org/0000-0001-7186-5755
+      name: Eric Andrews
+    - '@type': Person
+      name: Rick Champlin
+    - '@type': Person
+      name: Vincent Paul Raymond
+    - '@type': Person
+      sameAs: https://orcid.org/0000-0002-0205-9298
+      name: Meghavarshini Krishnaswamy
+    - '@type': Person
+      sameAs: https://orcid.org/0000-0002-3606-0078
+      name: Clayton Morrison
+    - '@type': Person
+      name: Emily Butler
+    - '@type': Person
+      sameAs: https://orcid.org/0000-0002-8568-9518
+      name: Kobus Barnard
   citation: https://openreview.net/forum?id=ZJWQfgXQb6
   funder:
     '@type': Organization
