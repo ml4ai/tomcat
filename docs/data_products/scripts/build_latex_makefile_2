@@ -1,0 +1,172 @@
+#!/bin/tcsh 
+
+if ($?RECURSION_LEVEL) then
+    set recursion_level = ${RECURSION_LEVEL}
+else 
+    set recursion_level = 0
+endif 
+
+if (${recursion_level} > 5) then
+    ${P_STDERR} "Circular dependency spotted in build_latex_makefile_2."
+    ${P_STDERR} "Exiting with error."
+    exit 1
+endif 
+
+@ recursion_level++
+setenv RECURSION_LEVEL ${recursion_level}
+# echo RECURSION_LEVEL: $RECURSION_LEVEL
+
+set tex_file = "${1}"
+# echo tex_file: $tex_file 
+
+set locations = "${2}"
+# echo locations: ${locations}
+
+set depends_on = ""
+
+# For input and include, generally we can either use "x.tex" or "x", so we
+# strip the .tex which might not be there, and add it back in again. 
+
+set depends_on_1 = `grep '^ *\\input *{.*}' ${tex_file} | sed 's/^ *\\input *{ *\(.*\) *}.*/\1/' | sed 's/\.tex$//' | sed 's/$/.tex/'`
+if ("${depends_on_1}" != "") then 
+    foreach depends_on_1_file (${depends_on_1})
+        # The ":0" means that we do not need to add a suffix. It gets
+        # stripped out below. 
+        set depends_on = "${depends_on} ${depends_on_1_file}:0"
+    end
+endif 
+
+set depends_on_2 = `grep '^ *\\include *{.*}' ${tex_file} | sed 's/^ *\\include *{ *\(.*\) *}.*/\1/' | sed 's/\.tex$//' | sed 's/$/.tex/'`
+if ("${depends_on_2}" != "") then 
+    foreach depends_on_2_file (${depends_on_2})
+        # The ":0" means that we do not need to add a suffix. It gets
+        # stripped out below. 
+        set depends_on = "${depends_on} ${depends_on_2_file}:0"
+    end
+endif 
+
+# For verbatim inputs, we cannot do the stripping and replacement of .tex,
+# as these files often are not *.tex. 
+#
+set depends_on_1v = `grep '^ *\\verbatiminput *{.*}' ${tex_file} | sed 's/^ *\\verbatiminput *{ *\(.*\) *}.*/\1/'`
+if ("${depends_on_1v}" != "") then 
+    foreach depends_on_1v_file (${depends_on_1v})
+        # The ":0" means that we do not need to add a suffix. It gets
+        # stripped out below. 
+        set depends_on = "${depends_on} ${depends_on_1v_file}:0"
+    end
+endif 
+
+# Graphics is tricky. Which extensions are allowed depends on which flavor
+# of latex is being run. We will assume pdflatex below if there is no TLA
+# suffix. 
+
+set depends_on_3 = `grep '^ *\\includegraphics[^{].*{.*}' ${tex_file} | sed 's/^ *\\includegraphics[^{].*{ *\(.*\) *}.*/\1/'`
+if ("${depends_on_3}" != "") then 
+    foreach depends_on_3_file (${depends_on_3})
+        set have_tla_suffix = `echo ${depends_on_3_file} | grep -c '\.[a-zA-Z]..$'`
+
+        if (${have_tla_suffix}) then
+            set depends_on = "${depends_on} ${depends_on_3_file}:0"
+        else 
+            set depends_on = "${depends_on} ${depends_on_3_file}:1"
+        endif 
+    end
+endif 
+
+# echo depends_on: $depends_on
+set depends_on_paths = ""
+
+# This list and its order can be set via \DeclareGraphicExtensions.  The
+# latex variable is: \Gin@extensions. Perhaps we need to get fancier here. 
+set graphics_suffixes = "NULL .pdf .jpg .png .eps"
+
+foreach depends_on_file (${depends_on})
+    # echo tex_file: $tex_file depends_on_file: $depends_on_file
+    set found =  0
+
+    set need_tla_suffix = `echo ${depends_on_file} | grep -c ':1$'`
+    set depends_on_file = `echo ${depends_on_file} | sed 's/:.$//'`
+
+    # This messy code will loop through all graphix suffixes if
+    # need_tla_suffix suggests we need on. Otherwise we will break at the
+    # end. 
+    #
+    foreach graphics_suffix (${graphics_suffixes})
+        if (${need_tla_suffix}) then
+            if ("${graphics_suffix}" == "NULL") then 
+                continue
+            endif 
+        else 
+            set graphics_suffix = ""
+        endif 
+
+        foreach location (${locations})
+            # echo ${tex_file} : ${location}${depends_on_file}${graphics_suffix}
+            if (-e ${location}${depends_on_file}${graphics_suffix}) then
+                if ("${location}" == "./") then
+                    set location = ""
+                else
+                    # We set the location of the textinputs directory
+                    # location to ../ if it is there, or $HOME if it is
+                    # there. The first works for the manifesto if we are
+                    # following the directory structure in svn. This is too
+                    # brittle for the long run. 
+                    
+                    # echo location: $location
+                    pushd location > /dev/null
+                        set location = `pwd`/
+                        # echo location_path: $location_path
+                    popd > /dev/null
+
+                    pushd .. > /dev/null
+                        set parent_path = `pwd`/
+                        # echo parent_path: $parent_path
+                    popd > /dev/null
+
+                    set location = `echo ${location} | sed "s#${parent_path}#../#"`
+                    # echo location: $location
+
+                    set home_str = '$(HOME)'
+                    set location = `echo ${location} | sed "s#${HOME}#${home_str}#"`
+                endif 
+
+                set depends_on_paths = "${depends_on_paths} ${location}${depends_on_file}${graphics_suffix}"
+                set found =  1
+                break
+            endif 
+        end
+
+        if (${found}) break
+        if (${graphics_suffix} == "") break
+    end
+
+    if (! ${found}) then
+        ${P_STDERR} ""
+        ${P_STDERR} "Warning from script build_latex_makefile running in `pwd`."
+        ${P_STDERR} "Unable to find dependency ${depends_on_file} in current directory or TEXINPUTS."
+        ${P_STDERR} "Things will likely break unless this is sorted out."
+        ${P_STDERR} "" 
+    endif 
+end 
+
+if ("${depends_on_paths}" == "") then 
+    echo "${tex_file} has no findable dependencies. Exiting early."
+    exit 0
+else 
+    echo "${tex_file} has dependencies ${depends_on_paths}."
+endif 
+
+echo ${tex_file} : ${depends_on_paths} 
+if ("${depends_on_paths}" != "") then 
+    echo ${tex_file} : ${depends_on_paths}  >> Makefile.new
+    echo "	touch ${tex_file}"  >> Makefile.new
+    echo "" >> Makefile.new
+endif 
+
+# Recursive call. 
+foreach depends_on_path (${depends_on_paths})
+    build_latex_makefile_2 ${depends_on_path} ${locations}
+    if (${status}) exit 1 
+end 
+
