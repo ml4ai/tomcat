@@ -22,7 +22,7 @@ def utc_time_ns(seconds):
 
 
 def create_time_distribution(data):
-    time_distribution_unix_list.append(temp)
+    # time_distribution_unix_list.append(temp)
     time_distribution_unix_list = data["time_stamps"]
 
     ctime_list = []
