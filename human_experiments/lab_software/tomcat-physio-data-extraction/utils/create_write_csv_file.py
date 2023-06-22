@@ -21,7 +21,7 @@ def get_timestamps_from_dict(
     state_end = df_temp.index[
         iloc_idx_end
     ]  # reduce index by 1 as the index sometimes overflows
-    state_start, state_end = state_start-1, state_end+1 # Increase start and stop state by 1 to avoid NaNs for data extrapolation script. 
+    state_start, state_end = state_start-1, state_end+2 # Increase start and stop state by 1 to avoid NaNs for data extrapolation script. 
     range_ = list(range(state_start, state_end)) 
     state = [state] * len(range_)
     state = {i: x for i, x in enumerate(state, state_start)}
