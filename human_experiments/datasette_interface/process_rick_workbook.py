@@ -18,6 +18,132 @@ logging.basicConfig(
     handlers=logging_handlers,
 )
 
+TASKS = (
+    "rest_state",
+    "finger_tapping",
+    "affective_individual",
+    "affective_team",
+    "ping_pong_competitive_0",
+    "ping_pong_competitive_1",
+    "ping_pong_cooperative",
+    "saturn_a",
+    "saturn_b",
+)
+
+MODALITIES = (
+    "eeg",
+    "fnirs",
+    "gaze",
+)
+
+STATIONS = (
+    "lion",
+    "tiger",
+    "leopard",
+)
+
+
+def recreate_station_table(db_connection):
+    db_connection.execute("DROP TABLE IF EXISTS station")
+    db_connection.execute(
+        """
+        CREATE TABLE station (
+            id TEXT PRIMARY KEY
+        );"""
+    )
+    db_connection.executemany(
+        "INSERT INTO station VALUES(?)",
+        [(station,) for station in STATIONS],
+    )
+
+
+def recreate_modality_table(db_connection):
+    db_connection.execute("DROP TABLE IF EXISTS modality")
+    db_connection.execute(
+        """
+        CREATE TABLE modality (
+            id TEXT PRIMARY KEY
+        );"""
+    )
+
+    db_connection.executemany(
+        "INSERT INTO modality VALUES(?)",
+        [(modality,) for modality in MODALITIES],
+    )
+
+
+def recreate_participant_table(db_connection):
+    db_connection.execute("DROP TABLE IF EXISTS participant")
+    db_connection.execute(
+        """
+        CREATE TABLE participant (
+            id INTEGER PRIMARY KEY
+        );"""
+    )
+
+
+def recreate_group_session_table(db_connection):
+    db_connection.execute("DROP TABLE IF EXISTS group_session")
+    db_connection.execute(
+        """
+        CREATE TABLE group_session (
+            id TEXT PRIMARY KEY,
+            notes TEXT
+        );"""
+    )
+
+
+def recreate_data_validity_table(db_connection):
+    db_connection.execute("DROP TABLE IF EXISTS data_validity")
+    db_connection.execute(
+        """
+        CREATE TABLE data_validity (
+            group_session TEXT,
+            participant INTEGER,
+            station TEXT,
+            task TEXT,
+            modality TEXT,
+            is_valid BOOLEAN DEFAULT TRUE,
+            FOREIGN KEY(group_session) REFERENCES group_session(id)
+            FOREIGN KEY(participant) REFERENCES participant(id)
+            FOREIGN KEY(station) REFERENCES station(id)
+            FOREIGN KEY(task) REFERENCES task(id)
+            FOREIGN KEY(modality) REFERENCES modality(id)
+        );"""
+    )
+
+
+def insert_values(
+    db_connection,
+    table_name: str,
+    column_name_fragment: str,
+    group_session_id,
+    participants,
+    series,
+):
+
+    db_connection.execute(
+        f"""
+        INSERT INTO {table_name}
+        VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """,
+        (
+            group_session_id,
+            participants[0],
+            participants[1],
+            participants[2],
+            series[f"lion_eeg_data_{column_name_fragment}"] == "ok",
+            series[f"tiger_eeg_data_{column_name_fragment}"] == "ok",
+            series[f"leopard_eeg_data_{column_name_fragment}"] == "ok",
+            series[f"lion_nirs_data_{column_name_fragment}"] == "ok",
+            series[f"tiger_nirs_data_{column_name_fragment}"] == "ok",
+            series[f"leopard_nirs_data_{column_name_fragment}"] == "ok",
+            series[f"lion_pupil_data_{column_name_fragment}"] == "ok",
+            series[f"tiger_pupil_data_{column_name_fragment}"] == "ok",
+            series[f"leopard_pupil_data_{column_name_fragment}"] == "ok",
+        ),
+    )
+
 
 def process_rick_workbook():
     """Process Rick's CSVs"""
@@ -25,118 +151,25 @@ def process_rick_workbook():
     db_connection = sqlite3.connect(DB_PATH)
 
     with db_connection:
-        db_connection.execute("DROP TABLE IF EXISTS participant")
+        db_connection.execute("DROP TABLE IF EXISTS task")
         db_connection.execute(
             """
-            CREATE TABLE participant (
-                id INTEGER PRIMARY KEY
-            );"""
-        )
-
-        db_connection.execute("DROP TABLE IF EXISTS group_session")
-        db_connection.execute(
-            """
-            CREATE TABLE group_session (
+            CREATE TABLE task (
                 id TEXT PRIMARY KEY
             );"""
         )
+        db_connection.executemany(
+            "INSERT INTO task VALUES(?)",
+            [(task,) for task in TASKS],
+        )
+
+        recreate_station_table(db_connection)
+        recreate_modality_table(db_connection)
+        recreate_participant_table(db_connection)
+        recreate_group_session_table(db_connection)
+        recreate_data_validity_table(db_connection)
 
         # TODO Integrate the 'mask_on' statuses.
-        db_connection.execute("DROP TABLE IF EXISTS rest_state_task_metadata")
-        db_connection.execute(
-            """
-            CREATE TABLE rest_state_task_metadata (
-                group_session_id TEXT PRIMARY KEY,
-                lion_participant_id INTEGER NOT NULL,
-                tiger_participant_id INTEGER NOT NULL,
-                leopard_participant_id INTEGER NOT NULL,
-                lion_eeg_data_is_valid BOOLEAN DEFAULT TRUE,
-                tiger_eeg_data_is_valid BOOLEAN DEFAULT TRUE,
-                leopard_eeg_data_is_valid BOOLEAN DEFAULT TRUE,
-                lion_fnirs_data_is_valid BOOLEAN DEFAULT TRUE,
-                tiger_fnirs_data_is_valid BOOLEAN DEFAULT TRUE,
-                leopard_fnirs_data_is_valid BOOLEAN DEFAULT TRUE,
-                lion_gaze_data_is_valid BOOLEAN DEFAULT TRUE,
-                tiger_gaze_data_is_valid BOOLEAN DEFAULT TRUE,
-                leopard_gaze_data_is_valid BOOLEAN DEFAULT TRUE,
-                FOREIGN KEY(group_session_id) REFERENCES group_session(id),
-                FOREIGN KEY(lion_participant_id) REFERENCES participant(id),
-                FOREIGN KEY(tiger_participant_id) REFERENCES participant(id),
-                FOREIGN KEY(leopard_participant_id) REFERENCES participant(id)
-            );"""
-        )
-
-        db_connection.execute("DROP TABLE IF EXISTS finger_tapping_task_metadata")
-        db_connection.execute(
-            """
-            CREATE TABLE finger_tapping_task_metadata (
-                group_session_id TEXT PRIMARY KEY,
-                lion_participant_id INTEGER NOT NULL,
-                tiger_participant_id INTEGER NOT NULL,
-                leopard_participant_id INTEGER NOT NULL,
-                lion_eeg_data_is_valid BOOLEAN DEFAULT TRUE,
-                tiger_eeg_data_is_valid BOOLEAN DEFAULT TRUE,
-                leopard_eeg_data_is_valid BOOLEAN DEFAULT TRUE,
-                lion_fnirs_data_is_valid BOOLEAN DEFAULT TRUE,
-                tiger_fnirs_data_is_valid BOOLEAN DEFAULT TRUE,
-                leopard_fnirs_data_is_valid BOOLEAN DEFAULT TRUE,
-                lion_gaze_data_is_valid BOOLEAN DEFAULT TRUE,
-                tiger_gaze_data_is_valid BOOLEAN DEFAULT TRUE,
-                leopard_gaze_data_is_valid BOOLEAN DEFAULT TRUE,
-                FOREIGN KEY(group_session_id) REFERENCES group_session(id),
-                FOREIGN KEY(lion_participant_id) REFERENCES participant(id),
-                FOREIGN KEY(tiger_participant_id) REFERENCES participant(id),
-                FOREIGN KEY(leopard_participant_id) REFERENCES participant(id)
-            );"""
-        )
-
-        db_connection.execute("DROP TABLE IF EXISTS affective_task_individual_metadata")
-        db_connection.execute(
-            """
-            CREATE TABLE affective_task_individual_metadata (
-                group_session_id TEXT PRIMARY KEY,
-                lion_participant_id INTEGER NOT NULL,
-                tiger_participant_id INTEGER NOT NULL,
-                leopard_participant_id INTEGER NOT NULL,
-                lion_eeg_data_is_valid BOOLEAN DEFAULT TRUE,
-                tiger_eeg_data_is_valid BOOLEAN DEFAULT TRUE,
-                leopard_eeg_data_is_valid BOOLEAN DEFAULT TRUE,
-                lion_fnirs_data_is_valid BOOLEAN DEFAULT TRUE,
-                tiger_fnirs_data_is_valid BOOLEAN DEFAULT TRUE,
-                leopard_fnirs_data_is_valid BOOLEAN DEFAULT TRUE,
-                lion_gaze_data_is_valid BOOLEAN DEFAULT TRUE,
-                tiger_gaze_data_is_valid BOOLEAN DEFAULT TRUE,
-                leopard_gaze_data_is_valid BOOLEAN DEFAULT TRUE,
-                FOREIGN KEY(group_session_id) REFERENCES group_session(id),
-                FOREIGN KEY(lion_participant_id) REFERENCES participant(id),
-                FOREIGN KEY(tiger_participant_id) REFERENCES participant(id),
-                FOREIGN KEY(leopard_participant_id) REFERENCES participant(id)
-            );"""
-        )
-
-        db_connection.execute("DROP TABLE IF EXISTS affective_task_team_metadata")
-        db_connection.execute(
-            """
-            CREATE TABLE affective_task_team_metadata (
-                group_session_id TEXT PRIMARY KEY,
-                lion_participant_id INTEGER NOT NULL,
-                tiger_participant_id INTEGER NOT NULL,
-                leopard_participant_id INTEGER NOT NULL,
-                lion_eeg_data_is_valid BOOLEAN DEFAULT TRUE,
-                tiger_eeg_data_is_valid BOOLEAN DEFAULT TRUE,
-                leopard_eeg_data_is_valid BOOLEAN DEFAULT TRUE,
-                lion_fnirs_data_is_valid BOOLEAN DEFAULT TRUE,
-                tiger_fnirs_data_is_valid BOOLEAN DEFAULT TRUE,
-                leopard_fnirs_data_is_valid BOOLEAN DEFAULT TRUE,
-                lion_gaze_data_is_valid BOOLEAN DEFAULT TRUE,
-                tiger_gaze_data_is_valid BOOLEAN DEFAULT TRUE,
-                leopard_gaze_data_is_valid BOOLEAN DEFAULT TRUE,
-                FOREIGN KEY(group_session_id) REFERENCES group_session(id),
-                FOREIGN KEY(lion_participant_id) REFERENCES participant(id),
-                FOREIGN KEY(tiger_participant_id) REFERENCES participant(id),
-                FOREIGN KEY(leopard_participant_id) REFERENCES participant(id)
-            );"""
-        )
 
     csv_path = (
         "/space/adarsh/tomcat/rick_csvs/view_exp_face_screen_all_crosstab.csv"
@@ -158,102 +191,82 @@ def process_rick_workbook():
 
             db_connection.executemany(
                 "INSERT OR IGNORE into participant VALUES(?)",
-                [(participant,) for participant in participants]
+                [(participant,) for participant in participants],
             )
 
+            # For the group session on 2022-09-30, confederate with ID 99901
+            # filled in for participant 00012 during the Saturn A mission,
+            # since participant 00012 got motion sickness and had to quit the
+            # experiment.
+            if group_session_id == "exp_2022_09_30_10":
+                db_connection.execute(
+                    "INSERT OR IGNORE into participant VALUES(?)", (99901,)
+                )
+
             db_connection.execute(
-                "INSERT into group_session VALUES(?)",
-                (group_session_id,),
+                "INSERT into group_session VALUES(?, ?)",
+                (group_session_id, None),
             )
 
             # TODO: Deal with 'no_face_image' case for eeg data.
-            db_connection.execute(
-                """
-                INSERT INTO rest_state_task_metadata
-                VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """,
-                (
-                    group_session_id,
-                    participants[0],
-                    participants[1],
-                    participants[2],
-                    series["lion_eeg_data_rest_state"] == "ok",
-                    series["tiger_eeg_data_rest_state"] == "ok",
-                    series["leopard_eeg_data_rest_state"] == "ok",
-                    series["lion_nirs_data_rest_state"] == "ok",
-                    series["tiger_nirs_data_rest_state"] == "ok",
-                    series["leopard_nirs_data_rest_state"] == "ok",
-                    series["lion_pupil_data_rest_state"] == "ok",
-                    series["tiger_pupil_data_rest_state"] == "ok",
-                    series["leopard_pupil_data_rest_state"] == "ok",
-                ),
-            )
+            for station in STATIONS:
+                for modality in MODALITIES:
+                    modality_in_csv = modality.replace("fnirs", "nirs").replace("gaze", "pupil")
+                    for task in TASKS:
+                        task_in_csv = (
+                            task.replace(
+                                "affective_individual",
+                                "affective_task_individual",
+                            )
+                            .replace("affective_team", "affective_task_team")
+                            .replace(
+                                "ping_pong_competitive_0",
+                                "ping_pong_competetive_0",
+                            )
+                            .replace(
+                                "ping_pong_competitive_0",
+                                "ping_pong_competetive_0",
+                            )
+                            .replace(
+                                "ping_pong_competitive_1",
+                                "ping_pong_competetive_1",
+                            )
+                            .replace(
+                                "ping_pong_cooperative",
+                                "ping_pong_cooperative_0",
+                            )
+                        )
+                        # For the group session on 2022-09-30, confederate with ID 99901 filled in
+                        # for participant 00012 during the Saturn A mission, since participant
+                        # 00012 got motion sickness and had to quit the experiment.
+                        participant_id = None
+                        if (
+                            group_session_id == "exp_2022_09_30_10"
+                            and task == "saturn_a"
+                            and station == "lion"
+                        ):
+                            participant_id = 99901
+                        else:
+                            participant_id = series[f"{station}_subject_id"]
 
-            db_connection.execute(
-                """
-                INSERT INTO finger_tapping_task_metadata
-                VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """,
-                (
-                    group_session_id,
-                    participants[0],
-                    participants[1],
-                    participants[2],
-                    series["lion_eeg_data_finger_tapping"] == "ok",
-                    series["tiger_eeg_data_finger_tapping"] == "ok",
-                    series["leopard_eeg_data_finger_tapping"] == "ok",
-                    series["lion_nirs_data_finger_tapping"] == "ok",
-                    series["tiger_nirs_data_finger_tapping"] == "ok",
-                    series["leopard_nirs_data_finger_tapping"] == "ok",
-                    series["lion_pupil_data_finger_tapping"] == "ok",
-                    series["tiger_pupil_data_finger_tapping"] == "ok",
-                    series["leopard_pupil_data_finger_tapping"] == "ok",
-                ),
-            )
 
-            db_connection.execute(
-                """
-                INSERT INTO affective_task_individual_metadata
-                VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """,
-                (
-                    group_session_id,
-                    participants[0],
-                    participants[1],
-                    participants[2],
-                    series["lion_eeg_data_affective_task_individual"] == "ok",
-                    series["tiger_eeg_data_affective_task_individual"] == "ok",
-                    series["leopard_eeg_data_affective_task_individual"] == "ok",
-                    series["lion_nirs_data_affective_task_individual"] == "ok",
-                    series["tiger_nirs_data_affective_task_individual"] == "ok",
-                    series["leopard_nirs_data_affective_task_individual"] == "ok",
-                    series["lion_pupil_data_affective_task_individual"] == "ok",
-                    series["tiger_pupil_data_affective_task_individual"] == "ok",
-                    series["leopard_pupil_data_affective_task_individual"] == "ok",
-                ),
-            )
+                        db_connection.execute(
+                            f"""
+                            INSERT INTO data_validity
+                            VALUES(?, ?, ?, ?, ?, ?)""",
+                            (
+                                group_session_id,
+                                participant_id,
+                                station,
+                                task,
+                                modality,
+                                series[
+                                    f"{station}_{modality_in_csv}_data_{task_in_csv}"
+                                ]
+                                == "ok",
+                            ),
+                        )
 
-            db_connection.execute(
-                """
-                INSERT INTO affective_task_team_metadata
-                VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """,
-                (
-                    group_session_id,
-                    participants[0],
-                    participants[1],
-                    participants[2],
-                    series["lion_eeg_data_affective_task_team"] == "ok",
-                    series["tiger_eeg_data_affective_task_team"] == "ok",
-                    series["leopard_eeg_data_affective_task_team"] == "ok",
-                    series["lion_nirs_data_affective_task_team"] == "ok",
-                    series["tiger_nirs_data_affective_task_team"] == "ok",
-                    series["leopard_nirs_data_affective_task_team"] == "ok",
-                    series["lion_pupil_data_affective_task_team"] == "ok",
-                    series["tiger_pupil_data_affective_task_team"] == "ok",
-                    series["leopard_pupil_data_affective_task_team"] == "ok",
-                ),
-            )
 
 if __name__ == "__main__":
     process_rick_workbook()
