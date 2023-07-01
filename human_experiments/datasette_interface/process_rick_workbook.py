@@ -117,7 +117,7 @@ def insert_values(
     db_connection,
     table_name: str,
     column_name_fragment: str,
-    group_session_id,
+    group_session_id: str,
     participants,
     series,
 ):
@@ -172,7 +172,7 @@ def process_rick_workbook():
         # TODO Integrate the 'mask_on' statuses.
 
     csv_path = (
-        "/space/adarsh/tomcat/rick_csvs/view_exp_face_screen_all_crosstab.csv"
+        "/space/adarsh/tomcat/rick_csvs/view_exp_face_screen_all_crosstab_updated.csv"
     )
 
     df = pd.read_csv(csv_path, index_col="experiment_id", dtype=str)
@@ -211,7 +211,7 @@ def process_rick_workbook():
             # TODO: Deal with 'no_face_image' case for eeg data.
             for station in STATIONS:
                 for modality in MODALITIES:
-                    modality_in_csv = modality.replace("fnirs", "nirs").replace("gaze", "pupil")
+                    modality_in_csv = modality.replace("gaze", "pupil")
                     for task in TASKS:
                         task_in_csv = (
                             task.replace(
@@ -220,34 +220,16 @@ def process_rick_workbook():
                             )
                             .replace("affective_team", "affective_task_team")
                             .replace(
-                                "ping_pong_competitive_0",
-                                "ping_pong_competetive_0",
-                            )
-                            .replace(
-                                "ping_pong_competitive_0",
-                                "ping_pong_competetive_0",
-                            )
-                            .replace(
-                                "ping_pong_competitive_1",
-                                "ping_pong_competetive_1",
-                            )
-                            .replace(
                                 "ping_pong_cooperative",
                                 "ping_pong_cooperative_0",
                             )
                         )
-                        # For the group session on 2022-09-30, confederate with ID 99901 filled in
-                        # for participant 00012 during the Saturn A mission, since participant
-                        # 00012 got motion sickness and had to quit the experiment.
-                        participant_id = None
-                        if (
-                            group_session_id == "exp_2022_09_30_10"
-                            and task == "saturn_a"
-                            and station == "lion"
-                        ):
-                            participant_id = 99901
-                        else:
+                        if task_in_csv == "finger_tapping":
                             participant_id = series[f"{station}_subject_id"]
+                        else:
+                            participant_id = series[f"{station}_{task_in_csv}_participant_id"]
+                        if participant_id == "mission_not_run":
+                            continue;
 
 
                         db_connection.execute(
