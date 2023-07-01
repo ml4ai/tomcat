@@ -7,7 +7,6 @@ from logging import info, warning, error, debug
 import sqlite3
 import csv
 import pandas as pd
-from dbml_sqlite import toSQLite
 from pprint import pprint
 from utils import cd
 from config import DB_PATH, logging_handlers
