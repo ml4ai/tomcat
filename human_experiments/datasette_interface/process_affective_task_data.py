@@ -26,7 +26,7 @@ logging.basicConfig(
 )
 
 
-def process_directory_v1(session, db_connection):
+def process_directory_v1(session, participants, db_connection):
     info(f"Processing directory {session}")
     with cd(f"{session}/baseline_tasks/affective"):
         info("Processing individual affective task files.")
@@ -41,15 +41,25 @@ def process_directory_v1(session, db_connection):
         assert len(individual_csv_files) == 3
         assert len(team_csv_files) == 1
 
+        # Get nominal participant IDs from CSV file names:
+        nominal_participants = {
+            filename.split("_")[1] for filename in individual_csv_files
+        }
+
         for csv_file in individual_csv_files:
-            participant_id = csv_file.split("_")[1]
+            nominal_participant_id = csv_file.split("_")[1]
+            real_participant_id = (
+                nominal_participant_id
+                if nominal_participant_id in participants
+                else list(participants - nominal_participants)[0]
+            )
+
             df = pd.read_csv(
                 csv_file,
                 delimiter=";",
                 usecols=[
                     "time",
                     "image_path",
-                    "subject_id",
                     "arousal_score",
                     "valence_score",
                     "event_type",
@@ -60,29 +70,31 @@ def process_directory_v1(session, db_connection):
                     "subject_id": str,
                     "arousal_score": str,
                     "valence_score": str,
-                    }
+                },
             )
 
-            rows = [
-                (
-                    session,
-                    participant_id,
-                    "individual",
-                    row["time"],
-                    convert_unix_timestamp_to_iso8601(df["time"].iloc[i]),
-                    row["event_type"],
-                    row["image_path"],
-                    row["arousal_score"],
-                    row["valence_score"],
-                )
-                for i, row in df.iterrows()
-            ]
-
             with db_connection:
-                db_connection.executemany(
-                    "INSERT into affective_task_event VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);",
-                    rows,
-                )
+                for i, row in df.iterrows():
+                    row = (
+                        session,
+                        real_participant_id,
+                        "individual",
+                        row["time"],
+                        convert_unix_timestamp_to_iso8601(df["time"].iloc[i]),
+                        row["event_type"],
+                        row["image_path"],
+                        row["arousal_score"],
+                        row["valence_score"],
+                    )
+                    try:
+                        db_connection.execute(
+                            "INSERT into affective_task_event VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);",
+                            row,
+                        )
+                    except sqlite3.IntegrityError as e:
+                        raise sqlite3.IntegrityError(
+                            f"Unable to insert row: {row}! Error: {e}"
+                        )
 
         for csv_file in team_csv_files:
             df = pd.read_csv(
@@ -102,33 +114,37 @@ def process_directory_v1(session, db_connection):
                     "subject_id": str,
                     "arousal_score": str,
                     "valence_score": str,
-                    }
+                },
             )
 
-            rows = [
-                (
-                    session,
-                    row["subject_id"],
-                    "team",
-                    row["time"],
-                    convert_unix_timestamp_to_iso8601(df["time"].iloc[i]),
-                    row["event_type"],
-                    row["image_path"],
-                    row["arousal_score"],
-                    row["valence_score"],
+            for i, row in df.iterrows():
+                real_participant_id = (
+                    row["subject_id"]
+                    if row["subject_id"] in participants
+                    else list(participants - nominal_participants)[0]
                 )
-                for i, row in df.iterrows()
-            ]
+                row = (
+                        session,
+                        real_participant_id,
+                        "team",
+                        row["time"],
+                        convert_unix_timestamp_to_iso8601(df["time"].iloc[i]),
+                        row["event_type"],
+                        row["image_path"],
+                        row["arousal_score"],
+                        row["valence_score"],
+                    )
 
-            with db_connection:
-                db_connection.executemany(
-                    "INSERT into affective_task_event VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);",
-                    rows,
-                )
+                with db_connection:
+                    db_connection.execute(
+                        "INSERT into affective_task_event VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);",
+                        row,
+                    )
 
 
-def process_directory_v2(session, db_connection):
+def process_directory_v2(session, participants, db_connection):
     """Process directory assuming unified XDF files."""
+    # TODO: Implement mapping to real participant IDs.
     info(f"Processing directory {session}")
     with cd(f"{session}/lsl"):
         streams, header = pyxdf.load_xdf(
@@ -163,11 +179,12 @@ def process_directory_v2(session, db_connection):
                 )
 
 
-def process_rest_state_task_data():
+def process_affective_task_data():
     info("Processing directories...")
 
     db_connection = sqlite3.connect(DB_PATH)
     with db_connection:
+        db_connection.execute("PRAGMA foreign_keys = 1")
         info("Dropping affective_task_event table")
         db_connection.execute(
             "DROP TABLE IF EXISTS individual_affective_task_event"
@@ -177,8 +194,8 @@ def process_rest_state_task_data():
         db_connection.execute(
             """
             CREATE TABLE affective_task_event (
-                group_session_id TEXT NOT NULL,
-                participant_id TEXT,
+                group_session TEXT NOT NULL,
+                participant INTEGER,
                 task_type TEXT NOT NULL,
                 timestamp_unix TEXT NOT NULL,
                 timestamp_iso8601 TEXT NOT NULL,
@@ -186,7 +203,8 @@ def process_rest_state_task_data():
                 image_path TEXT,
                 arousal_score INTEGER,
                 valence_score INTEGER,
-                FOREIGN KEY(group_session_id) REFERENCES group_session(id)
+                FOREIGN KEY(group_session) REFERENCES group_session(id)
+                FOREIGN KEY(participant) REFERENCES participant(id)
             );"""
         )
 
@@ -200,10 +218,21 @@ def process_rest_state_task_data():
         for session in tqdm(
             sorted(directories_to_process), unit="directories"
         ):
+            # Get real participant IDs for the task
+            with db_connection:
+                participants = {
+                    row[0]
+                    for row in db_connection.execute(
+                        f"""
+                    SELECT DISTINCT(participant) from data_validity
+                    WHERE group_session = '{session}' and task LIKE 'affective%';
+                    """
+                    ).fetchall()
+                }
             if not is_directory_with_unified_xdf_files(session):
-                process_directory_v1(session, db_connection)
+                process_directory_v1(session, participants, db_connection)
             else:
-                process_directory_v2(session, db_connection)
+                process_directory_v2(session, participants, db_connection)
 
 
 if __name__ == "__main__":
@@ -217,4 +246,4 @@ if __name__ == "__main__":
         separate invocations to monotonic() and datetime.utcnow() respectively.
         """
     )
-    process_rest_state_task_data()
+    process_affective_task_data()
