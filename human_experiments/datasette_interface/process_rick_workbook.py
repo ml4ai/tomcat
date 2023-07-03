@@ -171,7 +171,7 @@ def process_rick_workbook():
         # TODO Integrate the 'mask_on' statuses.
 
     csv_path = (
-        "/space/adarsh/tomcat/rick_csvs/view_exp_face_screen_all_crosstab_updated.csv"
+        "/tomcat/data/raw/LangLab/experiments/study_3_pilot/rchamplin_data_validity_table.csv"
     )
 
     df = pd.read_csv(csv_path, index_col="experiment_id", dtype=str)
@@ -223,10 +223,7 @@ def process_rick_workbook():
                                 "ping_pong_cooperative_0",
                             )
                         )
-                        if task_in_csv == "finger_tapping":
-                            participant_id = series[f"{station}_subject_id"]
-                        else:
-                            participant_id = series[f"{station}_{task_in_csv}_participant_id"]
+                        participant_id = series[f"{station}_{task_in_csv}_participant_id"]
                         if participant_id == "mission_not_run":
                             continue;
 
