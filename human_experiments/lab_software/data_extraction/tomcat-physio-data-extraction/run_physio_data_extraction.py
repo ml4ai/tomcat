@@ -6,174 +6,10 @@ import argparse
 import numpy as np
 from termcolor import colored
 from utils import (
-    create_time_distribution,
-    dataframe_to_csv,
     str2bool,
+    read_xdf_old,
+    read_xdf_new,
 )
-
-def read_xdf(
-    xdf_file_paths,
-    extract_pkl,
-    extract_csv,
-    extract_hdf5,
-    exclude,
-    output_path,
-):
-    """
-    Read the XDF files.
-    """
-    columns = shutil.get_terminal_size().columns
-    for path in xdf_file_paths:
-        data, _ = pyxdf.load_xdf(path)
-
-        if exclude not in path:
-            if "lion" in path:
-                print(
-                    colored("Lion ", "magenta", attrs=["bold", "blink"]).center(columns)
-                )
-            elif "leopard" in path:
-                print(
-                    colored("Leopard ", "magenta", attrs=["bold", "blink"]).center(
-                        columns
-                    )
-                )
-            else:
-                print(
-                    colored(
-                        "Tiger ", "magenta", "on_blue", attrs=["bold", "blink"]
-                    ).center(columns)
-                )
-
-            for i in range(0, len(data)):
-                if data[i]["info"]["type"] == ["NIRS"]:
-                    print(
-                        colored("[Status] Reading ", "green", attrs=["bold"]),
-                        colored(data[i]["info"]["type"], "blue"),
-                    )
-                    (
-                        time_distribution_human_readable_nirs,
-                        time_distribution_unix_nirs,
-                    ) = create_time_distribution(
-                        data[i],
-                    )
-                    dataframe_to_csv(
-                        path,
-                        data[i]["time_series"],
-                        "NIRS",
-                        time_distribution_human_readable_nirs,
-                        time_distribution_unix_nirs,
-                        extract_pkl,
-                        extract_csv,
-                        extract_hdf5,
-                        output_path,
-                    )
-
-                elif data[i]["info"]["type"] == ["Markers"]:
-                    # Our experiments don't use physical marker for the physio data
-                    print(
-                        colored("[Status] Skipping ", "green", attrs=["bold"]),
-                        colored(data[i]["info"]["type"], "blue"),
-                    )
-
-                elif data[i]["info"]["type"] == ["EEG"]:
-                    print(
-                        colored("[Status] Reading ", "green", attrs=["bold"]),
-                        colored(data[i]["info"]["type"], "blue"),
-                    )
-                    (
-                        time_distribution_human_readable_eeg,
-                        time_distribution_unix_eeg,
-                    ) = create_time_distribution(data[i])
-
-                    # Create a list of channel names
-                    EEG_channels = []
-                    for channel_dict in data[i]["info"]["desc"][0]["channels"][0][
-                        "channel"
-                    ]:
-                        EEG_channels.append(channel_dict["label"][0])
-
-                    channels_used = [
-                        "AFF1h",
-                        "F7",
-                        "FC5",
-                        "C3",
-                        "T7",
-                        "TP9",
-                        "Pz",
-                        "P3",
-                        "P7",
-                        "O1",
-                        "O2",
-                        "P8",
-                        "P4",
-                        "TP10",
-                        "Cz",
-                        "C4",
-                        "T8",
-                        "FC6",
-                        "FCz",
-                        "F8",
-                        "AFF2h",
-                        "AUX_GSR",
-                        "AUX_EKG",
-                    ]
-
-                    exclude_channels = [
-                        (i, ch)
-                        for i, ch in enumerate(EEG_channels)
-                        if ch not in channels_used
-                    ]
-                    exclude_indices = [index for index, _ in exclude_channels]
-                    EEG_data = np.delete(
-                        data[i]["time_series"].T, exclude_indices, axis=0
-                    )
-
-                    dataframe_to_csv(
-                        path,
-                        EEG_data.T,  # Use EEG data with channels we want
-                        "EEG",
-                        time_distribution_human_readable_eeg,
-                        time_distribution_unix_eeg,
-                        extract_pkl,
-                        extract_csv,
-                        extract_hdf5,
-                        output_path,
-                    )
-
-                elif data[i]["info"]["type"] == ["Gaze"]:
-                    print(
-                        colored("[Status] Reading ", "green", attrs=["bold"]),
-                        colored(data[i]["info"]["type"], "blue"),
-                    )
-                    (
-                        time_distribution_human_readable_gaze,
-                        time_distribution_unix_gaze,
-                    ) = create_time_distribution(
-                        data[i],
-                    )
-                    dataframe_to_csv(
-                        path,
-                        data[i]["time_series"],
-                        "Gaze",
-                        time_distribution_human_readable_gaze,
-                        time_distribution_unix_gaze,
-                        extract_pkl,
-                        extract_csv,
-                        extract_hdf5,
-                        output_path,
-                    )
-
-                elif data[i]["info"]["type"] == ["Accelerometer"]:
-                    print(
-                        colored("[Status] Skipping ", "green", attrs=["bold"]),
-                        colored(data[i]["info"]["type"], "blue"),
-                    )
-        else:
-            print(
-                colored("[Status] Skipping ", "yellow", attrs=["bold"]),
-                colored(exclude, "red"),
-            )
-
 
 def look_for_XDF_files(
     rootdir_xdf,
@@ -198,15 +34,38 @@ def look_for_XDF_files(
             colored("[Status] xdf file found at ", "green", attrs=["bold"]),
             colored(file_path, "blue"),
         )
+    if len(xdf_file_paths) == 0:
+        print(
+            colored("[Status] No xdf files found at ", "red", attrs=["bold"]),
+            colored(rootdir_xdf, "blue"),
+        )
+        sys.exit()
+    elif len(xdf_file_paths) > 2:
+        print(
+            colored("[Status] +++++ Extracting data for experiments before 2023_04_17 ++++++", "green", attrs=["bold"])
+        )
+        read_xdf_old(
+            sorted(xdf_file_paths),
+            extract_pkl,
+            extract_csv,
+            extract_hdf5,
+            exclude,
+            output_path,
+        )  # 1. read all the XDF files
 
-    read_xdf(
-        sorted(xdf_file_paths),
-        extract_pkl,
-        extract_csv,
-        extract_hdf5,
-        exclude,
-        output_path,
-    )  # 1. read all the XDF files
+    elif len(xdf_file_paths) == 2:
+        print(
+            colored("[Status] +++++ Extracting data for experiments after 2023_04_17 ++++++", "green", attrs=["bold"])
+        )
+        read_xdf_new(
+            sorted(xdf_file_paths),
+            extract_pkl,
+            extract_csv,
+            extract_hdf5,
+            exclude,
+            output_path,
+            rootdir_xdf,
+        )
 
 
 if __name__ == "__main__":

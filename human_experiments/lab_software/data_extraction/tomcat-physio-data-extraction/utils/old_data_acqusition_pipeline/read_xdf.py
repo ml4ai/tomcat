@@ -16,7 +16,7 @@ def read_xdf(
     output_path,
 ):
     """
-    Read the XDF files for experiments before 2023_04_17.
+    Read the XDF files for experiments including 2023_04_17 and after.
     """
     columns = shutil.get_terminal_size().columns
     for path in xdf_file_paths:
@@ -169,3 +169,4 @@ def read_xdf(
                 colored("[Status] Skipping ", "yellow", attrs=["bold"]),
                 colored(exclude, "red"),
             )
+            
