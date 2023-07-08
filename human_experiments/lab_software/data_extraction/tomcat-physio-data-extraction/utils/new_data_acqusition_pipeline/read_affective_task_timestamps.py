@@ -41,7 +41,7 @@ def read_affective_task_timestamps_individual(
                 + ".csv",
             )
 
-            AffectiveTask_tiger.to_csv(full_path, sep=";")
+            AffectiveTask_tiger.to_csv(full_path, sep=";", encoding="utf-8")
             print(
                 colored(
                     "[Status] Saving Individual Affective task to",
@@ -81,7 +81,7 @@ def read_affective_task_timestamps_individual(
                 + ".csv",
             )
 
-            AffectiveTask_lion.to_csv(full_path, sep=";")
+            AffectiveTask_lion.to_csv(full_path, sep=";", encoding="utf-8")
             print(
                 colored(
                     "[Status] Saving Individual Affective task to",
@@ -121,7 +121,7 @@ def read_affective_task_timestamps_individual(
                 + ".csv",
             )
 
-            AffectiveTask_leopard.to_csv(full_path, sep=";")
+            AffectiveTask_leopard.to_csv(full_path, sep=";", encoding="utf-8")
             print(
                 colored(
                     "[Status] Saving Individual Affective task to",
@@ -163,7 +163,7 @@ def read_affective_task_timestamps_team(
                 "baseline_tasks/affective/team_" + str(timestamp_team) + ".csv",
             )
 
-            AffectiveTask_team.to_csv(full_path, sep=";")
+            AffectiveTask_team.to_csv(full_path, sep=";", encoding="utf-8")
             print(
                 colored(
                     "[Status] Saving Team Affective task to", "green", attrs=["bold"]

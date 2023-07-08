@@ -40,7 +40,7 @@ def read_ping_pong_timestamps(
                 + str(PingPong_competitive_0_timestamp)
                 + ".csv",
             )
-            PingPong_competitive_0.to_csv(full_path, sep=";")
+            PingPong_competitive_0.to_csv(full_path, sep=";", encoding="utf-8")
 
             print(
                 colored(
@@ -81,7 +81,7 @@ def read_ping_pong_timestamps(
                 + str(PingPong_competitive_1_timestamp)
                 + ".csv",
             )
-            PingPong_competitive_1.to_csv(full_path, sep=";")
+            PingPong_competitive_1.to_csv(full_path, sep=";", encoding="utf-8")
             print(
                 colored(
                     "[Status] Saving Ping Pong Competetive 1 to ",
@@ -121,7 +121,7 @@ def read_ping_pong_timestamps(
                 + str(PingPong_cooperative_0_timestamp)
                 + ".csv",
             )
-            PingPong_cooperative_0.to_csv(full_path, sep=";")
+            PingPong_cooperative_0.to_csv(full_path, sep=";", encoding="utf-8")
             print(
                 colored(
                     "[Status] Saving Ping Pong Coorperative 0 to ",

@@ -31,7 +31,7 @@ def read_finger_tapping_time(block, input_path, output_path):
                 exp_name,
                 "baseline_tasks/finger_tapping/" + str(timestamp) + ".csv",
             )
-            df.to_csv(full_path, sep=";")
+            df.to_csv(full_path, sep=";", encoding="utf-8")
             print(
                 colored(
                     "[Status] Saving Finger Tapping task to ", "green", attrs=["bold"]

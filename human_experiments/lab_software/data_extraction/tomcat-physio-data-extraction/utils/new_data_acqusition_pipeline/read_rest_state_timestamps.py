@@ -29,19 +29,9 @@ def read_rest_state_timestamps(block, input_path, output_path):
                 exp_name,
                 "baseline_tasks/rest_state/" + str(rest_state_timestamp) + ".csv",
             )
-            df.to_csv(full_path, sep=";")
+            df.to_csv(full_path, sep=";", encoding="utf-8")
             print(
                 colored("[Status] Saving Rest state to", "green", attrs=["bold"]),
                 colored(full_path, "blue"),
             )
 
-    #         rest_state = block[i]["time_stamps"]
-
-    #         markers[idx] = {
-    #             "state": "rest_state",
-    #             "participant": None,
-    #             "start_time": rest_state[0],
-    #             "end_time": rest_state[-1],
-    #         }
-
-    # return markers

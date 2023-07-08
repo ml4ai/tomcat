@@ -135,18 +135,19 @@ def save_NIRS(
                     colored("Saving unfiltered NIRS HbO HbR data to", "green", attrs=["bold"]),
                     colored(file_path, "green", attrs=["bold"]),
                 )
-                df[header_hbo_hbr].to_csv(file_path)
+                df[header_hbo_hbr].to_csv(file_path, sep=";", encoding="utf-8")
 
                 print(
                     colored("[INFO]", "green", attrs=["bold"]),
                     colored("Saving raw NIRS W1 W2 to", "green", attrs=["bold"]),
                     colored(file_path, "green", attrs=["bold"]),
                 )
-                df[header_raw].to_csv(file_path_raw)
+                df[header_raw].to_csv(file_path_raw, sep=";", encoding="utf-8")
 
             if extract_pkl:
                 # Create the full file path
                 file_path = os.path.join(full_output_path, "NIRS.pkl")
+                file_path_raw = os.path.join(full_output_path, "NIRS_raw.pkl")
 
                 # Save the dataframe to a pkl file
                 print("Saving NIRS data to: {}".format(file_path))
@@ -155,11 +156,13 @@ def save_NIRS(
                     colored("Saving unfiltered NIRS HbO HbR data to", "green", attrs=["bold"]),
                     colored(file_path, "green", attrs=["bold"]),
                 )
-                df[0].to_pickle(file_path)
+                df[header_hbo_hbr].to_pickle(file_path, sep=";", encoding="utf-8")
+                df[header_raw].to_pickle(file_path_raw, sep=";", encoding="utf-8")
 
             if extract_hdf5:
                 # Create the full file path
                 file_path = os.path.join(full_output_path, "NIRS.h5")
+                file_path_raw = os.path.join(full_output_path, "NIRS_raw.h5")
 
                 # Save the dataframe to a hdf5 file
                 print("Saving NIRS data to: {}".format(file_path))
@@ -168,7 +171,8 @@ def save_NIRS(
                     colored("Saving unfiltered NIRS HbO HbR data to", "green", attrs=["bold"]),
                     colored(file_path, "green", attrs=["bold"]),
                 )
-                df[0].to_hdf(file_path, key="df", mode="w")
+                df[header_hbo_hbr].to_hdf(file_path, key="df", mode="w", sep=";", encoding="utf-8")
+                df[header_raw].to_hdf(file_path_raw, key="df", mode="w", sep=";", encoding="utf-8")
         else:
             print(
                 colored("[Warning]", "yellow", attrs=["bold"]),

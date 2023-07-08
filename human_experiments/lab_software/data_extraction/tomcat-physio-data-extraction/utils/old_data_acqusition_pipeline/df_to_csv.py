@@ -224,7 +224,7 @@ def dataframe_to_csv_1(
                 colored(stream_type, "blue"),
                 colored("Saving Raw NIRS wavelength info to csv files", "green", attrs=["bold"]),
             )
-            df[header_raw].to_csv(new_csv_file_path + "_raw" + ".csv", sep="\t", encoding="utf-8")
+            df[header_raw].to_csv(new_csv_file_path + "_raw" + ".csv", sep=";", encoding="utf-8")
 
             print(
                 colored("[INFO]", "green", attrs=["bold"]),
@@ -232,10 +232,10 @@ def dataframe_to_csv_1(
                 colored("Saving HbO HbR NIRS info to csv files", "green", attrs=["bold"]),
             )
 
-            df[header_hbo_hbr].to_csv(new_csv_file_path + ".csv", sep="\t", encoding="utf-8")
+            df[header_hbo_hbr].to_csv(new_csv_file_path + ".csv", sep=";", encoding="utf-8")
 
         else:
-            df.to_csv(new_csv_file_path + ".csv", sep="\t", encoding="utf-8")
+            df.to_csv(new_csv_file_path + ".csv", sep=";", encoding="utf-8")
             print(
                 colored("[INFO]", "green", attrs=["bold"]),
                 colored("Sucessfully generated csv file at", "green", attrs=["bold"]),
@@ -244,7 +244,7 @@ def dataframe_to_csv_1(
 
     # Save as pickle file
     if extract_pkl == True:
-        df.to_pickle(csv_file_name + ".pkl")
+        df.to_pickle(csv_file_name + ".pkl", sep=";", encoding="utf-8")
         print(
             colored("[INFO]", "green", attrs=["bold"]),
             colored("Sucessfully generated pickle file at", "green", attrs=["bold"]),
@@ -253,7 +253,7 @@ def dataframe_to_csv_1(
 
     # Save as hdf5 file
     if extract_hdf5 == True:
-        df.to_hdf(new_csv_file_path + ".h5", key="df", mode="w")
+        df.to_hdf(new_csv_file_path + ".h5", key="df", mode="w", sep=";", encoding="utf-8")
         print(
             colored("[INFO]", "green", attrs=["bold"]),
             colored("Sucessfully generated hdf5 file at", "green", attrs=["bold"]),

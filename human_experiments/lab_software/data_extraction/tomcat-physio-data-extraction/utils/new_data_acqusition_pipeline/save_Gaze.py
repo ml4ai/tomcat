@@ -41,7 +41,7 @@ def save_Gaze(
                     colored("Saving unfiltered Gaze to", "green", attrs=["bold"]),
                     colored(file_path, "green", attrs=["bold"]),
                 )
-                df.to_csv(file_path)
+                df.to_csv(file_path, sep=";", encoding="utf-8")
 
             if extract_pkl:
                 # Create the full file path
@@ -54,7 +54,7 @@ def save_Gaze(
                     colored("Saving unfiltered Gaze to", "green", attrs=["bold"]),
                     colored(file_path, "green", attrs=["bold"]),
                 )
-                df.to_pickle(file_path)
+                df.to_pickle(file_path, sep=";", encoding="utf-8")
 
             if extract_hdf5:
                 # Create the full file path
@@ -67,7 +67,7 @@ def save_Gaze(
                     colored("Saving unfiltered Gaze to", "green", attrs=["bold"]),
                     colored(file_path, "green", attrs=["bold"]),
                 )
-                df.to_hdf(file_path, key="df", mode="w")
+                df.to_hdf(file_path, key="df", mode="w", sep=";", encoding="utf-8")
         else:
             print(
                 colored("[Warning]", "yellow", attrs=["bold"]),
