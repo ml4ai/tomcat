@@ -28,9 +28,6 @@ def read_xdf(
                 lion_0297_block_1_NIRS,
                 tiger_0239_block_1_NIRS,
                 leopard_0171_block_1_NIRS,
-                lion_0297_raw_w1,
-                tiger_0239_raw_w1,
-                leopard_0171_raw_w1,
             ) = read_nirs(
                 block_1
             )  # 1.1 Read NIRS timerseries data and its timestamps
@@ -79,9 +76,6 @@ def read_xdf(
                 lion_0297_block_2_NIRS,
                 tiger_0239_block_2_NIRS,
                 leopard_0171_block_2_NIRS,
-                _,
-                _,
-                _,
             ) = read_nirs(
                 block_2
             )  # 1.1 Read NIRS data
@@ -177,9 +171,6 @@ def read_xdf(
         lion_0297_block_NIRS,
         tiger_0239_block_NIRS,
         leopard_0171_block_NIRS,
-        lion_0297_raw_w1,
-        tiger_0239_raw_w1,
-        leopard_0171_raw_w1,
         rootdir_xdf,
         output_path,
         extract_pkl,
