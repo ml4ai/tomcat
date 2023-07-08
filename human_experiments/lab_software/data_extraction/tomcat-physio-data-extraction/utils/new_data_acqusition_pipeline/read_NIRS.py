@@ -116,10 +116,6 @@ def read_nirs(block):
                     lion_0297_block["time_series"][:, 1:], columns=header
                 )  # Get channel data W1 W2 HbO HbR
 
-                # lion_0297_block_df_raw = pd.DataFrame(
-                #     lion_0297_block["time_series"][:, 1:41], columns=header_raw
-                # )# Get raw w1, W2 data to calculate CV
-
                 print(
                     colored(
                         "[Status] Extracted timeseries from NIRS as dataframe ",
@@ -127,7 +123,7 @@ def read_nirs(block):
                         attrs=["bold"],
                     )
                 )
-                # lion_0297_block_df_raw["unix_time"] = lion_0297_block["time_stamps"]  # Get Unix time from XDF
+
                 lion_0297_block_df["unix_time"] = lion_0297_block[
                     "time_stamps"
                 ]  # Get Unix time from XDF
@@ -153,10 +149,6 @@ def read_nirs(block):
                     tiger_0239_block["time_series"][:, 1:], columns=header
                 )
 
-                # tiger_0239_block_df_raw = pd.DataFrame(
-                #     tiger_0239_block["time_series"][:, 1:41], columns=header_raw
-                # )# Get raw w1, W2 data to calculate CV
-
                 print(
                     colored(
                         "[Status] Extracted timeseries from NIRS as dataframe ",
@@ -164,7 +156,7 @@ def read_nirs(block):
                         attrs=["bold"],
                     )
                 )
-                # tiger_0239_block_df_raw['unix_time'] = tiger_0239_block["time_stamps"]  # Get Unix time from XDF
+
                 tiger_0239_block_df["unix_time"] = tiger_0239_block[
                     "time_stamps"
                 ]  # Get Unix time from XDF
@@ -190,10 +182,6 @@ def read_nirs(block):
                     leopard_0171_block["time_series"][:, 1:], columns=header
                 )
 
-                # leopard_0171_block_df_raw = pd.DataFrame(
-                #     leopard_0171_block["time_series"][:, 1:41], columns=header_raw
-                # )# Get raw w1, W2 data to calculate CV
-
                 print(
                     colored(
                         "[Status] Extracted timeseries from NIRS as dataframe ",
@@ -201,7 +189,7 @@ def read_nirs(block):
                         attrs=["bold"],
                     )
                 )
-                # leopard_0171_block_df_raw["unix_time"] = leopard_0171_block["time_stamps"]  # Get Unix time from XDF
+
                 leopard_0171_block_df["unix_time"] = leopard_0171_block[
                     "time_stamps"
                 ]  # Get Unix time from XDF

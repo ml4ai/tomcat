@@ -130,42 +130,6 @@ def read_xdf(
         leopard_0171_block_2_Gaze,
     )
 
-    # # Label the NIRS data with tasks timestamps: RestState, FingerTapping, AffectiveTask, PingPong, Minecraft
-    # (
-    #     lion_0297_block_NIRS_labeled,
-    #     tiger_0239_block_NIRS_labeled,
-    #     leopard_0171_block_NIRS_labeled,
-    # ) = label_data(
-    #     lion_0297_block_NIRS,
-    #     tiger_0239_block_NIRS,
-    #     leopard_0171_block_NIRS,
-    #     minecraft_markers,
-    # )
-
-    # # Label the EEG data with tasks timestamps: RestState, FingerTapping, AffectiveTask, PingPong, Minecraft
-    # (
-    #     lion_0297_block_EEG_labeled,
-    #     tiger_0239_block_EEG_labeled,
-    #     leopard_0171_block_EEG_labeled,
-    # ) = label_data(
-    #     lion_0297_block_EEG,
-    #     tiger_0239_block_EEG,
-    #     leopard_0171_block_EEG,
-    #     minecraft_markers,
-    # )
-
-    # # Label the Gaze data with tasks timestamps: RestState, FingerTapping, AffectiveTask, PingPong, Minecraft
-    # (
-    #     lion_0297_block_Gaze_labeled,
-    #     tiger_0239_block_Gaze_labeled,
-    #     leopard_0171_block_Gaze_labeled,
-    # ) = label_data(
-    #     lion_0297_block_Gaze,
-    #     tiger_0239_block_Gaze,
-    #     leopard_0171_block_Gaze,
-    #     minecraft_markers,
-    # )
-
     # Filter and save the NIRS data
     save_NIRS(
         lion_0297_block_NIRS,
