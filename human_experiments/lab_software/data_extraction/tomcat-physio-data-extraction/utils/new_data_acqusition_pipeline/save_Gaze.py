@@ -11,6 +11,7 @@ def save_Gaze(
     extract_pkl,
     extract_csv,
     extract_hdf5,
+    exclude,
 ):
     # Construct a dictionary to loop through
     df_dict = {
@@ -24,53 +25,60 @@ def save_Gaze(
     folder_name = os.path.basename(input_path)
 
     for iMac, df in df_dict.items():
-        if not df.empty:
-            # Create the full output path
-            full_output_path = os.path.join(output_path, folder_name, iMac)
+        if exclude not in iMac:
+            if not df.empty:
+                # Create the full output path
+                full_output_path = os.path.join(output_path, folder_name, iMac)
 
-            # Ensure the directory exists
-            os.makedirs(full_output_path, exist_ok=True)
+                # Ensure the directory exists
+                os.makedirs(full_output_path, exist_ok=True)
 
-            if extract_csv:
-                # Create the full file path
-                file_path = os.path.join(full_output_path, "Gaze.csv")
+                if extract_csv:
+                    # Create the full file path
+                    file_path = os.path.join(full_output_path, "Gaze.csv")
 
-                # Save the dataframe to a csv file
+                    # Save the dataframe to a csv file
+                    print(
+                        colored("[INFO]", "green", attrs=["bold"]),
+                        colored("Saving unfiltered Gaze to", "green", attrs=["bold"]),
+                        colored(file_path, "green", attrs=["bold"]),
+                    )
+                    df.to_csv(file_path, sep=";", encoding="utf-8")
+
+                if extract_pkl:
+                    # Create the full file path
+                    file_path = os.path.join(full_output_path, "Gaze.pkl")
+
+                    # Save the dataframe to a pkl file
+                    print("Saving Gaze data to: {}".format(file_path))
+                    print(
+                        colored("[INFO]", "green", attrs=["bold"]),
+                        colored("Saving unfiltered Gaze to", "green", attrs=["bold"]),
+                        colored(file_path, "green", attrs=["bold"]),
+                    )
+                    df.to_pickle(file_path, sep=";", encoding="utf-8")
+
+                if extract_hdf5:
+                    # Create the full file path
+                    file_path = os.path.join(full_output_path, "Gaze.h5")
+
+                    # Save the dataframe to a hdf5 file
+                    print("Saving Gaze data to: {}".format(file_path))
+                    print(
+                        colored("[INFO]", "green", attrs=["bold"]),
+                        colored("Saving unfiltered Gaze to", "green", attrs=["bold"]),
+                        colored(file_path, "green", attrs=["bold"]),
+                    )
+                    df.to_hdf(file_path, key="df", mode="w", sep=";", encoding="utf-8")
+            else:
                 print(
-                    colored("[INFO]", "green", attrs=["bold"]),
-                    colored("Saving unfiltered Gaze to", "green", attrs=["bold"]),
-                    colored(file_path, "green", attrs=["bold"]),
+                    colored("[Warning]", "yellow", attrs=["bold"]),
+                    colored("No Gaze data to save for", "yellow", attrs=["bold"]),
+                    colored(iMac, "green", attrs=["bold"]),
                 )
-                df.to_csv(file_path, sep=";", encoding="utf-8")
-
-            if extract_pkl:
-                # Create the full file path
-                file_path = os.path.join(full_output_path, "Gaze.pkl")
-
-                # Save the dataframe to a pkl file
-                print("Saving Gaze data to: {}".format(file_path))
-                print(
-                    colored("[INFO]", "green", attrs=["bold"]),
-                    colored("Saving unfiltered Gaze to", "green", attrs=["bold"]),
-                    colored(file_path, "green", attrs=["bold"]),
-                )
-                df.to_pickle(file_path, sep=";", encoding="utf-8")
-
-            if extract_hdf5:
-                # Create the full file path
-                file_path = os.path.join(full_output_path, "Gaze.h5")
-
-                # Save the dataframe to a hdf5 file
-                print("Saving Gaze data to: {}".format(file_path))
-                print(
-                    colored("[INFO]", "green", attrs=["bold"]),
-                    colored("Saving unfiltered Gaze to", "green", attrs=["bold"]),
-                    colored(file_path, "green", attrs=["bold"]),
-                )
-                df.to_hdf(file_path, key="df", mode="w", sep=";", encoding="utf-8")
         else:
             print(
                 colored("[Warning]", "yellow", attrs=["bold"]),
-                colored("No Gaze data to save for", "yellow", attrs=["bold"]),
+                colored("Excluding", "yellow", attrs=["bold"]),
                 colored(iMac, "green", attrs=["bold"]),
             )

@@ -94,11 +94,6 @@ def read_nirs(block):
     lion_0297_block_df = pd.DataFrame()
     tiger_0239_block_df = pd.DataFrame()
     leopard_0171_block_df = pd.DataFrame()
-    # (
-    #     lion_0297_block_df_raw,
-    #     tiger_0239_block_df_raw,
-    #     leopard_0171_block_df_raw,
-    # ) = (pd.DataFrame(), pd.DataFrame(), pd.DataFrame())
 
     for i in range(0, len(block)):
         try:

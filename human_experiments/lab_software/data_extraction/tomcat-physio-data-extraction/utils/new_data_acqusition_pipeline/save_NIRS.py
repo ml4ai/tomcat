@@ -12,6 +12,7 @@ def save_NIRS(
     extract_pkl,
     extract_csv,
     extract_hdf5,
+    exclude,
 ):
     # define header for NIRS raw and HbO HbR data
     header_raw = [
@@ -115,67 +116,74 @@ def save_NIRS(
     folder_name = os.path.basename(input_path)
 
     for iMac, df in df_dict.items():
-        if not df.empty:
-            # Sometimes the dataframe is empty because NIRS wasn't recorded
+        if exclude not in iMac:
+            if not df.empty:
+                # Sometimes the dataframe is empty because NIRS wasn't recorded
 
-            # Create the full output path
-            full_output_path = os.path.join(output_path, folder_name, iMac)
+                # Create the full output path
+                full_output_path = os.path.join(output_path, folder_name, iMac)
 
-            # Ensure the directory exists
-            os.makedirs(full_output_path, exist_ok=True)
+                # Ensure the directory exists
+                os.makedirs(full_output_path, exist_ok=True)
 
-            if extract_csv:
-                # Create the full file path
-                file_path = os.path.join(full_output_path, "NIRS.csv")
-                file_path_raw = os.path.join(full_output_path, "NIRS_raw.csv")
+                if extract_csv:
+                    # Create the full file path
+                    file_path = os.path.join(full_output_path, "NIRS.csv")
+                    file_path_raw = os.path.join(full_output_path, "NIRS_raw.csv")
 
-                # Save the dataframe to a csv file
+                    # Save the dataframe to a csv file
+                    print(
+                        colored("[INFO]", "green", attrs=["bold"]),
+                        colored("Saving unfiltered NIRS HbO HbR data to", "green", attrs=["bold"]),
+                        colored(file_path, "green", attrs=["bold"]),
+                    )
+                    df[header_hbo_hbr].to_csv(file_path, sep=";", encoding="utf-8")
+
+                    print(
+                        colored("[INFO]", "green", attrs=["bold"]),
+                        colored("Saving raw NIRS W1 W2 to", "green", attrs=["bold"]),
+                        colored(file_path, "green", attrs=["bold"]),
+                    )
+                    df[header_raw].to_csv(file_path_raw, sep=";", encoding="utf-8")
+
+                if extract_pkl:
+                    # Create the full file path
+                    file_path = os.path.join(full_output_path, "NIRS.pkl")
+                    file_path_raw = os.path.join(full_output_path, "NIRS_raw.pkl")
+
+                    # Save the dataframe to a pkl file
+                    print("Saving NIRS data to: {}".format(file_path))
+                    print(
+                        colored("[INFO]", "green", attrs=["bold"]),
+                        colored("Saving unfiltered NIRS HbO HbR data to", "green", attrs=["bold"]),
+                        colored(file_path, "green", attrs=["bold"]),
+                    )
+                    df[header_hbo_hbr].to_pickle(file_path, sep=";", encoding="utf-8")
+                    df[header_raw].to_pickle(file_path_raw, sep=";", encoding="utf-8")
+
+                if extract_hdf5:
+                    # Create the full file path
+                    file_path = os.path.join(full_output_path, "NIRS.h5")
+                    file_path_raw = os.path.join(full_output_path, "NIRS_raw.h5")
+
+                    # Save the dataframe to a hdf5 file
+                    print("Saving NIRS data to: {}".format(file_path))
+                    print(
+                        colored("[INFO]", "green", attrs=["bold"]),
+                        colored("Saving unfiltered NIRS HbO HbR data to", "green", attrs=["bold"]),
+                        colored(file_path, "green", attrs=["bold"]),
+                    )
+                    df[header_hbo_hbr].to_hdf(file_path, key="df", mode="w", sep=";", encoding="utf-8")
+                    df[header_raw].to_hdf(file_path_raw, key="df", mode="w", sep=";", encoding="utf-8")
+            else:
                 print(
-                    colored("[INFO]", "green", attrs=["bold"]),
-                    colored("Saving unfiltered NIRS HbO HbR data to", "green", attrs=["bold"]),
-                    colored(file_path, "green", attrs=["bold"]),
+                    colored("[Warning]", "yellow", attrs=["bold"]),
+                    colored("No NIRS data to save for", "yellow", attrs=["bold"]),
+                    colored(iMac, "green", attrs=["bold"]),
                 )
-                df[header_hbo_hbr].to_csv(file_path, sep=";", encoding="utf-8")
-
-                print(
-                    colored("[INFO]", "green", attrs=["bold"]),
-                    colored("Saving raw NIRS W1 W2 to", "green", attrs=["bold"]),
-                    colored(file_path, "green", attrs=["bold"]),
-                )
-                df[header_raw].to_csv(file_path_raw, sep=";", encoding="utf-8")
-
-            if extract_pkl:
-                # Create the full file path
-                file_path = os.path.join(full_output_path, "NIRS.pkl")
-                file_path_raw = os.path.join(full_output_path, "NIRS_raw.pkl")
-
-                # Save the dataframe to a pkl file
-                print("Saving NIRS data to: {}".format(file_path))
-                print(
-                    colored("[INFO]", "green", attrs=["bold"]),
-                    colored("Saving unfiltered NIRS HbO HbR data to", "green", attrs=["bold"]),
-                    colored(file_path, "green", attrs=["bold"]),
-                )
-                df[header_hbo_hbr].to_pickle(file_path, sep=";", encoding="utf-8")
-                df[header_raw].to_pickle(file_path_raw, sep=";", encoding="utf-8")
-
-            if extract_hdf5:
-                # Create the full file path
-                file_path = os.path.join(full_output_path, "NIRS.h5")
-                file_path_raw = os.path.join(full_output_path, "NIRS_raw.h5")
-
-                # Save the dataframe to a hdf5 file
-                print("Saving NIRS data to: {}".format(file_path))
-                print(
-                    colored("[INFO]", "green", attrs=["bold"]),
-                    colored("Saving unfiltered NIRS HbO HbR data to", "green", attrs=["bold"]),
-                    colored(file_path, "green", attrs=["bold"]),
-                )
-                df[header_hbo_hbr].to_hdf(file_path, key="df", mode="w", sep=";", encoding="utf-8")
-                df[header_raw].to_hdf(file_path_raw, key="df", mode="w", sep=";", encoding="utf-8")
         else:
             print(
                 colored("[Warning]", "yellow", attrs=["bold"]),
-                colored("No NIRS data to save for", "yellow", attrs=["bold"]),
+                colored("Excluding", "yellow", attrs=["bold"]),
                 colored(iMac, "green", attrs=["bold"]),
             )

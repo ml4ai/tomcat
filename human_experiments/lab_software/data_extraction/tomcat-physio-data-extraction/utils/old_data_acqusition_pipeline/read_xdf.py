@@ -21,7 +21,6 @@ def read_xdf(
     columns = shutil.get_terminal_size().columns
     for path in xdf_file_paths:
         data, _ = pyxdf.load_xdf(path)
-
         if exclude not in path:
             if "lion" in path:
                 print(
@@ -166,7 +165,8 @@ def read_xdf(
                     )
         else:
             print(
-                colored("[Status] Skipping ", "yellow", attrs=["bold"]),
-                colored(exclude, "red"),
+                colored("[Warning]", "yellow", attrs=["bold"]),
+                colored("Excluding", "yellow", attrs=["bold"]),
+                colored(exclude, "green", attrs=["bold"]),
             )
             

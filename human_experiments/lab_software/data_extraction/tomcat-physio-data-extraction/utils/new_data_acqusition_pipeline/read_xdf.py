@@ -96,10 +96,6 @@ def read_xdf(
                 block_2
             )  # 1.3 Read Gaze data
 
-            # minecraft_markers = read_minecraft_timestamps(
-            #     block_2, PingPong_markers
-            # )  # 2. Read Minecraft timestamps
-
     # Merge NIRS block 1 and block 2
     lion_0297_block_NIRS, tiger_0239_block_NIRS, leopard_0171_block_NIRS = tasks_merge(
         lion_0297_block_1_NIRS,
@@ -140,6 +136,7 @@ def read_xdf(
         extract_pkl,
         extract_csv,
         extract_hdf5,
+        exclude,
     )
 
     # Filter and save the EEG data
@@ -152,6 +149,7 @@ def read_xdf(
         extract_pkl,
         extract_csv,
         extract_hdf5,
+        exclude,
     )
 
     # Filter and save the Gaze data
@@ -164,4 +162,5 @@ def read_xdf(
         extract_pkl,
         extract_csv,
         extract_hdf5,
+        exclude,
     )
