@@ -4,6 +4,7 @@ import pyxdf
 import shutil
 import argparse
 import numpy as np
+import pandas as pd
 from termcolor import colored
 from utils import (
     str2bool,
@@ -112,6 +113,13 @@ if __name__ == "__main__":
             it will go to same folder your reading XDF files from",
     )
 
+    parser.add_argument(
+        "--data_validity",
+        required=False,
+        default=None,
+        help="Enter the csv file path which contains information about data validity per subject, task and modality",
+    )
+
     arg = parser.parse_args()
 
     rootdir_xdf = arg.p
@@ -120,6 +128,31 @@ if __name__ == "__main__":
     extract_csv = arg.csv
     exclude = str(arg.exclude)
     output_path = arg.output_path
+    data_validity = arg.data_validity
+
+    if data_validity is not None:
+        data_validity_df = pd.read_csv(data_validity)
+        # Filter rows where is_valid is 0
+        invalid_df = data_validity_df[data_validity_df['is_valid'] == 0]
+
+        # Group by group_session_id, station and count tasks and modalities
+        grouped = invalid_df.groupby(['group_session_id', 'station']).agg({'task': 'nunique', 'modality': 'nunique'}).reset_index()
+        
+        # Filter groups where count of unique tasks and modalities match with total unique tasks and modalities
+        filtered_groups = grouped[
+            (grouped['task'] == data_validity_df['task'].nunique()) & 
+            (grouped['modality'] == data_validity_df['modality'].nunique())]
+
+        sessionid_imac_mapping = filtered_groups.set_index('group_session_id')['station'].to_dict()
+
+        group_session_id = os.path.basename(rootdir_xdf)
+
+        if os.path.basename(group_session_id) in sessionid_imac_mapping:
+            exclude = sessionid_imac_mapping[group_session_id]
+            print(
+        colored("[Status] Excluding:", "yellow", attrs=["bold"]),
+        colored(exclude, "blue"),
+    )
 
     print(
         colored("[Status] Root Directory:", "green", attrs=["bold"]),
