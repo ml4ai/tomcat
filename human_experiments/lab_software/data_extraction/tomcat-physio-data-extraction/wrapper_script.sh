@@ -3,11 +3,15 @@
 # Define an array of directories to ignore
 ignore=("exp_2022_04_01_13" "exp_2022_04_22_09")
 
-while getopts ":d:o:" opt; do
+data_validity=""
+
+while getopts ":d:o:v:" opt; do
   case $opt in
     d) rootdir="$OPTARG"
     ;;
     o) outputdir="$OPTARG"
+    ;;
+    v) data_validity="$OPTARG"
     ;;
     \?) echo "Invalid option -$OPTARG" >&2
     ;;
@@ -34,7 +38,7 @@ execute_python_script() {
     local error_log="$experiment_output_dir/error_log.txt"
 
     # Call python script and save stderr to error log
-    if ! python3 run_physio_data_extraction.py --p "$dir" --csv True --output_path "$outputdir" 2>> "$error_log"; then
+    if ! python3 run_physio_data_extraction.py --p "$dir" --csv True --output_path "$outputdir" --data_validity "$data_validity" 2>> "$error_log"; then
         echo "Python script failed for $dir."
     fi
 }
@@ -53,7 +57,7 @@ for dir in "${directories[@]}"; do
     fi
 
     # Print the command before executing
-    echo "Running: python3 run_physio_data_extraction.py --p \"$dir\" --csv True --hdf5 True --output_path \"$outputdir\""
+    echo "Running: python3 run_physio_data_extraction.py --p \"$dir\" --csv True --hdf5 True --output_path \"$outputdir\" --data_validity \"$data_validity\""
 
     # Start a separate process to execute the Python script
     execute_python_script "$dir" &
