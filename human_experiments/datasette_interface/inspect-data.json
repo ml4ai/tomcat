@@ -1,29 +1,38 @@
 {
   "tomcat": {
-    "hash": "d644ea98b569c252ab3df2c48e93a36497fa9dde377fd0bbec4f92833c501424",
-    "size": 13261479936,
-    "file": "tomcat.db",
+    "hash": "14deb3eb9c78978df85f960d7c0d6045fae1de224f76276ce22d4759669dc0be",
+    "size": 3126947840,
+    "file": "/space/adarsh/tomcat/tomcat.db",
     "tables": {
+      "_templates_": {
+        "count": 0
+      },
+      "rest_state_task": {
+        "count": 39
+      },
+      "affective_task_event": {
+        "count": 8069
+      },
+      "task": {
+        "count": 9
+      },
+      "station": {
+        "count": 3
+      },
+      "modality": {
+        "count": 3
+      },
       "participant": {
         "count": 112
       },
       "group_session": {
         "count": 40
       },
+      "data_validity": {
+        "count": 3096
+      },
       "fnirs_raw": {
-        "count": 6029336
-      },
-      "rest_state_task": {
-        "count": 39
-      },
-      "affective_task_event": {
-        "count": 14586
-      },
-      "mission": {
-        "count": 104
-      },
-      "testbed_message": {
-        "count": 6441966
+        "count": 6849295
       }
     }
   }
