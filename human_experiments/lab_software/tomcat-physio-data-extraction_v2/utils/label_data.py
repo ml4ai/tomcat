@@ -2,6 +2,7 @@ def update_state(block, state, start_time, end_time):
     try:
         start_index = block["unix_time"].searchsorted(start_time)
         end_index = block["unix_time"].searchsorted(end_time)
+        start_index, end_index = start_index-2, end_index+2
         block.loc[start_index:end_index, "event_type"] = state
     except KeyError as e:
         print(f"KeyError: {e} in update_state function")

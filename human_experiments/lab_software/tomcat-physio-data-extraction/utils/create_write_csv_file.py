@@ -21,7 +21,8 @@ def get_timestamps_from_dict(
     state_end = df_temp.index[
         iloc_idx_end
     ]  # reduce index by 1 as the index sometimes overflows
-    range_ = list(range(state_start, state_end))
+    state_start, state_end = state_start-1, state_end+2 # Increase start and stop state by 1 to avoid NaNs for data extrapolation script. 
+    range_ = list(range(state_start, state_end)) 
     state = [state] * len(range_)
     state = {i: x for i, x in enumerate(state, state_start)}
 
@@ -542,7 +543,7 @@ def dataframe_to_csv(
 
     # Save as CSV file
     if extract_csv == True:
-        df_original.to_csv(new_csv_file_path + ".csv", sep="\t", encoding="utf-8")
+        df_original.to_csv(new_csv_file_path + ".csv", sep=";", encoding="utf-8")
         print(
             colored("[INFO]", "green", attrs=["bold"]),
             colored("Sucessfully generated csv file at", "green", attrs=["bold"]),
@@ -552,7 +553,7 @@ def dataframe_to_csv(
         if bool(filter) == True and stream_type == "NIRS":
             df_final_filtered = filter_NIRS(df_final)
             df_final_filtered.to_csv(
-                new_csv_file_path + "_filtered" + ".csv", sep="\t", encoding="utf-8"
+                new_csv_file_path + "_filtered" + ".csv", sep=";", encoding="utf-8"
             )
             print(
                 colored("[INFO]", "green", attrs=["bold"]),
@@ -567,7 +568,7 @@ def dataframe_to_csv(
         if bool(filter) == True and stream_type == "EEG":
             df_final_filtered = filter_EEG(df_final)
             df_final_filtered.to_csv(
-                new_csv_file_path + "_filtered" + ".csv", sep="\t", encoding="utf-8"
+                new_csv_file_path + "_filtered" + ".csv", sep=";", encoding="utf-8"
             )
             print(
                 colored("[INFO]", "green", attrs=["bold"]),
