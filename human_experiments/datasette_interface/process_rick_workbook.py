@@ -79,6 +79,8 @@ def recreate_participant_table(db_connection):
             id INTEGER PRIMARY KEY
         );"""
     )
+    # Insert a participant ID of -1 to represent 'unknown participant'
+    db_connection.execute("INSERT into participant VALUES(?)", [-1])
 
 
 def recreate_group_session_table(db_connection):
