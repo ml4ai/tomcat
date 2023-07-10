@@ -244,18 +244,53 @@ def dataframe_to_csv_1(
 
     # Save as pickle file
     if extract_pkl == True:
-        df.to_pickle(csv_file_name + ".pkl", sep=";", encoding="utf-8")
-        print(
-            colored("[INFO]", "green", attrs=["bold"]),
-            colored("Sucessfully generated pickle file at", "green", attrs=["bold"]),
-            colored(new_csv_file_path + ".pkl", "blue"),
-        )
+        if stream_type == "NIRS":
+            print(
+                colored("[INFO]", "green", attrs=["bold"]),
+                colored(stream_type, "blue"),
+                colored("Saving Raw NIRS wavelength info to pickle files", "green", attrs=["bold"]),
+            )
+            df[header_raw].to_pickle(new_csv_file_path + "_raw" + ".pkl")
+
+            print(
+                colored("[INFO]", "green", attrs=["bold"]),
+                colored(stream_type, "blue"),
+                colored("Saving HbO HbR NIRS info to pickle files", "green", attrs=["bold"]),
+            )
+
+            df[header_hbo_hbr].to_pickle(new_csv_file_path + ".pkl")
+
+        else:
+            df.to_pickle(new_csv_file_path + ".pkl")
+            print(
+                colored("[INFO]", "green", attrs=["bold"]),
+                colored("Sucessfully generated pickle file at", "green", attrs=["bold"]),
+                colored(new_csv_file_path + ".pkl", "blue"),
+            )
+
 
     # Save as hdf5 file
     if extract_hdf5 == True:
-        df.to_hdf(new_csv_file_path + ".h5", key="df", mode="w", sep=";", encoding="utf-8")
-        print(
-            colored("[INFO]", "green", attrs=["bold"]),
-            colored("Sucessfully generated hdf5 file at", "green", attrs=["bold"]),
-            colored(new_csv_file_path + ".h5", "blue"),
-        )
+        if stream_type == "NIRS":
+            print(
+                colored("[INFO]", "green", attrs=["bold"]),
+                colored(stream_type, "blue"),
+                colored("Saving Raw NIRS wavelength info to HDF files", "green", attrs=["bold"]),
+            )
+            df[header_raw].to_hdf(new_csv_file_path + "_raw" + ".h5", key='df', mode='w')
+
+            print(
+                colored("[INFO]", "green", attrs=["bold"]),
+                colored(stream_type, "blue"),
+                colored("Saving HbO HbR NIRS info to HDF files", "green", attrs=["bold"]),
+            )
+
+            df[header_hbo_hbr].to_hdf(new_csv_file_path + ".h5", key='df', mode='w')
+
+        else:
+            df.to_hdf(new_csv_file_path + ".h5", key='df', mode='w')
+            print(
+                colored("[INFO]", "green", attrs=["bold"]),
+                colored("Sucessfully generated HDF file at", "green", attrs=["bold"]),
+                colored(new_csv_file_path + ".h5", "blue"),
+            )
