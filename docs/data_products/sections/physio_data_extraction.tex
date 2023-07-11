@@ -1,0 +1,60 @@
+\section{Physiological data extraction}
+The ToMCAT dataset incorporates various types of physiological data, including EEG, fNIRS, EKG, GSR, and Gaze, all of which are stored in .xdf files. For the sake of convenience and readability, these files should be transformed into a more accessible format, such as CSV. This transformation can be accomplished using a Python script located at  \code{tomcat/human_experiments/lab_software/data_extraction/tomcat-physio-data-extraction/run_physio_data_extraction.py}. This script takes the experiment directory as input and works harmoniously with both the old and new data pipelines.
+
+For the old data pipeline, the required file structure is as outlined below:
+\begin{verbatim}
+    exp_*/
+     lion/eeg_fnirs_pupil/lion_eeg_fnirs_pupil.xdf
+     tiger/eeg_fnirs_pupil/tiger_eeg_fnirs_pupil.xdf
+     leopard/eeg_fnirs_pupil/leopard_eeg_fnirs_pupil.xdf
+\end{verbatim}
+
+Conversely, the new data pipeline requires this file structure:
+\begin{verbatim}
+    exp_*/lsl/
+      block_1.xdf
+      block_2.xdf
+\end{verbatim}
+
+The script produces output files for both the old and new data pipelines, following this organization:
+\begin{verbatim}
+    exp_*/
+     lion/
+          EEG.csv
+          Gaze.csv
+          NIRS.csv
+          NIRS_raw.csv
+     tiger/
+          EEG.csv
+          Gaze.csv
+          NIRS.csv
+          NIRS_raw.csv
+     leopard/
+          EEG.csv
+          Gaze.csv
+          NIRS.csv
+          NIRS_raw.csv
+
+\end{verbatim}
+In the case of the new data pipeline, an additional folder is created with the following structure:
+\begin{verbatim}
+    exp_*/
+     baseline_tasks/
+          affective/
+               individual_<cat>_<participantID>_<timestamp>.csv
+               individual_<cat>_<participantID>_<timestamp>_metadata.json
+               team_<timestamp>.csv
+               team_<timestamp>_metadata.json
+          finger_tapping/
+               <timestamp>.csv
+               <timestamp>_metadata.json
+          ping_pong/
+               competitive_0_<timestamp>.csv
+               competitive_1_<timestamp>.csv
+               cooperative_0_<timestamp>.csv
+          rest_state/
+               <timestamp>.csv
+
+\end{verbatim}
+
+However, in case any of these files do not exist due to unexpected circumstances, the script will still proceed to extract the remaining available data.
