@@ -93,12 +93,12 @@ def process_rest_state_task_data():
         db_connection.execute(
             """
             CREATE TABLE rest_state_task (
-                group_session_id TEXT NOT NULL,
+                group_session TEXT NOT NULL,
                 start_timestamp_unix TEXT NOT NULL,
                 start_timestamp_iso8601 TEXT NOT NULL,
                 stop_timestamp_unix TEXT NOT NULL,
                 stop_timestamp_iso8601 TEXT NOT NULL,
-                FOREIGN KEY(group_session_id) REFERENCES group_session(id)
+                FOREIGN KEY(group_session) REFERENCES group_session(id)
             );"""
         )
 

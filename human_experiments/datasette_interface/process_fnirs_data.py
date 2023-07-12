@@ -197,7 +197,7 @@ def process_directory_v2(session, db_connection):
 
 
 def create_indices():
-    """Create index for efficient querying"""
+    """Create indices for efficient querying"""
     info("Creating index for fnirs_raw table.")
     db_connection = sqlite3.connect(DB_PATH)
 
@@ -230,6 +230,13 @@ def create_indices():
         """
         )
 
+        db_connection.execute(
+            """
+            CREATE INDEX IF NOT EXISTS idx_task
+            ON fnirs_raw (task);
+        """
+        )
+
 
 def label_rest_state_task_data(
     group_session, station, is_valid, participant_id, modality, db_connection
@@ -238,7 +245,7 @@ def label_rest_state_task_data(
         start_timestamp, stop_timestamp = db_connection.execute(
             f"""
             SELECT start_timestamp_unix, stop_timestamp_unix from rest_state_task
-            WHERE group_session_id='{group_session}';
+            WHERE group_session='{group_session}';
         """
         ).fetchall()[0]
 
@@ -257,6 +264,50 @@ def label_rest_state_task_data(
         """
         )
 
+def label_affective_task_data(
+    group_session, station, is_valid, participant_id, task, db_connection
+):
+    task_type = task.split("_")[-1]
+    with db_connection:
+        db_connection.execute("PRAGMA foreign_keys = 1;")
+
+        # Get start/stop timestamps for affective task
+        start_timestamp = db_connection.execute(
+            f"""
+            SELECT timestamp_unix from affective_task_event
+            WHERE
+                group_session='{group_session}'
+                AND task_type='{task_type}'
+                AND event_type='start_affective_task'
+            ORDER BY timestamp_unix LIMIT 1
+        """
+        ).fetchall()[0][0]
+
+        stop_timestamp = db_connection.execute(
+            f"""
+            SELECT timestamp_unix from affective_task_event
+            WHERE
+                group_session='{group_session}'
+                AND task_type='{task_type}'
+                AND event_type='final_submission'
+            ORDER BY timestamp_unix DESC LIMIT 1
+        """
+        ).fetchall()[0][0]
+
+        # Update participant ID and label task.
+        db_connection.execute(
+            f"""
+            UPDATE fnirs_raw
+            SET
+                task='affective_{task_type}',
+                participant='{participant_id}'
+            WHERE
+                timestamp_unix >= '{start_timestamp}'
+                AND timestamp_unix <= '{stop_timestamp}'
+                AND station='{station}'
+        """
+        )
+
 
 def label_data():
     db_connection = sqlite3.connect(DB_PATH)
@@ -265,13 +316,15 @@ def label_data():
         validity_rows = db_connection.execute(
             f"""
             SELECT * from data_validity
-            WHERE task='rest_state'
-            AND modality='fnirs';
+            WHERE modality='fnirs';
         """
         ).fetchall()
 
     for row in tqdm(validity_rows):
         group_session, participant_id, station, task, modality, is_valid = row
+        if modality != "fnirs":
+            continue
+
         info(f"row: {row}")
         if task == "rest_state":
             if group_session == "exp_2022_12_05_12":
@@ -285,6 +338,11 @@ def label_data():
                 label_rest_state_task_data(
                     group_session, station, is_valid, participant_id, modality, db_connection
                 )
+
+        if "affective" in task:
+            label_affective_task_data(
+                group_session, station, is_valid, participant_id, task, db_connection
+            )
 
 
 # def remove_invalid_data():
