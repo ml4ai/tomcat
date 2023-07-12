@@ -211,7 +211,7 @@ def create_index():
             ON fnirs_raw (timestamp_unix);
         """)
 
-def label_data():
+def label_and_clean_data():
     # label rest state task data
     # 1. Get the rows corresponding to TASK in GROUP_SESSION for STATION, by
     # looking at the timestamps in the rest_state_task table.
@@ -231,11 +231,15 @@ def label_data():
 
         for row in tqdm(validity_rows):
             group_session, participant_id, station, task , modality, is_valid = row
+            info(f"row: {row}")
             if task != "rest_state":
                 continue
 
             if group_session == "exp_2022_12_05_12":
-                error(f"[MISSING DATA] There is no rest state data for {group_session}! We do not know why.")
+                error(f"""
+                    [MISSING DATA] There is no rest state data for
+                    {group_session}, due to technical issues. See Rick's email
+                    from 2023-07-11 for details.""")
                 continue
 
             rowids = [x[0] for x in db_connection.execute(f"""
@@ -250,16 +254,24 @@ def label_data():
                     WHERE group_session_id='{group_session}';
                 """).fetchall()[0]
             else:
-                print("invalid data! Should delete these rows.")
+                info(f"""Data for {task} for {group_session} for modality
+                        {modality} is not valid. We will delete this data from
+                        the table.""")
+                db_connection.execute(f"""
+                    DELETE FROM fnirs_raw
+                    WHERE
+                        timestamp_unix >= '{start_timestamp}'
+                        AND timestamp_unix <= '{stop_timestamp}';
+                """)
 
             db_connection.execute(f"""
-            UPDATE fnirs_raw
-            SET
-                task='rest_state',
-                participant='{participant_id}'
-            WHERE
-                timestamp_unix >= '{start_timestamp}'
-            AND timestamp_unix < '{stop_timestamp}';
+                UPDATE fnirs_raw
+                SET
+                    task='rest_state',
+                    participant='{participant_id}'
+                WHERE
+                    timestamp_unix >= '{start_timestamp}'
+                    AND timestamp_unix < '{stop_timestamp}';
             """)
 
 
@@ -268,5 +280,5 @@ if __name__ == "__main__":
     # recreate_fnirs_table()
     # create_index()
     # insert_raw_unlabeled_data()
-    label_data()
+    label_and_clean_data()
     info("Finished building fNIRS table.")
