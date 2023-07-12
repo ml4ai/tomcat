@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """Script to process testbed messages"""
 import os
 import json
