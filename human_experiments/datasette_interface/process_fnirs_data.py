@@ -195,100 +195,120 @@ def process_directory_v2(session, db_connection):
                 station = stream["info"]["name"][0].split("_")[0]
                 insert_data_into_table(stream, session, station, db_connection)
 
+
 def create_indices():
     """Create index for efficient querying"""
     info("Creating index for fnirs_raw table.")
     db_connection = sqlite3.connect(DB_PATH)
 
     with db_connection:
-        db_connection.execute("""
+        db_connection.execute(
+            """
             CREATE INDEX IF NOT EXISTS idx_group_session_station
             ON fnirs_raw (group_session, station);
-        """)
+        """
+        )
 
-        db_connection.execute("""
+        db_connection.execute(
+            """
             CREATE INDEX IF NOT EXISTS idx_timestamp_unix
             ON fnirs_raw (timestamp_unix);
-        """)
+        """
+        )
 
-        db_connection.execute("""
+        db_connection.execute(
+            """
             CREATE INDEX IF NOT EXISTS idx_participant
             ON fnirs_raw (participant);
-        """)
+        """
+        )
 
-        db_connection.execute("""
+        db_connection.execute(
+            """
             CREATE INDEX IF NOT EXISTS idx_group_session
             ON fnirs_raw (group_session);
-        """)
+        """
+        )
 
-def label_and_clean_data():
-    # label rest state task data
-    # 1. Get the rows corresponding to TASK in GROUP_SESSION for STATION, by
-    # looking at the timestamps in the rest_state_task table.
-    # 2. Check the data_validity table to see if the fNIRS data for TASK,
-    # GROUP_SESSION, STATION is VALID.
-    # 3. If the data is not valid, remove the rows.
-    # 4. If the data is valid, label the rows with the participant ID.
+
+def label_rest_state_task_data(
+    group_session, station, is_valid, participant_id, modality, db_connection
+):
+    with db_connection:
+        start_timestamp, stop_timestamp = db_connection.execute(
+            f"""
+            SELECT start_timestamp_unix, stop_timestamp_unix from rest_state_task
+            WHERE group_session_id='{group_session}';
+        """
+        ).fetchall()[0]
+
+
+        # Update participant ID and label task.
+        db_connection.execute(
+            f"""
+            UPDATE fnirs_raw
+            SET
+                task='rest_state',
+                participant='{participant_id}'
+            WHERE
+                timestamp_unix >= '{start_timestamp}'
+                AND timestamp_unix < '{stop_timestamp}'
+                and station='{station}'
+        """
+        )
+
+
+def label_data():
     db_connection = sqlite3.connect(DB_PATH)
 
     with db_connection:
-
-        validity_rows = db_connection.execute(f"""
+        validity_rows = db_connection.execute(
+            f"""
             SELECT * from data_validity
             WHERE task='rest_state'
             AND modality='fnirs';
-        """).fetchall()
+        """
+        ).fetchall()
 
-        for row in tqdm(validity_rows):
-            group_session, participant_id, station, task , modality, is_valid = row
-            info(f"row: {row}")
-            if task != "rest_state":
-                continue
-
+    for row in tqdm(validity_rows):
+        group_session, participant_id, station, task, modality, is_valid = row
+        info(f"row: {row}")
+        if task == "rest_state":
             if group_session == "exp_2022_12_05_12":
-                error(f"""
+                error(
+                    f"""
                     [MISSING DATA] There is no rest state data for
                     {group_session}, due to technical issues. See Rick's email
-                    from 2023-07-11 for details.""")
-                continue
-
-            rowids = [x[0] for x in db_connection.execute(f"""
-                SELECT rowid from fnirs_raw
-                WHERE group_session='{group_session}'
-                AND station='{station}';
-            """).fetchall()]
-
-            if is_valid == 1:
-                start_timestamp, stop_timestamp = db_connection.execute(f"""
-                    SELECT start_timestamp_unix, stop_timestamp_unix from rest_state_task
-                    WHERE group_session_id='{group_session}';
-                """).fetchall()[0]
+                    from 2023-07-11 for details."""
+                )
             else:
-                info(f"""Data for {task} for {group_session} for modality
-                        {modality} is not valid. We will delete this data from
-                        the table.""")
-                db_connection.execute(f"""
-                    DELETE FROM fnirs_raw
-                    WHERE
-                        timestamp_unix >= '{start_timestamp}'
-                        AND timestamp_unix <= '{stop_timestamp}';
-                """)
-
-            db_connection.execute(f"""
-                UPDATE fnirs_raw
-                SET
-                    task='rest_state',
-                    participant='{participant_id}'
-                WHERE
-                    timestamp_unix >= '{start_timestamp}'
-                    AND timestamp_unix < '{stop_timestamp}';
-            """)
+                label_rest_state_task_data(
+                    group_session, station, is_valid, participant_id, modality, db_connection
+                )
 
 
+# def remove_invalid_data():
+    # Clean data
+    # if is_valid == 0:
+        # info(
+            # f"""Data for rest_state task for {group_session} for modality
+                # {modality} for station {station} is not valid.
+                # We will delete this data from the table."""
+        # )
+        # db_connection.execute(
+            # f"""
+            # DELETE FROM fnirs_raw
+            # WHERE
+                # group_session='{group_session}'
+                # AND station='{station}'
+                # AND task = '{task}'
+        # """
+        # )
 if __name__ == "__main__":
     info("Starting building fNIRS table.")
     # recreate_fnirs_table()
-    create_indices()
+    # create_indices()
     # insert_raw_unlabeled_data()
-    # label_and_clean_data()
+    label_data()
+    # remove_invalid_data()
     info("Finished building fNIRS table.")
