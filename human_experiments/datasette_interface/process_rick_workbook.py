@@ -82,6 +82,9 @@ def recreate_participant_table(db_connection):
     # Insert a participant ID of -1 to represent 'unknown participant'
     db_connection.execute("INSERT into participant VALUES(?)", [-1])
 
+    # Insert a participant ID of -2 to represent the team (for affective task
+    # event data)
+    db_connection.execute("INSERT into participant VALUES(?)", [-2])
 
 def recreate_group_session_table(db_connection):
     db_connection.execute("DROP TABLE IF EXISTS group_session")
