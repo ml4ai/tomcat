@@ -1,18 +1,9 @@
 {
   "tomcat": {
-    "hash": "14deb3eb9c78978df85f960d7c0d6045fae1de224f76276ce22d4759669dc0be",
-    "size": 3126947840,
+    "hash": "11c5a1f95ac51984bbd3930209f5eb98869740ecf3c6638f816e2afe98ed2163",
+    "size": 3601227776,
     "file": "/space/adarsh/tomcat/tomcat.db",
     "tables": {
-      "_templates_": {
-        "count": 0
-      },
-      "rest_state_task": {
-        "count": 39
-      },
-      "affective_task_event": {
-        "count": 8069
-      },
       "task": {
         "count": 9
       },
@@ -31,8 +22,11 @@
       "data_validity": {
         "count": 3096
       },
+      "rest_state_task": {
+        "count": 39
+      },
       "fnirs_raw": {
-        "count": 6849295
+        "count": 6738867
       }
     }
   }
