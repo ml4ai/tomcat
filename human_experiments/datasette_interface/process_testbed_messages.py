@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """Script to process testbed messages"""
 import os
+import sys
 import json
 from glob import glob
 import sqlite3
@@ -20,7 +21,12 @@ import pyxdf
 
 logging.basicConfig(
     level=logging.INFO,
-    handlers=logging_handlers,
+    handlers=(
+        logging.FileHandler(
+            filename="/space/adarsh/tomcat/build_testbed_message_table.log", mode="w"
+        ),
+        logging.StreamHandler(stream=sys.stderr),
+    ),
 )
 
 def update_key_messages_dict(message, key_messages):
@@ -497,19 +503,16 @@ def process_directory_v2(session, db_connection):
                         )
 
 
-
-def process_testbed_messages():
-    info("Processing directories...")
-
+def recreate_table():
     db_connection = sqlite3.connect(DB_PATH)
     with db_connection:
-        info("Dropping mission table!")
+        info("Recreating mission table!")
         db_connection.execute("DROP TABLE IF EXISTS mission")
         db_connection.execute(
             """
             CREATE TABLE mission (
                 id TEXT PRIMARY KEY NOT NULL,
-                group_session_id TEXT NOT NULL,
+                group_session TEXT NOT NULL,
                 name TEXT NOT NULL,
                 start_timestamp_iso8601 TEXT NOT NULL,
                 start_timestamp_unix TEXT NOT NULL,
@@ -517,23 +520,29 @@ def process_testbed_messages():
                 stop_timestamp_unix TEXT NOT NULL,
                 final_team_score INTEGER,
                 testbed_version TEXT NOT NULL,
-                FOREIGN KEY(group_session_id) REFERENCES group_session(id)
+                FOREIGN KEY(group_session) REFERENCES group_session(id)
             );"""
         )
 
+        info("Recreating testbed_message table!")
         db_connection.execute("DROP TABLE IF EXISTS testbed_message")
         db_connection.execute(
             """
             CREATE TABLE testbed_message (
                 timestamp_unix TEXT,
                 timestamp_iso8601 TEXT,
-                mission_id TEXT,
+                mission TEXT,
                 topic TEXT,
                 message JSON,
-                FOREIGN KEY(mission_id) REFERENCES mission(id)
+                FOREIGN KEY(mission) REFERENCES mission(id)
             );
             """
         )
+
+def process_testbed_messages():
+    info("Processing directories...")
+
+    db_connection = sqlite3.connect(DB_PATH)
 
     with cd("/tomcat/data/raw/LangLab/experiments/study_3_pilot/group"):
         directories_to_process = [
@@ -551,4 +560,5 @@ def process_testbed_messages():
                 process_directory_v2(session, db_connection)
 
 if __name__ == "__main__":
+    recreate_table()
     process_testbed_messages()

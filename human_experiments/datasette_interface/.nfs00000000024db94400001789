@@ -7,17 +7,6 @@ license_url: https://creativecommons.org/licenses/by-nc-sa/4.0/
 databases:
     tomcat:
         tables:
-            participant:
-                description: Table with participant IDs.
-                columns:
-                    id: |
-                        Participant ID.
-                        -1 indicates an unknown participant.
-                        -2 indicates the team as a whole. This is relevant for the affective_task_event table,
-                        where some events intrinsically involve the team as a whole, rather than just one player.
-                        Participants with IDs > 999 are confederates (i.e.,
-                        experimenters who stepped in to replace no-show
-                        participants or participants who left partway through the group session.)
             mission:
                 description: Metadata about the Minecraft missions.
                 columns:

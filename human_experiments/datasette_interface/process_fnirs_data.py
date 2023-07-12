@@ -195,7 +195,7 @@ def process_directory_v2(session, db_connection):
                 station = stream["info"]["name"][0].split("_")[0]
                 insert_data_into_table(stream, session, station, db_connection)
 
-def create_index():
+def create_indices():
     """Create index for efficient querying"""
     info("Creating index for fnirs_raw table.")
     db_connection = sqlite3.connect(DB_PATH)
@@ -209,6 +209,16 @@ def create_index():
         db_connection.execute("""
             CREATE INDEX IF NOT EXISTS idx_timestamp_unix
             ON fnirs_raw (timestamp_unix);
+        """)
+
+        db_connection.execute("""
+            CREATE INDEX IF NOT EXISTS idx_participant
+            ON fnirs_raw (participant);
+        """)
+
+        db_connection.execute("""
+            CREATE INDEX IF NOT EXISTS idx_group_session
+            ON fnirs_raw (group_session);
         """)
 
 def label_and_clean_data():
@@ -278,7 +288,7 @@ def label_and_clean_data():
 if __name__ == "__main__":
     info("Starting building fNIRS table.")
     # recreate_fnirs_table()
-    # create_index()
+    create_indices()
     # insert_raw_unlabeled_data()
-    label_and_clean_data()
+    # label_and_clean_data()
     info("Finished building fNIRS table.")
