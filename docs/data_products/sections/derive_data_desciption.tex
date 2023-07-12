@@ -1,0 +1,172 @@
+\section{Derived Data Description}
+
+\subsection{EEG and fNIRS channels provided by Aurora}
+
+\eduong{Here we describe how Aurora provides the HbO and HbR channels for fNIRS along with any derived channels of EEG. Some questions to answer: What are the channels recorded? How did Aurora compute HbO and HbR?}
+
+\subsection{Derived Data Columns Descriptions}
+
+\eduong{Here we describe the columns provided in the derived dataset.}
+
+\begin{table}
+\centering
+\begin{tabularx}{\textwidth}{|l|l|X|}
+\hline
+\textbf{Type} & \textbf{Channel} & \textbf{Description} \\
+\hline
+\multirow{3}{*}{Time} 
+& \texttt{unix\_time} & \\
+& \texttt{human\_readable\_time} & \\
+& \texttt{seconds\_since\_start} & \\
+\hline
+\multirow{3}{*}{Subject ID} 
+& \texttt{lion\_id} & \\
+& \texttt{tiger\_id} & \\
+& \texttt{leopard\_id} & \\
+\hline
+\end{tabularx}
+\caption{Channel Descriptions}
+\label{tab:other_columns}
+\end{table}
+
+\begin{table}
+\centering
+\begin{tabularx}{\textwidth}{|l|l|X|}
+\hline
+\textbf{Type} & \textbf{Channel} & \textbf{Description} \\
+\hline
+\multirow{22}{*}{EEG}
+& \texttt{<subject>\_eeg\_AFF1h} & Description of AFF1h \\
+& \texttt{<subject>\_eeg\_F7} & Description of F7 \\
+& \texttt{<subject>\_eeg\_FC5} & Description of FC5 \\
+& \texttt{<subject>\_eeg\_C3} & Description of C3 \\
+& \texttt{<subject>\_eeg\_T7} & Description of T7 \\
+& \texttt{<subject>\_eeg\_TP9} & Description of TP9 \\
+& \texttt{<subject>\_eeg\_Pz} & Description of Pz \\
+& \texttt{<subject>\_eeg\_P3} & Description of P3 \\
+& \texttt{<subject>\_eeg\_P7} & Description of P7 \\
+& \texttt{<subject>\_eeg\_O1} & Description of O1 \\
+& \texttt{<subject>\_eeg\_O2} & Description of O2 \\
+& \texttt{<subject>\_eeg\_P8} & Description of P8 \\
+& \texttt{<subject>\_eeg\_P4} & Description of P4 \\
+& \texttt{<subject>\_eeg\_TP10} & Description of TP10 \\
+& \texttt{<subject>\_eeg\_Cz} & Description of Cz \\
+& \texttt{<subject>\_eeg\_C4} & Description of C4 \\
+& \texttt{<subject>\_eeg\_T8} & Description of T8 \\
+& \texttt{<subject>\_eeg\_FC6} & Description of FC6 \\
+& \texttt{<subject>\_eeg\_FCz} & Description of FCz \\
+& \texttt{<subject>\_eeg\_F8} & Description of F8 \\
+& \texttt{<subject>\_eeg\_AFF2h} & Description of AFF2h \\
+& \texttt{<subject>\_eeg\_GSR} & Description of AUX\_GSR \\
+& \texttt{<subject>\_eeg\_EKG} & Description of AUX\_EKG \\
+\hline
+\end{tabularx}
+\caption{Channel Descriptions}
+\label{tab:EEG_channels}
+\end{table}
+
+\begin{table}
+\centering
+\begin{tabularx}{\textwidth}{|l|l|X|}
+\hline
+\textbf{Type} & \textbf{Channel} & \textbf{Description} \\
+\hline
+\multirow{40}{*}{fNIRS raw}
+& \texttt{<subject>\_fnirs\_S1-D1\_760} & Description of S1-D1\_760 \\
+& \texttt{<subject>\_fnirs\_S1-D2\_760} & Description of S1-D2\_760 \\
+& \texttt{<subject>\_fnirs\_S2-D1\_760} & Description of S2-D1\_760 \\
+& \texttt{<subject>\_fnirs\_S2-D3\_760} & Description of S2-D3\_760 \\
+& \texttt{<subject>\_fnirs\_S3-D1\_760} & Description of S3-D1\_760 \\
+& \texttt{<subject>\_fnirs\_S3-D3\_760} & Description of S3-D3\_760 \\
+& \texttt{<subject>\_fnirs\_S3-D4\_760} & Description of S3-D4\_760 \\
+& \texttt{<subject>\_fnirs\_S4-D2\_760} & Description of S4-D2\_760 \\
+& \texttt{<subject>\_fnirs\_S4-D4\_760} & Description of S4-D4\_760 \\
+& \texttt{<subject>\_fnirs\_S4-D5\_760} & Description of S4-D5\_760 \\
+& \texttt{<subject>\_fnirs\_S5-D3\_760} & Description of S5-D3\_760 \\
+& \texttt{<subject>\_fnirs\_S5-D4\_760} & Description of S5-D4\_760 \\
+& \texttt{<subject>\_fnirs\_S5-D6\_760} & Description of S5-D6\_760 \\
+& \texttt{<subject>\_fnirs\_S6-D4\_760} & Description of S6-D4\_760 \\
+& \texttt{<subject>\_fnirs\_S6-D6\_760} & Description of S6-D6\_760 \\
+& \texttt{<subject>\_fnirs\_S6-D7\_760} & Description of S6-D7\_760 \\
+& \texttt{<subject>\_fnirs\_S7-D5\_760} & Description of S7-D5\_760 \\
+& \texttt{<subject>\_fnirs\_S7-D7\_760} & Description of S7-D7\_760 \\
+& \texttt{<subject>\_fnirs\_S8-D6\_760} & Description of S8-D6\_760 \\
+& \texttt{<subject>\_fnirs\_S8-D7\_760} & Description of S8-D7\_760 \\
+& \texttt{<subject>\_fnirs\_S1-D1\_850} & Description of S1-D1\_850 \\
+& \texttt{<subject>\_fnirs\_S1-D2\_850} & Description of S1-D2\_850 \\
+& \texttt{<subject>\_fnirs\_S2-D1\_850} & Description of S2-D1\_850 \\
+& \texttt{<subject>\_fnirs\_S2-D3\_850} & Description of S2-D3\_850 \\
+& \texttt{<subject>\_fnirs\_S3-D1\_850} & Description of S3-D1\_850 \\
+& \texttt{<subject>\_fnirs\_S3-D3\_850} & Description of S3-D3\_850 \\
+& \texttt{<subject>\_fnirs\_S3-D4\_850} & Description of S3-D4\_850 \\
+& \texttt{<subject>\_fnirs\_S4-D2\_850} & Description of S4-D2\_850 \\
+& \texttt{<subject>\_fnirs\_S4-D4\_850} & Description of S4-D4\_850 \\
+& \texttt{<subject>\_fnirs\_S4-D5\_850} & Description of S4-D5\_850 \\
+& \texttt{<subject>\_fnirs\_S5-D3\_850} & Description of S5-D3\_850 \\
+& \texttt{<subject>\_fnirs\_S5-D4\_850} & Description of S5-D4\_850 \\
+& \texttt{<subject>\_fnirs\_S5-D6\_850} & Description of S5-D6\_850 \\
+& \texttt{<subject>\_fnirs\_S6-D4\_850} & Description of S6-D4\_850 \\
+& \texttt{<subject>\_fnirs\_S6-D6\_850} & Description of S6-D6\_850 \\
+& \texttt{<subject>\_fnirs\_S6-D7\_850} & Description of S6-D7\_850 \\
+& \texttt{<subject>\_fnirs\_S7-D5\_850} & Description of S7-D5\_850 \\
+& \texttt{<subject>\_fnirs\_S7-D7\_850} & Description of S7-D7\_850 \\
+& \texttt{<subject>\_fnirs\_S8-D6\_850} & Description of S8-D6\_850 \\
+& \texttt{<subject>\_fnirs\_S8-D7\_850} & Description of S8-D7\_850 \\
+\hline
+\end{tabularx}
+\caption{Channel Descriptions}
+\label{tab:fNIRS_raw_channels}
+\end{table}
+
+\begin{table}
+\centering
+\begin{tabularx}{\textwidth}{|l|l|X|}
+\hline
+\textbf{Type} & \textbf{Channel} & \textbf{Description} \\
+\hline
+\multirow{40}{*}{fNIRS}
+& \texttt{<subject>\_fnirs\_S1-D1\_HbO} & Description of S1-D1\_HbO \\
+& \texttt{<subject>\_fnirs\_S1-D2\_HbO} & Description of S1-D2\_HbO \\
+& \texttt{<subject>\_fnirs\_S2-D1\_HbO} & Description of S2-D1\_HbO \\
+& \texttt{<subject>\_fnirs\_S2-D3\_HbO} & Description of S2-D3\_HbO \\
+& \texttt{<subject>\_fnirs\_S3-D1\_HbO} & Description of S3-D1\_HbO \\
+& \texttt{<subject>\_fnirs\_S3-D3\_HbO} & Description of S3-D3\_HbO \\
+& \texttt{<subject>\_fnirs\_S3-D4\_HbO} & Description of S3-D4\_HbO \\
+& \texttt{<subject>\_fnirs\_S4-D2\_HbO} & Description of S4-D2\_HbO \\
+& \texttt{<subject>\_fnirs\_S4-D4\_HbO} & Description of S4-D4\_HbO \\
+& \texttt{<subject>\_fnirs\_S4-D5\_HbO} & Description of S4-D5\_HbO \\
+& \texttt{<subject>\_fnirs\_S5-D3\_HbO} & Description of S5-D3\_HbO \\
+& \texttt{<subject>\_fnirs\_S5-D4\_HbO} & Description of S5-D4\_HbO \\
+& \texttt{<subject>\_fnirs\_S5-D6\_HbO} & Description of S5-D6\_HbO \\
+& \texttt{<subject>\_fnirs\_S6-D4\_HbO} & Description of S6-D4\_HbO \\
+& \texttt{<subject>\_fnirs\_S6-D6\_HbO} & Description of S6-D6\_HbO \\
+& \texttt{<subject>\_fnirs\_S6-D7\_HbO} & Description of S6-D7\_HbO \\
+& \texttt{<subject>\_fnirs\_S7-D5\_HbO} & Description of S7-D5\_HbO \\
+& \texttt{<subject>\_fnirs\_S7-D7\_HbO} & Description of S7-D7\_HbO \\
+& \texttt{<subject>\_fnirs\_S8-D6\_HbO} & Description of S8-D6\_HbO \\
+& \texttt{<subject>\_fnirs\_S8-D7\_HbO} & Description of S8-D7\_HbO \\
+& \texttt{<subject>\_fnirs\_S1-D1\_HbR} & Description of S1-D1\_HbR \\
+& \texttt{<subject>\_fnirs\_S1-D2\_HbR} & Description of S1-D2\_HbR \\
+& \texttt{<subject>\_fnirs\_S2-D1\_HbR} & Description of S2-D1\_HbR \\
+& \texttt{<subject>\_fnirs\_S2-D3\_HbR} & Description of S2-D3\_HbR \\
+& \texttt{<subject>\_fnirs\_S3-D1\_HbR} & Description of S3-D1\_HbR \\
+& \texttt{<subject>\_fnirs\_S3-D3\_HbR} & Description of S3-D3\_HbR \\
+& \texttt{<subject>\_fnirs\_S3-D4\_HbR} & Description of S3-D4\_HbR \\
+& \texttt{<subject>\_fnirs\_S4-D2\_HbR} & Description of S4-D2\_HbR \\
+& \texttt{<subject>\_fnirs\_S4-D4\_HbR} & Description of S4-D4\_HbR \\
+& \texttt{<subject>\_fnirs\_S4-D5\_HbR} & Description of S4-D5\_HbR \\
+& \texttt{<subject>\_fnirs\_S5-D3\_HbR} & Description of S5-D3\_HbR \\
+& \texttt{<subject>\_fnirs\_S5-D4\_HbR} & Description of S5-D4\_HbR \\
+& \texttt{<subject>\_fnirs\_S5-D6\_HbR} & Description of S5-D6\_HbR \\
+& \texttt{<subject>\_fnirs\_S6-D4\_HbR} & Description of S6-D4\_HbR \\
+& \texttt{<subject>\_fnirs\_S6-D6\_HbR} & Description of S6-D6\_HbR \\
+& \texttt{<subject>\_fnirs\_S6-D7\_HbR} & Description of S6-D7\_HbR \\
+& \texttt{<subject>\_fnirs\_S7-D5\_HbR} & Description of S7-D5\_HbR \\
+& \texttt{<subject>\_fnirs\_S7-D7\_HbR} & Description of S7-D7\_HbR \\
+& \texttt{<subject>\_fnirs\_S8-D6\_HbR} & Description of S8-D6\_HbR \\
+& \texttt{<subject>\_fnirs\_S8-D7\_HbR} & Description of S8-D7\_HbR \\
+\hline
+\end{tabularx}
+\caption{Channel Descriptions}
+\label{tab:fNIRS_channels}
+\end{table}
