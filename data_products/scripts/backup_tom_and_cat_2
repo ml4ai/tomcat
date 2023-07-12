@@ -209,6 +209,14 @@ ${VERBOSE_ECHO} "Pending exit status in backup_tom_and_cat_2 is ${exit_status}"
 ${VERBOSE_ECHO} ""
 
 
+${VERBOSE_ECHO} rsync ${rsync_options} /tomcat/ /tomcat_mirror
+rsync ${rsync_options} /tomcat/ /tomcat_mirror
+rc=$?
+${VERBOSE_ECHO} "Rsync return code was ${rc}"
+${VERBOSE_ECHO} "Pending exit status in backup_tom_and_cat_2 is ${exit_status}"
+${VERBOSE_ECHO} ""
+
+
 echo " "
 # eval echo "Script backup_tom_and_cat_2 exiting with status ${exit_status} on: $(date)" 
 eval echo "Script backup_tom_and_cat_2 exiting with status ${exit_status} on: $(date)" 

@@ -3,6 +3,7 @@ import sys
 import pyxdf
 import shutil
 import argparse
+import numpy as np
 from termcolor import colored
 from utils import (
     get_start_stop_time_from_xdf,
@@ -19,6 +20,7 @@ def read_xdf(
     subject_id,
     extract_pkl,
     extract_csv,
+    extract_hdf5,
     exclude,
     filter,
     output_path,
@@ -64,9 +66,7 @@ def read_xdf(
                         time_distribution_human_readable_nirs,
                         time_distribution_unix_nirs,
                     ) = create_time_distribution(
-                        time_start_streams_nirs,
-                        time_end_streams_nirs,
-                        len(data[i]["time_series"]),
+                        data[i],
                     )
                     dataframe_to_csv(
                         path,
@@ -79,6 +79,7 @@ def read_xdf(
                         subject_id,
                         extract_pkl,
                         extract_csv,
+                        extract_hdf5,
                         filter,
                         output_path,
                     )
@@ -98,20 +99,58 @@ def read_xdf(
                     (
                         time_start_streams_eeg,
                         time_end_streams_eeg,
-                    ) = get_start_stop_time_from_xdf(
-                        data[i]
-                    )  # get the unix time
+                    ) = get_start_stop_time_from_xdf(data[i])
                     (
                         time_distribution_human_readable_eeg,
                         time_distribution_unix_eeg,
-                    ) = create_time_distribution(
-                        time_start_streams_eeg,
-                        time_end_streams_eeg,
-                        len(data[i]["time_series"]),
+                    ) = create_time_distribution(data[i])
+
+                    # Create a list of channel names
+                    EEG_channels = []
+                    for channel_dict in data[i]["info"]["desc"][0]["channels"][0][
+                        "channel"
+                    ]:
+                        EEG_channels.append(channel_dict["label"][0])
+
+                    channels_used = [
+                        "AFF1h",
+                        "F7",
+                        "FC5",
+                        "C3",
+                        "T7",
+                        "TP9",
+                        "Pz",
+                        "P3",
+                        "P7",
+                        "O1",
+                        "O2",
+                        "P8",
+                        "P4",
+                        "TP10",
+                        "Cz",
+                        "C4",
+                        "T8",
+                        "FC6",
+                        "FCz",
+                        "F8",
+                        "AFF2h",
+                        "AUX_GSR",
+                        "AUX_EKG",
+                    ]
+
+                    exclude_channels = [
+                        (i, ch)
+                        for i, ch in enumerate(EEG_channels)
+                        if ch not in channels_used
+                    ]
+                    exclude_indices = [index for index, _ in exclude_channels]
+                    EEG_data = np.delete(
+                        data[i]["time_series"].T, exclude_indices, axis=0
                     )
+
                     dataframe_to_csv(
                         path,
-                        data[i]["time_series"],
+                        EEG_data.T,  # Use EEG data with channels we want
                         "EEG",
                         time_distribution_human_readable_eeg,
                         time_distribution_unix_eeg,
@@ -120,7 +159,9 @@ def read_xdf(
                         subject_id,
                         extract_pkl,
                         extract_csv,
+                        extract_hdf5,
                         filter,
+                        output_path,
                     )
 
                 elif data[i]["info"]["type"] == ["Gaze"]:
@@ -138,9 +179,7 @@ def read_xdf(
                         time_distribution_human_readable_gaze,
                         time_distribution_unix_gaze,
                     ) = create_time_distribution(
-                        time_start_streams_gaze,
-                        time_end_streams_gaze,
-                        len(data[i]["time_series"]),
+                        data[i],
                     )
                     dataframe_to_csv(
                         path,
@@ -153,7 +192,9 @@ def read_xdf(
                         subject_id,
                         extract_pkl,
                         extract_csv,
+                        extract_hdf5,
                         filter,
+                        output_path,
                     )
 
                 elif data[i]["info"]["type"] == ["Accelerometer"]:
@@ -177,6 +218,7 @@ def look_for_XDF_files(
     subject_id,
     extract_pkl,
     extract_csv,
+    extract_hdf5,
     exclude,
     filter,
     output_path,
@@ -184,15 +226,18 @@ def look_for_XDF_files(
     """
     Walk through root directory, looking for the xdf files.
     """
-    xdf_file_paths = []
-    for root, dirs, files in os.walk(rootdir_xdf):
-        for file in files:
-            if file.endswith(".xdf"):
-                xdf_file_paths.append(os.path.join(root, file))
-                print(
-                    colored("[Status] xdf file found at ", "green", attrs=["bold"]),
-                    colored(os.path.join(root, file), "blue"),
-                )
+    xdf_file_paths = [
+        os.path.join(root, file)
+        for root, dirs, files in os.walk(rootdir_xdf)
+        for file in files
+        if file.endswith(".xdf")
+    ]
+
+    for file_path in xdf_file_paths:
+        print(
+            colored("[Status] xdf file found at ", "green", attrs=["bold"]),
+            colored(file_path, "blue"),
+        )
 
     read_xdf(
         sorted(xdf_file_paths),
@@ -201,6 +246,7 @@ def look_for_XDF_files(
         subject_id,
         extract_pkl,
         extract_csv,
+        extract_hdf5,
         exclude,
         filter,
         output_path,
@@ -245,6 +291,13 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
+        "--hdf5",
+        default=False,
+        type=str2bool,
+        help="By setting hdf5 to True you extract xdf files as hdf5 file",
+    )
+
+    parser.add_argument(
         "--exclude",
         required=False,
         default=None,
@@ -273,6 +326,7 @@ if __name__ == "__main__":
     rootdir_minecraft_data = arg.p3
     subject_id = arg.s
     extract_pkl = arg.pkl
+    extract_hdf5 = arg.hdf5
     extract_csv = arg.csv
     exclude = str(arg.exclude)
     filter = str(arg.filter)
@@ -290,6 +344,7 @@ if __name__ == "__main__":
             subject_id,
             extract_pkl,
             extract_csv,
+            extract_hdf5,
             exclude,
             filter,
             output_path,
