@@ -19,10 +19,15 @@ import pandas as pd
 from glob import glob
 import json
 
-
 logging.basicConfig(
     level=logging.INFO,
-    handlers=logging_handlers,
+    handlers=(
+        logging.FileHandler(
+            filename="/space/adarsh/tomcat/build_affective_task_data_table.log",
+            mode="w",
+        ),
+        logging.StreamHandler(stream=sys.stderr),
+    ),
 )
 
 
