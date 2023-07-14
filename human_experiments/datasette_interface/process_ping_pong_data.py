@@ -65,7 +65,7 @@ def process_directory_v1(session, participants, db_connection):
     info(f"Processing directory {session}")
     info(f"Participants from data_validity table: {participants}")
     with cd(f"{session}/baseline_tasks/ping_pong"):
-        info("Processing fingertapping task files.")
+        info("Processing ping pong task files.")
         competitive_csv_files = glob("competitive*.csv")
 
         df = pd.read_csv(
