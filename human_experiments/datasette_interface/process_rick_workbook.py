@@ -12,22 +12,28 @@ from utils import cd
 from config import DB_PATH, logging_handlers
 
 
+
 logging.basicConfig(
     level=logging.INFO,
-    handlers=logging_handlers,
+    handlers=(
+        logging.FileHandler(
+            filename="/space/adarsh/tomcat/build_base_tables.log",
+            mode="w",
+        ),
+        logging.StreamHandler(stream=sys.stderr),
+    ),
 )
 
-TASKS = (
+TASKS = {
     "rest_state",
     "finger_tapping",
     "affective_individual",
     "affective_team",
-    "ping_pong_competitive_0",
-    "ping_pong_competitive_1",
+    "ping_pong_competitive",
     "ping_pong_cooperative",
     "saturn_a",
     "saturn_b",
-)
+}
 
 MODALITIES = (
     "eeg",
@@ -86,6 +92,7 @@ def recreate_participant_table(db_connection):
     # event data)
     db_connection.execute("INSERT into participant VALUES(?)", [-2])
 
+
 def recreate_group_session_table(db_connection):
     db_connection.execute("DROP TABLE IF EXISTS group_session")
     db_connection.execute(
@@ -125,7 +132,6 @@ def insert_values(
     participants,
     series,
 ):
-
     db_connection.execute(
         f"""
         INSERT INTO {table_name}
@@ -175,9 +181,7 @@ def process_rick_workbook():
 
         # TODO Integrate the 'mask_on' statuses.
 
-    csv_path = (
-        "/tomcat/data/raw/LangLab/experiments/study_3_pilot/rchamplin_data_validity_table.csv"
-    )
+    csv_path = "/tomcat/data/raw/LangLab/experiments/study_3_pilot/rchamplin_data_validity_table.csv"
 
     df = pd.read_csv(csv_path, index_col="experiment_id", dtype=str)
 
@@ -213,10 +217,35 @@ def process_rick_workbook():
             )
 
             # TODO: Deal with 'no_face_image' case for eeg data.
+            tasks_new = TASKS | {"ping_pong_competitive_0", "ping_pong_competitive_1"}
+            tasks_new.remove("ping_pong_competitive")
             for station in STATIONS:
                 for modality in MODALITIES:
                     modality_in_csv = modality.replace("gaze", "pupil")
-                    for task in TASKS:
+                    for task in tasks_new:
+                        if (
+                            (task == "ping_pong_competitive_1")
+                            and (station in {"lion", "tiger"})
+                        ) or (
+                            (task == "ping_pong_competitive_0")
+                            and (station == "leopard")
+                        ):
+                            info(f"""
+                                [ERROR]: Task = {task} and station = {station},
+                                a combination that is not possible.
+                                ping_pong_competitive_0 was performed on the
+                                'lion' and 'tiger' stations, while
+                                'ping_pong_competitive_1' was performed on the
+                                'leopard' and 'cheetah' stations. The 'cheetah'
+                                station was manned by an experimenter (but we
+                                did not record who the experimenter was).
+                                We will skip entering this combination in the
+                                data_validity table.
+                            """)
+                            continue
+
+                        if modality == "fnirs" and "ping_pong" in task:
+                            print(modality, task, station)
                         task_in_csv = (
                             task.replace(
                                 "affective_individual",
@@ -228,11 +257,17 @@ def process_rick_workbook():
                                 "ping_pong_cooperative_0",
                             )
                         )
-                        participant_id = series[f"{station}_{task_in_csv}_participant_id"]
+                        participant_id = series[
+                            f"{station}_{task_in_csv}_participant_id"
+                        ]
                         if participant_id == "mission_not_run":
-                            continue;
+                            continue
 
 
+                        # Remove the _0, _1 suffixes from the names of the
+                        # ping pong competitive tasks before we write them to
+                        # the database.
+                        task = task.replace("_0","").replace("_1","")
                         db_connection.execute(
                             f"""
                             INSERT INTO data_validity
