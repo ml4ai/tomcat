@@ -68,53 +68,54 @@ def process_directory_v1(session, participants, db_connection):
         info("Processing ping pong task files.")
         competitive_csv_files = glob("competitive*.csv")
 
-        df = pd.read_csv(
-            csv_file,
-            delimiter=";",
-            dtype=str,
-        )
+        for csv_file in competitive_csv_files:
+            df = pd.read_csv(
+                csv_file,
+                delimiter=";",
+                dtype=str,
+            )
 
-        with db_connection:
-            db_connection.execute("PRAGMA foreign_keys = 1")
-            for i, row in df.iterrows():
-                current_event_type = row["event_type"]
+            with db_connection:
+                db_connection.execute("PRAGMA foreign_keys = 1")
+                for i, row in df.iterrows():
+                    current_event_type = row["event_type"]
 
-                countdown_timer = row["countdown_timer"]
-                if not pd.isna(countdown_timer):
-                    countdown_timer = int(countdown_timer)
-                # For some reason, pygame sometimes outputs a negative value for seconds
-                # elapsed - in this case, the baseline task program writes a
-                # value of '1' for the countdown timer. We have seen this occur
-                # so far whenever the value in the `event_type` changes, for
-                # the first value after this change occurs.
-                # will replace such values with 10 (the initial value).
-                if i != 0:
-                    previous_event_type = df.loc[i - 1]["event_type"]
-                    if (current_event_type != previous_event_type) and (
-                        countdown_timer == 1
-                    ):
-                        countdown_timer = 10
+                    countdown_timer = row["countdown_timer"]
+                    if not pd.isna(countdown_timer):
+                        countdown_timer = int(countdown_timer)
+                    # For some reason, pygame sometimes outputs a negative value for seconds
+                    # elapsed - in this case, the baseline task program writes a
+                    # value of '1' for the countdown timer. We have seen this occur
+                    # so far whenever the value in the `event_type` changes, for
+                    # the first value after this change occurs.
+                    # will replace such values with 10 (the initial value).
+                    if i != 0:
+                        previous_event_type = df.loc[i - 1]["event_type"]
+                        if (current_event_type != previous_event_type) and (
+                            countdown_timer == 1
+                        ):
+                            countdown_timer = 10
 
-                lion_value, tiger_value, leopard_value = row.iloc[-3:]
-                row = (
-                    session,
-                    row["time"],
-                    convert_unix_timestamp_to_iso8601(df["time"].iloc[i]),
-                    row["event_type"],
-                    countdown_timer,
-                    lion_value,
-                    tiger_value,
-                    leopard_value,
-                )
-                try:
-                    db_connection.execute(
-                        "INSERT into ping_pong_task_event VALUES(?, ?, ?, ?, ?, ?, ?, ?);",
-                        row,
+                    lion_value, tiger_value, leopard_value = row.iloc[-3:]
+                    row = (
+                        session,
+                        row["time"],
+                        convert_unix_timestamp_to_iso8601(df["time"].iloc[i]),
+                        row["event_type"],
+                        countdown_timer,
+                        lion_value,
+                        tiger_value,
+                        leopard_value,
                     )
-                except sqlite3.IntegrityError as e:
-                    raise sqlite3.IntegrityError(
-                        f"Unable to insert row: {row}! Error: {e}"
-                    )
+                    try:
+                        db_connection.execute(
+                            "INSERT into ping_pong_task_event VALUES(?, ?, ?, ?, ?, ?, ?, ?);",
+                            row,
+                        )
+                    except sqlite3.IntegrityError as e:
+                        raise sqlite3.IntegrityError(
+                            f"Unable to insert row: {row}! Error: {e}"
+                        )
 
 
 def process_directory_v2(session, participants, db_connection):
