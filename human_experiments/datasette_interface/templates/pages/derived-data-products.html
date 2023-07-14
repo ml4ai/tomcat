@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block body_class %}index{% endblock %}
+
+{% block content %}
+{{ render_markdown("""
+# Derived data products
+
+We provide a number of derived data products based on this dataset.
+
+""") }}
+{% endblock %}

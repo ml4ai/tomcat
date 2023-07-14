@@ -1,0 +1,30 @@
+{
+  "tomcat": {
+    "hash": "d644ea98b569c252ab3df2c48e93a36497fa9dde377fd0bbec4f92833c501424",
+    "size": 13261479936,
+    "file": "tomcat.db",
+    "tables": {
+      "participant": {
+        "count": 112
+      },
+      "group_session": {
+        "count": 40
+      },
+      "fnirs_raw": {
+        "count": 6029336
+      },
+      "rest_state_task": {
+        "count": 39
+      },
+      "affective_task_event": {
+        "count": 14586
+      },
+      "mission": {
+        "count": 104
+      },
+      "testbed_message": {
+        "count": 6441966
+      }
+    }
+  }
+}
