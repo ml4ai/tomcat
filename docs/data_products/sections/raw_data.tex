@@ -4,22 +4,22 @@ In what follows, upper case indicates
 a placeholder for a more specific string (i.e., variables), whereas lower case or mixed case
 indicates actual strings (i.e., verbatim).
 We break the directory structure for raw ToMCAT data into three parts
-\code{ROOT\/STUDY\/RAW\_DATA}. 
+\code{ROOT\/STUDY\/RAW\_DATA}.
 As an experiment is run, data is written to the LangLab linux computer called
 ``cat''. ROOT on cat is
 \code{/data/cat}. The data gets mirrored onto the LangLab linux computer called
-``tom'', where ROOT is \code{/data/tom}. 
-This is done by the script \code{sync\_tom\_and\_cat}, which is called by the script 
+``tom'', where ROOT is \code{/data/tom}.
+This is done by the script \code{sync\_tom\_and\_cat}, which is called by the script
 \code{pull\_tomcat\_data}. Ideally, \code{sync\_tom\_and\_cat} should also be
 called from the main driver script as soon as the experiment is over, but
-currently we do not do this. 
+currently we do not do this.
 
 The script \code{pull\_tomcat\_data} transfers the data to the IVILAB machine
 \textit{i03.cs.arizona.edu}, and makes two backups of it.  Ideally, we would
 also create off-site backups, but we do not do this yet. The data is is
 written to
-\code{/tomcat\_raw\_NNN} where NNN is 1, 2, 3, or 4, and backed up to 
-\code{/tomcat\_raw\_NNN\_B1} and \code{/tomcat\_raw\_NNN\_B2}.  
+\code{/tomcat\_raw\_NNN} where NNN is 1, 2, 3, or 4, and backed up to
+\code{/tomcat\_raw\_NNN\_B1} and \code{/tomcat\_raw\_NNN\_B2}.
 The script \code{pull\_tomcat\_data} then makes links to those multiple data
 locations from \code{/tomcat/data/raw} and provides access via NFS to the compute
 servers \textit{laplace.cs.arizona.edu} and \textit{gauss.cs.arizona.edu}.
@@ -30,7 +30,7 @@ The directory structure pattern for STUDY under the root directory is
 \textit{LangLab}, and STUDY\_NAME is \textit{study\_3\_pilot}.
 This study name is a bit misleading, but makes senses as this study
 gradually morphed from an initial pilot study to a real one as we developed the
-system, but most data is informative. 
+system, but most data is informative.
 
 RAW\_DATA has two subdirectories, ``presession'' and ``group'', containing data
 from the presession experiments and main experiments separately. In both cases, we put the
@@ -38,15 +38,15 @@ data from one experimental instance into a directory named
 \code{exp\_YEAR\_MM\_DD\_HOUR}. Since we only run one main session at a time, and
 they last from most of an hour to over three hours, hourly time resolution
 suffices to disambiguate them. However, presessions take only 15 to 30 minutes,
-and so a presession directory can hold data for multiple participants. 
+and so a presession directory can hold data for multiple participants.
 
 The group session runs are post processed so that all presession data for the
 participants in the group are linked from the group data directory. This
 matching cannot be done after the group experiment is finished because we do not
-know in advance whether there will be no-shows or other last minute changes. 
+know in advance whether there will be no-shows or other last minute changes.
 
 To further clarify directory naming, on the IVILAB cpu servers,
-the data for the first valid group session 
+the data for the first valid group session
 is in:
 \begin{lstlisting}
 /tomcat/data/raw/LangLab/experiments/study\_3\_pilot/group/exp\_2022\_09\_30\_10
@@ -66,7 +66,7 @@ consumption.
 
 As mentioned above, a post-processing step links all needed presession files into
 the group experimental runs. We describe the final group session data with
-needed presession data included. 
+needed presession data included.
 
 \kobus{Chinmai used <> for variables, except also YYYY, MM, etc. I am not sure
 whether we should try to make it all consistent.}
@@ -74,10 +74,10 @@ whether we should try to make it all consistent.}
 Each of the three participants are associated by the name of the iMac device
 they use during the experiment.
 The iMac devices are named as lion, tiger, and
-leopard. We define 
-<cat> $\in \{leopard, lion, tiger\}$ 
+leopard. We define
+<cat> $\in \{leopard, lion, tiger\}$
 and <Cat> $\in \{Leopard, Lion, Tiger\}$,
-and use <cat> or <Cat> to represent the three instances. 
+and use <cat> or <Cat> to represent the three instances.
 
 \kobus{Some of this is from a very old document. And the rest is from me quickly looking
 at both early and recent data directories. Please check and update!! And include
@@ -90,7 +90,7 @@ Underneath each experiment (RAW\_DATA) directory (i.e.,
 \code{ROOT/STUDY/group/exp_YYYY_MM_DD_HH}), we have the following structures:
 \begin{verbatim}
 redcap_data/
-    team_data.csv 
+    team_data.csv
 
 baseline_tasks/
     affective/
@@ -114,7 +114,7 @@ baseline_tasks/
 lsl/
     block_1.xdf
     block_2.xdf
-       
+
 minecraft/
     MinecraftData_Trial-T00073_ID-<fancy_string>.metadata
     MinecraftData_Trial-Training_ID-<fancy_string>.metadata
@@ -130,7 +130,7 @@ testbed_logs/
     asist_logs_<timestamp>/
 
 tmp/
-    
+
 data_inventory.log
 data_inventory.run
 time_difference.txt
@@ -140,34 +140,223 @@ trial_info.json
 
 \subsubsection{Description of the files.}
 
-\noindent 
+\noindent
 Excluding log files, debugging, and other infrastructure files, the format and
 the data for each file listed
 above is detailed as follows: \\
 
 
 \begin{description}
-\item{redcap\_data/team\_data.csv}\\
-describe the format and the data
+\item\textbf{REDCap Files:}
+\medskip
+\item\textbf{redcap\_data/team\_data.csv}\\(comma delimited, 1st row is a header, complex strings double-quoted)\\
+This CSV file is the Team Data record for the experiment exported from the REDCap database. The Team Data is info and notes created by the experimenters regarding the experiment. The data is inputted into REDCap after the experiment has been completed. A summary of data contained in this file is: Team ID, Session Date/Time, Participant's IDs, Absent Participants, Experimenters that subbed-in, Problems/Issues with Participants, Problems/Issues with Equipment, and Additional Notes regarding the Session.
 
-\item{baseline\_tasks/affective/individual\_<cat>\_<participantID>\_<timestamp>.csv}\\
-describe the format and the data
+Team Data Fields:
+\begin{itemize}
+    \item \code{record\_id -}\\REDCap Team Data Record ID.
+    \item \code{redcap\_survey\_identifier - (can be blank)}\\Survey ID that identifies the REDCap Survey Form used to input the Team Data.
+    \item \code{team\_data\_timestamp - (can be blank)}\\Timestamp of when the Team Data Record was created.
+    \item \code{team\_id - [##]}\\Team ID assigned to the Experiment.
+    \item \code{testing\_session\_date - [yyyy-mm-dd hh:nn] (hh in 24 hour)}\\Experiment Session Date and Time.
+    \item \code{subject\_id - [#####, #####, #####]}\\IDs of the Participants that participated in the Experiment. Lion's ID, Tiger's ID, Leopard's ID. (If an experimenter sat-in, the ID will be entered as 99999 for that position).
+    \item \code{real\_participant\_attend - [No/Yes] (can be blank)}\\Did any of the actual participants with assigned subject IDs not attend?
+    \item \code{real\_participant\_absent - (can be blank)}\\If \code{real\_participant\_attend}=Yes, a list of the subject ID(s) that was scheduled to attend but did not attend.
+    \item \code{research\_team\_participation - [No/Yes] (can be blank)}\\Did a research team member play as a mock participant during the testing session?
+    \item \code{participants\_issues - [No/Yes] (can be blank)}\\Were there any problems/issues with the participants during the testing session?
+    \item \code{participants\_issues\_details - (can be blank)}\\If \code{participants\_issues}=Yes, bulleted list of participant-related issues during the testing session.
+    \item \code{equipment\_issues - [No/Yes] (can be blank)}\\Were there any problems/issues with the equipment during the testing session?
+    \item \code{equipment\_issues\_details - (can be blank)}\\If \code{equipment\_issues}=Yes, bulleted list of equipment-related issues related during the testing session.
+    \item \code{additional\_notes - (can be blank)}\\Any additional notes regarding the testing session.
+    \item \code{team\_data\_complete - [Incomplete/Unverified/Complete]}\\Status of this Team Data Record.
+\end{itemize}
 
-\item{baseline\_tasks/affective/individual\_<cat>\_<participantID>\_<timestamp>\_metadata.json}\\
-describe the format and the data
+\bigskip\item\textbf{Baseline Affective Task Files:}
+\medskip
+\item\textbf{baseline\_tasks/affective/individual\_<participantID>\_<timestamp>.csv}\\(semicolon delimited, 1st row is a header)\\
+This CSV file is the Baseline Individual Affective Task Data/Statistics for each Participant. The Participant ID is in the of the file name. There will be three of these files in the directory. One for each Participant, Lion, Tiger, and Leopard. A summary of data contained in this file is: Record Timestamp (in Global, Monotonic, and Human formats), Name of Image being shown to the Participant, Subject ID (Participant ID), The Participant's Arousal Score, The Participant's Valence Score, and the Event Type (start\_affective\_task, show\_blank\_screen, show\_cross\_screen, show\_image, show\_rating\_screen, intermediate\_selection, final\_submission).
 
-\item{baseline\_tasks/affective/team\_<timestamp>.csv}\\
-describe the format and the data
+Baseline Individual Affective Task Fields:
+\begin{itemize}
+    \item \code{time - [##########.######] (in seconds)}\\Unix Time \href{https://www.unixtimestamp.com/}{https://www.unixtimestamp.com/}.
+    \item \code{monotonic\_time - [#######.#########] (in seconds)}\\How long since the computer that hosts the task was booted up.
+    \item \code{human\_readable\_time - [yyyy-mm-ddThh:nn:ss.######Z] (hh in 24 hour)}\\ UTC-0 time in human-readable format.
+    \item \code{image\_path -}\\Name of image being shown to the Participant. You can see these images in the code of baseline task.
+    \item \code{subject\_id - [#####]}\\Participant ID. (If an experimenter sat-in, the ID will be entered as 99999 for that Participant)
+    \item \code{arousal\_score - [-2 to +2]}\\Arousal measure of emotion (calm vs. intense).
+    \item \code{valence\_score - [-2 to +2]}\\Valence measure of emotion (unpleasant vs. pleasant).
+    \item \code{event\_type -}\\What event and when. (start\_affective\_task, show\_blank\_screen, show\_cross\_screen, show\_image, show\_rating\_screen, intermediate\_selection, final\_submission).
+\end{itemize}
 
-\item{baseline\_tasks/affective/team\_<timestamp>\_metadata.json}\\
-describe the format and the data
 
-\kobus{Many more files}
+\medskip
+\item\textbf{baseline\_tasks/affective/\\individual\_<participantID>\_<timestamp>\_metadata.json}\\(JSON data format)
+Baseline Individual Affective Task Participant configuration information. This is the sequence that the computer shows for each image: blank screen, cross screen, blank screen, image, rating screen. The timing for each screen is specified in this JSON file as shown below.
+
+Participant Configuration Information JSON File:
+\begin{verbatim}
+    {
+        "participant_ids": ["#####"] ("99999" for subbing-in experimenter),
+        "blank_screen_milliseconds": [####],
+        "cross_screen_milliseconds": [####],
+        "individual_image_timer": [##.#] (in seconds),
+        "individual_rating_timer": [##.#] (in seconds),
+        "team_image_timer": [##.#] (in seconds),
+        "team_discussion_timer": [##.#] (in seconds),
+        "team_rating_timer": [##.#] (in seconds)
+    }
+\end{verbatim}
+
+
+\medskip
+\item\textbf{baseline\_tasks/affective/team\_<timestamp>.csv}\\(semicolon delimited, 1st row is a header)\\
+This CSV file is the Baseline Team Affective Task Data/Statistics. A summary of data contained in this file is: Record Timestamps (in Global, Monotonic, and Human formats), Name of Image being shown to the Participants, Subject ID (Participant ID), The Participant's Arousal Score (blank if this participant was not selected to score this image), The Participant's Valence Score (blank if this participant was not selected to score this image), and the Event Type (start\_affective\_task, show\_blank\_screen, show\_cross\_screen, show\_image, show\_rating\_screen, intermediate\_selection, final\_submission).
+
+Baseline Team Affective Task Fields:
+\begin{itemize}
+    \item \code{time} - [\#\#\#\#\#\#\#\#\#\#.\#\#\#\#\#\#] (in seconds)\\Unix Time \href{https://www.unixtimestamp.com/}{https://www.unixtimestamp.com/}.
+    \item \code{monotonic\_time} - [\#\#\#\#\#\#\#.\#\#\#\#\#\#\#\#\#] (in seconds)\\How long since the computer that hosts the task was booted up.
+    \item \code{human\_readable\_time} - [yyyy-mm-ddThh:nn:ss.\#\#\#\#\#\#Z] (hh in 24 hour)\\ UTC-0 time in human-readable format.
+    \item \code{image\_path} - [Team\#\#\#.jpg]\\Name of image being shown to the participants. You can see these images in the code of baseline task.
+    \item \code{subject\_id} - [\#\#\#\#\#]\\Participant ID. (If an experimenter sat-in, the ID will be entered as 99999 for that Participant)
+    \item \code{arousal\_score} - [-2 to +2]\\Arousal measure of emotion (calm vs. intense, will be blank if this participant was not selected to score this image).
+    \item \code{valence\_score} - [-2 to +2]\\Valence measure of emotion (unpleasant vs. pleasant, will be blank if this participant was not selected to score this image).
+    \item \code{event\_type} -\\What event and when. (start\_affective\_task, show\_blank\_screen, show\_cross\_screen, show\_image, show\_rating\_screen, intermediate\_selection, final\_submission).
+\end{itemize}
+
+
+\medskip
+\item\textbf{baseline\_tasks/affective/team\_<timestamp>\_metadata.json}\\(JSON data format)
+Baseline Team Affective Task Participant configuration information. This is the sequence that the computer shows for each image: blank screen, cross screen, blank screen, image, rating screen. The timing for each screen is specified in this JSON file as shown below.
+
+Team Configuration Information JSON File:
+\begin{verbatim}
+    {
+        "participants_ids": [
+            ("#####","#####","#####"; "99999" for experimenter)
+            "<lion_participant_id>",
+            "<tiger_participant_id>",
+            "<leopard_participant_id>"
+        ],
+        "blank_screen_milliseconds": [####],
+        "cross_screen_milliseconds": [####],
+        "individual_image_timer": [##.#] (in seconds),
+        "individual_rating_timer": [##.#] (in seconds),
+        "team_image_timer": [##.#] (in seconds),
+        "team_discussion_timer": [##.#] (in seconds),
+        "team_rating_timer": [##.#] (in seconds)
+    }
+\end{verbatim}
+
+
+
+\bigskip\item\textbf{Baseline Finger Tapping Task Files:}
+\medskip
+\item\textbf{baseline\_tasks/finger\_tapping/<timestamp>.csv}\\(semicolon delimited, 1st row is a header)\\
+This CSV file is the Baseline Finger Tapping Task Data/Statistics. A summary of data contained in this file is: Record Timestamp (Unix Time, Monotonic, and Human-readable formats), Row Data Event (team, individual), Countdown Timer (intiger - 10 to 0), Was a Tap on Keyboard recorded for each participant (0 = no-tap, 1 = tap). The last three column (Fields) names for the Tap Data are the IDs of the Participants (<lion\_participant\_id>, <tiger\_participant\_id>, <leopard\_participant\_id>, If an experimenter sat-in, the column name will be "99999" for that Participant).
+
+Baseline Individual Affective Task Fields:
+\begin{itemize}
+    \item \code{time} - [\#\#\#\#\#\#\#\#\#\#.\#\#\#\#\#\#] (in seconds)\\Unix Time \href{https://www.unixtimestamp.com/}{https://www.unixtimestamp.com/}.
+    \item \code{monotonic\_time} - [\#\#\#\#\#\#\#.\#\#\#\#\#\#\#\#\#] (in seconds)\\How long since the computer that hosts the task was booted up.
+    \item \code{human\_readable\_time} - [yyyy-mm-ddThh:nn:ss.\#\#\#\#\#\#Z] (hh in 24 hour)\\ UTC-0 time in human-readable format.
+    \item \code{event\_type} -\\What event and when. (team, individual).
+    \item \code{countdown\_timer} - [\#\#] (intiger - 10 to 0)\\Countdown Timer.
+    \item \code{<lion_participant_id>} - [0 or 1]\\Tap on keyboard from Lion (0 = no-tap, 1 = tap).
+    \item \code{<tiger_participant_id>} - [0 or 1]\\Tap on keyboard from Tiger (0 = no-tap, 1 = tap).
+    \item \code{<leopard_participant_id>} - [0 or 1]\\Tap on keyboard from Leopard (0 = no-tap, 1 = tap).
+\end{itemize}
+
+
+\medskip
+\item\textbf{baseline\_tasks/finger\_tapping/<timestamp>\_metadata.json}\\(JSON data format)
+Baseline Finger Tapping Task configuration information. The configuration information in this file: participants\_ids, session, seconds\_per\_session, seconds\_count\_down, square\_width, and count\_down\_message.
+
+Finger Tapping Configuration Information JSON File:
+\begin{verbatim}
+    {
+        "participants_ids": [
+            ("#####","#####","#####"; "99999" for experimenter)
+            "<lion_participant_id>",
+            "<tiger_participant_id>",
+            "<leopard_participant_id>"
+        ],
+        "session": [ (typical: "0,1,0,1")
+            (0 or 1),
+            (0 or 1),
+            (0 or 1),
+            (0 or 1)
+        ],
+        "seconds_per_session": [ (typical: "10.0" for all)
+            ##.#,
+            ##.#,
+            ##.#,
+            ##.#
+        ],
+        "seconds_count_down": [##.#] (typical: "10.0"),
+        "square_width": [###] (typical: "200")
+        "count_down_message": ["string"]
+        (example: "Practice session: Press SPACEBAR and observe the squares")
+    }
+\end{verbatim}
+
+
+
+\bigskip\item\textbf{Baseline Ping-Pong Task Files:}
+\medskip
+\item\textbf{baseline\_tasks/ping\_pong/competitive\_<team>\_<timestamp>.csv}\\(semicolon delimited, 1st row is a header)\\
+This CSV file is for the Baseline Competitive Ping-Pong Task Data/Statistics. The <team> in the file name is "0" for Lion vs Tiger and "1" for Leopard vs Cheetah. (If an experimenter sat-in, the column name will be "99999" for that Participant). A summary of data contained in this file is: Record Timestamp (Unix Time, Monotonic, and Human-readable formats), Score on Left, Score on Right, Game Started (False = countdown for game to start, True = game has started), Ball's X Coordinates, Ball's Y Coordinates, Participant 1 Paddle X Coordinates, Participant 1 Paddle Y Coordinates, Participant 2 Paddle X Coordinates, Participant 2 Paddle Y Coordinates, Seconds Timer on Screen (If game has not started, \code{started = False}, the \code{seconds} will count down from 10 to 0. If game has started, \code{started = True}, the \code{seconds} will count down from 120 to 0.)
+
+Baseline Competitive Ping-Pong Task Fields:
+\begin{itemize}
+    \item \code{time - [##########.######] (in seconds)}\\Unix Time \href{https://www.unixtimestamp.com/}{https://www.unixtimestamp.com/}.
+    \item \code{monotonic\_time - [#######.#########] (in seconds)}\\How long since the computer that hosts the task was booted up.
+    \item \code{human\_readable\_time - [yyyy-mm-ddThh:nn:ss.######Z] (hh in 24h)}\\ UTC-0 time in human-readable format.
+    \item \code{score_left - [##]}\\.
+    \item \code{score_right - [##]}\\.
+    \item \code{started} - \\.
+    \item \code{ball_x} - \\.
+    \item \code{ball_y} - \\.
+    \item \code{<participant1_id>_x} -\\.
+    \item \code{<participant1_id>_y>} -\\.
+    \item \code{<participant2_id>_x} -\\.
+    \item \code{<participant2_id>_y>} -\\.
+    \item \code{seconds} - [\#\#\#]\\Seconds left in game (120 counts down to 0).
+\end{itemize}
+
+
+
+\bigskip\item\textbf{XDF Files:}
+\medskip
+\item\textbf{lsl/block\_1.xdf}\\(Extensible Data Format XDF, binary file format)\\
+The "block\_1.xdf" contains data files and data streams for the Baseline Tasks portion of the Experiment. You must use a XDF viewer program to view or extract the data contained in this file. Some common software packages used to view or extract data from this XDF file are: MNE-Python, Matplotlib, and Qtgraph. A summary of data recorded in this XDF file is: fNIRS LSL Streams, EEG LSL Streams, Baseline Data, Filenames of the Face and Screen Images, and Pupil Data.
+
+Data files and streams contained in the "block\_1.xdf":
+\begin{itemize}
+    \item \code{fNIRS LSL Streams} -\\fNIRS LSL Streams being transmitted from the "NIRx - Aurora" software programs running on the "fNIRS Server Computer" during the Baseline Tasks portion of the Experiment for participants on Lion, Tiger, and Leopard.
+    \item \code{EEG LSL Streams} -\\EEG LSL Streams being transmitted from the "Brain Vision - LSL-actiChamp" software programs running on the "EEG Server Computer" during the Baseline Tasks portion of the Experiment for participants on Lion, Tiger, and Leopard.
+    \item \code{Baseline Data for all Tasks} -\\All records that are outputted to the Baseline Tasks CSV files are also recorded in this XDF file for all Baseline Tasks.
+    \item \code{Filenames of the Face Images} -\\The Filenames of all Face Images created during the Baseline Tasks portion of the Experiment for participants on Lion, Tiger, and Leopard.
+    \item \code{Filenames of the Screen Images} -\\The Filenames of all Face Images created during the Baseline Tasks portion of the Experiment for participants on Lion, Tiger, and Leopard.
+    \item \code{Pupil Data} -\\Pupil Data files recorded from the "Pupil Labs - Pupil Capture" software programs running on the participant's iMacs, Lion, Tiger, and Leopard during the Baseline Tasks portion of the Experiment.
+\end{itemize}
+
+
+\medskip
+\item\textbf{lsl/block\_2.xdf}\\(Extensible Data Format XDF, binary file format)\\
+The "block\_2.xdf" contains data files and data streams for the Minecraft portion of the Experiment. You must use a XDF viewer program to view or extract the data contained in this file. Some common software packages used to view or extract data from this XDF file are: MNE-Python, Matplotlib, and Qtgraph. A summary of data recorded in this XDF file is: fNIRS LSL Streams, EEG LSL Streams, Individual and Central Audio, Filenames of the Face and Screen Images, and Pupil Data.
+
+Data files and streams contained in the "block\_2.xdf":
+\begin{itemize}
+    \item \code{fNIRS LSL Streams} -\\fNIRS LSL Streams being transmitted from the "NIRx - Aurora" software programs running on the "fNIRS Server Computer" during the Minecraft portion of the Experiment for participants on Lion, Tiger, and Leopard.
+    \item \code{EEG LSL Streams} -\\EEG LSL Streams being transmitted from the "Brain Vision - LSL-actiChamp" software programs running on the "EEG Server Computer" during the Minecraft portion of the Experiment for participants on Lion, Tiger, and Leopard.
+    \item \code{Minecraft Messages} -\\A series of JSON strings recording the messages sent to and from participants during the three Minecraft missions, Training, Saturn A, and Saturn B.
+    \item \code{Individual Audio} -\\Audio Signals captured during the Minecraft portion of the Experiment from each participant's microphone, Lion, Tiger, and Leopard.
+    \item \code{Central Audio} -\\This is Audio File from the central array microphone located in the center of the experiment room that picks up all audio in the room during the experiment.
+    \item \code{Filenames of the Face Images} -\\The Filenames of all Face Images created during the Minecraft portion of the Experiment for participants on Lion, Tiger, and Leopard.
+    \item \code{Filenames of the Screen Images} -\\The Filenames of all Face Images created during the Minecraft portion of the Experiment for participants on Lion, Tiger, and Leopard.
+    \item \code{Pupil Data} -\\Pupil Data files recorded from the "Pupil Labs - Pupil Capture" software programs running on the participant's iMacs, Lion, Tiger, and Leopard during the Minecraft portion of the Experiment.
+\end{itemize}
+
+
 \end{description}
-
-
-
-
-
-
-
