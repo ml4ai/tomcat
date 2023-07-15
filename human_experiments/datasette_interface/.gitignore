@@ -3,3 +3,6 @@
 
 # Ignore log files
 *.log
+
+# NFS files
+.nfs*
