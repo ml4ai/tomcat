@@ -1,121 +1,380 @@
 \section{Derived Data Description}
 
-\subsection{EEG and fNIRS channels provided by Aurora}
+\subsection{Derived Data Files}
 
-\eduong{Here we describe how Aurora provides the HbO and HbR channels for fNIRS along with any derived channels of EEG. Some questions to answer: What are the channels recorded? How did Aurora compute HbO and HbR?}
+The following folders contain several versions of derived data at various synchronization frequencies:
+\begin{itemize}
+  \item \texttt{fnirs\_20hz} contains synchronized fNIRS signals and task data at 20 Hz sampling rate.
+  \item \texttt{fnirs\_raw\_20hz} contains synchronized fNIRS raw signals and task data at 20 Hz sampling rate.
+  \item \texttt{eeg\_1000hz} contains synchronized EEG signals and task data at 1000 Hz sampling rate.
+  \item \texttt{eeg\_1200hz\_120hz} contains synchronized EEG signals with 1200 Hz sampling rate, then downsampled to 120 Hz sampling rate and synchronized and task data.
+  \item \texttt{fnirs\_eeg\_1000hz} contains synchronized fNIRS and EEG signals and task data at 1000 Hz sampling rate.
+  \item \texttt{fnirs\_raw\_eeg\_1000hz} contains synchronized fNIRS raw and EEG signals and task data at 1000 Hz sampling rate.
+  \item \texttt{fnirs\_eeg\_1200hz\_120hz} contains synchronized fNIRS and EEG signals with 1200 Hz sampling rate, then downsampled to 120 Hz sampling rate and synchronized and task data.
+  \item \texttt{fnirs\_raw\_eeg\_1200hz\_120hz} contains synchronized fNIRS raw and EEG signals with 1200 Hz sampling rate, then downsampled to 120 Hz sampling rate and synchronized and task data.
+\end{itemize}
+
+Each derived data folder contains synchronized fNIRS and/or EEG signals for each task and for the entire experiment for each experiment:
+\begin{verbatim}
+exp_*/
+    rest_state.csv
+    finger_tapping.csv
+    lion_affective_individual.csv
+    tiger_affective_individual.csv
+    leopard_affective_individual.csv
+    affective_team.csv
+    ping_pong_competitive_0.csv
+    ping_pong_competitive_1.csv
+    ping_pong_cooperative.csv
+    hands_on_training.csv
+    saturn_a.csv
+    saturn_b.csv
+    synchronized_signals.csv
+    log.txt
+\end{verbatim}
+
+Each experiment contains the following CSV files, with columns described in \ref{sec:derived_data_cols_desc}:
+\begin{itemize}
+  \item \texttt{rest\_state.csv} contains the synchronized signal and rest state task data.
+  \item \texttt{finger\_tapping.csv} contains the synchronized signal and finger tapping task data.
+  \item \texttt{lion\_affective\_individual.csv} contains the synchronized signal and individual affective task data for participant using the Lion computer in the lab.
+  \item \texttt{tiger\_affective\_individual.csv} contains the synchronized signal and individual affective task data for participant using the Leopard computer in the lab.
+  \item \texttt{leopard\_affective\_individual.csv} contains the synchronized signal and individual affective task data for participant using the Leopard computer in the lab.
+  \item \texttt{affective\_team.csv} contains the synchronized signal and team affective task data.
+  \item \texttt{ping\_pong\_competitive\_0.csv} contains the synchronized signal and ping pong competitive task data between two participants or one participant and one experimenter. The \texttt{0} indicates the match ID to distinguish between matches.
+  \item \texttt{ping\_pong\_competitive\_1.csv} contains the synchronized signal and ping pong competitive task data between two participants or one participant and one experimenter. The \texttt{1} indicates the match ID to distinguish between matches.
+  \item \texttt{ping\_pong\_cooperative.csv} contains the synchronized signal and ping pong cooperative task data between three participants against an artificial intelligent agent.
+  \item \texttt{hands\_on\_training.csv} contains the synchronized signal and Minecraft search-and-rescue hands-on training mission data.
+  \item \texttt{saturn\_a.csv} contains the synchronized signal and Minecraft search-and-rescue Saturn A mission data.
+  \item \texttt{saturn\_b.csv} contains the synchronized signal and Minecraft search-and-rescue Saturn B mission data.
+  \item \texttt{synchronized\_signals.csv} contains the synchronized signal for the entire experiment session.
+  \item \texttt{log.txt} contains the messages logged by the processing program, which contains information about the synchronization process.
+\end{itemize}
 
 \subsection{Derived Data Columns Descriptions}
+\label{sec:derived_data_cols_desc}
 
 \eduong{Here we describe the columns provided in the derived dataset.}
 
-\begin{table}
+\begin{table}[h]
 \centering
 \begin{tabularx}{\textwidth}{|l|l|X|}
 \hline
-\textbf{Type} & \textbf{Channel} & \textbf{Description} \\
+\textbf{Type} & \textbf{Column} & \textbf{Description} \\
 \hline
-\multirow{3}{*}{Time} 
-& \texttt{unix\_time} & \\
-& \texttt{human\_readable\_time} & \\
-& \texttt{seconds\_since\_start} & \\
+\multirow{13}{*}{\parbox{2cm}{Time}}
+& \texttt{index} (first column) & Row index counting from synchronized signals of the entire experiment in \texttt{synchronized\_signals.csv}. This is a reference column to identify the signals from the experiment synchronized signals with the task synchronized signals.\\
+& \texttt{unix\_time} & Unix time (in seconds, with 0.1 microsecond resolution) of when the fNIRS and EEG signals and the task data were recorded and synchronized.\\
+& \texttt{human\_readable\_time} & UTC time (in seconds, with 1.0 microsecond resolution) in the human readable format of when the fNIRS and EEG signals and the task data were recorded.\\
+& \texttt{seconds\_since\_start} & Time (in seconds, with 0.1 microsecond resolution) since the first entry of the task or the experiment.\\
 \hline
-\multirow{3}{*}{Subject ID} 
-& \texttt{lion\_id} & \\
-& \texttt{tiger\_id} & \\
-& \texttt{leopard\_id} & \\
+\multirow{6}{*}{\parbox{2cm}{Subject ID}}
+& \texttt{lion\_id} & ID of the participant who participated in the experiment using the Lion computer in the lab.\\
+& \texttt{tiger\_id} & ID of the participant who participated in the experiment using the Tiger computer in the lab.\\
+& \texttt{leopard\_id} & ID of the participant who participated in the experiment using the Leopard computer in the lab.\\
 \hline
 \end{tabularx}
-\caption{Channel Descriptions}
-\label{tab:other_columns}
+\caption{Columns that are common in all CSV files of derived data.}
+\label{tab:shared_columns}
+\end{table}
+
+\begin{table}[h]
+\centering
+\begin{tabularx}{\textwidth}{|l|X|}
+\hline
+\textbf{Channel} & \textbf{Description} \\
+\hline
+\texttt{event\_type} & Event labels for the rest state task. Event types include \texttt{start\_rest\_state} signifying the start of the task, and \texttt{end\_rest\_state} signifying the end of task.\\
+\hline
+\end{tabularx}
+\caption{Rest State Task columns information in the CSV file \texttt{rest\_state.csv} of the derived data.}
+\label{tab:rest_task_columns}
+\end{table}
+
+\begin{table}[h]
+\centering
+\begin{tabularx}{\textwidth}{|l|X|}
+\hline
+\textbf{Channel} & \textbf{Description} \\
+\hline
+\texttt{event\_type} & Event labels for the finger tapping task. Event types include \texttt{start\_fingertapping\_task} signifying the start of the task and the practice period, \texttt{end\_fingertapping\_task} for the end of the task, \texttt{individual} for the period during which the participants must tap in rhythm by themselves, and \texttt{team} for the period during which the participants must tap in synchronized rhythm with other participants.\\
+\hline
+\texttt{countdown\_timer} & This is the timer displayed to the participants on the monitor signifying the remaining duration of the task's phase.\\
+\hline
+\texttt{lion} & \texttt{0} for when the participant on the Lion computer is not pressing and holding down on the spacebar, and \texttt{1} for when the participant is pressing and holding down the space bar.\\
+\hline
+\texttt{tiger} & \texttt{0} for when the participant on the Tiger computer is not pressing and holding down on the spacebar, and \texttt{1} for when the participant is pressing and holding down the space bar.\\
+\hline
+\texttt{leopard} & \texttt{0} for when the participant on the Leopard computer is not pressing and holding down on the spacebar, and \texttt{1} for when the participant is pressing and holding down the space bar.\\
+\hline
+\end{tabularx}
+\caption{Finger Tapping Task columns information in the CSV file \texttt{finger\_tapping.csv} of the derived data.}
+\label{tab:finger_task_columns}
+\end{table}
+
+\begin{table}[h]
+\centering
+\begin{tabularx}{\textwidth}{|l|X|}
+\hline
+\textbf{Channel} & \textbf{Description} \\
+\hline
+\texttt{event\_type} & Event labels for the individual affective task. Event types include \texttt{start\_affective\_task} signifying the start of the task, \texttt{intermediate\_selection} signifying when a participant selects an arousal rating or a valence rating after observing an image, and \texttt{final\_submission} signifying when a participant submits the arousal and valence score for an image. For experiments recorded in April, 2023 onward, there are additional events, including \texttt{show\_blank\_screen} for when a participant's monitor began rendering the blank, black screen, \texttt{show\_cross\_screen} for when the monitor began rendering the black background with a plus symbol in the middle of the screen to center the participant's attention, \texttt{show\_image} for when the monitor began rendering an image at the center of the screen in front of a black background, and \texttt{show\_rating\_screen} for when the monitor began rendering the arousal and valence rating screen at the center of the screen.\\
+\hline
+\texttt{image\_path} & The image file that was rendered on the participants' monitors.\\
+\hline
+\texttt{arousal\_score} & The arousal score selected by the participant during the \texttt{intermediate\_selection} and \texttt{final\_submission} events.\\
+\hline
+\texttt{valence\_score} & The valence score selected by the participant during the \texttt{intermediate\_selection} and \texttt{final\_submission} events.\\
+\hline
+\end{tabularx}
+\caption{Individual Affective Task columns information in the CSV files \texttt{lion\_affective\_individual.csv}, \texttt{tiger\_affective\_individual.csv}, and \texttt{leopard\_affective\_individual.csv} of the derived data.}
+\label{tab:individual_affective_task_columns}
+\end{table}
+
+\begin{table}[h]
+\centering
+\begin{tabularx}{\textwidth}{|l|X|}
+\hline
+\textbf{Channel} & \textbf{Description} \\
+\hline
+\texttt{lion\_event\_type} & Similar event types to Table \ref{tab:individual_affective_task_columns}, but also include event \texttt{show\_observe\_message} signifying when the monitor displayed the message instructing the participants to quietly observe the image, \texttt{show\_discuss\_message} for when the monitor displayed the message instructing the participants to share and discuss their emotional experience with each other, and \texttt{show\_rater\_selected\_message} for when the monitor displayed the message notifying the participant who has been selected to input the shared arousal and valence rating. The events come from the participant sitting on the Lion computer in the lab.\\
+\hline
+\texttt{tiger\_event\_type} & Similar to the event types of the participant sitting on the Lion computer, but the events come from the participant sitting on the Tiger computer.\\
+\hline
+\texttt{leopard\_event\_type} & Similar to the event types of the participant sitting on the Lion computer, but the events come from the participant sitting on the Leopard computer.\\
+\hline
+\texttt{image\_path} & The image file that was rendered on the participants' monitors.\\
+\hline
+\texttt{arousal\_score} & The arousal score selected by the participant during the \texttt{intermediate\_selection} and \texttt{final\_submission} events.\\
+\hline
+\texttt{valence\_score} & The valence score selected by the participant during the \texttt{intermediate\_selection} and \texttt{final\_submission} events.\\
+\hline
+\end{tabularx}
+\caption{Team Affective Task columns information in the CSV file \texttt{affective\_team.csv} of the derived data.}
+\label{tab:team_affective_task_columns}
+\end{table}
+
+\begin{table}[h]
+\centering
+\begin{tabularx}{\textwidth}{|l|X|}
+\hline
+\textbf{Channel} & \textbf{Description} \\
+\hline
+\texttt{score\_left} & The current score for the player on the left side.\\
+\hline
+\texttt{score\_right} & The current score for the player on the right side.\\
+\hline
+\texttt{started} & \texttt{False} for when the task is in practice mode: the ball stayed fixed at the center of the screen, while the players were allowed to move the paddles along the vertical axis. \texttt{True} for when the task is not in practice mode: the ball moved and the players could score points against the other side.\\
+\hline
+\texttt{ball\_x} & the x-axis coordinate of the ball's top left pixel, with the lower number located on the left side of the screen, and the higher number on the right side.\\
+\hline
+\texttt{ball\_y} & the y-axis coordinate of the ball's top left pixel, with the lower number located toward the top  of the screen, and the higher number toward the bottom.\\
+\hline
+\texttt{<subject>\_x} & the x-axis coordinate of the player's paddle's top left pixel, with the lower number located on the left side of the screen, and the higher number on the right side. The x-axis coordinate is fixed, and the lower number indicates that the player's paddle was on the left side and the higher number indicates that the player's paddle was on the right side.\\
+\hline
+\texttt{<subject>\_y} & the y-axis coordinate of the player's paddle's top left pixel, with the lower number located toward the top of the screen, and the higher number toward the bottom.\\
+\hline
+\texttt{exp\_x} & the x-axis coordinate of the experimenter's paddle's top left pixel, with the lower number located on the left side of the screen, and the higher number on the right side. The x-axis coordinate is fixed, and the lower number indicates that the experimenter's paddle was on the left side and the higher number indicates that the experimenter's paddle was on the right side.\\
+\hline
+\texttt{exp\_y} & the y-axis coordinate of the experimenter's paddle's top left pixel, with the lower number located toward the top of the screen, and the higher number toward the bottom.\\
+\hline
+\end{tabularx}
+\caption{Ping Pong Competitive Task columns information in the CSV files \texttt{ping\_pong\_competitive\_0.csv} and \texttt{ping\_pong\_competitive\_1.csv} of the derived data.}
+\label{tab:ping_pong_competitive_task_columns}
+\end{table}
+
+\begin{table}[h]
+\centering
+\begin{tabularx}{\textwidth}{|l|X|}
+\hline
+\textbf{Channel} & \textbf{Description} \\
+\hline
+\texttt{score\_left} & The current score for the players on the left side.\\
+\hline
+\texttt{score\_right} & The current score for the artificial intelligent agent on the right side.\\
+\hline
+\texttt{started} & \texttt{False} for when the task is in practice mode: the ball stayed fixed at the center of the screen, while the players were allowed to move the paddles along the vertical axis. \texttt{True} for when the task is not in practice mode: the ball moved and the players could score points against the other side.\\
+\hline
+\texttt{ball\_x} & the x-axis coordinate of the ball's top left pixel, with the lower number located on the left side of the screen, and the higher number on the right side.\\
+\hline
+\texttt{ball\_y} & the y-axis coordinate of the ball's top left pixel, with the lower number located toward the top  of the screen, and the higher number toward the bottom.\\
+\hline
+\texttt{<subject>\_x} & the x-axis coordinate of the player's paddle's top left pixel, with the lower number located on the left side of the screen, and the higher number on the right side. The x-axis coordinate is fixed, all players were on the left side.\\
+\hline
+\texttt{<subject>\_y} & the y-axis coordinate of the player's paddle's top left pixel, with the lower number located toward the top of the screen, and the higher number toward the bottom.\\
+\hline
+\texttt{ai\_x} & the x-axis coordinate of the artificial intelligent agent's paddle's top left pixel, with the lower number located on the left side of the screen, and the higher number on the right side. The x-axis coordinate is fixed, and the artificial intelligent agent was on the right side.\\
+\hline
+\texttt{ai\_y} & the y-axis coordinate of the artificial intelligent agent's paddle's top left pixel, with the lower number located toward the top of the screen, and the higher number toward the bottom.\\
+\hline
+\end{tabularx}
+\caption{Ping Pong Cooperative Task columns information in the CSV file \texttt{ping\_pong\_cooperative.csv} of the derived data.}
+\label{tab:ping_pong_cooperative_task_columns}
+\end{table}
+
+\begin{table}[h]
+\centering
+\begin{tabularx}{\textwidth}{|l|X|}
+\hline
+\textbf{Channel} & \textbf{Description} \\
+\hline
+\texttt{score} & The current score of the team. The team scored points for rescuing victims in a search-and-rescue mission in Minecraft.\\
+\hline
+\end{tabularx}
+\caption{Minecraft Hands-on Training \texttt{hands\_on\_training.csv}, Saturn A \texttt{saturn\_a.csv}, and Saturn B \texttt{saturn\_b.csv} columns information in the CSV files of the derived data.}
+\label{tab:minecraft_task_columns}
+\end{table}
+
+\eduong{Here we describe how Aurora provides the HbO and HbR channels for fNIRS along with any derived channels of EEG. Some questions to answer: What are the channels recorded? How did Aurora compute HbO and HbR?}
+
+\eduong{Caleb, Diheng, and/or Savannah writing about EEG and fNIRS channels in the tables?}
+
+\begin{table}
+\centering
+\begin{tabularx}{\textwidth}{|l|X|}
+\hline
+\textbf{EEG signal columns} & \textbf{Description} \\
+\hline
+\texttt{<subject>\_eeg\_AFF1h} & Description of AFF1h \\
+\hline
+\texttt{<subject>\_eeg\_F7} & Description of F7 \\
+\hline
+\texttt{<subject>\_eeg\_FC5} & Description of FC5 \\
+\hline
+\texttt{<subject>\_eeg\_C3} & Description of C3 \\
+\hline
+\texttt{<subject>\_eeg\_T7} & Description of T7 \\
+\hline
+\texttt{<subject>\_eeg\_TP9} & Description of TP9 \\
+\hline
+\texttt{<subject>\_eeg\_Pz} & Description of Pz \\
+\hline
+\texttt{<subject>\_eeg\_P3} & Description of P3 \\
+\hline
+\texttt{<subject>\_eeg\_P7} & Description of P7 \\
+\hline
+\texttt{<subject>\_eeg\_O1} & Description of O1 \\
+\hline
+\texttt{<subject>\_eeg\_O2} & Description of O2 \\
+\hline
+\texttt{<subject>\_eeg\_P8} & Description of P8 \\
+\hline
+\texttt{<subject>\_eeg\_P4} & Description of P4 \\
+\hline
+\texttt{<subject>\_eeg\_TP10} & Description of TP10 \\
+\hline
+\texttt{<subject>\_eeg\_Cz} & Description of Cz \\
+\hline
+\texttt{<subject>\_eeg\_C4} & Description of C4 \\
+\hline
+\texttt{<subject>\_eeg\_T8} & Description of T8 \\
+\hline
+\texttt{<subject>\_eeg\_FC6} & Description of FC6 \\
+\hline
+\texttt{<subject>\_eeg\_FCz} & Description of FCz \\
+\hline
+\texttt{<subject>\_eeg\_F8} & Description of F8 \\
+\hline
+\texttt{<subject>\_eeg\_AFF2h} & Description of AFF2h \\
+\hline
+\texttt{<subject>\_eeg\_GSR} & Description of AUX\_GSR \\
+\hline
+\texttt{<subject>\_eeg\_EKG} & Description of AUX\_EKG \\
+\hline
+\end{tabularx}
+\caption{Signal Descriptions}
+\label{tab:EEG_signals}
 \end{table}
 
 \begin{table}
 \centering
-\begin{tabularx}{\textwidth}{|l|l|X|}
+\begin{tabularx}{\textwidth}{|l|X|}
 \hline
-\textbf{Type} & \textbf{Channel} & \textbf{Description} \\
+\textbf{fNIRS raw signal columns} & \textbf{Description} \\
 \hline
-\multirow{22}{*}{EEG}
-& \texttt{<subject>\_eeg\_AFF1h} & Description of AFF1h \\
-& \texttt{<subject>\_eeg\_F7} & Description of F7 \\
-& \texttt{<subject>\_eeg\_FC5} & Description of FC5 \\
-& \texttt{<subject>\_eeg\_C3} & Description of C3 \\
-& \texttt{<subject>\_eeg\_T7} & Description of T7 \\
-& \texttt{<subject>\_eeg\_TP9} & Description of TP9 \\
-& \texttt{<subject>\_eeg\_Pz} & Description of Pz \\
-& \texttt{<subject>\_eeg\_P3} & Description of P3 \\
-& \texttt{<subject>\_eeg\_P7} & Description of P7 \\
-& \texttt{<subject>\_eeg\_O1} & Description of O1 \\
-& \texttt{<subject>\_eeg\_O2} & Description of O2 \\
-& \texttt{<subject>\_eeg\_P8} & Description of P8 \\
-& \texttt{<subject>\_eeg\_P4} & Description of P4 \\
-& \texttt{<subject>\_eeg\_TP10} & Description of TP10 \\
-& \texttt{<subject>\_eeg\_Cz} & Description of Cz \\
-& \texttt{<subject>\_eeg\_C4} & Description of C4 \\
-& \texttt{<subject>\_eeg\_T8} & Description of T8 \\
-& \texttt{<subject>\_eeg\_FC6} & Description of FC6 \\
-& \texttt{<subject>\_eeg\_FCz} & Description of FCz \\
-& \texttt{<subject>\_eeg\_F8} & Description of F8 \\
-& \texttt{<subject>\_eeg\_AFF2h} & Description of AFF2h \\
-& \texttt{<subject>\_eeg\_GSR} & Description of AUX\_GSR \\
-& \texttt{<subject>\_eeg\_EKG} & Description of AUX\_EKG \\
+\texttt{<subject>\_fnirs\_S1-D1\_760} & Description of S1-D1\_760 \\
+\hline
+\texttt{<subject>\_fnirs\_S1-D2\_760} & Description of S1-D2\_760 \\
+\hline
+\texttt{<subject>\_fnirs\_S2-D1\_760} & Description of S2-D1\_760 \\
+\hline
+\texttt{<subject>\_fnirs\_S2-D3\_760} & Description of S2-D3\_760 \\
+\hline
+\texttt{<subject>\_fnirs\_S3-D1\_760} & Description of S3-D1\_760 \\
+\hline
+\texttt{<subject>\_fnirs\_S3-D3\_760} & Description of S3-D3\_760 \\
+\hline
+\texttt{<subject>\_fnirs\_S3-D4\_760} & Description of S3-D4\_760 \\
+\hline
+\texttt{<subject>\_fnirs\_S4-D2\_760} & Description of S4-D2\_760 \\
+\hline
+\texttt{<subject>\_fnirs\_S4-D4\_760} & Description of S4-D4\_760 \\
+\hline
+\texttt{<subject>\_fnirs\_S4-D5\_760} & Description of S4-D5\_760 \\
+\hline
+\texttt{<subject>\_fnirs\_S5-D3\_760} & Description of S5-D3\_760 \\
+\hline
+\texttt{<subject>\_fnirs\_S5-D4\_760} & Description of S5-D4\_760 \\
+\hline
+\texttt{<subject>\_fnirs\_S5-D6\_760} & Description of S5-D6\_760 \\
+\hline
+\texttt{<subject>\_fnirs\_S6-D4\_760} & Description of S6-D4\_760 \\
+\hline
+\texttt{<subject>\_fnirs\_S6-D6\_760} & Description of S6-D6\_760 \\
+\hline
+\texttt{<subject>\_fnirs\_S6-D7\_760} & Description of S6-D7\_760 \\
+\hline
+\texttt{<subject>\_fnirs\_S7-D5\_760} & Description of S7-D5\_760 \\
+\hline
+\texttt{<subject>\_fnirs\_S7-D7\_760} & Description of S7-D7\_760 \\
+\hline
+\texttt{<subject>\_fnirs\_S8-D6\_760} & Description of S8-D6\_760 \\
+\hline
+\texttt{<subject>\_fnirs\_S8-D7\_760} & Description of S8-D7\_760 \\
+\hline
+\texttt{<subject>\_fnirs\_S1-D1\_850} & Description of S1-D1\_850 \\
+\hline
+\texttt{<subject>\_fnirs\_S1-D2\_850} & Description of S1-D2\_850 \\
+\hline
+\texttt{<subject>\_fnirs\_S2-D1\_850} & Description of S2-D1\_850 \\
+\hline
+\texttt{<subject>\_fnirs\_S2-D3\_850} & Description of S2-D3\_850 \\
+\hline
+\texttt{<subject>\_fnirs\_S3-D1\_850} & Description of S3-D1\_850 \\
+\hline
+\texttt{<subject>\_fnirs\_S3-D3\_850} & Description of S3-D3\_850 \\
+\hline
+\texttt{<subject>\_fnirs\_S3-D4\_850} & Description of S3-D4\_850 \\
+\hline
+\texttt{<subject>\_fnirs\_S4-D2\_850} & Description of S4-D2\_850 \\
+\hline
+\texttt{<subject>\_fnirs\_S4-D4\_850} & Description of S4-D4\_850 \\
+\hline
+\texttt{<subject>\_fnirs\_S4-D5\_850} & Description of S4-D5\_850 \\
+\hline
+\texttt{<subject>\_fnirs\_S5-D3\_850} & Description of S5-D3\_850 \\
+\hline
+\texttt{<subject>\_fnirs\_S5-D4\_850} & Description of S5-D4\_850 \\
+\hline
+\texttt{<subject>\_fnirs\_S5-D6\_850} & Description of S5-D6\_850 \\
+\hline
+\texttt{<subject>\_fnirs\_S6-D4\_850} & Description of S6-D4\_850 \\
+\hline
+\texttt{<subject>\_fnirs\_S6-D6\_850} & Description of S6-D6\_850 \\
+\hline
+\texttt{<subject>\_fnirs\_S6-D7\_850} & Description of S6-D7\_850 \\
+\hline
+\texttt{<subject>\_fnirs\_S7-D5\_850} & Description of S7-D5\_850 \\
+\hline
+\texttt{<subject>\_fnirs\_S7-D7\_850} & Description of S7-D7\_850 \\
+\hline
+\texttt{<subject>\_fnirs\_S8-D6\_850} & Description of S8-D6\_850 \\
+\hline
+\texttt{<subject>\_fnirs\_S8-D7\_850} & Description of S8-D7\_850 \\
 \hline
 \end{tabularx}
-\caption{Channel Descriptions}
-\label{tab:EEG_channels}
-\end{table}
-
-\begin{table}
-\centering
-\begin{tabularx}{\textwidth}{|l|l|X|}
-\hline
-\textbf{Type} & \textbf{Channel} & \textbf{Description} \\
-\hline
-\multirow{40}{*}{fNIRS raw}
-& \texttt{<subject>\_fnirs\_S1-D1\_760} & Description of S1-D1\_760 \\
-& \texttt{<subject>\_fnirs\_S1-D2\_760} & Description of S1-D2\_760 \\
-& \texttt{<subject>\_fnirs\_S2-D1\_760} & Description of S2-D1\_760 \\
-& \texttt{<subject>\_fnirs\_S2-D3\_760} & Description of S2-D3\_760 \\
-& \texttt{<subject>\_fnirs\_S3-D1\_760} & Description of S3-D1\_760 \\
-& \texttt{<subject>\_fnirs\_S3-D3\_760} & Description of S3-D3\_760 \\
-& \texttt{<subject>\_fnirs\_S3-D4\_760} & Description of S3-D4\_760 \\
-& \texttt{<subject>\_fnirs\_S4-D2\_760} & Description of S4-D2\_760 \\
-& \texttt{<subject>\_fnirs\_S4-D4\_760} & Description of S4-D4\_760 \\
-& \texttt{<subject>\_fnirs\_S4-D5\_760} & Description of S4-D5\_760 \\
-& \texttt{<subject>\_fnirs\_S5-D3\_760} & Description of S5-D3\_760 \\
-& \texttt{<subject>\_fnirs\_S5-D4\_760} & Description of S5-D4\_760 \\
-& \texttt{<subject>\_fnirs\_S5-D6\_760} & Description of S5-D6\_760 \\
-& \texttt{<subject>\_fnirs\_S6-D4\_760} & Description of S6-D4\_760 \\
-& \texttt{<subject>\_fnirs\_S6-D6\_760} & Description of S6-D6\_760 \\
-& \texttt{<subject>\_fnirs\_S6-D7\_760} & Description of S6-D7\_760 \\
-& \texttt{<subject>\_fnirs\_S7-D5\_760} & Description of S7-D5\_760 \\
-& \texttt{<subject>\_fnirs\_S7-D7\_760} & Description of S7-D7\_760 \\
-& \texttt{<subject>\_fnirs\_S8-D6\_760} & Description of S8-D6\_760 \\
-& \texttt{<subject>\_fnirs\_S8-D7\_760} & Description of S8-D7\_760 \\
-& \texttt{<subject>\_fnirs\_S1-D1\_850} & Description of S1-D1\_850 \\
-& \texttt{<subject>\_fnirs\_S1-D2\_850} & Description of S1-D2\_850 \\
-& \texttt{<subject>\_fnirs\_S2-D1\_850} & Description of S2-D1\_850 \\
-& \texttt{<subject>\_fnirs\_S2-D3\_850} & Description of S2-D3\_850 \\
-& \texttt{<subject>\_fnirs\_S3-D1\_850} & Description of S3-D1\_850 \\
-& \texttt{<subject>\_fnirs\_S3-D3\_850} & Description of S3-D3\_850 \\
-& \texttt{<subject>\_fnirs\_S3-D4\_850} & Description of S3-D4\_850 \\
-& \texttt{<subject>\_fnirs\_S4-D2\_850} & Description of S4-D2\_850 \\
-& \texttt{<subject>\_fnirs\_S4-D4\_850} & Description of S4-D4\_850 \\
-& \texttt{<subject>\_fnirs\_S4-D5\_850} & Description of S4-D5\_850 \\
-& \texttt{<subject>\_fnirs\_S5-D3\_850} & Description of S5-D3\_850 \\
-& \texttt{<subject>\_fnirs\_S5-D4\_850} & Description of S5-D4\_850 \\
-& \texttt{<subject>\_fnirs\_S5-D6\_850} & Description of S5-D6\_850 \\
-& \texttt{<subject>\_fnirs\_S6-D4\_850} & Description of S6-D4\_850 \\
-& \texttt{<subject>\_fnirs\_S6-D6\_850} & Description of S6-D6\_850 \\
-& \texttt{<subject>\_fnirs\_S6-D7\_850} & Description of S6-D7\_850 \\
-& \texttt{<subject>\_fnirs\_S7-D5\_850} & Description of S7-D5\_850 \\
-& \texttt{<subject>\_fnirs\_S7-D7\_850} & Description of S7-D7\_850 \\
-& \texttt{<subject>\_fnirs\_S8-D6\_850} & Description of S8-D6\_850 \\
-& \texttt{<subject>\_fnirs\_S8-D7\_850} & Description of S8-D7\_850 \\
-\hline
-\end{tabularx}
-\caption{Channel Descriptions}
-\label{tab:fNIRS_raw_channels}
+\caption{Signal Descriptions}
+\label{tab:fNIRS_raw_signals}
 \end{table}
 
 \begin{table}
@@ -167,6 +426,6 @@
 & \texttt{<subject>\_fnirs\_S8-D7\_HbR} & Description of S8-D7\_HbR \\
 \hline
 \end{tabularx}
-\caption{Channel Descriptions}
-\label{tab:fNIRS_channels}
+\caption{Signals Descriptions}
+\label{tab:fNIRS_signals}
 \end{table}
