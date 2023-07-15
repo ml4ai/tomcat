@@ -23,7 +23,7 @@ logging.basicConfig(
     level=logging.INFO,
     handlers=(
         logging.FileHandler(
-            filename="/space/adarsh/tomcat/build_ping_pong_competitive_task_table.log",
+            filename="/space/adarsh/tomcat/build_ping_pong_cooperative_task_table.log",
             mode="w",
         ),
         logging.StreamHandler(stream=sys.stderr),
@@ -38,16 +38,15 @@ def recreate_table():
         info("Dropping ping_pong_task_event table.")
 
         db_connection.execute(
-            "DROP TABLE IF EXISTS ping_pong_competitive_task_observation"
+            "DROP TABLE IF EXISTS ping_pong_cooperative_task_observation"
         )
         db_connection.execute(
             """
-            CREATE TABLE ping_pong_competitive_task_observation (
+            CREATE TABLE ping_pong_cooperative_task_observation (
                 group_session TEXT NOT NULL,
                 player_1_id INTEGER NOT NULL,
                 player_2_id INTEGER NOT NULL,
-                player_1_station TEXT NOT NULL,
-                player_2_station TEXT NOT NULL,
+                player_3_id INTEGER NOT NULL,
                 timestamp_unix TEXT NOT NULL,
                 timestamp_iso8601 TEXT NOT NULL,
                 task_started BOOLEAN NOT NULL,
@@ -58,112 +57,110 @@ def recreate_table():
                 player_1_paddle_position_y INTEGER NOT NULL CHECK(player_1_paddle_position_y >= 0),
                 player_2_paddle_position_x INTEGER NOT NULL CHECK(player_2_paddle_position_x >= 0),
                 player_2_paddle_position_y INTEGER NOT NULL CHECK(player_2_paddle_position_y >= 0),
-                player_1_score INTEGER NOT NULL CHECK(player_1_score >= 0),
-                player_2_score INTEGER NOT NULL CHECK(player_2_score >= 0),
+                player_3_paddle_position_x INTEGER NOT NULL CHECK(player_3_paddle_position_x >= 0),
+                player_3_paddle_position_y INTEGER NOT NULL CHECK(player_3_paddle_position_y >= 0),
+                ai_paddle_position_x INTEGER NOT NULL CHECK(ai_paddle_position_x >= 0),
+                ai_paddle_position_y INTEGER NOT NULL CHECK(ai_paddle_position_y >= 0),
+                team_score INTEGER NOT NULL CHECK(team_score >= 0),
+                ai_score INTEGER NOT NULL CHECK(ai_score >= 0),
                 FOREIGN KEY(group_session) REFERENCES group_session(id)
                 FOREIGN KEY(player_1_id) REFERENCES participant(id)
                 FOREIGN KEY(player_2_id) REFERENCES participant(id)
-                FOREIGN KEY(player_1_station) REFERENCES station(id)
-                FOREIGN KEY(player_2_station) REFERENCES station(id)
+                FOREIGN KEY(player_3_id) REFERENCES participant(id)
             );"""
         )
 
 
-def process_competitive_csv_files(competitive_csv_files, session, participants, db_connection):
-    for csv_file in competitive_csv_files:
-        df = pd.read_csv(
-            csv_file,
-            delimiter=";",
-            dtype=str,
-        )
+def process_cooperative_csv_files(csv_file, session, participants, db_connection):
+    df = pd.read_csv(
+        csv_file,
+        delimiter=";",
+        dtype=str,
+    )
 
-        left_station, right_station = (
-            ["lion", "tiger"]
-            if "_0" in csv_file
-            else ["leopard", "cheetah"]
-        )
+    player_1_id = participants["lion"]
+    player_2_id = participants["tiger"]
+    player_3_id = participants["leopard"]
 
-        player_1_id = participants[left_station]
-        # Player 2 is an experimenter on cheetah, but we don't know
-        # which experimenter.
-        player_2_id = (
-            participants[right_station]
-            if right_station != "cheetah"
-            else -3
-        )
+    with db_connection:
+        db_connection.execute("PRAGMA foreign_keys = 1")
+        for i, row in df.iterrows():
+            current_started_value = row["started"]
 
-        with db_connection:
-            db_connection.execute("PRAGMA foreign_keys = 1")
-            for i, row in df.iterrows():
-                current_started_value = row["started"]
+            seconds = int(row["seconds"])
+            # For some reason, pygame sometimes outputs a negative value for seconds
+            # elapsed - in this case, the baseline task program writes a
+            # value of '110' for the countdown timer. We have seen this occur
+            # so far whenever the value in the `started` column changes, for
+            # the first value after this change occurs.
+            # will replace such values with 120 (the initial value).
+            if i != 0:
+                previous_started_value = df.loc[i - 1]["started"]
+                if (
+                    current_started_value != previous_started_value
+                ) and (seconds == 110):
+                    seconds = 120
 
-                seconds = int(row["seconds"])
-                # For some reason, pygame sometimes outputs a negative value for seconds
-                # elapsed - in this case, the baseline task program writes a
-                # value of '110' for the countdown timer. We have seen this occur
-                # so far whenever the value in the `started` column changes, for
-                # the first value after this change occurs.
-                # will replace such values with 120 (the initial value).
-                if i != 0:
-                    previous_started_value = df.loc[i - 1]["started"]
-                    if (
-                        current_started_value != previous_started_value
-                    ) and (seconds == 110):
-                        seconds = 120
+            (
+                ball_x,
+                ball_y,
+                player_1_x,
+                player_1_y,
+                player_2_x,
+                player_2_y,
+                player_3_x,
+                player_3_y,
+                ai_x,
+                ai_y,
+            ) = row.iloc[-11:-1]
 
-                (
-                    ball_x,
-                    ball_y,
-                    player_1_x,
-                    player_1_y,
-                    player_2_x,
-                    player_2_y,
-                ) = row.iloc[-7:-1]
+            row = (
+                session,
+                player_1_id,
+                player_2_id,
+                player_3_id,
+                row["time"],
+                convert_unix_timestamp_to_iso8601(df["time"].iloc[i]),
+                current_started_value,
+                seconds,
+                ball_x,
+                ball_y,
+                player_1_x,
+                player_1_y,
+                player_2_x,
+                player_2_y,
+                player_3_x,
+                player_3_y,
+                ai_x,
+                ai_y,
+                row["score_left"],
+                row["score_right"],
+            )
 
-                row = (
-                    session,
-                    player_1_id,
-                    player_2_id,
-                    left_station,
-                    right_station,
-                    row["time"],
-                    convert_unix_timestamp_to_iso8601(df["time"].iloc[i]),
-                    current_started_value,
-                    seconds,
-                    ball_x,
-                    ball_y,
-                    player_1_x,
-                    player_1_y,
-                    player_2_x,
-                    player_2_y,
-                    row["score_left"],
-                    row["score_right"],
+            try:
+                qmarks = ",".join(["?" for _ in range(len(row))])
+                db_connection.execute(
+                    f"""INSERT into ping_pong_cooperative_task_observation
+                    VALUES({qmarks})""",
+                    row,
                 )
-
-                try:
-                    qmarks = ",".join(["?" for _ in range(len(row))])
-                    db_connection.execute(
-                        f"""INSERT into ping_pong_competitive_task_observation
-                        VALUES({qmarks})""",
-                        row,
-                    )
-                except sqlite3.IntegrityError as e:
-                    raise sqlite3.IntegrityError(
-                        f"Unable to insert row: {row}! Error: {e}"
-                    )
-                except sqlite3.InterfaceError as e:
-                    raise sqlite3.InterfaceError(
-                        f"Unable to insert row: {row}! Error: {e}"
-                    )
+            except sqlite3.IntegrityError as e:
+                raise sqlite3.IntegrityError(
+                    f"Unable to insert row: {row}! Error: {e}"
+                )
+            except sqlite3.InterfaceError as e:
+                raise sqlite3.InterfaceError(
+                    f"Unable to insert row: {row}! Error: {e}"
+                )
 
 def process_directory_v1(session, participants, db_connection):
     info(f"Processing directory {session}")
     info(f"Participants from data_validity table: {participants}")
     with cd(f"{session}/baseline_tasks/ping_pong"):
         info("Processing ping pong task files.")
-        competitive_csv_files = glob("competitive*.csv")
-        assert len(competitive_csv_files) == 2
-        process_competitive_csv_files(competitive_csv_files, session, participants, db_connection)
+        cooperative_csv_files = glob("cooperative*.csv")
+        assert len(cooperative_csv_files) == 1
+        process_cooperative_csv_files(cooperative_csv_files[0], session, participants, db_connection)
 
 
 
@@ -221,14 +218,17 @@ def process_directory_v2(session, participants, db_connection):
                     player_1_y,
                     player_2_x,
                     player_2_y,
-                ) = list(data.values())[-7:-1]
+                    player_3_x,
+                    player_3_y,
+                    ai_x,
+                    ai_y,
+                ) = list(data.values())[-11:-1]
 
                 row = (
                     session,
                     player_1_id,
                     player_2_id,
-                    left_station,
-                    right_station,
+                    participants["leopard"],
                     data["time"],
                     convert_unix_timestamp_to_iso8601(data["time"]),
                     current_started_value,
@@ -239,6 +239,10 @@ def process_directory_v2(session, participants, db_connection):
                     player_1_y,
                     player_2_x,
                     player_2_y,
+                    player_3_x,
+                    player_3_y,
+                    ai_x,
+                    ai_y,
                     data["score_left"],
                     data["score_right"],
                 )
@@ -246,7 +250,7 @@ def process_directory_v2(session, participants, db_connection):
                 try:
                     qmarks = ",".join(["?" for _ in range(len(row))])
                     db_connection.execute(
-                        f"""INSERT into ping_pong_competitive_task_observation
+                        f"""INSERT into ping_pong_cooperative_task_observation
                         VALUES({qmarks})""",
                         row,
                     )
@@ -282,7 +286,7 @@ def process_ping_pong_task_data():
                     participant = db_connection.execute(
                         f"""
                         SELECT DISTINCT(participant) from data_validity
-                        WHERE group_session = '{session}' AND task = 'ping_pong_competitive'
+                        WHERE group_session = '{session}' AND task = 'ping_pong_cooperative'
                         AND station = '{station}'
                         """
                     ).fetchall()[0][0]
@@ -296,7 +300,7 @@ def process_ping_pong_task_data():
 if __name__ == "__main__":
     info(
         """
-        Processing ping pong competitive task data. For the CSV files predating the
+        Processing ping pong cooperative task data. For the CSV files predating the
         unified XDF file era, We will use the `time` column in the CSV,"
         ignoring the `monotonic_time` and `human_readable` time columns,
         since those timestamps are systematically a few microseconds later
