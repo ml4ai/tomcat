@@ -41,11 +41,11 @@ MODALITIES = (
     "gaze",
 )
 
-STATIONS = (
+STATIONS = [
     "lion",
     "tiger",
     "leopard",
-)
+]
 
 
 def recreate_station_table(db_connection):
@@ -58,7 +58,7 @@ def recreate_station_table(db_connection):
     )
     db_connection.executemany(
         "INSERT INTO station VALUES(?)",
-        [(station,) for station in STATIONS],
+        [(station,) for station in STATIONS + ["cheetah"]],
     )
 
 
@@ -101,8 +101,7 @@ def recreate_group_session_table(db_connection):
     db_connection.execute(
         """
         CREATE TABLE group_session (
-            id TEXT PRIMARY KEY,
-            notes TEXT
+            id TEXT PRIMARY KEY
         );"""
     )
 
