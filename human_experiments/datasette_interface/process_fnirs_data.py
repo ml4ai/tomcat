@@ -309,6 +309,21 @@ def label_affective_task_data(
         )
 
 
+def label_fingertapping_task_data(
+    group_session, station, is_valid, participant_id, task, db_connection
+):
+    raise NotImplementedError
+
+def label_ping_pong_competitive_task_data(
+    group_session, station, is_valid, participant_id, task, db_connection
+):
+    raise NotImplementedError
+
+def label_ping_pong_cooperative_task_data(
+    group_session, station, is_valid, participant_id, task, db_connection
+):
+    raise NotImplementedError
+
 def label_data():
     db_connection = sqlite3.connect(DB_PATH)
 
@@ -339,13 +354,31 @@ def label_data():
                     group_session, station, is_valid, participant_id, modality, db_connection
                 )
 
-        if "affective" in task:
+        elif "affective" in task:
             label_affective_task_data(
                 group_session, station, is_valid, participant_id, task, db_connection
             )
 
+        elif task == "finger_tapping":
+            label_fingertapping_task_data(
+                group_session, station, is_valid, participant_id, task, db_connection
+            )
 
-# def remove_invalid_data():
+        elif task == "ping_pong_competitive":
+            label_ping_pong_competitive_task_data(
+                group_session, station, is_valid, participant_id, task, db_connection
+            )
+
+        elif task == "ping_pong_competitive":
+            label_ping_pong_competitive_task_data(
+                group_session, station, is_valid, participant_id, task, db_connection
+            )
+        else:
+            raise ValueError(f"Bad task name: {task}")
+
+
+def remove_invalid_data():
+    raise NotImplementedError
     # Clean data
     # if is_valid == 0:
         # info(
@@ -362,6 +395,7 @@ def label_data():
                 # AND task = '{task}'
         # """
         # )
+
 if __name__ == "__main__":
     info("Starting building fNIRS table.")
     # recreate_fnirs_table()
