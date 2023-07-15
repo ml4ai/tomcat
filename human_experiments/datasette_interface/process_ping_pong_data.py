@@ -23,7 +23,7 @@ logging.basicConfig(
     level=logging.INFO,
     handlers=(
         logging.FileHandler(
-            filename="/space/adarsh/tomcat/build_ping_pong_task_table.log",
+            filename="/space/adarsh/tomcat/build_ping_pong_competitive_task_table.log",
             mode="w",
         ),
         logging.StreamHandler(stream=sys.stderr),
@@ -37,29 +37,120 @@ def recreate_table():
         db_connection.execute("PRAGMA foreign_keys = 1")
         info("Dropping ping_pong_task_event table.")
 
-        db_connection.execute("DROP TABLE IF EXISTS ping_pong_task_event")
+        db_connection.execute(
+            "DROP TABLE IF EXISTS ping_pong_competitive_task_observation"
+        )
         db_connection.execute(
             """
-            CREATE TABLE ping_pong_task_event (
+            CREATE TABLE ping_pong_competitive_task_observation (
                 group_session TEXT NOT NULL,
+                stations TEXT NOT NULL,
+                player_1_id INTEGER NOT NULL,
+                player_2_id INTEGER NOT NULL,
                 timestamp_unix TEXT NOT NULL,
                 timestamp_iso8601 TEXT NOT NULL,
-                event_type TEXT,
-                task_started BOOLEAN,
-                ball_position_x TEXT,
-                ball_position_y TEXT,
-                player_1_id INTEGER,
-                player_2_id INTEGER,
-                player_1_paddle_position_x TEXT,
-                player_1_paddle_position_y TEXT,
-                player_2_paddle_position_x TEXT,
-                player_2_paddle_position_y TEXT,
-                player_1_score TEXT,
-                player_2_score TEXT,
+                task_started BOOLEAN NOT NULL,
+                countdown_timer INTEGER NOT NULL CHECK(countdown_timer >= 0),
+                ball_position_x INTEGER NOT NULL CHECK(ball_position_x >= 0),
+                ball_position_y INTEGER NOT NULL CHECK(ball_position_y >= 0),
+                player_1_paddle_position_x INTEGER NOT NULL CHECK(player_1_paddle_position_x >= 0),
+                player_1_paddle_position_y INTEGER NOT NULL CHECK(player_1_paddle_position_y >= 0),
+                player_2_paddle_position_x INTEGER NOT NULL CHECK(player_2_paddle_position_x >= 0),
+                player_2_paddle_position_y INTEGER NOT NULL CHECK(player_2_paddle_position_y >= 0),
+                player_1_score INTEGER NOT NULL CHECK(player_1_score >= 0),
+                player_2_score INTEGER NOT NULL CHECK(player_2_score >= 0),
                 FOREIGN KEY(group_session) REFERENCES group_session(id)
             );"""
         )
 
+
+def process_competitive_csv_files(competitive_csv_files, session, participants, db_connection):
+    for csv_file in competitive_csv_files:
+        df = pd.read_csv(
+            csv_file,
+            delimiter=";",
+            dtype=str,
+        )
+
+        left_station, right_station = (
+            ["lion", "tiger"]
+            if "_0" in csv_file
+            else ["leopard", "cheetah"]
+        )
+
+        stations = "_".join([left_station, right_station])
+
+        with db_connection:
+            player_1_id = participants[left_station]
+            # Player 2 is an experimenter on cheetah, but we don't know
+            # which experimenter.
+            player_2_id = (
+                participants[right_station]
+                if right_station != "cheetah"
+                else -3
+            )
+
+            db_connection.execute("PRAGMA foreign_keys = 1")
+            for i, row in df.iterrows():
+                current_started_value = row["started"]
+
+                seconds = int(row["seconds"])
+                # For some reason, pygame sometimes outputs a negative value for seconds
+                # elapsed - in this case, the baseline task program writes a
+                # value of '110' for the countdown timer. We have seen this occur
+                # so far whenever the value in the `started` column changes, for
+                # the first value after this change occurs.
+                # will replace such values with 120 (the initial value).
+                if i != 0:
+                    previous_started_value = df.loc[i - 1]["started"]
+                    if (
+                        current_started_value != previous_started_value
+                    ) and (seconds == 110):
+                        seconds = 120
+
+                (
+                    ball_x,
+                    ball_y,
+                    player_1_x,
+                    player_1_y,
+                    player_2_x,
+                    player_2_y,
+                ) = row.iloc[-7:-1]
+
+                row = (
+                    session,
+                    stations,
+                    player_1_id,
+                    player_2_id,
+                    row["time"],
+                    convert_unix_timestamp_to_iso8601(df["time"].iloc[i]),
+                    current_started_value,
+                    seconds,
+                    ball_x,
+                    ball_y,
+                    player_1_x,
+                    player_1_y,
+                    player_2_x,
+                    player_2_y,
+                    row["score_left"],
+                    row["score_right"],
+                )
+
+                try:
+                    qmarks = ",".join(["?" for _ in range(len(row))])
+                    db_connection.execute(
+                        f"""INSERT into ping_pong_competitive_task_observation
+                        VALUES({qmarks})""",
+                        row,
+                    )
+                except sqlite3.IntegrityError as e:
+                    raise sqlite3.IntegrityError(
+                        f"Unable to insert row: {row}! Error: {e}"
+                    )
+                except sqlite3.InterfaceError as e:
+                    raise sqlite3.InterfaceError(
+                        f"Unable to insert row: {row}! Error: {e}"
+                    )
 
 def process_directory_v1(session, participants, db_connection):
     info(f"Processing directory {session}")
@@ -67,55 +158,10 @@ def process_directory_v1(session, participants, db_connection):
     with cd(f"{session}/baseline_tasks/ping_pong"):
         info("Processing ping pong task files.")
         competitive_csv_files = glob("competitive*.csv")
+        assert len(competitive_csv_files) == 2
+        process_competitive_csv_files(competitive_csv_files, session, participants, db_connection)
+        competitive_csv_files = glob("cooperative*.csv")
 
-        for csv_file in competitive_csv_files:
-            df = pd.read_csv(
-                csv_file,
-                delimiter=";",
-                dtype=str,
-            )
-
-            with db_connection:
-                db_connection.execute("PRAGMA foreign_keys = 1")
-                for i, row in df.iterrows():
-                    current_event_type = row["event_type"]
-
-                    countdown_timer = row["countdown_timer"]
-                    if not pd.isna(countdown_timer):
-                        countdown_timer = int(countdown_timer)
-                    # For some reason, pygame sometimes outputs a negative value for seconds
-                    # elapsed - in this case, the baseline task program writes a
-                    # value of '1' for the countdown timer. We have seen this occur
-                    # so far whenever the value in the `event_type` changes, for
-                    # the first value after this change occurs.
-                    # will replace such values with 10 (the initial value).
-                    if i != 0:
-                        previous_event_type = df.loc[i - 1]["event_type"]
-                        if (current_event_type != previous_event_type) and (
-                            countdown_timer == 1
-                        ):
-                            countdown_timer = 10
-
-                    lion_value, tiger_value, leopard_value = row.iloc[-3:]
-                    row = (
-                        session,
-                        row["time"],
-                        convert_unix_timestamp_to_iso8601(df["time"].iloc[i]),
-                        row["event_type"],
-                        countdown_timer,
-                        lion_value,
-                        tiger_value,
-                        leopard_value,
-                    )
-                    try:
-                        db_connection.execute(
-                            "INSERT into ping_pong_task_event VALUES(?, ?, ?, ?, ?, ?, ?, ?);",
-                            row,
-                        )
-                    except sqlite3.IntegrityError as e:
-                        raise sqlite3.IntegrityError(
-                            f"Unable to insert row: {row}! Error: {e}"
-                        )
 
 
 def process_directory_v2(session, participants, db_connection):
@@ -204,7 +250,7 @@ def process_ping_pong_task_data():
                         f"""
                         SELECT DISTINCT(participant) from data_validity
                         WHERE group_session = '{session}' AND task LIKE 'ping%'
-                        # AND station = '{station}'
+                        AND station = '{station}'
                         """
                     ).fetchall()[0][0]
                     participants[station] = participant
@@ -218,7 +264,7 @@ def process_ping_pong_task_data():
 if __name__ == "__main__":
     info(
         """
-        Processing rest state task data. For the CSV files predating the
+        Processing ping pong task data. For the CSV files predating the
         unified XDF file era, We will use the `time` column in the CSV,"
         ignoring the `monotonic_time` and `human_readable` time columns,
         since those timestamps are systematically a few microseconds later

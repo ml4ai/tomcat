@@ -92,6 +92,9 @@ def recreate_participant_table(db_connection):
     # event data)
     db_connection.execute("INSERT into participant VALUES(?)", [-2])
 
+    # Insert a participant ID of -3 to represent an unknown experimenter (for
+    # the ping pong task data)
+    db_connection.execute("INSERT into participant VALUES(?)", [-3])
 
 def recreate_group_session_table(db_connection):
     db_connection.execute("DROP TABLE IF EXISTS group_session")

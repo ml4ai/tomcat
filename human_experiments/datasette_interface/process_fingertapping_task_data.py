@@ -213,7 +213,7 @@ def process_fingertapping_task_data():
 if __name__ == "__main__":
     info(
         """
-        Processing rest state task data. For the CSV files predating the
+        Processing fingertapping task data. For the CSV files predating the
         unified XDF file era, We will use the `time` column in the CSV,"
         ignoring the `monotonic_time` and `human_readable` time columns,
         since those timestamps are systematically a few microseconds later
