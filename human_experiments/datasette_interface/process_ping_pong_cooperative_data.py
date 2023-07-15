@@ -35,7 +35,7 @@ def recreate_table():
     db_connection = sqlite3.connect(DB_PATH)
     with db_connection:
         db_connection.execute("PRAGMA foreign_keys = 1")
-        info("Dropping ping_pong_task_event table.")
+        info("Dropping ping_pong_cooperative_task_observation table.")
 
         db_connection.execute(
             "DROP TABLE IF EXISTS ping_pong_cooperative_task_observation"
