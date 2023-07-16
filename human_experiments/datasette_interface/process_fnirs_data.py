@@ -309,20 +309,87 @@ def label_affective_task_data(
         )
 
 
-def label_fingertapping_task_data(
-    group_session, station, is_valid, participant_id, task, db_connection
-):
-    raise NotImplementedError
 
-def label_ping_pong_competitive_task_data(
-    group_session, station, is_valid, participant_id, task, db_connection
+def update_labels(
+    group_session, station, is_valid, participant_id, task, db_connection,
+    table_name
 ):
-    raise NotImplementedError
+    with db_connection:
+        db_connection.execute("PRAGMA foreign_keys = 1;")
 
-def label_ping_pong_cooperative_task_data(
-    group_session, station, is_valid, participant_id, task, db_connection
+        # Get start/stop timestamps for affective task
+        start_timestamp = db_connection.execute(
+            f"""
+            SELECT timestamp_unix from {table_name}
+            WHERE
+                group_session={group_session}
+            ORDER BY timestamp_unix LIMIT 1
+        """
+        ).fetchall()[0][0]
+
+        stop_timestamp = db_connection.execute(
+            f"""
+            SELECT timestamp_unix from {table_name}
+            WHERE
+                group_session='{group_session}'
+            ORDER BY timestamp_unix DESC LIMIT 1
+        """
+        ).fetchall()[0][0]
+
+        # Update participant ID and label task.
+        db_connection.execute(
+            f"""
+            UPDATE fnirs_raw
+            SET
+                task='{task}',
+                participant='{participant_id}'
+            WHERE
+                timestamp_unix >= '{start_timestamp}'
+                AND timestamp_unix <= '{stop_timestamp}'
+                AND station='{station}'
+        """
+        )
+
+def label_minecraft_data(
+    group_session, station, is_valid, participant_id, task, db_connection,
+    mission
 ):
-    raise NotImplementedError
+    with db_connection:
+        db_connection.execute("PRAGMA foreign_keys = 1;")
+
+        # Get start/stop timestamps for affective task
+        start_timestamp = db_connection.execute(
+            f"""
+            SELECT start_timestamp_unix from mission
+            WHERE
+                group_session='{group_session}'
+                and name = '{mission}'
+        """
+        ).fetchall()[0][0]
+
+        stop_timestamp = db_connection.execute(
+            f"""
+            SELECT stop_timestamp_unix from mission
+            WHERE
+                group_session='{group_session}'
+                and name = '{mission}'
+        """
+        ).fetchall()[0][0]
+
+        # Update participant ID and label task.
+        db_connection.execute(
+            f"""
+            UPDATE fnirs_raw
+            SET
+                task='{task}',
+                participant='{participant_id}'
+            WHERE
+                timestamp_unix >= '{start_timestamp}'
+                AND timestamp_unix <= '{stop_timestamp}'
+                AND station='{station}'
+        """
+        )
+
 
 def label_data():
     db_connection = sqlite3.connect(DB_PATH)
@@ -360,21 +427,31 @@ def label_data():
             )
 
         elif task == "finger_tapping":
-            label_fingertapping_task_data(
-                group_session, station, is_valid, participant_id, task, db_connection
+            update_labels(
+                group_session, station, is_valid, participant_id, task,
+                db_connection, "fingertapping_task_event"
             )
 
         elif task == "ping_pong_competitive":
-            label_ping_pong_competitive_task_data(
-                group_session, station, is_valid, participant_id, task, db_connection
+            update_labels(
+                group_session, station, is_valid, participant_id, task,
+                db_connection, "ping_pong_competitive_task_observation"
             )
 
-        elif task == "ping_pong_competitive":
-            label_ping_pong_competitive_task_data(
-                group_session, station, is_valid, participant_id, task, db_connection
+        elif task == "ping_pong_cooperative":
+            update_labels(
+                group_session, station, is_valid, participant_id, task,
+                db_connection, "ping_pong_cooperative_task_observation"
             )
         else:
-            raise ValueError(f"Bad task name: {task}")
+            if task == "saturn_a"
+            label_minecraft_data(
+                group_session, station, is_valid, participant_id, task,
+                db_connection
+            )
+
+            info(f"labeling not implemented yet for {task}")
+            pass
 
 
 def remove_invalid_data():
