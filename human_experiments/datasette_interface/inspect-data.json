@@ -1,44 +1,56 @@
 {
   "tomcat": {
-    "hash": "bf58bfe14a00f57f50c9f74694799022bca7ae3c5d5f0ff7dcdfcb497ec16c76",
-    "size": 3601227776,
+    "hash": "45fa8196f2f9f871291f970b6f60e3359c20b631191e6b000cb51f0298076841",
+    "size": 14626287616,
     "file": "/space/adarsh/tomcat/tomcat.db",
     "tables": {
-      "rest_state_task": {
-        "count": 39
-      },
       "fnirs_raw": {
-        "count": 6738867
-      },
-      "task": {
-        "count": 9
-      },
-      "station": {
-        "count": 3
-      },
-      "modality": {
-        "count": 3
-      },
-      "participant": {
-        "count": 113
-      },
-      "group_session": {
-        "count": 40
-      },
-      "data_validity": {
-        "count": 3096
-      },
-      "mission": {
-        "count": 0
-      },
-      "testbed_message": {
-        "count": 0
+        "count": 6729665
       },
       "affective_task_event": {
         "count": 14586
       },
       "_templates_": {
         "count": 0
+      },
+      "mission": {
+        "count": 104
+      },
+      "testbed_message": {
+        "count": 6441966
+      },
+      "rest_state_task": {
+        "count": 39
+      },
+      "fingertapping_task_event": {
+        "count": 104084
+      },
+      "ping_pong_competitive_task_state": {
+        "count": 0
+      },
+      "task": {
+        "count": 8
+      },
+      "station": {
+        "count": 4
+      },
+      "modality": {
+        "count": 3
+      },
+      "participant": {
+        "count": 114
+      },
+      "group_session": {
+        "count": 40
+      },
+      "data_validity": {
+        "count": 2736
+      },
+      "ping_pong_competitive_task_observation": {
+        "count": 695816
+      },
+      "ping_pong_cooperative_task_observation": {
+        "count": 445244
       }
     }
   }
