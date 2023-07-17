@@ -1,14 +1,11 @@
 {
   "tomcat": {
-    "hash": "45fa8196f2f9f871291f970b6f60e3359c20b631191e6b000cb51f0298076841",
-    "size": 14626287616,
+    "hash": "7beba2813c7468d2cbbcf41001aca305f142d7e9acdaddcbbf430b2398f1e179",
+    "size": 14921027584,
     "file": "/space/adarsh/tomcat/tomcat.db",
     "tables": {
       "fnirs_raw": {
         "count": 6729665
-      },
-      "affective_task_event": {
-        "count": 14586
       },
       "_templates_": {
         "count": 0
@@ -28,8 +25,11 @@
       "ping_pong_competitive_task_state": {
         "count": 0
       },
+      "ping_pong_cooperative_task_observation": {
+        "count": 323806
+      },
       "task": {
-        "count": 8
+        "count": 9
       },
       "station": {
         "count": 4
@@ -44,13 +44,13 @@
         "count": 40
       },
       "data_validity": {
-        "count": 2736
+        "count": 3060
       },
       "ping_pong_competitive_task_observation": {
-        "count": 695816
+        "count": 647242
       },
-      "ping_pong_cooperative_task_observation": {
-        "count": 445244
+      "affective_task_event": {
+        "count": 14586
       }
     }
   }
