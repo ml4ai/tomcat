@@ -17,6 +17,47 @@ message body and the following subject line:
     subscribe tomcat-dataset-updates <firstname> <lastname>
 
 (replace `<firstname>` and `<lastname>` with your own first name and last name).
+
+## 2023-07-17
+
+This is a major update that implements the following changes.
+
+## Base tables
+
+A number of 'base tables' have been added in order to facilitate querying, as
+well as provide additional layers of validation while constructing the
+database. The tables that have been added are the following:
+
+- `data_validity`: This table contains information about
+                   which participants were involved in the tasks, and whether
+                   the data from the EEG,
+                   fNIRS, and eye tracking modalities are valid. In most
+                   cases, when an experimenter stepped in to replace a
+                   participant (e.g., for a now-show participant), they did
+                   not wear fNIRS/EEG devices, and in some cases, they did not
+                   wear the eye tracker either. Not all groups completed all
+                   the tasks, and for some tasks, the data is missing. In
+                   cases such as these, the table simply omits rows for which
+                   we do not have data.
+- `modality`: The modality of a physiological observation (currently contains
+information about EEG/fNIRS/eye tracking, other modalities (e.g., EKG) to be
+added soon.)
+- `task`: The task being performed.
+- `station`: The ID of the iMac that the participant was seated at while
+performing a task. As it turns out, this information is critical for sorting
+out participant IDs in cases when an experimenter steps in to take the place
+of a participant, or in some cases, when participants are moved from one
+station to another due to equipment issues. It is also a potentially useful
+field to have for other types of queries.
+
+## fnirs_raw table updated
+- The fnirs_raw table is now correctly labeled, and doesn't have labels for
+rows in which we do not know for sure which participant was wearing the cap.
+- Invalid data removed
+
+## Other changes
+- The schema diagram has been updated.
+
 """)
 }}
 {% endblock %}
