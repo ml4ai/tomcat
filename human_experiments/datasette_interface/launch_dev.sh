@@ -9,6 +9,7 @@ datasette \
     --template-dir=templates \
     --plugins-dir=plugins/ \
     --inspect-file=inspect-data.json \
+    --static assets:static \
     --setting sql_time_limit_ms 10000 \
     --setting facet_time_limit_ms 10000 \
     --setting num_sql_threads 10 \
