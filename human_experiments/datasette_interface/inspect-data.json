@@ -1,0 +1,51 @@
+{
+  "tomcat": {
+    "hash": "dd7284c1b5bbd681fb40ff84786ee750e0700152d89be5f4a68312f71921447f",
+    "size": 14916050944,
+    "file": "/space/adarsh/tomcat/tomcat.db",
+    "tables": {
+      "task": {
+        "count": 9
+      },
+      "station": {
+        "count": 4
+      },
+      "modality": {
+        "count": 3
+      },
+      "participant": {
+        "count": 114
+      },
+      "group_session": {
+        "count": 40
+      },
+      "data_validity": {
+        "count": 3060
+      },
+      "rest_state_task": {
+        "count": 39
+      },
+      "affective_task_event": {
+        "count": 14586
+      },
+      "fingertapping_task_observation": {
+        "count": 99875
+      },
+      "ping_pong_competitive_task_observation": {
+        "count": 647242
+      },
+      "ping_pong_cooperative_task_observation": {
+        "count": 323806
+      },
+      "mission": {
+        "count": 104
+      },
+      "testbed_message": {
+        "count": 6441966
+      },
+      "fnirs_raw": {
+        "count": 6849295
+      }
+    }
+  }
+}
