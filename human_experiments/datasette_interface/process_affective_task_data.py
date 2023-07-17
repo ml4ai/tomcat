@@ -82,14 +82,14 @@ def process_directory_v1(session, participants, db_connection):
 
             if session == "exp_2022_11_04_10":
                 info(
-                    "[ASSUMPTION]: For the affective task in the exp_2022_11_04_10"
+                    "[CORRECTION]: For the affective task in the exp_2022_11_04_10"
                     " session, the CSV files have participant IDs 00052, 00058, and"
                     " 99999. However, Rick's experiment tracker CSV has 99906 at"
                     " the 'lion' station, '00053' at the 'tiger' station, and 00052"
-                    " at the 'leopard' station. We are assuming here that"
-                    " participant 99999 (generic experimenter ID) is actually"
-                    " participant 99906, and participant 00058 is actually"
-                    " participant 00053."
+                    " at the 'leopard' station. It was later identified that"
+                    " the 00058 for Tiger written on the clipboard was a typo,"
+                    " it should have been 00053. Experimenter 99999 in this"
+                    " case corresponds to experimenter 99906."
                 )
 
                 if nominal_participant_id == 99999:
