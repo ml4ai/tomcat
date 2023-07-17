@@ -12,7 +12,7 @@ from utils import (
 )
 import pyxdf
 import logging
-from logging import info, error
+from logging import info, error, debug
 from config import DB_PATH, logging_handlers
 from tqdm import tqdm
 import pandas as pd
@@ -69,7 +69,9 @@ def recreate_table():
         )
 
 
-def process_competitive_csv_files(competitive_csv_files, session, participants, db_connection):
+def process_competitive_csv_files(
+    competitive_csv_files, session, participants, db_connection
+):
     for csv_file in competitive_csv_files:
         df = pd.read_csv(
             csv_file,
@@ -78,18 +80,14 @@ def process_competitive_csv_files(competitive_csv_files, session, participants, 
         )
 
         left_station, right_station = (
-            ["lion", "tiger"]
-            if "_0" in csv_file
-            else ["leopard", "cheetah"]
+            ["lion", "tiger"] if "_0" in csv_file else ["leopard", "cheetah"]
         )
 
         player_1_id = participants[left_station]
         # Player 2 is an experimenter on cheetah, but we don't know
         # which experimenter.
         player_2_id = (
-            participants[right_station]
-            if right_station != "cheetah"
-            else -3
+            participants[right_station] if right_station != "cheetah" else -3
         )
 
         with db_connection:
@@ -106,9 +104,9 @@ def process_competitive_csv_files(competitive_csv_files, session, participants, 
                 # will replace such values with 120 (the initial value).
                 if i != 0:
                     previous_started_value = df.loc[i - 1]["started"]
-                    if (
-                        current_started_value != previous_started_value
-                    ) and (seconds == 110):
+                    if (current_started_value != previous_started_value) and (
+                        seconds == 110
+                    ):
                         seconds = 120
 
                 (
@@ -156,26 +154,32 @@ def process_competitive_csv_files(competitive_csv_files, session, participants, 
                         f"Unable to insert row: {row}! Error: {e}"
                     )
 
+
 def process_directory_v1(session, participants, db_connection):
-    info(f"Processing directory {session}")
-    info(f"Participants from data_validity table: {participants}")
     with cd(f"{session}/baseline_tasks/ping_pong"):
-        info("Processing ping pong task files.")
         competitive_csv_files = glob("competitive*.csv")
         assert len(competitive_csv_files) == 2
-        process_competitive_csv_files(competitive_csv_files, session, participants, db_connection)
-
+        process_competitive_csv_files(
+            competitive_csv_files, session, participants, db_connection
+        )
 
 
 def process_directory_v2(session, participants, db_connection):
     """Process directory assuming unified XDF files."""
-    # TODO: Implement mapping to real participant IDs.
-    info(f"Processing directory {session}")
+    debug(f"Processing directory {session}")
 
     with cd(f"{session}/lsl"):
         streams, header = pyxdf.load_xdf(
             "block_1.xdf", select_streams=[{"type": "ping_pong"}]
         )
+        streams = [
+            stream
+            for stream in streams
+            if stream["info"]["name"][0] != "PingPong_cooperative_0"
+        ]
+
+        assert len(streams) == 2
+
         for stream in streams:
             stream_name = stream["info"]["name"][0]
 
@@ -209,10 +213,12 @@ def process_directory_v2(session, participants, db_connection):
                 # the first value after this change occurs.
                 # will replace such values with 120 (the initial value).
                 if i != 0:
-                    previous_started_value = json.loads(stream["time_series"][i - 1][0])["started"]
-                    if (
-                        current_started_value != previous_started_value
-                    ) and (seconds == 110):
+                    previous_started_value = json.loads(
+                        stream["time_series"][i - 1][0]
+                    )["started"]
+                    if (current_started_value != previous_started_value) and (
+                        seconds == 110
+                    ):
                         seconds = 120
                 (
                     ball_x,
@@ -244,12 +250,13 @@ def process_directory_v2(session, participants, db_connection):
                 )
 
                 try:
-                    qmarks = ",".join(["?" for _ in range(len(row))])
-                    db_connection.execute(
-                        f"""INSERT into ping_pong_competitive_task_observation
-                        VALUES({qmarks})""",
-                        row,
-                    )
+                    with db_connection:
+                        qmarks = ",".join(["?" for _ in range(len(row))])
+                        db_connection.execute(
+                            f"""INSERT into ping_pong_competitive_task_observation
+                            VALUES({qmarks})""",
+                            row,
+                        )
                 except sqlite3.IntegrityError as e:
                     raise sqlite3.IntegrityError(
                         f"Unable to insert row: {row}! Error: {e}"
@@ -279,13 +286,19 @@ def process_ping_pong_task_data():
                 db_connection.execute("PRAGMA foreign_keys = 1")
                 participants = {}
                 for station in ["lion", "tiger", "leopard"]:
-                    participant = db_connection.execute(
-                        f"""
-                        SELECT DISTINCT(participant) from data_validity
-                        WHERE group_session = '{session}' AND task = 'ping_pong_competitive'
-                        AND station = '{station}'
-                        """
-                    ).fetchall()[0][0]
+                    try:
+                        participant = db_connection.execute(
+                            f"""
+                            SELECT DISTINCT(participant) from data_validity
+                            WHERE group_session = '{session}' AND task = 'ping_pong_competitive'
+                            AND station = '{station}'
+                            """
+                        ).fetchall()[0][0]
+                    except IndexError as e:
+                        error(
+                            f"Unable to get participant for {session}, {station}"
+                        )
+                        raise IndexError(e)
                     participants[station] = participant
             if not is_directory_with_unified_xdf_files(session):
                 process_directory_v1(session, participants, db_connection)

@@ -24,16 +24,17 @@ logging.basicConfig(
     ),
 )
 
-TASKS = {
+TASKS = [
     "rest_state",
     "finger_tapping",
     "affective_individual",
     "affective_team",
     "ping_pong_competitive",
     "ping_pong_cooperative",
+    "hands_on_training",
     "saturn_a",
     "saturn_b",
-}
+]
 
 MODALITIES = (
     "eeg",
@@ -214,13 +215,13 @@ def process_rick_workbook():
                 )
 
             db_connection.execute(
-                "INSERT into group_session VALUES(?, ?)",
-                (group_session_id, None),
+                "INSERT into group_session VALUES(?)",
+                (group_session_id,),
             )
 
             # TODO: Deal with 'no_face_image' case for eeg data.
-            tasks_new = TASKS | {"ping_pong_competitive_0", "ping_pong_competitive_1"}
-            tasks_new.remove("ping_pong_competitive")
+            tasks_new = TASKS + ["ping_pong_competitive_0", "ping_pong_competitive_1"]
+            tasks_new = [task for task in tasks_new if task != "ping_pong_competitive"]
             for station in STATIONS:
                 for modality in MODALITIES:
                     modality_in_csv = modality.replace("gaze", "pupil")
@@ -246,8 +247,6 @@ def process_rick_workbook():
                             """)
                             continue
 
-                        if modality == "fnirs" and "ping_pong" in task:
-                            print(modality, task, station)
                         task_in_csv = (
                             task.replace(
                                 "affective_individual",
@@ -262,6 +261,7 @@ def process_rick_workbook():
                         participant_id = series[
                             f"{station}_{task_in_csv}_participant_id"
                         ]
+
                         if participant_id == "mission_not_run":
                             continue
 

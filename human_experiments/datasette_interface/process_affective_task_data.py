@@ -214,9 +214,6 @@ def process_directory_v1(session, participants, db_connection):
 
 def process_directory_v2(session, participants, db_connection):
     """Process directory assuming unified XDF files."""
-    # TODO: Implement mapping to real participant IDs.
-    info(f"Processing directory {session}")
-
     with cd(f"{session}/lsl"):
         streams, header = pyxdf.load_xdf(
             "block_1.xdf", select_streams=[{"type": "affective_task"}]
@@ -224,8 +221,6 @@ def process_directory_v2(session, participants, db_connection):
         nominal_participant_to_stream_map = {}
 
         for i, stream in enumerate(streams):
-            # start_timestamp_lsl = stream["time_stamps"][0]
-            # stop_timestamp_lsl = stream["time_stamps"][-1]
             stream_name = stream["info"]["name"][0]
             stream_source = stream_name.split("_")[-1]
 

@@ -7,10 +7,51 @@ license_url: https://creativecommons.org/licenses/by-nc-sa/4.0/
 databases:
     tomcat:
         tables:
+            affective_task_event:
+                description: Events from the individual and team affective tasks.
+                columns:
+                    group_session: The group session the task is a part of.
+                    participant: Participant ID.
+                    timestamp_unix: The Unix timestamp of the event.
+                    timestamp_iso8601: The ISO-8601 timestamp of the event.
+                    event_type: The type of the event.
+                    image_path: The path to the image that was shown on the participant screen(s).
+                    arousal_score: The arousal score reported by the participant. Null if not applicable.
+                    valence_score: The valence score reported by the participant. Null if not applicable.
+
+            data_validity:
+                description: >
+                    Table with information about which participants were
+                    involved in the tasks, and whether the data from the EEG,
+                    fNIRS, and eye tracking modalities are valid. In most
+                    cases, when an experimenter stepped in to replace a
+                    participant (e.g., for a now-show participant), they did
+                    not wear fNIRS/EEG devices, and in some cases, they did not
+                    wear the eye tracker either. Not all groups completed all
+                    the tasks, and for some tasks, the data is missing. In
+                    cases such as these, the table simply omits rows for which
+                    we do not have data.
+                columns:
+                    group_session: Group session ID
+                    participant: Participant ID
+                    station: The iMac that the participant was stationed at.
+                    task: Task ID.
+                    modality: The modality of the data.
+                    is_valid: >
+                        Whether the data for the relevant
+                        participant/task/modality is valid (1) or invalid (0).
+
+
+            group_session:
+                description: Table with group session IDs.
+                columns:
+                    id: >
+                        Group session ID. Format: `exp_YYYY_MM_DD_HH`.
+
             participant:
                 description: Table with participant IDs.
                 columns:
-                    id: |
+                    id: >
                         Participant ID.
                         -1 indicates an unknown participant.
                         -2 indicates the team as a whole. This is relevant for the affective_task_event table,
@@ -32,6 +73,7 @@ databases:
                     stop_timestamp_unix: The stopping Unix timestamp of the mission.
                     final_team_score: The final mission score achieved by the team.
                     testbed_version: The version of the testbed used for the mission.
+
             testbed_message:
                 description: Messages sent over the the testbed's message bus during missions.
                 columns:

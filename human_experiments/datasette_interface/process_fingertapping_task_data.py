@@ -35,12 +35,12 @@ def recreate_table():
     db_connection = sqlite3.connect(DB_PATH)
     with db_connection:
         db_connection.execute("PRAGMA foreign_keys = 1")
-        info("Dropping fingertapping_task_event table.")
+        info("Dropping fingertapping_task_observation table.")
 
-        db_connection.execute("DROP TABLE IF EXISTS fingertapping_task_event")
+        db_connection.execute("DROP TABLE IF EXISTS fingertapping_task_observation")
         db_connection.execute(
             """
-            CREATE TABLE fingertapping_task_event (
+            CREATE TABLE fingertapping_task_observation (
                 group_session TEXT NOT NULL,
                 timestamp_unix TEXT NOT NULL,
                 timestamp_iso8601 TEXT NOT NULL,
@@ -55,10 +55,7 @@ def recreate_table():
 
 
 def process_directory_v1(session, participants, db_connection):
-    info(f"Processing directory {session}")
-    info(f"Participants from data_validity table: {participants}")
     with cd(f"{session}/baseline_tasks/finger_tapping"):
-        info("Processing fingertapping task files.")
         csv_files = glob("*.csv")
         # We expect exactly 1 CSV file.
         assert len(csv_files) == 1
@@ -104,7 +101,7 @@ def process_directory_v1(session, participants, db_connection):
                 )
                 try:
                     db_connection.execute(
-                        "INSERT into fingertapping_task_event VALUES(?, ?, ?, ?, ?, ?, ?, ?);",
+                        "INSERT into fingertapping_task_observation VALUES(?, ?, ?, ?, ?, ?, ?, ?);",
                         row,
                     )
                 except sqlite3.IntegrityError as e:
@@ -115,16 +112,11 @@ def process_directory_v1(session, participants, db_connection):
 
 def process_directory_v2(session, participants, db_connection):
     """Process directory assuming unified XDF files."""
-    # TODO: Implement mapping to real participant IDs.
-    info(f"Processing directory {session}")
-
     with cd(f"{session}/lsl"):
         streams, header = pyxdf.load_xdf(
             "block_1.xdf", select_streams=[{"type": "finger_tapping"}]
         )
         stream = streams[0]
-        # start_timestamp_lsl = stream["time_stamps"][0]
-        # stop_timestamp_lsl = stream["time_stamps"][-1]
 
         for i, (timestamp, data) in enumerate(
             zip(stream["time_stamps"], stream["time_series"])
@@ -167,7 +159,7 @@ def process_directory_v2(session, participants, db_connection):
                 db_connection.execute("PRAGMA foreign_keys = 1")
                 try:
                     db_connection.execute(
-                        "INSERT into fingertapping_task_event VALUES(?, ?, ?, ?, ?, ?, ?, ?);",
+                        "INSERT into fingertapping_task_observation VALUES(?, ?, ?, ?, ?, ?, ?, ?);",
                         row,
                     )
                 except sqlite3.IntegrityError as e:
@@ -204,8 +196,7 @@ def process_fingertapping_task_data():
                     ).fetchall()[0][0]
                     participants[station] = participant
             if not is_directory_with_unified_xdf_files(session):
-                pass
-                # process_directory_v1(session, participants, db_connection)
+                process_directory_v1(session, participants, db_connection)
             else:
                 process_directory_v2(session, participants, db_connection)
 
@@ -221,5 +212,5 @@ if __name__ == "__main__":
         separate invocations to monotonic() and datetime.utcnow() respectively.
         """
     )
-    # recreate_table()
+    recreate_table()
     process_fingertapping_task_data()

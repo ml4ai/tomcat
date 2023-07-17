@@ -264,10 +264,62 @@ def label_rest_state_task_data(
         """
         )
 
-def label_affective_task_data(
+def label_affective_task_individual_data(
     group_session, station, is_valid, participant_id, task, db_connection
 ):
-    task_type = task.split("_")[-1]
+    with db_connection:
+        db_connection.execute("PRAGMA foreign_keys = 1;")
+
+        # Get start/stop timestamps for affective task
+        try:
+            start_timestamp = db_connection.execute(
+                f"""
+                SELECT timestamp_unix from affective_task_event
+                WHERE
+                    group_session='{group_session}'
+                    AND task_type='individual'
+                    AND participant='{participant_id}'
+                    AND event_type='start_affective_task'
+                ORDER BY timestamp_unix LIMIT 1
+            """
+            ).fetchall()[0][0]
+        except IndexError as e:
+            error(f"Unable to get starting timestamp for {group_session}, {station}, {participant_id}, {task}")
+            raise IndexError(e)
+
+        try:
+            stop_timestamp = db_connection.execute(
+                f"""
+                SELECT timestamp_unix from affective_task_event
+                WHERE
+                    group_session='{group_session}'
+                    AND task_type='individual'
+                    AND participant='{participant_id}'
+                    AND event_type='final_submission'
+                ORDER BY timestamp_unix DESC LIMIT 1
+            """
+            ).fetchall()[0][0]
+        except:
+            error(f"Unable to get stop timestamp for {group_session}, {station}, {participant_id}, {task}")
+            raise IndexError(e)
+
+        # Update participant ID and label task.
+        db_connection.execute(
+            f"""
+            UPDATE fnirs_raw
+            SET
+                task='affective_individual',
+                participant='{participant_id}'
+            WHERE
+                timestamp_unix >= '{start_timestamp}'
+                AND timestamp_unix <= '{stop_timestamp}'
+                AND station='{station}'
+        """
+        )
+
+def label_affective_task_team_data(
+    group_session, station, is_valid, participant_id, task, db_connection
+):
     with db_connection:
         db_connection.execute("PRAGMA foreign_keys = 1;")
 
@@ -277,7 +329,7 @@ def label_affective_task_data(
             SELECT timestamp_unix from affective_task_event
             WHERE
                 group_session='{group_session}'
-                AND task_type='{task_type}'
+                AND task_type='team'
                 AND event_type='start_affective_task'
             ORDER BY timestamp_unix LIMIT 1
         """
@@ -288,7 +340,7 @@ def label_affective_task_data(
             SELECT timestamp_unix from affective_task_event
             WHERE
                 group_session='{group_session}'
-                AND task_type='{task_type}'
+                AND task_type='team'
                 AND event_type='final_submission'
             ORDER BY timestamp_unix DESC LIMIT 1
         """
@@ -299,7 +351,7 @@ def label_affective_task_data(
             f"""
             UPDATE fnirs_raw
             SET
-                task='affective_{task_type}',
+                task='affective_team',
                 participant='{participant_id}'
             WHERE
                 timestamp_unix >= '{start_timestamp}'
@@ -318,14 +370,19 @@ def update_labels(
         db_connection.execute("PRAGMA foreign_keys = 1;")
 
         # Get start/stop timestamps for affective task
-        start_timestamp = db_connection.execute(
-            f"""
-            SELECT timestamp_unix from {table_name}
-            WHERE
-                group_session={group_session}
-            ORDER BY timestamp_unix LIMIT 1
-        """
-        ).fetchall()[0][0]
+        try:
+            start_timestamp = db_connection.execute(
+                f"""
+                SELECT timestamp_unix from {table_name}
+                WHERE
+                    group_session='{group_session}'
+                ORDER BY timestamp_unix LIMIT 1
+            """
+            ).fetchall()[0][0]
+        except IndexError:
+            error(f"""IndexError! Cannot update labels for {group_session},
+                    {station}, {participant_id}, {task}, {table_name}.""")
+
 
         stop_timestamp = db_connection.execute(
             f"""
@@ -352,8 +409,16 @@ def update_labels(
 
 def label_minecraft_data(
     group_session, station, is_valid, participant_id, task, db_connection,
-    mission
 ):
+    if task == "saturn_a":
+        mission = "Saturn_A"
+    elif task == "saturn_b":
+        mission = "Saturn_B"
+    elif task == "hands_on_training":
+        mission = "Hands-on Training"
+    else:
+        raise ValueError(f"Bad task: {task}!")
+
     with db_connection:
         db_connection.execute("PRAGMA foreign_keys = 1;")
 
@@ -392,6 +457,7 @@ def label_minecraft_data(
 
 
 def label_data():
+    info("Labeling data")
     db_connection = sqlite3.connect(DB_PATH)
 
     with db_connection:
@@ -402,12 +468,11 @@ def label_data():
         """
         ).fetchall()
 
-    for row in tqdm(validity_rows):
+    for row in tqdm(validity_rows[290:]):
         group_session, participant_id, station, task, modality, is_valid = row
         if modality != "fnirs":
             continue
 
-        info(f"row: {row}")
         if task == "rest_state":
             if group_session == "exp_2022_12_05_12":
                 error(
@@ -422,14 +487,21 @@ def label_data():
                 )
 
         elif "affective" in task:
-            label_affective_task_data(
-                group_session, station, is_valid, participant_id, task, db_connection
-            )
+            if task == "affective_individual":
+                label_affective_task_individual_data(
+                    group_session, station, is_valid, participant_id, task, db_connection
+                )
+            elif task == "affective_team":
+                label_affective_task_team_data(
+                    group_session, station, is_valid, participant_id, task, db_connection
+                )
+            else:
+                raise ValueError(f"Bad task: {task}!")
 
         elif task == "finger_tapping":
             update_labels(
                 group_session, station, is_valid, participant_id, task,
-                db_connection, "fingertapping_task_event"
+                db_connection, "fingertapping_task_observation"
             )
 
         elif task == "ping_pong_competitive":
@@ -444,14 +516,10 @@ def label_data():
                 db_connection, "ping_pong_cooperative_task_observation"
             )
         else:
-            if task == "saturn_a"
             label_minecraft_data(
                 group_session, station, is_valid, participant_id, task,
                 db_connection
             )
-
-            info(f"labeling not implemented yet for {task}")
-            pass
 
 
 def remove_invalid_data():

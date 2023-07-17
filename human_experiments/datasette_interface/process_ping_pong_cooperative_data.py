@@ -12,7 +12,7 @@ from utils import (
 )
 import pyxdf
 import logging
-from logging import info, error
+from logging import info, error, debug
 from config import DB_PATH, logging_handlers
 from tqdm import tqdm
 import pandas as pd
@@ -154,10 +154,8 @@ def process_cooperative_csv_files(csv_file, session, participants, db_connection
                 )
 
 def process_directory_v1(session, participants, db_connection):
-    info(f"Processing directory {session}")
-    info(f"Participants from data_validity table: {participants}")
+    debug(f"Processing directory {session}")
     with cd(f"{session}/baseline_tasks/ping_pong"):
-        info("Processing ping pong task files.")
         cooperative_csv_files = glob("cooperative*.csv")
         assert len(cooperative_csv_files) == 1
         process_cooperative_csv_files(cooperative_csv_files[0], session, participants, db_connection)
@@ -166,89 +164,75 @@ def process_directory_v1(session, participants, db_connection):
 
 def process_directory_v2(session, participants, db_connection):
     """Process directory assuming unified XDF files."""
-    # TODO: Implement mapping to real participant IDs.
-    info(f"Processing directory {session}")
+    debug(f"Processing directory {session}")
 
     with cd(f"{session}/lsl"):
         streams, header = pyxdf.load_xdf(
-            "block_1.xdf", select_streams=[{"type": "ping_pong"}]
+            "block_1.xdf", select_streams=[{"name": "PingPong_cooperative_0"}]
         )
-        for stream in streams:
-            stream_name = stream["info"]["name"][0]
+        assert len(streams) == 1
+        stream = streams[0]
 
-            left_station, right_station = (
-                ["lion", "tiger"]
-                if "_0" in stream_name
-                else ["leopard", "cheetah"]
+        stream_name = stream["info"]["name"][0]
+
+        for i, (timestamp, data) in enumerate(
+            zip(stream["time_stamps"], stream["time_series"])
+        ):
+            data = json.loads(data[0])
+            current_started_value = data["started"]
+
+            seconds = int(data["seconds"])
+            # For some reason, pygame sometimes outputs a negative value for seconds
+            # elapsed - in this case, the baseline task program writes a
+            # value of '110' for the countdown timer. We have seen this occur
+            # so far whenever the value in the `started` column changes, for
+            # the first value after this change occurs.
+            # will replace such values with 120 (the initial value).
+            if i != 0:
+                previous_started_value = json.loads(stream["time_series"][i - 1][0])["started"]
+                if (
+                    current_started_value != previous_started_value
+                ) and (seconds == 110):
+                    seconds = 120
+            (
+                ball_x,
+                ball_y,
+                player_1_x,
+                player_1_y,
+                player_2_x,
+                player_2_y,
+                player_3_x,
+                player_3_y,
+                ai_x,
+                ai_y,
+            ) = list(data.values())[-11:-1]
+
+            row = (
+                session,
+                participants["lion"],
+                participants["tiger"],
+                participants["leopard"],
+                data["time"],
+                convert_unix_timestamp_to_iso8601(data["time"]),
+                current_started_value,
+                seconds,
+                ball_x,
+                ball_y,
+                player_1_x,
+                player_1_y,
+                player_2_x,
+                player_2_y,
+                player_3_x,
+                player_3_y,
+                ai_x,
+                ai_y,
+                data["score_left"],
+                data["score_right"],
             )
 
-            stations = "_".join([left_station, right_station])
-            player_1_id = participants[left_station]
-            # Player 2 is an experimenter on cheetah, but we don't know
-            # which experimenter.
-            player_2_id = (
-                participants[right_station]
-                if right_station != "cheetah"
-                else -3
-            )
-
-            for i, (timestamp, data) in enumerate(
-                zip(stream["time_stamps"], stream["time_series"])
-            ):
-                data = json.loads(data[0])
-                current_started_value = data["started"]
-
-                seconds = int(data["seconds"])
-                # For some reason, pygame sometimes outputs a negative value for seconds
-                # elapsed - in this case, the baseline task program writes a
-                # value of '110' for the countdown timer. We have seen this occur
-                # so far whenever the value in the `started` column changes, for
-                # the first value after this change occurs.
-                # will replace such values with 120 (the initial value).
-                if i != 0:
-                    previous_started_value = json.loads(stream["time_series"][i - 1][0])["started"]
-                    if (
-                        current_started_value != previous_started_value
-                    ) and (seconds == 110):
-                        seconds = 120
-                (
-                    ball_x,
-                    ball_y,
-                    player_1_x,
-                    player_1_y,
-                    player_2_x,
-                    player_2_y,
-                    player_3_x,
-                    player_3_y,
-                    ai_x,
-                    ai_y,
-                ) = list(data.values())[-11:-1]
-
-                row = (
-                    session,
-                    player_1_id,
-                    player_2_id,
-                    participants["leopard"],
-                    data["time"],
-                    convert_unix_timestamp_to_iso8601(data["time"]),
-                    current_started_value,
-                    seconds,
-                    ball_x,
-                    ball_y,
-                    player_1_x,
-                    player_1_y,
-                    player_2_x,
-                    player_2_y,
-                    player_3_x,
-                    player_3_y,
-                    ai_x,
-                    ai_y,
-                    data["score_left"],
-                    data["score_right"],
-                )
-
+            qmarks = ",".join(["?" for _ in range(len(row))])
+            with db_connection:
                 try:
-                    qmarks = ",".join(["?" for _ in range(len(row))])
                     db_connection.execute(
                         f"""INSERT into ping_pong_cooperative_task_observation
                         VALUES({qmarks})""",
