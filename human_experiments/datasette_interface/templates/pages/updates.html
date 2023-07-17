@@ -50,18 +50,45 @@ of a participant, or in some cases, when participants are moved from one
 station to another due to equipment issues. It is also a potentially useful
 field to have for other types of queries.
 
+### Other changes:
+
+#### `participant`
+
+- The `is_confederate` column has been removed from the `participant` table,
+for two reasons:
+  - The datatype of the `participant.id` column is now `INTEGER`.
+  - The Datasette interface was displaying the value of the `is_confederate`
+  column in links arising from foreign key relationships, instead of the actual
+  value of the participant ID.
+  - We now have additional participant IDs to denote special circumstances:
+    - -1 indicates an unknown participant.
+    - -2 indicates the team as a whole. This is relevant for the
+    affective_task_event table, where some events intrinsically involve the
+    team as a whole, rather than just one player.
+    - -3 indicates that the participant is a confederate whose identity was not
+    recorded.
+    - Participants with IDs > 999 are confederates (i.e., experimenters who
+    stepped in to replace no-show participants or participants who left partway
+    through the group session.)
+
 # Baseline task observation tables
 
 Tables have been added for all the non-physio observations for all the baseline
-tasks. Tables added:
+tasks. The tables added are listed below.
 
 - `affective_task_event`
 - `fingertapping_task_observation`
 - `ping_pong_competitive_task_observation`
 - `ping_pong_cooperative_task_observation`
 
-## fnirs_raw table updated
+Note that for the finger tapping and ping pong tasks, the table names end in
+`_observation`, since the majority of the rows (with the exception of events
+denoting the start of the task) are *state* observations at regular time
+intervals, rather than *events*, as in the affective task.
 
+## `fnirs_raw` table updated
+
+- In the previous version of the `fnirs_raw` table, the participant IDs
 - The fnirs_raw table is now correctly labeled, and doesn't have labels for
 rows in which we do not know for sure which participant was wearing the cap.
 - Invalid data removed
