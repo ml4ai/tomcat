@@ -12,7 +12,7 @@ from utils import (
 )
 import pyxdf
 import logging
-from logging import info, error
+from logging import info, error, debug
 from config import DB_PATH, logging_handlers
 from tqdm import tqdm
 import pandas as pd
@@ -75,14 +75,42 @@ def process_directory_v1(session, participants, db_connection):
         nominal_participants = {
             int(filename.split("_")[1]) for filename in individual_csv_files
         }
+        debug(f"Nominal participants: {nominal_participants}")
 
         for csv_file in individual_csv_files:
             nominal_participant_id = int(csv_file.split("_")[1])
-            real_participant_id = (
-                nominal_participant_id
-                if nominal_participant_id in participants
-                else list(participants - nominal_participants)[0]
-            )
+
+            if session == "exp_2022_11_04_10":
+                info(
+                    "[ASSUMPTION]: For the affective task in the exp_2022_11_04_10"
+                    " session, the CSV files have participant IDs 00052, 00058, and"
+                    " 99999. However, Rick's experiment tracker CSV has 99906 at"
+                    " the 'lion' station, '00053' at the 'tiger' station, and 00052"
+                    " at the 'leopard' station. We are assuming here that"
+                    " participant 99999 (generic experimenter ID) is actually"
+                    " participant 99906, and participant 00058 is actually"
+                    " participant 00053."
+                )
+
+                if nominal_participant_id == 99999:
+                    real_participant_id = 99906
+                elif nominal_participant_id == 58:
+                    real_participant_id = 53
+                elif nominal_participant_id == 52:
+                    real_participant_id = 52
+                else:
+                    raise ValueError(
+                        f"Bad nominal participant ID: {nominal_participant_id}"
+                    )
+
+            else:
+                real_participant_id = (
+                    nominal_participant_id
+                    if nominal_participant_id in set(participants.values())
+                    else list(
+                        set(participants.values()) - nominal_participants
+                    )[0]
+                )
 
             df = pd.read_csv(
                 csv_file,
@@ -154,8 +182,10 @@ def process_directory_v1(session, participants, db_connection):
                 else:
                     real_participant_id = (
                         int(row["subject_id"])
-                        if int(row["subject_id"]) in participants
-                        else list(participants - nominal_participants)[0]
+                        if int(row["subject_id"]) in set(participants.values())
+                        else list(
+                            set(participants.values()) - nominal_participants
+                        )[0]
                     )
 
                 row = (
@@ -191,36 +221,46 @@ def process_directory_v2(session, participants, db_connection):
         streams, header = pyxdf.load_xdf(
             "block_1.xdf", select_streams=[{"type": "affective_task"}]
         )
+        nominal_participant_to_stream_map = {}
+
         for i, stream in enumerate(streams):
             # start_timestamp_lsl = stream["time_stamps"][0]
             # stop_timestamp_lsl = stream["time_stamps"][-1]
+            stream_name = stream["info"]["name"][0]
+            stream_source = stream_name.split("_")[-1]
 
             task_type = "individual" if i != 3 else "team"
 
             rows = []
+
+            real_participants_set = set(participants.values())
 
             for timestamp, data in zip(
                 stream["time_stamps"], stream["time_series"]
             ):
                 data = json.loads(data[0])
 
-                nominal_participant_id = (
-                    int(data["subject_id"])
-                    if data["subject_id"] is not None
-                    else -2
-                )
+                nominal_participant_id = data["subject_id"]
 
-                # Replace nominal participant ID with real participant ID.
-                real_participant_id = (
-                    nominal_participant_id
-                    if nominal_participant_id in participants
-                    or nominal_participant_id == -2
-                    else [
-                        participant_id
-                        for participant_id in list(participants)
-                        if participant_id > 999
-                    ][0]
-                )
+                if task_type == "individual":
+                    real_participant_id = participants[stream_source]
+                    if (
+                        nominal_participant_id
+                        not in nominal_participant_to_stream_map
+                    ):
+                        nominal_participant_to_stream_map[
+                            nominal_participant_id
+                        ] = stream_source
+
+                elif task_type == "team":
+                    if nominal_participant_id is None:
+                        real_participant_id = -2
+                    else:
+                        real_participant_id = participants[
+                            nominal_participant_to_stream_map[
+                                nominal_participant_id
+                            ]
+                        ]
 
                 row = (
                     session,
@@ -266,15 +306,16 @@ def process_affective_task_data():
             # Get real participant IDs for the task
             with db_connection:
                 db_connection.execute("PRAGMA foreign_keys = 1")
-                participants = {
-                    row[0]
-                    for row in db_connection.execute(
+                participants = {}
+                for station in ["lion", "tiger", "leopard"]:
+                    participant = db_connection.execute(
                         f"""
-                    SELECT DISTINCT(participant) from data_validity
-                    WHERE group_session = '{session}' and task LIKE 'affective%';
-                    """
-                    ).fetchall()
-                }
+                        SELECT DISTINCT(participant) from data_validity
+                        WHERE group_session = '{session}' AND task LIKE 'finger%'
+                        AND station = '{station}'
+                        """
+                    ).fetchall()[0][0]
+                    participants[station] = participant
             if not is_directory_with_unified_xdf_files(session):
                 process_directory_v1(session, participants, db_connection)
             else:
