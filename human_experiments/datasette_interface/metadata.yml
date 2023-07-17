@@ -74,6 +74,84 @@ databases:
                     final_team_score: The final mission score achieved by the team.
                     testbed_version: The version of the testbed used for the mission.
 
+            modality:
+                description: Modalities for physiological data.
+                columns:
+                    id: The ID of the modality.
+
+            ping_pong_competitive_task_observation:
+                description: Observations from the competitive ping-pong tasks.
+                columns:
+                    group_session: The group session ID.
+                    player_1_id: Player 1's participant ID
+                    player_2_id: Player 2's participant ID
+                    player_1_station: Player 1's station.
+                    player_2_station: Player 2's station.
+                    timestamp_unix: Unix timestamp of the observation
+                    timestamp_iso8601: ISO-8601 timestamp of the observation.
+                    task_started: Whether the task has started (1) or not (0).
+                    seconds: The number of seconds left in the game (not shown to participants).
+                    ball_position_x: The x-coordinate of the ball.
+                    ball_position_y: The y-coordinate of the ball.
+                    player_1_paddle_position_x: >
+                        The x-coordinate of the pixel at the top left corner of player 1's paddle.
+                    player_1_paddle_position_y: >
+                        The y-coordinate of the pixel at the top left corner of player 1's paddle.
+                    player_2_paddle_position_x: >
+                        The x-coordinate of the pixel at the top left corner of player 2's paddle.
+                    player_2_paddle_position_y: >
+                        The y-coordinate of the pixel at the top left corner of player 2's paddle.
+                    player_1_score: Player 1's score.
+                    player_2_score: Player 2's score.
+
+            ping_pong_cooperative_task_observation:
+                description: Observations from the cooperative ping-pong tasks.
+                columns:
+                    group_session: The group session ID
+                    player_1_id: Player 1's participant ID
+                    player_2_id: Player 2's participant ID
+                    player_3_id: Player 3's participant ID
+                    timestamp_unix: Unix timestamp of the observation
+                    timestamp_iso8601: ISO-8601 timestamp of the observation.
+                    task_started: Whether the task has started (1) or not (0).
+                    seconds: The number of seconds left in the game (not shown to participants).
+                    ball_position_x: The x-coordinate of the ball.
+                    ball_position_y: The y-coordinate of the ball.
+                    player_1_paddle_position_x: >
+                        The x-coordinate of the pixel at the top left corner of player 1's paddle.
+                    player_1_paddle_position_y: >
+                        The y-coordinate of the pixel at the top left corner of player 1's paddle.
+                    player_2_paddle_position_x: >
+                        The x-coordinate of the pixel at the top left corner of player 2's paddle.
+                    player_2_paddle_position_y: >
+                        The y-coordinate of the pixel at the top left corner of player 2's paddle.
+                    player_3_paddle_position_x: >
+                        The x-coordinate of the pixel at the top left corner of player 3's paddle.
+                    player_3_paddle_position_y: >
+                        The y-coordinate of the pixel at the top left corner of player 3's paddle.
+                    ai_paddle_position_x: >
+                        The x-coordinate of the pixel at the top left corner of the AI player's paddle.
+                    ai_paddle_position_y: >
+                        The y-coordinate of the pixel at the top left corner of the AI player's paddle.
+                    team_score: The team's score.
+                    ai_score: The score of the AI player.
+
+            station:
+                description: >
+                    During the group session, each participant is seated at one
+                    of four iMacs, labeled 'lion', 'tiger', 'leopard', and
+                    'cheetah'. The 'cheetah' station is only used in the
+                    competitive ping pong task, when an experimenter steps in
+                    to play against the participant seated at the 'leopard'
+                    station.
+                columns:
+                    id: Station ID.
+
+            task:
+                description: The different tasks that take place during a group session.
+                columns:
+                    id: Task ID.
+
             testbed_message:
                 description: Messages sent over the the testbed's message bus during missions.
                 columns:
