@@ -12,5 +12,5 @@ schemacrawler.sh \
     --database /space/$USER/tomcat/tomcat.db \
     --info-level standard \
     --server sqlite \
-    --portable-names \
-    -g schemacrawler.config.properties
+    -g schemacrawler.config.properties \
+    --portable-names
