@@ -523,29 +523,41 @@ def label_data():
 
 
 def remove_invalid_data():
-    raise NotImplementedError
-    # Clean data
-    # if is_valid == 0:
-        # info(
-            # f"""Data for rest_state task for {group_session} for modality
-                # {modality} for station {station} is not valid.
-                # We will delete this data from the table."""
-        # )
-        # db_connection.execute(
-            # f"""
-            # DELETE FROM fnirs_raw
-            # WHERE
-                # group_session='{group_session}'
-                # AND station='{station}'
-                # AND task = '{task}'
-        # """
-        # )
+    db_connection = sqlite3.connect(DB_PATH)
+    with db_connection:
+        validity_rows = db_connection.execute(
+            f"""
+            SELECT * from data_validity
+            WHERE modality='fnirs';
+        """
+        ).fetchall()
+
+    fnirs_rows = [row for row in validity_rows if row[-2] == "fnirs"]
+
+    for row in tqdm(fnirs_rows):
+        group_session, participant_id, station, task, modality, is_valid = row
+
+        if is_valid == 0:
+            info(
+                f"Data for task {task} for {group_session} for modality"
+                f" {modality} for station {station}/participant {participant_id}"
+                " is not valid. We will delete this data from the table."
+            )
+            db_connection.execute(
+                f"""
+                DELETE FROM fnirs_raw
+                WHERE
+                    group_session='{group_session}'
+                    AND station='{station}'
+                    AND task = '{task}'
+            """
+            )
 
 if __name__ == "__main__":
     info("Starting building fNIRS table.")
-    # recreate_fnirs_table()
-    # create_indices()
-    # insert_raw_unlabeled_data()
+    recreate_fnirs_table()
+    create_indices()
+    insert_raw_unlabeled_data()
     label_data()
-    # remove_invalid_data()
+    remove_invalid_data()
     info("Finished building fNIRS table.")
