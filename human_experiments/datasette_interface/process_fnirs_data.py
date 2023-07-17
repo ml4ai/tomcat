@@ -468,7 +468,7 @@ def label_data():
         """
         ).fetchall()
 
-    for row in tqdm(validity_rows[290:]):
+    for row in tqdm(validity_rows):
         group_session, participant_id, station, task, modality, is_valid = row
         if modality != "fnirs":
             continue
