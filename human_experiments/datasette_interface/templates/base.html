@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>{% block title %}{% endblock %}</title>
-    <link rel="stylesheet" href="{{ urls.static('app.css') }}?{{ app_css_hash }}">
+    <!--<link rel="stylesheet" href="{{ urls.static('app.css') }}?{{ app_css_hash }}">-->
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 {% for url in extra_css_urls %}
     <link rel="stylesheet" href="{{ url.url }}"{% if url.get("sri") %} integrity="{{ url.sri }}" crossorigin="anonymous"{% endif %}>
@@ -43,6 +43,12 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/schema">Schema</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/papers-and-systems">Papers and Systems</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/mailing-list">Mailing List</a>
                 </li>
             </ul>
         </div>

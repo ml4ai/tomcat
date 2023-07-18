@@ -18,4 +18,4 @@ services:
         --inspect-file=/mnt/inspect-data.json
         --setting sql_time_limit_ms 1000
         --setting num_sql_threads 10
-        --setting max_csv_mb 4000
+        --setting max_csv_mb 20000
