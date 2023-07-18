@@ -2,7 +2,7 @@
 # Shell script for launching the Datasette instance in dev mode
 
 set -euo pipefail
-datasette \
+datasette -i \
     /space/adarsh/tomcat/tomcat.db \
     --metadata metadata.yml \
     --reload \
@@ -13,4 +13,4 @@ datasette \
     --setting sql_time_limit_ms 10000 \
     --setting facet_time_limit_ms 10000 \
     --setting num_sql_threads 10 \
-    --setting max_csv_mb 4000 \
+    --setting max_csv_mb 12000 \
