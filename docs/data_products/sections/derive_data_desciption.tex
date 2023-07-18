@@ -68,27 +68,24 @@ Not all experiments may include the aforementioned CSV files, due to a couple of
 \subsection{Derived Data Columns Descriptions}
 \label{sec:derived_data_cols_desc}
 
-\eduong{Here we describe the columns provided in the derived dataset.}
+The columns in each aforementioned CSV file (e.g., \texttt{rest\_state.csv}, \texttt{ping\_pong\_cooperative.csv}) are detailed in \autoref{tab:shared_columns}, \autoref{tab:rest_task_columns}, \autoref{tab:finger_task_columns}, \autoref{tab:individual_affective_task_columns}, \autoref{tab:team_affective_task_columns}, \autoref{tab:ping_pong_competitive_task_columns}, \autoref{tab:ping_pong_cooperative_task_columns}, \autoref{tab:minecraft_task_columns}, \autoref{tab:EEG_signals}, \autoref{tab:fNIRS_raw_signals}, and \autoref{tab:fNIRS_signals}.
 
 \begin{table}[h]
 \centering
-\begin{tabularx}{\textwidth}{|l|l|X|}
+\begin{tabularx}{\textwidth}{|l|X|}
 \hline
-\textbf{Type} & \textbf{Column} & \textbf{Description} \\
+\textbf{Time columns} & \textbf{Description} \\
 \hline
-\multirow{13}{*}{\parbox{2cm}{Time}}
-& \texttt{index} (first column) & Row index counting from synchronized signals of the entire experiment in \texttt{synchronized\_signals.csv}. This is a reference column to identify the signals from the experiment synchronized signals with the task synchronized signals.\\
-& \texttt{unix\_time} & Unix time (in seconds, with 0.1 microsecond resolution) of when the fNIRS and EEG signals and the task data were recorded and synchronized.\\
-& \texttt{human\_readable\_time} & UTC time (in seconds, with 1.0 microsecond resolution) in the human readable format of when the fNIRS and EEG signals and the task data were recorded.\\
-& \texttt{seconds\_since\_start} & Time (in seconds, with 0.1 microsecond resolution) since the first entry of the task or the experiment.\\
+\texttt{index} (first column) & Row index counting from synchronized signals of the entire experiment in \texttt{synchronized\_signals.csv}. This is a reference column to identify the signals from the experiment synchronized signals with the task synchronized signals.\\
 \hline
-\multirow{6}{*}{\parbox{2cm}{Subject ID}}
-& \texttt{lion\_id} & ID of the participant who participated in the experiment using the Lion computer in the lab.\\
-& \texttt{tiger\_id} & ID of the participant who participated in the experiment using the Tiger computer in the lab.\\
-& \texttt{leopard\_id} & ID of the participant who participated in the experiment using the Leopard computer in the lab.\\
+\texttt{unix\_time} & Unix time (in seconds, with 0.1 microsecond resolution) of when the fNIRS and EEG signals and the task data were recorded and synchronized.\\
+\hline
+\texttt{human\_readable\_time} & UTC time (in seconds, with 1.0 microsecond resolution) in the human readable format of when the fNIRS and EEG signals and the task data were recorded.\\
+\hline
+\texttt{seconds\_since\_start} & Time (in seconds, with 0.1 microsecond resolution) since the first entry of the task or the experiment.\\
 \hline
 \end{tabularx}
-\caption{Columns that are common in all CSV files of derived data.}
+\caption{Columns of time that are common in all CSV files of derived data.}
 \label{tab:shared_columns}
 \end{table}
 
@@ -238,10 +235,6 @@ Not all experiments may include the aforementioned CSV files, due to a couple of
 \caption{Minecraft Hands-on Training \texttt{hands\_on\_training.csv}, Saturn A \texttt{saturn\_a.csv}, and Saturn B \texttt{saturn\_b.csv} columns information in the CSV files of the derived data.}
 \label{tab:minecraft_task_columns}
 \end{table}
-
-\eduong{Here we describe how Aurora provides the HbO and HbR channels for fNIRS along with any derived channels of EEG. Some questions to answer: What are the channels recorded? How did Aurora compute HbO and HbR?}
-
-\cjs{Not sure if we should write because we're using the devices default setting for calculating HbO and HbR}
 
 \begin{figure}
   \includegraphics[width=\linewidth]{images/combined_montage.pdf}
@@ -403,7 +396,7 @@ Not all experiments may include the aforementioned CSV files, due to a couple of
   \texttt{<subject>\_fnirs\_S8-D7\_850} & 'Af8-F6': right anterior frontal region  \\
   \hline
   \end{tabularx}
-  \caption{Table of fNIRS raw signal descriptions, mapping the source (S) to the detector (D) for various topological locations on the subject's brain. Each channel is recorded using light wavelengths of 760nm and 850nm. For a visual representation of these electrode locations, refer to \autoref{fig:combined-montage}.}
+  \caption{Table of fNIRS raw signal descriptions, mapping the source (S) to the detector (D) for various topological locations on the subject's brain. These signals where recorded using the Aurora fNIRS software. Each channel is recorded using light wavelengths of 760nm and 850nm. For a visual representation of these electrode locations, refer to \autoref{fig:combined-montage}.}
   \label{tab:fNIRS_raw_signals}
   \end{table}
 

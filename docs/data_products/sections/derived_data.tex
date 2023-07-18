@@ -1,6 +1,16 @@
 \section{Derived data}
 
-\subsection{Filtering EEG and fNIRS Signals}
+\subsection{Synchronization of EEG and fNIRS Signals}
+
+In multimodal neuroimaging studies, synchronizing signals from multiple modalities is a crucial step to conducting comprehensive studies on all these modalities together. The discrepancy between EEG and fNIRS signals' time series is an issue that researchers encounter frequently due to the limitations of recording hardware or the necessity to remove invalid signals. Additionally, these two modalities have distinct recording rates, further complicating their alignment. To facilitate comprehensive evaluation of EEG and fNIRS signals, it is essential to synchronize these two signals.
+
+The synchronization process is a three-step approach involving the interpolation of EEG and fNIRS signals to ensure a regular interval, then noise artifacts removal, followed by resampling and synchronization of the interpolated signals at the desired sampling rate.
+
+\subsubsection{Interpolation of EEG and fNIRS Signals}
+
+Part of the signal synchronization process involves using the Fast Fourier Transform (FFT)-based resampling method. However, this method requires the EEG and fNIRS signals to be sampled at uniform intervals. To ensure that the EEG signals meet this requirement, we generate a time series with a regular interval, matching the anticipated recording frequency of the EEG signal. This time series begins at the earliest second possessing both a preceding EEG entry and a preceding fNIRS entry. The time series ends closest to the final timestamp that has an EEG entry and an fNIRS entry recorded on or immediately after to it. Then, the EEG signal is interpolated to this generated time series via linear interpolation.
+
+We repeat this process for the fNIRS signal. A regular interval time series is generated with the same frequency as the expected recording frequency of the fNIRS signal. It starts at the earliest second with an EEG entry and a fNIRS entry immediately preceding it, and ends nearest to the latest timestamp with an EEG entry and an fNIRS entry recorded on or immediately after it. The fNIRS signal is then interpolated to the newly generated time series using linear interpolation.
 
 \subsubsection{Removing Noise in EEG Signals with Notch Filter}
 
@@ -20,23 +30,25 @@ To address these challenges, we employed a bandpass filter as an effective noise
 
 The filtered fNIRS signals are accessible in \texttt{pre\_processed\_<subject>\_fnirs.csv} files.
 
-\subsection{Synchronization of EEG and fNIRS Signals}
-
-In multimodal neuroimaging studies, synchronizing signals from multiple modalities is a crucial step to conducting comprehensive studies on all these modalities together. The discrepancy between EEG and fNIRS signals' time series is an issue that researchers encounter frequently due to the limitations of recording hardware or the necessity to remove invalid signals. Additionally, these two modalities have distinct recording rates, further complicating their alignment. To facilitate comprehensive evaluation of EEG and fNIRS signals, it is essential to synchronize these two signals.
-
-The synchronization process is a two-step approach involving the interpolation of EEG and fNIRS signals to ensure a regular interval, followed by resampling and synchronization of the interpolated signals at the desired sampling rate.
-
-\subsubsection{Interpolation of EEG and fNIRS Signals}
-
-Part of the signal synchronization process involves using the Fast Fourier Transform (FFT)-based resampling method. However, this method requires the EEG and fNIRS signals to be sampled at uniform intervals. To ensure that the EEG signals meet this requirement, we generate a time series with a regular interval, matching the anticipated recording frequency of the EEG signal. This time series begins at the earliest second possessing both a preceding EEG entry and a preceding fNIRS entry. The time series ends closest to the final timestamp that has an EEG entry and an fNIRS entry recorded on or immediately after to it. Then, the EEG signal is interpolated to this generated time series via linear interpolation.
-
-We repeat this process for the fNIRS signal. A regular interval time series is generated with the same frequency as the expected recording frequency of the fNIRS signal. It starts at the earliest second with an EEG entry and a fNIRS entry immediately preceding it, and ends nearest to the latest timestamp with an EEG entry and an fNIRS entry recorded on or immediately after it. The fNIRS signal is then interpolated to the newly generated time series using linear interpolation.
-
 \subsubsection{Synchronization of EEG and fNIRS Signals}
 
 Upon successful interpolation to ensure sampling at uniform intervals, the EEG and fNIRS signals are resampled and synchronized using the FFT-based resampling method \texttt{mne.filter.resample} available in the Python MNE library \cite{GramfortEtAl2013a}. Additionally, to mitigate aliasing effects, the synchronized signals can be optionally down-sampled to a designated down-sampling rate using a lowpass filter followed by down-sampling using infinite impulse response (IIR) filter method \texttt{scipy.signal.decimate} provided by the Python Scipy library \cite{2020SciPy-NMeth}.
 
-A synchronous time series is then generated with the preferred sampling rate, and timestamps are assigned to the resampled EEG and fNIRS signals. The starting point of this synchronous time series mirrors the start time of the regular interval time series used to interpolate the EEG and fNIRS signals, ensuring regular interval signal. This time series ends nearest to the latest timestamp that possesses an interpolated EEG entry and an interpolated fNIRS entry recorded immediately after it.
+A synchronous time series is then generated with the preferred sampling rate, and timestamps are assigned to the resampled EEG and fNIRS signals. The starting point of this synchronous time series mirrors the start time of the regular interval time series used to interpolate the EEG and fNIRS signals, ensuring regular interval signal. This time series ends nearest to the latest timestamp that possesses an interpolated EEG entry and an interpolated fNIRS entry recorded immediately after it. The result of the interpolation and the synchronization process for fNIRS is shown in \autoref{fig:fnirs_filtered} and for EEG is shown in \autoref{fig:eeg_filtered}.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\textwidth]{images/fnirs_filtered}
+  \caption{823-second sequence of the fNIRS signals procured from a participant utilizing the Tiger computer, specifically from channel S1-D1\_HbO. Three types of signals are presented: the raw fNIRS signal, the pre-processed signal, and the synchronized signal. The raw signal serves as the baseline, directly acquired from the recording. The pre-processed signal is the result of linear interpolation and bandpass filtering (using a 4th order Butterworth method with a low cutoff bandwidth of 0.01 Hz and a high cutoff bandwidth of 0.2 Hz) of the raw signal, effectively mitigating noise and artifacts. Lastly, the synchronized signal is derived from the pre-processed signal through resampling, ensuring that all data are aligned in time.}
+  \label{fig:fnirs_filtered}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\textwidth]{images/eeg_filtered}
+  \caption{3.75-second sequence of the EEG signals gathered from a participant working with the Tiger computer, specifically from channel F7. Three types of signals are presented: the raw EEG signal, the pre-processed signal, and the synchronized signal. The raw signal acts as the baseline, derived directly from the initial recording. The pre-processed signal is derived from the raw signal through linear interpolation and notch filtering (configured at a frequency of 60 Hz, a transition bandwidth of 9 Hz, and notch widths of 2 Hz), effectively reducing noise and artifacts. The synchronized signal, obtained through resampling of the pre-processed signal, assures consistent timing across the experiment. }
+  \label{fig:eeg_filtered}
+\end{figure}
 
 \subsection{Synchronizing Task Data with EEG and fNIRS Resampled Signals}
 
