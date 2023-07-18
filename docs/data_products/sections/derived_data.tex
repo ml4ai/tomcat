@@ -1,5 +1,25 @@
 \section{Derived data}
 
+\subsection{Filtering EEG and fNIRS Signals}
+
+\subsubsection{Removing Noise in EEG Signals with Notch Filter}
+
+EEG signals often exhibit susceptibility to artifacts, an interference that can be attributed to several sources. For instance, physiological factors such as eye movements or blinks can induce such artifacts \cite{10.3389/fnhum.2012.00278}, as can environmental elements like fluorescent lighting or grounding complications \cite{Kaya21}.
+
+Upon thorough examination and visualization of the raw EEG data, we identified a consistent 60 Hz electrical disturbance within the signal, along with corresponding harmonics. An anomalous peak was also noted around the 5 Hz mark, potentially attributable to a grounding irregularity or an other environmental factors.
+
+With the aid of MNE-Python \cite{GramfortEtAl2013a}, we efficiently mitigated these intrusive noises by deploying a notch filter. The filter was configured with a frequency of 60 Hz, a transition bandwidth of 9 Hz, and notch widths of 2 Hz.
+
+The filtered EEG signals are accessible in \texttt{pre\_processed\_<subject>\_eeg.csv} files.
+
+\subsubsection{Mitigating Artifacts in EEG Signals Utilizing Notch Filter}
+
+fNIRS signals are often susceptible to motion artifacts (MA) stemming from physiological activities, including cardiac and respiratory disturbances. These artifacts become particularly noticeable in the measurement of oxyhemoglobin (HbO) and deoxyhemoglobin (HbR) concentrations within the signal channels.
+
+To address these challenges, we employed a bandpass filter as an effective noise reduction strategy. The filter was calibrated in line with the recommendations provided by \cite{Koenraadt2014}. With a low cutoff bandwidth of 0.01 Hz and a high cutoff bandwidth of 0.2 Hz for the 4th order Butterworth method, the filter was tailored to selectively allow signal components within this frequency range while attenuating components outside the range.
+
+The filtered fNIRS signals are accessible in \texttt{pre\_processed\_<subject>\_fnirs.csv} files.
+
 \subsection{Synchronization of EEG and fNIRS Signals}
 
 In multimodal neuroimaging studies, synchronizing signals from multiple modalities is a crucial step to conducting comprehensive studies on all these modalities together. The discrepancy between EEG and fNIRS signals' time series is an issue that researchers encounter frequently due to the limitations of recording hardware or the necessity to remove invalid signals. Additionally, these two modalities have distinct recording rates, further complicating their alignment. To facilitate comprehensive evaluation of EEG and fNIRS signals, it is essential to synchronize these two signals.

@@ -29,6 +29,12 @@ exp_*/
     hands_on_training.csv
     saturn_a.csv
     saturn_b.csv
+    pre_processed_lion_fnirs.csv
+    pre_processed_tiger_fnirs.csv
+    pre_processed_leopard_fnirs.csv
+    pre_processed_lion_eeg.csv
+    pre_processed_tiger_eeg.csv
+    pre_processed_leopard_eeg.csv
     synchronized_signals.csv
     log.txt
 \end{verbatim}
@@ -47,9 +53,17 @@ Each experiment contains the following CSV files, with columns described in \ref
   \item \texttt{hands\_on\_training.csv} contains the synchronized signal and Minecraft search-and-rescue hands-on training mission data.
   \item \texttt{saturn\_a.csv} contains the synchronized signal and Minecraft search-and-rescue Saturn A mission data.
   \item \texttt{saturn\_b.csv} contains the synchronized signal and Minecraft search-and-rescue Saturn B mission data.
+  \item \texttt{pre\_processed\_lion\_fnirs.csv}  contains the filtered fNIRS signals of the participant using the Lion computer.
+  \item \texttt{pre\_processed\_lion\_eeg.csv}  contains the filtered EEG signals of the participant using the Lion computer.
+  \item \texttt{pre\_processed\_tiger\_fnirs.csv}  contains the filtered fNIRS signals of the participant using the Tiger computer.
+  \item \texttt{pre\_processed\_tiger\_eeg.csv}  contains the filtered EEG signals of the participant using the Tiger computer.
+  \item \texttt{pre\_processed\_leopard\_fnirs.csv}  contains the filtered fNIRS signals of the participant using the Leopard computer.
+  \item \texttt{pre\_processed\_leopard\_eeg.csv}  contains the filtered EEG signals of the participant using the Leopard computer.
   \item \texttt{synchronized\_signals.csv} contains the synchronized signal for the entire experiment session.
-  \item \texttt{log.txt} contains the messages logged by the processing program, which contains information about the synchronization process.
+  \item \texttt{log.txt} contains the messages logged by the processing program, which includes information about the filtering and the synchronization processes.
 \end{itemize}
+
+Not all experiments may include the aforementioned CSV files, due to a couple of primary reasons. Firstly, time constraints can result in certain tasks remaining incomplete in some experiments. Secondly, instances where the experiment involves only two participants or the recorded signals are compromised during certain tasks can also lead to the absence of these CSV files.
 
 \subsection{Derived Data Columns Descriptions}
 \label{sec:derived_data_cols_desc}
