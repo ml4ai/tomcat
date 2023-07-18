@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block body_class %}index{% endblock %}
+
+{% block content %}
+{{ render_markdown(
+"""
+# 2023-07-17 update
+
+This is a major update that implements the following changes.
+
+## Base tables
+
+A number of 'base tables' have been added in order to facilitate querying, as
+well as provide additional layers of validation while constructing the
+database. The tables that have been added are the following:
+
+- `data_validity`: This table contains information about
+                   which participants were involved in the tasks, and whether
+                   the data from the EEG,
+                   fNIRS, and eye tracking modalities are valid. In most
+                   cases, when an experimenter stepped in to replace a
+                   participant (e.g., for a now-show participant), they did
+                   not wear fNIRS/EEG devices, and in some cases, they did not
+                   wear the eye tracker either. Not all groups completed all
+                   the tasks, and for some tasks, the data is missing. In
+                   cases such as these, the table simply omits rows for which
+                   we do not have data.
+- `modality`: The modality of a physiological observation (currently contains
+information about EEG/fNIRS/eye tracking, other modalities (e.g., EKG) to be
+added soon.)
+- `task`: The task being performed.
+- `station`: The ID of the iMac that the participant was seated at while
+performing a task. As it turns out, this information is critical for sorting
+out participant IDs in cases when an experimenter steps in to take the place
+of a participant, or in some cases, when participants are moved from one
+station to another due to equipment issues. It is also a potentially useful
+field to have for other types of queries.
+
+### Other changes:
+
+#### `participant` table
+
+- The `is_confederate` column has been removed from the `participant` table,
+for two reasons:
+  - The datatype of the `participant.id` column is now `INTEGER`.
+  - The Datasette interface was displaying the value of the `is_confederate`
+  column in links arising from foreign key relationships, instead of the actual
+  value of the participant ID.
+  - We now have additional participant IDs to denote special circumstances:
+    - -1 indicates an unknown participant.
+    - -2 indicates the team as a whole. This is relevant for the
+    affective_task_event table, where some events intrinsically involve the
+    team as a whole, rather than just one player.
+    - -3 indicates that the participant is a confederate whose identity was not
+    recorded.
+    - Participants with IDs > 999 are confederates (i.e., experimenters who
+    stepped in to replace no-show participants or participants who left partway
+    through the group session.)
+
+# Baseline task observation tables
+
+Tables have been added for all the non-physio observations for all the baseline
+tasks. The tables added are listed below.
+
+- `affective_task_event`
+- `fingertapping_task_observation`
+- `ping_pong_competitive_task_observation`
+- `ping_pong_cooperative_task_observation`
+
+Note that for the finger tapping and ping pong tasks, the table names end in
+`_observation`, since the majority of the rows (with the exception of events
+denoting the start of the task) are *state* observations at regular time
+intervals, rather than *events*, as in the affective task.
+
+## `fnirs_raw` table updated
+
+The new version of the `fnirs_raw` table fixes the following errors.
+
+- For some of the group sessions, an experimenter stepped in to replace a
+participant mid-way through the session, however, the `participant` column was
+set to the experimenter's ID for all the rows in that group session, rather
+than only the ones in which the experimenter stepped in. The new version uses
+the `data_validity` table to assign the correct participant IDs for each task.
+- The tasks are 'atomic' in the sense that if a participant decided to leave
+the group session in the middle of a task and an experimenter filled in for
+them, the task would be restarted. Thus, for a given task in a group session,
+the value of the `participant` column in the `fnirs_raw` table should not
+change. However, for the rows corresponding to the time in between tasks, it is
+not known for certain whether (i) the EEG/fNIRS cap was being worn by a
+participant (confederate or otherwise) and (ii) if the cap was being work by a
+participant, what the ID of that participant is.  This is because it was not
+feasible for us to record the timestamps corresponding to a participant taking
+off their fNIRS cap (which is inherently a temporally extended event) with a
+high level of temporal precision. Thus, for the rows in the table corresponding
+to the time in between tasks, we assign a participant ID of `-1`, indicating an
+unknown (as of now) participant. In a future update, we will do a bit more inference to
+label these 'inter-task' rows. That is, if the participant ID does not change
+between tasks, we will likely label the rows for the period between those tasks
+with that participant ID. We expect that users of this data will likely be more
+immediately interested in the fNIRS signals that occur during tasks.
+- In most cases, when an experimenter steps in for a participant, they do not
+wear the fNIRS/EEG cap, since setting up the cap properly on a participant's
+head is a lengthy process. The cap still records values for the rest of the
+duration of the group session after it has been removed from the participant's
+head, but in most cases (i.e., whenever the confederate is not wearing the
+cap), these values are simply noise and can be safely ignored.s validity
+information is captured in the `data_validity` table. Thus, we delete rows in
+the `fnirs_raw` table for which the data is not valid (i.e., the `is_valid`
+column in the `data_validity` table equals 0).
+
+## Other changes
+- The database schema diagram has been updated.
+- Additional metadata has been added in the form of descriptions for the
+various tables and columns.
+
+""")
+}}
+{% endblock %}
