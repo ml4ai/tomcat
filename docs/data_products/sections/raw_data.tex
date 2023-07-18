@@ -23,51 +23,59 @@ The script \verb|pull_tomcat_data| then makes links to those multiple data
 locations from \verb|/tomcat/data/raw| and provides access via NFS to the compute
 servers \textit{laplace.cs.arizona.edu} and \textit{gauss.cs.arizona.edu}.
 Thus, on those IVILAB machines, \verb|<ROOT>| is \verb|/tomcat/data/raw|.
-
 The directory structure pattern for \verb|<study>| under the root directory is
-\verb|<facility>/experiments/<study>|. For this experiment, \verb|<facility>|
-is \textit{LangLab}, and \verb|<study>| is \verb|study_3_pilot|.  This study
-name is a bit misleading, but makes senses as this study gradually morphed from
-an initial pilot study to a real one as we developed the system, but most data
-is informative.
+
+\begin{verbatim}
+<facility>/experiments/<study>
+\end{verbatim}
+
+For this experiment, \verb|<facility>| is \textit{LangLab}, and \verb|<study>|
+is \verb|study_3_pilot|.  This study name is a bit misleading, but makes senses
+as this study gradually morphed from an initial pilot study to a real one as we
+developed the system, but most data is informative.
 
 \verb|<raw_data>| has two subdirectories, ``presession'' and ``group'', containing data
 from the presession experiments and main experiments separately. In both cases, we put the
 data from one experimental instance into a directory named
-\verb|exp_<year>_<mm>_<dd>_<hour>|. Since we only run one main session at a time, and
+\verb|exp_<yyyy>_<mm>_<dd>_<hh>|. Since we only run one main session at a time, and
 they last from most of an hour to over three hours, hourly time resolution
 suffices to disambiguate them. However, presessions take only 15 to 30 minutes,
 and so a presession directory can hold data for multiple participants.
 
 The group session runs are post processed so that all presession data for the
 participants in the group are linked from the group data directory. This
-matching cannot be done after the group experiment is finished because we do not
-know in advance whether there will be no-shows or other last minute changes.
+matching cannot be done before the group experiment is finished because we do
+not know in advance whether there will be no-shows or other last minute
+changes.
 
 To further clarify directory naming, on the IVILAB compute servers,
 the data for the first valid group session is in:
-\begin{lstlisting}
+%
+\begin{verbatim}
 /tomcat/data/raw/LangLab/experiments/study_3_pilot/group/exp_2022_09_30_10
-\end{lstlisting}
+\end{verbatim}
 However, this might be reported  differently because of the linking described
-above. Specifically, the previous example is equivalent to :
-\begin{lstlisting}
+above. Specifically, the previous example is equivalent to:
+%
+\begin{verbatim}
 /tomcat_raw_1/data/LangLab/experiments/study_3_pilot/group/exp_2022_09_30_10
-\end{lstlisting}
+\end{verbatim}
+%
 In the original data there are some group experiment directories with time
 strings earlier than the above example, but those are all preliminary pilot
-experiments. We keep the raw data irregardless, but all directories with serious
+experiments. We keep the raw data regardless, but all directories with serious
 issues are filtered out when we create derived data sets for general
 consumption.
 
-\subsection{Raw data structure for group sessions.}
+\subsection{Raw data structure for group sessions}
 
 As mentioned above, a post-processing step links all needed presession files into
 the group experimental runs. We describe the final group session data with
 needed presession data included.
 
-\kobus{Chinmai used <> for variables, except also YYYY, MM, etc. I am not sure
-whether we should try to make it all consistent.}
+%\kobus{Chinmai used <> for variables, except also YYYY, MM, etc. I am not sure
+%whether we should try to make it all consistent.}
+% Adarsh (2023-07-18): I changed all the variable instances to use <>.
 
 Each of the three participants are associated by the name of the iMac device
 they use during the experiment.
@@ -77,15 +85,18 @@ leopard. We define
 and <Cat> $\in \{Leopard, Lion, Tiger\}$,
 and use <cat> or <Cat> to represent the three instances.
 
-\kobus{Some of this is from a very old document. And the rest is from me quickly looking
-at both early and recent data directories. Please check and update!! And include
-details!!!}
+%\kobus{Some of this is from a very old document. And the rest is from me quickly looking
+%at both early and recent data directories. Please check and update!! And include
+%details!!!}
 
 \kobus{Also, I understand we changed formats mid stream. We need to specify
 these differences here.}
 
-Underneath each experiment (\verb|RAW_DATA|) directory (i.e.,
-\verb|ROOT/STUDY/group/exp_YYYY_MM_DD_HH|), we have the following structures:
+
+Underneath each experiment (\verb|<raw_data>|) directory (i.e.,\\
+\verb|<root>/<study>/group/exp_<yyyy>_<mm>_<dd>_<hh>|), we have the following
+file/directory structure:
+%
 \begin{verbatim}
 redcap_data/
     team_data.csv
