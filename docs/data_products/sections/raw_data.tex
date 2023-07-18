@@ -92,6 +92,26 @@ and use <cat> or <Cat> to represent the three instances.
 \kobus{Also, I understand we changed formats mid stream. We need to specify
 these differences here.}
 
+Prior to April 2023, we recorded physio data for each station to a separate
+XDF file, and the rest of the data (baseline task observations, Minecraft data,
+etc.) to separate files. However, we realized that timestamps were not
+synchronized across different XDF files. Furthermore, recording the non-physio
+data to separate files made it difficult to synchronize timestamps between
+physio and non-physio data. To overcome these limitations, starting in April
+2023, we made a substantial change to the recording setup such that all data
+was now streamed through LSL and only a single XDF file would be written to at
+a time. The only data we excluded from the XDF files was the raw face and screen
+capture images---however, we did push the timestamps (corresponding to when the
+images were captured) onto LSL, resulting in them being written to the XDF file
+as well.
+
+We call the pre-April 2023 setup \emph{v1}, and the subsequent setup \emph{v2}.
+For redundancy, we retain the existing mechanisms from v1 that were
+recording to non-XDF files---thus, there is some overlap in the directory
+structure for the v1 and v2 recording outputs. However, with the exception of
+images, the XDF files supersede the non-XDF files for the v2 recording setup.
+In the directory structure shown below, we denote which directories are only
+present in v1 or v2 data using comments starting with an octothorpe (\verb|#|).
 
 Underneath each experiment (\verb|<raw_data>|) directory (i.e.,\\
 \verb|<root>/<study>/group/exp_<yyyy>_<mm>_<dd>_<hh>|), we have the following
@@ -120,7 +140,7 @@ baseline_tasks/
     rest_state/
         <timestamp>.csv
 
-lsl/
+lsl/ # Only for experiments starting April 2023
     block_1.xdf
     block_2.xdf
 
@@ -129,20 +149,56 @@ minecraft/
     MinecraftData_Trial-Training_ID-<fancy_string>.metadata
 
 <cat>/
-    audio/
+    eeg_fnirs_pupil/ # Only for experiments before April 2023
+        <cat>_eeg_fnirs_pupil.xdf
+    audio/ # Only for sessions on or after 2022-10-07
+        ... 3 to 4 .wav files # Prior to 2023-04-17
+        block_2/ # On or after 2023-04-17
+            ... 3 to 4 .wav files
     face_images/
+        ffmpeg.log
+        ... a large number of .png files
+    presession/
+        participant_<ID>.wav
+        participant_<ID>Task2.wav
     pupil_recorder/
+        000/
+            blinks.pldata
+            blinks_timestamps.npy
+            eye0.intrinsics
+            eye0.mp4
+            eye0_timestamps.npy
+            eye1.intrinsics
+            eye1.mp4
+            eye1_timestamps.npy
+            fixations.pldata
+            fixations_timestamps.npy
+            gaze.pldata
+            gaze_timestamps.npy
+            info.player.json
+            notify.pldata
+            notify_timestamps.npy
+            pupil.pldata
+            pupil_timestamps.npy
+            user_info.csv
+            world.intrinsics
+            world.mp4
+            world_timestamps.npy
     redcap_data/
+        <cat>_post_game_survey_data.csv
+        <cat>_self_report_data.csv
     screen_shots/
+        ffmpeg.log
+        ... a large number of .png files
 
-testbed_logs/
-    asist_logs_<timestamp>/
+testbed_logs/ # On or after 2022-10-27
+    asist_logs_<yyyy>_<mm>_<dd>_<hh>_<mm>_<ss>/
 
 tmp/
 
-data_inventory.log
-data_inventory.run
-time_difference.txt
+data_inventory.log # For sessions starting 2023-04-17
+data_inventory.run # For sessions starting 2023-04-17
+time_difference.txt # For sessions starting 2023-04-17
 
 trial_info.json
 \end{verbatim}
@@ -151,8 +207,7 @@ trial_info.json
 
 \noindent
 Excluding log files, debugging, and other infrastructure files, the format and
-the data for each file listed
-above is detailed as follows: \\
+the data for each file listed above is detailed as follows: \\
 
 
 \begin{description}
