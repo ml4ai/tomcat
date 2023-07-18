@@ -3,11 +3,20 @@
 {% block body_class %}index{% endblock %}
 
 {% block content %}
-    <h1>Updates</h1>
-    <p>Updates to the dataset will be described here.</p>
-    <p> Sign up for our mailing list to get notifications whenever the dataset is
-    updated. To subscribe, send an email to <a
-        href="mailto:list@list.arizona.edu">list@list.arizona.edu</a> with a blank
-    message body and the following subject line: <strong>subscribe tomcat-dataset-updates firstname lastname</strong>
-    (replace firstname and lastname with your own first name and last name).
+{{ render_markdown(
+"""
+# Updates
+
+Updates to the dataset will be collected on this page. Sign up for our [mailing
+list](/mailing-list) to receive email updates whenever the dataset is updated.
+
+## List of updates
+
+- [2023-07-17](/updates/2023-07-17): A major update that adds new data from
+baseline tasks, fixes labels in and removes invalid data from the `fnirs_raw`
+table, and adds a set of new 'base' tables, foreign key relationships, and
+indices to facilitate new queries and speed up existing queries. See
+[here](/updates/2023-07-17) for more details.
+""")
+}}
 {% endblock %}

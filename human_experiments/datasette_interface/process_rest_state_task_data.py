@@ -18,12 +18,15 @@ from tqdm import tqdm
 import pandas as pd
 from glob import glob
 
-
 logging.basicConfig(
     level=logging.INFO,
-    handlers=logging_handlers,
+    handlers=(
+        logging.FileHandler(
+            filename="/space/adarsh/tomcat/build_rest_state_task_table.log", mode="w"
+        ),
+        logging.StreamHandler(stream=sys.stderr),
+    ),
 )
-
 
 def process_directory_v1(session, db_connection):
     info(f"Processing directory {session}")
@@ -93,12 +96,12 @@ def process_rest_state_task_data():
         db_connection.execute(
             """
             CREATE TABLE rest_state_task (
-                group_session_id TEXT NOT NULL,
+                group_session TEXT NOT NULL,
                 start_timestamp_unix TEXT NOT NULL,
                 start_timestamp_iso8601 TEXT NOT NULL,
                 stop_timestamp_unix TEXT NOT NULL,
                 stop_timestamp_iso8601 TEXT NOT NULL,
-                FOREIGN KEY(group_session_id) REFERENCES group_session(id)
+                FOREIGN KEY(group_session) REFERENCES group_session(id)
             );"""
         )
 

@@ -5,6 +5,7 @@ import logging
 from logging import info
 from config import logging_handlers
 import dateutil
+from dateutil import parser
 import datetime
 from pytz import timezone
 import time
@@ -67,6 +68,6 @@ def convert_unix_timestamp_to_iso8601(unix_timestamp):
 
 
 def convert_iso8601_timestamp_to_unix(iso8601_timestamp):
-    d = dateutil.parser.parse(iso8601_timestamp)
+    d = parser.parse(iso8601_timestamp)
     unix_timestamp = d.timestamp()
     return unix_timestamp
