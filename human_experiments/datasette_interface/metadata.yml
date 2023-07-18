@@ -42,25 +42,29 @@ databases:
                         participant/task/modality is valid (1) or invalid (0).
 
 
+            fnirs_raw:
+                description: >
+                    Table with raw fNIRS data.
+                columns:
+                    group_session: Group session ID
+                    task: Task ID.
+                    station: The iMac that the participant was stationed at.
+                    participant: >
+                        Participant ID. A participant ID of -1 indicates an
+                        unknown participant. All rows that do not have values
+                        for the `task` column will have their participant ID
+                        set to -1. In the future, we will label some of these
+                        inter/pre/post task rows with the correct participant
+                        ID.
+                    timestamp_unix: The Unix timestamp of the event.
+                    timestamp_iso8601: The ISO-8601 timestamp of the event.
+
             group_session:
                 description: Table with group session IDs.
                 columns:
                     id: >
                         Group session ID. Format: `exp_YYYY_MM_DD_HH`.
 
-            participant:
-                description: Table with participant IDs.
-                columns:
-                    id: >
-                        Participant ID.
-                        -1 indicates an unknown participant.
-                        -2 indicates the team as a whole. This is relevant for the affective_task_event table,
-                        where some events intrinsically involve the team as a whole, rather than just one player.
-                        -3 indicates that the participant is a confederate whose identity was not recorded.
-                        Participants with IDs > 999 are confederates (i.e.,
-                        experimenters who stepped in to replace no-show
-                        participants or participants who left partway through
-                        the group session.)
             mission:
                 description: Metadata about the Minecraft missions.
                 columns:
@@ -78,6 +82,20 @@ databases:
                 description: Modalities for physiological data.
                 columns:
                     id: The ID of the modality.
+
+            participant:
+                description: Table with participant IDs.
+                columns:
+                    id: >
+                        Participant ID.
+                        -1 indicates an unknown participant.
+                        -2 indicates the team as a whole. This is relevant for the affective_task_event table,
+                        where some events intrinsically involve the team as a whole, rather than just one player.
+                        -3 indicates that the participant is a confederate whose identity was not recorded.
+                        Participants with IDs > 999 are confederates (i.e.,
+                        experimenters who stepped in to replace no-show
+                        participants or participants who left partway through
+                        the group session.)
 
             ping_pong_competitive_task_observation:
                 description: Observations from the competitive ping-pong tasks.

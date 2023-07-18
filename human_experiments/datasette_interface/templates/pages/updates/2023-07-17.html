@@ -57,6 +57,11 @@ for two reasons:
     - Participants with IDs > 999 are confederates (i.e., experimenters who
     stepped in to replace no-show participants or participants who left partway
     through the group session.)
+- The foreign key links for the `group_session` table were facing the same
+issue as the links for the `participant` table (see above). Thus, we removed
+the `notes` column from this table (the column was empty). We will re-add this
+column later once we have figured out how to deal with this Datasette interface
+issue.
 
 # Baseline task observation tables
 
