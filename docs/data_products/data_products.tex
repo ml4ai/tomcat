@@ -17,10 +17,12 @@
 
 \usepackage{graphicx}
 \usepackage{authblk}
-\usepackage{hyperref}
+\usepackage[%
+    urlcolor=Blue,
+    linkcolor=Blue,
+]{hyperref}
 \usepackage{upquote}
 \usepackage{verbatim}
-\usepackage{url}
 \usepackage{subcaption}
 \usepackage{amsmath}
 \usepackage{tabularx}
@@ -152,9 +154,12 @@ Jones, Chinmai Basavaraj, Kobus Barnard}
 \maketitle
 \setcounter{page}{2}
 
+\settocdepth{subsection}
+\tableofcontents*
+\newpage
 
 This document describes in detail the structure and semantics of experiment data
-collected as a part of the ASIST ToMCAT project.
+collected as a part of the ASIST ToMCAT project (\url{https://ml4ai.github.io}).
 
 \input{sections/overview}
 \input{sections/raw_data}
