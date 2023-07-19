@@ -68,27 +68,24 @@ Not all experiments may include the aforementioned CSV files, due to a couple of
 \subsection{Derived Data Columns Descriptions}
 \label{sec:derived_data_cols_desc}
 
-\eduong{Here we describe the columns provided in the derived dataset.}
+The columns in each aforementioned CSV file (e.g., \texttt{rest\_state.csv}, \texttt{ping\_pong\_cooperative.csv}) are detailed in \autoref{tab:shared_columns}, \autoref{tab:rest_task_columns}, \autoref{tab:finger_task_columns}, \autoref{tab:individual_affective_task_columns}, \autoref{tab:team_affective_task_columns}, \autoref{tab:ping_pong_competitive_task_columns}, \autoref{tab:ping_pong_cooperative_task_columns}, \autoref{tab:minecraft_task_columns}, \autoref{tab:EEG_signals}, \autoref{tab:fNIRS_raw_signals}, and \autoref{tab:fNIRS_signals}.
 
 \begin{table}[h]
 \centering
-\begin{tabularx}{\textwidth}{|l|l|X|}
+\begin{tabularx}{\textwidth}{|l|X|}
 \hline
-\textbf{Type} & \textbf{Column} & \textbf{Description} \\
+\textbf{Time columns} & \textbf{Description} \\
 \hline
-\multirow{13}{*}{\parbox{2cm}{Time}}
-& \texttt{index} (first column) & Row index counting from synchronized signals of the entire experiment in \texttt{synchronized\_signals.csv}. This is a reference column to identify the signals from the experiment synchronized signals with the task synchronized signals.\\
-& \texttt{unix\_time} & Unix time (in seconds, with 0.1 microsecond resolution) of when the fNIRS and EEG signals and the task data were recorded and synchronized.\\
-& \texttt{human\_readable\_time} & UTC time (in seconds, with 1.0 microsecond resolution) in the human readable format of when the fNIRS and EEG signals and the task data were recorded.\\
-& \texttt{seconds\_since\_start} & Time (in seconds, with 0.1 microsecond resolution) since the first entry of the task or the experiment.\\
+\texttt{index} (first column) & Row index counting from synchronized signals of the entire experiment in \texttt{synchronized\_signals.csv}. This is a reference column to identify the signals from the experiment synchronized signals with the task synchronized signals.\\
 \hline
-\multirow{6}{*}{\parbox{2cm}{Subject ID}}
-& \texttt{lion\_id} & ID of the participant who participated in the experiment using the Lion computer in the lab.\\
-& \texttt{tiger\_id} & ID of the participant who participated in the experiment using the Tiger computer in the lab.\\
-& \texttt{leopard\_id} & ID of the participant who participated in the experiment using the Leopard computer in the lab.\\
+\texttt{unix\_time} & Unix time (in seconds, with 0.1 microsecond resolution) of when the fNIRS and EEG signals and the task data were recorded and synchronized.\\
+\hline
+\texttt{human\_readable\_time} & UTC time (in seconds, with 1.0 microsecond resolution) in the human readable format of when the fNIRS and EEG signals and the task data were recorded.\\
+\hline
+\texttt{seconds\_since\_start} & Time (in seconds, with 0.1 microsecond resolution) since the first entry of the task or the experiment.\\
 \hline
 \end{tabularx}
-\caption{Columns that are common in all CSV files of derived data.}
+\caption{Columns of time that are common in all CSV files of derived data.}
 \label{tab:shared_columns}
 \end{table}
 
@@ -239,207 +236,257 @@ Not all experiments may include the aforementioned CSV files, due to a couple of
 \label{tab:minecraft_task_columns}
 \end{table}
 
-\eduong{Here we describe how Aurora provides the HbO and HbR channels for fNIRS along with any derived channels of EEG. Some questions to answer: What are the channels recorded? How did Aurora compute HbO and HbR?}
-
-\eduong{Caleb, Diheng, and/or Savannah writing about EEG and fNIRS channels in the tables?}
+\begin{figure}
+  \includegraphics[width=\linewidth]{images/combined_montage.pdf}
+  \centering
+  \caption{%
+      The montage we used for combined EEG/fNIRS data acquisition.  EEG
+      electrodes were located in the anterior frontal (AFF1h, AFF2h), frontal
+      (F7, F8), frontocentral (FC5, FCz, FC6), central (C3, Cz, C4),
+      occipital (O1, O2), temporal (T7, T8) and parietal (P7, P3, Pz, P4, P8)
+      regions.  fNIRS optodes were located in frontal (Fz, F1, F2, F3, F4,
+      F5, F6), anterior frontal (AF3, AF4, AFz, AF7, AF8), frontal polar
+      (FP1, FPz, FP2). The line is the channel formed when fNIRS source
+      optode (red) and fNIRS detector (blue) optode are combined.
+  }
+  \label{fig:combined-montage}
+\end{figure}
 
 \begin{table}
 \centering
 \begin{tabularx}{\textwidth}{|l|X|}
 \hline
-\textbf{EEG signal columns} & \textbf{Description} \\
+\textbf{EEG signal columns} & \textbf{Description (topological location of the subject's brain)} \\
 \hline
-\texttt{<subject>\_eeg\_AFF1h} & Description of AFF1h \\
+\texttt{<subject>\_eeg\_AFF1h} & Left anterior frontal region \\
 \hline
-\texttt{<subject>\_eeg\_F7} & Description of F7 \\
+\texttt{<subject>\_eeg\_F7} & Left frontal region  \\
 \hline
-\texttt{<subject>\_eeg\_FC5} & Description of FC5 \\
+\texttt{<subject>\_eeg\_FC5} & Left fronto-central region  \\
 \hline
-\texttt{<subject>\_eeg\_C3} & Description of C3 \\
+\texttt{<subject>\_eeg\_C3} & Left central region \\
 \hline
-\texttt{<subject>\_eeg\_T7} & Description of T7 \\
+\texttt{<subject>\_eeg\_T7} & Left temporal region \\
 \hline
-\texttt{<subject>\_eeg\_TP9} & Description of TP9 \\
+\texttt{<subject>\_eeg\_TP9} & Left temporal-parietal region \\
 \hline
-\texttt{<subject>\_eeg\_Pz} & Description of Pz \\
+\texttt{<subject>\_eeg\_Pz} & Central parietal region \\
 \hline
-\texttt{<subject>\_eeg\_P3} & Description of P3 \\
+\texttt{<subject>\_eeg\_P3} & Left parietal region \\
 \hline
-\texttt{<subject>\_eeg\_P7} & Description of P7 \\
+\texttt{<subject>\_eeg\_P7} & Left parietal region \\
 \hline
-\texttt{<subject>\_eeg\_O1} & Description of O1 \\
+\texttt{<subject>\_eeg\_O1} & Left occipital region \\
 \hline
-\texttt{<subject>\_eeg\_O2} & Description of O2 \\
+\texttt{<subject>\_eeg\_O2} & Right occipital region \\
 \hline
-\texttt{<subject>\_eeg\_P8} & Description of P8 \\
+\texttt{<subject>\_eeg\_P8} & Right parietal region \\
 \hline
-\texttt{<subject>\_eeg\_P4} & Description of P4 \\
+\texttt{<subject>\_eeg\_P4} & Right parietal region \\
 \hline
-\texttt{<subject>\_eeg\_TP10} & Description of TP10 \\
+\texttt{<subject>\_eeg\_TP10} & Right temporal-parietal region \\
 \hline
-\texttt{<subject>\_eeg\_Cz} & Description of Cz \\
+\texttt{<subject>\_eeg\_Cz} & central region \\
 \hline
-\texttt{<subject>\_eeg\_C4} & Description of C4 \\
+\texttt{<subject>\_eeg\_C4} & Right central region \\
 \hline
-\texttt{<subject>\_eeg\_T8} & Description of T8 \\
+\texttt{<subject>\_eeg\_T8} & Right temporal region \\
 \hline
-\texttt{<subject>\_eeg\_FC6} & Description of FC6 \\
+\texttt{<subject>\_eeg\_FC6} & Right fronto-central region \\
 \hline
-\texttt{<subject>\_eeg\_FCz} & Description of FCz \\
+\texttt{<subject>\_eeg\_FCz} & Central fronto-central region \\
 \hline
-\texttt{<subject>\_eeg\_F8} & Description of F8 \\
+\texttt{<subject>\_eeg\_F8} & Right frontal region \\
 \hline
-\texttt{<subject>\_eeg\_AFF2h} & Description of AFF2h \\
+\texttt{<subject>\_eeg\_AFF2h} & Right anterior frontal region \\
 \hline
-\texttt{<subject>\_eeg\_GSR} & Description of AUX\_GSR \\
+\texttt{<subject>\_eeg\_GSR} & Right hand \\
 \hline
-\texttt{<subject>\_eeg\_EKG} & Description of AUX\_EKG \\
+\texttt{<subject>\_eeg\_EKG} & 4\textsuperscript{th} Intercostal space \\
 \hline
 \end{tabularx}
-\caption{Signal Descriptions}
+\caption{Table of EEG signal descriptions, specifying the topological locations on the subject's brain. Each entry provides the label of the signal column corresponding to the EEG electrode location. For a visual representation of these electrode locations, refer to \autoref{fig:combined-montage}.}
 \label{tab:EEG_signals}
 \end{table}
 
 \begin{table}
-\centering
-\begin{tabularx}{\textwidth}{|l|X|}
-\hline
-\textbf{fNIRS raw signal columns} & \textbf{Description} \\
-\hline
-\texttt{<subject>\_fnirs\_S1-D1\_760} & Description of S1-D1\_760 \\
-\hline
-\texttt{<subject>\_fnirs\_S1-D2\_760} & Description of S1-D2\_760 \\
-\hline
-\texttt{<subject>\_fnirs\_S2-D1\_760} & Description of S2-D1\_760 \\
-\hline
-\texttt{<subject>\_fnirs\_S2-D3\_760} & Description of S2-D3\_760 \\
-\hline
-\texttt{<subject>\_fnirs\_S3-D1\_760} & Description of S3-D1\_760 \\
-\hline
-\texttt{<subject>\_fnirs\_S3-D3\_760} & Description of S3-D3\_760 \\
-\hline
-\texttt{<subject>\_fnirs\_S3-D4\_760} & Description of S3-D4\_760 \\
-\hline
-\texttt{<subject>\_fnirs\_S4-D2\_760} & Description of S4-D2\_760 \\
-\hline
-\texttt{<subject>\_fnirs\_S4-D4\_760} & Description of S4-D4\_760 \\
-\hline
-\texttt{<subject>\_fnirs\_S4-D5\_760} & Description of S4-D5\_760 \\
-\hline
-\texttt{<subject>\_fnirs\_S5-D3\_760} & Description of S5-D3\_760 \\
-\hline
-\texttt{<subject>\_fnirs\_S5-D4\_760} & Description of S5-D4\_760 \\
-\hline
-\texttt{<subject>\_fnirs\_S5-D6\_760} & Description of S5-D6\_760 \\
-\hline
-\texttt{<subject>\_fnirs\_S6-D4\_760} & Description of S6-D4\_760 \\
-\hline
-\texttt{<subject>\_fnirs\_S6-D6\_760} & Description of S6-D6\_760 \\
-\hline
-\texttt{<subject>\_fnirs\_S6-D7\_760} & Description of S6-D7\_760 \\
-\hline
-\texttt{<subject>\_fnirs\_S7-D5\_760} & Description of S7-D5\_760 \\
-\hline
-\texttt{<subject>\_fnirs\_S7-D7\_760} & Description of S7-D7\_760 \\
-\hline
-\texttt{<subject>\_fnirs\_S8-D6\_760} & Description of S8-D6\_760 \\
-\hline
-\texttt{<subject>\_fnirs\_S8-D7\_760} & Description of S8-D7\_760 \\
-\hline
-\texttt{<subject>\_fnirs\_S1-D1\_850} & Description of S1-D1\_850 \\
-\hline
-\texttt{<subject>\_fnirs\_S1-D2\_850} & Description of S1-D2\_850 \\
-\hline
-\texttt{<subject>\_fnirs\_S2-D1\_850} & Description of S2-D1\_850 \\
-\hline
-\texttt{<subject>\_fnirs\_S2-D3\_850} & Description of S2-D3\_850 \\
-\hline
-\texttt{<subject>\_fnirs\_S3-D1\_850} & Description of S3-D1\_850 \\
-\hline
-\texttt{<subject>\_fnirs\_S3-D3\_850} & Description of S3-D3\_850 \\
-\hline
-\texttt{<subject>\_fnirs\_S3-D4\_850} & Description of S3-D4\_850 \\
-\hline
-\texttt{<subject>\_fnirs\_S4-D2\_850} & Description of S4-D2\_850 \\
-\hline
-\texttt{<subject>\_fnirs\_S4-D4\_850} & Description of S4-D4\_850 \\
-\hline
-\texttt{<subject>\_fnirs\_S4-D5\_850} & Description of S4-D5\_850 \\
-\hline
-\texttt{<subject>\_fnirs\_S5-D3\_850} & Description of S5-D3\_850 \\
-\hline
-\texttt{<subject>\_fnirs\_S5-D4\_850} & Description of S5-D4\_850 \\
-\hline
-\texttt{<subject>\_fnirs\_S5-D6\_850} & Description of S5-D6\_850 \\
-\hline
-\texttt{<subject>\_fnirs\_S6-D4\_850} & Description of S6-D4\_850 \\
-\hline
-\texttt{<subject>\_fnirs\_S6-D6\_850} & Description of S6-D6\_850 \\
-\hline
-\texttt{<subject>\_fnirs\_S6-D7\_850} & Description of S6-D7\_850 \\
-\hline
-\texttt{<subject>\_fnirs\_S7-D5\_850} & Description of S7-D5\_850 \\
-\hline
-\texttt{<subject>\_fnirs\_S7-D7\_850} & Description of S7-D7\_850 \\
-\hline
-\texttt{<subject>\_fnirs\_S8-D6\_850} & Description of S8-D6\_850 \\
-\hline
-\texttt{<subject>\_fnirs\_S8-D7\_850} & Description of S8-D7\_850 \\
-\hline
-\end{tabularx}
-\caption{Signal Descriptions}
-\label{tab:fNIRS_raw_signals}
-\end{table}
+  \centering
+  \begin{tabularx}{\textwidth}{|l|X|}
+  \hline
+  \textbf{fNIRS raw signal columns} & \textbf{Description (topological location of the subject's brain)} \\
+  \hline
+  \texttt{<subject>\_fnirs\_S1-D1\_760} & 'F3-F5': left frontal region \\
+  \hline
+  \texttt{<subject>\_fnirs\_S1-D2\_760} & 'F3-F1': left frontal region  \\
+  \hline
+  \texttt{<subject>\_fnirs\_S2-D1\_760} & 'Af7-F5': left anterior frontal region  \\
+  \hline
+  \texttt{<subject>\_fnirs\_S2-D3\_760} & 'Af7-Fp1': left anterior frontal region  \\
+  \hline
+  \texttt{<subject>\_fnirs\_S3-D1\_760} & 'Af3-F5': left anterior frontal region  \\
+  \hline
+  \texttt{<subject>\_fnirs\_S3-D3\_760} & 'Af3-Fp1': left anterior frontal region  \\
+  \hline
+  \texttt{<subject>\_fnirs\_S3-D4\_760} & 'Af3-Afz': left anterior frontal region  \\
+  \hline
+  \texttt{<subject>\_fnirs\_S4-D2\_760} & 'Fz-F1': left frontal region  \\
+  \hline
+  \texttt{<subject>\_fnirs\_S4-D4\_760} & 'Fz-Afz': central frontal region  \\
+  \hline
+  \texttt{<subject>\_fnirs\_S4-D5\_760} & 'Fz-F2': right frontal region  \\
+  \hline
+  \texttt{<subject>\_fnirs\_S5-D3\_760} & 'Fpz-Fp1': left frontal polar region  \\
+  \hline
+  \texttt{<subject>\_fnirs\_S5-D4\_760} & 'Fpz-Afz': central frontal polar region  \\
+  \hline
+  \texttt{<subject>\_fnirs\_S5-D6\_760} & 'Fpz-Fp2': right frontal polar region  \\
+  \hline
+  \texttt{<subject>\_fnirs\_S6-D4\_760} & 'Af4-Afz': right anterior frontal region  \\
+  \hline
+  \texttt{<subject>\_fnirs\_S6-D6\_760} & 'Af4-Fp2': right anterior frontal region  \\
+  \hline
+  \texttt{<subject>\_fnirs\_S6-D7\_760} & 'Af4-F6': right anterior frontal region  \\
+  \hline
+  \texttt{<subject>\_fnirs\_S7-D5\_760} & 'F4-F2': right frontal region  \\
+  \hline
+  \texttt{<subject>\_fnirs\_S7-D7\_760} & 'F4-F6': right frontal region  \\
+  \hline
+  \texttt{<subject>\_fnirs\_S8-D6\_760} & 'Af8-Fp2': right anterior frontal region  \\
+  \hline
+  \texttt{<subject>\_fnirs\_S8-D7\_760} & 'Af8-F6': right anterior frontal region  \\
+  \hline
+  \texttt{<subject>\_fnirs\_S1-D1\_850} & 'F3-F5': left frontal region  \\
+  \hline
+  \texttt{<subject>\_fnirs\_S1-D2\_850} & 'F3-F1': left frontal region  \\
+  \hline
+  \texttt{<subject>\_fnirs\_S2-D1\_850} & 'Af7-F5': left anterior frontal region  \\
+  \hline
+  \texttt{<subject>\_fnirs\_S2-D3\_850} & 'Af7-Fp1': left anterior frontal region  \\
+  \hline
+  \texttt{<subject>\_fnirs\_S3-D1\_850} & 'Af3-F5': left anterior frontal region  \\
+  \hline
+  \texttt{<subject>\_fnirs\_S3-D3\_850} & 'Af3-Fp1': left anterior frontal region  \\
+  \hline
+  \texttt{<subject>\_fnirs\_S3-D4\_850} & 'Af3-Afz': left anterior frontal region  \\
+  \hline
+  \texttt{<subject>\_fnirs\_S4-D2\_850} & 'Fz-F1': left frontal region  \\
+  \hline
+  \texttt{<subject>\_fnirs\_S4-D4\_850} & 'Fz-Afz': central frontal region  \\
+  \hline
+  \texttt{<subject>\_fnirs\_S4-D5\_850} & 'Fz-F2': right frontal region  \\
+  \hline
+  \texttt{<subject>\_fnirs\_S5-D3\_850} & 'Fpz-Fp1': left frontal polar region  \\
+  \hline
+  \texttt{<subject>\_fnirs\_S5-D4\_850} & 'Fpz-Afz': central frontal polar region  \\
+  \hline
+  \texttt{<subject>\_fnirs\_S5-D6\_850} & 'Fpz-Fp2': right frontal polar region  \\
+  \hline
+  \texttt{<subject>\_fnirs\_S6-D4\_850} & 'Af4-Afz': right anterior frontal region  \\
+  \hline
+  \texttt{<subject>\_fnirs\_S6-D6\_850} & 'Af4-Fp2': right anterior frontal region  \\
+  \hline
+  \texttt{<subject>\_fnirs\_S6-D7\_850} & 'Af4-F6': right anterior frontal region  \\
+  \hline
+  \texttt{<subject>\_fnirs\_S7-D5\_850} & 'F4-F2': right frontal region  \\
+  \hline
+  \texttt{<subject>\_fnirs\_S7-D7\_850} & 'F4-F6': right frontal region  \\
+  \hline
+  \texttt{<subject>\_fnirs\_S8-D6\_850} & 'Af8-Fp2': right anterior frontal region  \\
+  \hline
+  \texttt{<subject>\_fnirs\_S8-D7\_850} & 'Af8-F6': right anterior frontal region  \\
+  \hline
+  \end{tabularx}
+  \caption{Table of fNIRS raw signal descriptions, mapping the source (S) to the detector (D) for various topological locations on the subject's brain. These signals where recorded using the Aurora fNIRS software. Each channel is recorded using light wavelengths of 760nm and 850nm. For a visual representation of these electrode locations, refer to \autoref{fig:combined-montage}.}
+  \label{tab:fNIRS_raw_signals}
+  \end{table}
 
-\begin{table}
-\centering
-\begin{tabularx}{\textwidth}{|l|l|X|}
-\hline
-\textbf{Type} & \textbf{Channel} & \textbf{Description} \\
-\hline
-\multirow{40}{*}{fNIRS}
-& \texttt{<subject>\_fnirs\_S1-D1\_HbO} & Description of S1-D1\_HbO \\
-& \texttt{<subject>\_fnirs\_S1-D2\_HbO} & Description of S1-D2\_HbO \\
-& \texttt{<subject>\_fnirs\_S2-D1\_HbO} & Description of S2-D1\_HbO \\
-& \texttt{<subject>\_fnirs\_S2-D3\_HbO} & Description of S2-D3\_HbO \\
-& \texttt{<subject>\_fnirs\_S3-D1\_HbO} & Description of S3-D1\_HbO \\
-& \texttt{<subject>\_fnirs\_S3-D3\_HbO} & Description of S3-D3\_HbO \\
-& \texttt{<subject>\_fnirs\_S3-D4\_HbO} & Description of S3-D4\_HbO \\
-& \texttt{<subject>\_fnirs\_S4-D2\_HbO} & Description of S4-D2\_HbO \\
-& \texttt{<subject>\_fnirs\_S4-D4\_HbO} & Description of S4-D4\_HbO \\
-& \texttt{<subject>\_fnirs\_S4-D5\_HbO} & Description of S4-D5\_HbO \\
-& \texttt{<subject>\_fnirs\_S5-D3\_HbO} & Description of S5-D3\_HbO \\
-& \texttt{<subject>\_fnirs\_S5-D4\_HbO} & Description of S5-D4\_HbO \\
-& \texttt{<subject>\_fnirs\_S5-D6\_HbO} & Description of S5-D6\_HbO \\
-& \texttt{<subject>\_fnirs\_S6-D4\_HbO} & Description of S6-D4\_HbO \\
-& \texttt{<subject>\_fnirs\_S6-D6\_HbO} & Description of S6-D6\_HbO \\
-& \texttt{<subject>\_fnirs\_S6-D7\_HbO} & Description of S6-D7\_HbO \\
-& \texttt{<subject>\_fnirs\_S7-D5\_HbO} & Description of S7-D5\_HbO \\
-& \texttt{<subject>\_fnirs\_S7-D7\_HbO} & Description of S7-D7\_HbO \\
-& \texttt{<subject>\_fnirs\_S8-D6\_HbO} & Description of S8-D6\_HbO \\
-& \texttt{<subject>\_fnirs\_S8-D7\_HbO} & Description of S8-D7\_HbO \\
-& \texttt{<subject>\_fnirs\_S1-D1\_HbR} & Description of S1-D1\_HbR \\
-& \texttt{<subject>\_fnirs\_S1-D2\_HbR} & Description of S1-D2\_HbR \\
-& \texttt{<subject>\_fnirs\_S2-D1\_HbR} & Description of S2-D1\_HbR \\
-& \texttt{<subject>\_fnirs\_S2-D3\_HbR} & Description of S2-D3\_HbR \\
-& \texttt{<subject>\_fnirs\_S3-D1\_HbR} & Description of S3-D1\_HbR \\
-& \texttt{<subject>\_fnirs\_S3-D3\_HbR} & Description of S3-D3\_HbR \\
-& \texttt{<subject>\_fnirs\_S3-D4\_HbR} & Description of S3-D4\_HbR \\
-& \texttt{<subject>\_fnirs\_S4-D2\_HbR} & Description of S4-D2\_HbR \\
-& \texttt{<subject>\_fnirs\_S4-D4\_HbR} & Description of S4-D4\_HbR \\
-& \texttt{<subject>\_fnirs\_S4-D5\_HbR} & Description of S4-D5\_HbR \\
-& \texttt{<subject>\_fnirs\_S5-D3\_HbR} & Description of S5-D3\_HbR \\
-& \texttt{<subject>\_fnirs\_S5-D4\_HbR} & Description of S5-D4\_HbR \\
-& \texttt{<subject>\_fnirs\_S5-D6\_HbR} & Description of S5-D6\_HbR \\
-& \texttt{<subject>\_fnirs\_S6-D4\_HbR} & Description of S6-D4\_HbR \\
-& \texttt{<subject>\_fnirs\_S6-D6\_HbR} & Description of S6-D6\_HbR \\
-& \texttt{<subject>\_fnirs\_S6-D7\_HbR} & Description of S6-D7\_HbR \\
-& \texttt{<subject>\_fnirs\_S7-D5\_HbR} & Description of S7-D5\_HbR \\
-& \texttt{<subject>\_fnirs\_S7-D7\_HbR} & Description of S7-D7\_HbR \\
-& \texttt{<subject>\_fnirs\_S8-D6\_HbR} & Description of S8-D6\_HbR \\
-& \texttt{<subject>\_fnirs\_S8-D7\_HbR} & Description of S8-D7\_HbR \\
-\hline
-\end{tabularx}
-\caption{Signals Descriptions}
-\label{tab:fNIRS_signals}
-\end{table}
+  \begin{table}
+    \centering
+    \begin{tabularx}{\textwidth}{|l|X|}
+    \hline
+    \textbf{fNIRS raw signal columns} & \textbf{Description (topological location of the subject's brain)} \\
+    \hline
+    \texttt{<subject>\_fnirs\_S1-D1\_HbO} & 'F3-F5': left frontal region \\
+    \hline
+    \texttt{<subject>\_fnirs\_S1-D2\_HbO} & 'F3-F1': left frontal region  \\
+    \hline
+    \texttt{<subject>\_fnirs\_S2-D1\_HbO} & 'Af7-F5': left anterior frontal region  \\
+    \hline
+    \texttt{<subject>\_fnirs\_S2-D3\_HbO} & 'Af7-Fp1': left anterior frontal region  \\
+    \hline
+    \texttt{<subject>\_fnirs\_S3-D1\_HbO} & 'Af3-F5': left anterior frontal region  \\
+    \hline
+    \texttt{<subject>\_fnirs\_S3-D3\_HbO} & 'Af3-Fp1': left anterior frontal region  \\
+    \hline
+    \texttt{<subject>\_fnirs\_S3-D4\_HbO} & 'Af3-Afz': left anterior frontal region  \\
+    \hline
+    \texttt{<subject>\_fnirs\_S4-D2\_HbO} & 'Fz-F1': left frontal region  \\
+    \hline
+    \texttt{<subject>\_fnirs\_S4-D4\_HbO} & 'Fz-Afz': central frontal region  \\
+    \hline
+    \texttt{<subject>\_fnirs\_S4-D5\_HbO} & 'Fz-F2': right frontal region  \\
+    \hline
+    \texttt{<subject>\_fnirs\_S5-D3\_HbO} & 'Fpz-Fp1': left frontal polar region  \\
+    \hline
+    \texttt{<subject>\_fnirs\_S5-D4\_HbO} & 'Fpz-Afz': central frontal polar region  \\
+    \hline
+    \texttt{<subject>\_fnirs\_S5-D6\_HbO} & 'Fpz-Fp2': right frontal polar region  \\
+    \hline
+    \texttt{<subject>\_fnirs\_S6-D4\_HbO} & 'Af4-Afz': right anterior frontal region  \\
+    \hline
+    \texttt{<subject>\_fnirs\_S6-D6\_HbO} & 'Af4-Fp2': right anterior frontal region  \\
+    \hline
+    \texttt{<subject>\_fnirs\_S6-D7\_HbO} & 'Af4-F6': right anterior frontal region  \\
+    \hline
+    \texttt{<subject>\_fnirs\_S7-D5\_HbO} & 'F4-F2': right frontal region  \\
+    \hline
+    \texttt{<subject>\_fnirs\_S7-D7\_HbO} & 'F4-F6': right frontal region  \\
+    \hline
+    \texttt{<subject>\_fnirs\_S8-D6\_HbO} & 'Af8-Fp2': right anterior frontal region  \\
+    \hline
+    \texttt{<subject>\_fnirs\_S8-D7\_HbO} & 'Af8-F6': right anterior frontal region  \\
+    \hline
+    \texttt{<subject>\_fnirs\_S1-D1\_HbR} & 'F3-F5': left frontal region  \\
+    \hline
+    \texttt{<subject>\_fnirs\_S1-D2\_HbR} & 'F3-F1': left frontal region  \\
+    \hline
+    \texttt{<subject>\_fnirs\_S2-D1\_HbR} & 'Af7-F5': left anterior frontal region  \\
+    \hline
+    \texttt{<subject>\_fnirs\_S2-D3\_HbR} & 'Af7-Fp1': left anterior frontal region  \\
+    \hline
+    \texttt{<subject>\_fnirs\_S3-D1\_HbR} & 'Af3-F5': left anterior frontal region  \\
+    \hline
+    \texttt{<subject>\_fnirs\_S3-D3\_HbR} & 'Af3-Fp1': left anterior frontal region  \\
+    \hline
+    \texttt{<subject>\_fnirs\_S3-D4\_HbR} & 'Af3-Afz': left anterior frontal region  \\
+    \hline
+    \texttt{<subject>\_fnirs\_S4-D2\_HbR} & 'Fz-F1': left frontal region  \\
+    \hline
+    \texttt{<subject>\_fnirs\_S4-D4\_HbR} & 'Fz-Afz': central frontal region  \\
+    \hline
+    \texttt{<subject>\_fnirs\_S4-D5\_HbR} & 'Fz-F2': right frontal region  \\
+    \hline
+    \texttt{<subject>\_fnirs\_S5-D3\_HbR} & 'Fpz-Fp1': left frontal polar region  \\
+    \hline
+    \texttt{<subject>\_fnirs\_S5-D4\_HbR} & 'Fpz-Afz': central frontal polar region  \\
+    \hline
+    \texttt{<subject>\_fnirs\_S5-D6\_HbR} & 'Fpz-Fp2': right frontal polar region  \\
+    \hline
+    \texttt{<subject>\_fnirs\_S6-D4\_HbR} & 'Af4-Afz': right anterior frontal region  \\
+    \hline
+    \texttt{<subject>\_fnirs\_S6-D6\_HbR} & 'Af4-Fp2': right anterior frontal region  \\
+    \hline
+    \texttt{<subject>\_fnirs\_S6-D7\_HbR} & 'Af4-F6': right anterior frontal region  \\
+    \hline
+    \texttt{<subject>\_fnirs\_S7-D5\_HbR} & 'F4-F2': right frontal region  \\
+    \hline
+    \texttt{<subject>\_fnirs\_S7-D7\_HbR} & 'F4-F6': right frontal region  \\
+    \hline
+    \texttt{<subject>\_fnirs\_S8-D6\_HbR} & 'Af8-Fp2': right anterior frontal region  \\
+    \hline
+    \texttt{<subject>\_fnirs\_S8-D7\_HbR} & 'Af8-F6': right anterior frontal region  \\
+    \hline
+    \end{tabularx}
+    \caption{Table of fNIRS raw signal descriptions, mapping the source (S) to the detector (D) for various topological locations on the subject's brain. HbO, or oxyhemoglobin, and HbR, or deoxyhemoglobin, are the two types of hemoglobin measured. For a visual representation of these electrode locations, refer to \autoref{fig:combined-montage}.}
+    \label{tab:fNIRS_signals}
+    \end{table}
