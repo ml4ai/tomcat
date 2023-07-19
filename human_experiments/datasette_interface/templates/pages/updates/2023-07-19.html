@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block body_class %}index{% endblock %}
+
+{% block content %}
+{{ render_markdown(
+"""
+# 2023-07-19 update
+
+## New version of derived data products
+
+### User-Facing Changes
+
+#### Data Content
+
+- The new data now includes all group sessions. In the previous version, the
+    following experiments were excluded:
+    - `exp_2022_12_05_12`
+    - `exp_2023_01_31_14`
+    - `exp_2023_02_10_10`
+- Additional raw channels of fNIRS have been incorporated into the new data.
+- Reports detailing the filtering process of EEG and fNIRS have been added to the new data.
+
+#### Data Format
+
+- The label `nirs` has been replaced with `fnirs` in the new data.
+- Instead of splitting the report into separate files per task as in the old
+data, the new data compiles the report of the entire process into a single file
+named `log.txt`.
+- The new data provides CSV files that contain the filtered signals and the synchronized signals of EEG and fNIRS for each experiment.
+- The NaN values previously found in the signal columns at the start and end of each task in the old data have been removed in the new data.
+- The `experiment_id` column previously found in each CSV file in the old data has been removed in the new data.
+
+### Changes Under the Hood
+
+The following changes to the signal processing pipeline were made:
+
+- The old process grouped the EEG and fNIRS signals for each task before synchronization and resampling. The new process first synchronizes and resamples the signals throughout the experiments before grouping them for task data synchronization. This results in different time series for synchronization and resampling, leading to different synchronized signal values between the old and new data.
+- The new process linearly interpolates the EEG and fNIRS signals to their recorded frequencies, ensuring regular intervals before filtering.
+- The new data filters the fNIRS using a Butterworth filter at order 4, compared to order 5 in the old process.
+- Instead of applying a lowpass FIR filter at frequency 55 to avoid aliasing before downsampling (as in the old process), the new process applies a Chebychev type I filter at order 8.
+- The new process replaces the previous method of resampling the EEG and fNIRS signals to the desired frequency using linear interpolation. It now uses a fast Fourier transform-based resampling method to achieve the target frequency.
+
+## Data products document
+
+- Added ['Data Products'
+document](http://ivilab.cs.arizona.edu/data/tomcat/data_products.pdf), which
+contains documentation about both raw (uncleaned) data that is accessible only to lab
+members and [derived data products](/derived-data-products) that we have disseminated publicly.
+The documentation of the raw data is mainly for internal use, while the
+documentation of the derived data products is intended for public consumption.
+  - Note that documentation for the *cleaned* raw data in the form of the SQLite
+    database is available as structured metadata in JSON form here:
+    https://tomcat.ivilab.org/-/metadata.json. This JSON object contains
+    descriptions for the tables and columns in the database. These descriptions are
+    also surfaced via the Datasette web interface.
+
+
+""")
+}}
+{% endblock %}
