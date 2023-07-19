@@ -412,39 +412,58 @@ Baseline Competitive Ping-Pong Task Fields:
 \end{itemize}
 
 
+\bigskip\bigskip\bigskip
+\item\textbf{XDF Files:}
+\begin{addmargin}[0em]{0em}
+    \item\textbf{Only for experiments before April 2023 (<cat>/<cat>\_eeg\_fnirs\_pupil.xdf)}\\
+    \item\verb|<cat>/<cat>_eeg_fnirs_pupil.xdf|\\(Extensible Data Format XDF, binary file format)\\
+    The \verb|<cat>_eeg_fnirs_pupil.xdf| contains <cat> data files and data streams for the Experiment. You must use a XDF viewer program to view or extract the data contained in this file. Some common software packages used to view or extract data from this XDF file are: MNE-Python, Matplotlib, and Qtgraph. A summary of data recorded in this XDF file is: fNIRS LSL Streams, EEG LSL Streams, and Pupil Data.
 
-\bigskip\item\textbf{XDF Files:}
-\medskip
-\item\verb|lsl/block_1.xdf|\\(Extensible Data Format XDF, binary file format)\\
-The \verb|block_1.xdf| contains data files and data streams for the Baseline Tasks portion of the Experiment. You must use a XDF viewer program to view or extract the data contained in this file. Some common software packages used to view or extract data from this XDF file are: MNE-Python, Matplotlib, and Qtgraph. A summary of data recorded in this XDF file is: fNIRS LSL Streams, EEG LSL Streams, Baseline Data, Filenames of the Face and Screen Images, and Pupil Data.
+    Data files and streams contained in the \verb|<cat>_eeg_fnirs_pupil.xdf|:
 
-Data files and streams contained in the \verb|block_1.xdf|:
+    \begin{itemize}
+        \item \verb|fNIRS LSL Streams| -\\fNIRS LSL Streams being transmitted from the "NIRx - Aurora" software programs running on the "fNIRS Server Computer" during the Experiment for participants on Lion, Tiger, and Leopard.
+        \item \verb|EEG LSL Streams| -\\EEG LSL Streams being transmitted from the "Brain Vision - LSL-actiChamp" software programs running on the "EEG Server Computer" during the Experiment for participants on Lion, Tiger, and Leopard.
+        \item \verb|Pupil Data| -\\Pupil Data files recorded from the "Pupil Labs - Pupil Capture" software programs running on the participant's iMacs, Lion, Tiger, and Leopard during the Experiment.
+    \end{itemize}
 
-\begin{itemize}
-    \item \verb|fNIRS LSL Streams| -\\fNIRS LSL Streams being transmitted from the "NIRx - Aurora" software programs running on the "fNIRS Server Computer" during the Baseline Tasks portion of the Experiment for participants on Lion, Tiger, and Leopard.
-    \item \verb|EEG LSL Streams| -\\EEG LSL Streams being transmitted from the "Brain Vision - LSL-actiChamp" software programs running on the "EEG Server Computer" during the Baseline Tasks portion of the Experiment for participants on Lion, Tiger, and Leopard.
-    \item \verb|Baseline Data for all Tasks| -\\All records that are outputted to the Baseline Tasks CSV files are also recorded in this XDF file for all Baseline Tasks.
-    \item \verb|Filenames of the Face Images| -\\The Filenames of all Face Images created during the Baseline Tasks portion of the Experiment for participants on Lion, Tiger, and Leopard.
-    \item \verb|Filenames of the Screen Images| -\\The Filenames of all Face Images created during the Baseline Tasks portion of the Experiment for participants on Lion, Tiger, and Leopard.
-    \item \verb|Pupil Data| -\\Pupil Data files recorded from the "Pupil Labs - Pupil Capture" software programs running on the participant's iMacs, Lion, Tiger, and Leopard during the Baseline Tasks portion of the Experiment.
-\end{itemize}
+\end{addmargin}
+
+\bigskip
+\begin{addmargin}[0em]{0em}
+    \item\textbf{Only for experiments starting April 2023 (block\_1.xdf and block\_2.xdf)\\}
+    \item\verb|lsl/block_1.xdf|\\(Extensible Data Format XDF, binary file format)\\
+    The \verb|block_1.xdf| contains data files and data streams for the Baseline Tasks portion of the Experiment. You must use a XDF viewer program to view or extract the data contained in this file. Some common software packages used to view or extract data from this XDF file are: MNE-Python, Matplotlib, and Qtgraph. A summary of data recorded in this XDF file is: fNIRS LSL Streams, EEG LSL Streams, Baseline Data, Filenames of the Face and Screen Images, and Pupil Data.
+
+    Data files and streams contained in the \verb|block_1.xdf|:
+
+    \begin{itemize}
+        \item \verb|fNIRS LSL Streams| -\\fNIRS LSL Streams being transmitted from the "NIRx - Aurora" software programs running on the "fNIRS Server Computer" during the Baseline Tasks portion of the Experiment for participants on Lion, Tiger, and Leopard.
+        \item \verb|EEG LSL Streams| -\\EEG LSL Streams being transmitted from the "Brain Vision - LSL-actiChamp" software programs running on the "EEG Server Computer" during the Baseline Tasks portion of the Experiment for participants on Lion, Tiger, and Leopard.
+        \item \verb|Baseline Data for all Tasks| -\\All records that are outputted to the Baseline Tasks CSV files are also recorded in this XDF file for all Baseline Tasks.
+        \item \verb|Filenames of the Face Images| -\\The Filenames of all Face Images created during the Baseline Tasks portion of the Experiment for participants on Lion, Tiger, and Leopard.
+        \item \verb|Filenames of the Screen Images| -\\The Filenames of all Face Images created during the Baseline Tasks portion of the Experiment for participants on Lion, Tiger, and Leopard.
+        \item \verb|Pupil Data| -\\Pupil Data files recorded from the "Pupil Labs - Pupil Capture" software programs running on the participant's iMacs, Lion, Tiger, and Leopard during the Baseline Tasks portion of the Experiment.
+    \end{itemize}
 
 
-\medskip
-\item\verb|lsl/block_2.xdf|\\(Extensible Data Format XDF, binary file format)\\
-The \verb|block_2.xdf| contains data files and data streams for the Minecraft portion of the Experiment. You must use a XDF viewer program to view or extract the data contained in this file. Some common software packages used to view or extract data from this XDF file are: MNE-Python, Matplotlib, and Qtgraph. A summary of data recorded in this XDF file is: fNIRS LSL Streams, EEG LSL Streams, Individual and Central Audio, Filenames of the Face and Screen Images, and Pupil Data.
+    \medskip
+    \item\verb|lsl/block_2.xdf|\\(Extensible Data Format XDF, binary file format)\\
+    The \verb|block_2.xdf| contains data files and data streams for the Minecraft portion of the Experiment. You must use a XDF viewer program to view or extract the data contained in this file. Some common software packages used to view or extract data from this XDF file are: MNE-Python, Matplotlib, and Qtgraph. A summary of data recorded in this XDF file is: fNIRS LSL Streams, EEG LSL Streams, Individual and Central Audio, Filenames of the Face and Screen Images, and Pupil Data.
 
-Data files and streams contained in the \verb|block_2.xdf|:
-\begin{itemize}
-    \item \verb|fNIRS LSL Streams| -\\fNIRS LSL Streams being transmitted from the "NIRx - Aurora" software programs running on the "fNIRS Server Computer" during the Minecraft portion of the Experiment for participants on Lion, Tiger, and Leopard.
-    \item \verb|EEG LSL Streams| -\\EEG LSL Streams being transmitted from the "Brain Vision - LSL-actiChamp" software programs running on the "EEG Server Computer" during the Minecraft portion of the Experiment for participants on Lion, Tiger, and Leopard.
-    \item \verb|Minecraft Messages| -\\A series of JSON strings recording the messages sent to and from participants during the three Minecraft missions, Training, Saturn A, and Saturn B.
-    \item \verb|Individual Audio| -\\Audio Signals captured during the Minecraft portion of the Experiment from each participant's microphone, Lion, Tiger, and Leopard.
-    \item \verb|Central Audio| -\\This is Audio File from the central array microphone located in the center of the experiment room that picks up all audio in the room during the experiment.
-    \item \verb|Filenames of the Face Images| -\\The Filenames of all Face Images created during the Minecraft portion of the Experiment for participants on Lion, Tiger, and Leopard.
-    \item \verb|Filenames of the Screen Images| -\\The Filenames of all Face Images created during the Minecraft portion of the Experiment for participants on Lion, Tiger, and Leopard.
-    \item \verb|Pupil Data| -\\Pupil Data files recorded from the "Pupil Labs - Pupil Capture" software programs running on the participant's iMacs, Lion, Tiger, and Leopard during the Minecraft portion of the Experiment.
-\end{itemize}
+    Data files and streams contained in the \verb|block_2.xdf|:
+    \begin{itemize}
+        \item \verb|fNIRS LSL Streams| -\\fNIRS LSL Streams being transmitted from the "NIRx - Aurora" software programs running on the "fNIRS Server Computer" during the Minecraft portion of the Experiment for participants on Lion, Tiger, and Leopard.
+        \item \verb|EEG LSL Streams| -\\EEG LSL Streams being transmitted from the "Brain Vision - LSL-actiChamp" software programs running on the "EEG Server Computer" during the Minecraft portion of the Experiment for participants on Lion, Tiger, and Leopard.
+        \item \verb|Minecraft Messages| -\\A series of JSON strings recording the messages sent to and from participants during the three Minecraft missions, Training, Saturn A, and Saturn B.
+        \item \verb|Individual Audio| -\\Audio Signals captured during the Minecraft portion of the Experiment from each participant's microphone, Lion, Tiger, and Leopard.
+        \item \verb|Central Audio| -\\This is Audio File from the central array microphone located in the center of the experiment room that picks up all audio in the room during the experiment.
+        \item \verb|Filenames of the Face Images| -\\The Filenames of all Face Images created during the Minecraft portion of the Experiment for participants on Lion, Tiger, and Leopard.
+        \item \verb|Filenames of the Screen Images| -\\The Filenames of all Face Images created during the Minecraft portion of the Experiment for participants on Lion, Tiger, and Leopard.
+        \item \verb|Pupil Data| -\\Pupil Data files recorded from the "Pupil Labs - Pupil Capture" software programs running on the participant's iMacs, Lion, Tiger, and Leopard during the Minecraft portion of the Experiment.
+    \end{itemize}
+
+\end{addmargin}
 
 
 \end{description}
