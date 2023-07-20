@@ -1,0 +1,385 @@
+\section{Derived Data Description}
+
+\subsection{Derived Data Files}
+
+The following folders contain several versions of derived data at various synchronization frequencies:
+\begin{itemize}
+  \item \texttt{fnirs\_20hz} contains synchronized fNIRS signals and task data at 20 Hz sampling rate.
+  \item \texttt{fnirs\_raw\_20hz} contains synchronized fNIRS raw signals and task data at 20 Hz sampling rate.
+  \item \texttt{eeg\_1000hz} contains synchronized EEG signals and task data at 1000 Hz sampling rate.
+  \item \texttt{eeg\_1200hz\_120hz} contains synchronized EEG signals with 1200 Hz sampling rate, then downsampled to 120 Hz sampling rate and synchronized and task data.
+  \item \texttt{fnirs\_eeg\_1000hz} contains synchronized fNIRS and EEG signals and task data at 1000 Hz sampling rate.
+  \item \texttt{fnirs\_raw\_eeg\_1000hz} contains synchronized fNIRS raw and EEG signals and task data at 1000 Hz sampling rate.
+  \item \texttt{fnirs\_eeg\_1200hz\_120hz} contains synchronized fNIRS and EEG signals with 1200 Hz sampling rate, then downsampled to 120 Hz sampling rate and synchronized and task data.
+  \item \texttt{fnirs\_raw\_eeg\_1200hz\_120hz} contains synchronized fNIRS raw and EEG signals with 1200 Hz sampling rate, then downsampled to 120 Hz sampling rate and synchronized and task data.
+\end{itemize}
+
+Each derived data folder contains synchronized fNIRS and/or EEG signals for each task and for the entire experiment for each experiment:
+\begin{verbatim}
+exp_*/
+    rest_state.csv
+    finger_tapping.csv
+    lion_affective_individual.csv
+    tiger_affective_individual.csv
+    leopard_affective_individual.csv
+    affective_team.csv
+    ping_pong_competitive_0.csv
+    ping_pong_competitive_1.csv
+    ping_pong_cooperative.csv
+    hands_on_training.csv
+    saturn_a.csv
+    saturn_b.csv
+    pre_processed_lion_fnirs.csv
+    pre_processed_tiger_fnirs.csv
+    pre_processed_leopard_fnirs.csv
+    pre_processed_lion_eeg.csv
+    pre_processed_tiger_eeg.csv
+    pre_processed_leopard_eeg.csv
+    synchronized_signals.csv
+    log.txt
+\end{verbatim}
+
+Each experiment contains the following CSV files, with columns described in \ref{sec:derived_data_cols_desc}:
+%
+\begin{itemize}
+  \item \texttt{rest\_state.csv} contains the synchronized signal and rest state task data.
+  \item \texttt{finger\_tapping.csv} contains the synchronized signal and finger tapping task data.
+  \item \texttt{lion\_affective\_individual.csv} contains the synchronized signal and individual affective task data for participant using the Lion computer in the lab.
+  \item \texttt{tiger\_affective\_individual.csv} contains the synchronized signal and individual affective task data for participant using the Leopard computer in the lab.
+  \item \texttt{leopard\_affective\_individual.csv} contains the synchronized signal and individual affective task data for participant using the Leopard computer in the lab.
+  \item \texttt{affective\_team.csv} contains the synchronized signal and team affective task data.
+  \item \texttt{ping\_pong\_competitive\_0.csv} contains the synchronized signal and ping pong competitive task data between two participants or one participant and one experimenter. The \texttt{0} indicates the match ID to distinguish between matches.
+  \item \texttt{ping\_pong\_competitive\_1.csv} contains the synchronized signal and ping pong competitive task data between two participants or one participant and one experimenter. The \texttt{1} indicates the match ID to distinguish between matches.
+  \item \texttt{ping\_pong\_cooperative.csv} contains the synchronized signal and ping pong cooperative task data between three participants against an artificial intelligent agent.
+  \item \texttt{hands\_on\_training.csv} contains the synchronized signal and Minecraft search-and-rescue hands-on training mission data.
+  \item \texttt{saturn\_a.csv} contains the synchronized signal and Minecraft search-and-rescue Saturn A mission data.
+  \item \texttt{saturn\_b.csv} contains the synchronized signal and Minecraft search-and-rescue Saturn B mission data.
+  \item \texttt{pre\_processed\_lion\_fnirs.csv}  contains the filtered fNIRS signals of the participant using the Lion computer.
+  \item \texttt{pre\_processed\_lion\_eeg.csv}  contains the filtered EEG signals of the participant using the Lion computer.
+  \item \texttt{pre\_processed\_tiger\_fnirs.csv}  contains the filtered fNIRS signals of the participant using the Tiger computer.
+  \item \texttt{pre\_processed\_tiger\_eeg.csv}  contains the filtered EEG signals of the participant using the Tiger computer.
+  \item \texttt{pre\_processed\_leopard\_fnirs.csv}  contains the filtered fNIRS signals of the participant using the Leopard computer.
+  \item \texttt{pre\_processed\_leopard\_eeg.csv}  contains the filtered EEG signals of the participant using the Leopard computer.
+  \item \texttt{synchronized\_signals.csv} contains the synchronized signal for the entire experiment session.
+  \item \texttt{log.txt} contains the messages logged by the processing program, which includes information about the filtering and the synchronization processes.
+\end{itemize}
+
+Not all experiments may include the aforementioned CSV files, due to a couple
+of primary reasons. Firstly, time constraints can result in certain tasks
+remaining incomplete in some experiments. Secondly, instances where the
+experiment involves only two participants or the recorded signals are
+compromised during certain tasks can also lead to the absence of these CSV
+files.
+
+\subsection{Derived Data Columns Descriptions}
+\label{sec:derived_data_cols_desc}
+
+The columns in each aforementioned CSV file (e.g., \texttt{rest\_state.csv},
+\texttt{ping\_pong\_cooperative.csv}) are detailed in
+\autoref{tab:shared_columns}, \autoref{tab:rest_task_columns},
+\autoref{tab:finger_task_columns},
+\autoref{tab:individual_affective_task_columns},
+\autoref{tab:team_affective_task_columns},
+\autoref{tab:ping_pong_competitive_task_columns},
+\autoref{tab:ping_pong_cooperative_task_columns},
+\autoref{tab:minecraft_task_columns}, \autoref{tab:EEG_signals},
+\autoref{tab:fNIRS_raw_signals}, and \autoref{tab:fNIRS_signals}. Note that the columns \texttt{lion\_id}, \texttt{tiger\_id}, and \texttt{leopard\_id} in each CSV file is currently a work-in-progress and need some improvements to reflect subject IDs in each experiment.
+
+\begin{table}[h]
+    \centering
+    \begin{tabularx}{\textwidth}{lX}
+        \toprule
+        Time columns & Description \\
+        \midrule
+        \texttt{index} (first column) & Row index counting from synchronized signals of the entire experiment in \texttt{synchronized\_signals.csv}. This is a reference column to identify the signals from the experiment synchronized signals with the task synchronized signals.\\
+        \texttt{unix\_time} & Unix time (in seconds, with 0.1 microsecond resolution) of when the fNIRS and EEG signals and the task data were recorded and synchronized.\\
+        \texttt{human\_readable\_time} & UTC time (in seconds, with 1.0 microsecond resolution) in the human readable format of when the fNIRS and EEG signals and the task data were recorded.\\
+        \texttt{seconds\_since\_start} & Time (in seconds, with 0.1 microsecond resolution) since the first entry of the task or the experiment.\\
+        \bottomrule
+    \end{tabularx}
+    \caption{Columns of time that are common in all CSV files of derived data.}
+    \label{tab:shared_columns}
+\end{table}
+
+\begin{table}[h]
+\centering
+\begin{tabularx}{\textwidth}{lX}
+    \toprule
+Channel & Description \\
+\midrule
+\texttt{event\_type} & Event labels for the rest state task. Event types include \texttt{start\_rest\_state} signifying the start of the task, and \texttt{end\_rest\_state} signifying the end of task.\\
+\bottomrule
+\end{tabularx}
+\caption{Rest State Task columns information in the CSV file \texttt{rest\_state.csv} of the derived data.}
+\label{tab:rest_task_columns}
+\end{table}
+
+\begin{table}[h]
+\centering
+\begin{tabularx}{\textwidth}{lX}
+    \toprule
+Channel & Description \\
+\midrule
+\texttt{event\_type} & Event labels for the finger tapping task. Event types include \texttt{start\_fingertapping\_task} signifying the start of the task and the practice period, \texttt{end\_fingertapping\_task} for the end of the task, \texttt{individual} for the period during which the participants must tap in rhythm by themselves, and \texttt{team} for the period during which the participants must tap in synchronized rhythm with other participants.\\
+\texttt{countdown\_timer} & This is the timer displayed to the participants on the monitor signifying the remaining duration of the task's phase.\\
+\texttt{lion} & \texttt{0} for when the participant on the Lion computer is not pressing and holding down on the spacebar, and \texttt{1} for when the participant is pressing and holding down the space bar.\\
+\texttt{tiger} & \texttt{0} for when the participant on the Tiger computer is not pressing and holding down on the spacebar, and \texttt{1} for when the participant is pressing and holding down the space bar.\\
+\texttt{leopard} & \texttt{0} for when the participant on the Leopard computer is not pressing and holding down on the spacebar, and \texttt{1} for when the participant is pressing and holding down the space bar.\\
+\bottomrule
+\end{tabularx}
+\caption{Finger Tapping Task columns information in the CSV file \texttt{finger\_tapping.csv} of the derived data.}
+\label{tab:finger_task_columns}
+\end{table}
+
+\begin{table}[h]
+\centering
+\begin{tabularx}{\textwidth}{lX}
+    \toprule
+    Channel & Description \\\midrule
+    \texttt{event\_type} & Event labels for the individual affective task. Event types include \texttt{start\_affective\_task} signifying the start of the task, \texttt{intermediate\_selection} signifying when a participant selects an arousal rating or a valence rating after observing an image, and \texttt{final\_submission} signifying when a participant submits the arousal and valence score for an image. For experiments recorded in April, 2023 onward, there are additional events, including \texttt{show\_blank\_screen} for when a participant's monitor began rendering the blank, black screen, \texttt{show\_cross\_screen} for when the monitor began rendering the black background with a plus symbol in the middle of the screen to center the participant's attention, \texttt{show\_image} for when the monitor began rendering an image at the center of the screen in front of a black background, and \texttt{show\_rating\_screen} for when the monitor began rendering the arousal and valence rating screen at the center of the screen.\\
+    \texttt{image\_path} & The image file that was rendered on the participants' monitors.\\
+    \texttt{arousal\_score} & The arousal score selected by the participant during the \texttt{intermediate\_selection} and \texttt{final\_submission} events.\\
+    \texttt{valence\_score} & The valence score selected by the participant during the \texttt{intermediate\_selection} and \texttt{final\_submission} events.\\
+\bottomrule
+\end{tabularx}
+\caption{Individual Affective Task columns information in the CSV files \texttt{lion\_affective\_individual.csv}, \texttt{tiger\_affective\_individual.csv}, and \texttt{leopard\_affective\_individual.csv} of the derived data.}
+\label{tab:individual_affective_task_columns}
+\end{table}
+
+\begin{table}[h]
+\centering
+\begin{tabularx}{\textwidth}{lX}
+\toprule
+Channel & Description \\
+\midrule
+\texttt{lion\_event\_type} & Similar event types to Table \ref{tab:individual_affective_task_columns}, but also include event \texttt{show\_observe\_message} signifying when the monitor displayed the message instructing the participants to quietly observe the image, \texttt{show\_discuss\_message} for when the monitor displayed the message instructing the participants to share and discuss their emotional experience with each other, and \texttt{show\_rater\_selected\_message} for when the monitor displayed the message notifying the participant who has been selected to input the shared arousal and valence rating. The events come from the participant sitting on the Lion computer in the lab.\\
+\texttt{tiger\_event\_type} & Similar to the event types of the participant sitting on the Lion computer, but the events come from the participant sitting on the Tiger computer.\\
+\texttt{leopard\_event\_type} & Similar to the event types of the participant sitting on the Lion computer, but the events come from the participant sitting on the Leopard computer.\\
+\texttt{image\_path} & The image file that was rendered on the participants' monitors.\\
+\texttt{arousal\_score} & The arousal score selected by the participant during the \texttt{intermediate\_selection} and \texttt{final\_submission} events.\\
+\texttt{valence\_score} & The valence score selected by the participant during the \texttt{intermediate\_selection} and \texttt{final\_submission} events.\\
+\bottomrule
+\end{tabularx}
+\caption{%
+    Team Affective Task columns information in the CSV file
+    \texttt{affective\_team.csv} of the derived data.
+}
+\label{tab:team_affective_task_columns}
+\end{table}
+
+\begin{table}[h]
+\centering
+\begin{tabularx}{\textwidth}{lX}
+\toprule
+Channel & Description \\
+\midrule
+\texttt{score\_left} & The current score for the player on the left side.\\
+\texttt{score\_right} & The current score for the player on the right side.\\
+\texttt{started} & \texttt{False} for when the task is in practice mode: the ball stayed fixed at the center of the screen, while the players were allowed to move the paddles along the vertical axis. \texttt{True} for when the task is not in practice mode: the ball moved and the players could score points against the other side.\\
+\texttt{ball\_x} & the x-axis coordinate of the ball's top left pixel, with the lower number located on the left side of the screen, and the higher number on the right side.\\
+\texttt{ball\_y} & the y-axis coordinate of the ball's top left pixel, with the lower number located toward the top  of the screen, and the higher number toward the bottom.\\
+\texttt{<subject>\_x} & the x-axis coordinate of the player's paddle's top left pixel, with the lower number located on the left side of the screen, and the higher number on the right side. The x-axis coordinate is fixed, and the lower number indicates that the player's paddle was on the left side and the higher number indicates that the player's paddle was on the right side.\\
+\texttt{<subject>\_y} & the y-axis coordinate of the player's paddle's top left pixel, with the lower number located toward the top of the screen, and the higher number toward the bottom.\\
+\texttt{exp\_x} & the x-axis coordinate of the experimenter's paddle's top left pixel, with the lower number located on the left side of the screen, and the higher number on the right side. The x-axis coordinate is fixed, and the lower number indicates that the experimenter's paddle was on the left side and the higher number indicates that the experimenter's paddle was on the right side.\\
+\texttt{exp\_y} & the y-axis coordinate of the experimenter's paddle's top left pixel, with the lower number located toward the top of the screen, and the higher number toward the bottom.\\
+\bottomrule
+\end{tabularx}
+\caption{Ping Pong Competitive Task columns information in the CSV files \texttt{ping\_pong\_competitive\_0.csv} and \texttt{ping\_pong\_competitive\_1.csv} of the derived data.}
+\label{tab:ping_pong_competitive_task_columns}
+\end{table}
+
+\begin{table}[h]
+\centering
+\begin{tabularx}{\textwidth}{lX}
+\toprule
+Channel & Description \\
+\midrule
+\texttt{score\_left} & The current score for the players on the left side.\\
+\texttt{score\_right} & The current score for the artificial intelligent agent on the right side.\\
+\texttt{started} & \texttt{False} for when the task is in practice mode: the ball stayed fixed at the center of the screen, while the players were allowed to move the paddles along the vertical axis. \texttt{True} for when the task is not in practice mode: the ball moved and the players could score points against the other side.\\
+\texttt{ball\_x} & the x-axis coordinate of the ball's top left pixel, with the lower number located on the left side of the screen, and the higher number on the right side.\\
+\texttt{ball\_y} & the y-axis coordinate of the ball's top left pixel, with the lower number located toward the top  of the screen, and the higher number toward the bottom.\\
+\texttt{<subject>\_x} & the x-axis coordinate of the player's paddle's top left pixel, with the lower number located on the left side of the screen, and the higher number on the right side. The x-axis coordinate is fixed, all players were on the left side.\\
+\texttt{<subject>\_y} & the y-axis coordinate of the player's paddle's top left pixel, with the lower number located toward the top of the screen, and the higher number toward the bottom.\\
+\texttt{ai\_x} & the x-axis coordinate of the artificial intelligent agent's paddle's top left pixel, with the lower number located on the left side of the screen, and the higher number on the right side. The x-axis coordinate is fixed, and the artificial intelligent agent was on the right side.\\
+\texttt{ai\_y} & the y-axis coordinate of the artificial intelligent agent's paddle's top left pixel, with the lower number located toward the top of the screen, and the higher number toward the bottom.\\
+\bottomrule
+\end{tabularx}
+\caption{Ping Pong Cooperative Task columns information in the CSV file \texttt{ping\_pong\_cooperative.csv} of the derived data.}
+\label{tab:ping_pong_cooperative_task_columns}
+\end{table}
+
+\begin{table}[h]
+\centering
+\begin{tabularx}{\textwidth}{lX}
+    \toprule
+Channel & Description \\
+\midrule
+\texttt{score} & The current score of the team. The team scored points for rescuing victims in a search-and-rescue mission in Minecraft.\\
+\bottomrule
+\end{tabularx}
+\caption{Minecraft Hands-on Training \texttt{hands\_on\_training.csv}, Saturn A \texttt{saturn\_a.csv}, and Saturn B \texttt{saturn\_b.csv} columns information in the CSV files of the derived data.}
+\label{tab:minecraft_task_columns}
+\end{table}
+
+\begin{figure}
+  \includegraphics[width=\linewidth]{images/combined_montage.pdf}
+  \centering
+  \caption{%
+      The montage we used for combined EEG/fNIRS data acquisition.  EEG
+      electrodes were located in the anterior frontal (AFF1h, AFF2h), frontal
+      (F7, F8), frontocentral (FC5, FCz, FC6), central (C3, Cz, C4),
+      occipital (O1, O2), temporal (T7, T8) and parietal (P7, P3, Pz, P4, P8)
+      regions.  fNIRS optodes were located in frontal (Fz, F1, F2, F3, F4,
+      F5, F6), anterior frontal (AF3, AF4, AFz, AF7, AF8), frontal polar
+      (FP1, FPz, FP2). The line is the channel formed when fNIRS source
+      optode (red) and fNIRS detector (blue) optode are combined.
+  }
+  \label{fig:combined-montage}
+\end{figure}
+
+\begin{table}
+\centering
+\begin{tabularx}{\textwidth}{lX}
+    \toprule
+    EEG signal columns & Description (topological location of the subject's brain) \\
+    \midrule
+    \texttt{<subject>\_eeg\_AFF1h} & Left anterior frontal region \\
+    \texttt{<subject>\_eeg\_F7} & Left frontal region  \\
+    \texttt{<subject>\_eeg\_FC5} & Left fronto-central region  \\
+    \texttt{<subject>\_eeg\_C3} & Left central region \\
+    \texttt{<subject>\_eeg\_T7} & Left temporal region \\
+    \texttt{<subject>\_eeg\_TP9} & Left temporal-parietal region \\
+    \texttt{<subject>\_eeg\_Pz} & Central parietal region \\
+    \texttt{<subject>\_eeg\_P3} & Left parietal region \\
+    \texttt{<subject>\_eeg\_P7} & Left parietal region \\
+    \texttt{<subject>\_eeg\_O1} & Left occipital region \\
+    \texttt{<subject>\_eeg\_O2} & Right occipital region \\
+    \texttt{<subject>\_eeg\_P8} & Right parietal region \\
+    \texttt{<subject>\_eeg\_P4} & Right parietal region \\
+    \texttt{<subject>\_eeg\_TP10} & Right temporal-parietal region \\
+    \texttt{<subject>\_eeg\_Cz} & central region \\
+    \texttt{<subject>\_eeg\_C4} & Right central region \\
+    \texttt{<subject>\_eeg\_T8} & Right temporal region \\
+    \texttt{<subject>\_eeg\_FC6} & Right fronto-central region \\
+    \texttt{<subject>\_eeg\_FCz} & Central fronto-central region \\
+    \texttt{<subject>\_eeg\_F8} & Right frontal region \\
+    \texttt{<subject>\_eeg\_AFF2h} & Right anterior frontal region \\
+    \texttt{<subject>\_eeg\_GSR} & Right hand \\
+    \texttt{<subject>\_eeg\_EKG} & 4\textsuperscript{th} Intercostal space \\
+    \bottomrule
+\end{tabularx}
+\caption{EEG signal descriptions, specifying the topological locations on the subject's brain. Each entry provides the label of the signal column corresponding to the EEG electrode location. For a visual representation of these electrode locations, refer to \autoref{fig:combined-montage}.
+}
+\label{tab:EEG_signals}
+\end{table}
+
+\begin{table}
+  \centering
+  \begin{tabularx}{\textwidth}{lX}
+  \toprule
+  fNIRS raw signal columns & Description (topological location of the subject's brain) \\
+  \midrule
+  \texttt{<subject>\_fnirs\_S1-D1\_760} & 'F3-F5': left frontal region \\
+  \texttt{<subject>\_fnirs\_S1-D2\_760} & 'F3-F1': left frontal region  \\
+  \texttt{<subject>\_fnirs\_S2-D1\_760} & 'Af7-F5': left anterior frontal region  \\
+  \texttt{<subject>\_fnirs\_S2-D3\_760} & 'Af7-Fp1': left anterior frontal region  \\
+  \texttt{<subject>\_fnirs\_S3-D1\_760} & 'Af3-F5': left anterior frontal region  \\
+  \texttt{<subject>\_fnirs\_S3-D3\_760} & 'Af3-Fp1': left anterior frontal region  \\
+  \texttt{<subject>\_fnirs\_S3-D4\_760} & 'Af3-Afz': left anterior frontal region  \\
+  \texttt{<subject>\_fnirs\_S4-D2\_760} & 'Fz-F1': left frontal region  \\
+  \texttt{<subject>\_fnirs\_S4-D4\_760} & 'Fz-Afz': central frontal region  \\
+  \texttt{<subject>\_fnirs\_S4-D5\_760} & 'Fz-F2': right frontal region  \\
+  \texttt{<subject>\_fnirs\_S5-D3\_760} & 'Fpz-Fp1': left frontal polar region  \\
+  \texttt{<subject>\_fnirs\_S5-D4\_760} & 'Fpz-Afz': central frontal polar region  \\
+  \texttt{<subject>\_fnirs\_S5-D6\_760} & 'Fpz-Fp2': right frontal polar region  \\
+  \texttt{<subject>\_fnirs\_S6-D4\_760} & 'Af4-Afz': right anterior frontal region  \\
+  \texttt{<subject>\_fnirs\_S6-D6\_760} & 'Af4-Fp2': right anterior frontal region  \\
+  \texttt{<subject>\_fnirs\_S6-D7\_760} & 'Af4-F6': right anterior frontal region  \\
+  \texttt{<subject>\_fnirs\_S7-D5\_760} & 'F4-F2': right frontal region  \\
+  \texttt{<subject>\_fnirs\_S7-D7\_760} & 'F4-F6': right frontal region  \\
+  \texttt{<subject>\_fnirs\_S8-D6\_760} & 'Af8-Fp2': right anterior frontal region  \\
+  \texttt{<subject>\_fnirs\_S8-D7\_760} & 'Af8-F6': right anterior frontal region  \\
+  \texttt{<subject>\_fnirs\_S1-D1\_850} & 'F3-F5': left frontal region  \\
+  \texttt{<subject>\_fnirs\_S1-D2\_850} & 'F3-F1': left frontal region  \\
+  \texttt{<subject>\_fnirs\_S2-D1\_850} & 'Af7-F5': left anterior frontal region  \\
+  \texttt{<subject>\_fnirs\_S2-D3\_850} & 'Af7-Fp1': left anterior frontal region  \\
+  \texttt{<subject>\_fnirs\_S3-D1\_850} & 'Af3-F5': left anterior frontal region  \\
+  \texttt{<subject>\_fnirs\_S3-D3\_850} & 'Af3-Fp1': left anterior frontal region  \\
+  \texttt{<subject>\_fnirs\_S3-D4\_850} & 'Af3-Afz': left anterior frontal region  \\
+  \texttt{<subject>\_fnirs\_S4-D2\_850} & 'Fz-F1': left frontal region  \\
+  \texttt{<subject>\_fnirs\_S4-D4\_850} & 'Fz-Afz': central frontal region  \\
+  \texttt{<subject>\_fnirs\_S4-D5\_850} & 'Fz-F2': right frontal region  \\
+  \texttt{<subject>\_fnirs\_S5-D3\_850} & 'Fpz-Fp1': left frontal polar region  \\
+  \texttt{<subject>\_fnirs\_S5-D4\_850} & 'Fpz-Afz': central frontal polar region  \\
+  \texttt{<subject>\_fnirs\_S5-D6\_850} & 'Fpz-Fp2': right frontal polar region  \\
+  \texttt{<subject>\_fnirs\_S6-D4\_850} & 'Af4-Afz': right anterior frontal region  \\
+  \texttt{<subject>\_fnirs\_S6-D6\_850} & 'Af4-Fp2': right anterior frontal region  \\
+  \texttt{<subject>\_fnirs\_S6-D7\_850} & 'Af4-F6': right anterior frontal region  \\
+  \texttt{<subject>\_fnirs\_S7-D5\_850} & 'F4-F2': right frontal region  \\
+  \texttt{<subject>\_fnirs\_S7-D7\_850} & 'F4-F6': right frontal region  \\
+  \texttt{<subject>\_fnirs\_S8-D6\_850} & 'Af8-Fp2': right anterior frontal region  \\
+  \texttt{<subject>\_fnirs\_S8-D7\_850} & 'Af8-F6': right anterior frontal region  \\
+  \bottomrule
+  \end{tabularx}
+  \caption{Table of fNIRS raw signal descriptions, mapping the source (S) to the detector (D) for various topological locations on the subject's brain. These signals where recorded using the Aurora fNIRS software. Each channel is recorded using light wavelengths of 760nm and 850nm. For a visual representation of these electrode locations, refer to \autoref{fig:combined-montage}.}
+  \label{tab:fNIRS_raw_signals}
+  \end{table}
+
+  \begin{table}
+    \centering
+    \begin{tabularx}{\textwidth}{lX}
+    \toprule
+    fNIRS raw signal columns & Description (topological location of the subject's brain) \\
+    \midrule
+    \texttt{<subject>\_fnirs\_S1-D1\_HbO} & 'F3-F5': left frontal region \\
+    \texttt{<subject>\_fnirs\_S1-D2\_HbO} & 'F3-F1': left frontal region  \\
+    \texttt{<subject>\_fnirs\_S2-D1\_HbO} & 'Af7-F5': left anterior frontal region  \\
+    \texttt{<subject>\_fnirs\_S2-D3\_HbO} & 'Af7-Fp1': left anterior frontal region  \\
+    \texttt{<subject>\_fnirs\_S3-D1\_HbO} & 'Af3-F5': left anterior frontal region  \\
+    \texttt{<subject>\_fnirs\_S3-D3\_HbO} & 'Af3-Fp1': left anterior frontal region  \\
+    \texttt{<subject>\_fnirs\_S3-D4\_HbO} & 'Af3-Afz': left anterior frontal region  \\
+    \texttt{<subject>\_fnirs\_S4-D2\_HbO} & 'Fz-F1': left frontal region  \\
+    \texttt{<subject>\_fnirs\_S4-D4\_HbO} & 'Fz-Afz': central frontal region  \\
+    \texttt{<subject>\_fnirs\_S4-D5\_HbO} & 'Fz-F2': right frontal region  \\
+    \texttt{<subject>\_fnirs\_S5-D3\_HbO} & 'Fpz-Fp1': left frontal polar region  \\
+    \texttt{<subject>\_fnirs\_S5-D4\_HbO} & 'Fpz-Afz': central frontal polar region  \\
+    \texttt{<subject>\_fnirs\_S5-D6\_HbO} & 'Fpz-Fp2': right frontal polar region  \\
+    \texttt{<subject>\_fnirs\_S6-D4\_HbO} & 'Af4-Afz': right anterior frontal region  \\
+    \texttt{<subject>\_fnirs\_S6-D6\_HbO} & 'Af4-Fp2': right anterior frontal region  \\
+    \texttt{<subject>\_fnirs\_S6-D7\_HbO} & 'Af4-F6': right anterior frontal region  \\
+    \texttt{<subject>\_fnirs\_S7-D5\_HbO} & 'F4-F2': right frontal region  \\
+    \texttt{<subject>\_fnirs\_S7-D7\_HbO} & 'F4-F6': right frontal region  \\
+    \texttt{<subject>\_fnirs\_S8-D6\_HbO} & 'Af8-Fp2': right anterior frontal region  \\
+    \texttt{<subject>\_fnirs\_S8-D7\_HbO} & 'Af8-F6': right anterior frontal region  \\
+    \texttt{<subject>\_fnirs\_S1-D1\_HbR} & 'F3-F5': left frontal region  \\
+    \texttt{<subject>\_fnirs\_S1-D2\_HbR} & 'F3-F1': left frontal region  \\
+    \texttt{<subject>\_fnirs\_S2-D1\_HbR} & 'Af7-F5': left anterior frontal region  \\
+    \texttt{<subject>\_fnirs\_S2-D3\_HbR} & 'Af7-Fp1': left anterior frontal region  \\
+    \texttt{<subject>\_fnirs\_S3-D1\_HbR} & 'Af3-F5': left anterior frontal region  \\
+    \texttt{<subject>\_fnirs\_S3-D3\_HbR} & 'Af3-Fp1': left anterior frontal region  \\
+    \texttt{<subject>\_fnirs\_S3-D4\_HbR} & 'Af3-Afz': left anterior frontal region  \\
+    \texttt{<subject>\_fnirs\_S4-D2\_HbR} & 'Fz-F1': left frontal region  \\
+    \texttt{<subject>\_fnirs\_S4-D4\_HbR} & 'Fz-Afz': central frontal region  \\
+    \texttt{<subject>\_fnirs\_S4-D5\_HbR} & 'Fz-F2': right frontal region  \\
+    \texttt{<subject>\_fnirs\_S5-D3\_HbR} & 'Fpz-Fp1': left frontal polar region  \\
+    \texttt{<subject>\_fnirs\_S5-D4\_HbR} & 'Fpz-Afz': central frontal polar region  \\
+    \texttt{<subject>\_fnirs\_S5-D6\_HbR} & 'Fpz-Fp2': right frontal polar region  \\
+    \texttt{<subject>\_fnirs\_S6-D4\_HbR} & 'Af4-Afz': right anterior frontal region  \\
+    \texttt{<subject>\_fnirs\_S6-D6\_HbR} & 'Af4-Fp2': right anterior frontal region  \\
+    \texttt{<subject>\_fnirs\_S6-D7\_HbR} & 'Af4-F6': right anterior frontal region  \\
+    \texttt{<subject>\_fnirs\_S7-D5\_HbR} & 'F4-F2': right frontal region  \\
+    \texttt{<subject>\_fnirs\_S7-D7\_HbR} & 'F4-F6': right frontal region  \\
+    \texttt{<subject>\_fnirs\_S8-D6\_HbR} & 'Af8-Fp2': right anterior frontal region  \\
+    \texttt{<subject>\_fnirs\_S8-D7\_HbR} & 'Af8-F6': right anterior frontal region  \\
+    \bottomrule
+    \end{tabularx}
+    \caption{%
+        fNIRS raw signal descriptions, mapping the source (S) to the detector
+        (D) for various topological locations on the subject's brain. HbO, or
+        oxyhemoglobin, and HbR, or deoxyhemoglobin, are the two types of
+        hemoglobin measured. For a visual representation of these electrode
+        locations, refer to \autoref{fig:combined-montage}.
+    }
+    \label{tab:fNIRS_signals}
+    \end{table}

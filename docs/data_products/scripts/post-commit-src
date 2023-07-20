@@ -1,0 +1,28 @@
+#!/bin/tcsh
+
+# Emergency stop. No output
+if (-e "/home/svn/src/hooks/DISABLE_REPO_SYNC") exit 1
+
+# Similar stop, but it is by design, and the exit value is 0. For example, we
+# use this if we are creating a sync setup. 
+if (-e "/home/svn/src/hooks/SKIP_POST_TO_COMMIT") exit 0
+
+# We want to be running with a lock ASAP, but we need some environment. Avoid
+# creating output without locking to avoid confusion from interleaved output.
+
+setenv KJB_SRC_PATH "/home/ivilab/src/"
+setenv MAKE_PATH "${KJB_SRC_PATH}Make/"
+setenv BASE_PATH "/bin:/usr/bin:/home/ivilab/ivilab/scripts:${MAKE_PATH}scripts"
+source ${MAKE_PATH}/init_compile >& /dev/null
+rehash
+setenv KJB_VERBOSE
+setenv KJB_VERBOSE_2
+
+# This lock is shared by all repo_sync processes. Helper processes that want
+# to lock based on script name must unsetenv this variable! 
+setenv KJB_LOCKFILE_NAME repo_sync
+
+kjb_lock post-commit-src-2 
+exit ${status}
+
+

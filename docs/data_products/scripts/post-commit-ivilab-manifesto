@@ -1,0 +1,86 @@
+#!/bin/tcsh -f
+
+# set echo
+
+echo "In script post-commit-ivilab-manifesto." >> /home/svn/ivilab/hooks/post-commit.log
+
+setenv PATH "/bin:/usr/bin:/home/ivilab/ivilab/scripts"
+rehash
+
+setenv TEXINPUTS ".:/home/ivilab/ivilab/texinputs:"
+
+set web_location = "/home/ivilab/public_html/private"
+
+cd /home/ivilab/ivilab/texinputs
+if ($status) then
+    echo "Changing to directory /home/ivilab/ivilab/texinputs FAILED" |& tee -a /home/svn/ivilab/hooks/post-commit.log 
+    exit 1 
+endif  
+
+svn up >>& /home/svn/ivilab/hooks/post-commit.log 
+if ($status) then
+    echo "Update of `pwd` FAILED"  |& tee -a /home/svn/ivilab/hooks/post-commit.log 
+    exit 1 
+endif 
+
+cd /home/ivilab/ivilab/manifesto
+if ($status) then
+    echo "Changing to directory /home/ivilab/ivilab/manifesto FAILED" |& tee -a /home/svn/ivilab/hooks/post-commit.log 
+    exit 1
+endif  
+
+echo "Updating `pwd` from new svn commit"  |& tee -a /home/svn/ivilab/hooks/post-commit.log 
+svn up >>& /home/svn/ivilab/hooks/post-commit.log 
+if ($status) then
+    echo "Update of `pwd` from new svn commit FAILED"  |& tee -a /home/svn/ivilab/hooks/post-commit.log 
+    exit 1 
+endif 
+
+# There is no way to get output to the user unless the script fails. This might
+# get fixed in the future, so we will let svn send this message to /dev/null.
+# But do not expect to see it (unless running the script independent of svn). 
+echo "Compiling `pwd`/manifesto.pdf"  |& tee -a /home/svn/ivilab/hooks/post-commit.log 
+(make < /dev/null > /home/svn/ivilab/hooks/post-commit-ivilab-manifesto-make.log) >>& /home/svn/ivilab/hooks/post-commit.log 
+
+if ($status) then
+    echo "Compiling of /home/ivilab/manifesto/manifest.pdf FAILED"  |& tee -a /home/svn/ivilab/hooks/post-commit.log 
+    exit 1 
+endif 
+
+if ( ! -e manifesto.pdf) then
+    echo "We expected `pwd`/manifesto.pdf to exist by now but it does not."  |& tee -a /home/svn/ivilab/hooks/post-commit.log 
+    exit 1 
+endif 
+
+cp manifesto.pdf ${web_location}
+if ($status) then
+    echo "Copying of `pwd`/manifest.pdf to ${web_location} FAILED"  |& tee -a /home/svn/ivilab/hooks/post-commit.log 
+    exit 1 
+endif 
+
+cd ${web_location}
+if ($status) then
+    echo "Unable to change directory to ${web_location}."  |& tee -a /home/svn/ivilab/hooks/post-commit.log 
+    exit 1
+endif 
+
+echo "Updating `pwd` using svn"  >>& /home/svn/ivilab/hooks/post-commit.log 
+svn up >>& /home/svn/ivilab/hooks/post-commit.log
+if ($status) then
+    echo "Updating `pwd` using svn FAILED."  |& tee -a /home/svn/ivilab/hooks/post-commit.log 
+    exit 1 
+endif 
+
+svn commit -m "Automated update via the script post-commit-ivilab-manifesto" >>& /home/svn/ivilab/hooks/post-commit.log
+if ($status) then
+    echo "Committing `pwd` using svn FAILED."  |& tee -a /home/svn/ivilab/hooks/post-commit.log 
+    exit 1 
+endif 
+            
+# There is no way to get output to the user unless the script fails. This might
+# get fixed in the future, so we will let svn send this message to /dev/null.
+# But do not expect to see it (unless running the script independent of svn). 
+echo "Update of manifesto.pdf on the web SUCCEEDED." |& tee -a /home/svn/ivilab/hooks/post-commit.log 
+            
+         
+
