@@ -1,0 +1,52 @@
+#!/bin/csh 
+
+##############################################################################
+#
+# Identification:
+#     A script to 
+#
+# Description:
+#     This script 
+#
+# Option arguments: 
+#
+# |    (The bar stops next line from joining) 
+#         Indented
+#
+# Examples (more to come):
+#     blah blah blah
+#
+# Bugs/deficiencies
+#
+# Author:
+#     Kobus Barnard 
+#
+##############################################################################
+
+# Emergency stop. No output. 
+if (-e "/home/svn/src/hooks/DISABLE_REPO_SYNC") exit 1
+
+# Similar stop, but it is by design, and the exist value is 0. For example, we
+# use this if we are creating a sync setup. 
+if (-e "/home/svn/src/hooks/SKIP_POST_FROM_COMMIT") exit 0
+
+setenv KJB_SRC_PATH "/home/ivilab/src/"
+setenv MAKE_PATH "${KJB_SRC_PATH}Make"
+setenv BASE_PATH "/bin:/usr/bin:/home/ivilab/ivilab/scripts:${MAKE_PATH}scripts"
+source ${MAKE_PATH}init_compile
+# echo PATH: $PATH
+rehash
+
+setenv KJB_VERBOSE 
+setenv KJB_VERBOSE_2
+
+# This lock is shared by all repo_sync processes
+setenv KJB_LOCKFILE_NAME repo_sync
+
+# We redirect to repo_sync.log in repo_sync_from_external so that we do not
+# hold a file while waiting. 
+kjb_lock repo_sync_from_external ivilab_src 
+if (${status}) exit 1
+
+
+
