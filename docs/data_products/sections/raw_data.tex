@@ -211,232 +211,387 @@ the data for each file listed above is detailed as follows: \\
 
 
 \begin{description}
-\item\textbf{REDCap Files:}
-\medskip
-\item\verb|redcap_data/team_data.csv|\\(comma delimited, 1st row is a header, complex strings double-quoted)\\
-This CSV file is the Team Data record for the experiment exported from the REDCap database. The Team Data is info and notes created by the experimenters regarding the experiment. The data is inputted into REDCap after the experiment has been completed. A summary of data contained in this file is: Team ID, Session Date/Time, Participant's IDs, Absent Participants, Experimenters that subbed-in, Problems/Issues with Participants, Problems/Issues with Equipment, and Additional Notes regarding the Session.
+\item\textbf{redcap\_data/ ...}
 
-Team Data Fields:
-\begin{itemize}
-    \item \verb|record_id -|\\REDCap Team Data Record ID.
-    \item \verb|redcap_survey_identifier - (can be blank)|\\Survey ID that identifies the REDCap Survey Form used to input the Team Data.
-    \item \verb|team_data_timestamp - (can be blank)|\\Timestamp of when the Team Data Record was created.
-    \item \verb|team_id - [##]|\\Team ID assigned to the Experiment.
-    \item \verb|testing_session_date - [yyyy-mm-dd hh:nn] (hh in 24 hour)|\\Experiment Session Date and Time.
-    \item \verb|subject_id - [#####, #####, #####]|\\IDs of the Participants that participated in the Experiment. Lion's ID, Tiger's ID, Leopard's ID. (If an experimenter sat-in, the ID will be entered as 99999 for that position).
-    \item \verb|real_participant_attend - [No/Yes] (can be blank)|\\Did any of the actual participants with assigned subject IDs not attend?
-    \item \verb|real_participant_absent - (can be blank)|\\If \verb|real_participant_attend|=Yes, a list of the subject ID(s) that was scheduled to attend but did not attend.
-    \item \verb|research_team_participation - [No/Yes] (can be blank)|\\Did a research team member play as a mock participant during the testing session?
-    \item \verb|participants_issues - [No/Yes] (can be blank)|\\Were there any problems/issues with the participants during the testing session?
-    \item \verb|participants_issues_details - (can be blank)|\\If \verb|participants_issues|=Yes, bulleted list of participant-related issues during the testing session.
-    \item \verb|equipment_issues - [No/Yes] (can be blank)|\\Were there any problems/issues with the equipment during the testing session?
-    \item \verb|equipment_issues_details - (can be blank)|\\If \verb|equipment_issues|=Yes, bulleted list of equipment-related issues related during the testing session.
-    \item \verb|additional_notes - (can be blank)|\\Any additional notes regarding the testing session.
-    \item \verb|team_data_complete - [Incomplete/Unverified/Complete]|\\Status of this Team Data Record.
-\end{itemize}
-
-\bigskip\item\textbf{Baseline Affective Task Files:}
-\medskip
-\item\verb|baseline_tasks/affective/individual_<participantID>_<timestamp>.csv|\\(semicolon delimited, 1st row is a header)\\
-This CSV file is the Baseline Individual Affective Task Data/Statistics for
-each Participant. The Participant ID is in the of the file name. There will be
-three of these files in the directory. One for each Participant, Lion, Tiger,
-and Leopard. A summary of data contained in this file is: Record Timestamp (in
-Global, Monotonic, and Human formats), Name of Image being shown to the
-Participant, Subject ID (Participant ID), The Participant's Arousal Score, The
-Participant's Valence Score, and the Event Type (\verb|start_affective_task|,
-\verb|show_blank_screen|, \verb|show_cross_screen|, \verb|show_image|,
-\verb|show_rating_screen|, \verb|intermediate_selection|,
-\verb|final_submission|).
-
-Baseline Individual Affective Task Fields:
-\begin{itemize}
-    \item \verb|time - [##########.######] (in seconds)|\\Unix Time \href{https://www.unixtimestamp.com/}{https://www.unixtimestamp.com/}.
-    \item \verb|monotonic_time - [#######.#########] (in seconds)|\\How long since the computer that hosts the task was booted up.
-    \item \verb|human_readable_time - [yyyy-mm-ddThh:nn:ss.######Z] (hh in 24 hour)|\\ UTC-0 time in human-readable format.
-    \item \verb|image_path -|\\Name of image being shown to the Participant. You can see these images in the code of baseline task.
-    \item \verb|subject_id - [#####]|\\Participant ID. (If an experimenter sat-in, the ID will be entered as 99999 for that Participant)
-    \item \verb|arousal_score - [-2 to +2]|\\Arousal measure of emotion (calm vs. intense).
-    \item \verb|valence_score - [-2 to +2]|\\Valence measure of emotion (unpleasant vs. pleasant).
-    \item \verb|event_type -|\\What event and when.
-        (\verb|start_affective_task|, \verb|show_blank_screen|,
-        \verb|show_cross_screen|, \verb|show_image|, \verb|show_rating_screen|,
-        \verb|intermediate_selection|, \verb|final_submission|).
-\end{itemize}
-
-
-\medskip
-\item\verb|baseline_tasks/affective/\\individual_<participantID>_<timestamp>_metadata.json|\\
-    (JSON data format)
-Baseline Individual Affective Task Participant configuration information. This is the sequence that the computer shows for each image: blank screen, cross screen, blank screen, image, rating screen. The timing for each screen is specified in this JSON file as shown below.
-
-Participant Configuration Information JSON File:
-\begin{verbatim}
-    {
-        "participant_ids": ["#####"] ("99999" for subbing-in experimenter),
-        "blank_screen_milliseconds": [####],
-        "cross_screen_milliseconds": [####],
-        "individual_image_timer": [##.#] (in seconds),
-        "individual_rating_timer": [##.#] (in seconds),
-        "team_image_timer": [##.#] (in seconds),
-        "team_discussion_timer": [##.#] (in seconds),
-        "team_rating_timer": [##.#] (in seconds)
-    }
-\end{verbatim}
-
-
-\medskip
-\item\verb|baseline_tasks/affective/team_<timestamp>.csv|\\(semicolon delimited, 1st row is a header)\\
-This CSV file is the Baseline Team Affective Task Data/Statistics. A summary of data contained in this file is: Record Timestamps (in Global, Monotonic, and Human formats), Name of Image being shown to the Participants, Subject ID (Participant ID), The Participant's Arousal Score (blank if this participant was not selected to score this image), The Participant's Valence Score (blank if this participant was not selected to score this image), and the Event Type
-(\verb|start_affective_task|, \verb|show_blank_screen|,
-\verb|show_cross_screen|, \verb|show_image|, \verb|show_rating_screen|,
-\verb|intermediate_selection|, \verb|final_submission|).
-
-Baseline Team Affective Task Fields:
-\begin{itemize}
-    \item \verb|time| - [\#\#\#\#\#\#\#\#\#\#.\#\#\#\#\#\#] (in seconds)\\Unix Time \href{https://www.unixtimestamp.com/}{https://www.unixtimestamp.com/}.
-    \item \verb|monotonic_time| - [\#\#\#\#\#\#\#.\#\#\#\#\#\#\#\#\#] (in seconds)\\How long since the computer that hosts the task was booted up.
-    \item \verb|human_readable_time| - [yyyy-mm-ddThh:nn:ss.\#\#\#\#\#\#Z] (hh in 24 hour)\\ UTC-0 time in human-readable format.
-    \item \verb|image_path| - [Team\#\#\#.jpg]\\Name of image being shown to the participants. You can see these images in the code of baseline task.
-    \item \verb|subject_id| - [\#\#\#\#\#]\\Participant ID. (If an experimenter sat-in, the ID will be entered as 99999 for that Participant)
-    \item \verb|arousal_score| - [-2 to +2]\\Arousal measure of emotion (calm vs. intense, will be blank if this participant was not selected to score this image).
-    \item \verb|valence_score| - [-2 to +2]\\Valence measure of emotion (unpleasant vs. pleasant, will be blank if this participant was not selected to score this image).
-    \item \verb|event_type| -\\What event and when.
-        (\verb|start_affective_task|, \verb|show_blank_screen|,
-        \verb|show_cross_screen|, \verb|show_image|, \verb|show_rating_screen|,
-        \verb|intermediate_selection|, \verb|final_submission|).
-\end{itemize}
-
-
-\medskip
-\item\verb|baseline_tasks/affective/team_<timestamp>_metadata.json|\\(JSON data format)
-Baseline Team Affective Task Participant configuration information. This is the sequence that the computer shows for each image: blank screen, cross screen, blank screen, image, rating screen. The timing for each screen is specified in this JSON file as shown below.
-
-Team Configuration Information JSON File:
-\begin{verbatim}
-    {
-        "participants_ids": [
-            ("#####","#####","#####"; "99999" for experimenter)
-            "<lion_participant_id>",
-            "<tiger_participant_id>",
-            "<leopard_participant_id>"
-        ],
-        "blank_screen_milliseconds": [####],
-        "cross_screen_milliseconds": [####],
-        "individual_image_timer": [##.#] (in seconds),
-        "individual_rating_timer": [##.#] (in seconds),
-        "team_image_timer": [##.#] (in seconds),
-        "team_discussion_timer": [##.#] (in seconds),
-        "team_rating_timer": [##.#] (in seconds)
-    }
-\end{verbatim}
+    \begin{addmargin}[0em]{0em} % Start of "team_data.csv"
+        \textbf{team\_data.csv}\\(comma delimited, 1st row is a header, complex strings double-quoted)\\
+        This CSV file is the Team Data record for the experiment exported from the REDCap database.
+        The Team Data is info and notes created by the experimenters regarding the experiment.
+        The data is inputted into REDCap after the experiment has been completed.
+        A summary of data contained in this file is: Team ID, Session Date/Time, Participant's IDs, Absent Participants,
+        Experimenters that subbed-in, Problems/Issues with Participants, Problems/Issues with Equipment, and Additional Notes regarding the Session.\\\\
+        Team Data Fields:
+        \begin{itemize}
+            \item \verb|record_id -|\\REDCap Team Data Record ID.
+            \item \verb|redcap_survey_identifier - (can be blank)|\\Survey ID that identifies the REDCap Survey Form used to input the Team Data.
+            \item \verb|team_data_timestamp - (can be blank)|\\Timestamp of when the Team Data Record was created.
+            \item \verb|team_id - [##]|\\Team ID assigned to the Experiment.
+            \item \verb|testing_session_date - [yyyy-mm-dd hh:nn] (hh in 24 hour)|\\Experiment Session Date and Time.
+            \item \verb|subject_id - [#####, #####, #####]|\\IDs of the Participants that participated in the Experiment. Lion's ID, Tiger's ID, Leopard's ID. (If an experimenter sat-in, the ID will be entered as 99999 for that position).
+            \item \verb|real_participant_attend - [No/Yes] (can be blank)|\\Did any of the actual participants with assigned subject IDs not attend?
+            \item \verb|real_participant_absent - (can be blank)|\\If \verb|real_participant_attend|=Yes, a list of the subject ID(s) that was scheduled to attend but did not attend.
+            \item \verb|research_team_participation - [No/Yes] (can be blank)|\\Did a research team member play as a mock participant during the testing session?
+            \item \verb|participants_issues - [No/Yes] (can be blank)|\\Were there any problems/issues with the participants during the testing session?
+            \item \verb|participants_issues_details - (can be blank)|\\If \verb|participants_issues|=Yes, bulleted list of participant-related issues during the testing session.
+            \item \verb|equipment_issues - [No/Yes] (can be blank)|\\Were there any problems/issues with the equipment during the testing session?
+            \item \verb|equipment_issues_details - (can be blank)|\\If \verb|equipment_issues|=Yes, bulleted list of equipment-related issues related during the testing session.
+            \item \verb|additional_notes - (can be blank)|\\Any additional notes regarding the testing session.
+            \item \verb|team_data_complete - [Incomplete/Unverified/Complete]|\\Status of this Team Data Record.
+        \end{itemize}
+    \end{addmargin} % End of "team_data.csv"
 
 
 
-\bigskip\item\textbf{Baseline Finger Tapping Task Files:}
-\medskip
-\item\verb|baseline_tasks/finger_tapping/<timestamp>.csv|\\(semicolon delimited, 1st row is a header)\\
-This CSV file is the Baseline Finger Tapping Task Data/Statistics. A summary of data contained in this file is: Record Timestamp (Unix Time, Monotonic, and Human-readable formats), Row Data Event (team, individual), Countdown Timer (intiger - 10 to 0), Was a Tap on Keyboard recorded for each participant (0 = no-tap, 1 = tap). The last three column (Fields) names for the Tap Data are the IDs of the Participants (\verb|<lion_participant_id>|, \verb|<tiger_participant_id>|, \verb|<leopard_participant_id>|, If an experimenter sat-in, the column name will be "99999" for that Participant).
+\textbf{\\\\\\}
+\item\textbf{baseline\_tasks/ ...}
+    \begin{addmargin}[0em]{0em} % Start of "baseline_tasks/affective/"
+        \textbf{affective/ ...}
 
-Baseline Individual Affective Task Fields:
-\begin{itemize}
-    \item \verb|time| - [\#\#\#\#\#\#\#\#\#\#.\#\#\#\#\#\#] (in seconds)\\Unix Time \href{https://www.unixtimestamp.com/}{https://www.unixtimestamp.com/}.
-    \item \verb|monotonic_time| - [\#\#\#\#\#\#\#.\#\#\#\#\#\#\#\#\#] (in seconds)\\How long since the computer that hosts the task was booted up.
-    \item \verb|human_readable_time| - [yyyy-mm-ddThh:nn:ss.\#\#\#\#\#\#Z] (hh in 24 hour)\\ UTC-0 time in human-readable format.
-    \item \verb|event_type| -\\What event and when. (team, individual).
-    \item \verb|countdown_timer| - [\#\#] (intiger - 10 to 0)\\Countdown Timer.
-    \item \verb|<lion_participant_id>| - [0 or 1]\\Tap on keyboard from Lion (0 = no-tap, 1 = tap).
-    \item \verb|<tiger_participant_id>| - [0 or 1]\\Tap on keyboard from Tiger (0 = no-tap, 1 = tap).
-    \item \verb|<leopard_participant_id>| - [0 or 1]\\Tap on keyboard from Leopard (0 = no-tap, 1 = tap).
-\end{itemize}
-
-
-\medskip
-\item\verb|baseline_tasks/finger_tapping/<timestamp>_metadata.json|\\(JSON data format)
-Baseline Finger Tapping Task configuration information. The configuration
-information in this file: \verb|participants_ids| \verb|session|
-\verb|seconds_per_session| \verb|seconds_count_down| \verb|square_width| and
-\verb|count_down_message|.
-
-Finger Tapping Configuration Information JSON File:
-
-\begin{verbatim}
-    {
-        "participants_ids": [
-            ("#####","#####","#####"; "99999" for experimenter)
-            "<lion_participant_id>",
-            "<tiger_participant_id>",
-            "<leopard_participant_id>"
-        ],
-        "session": [ (typical: "0,1,0,1")
-            (0 or 1),
-            (0 or 1),
-            (0 or 1),
-            (0 or 1)
-        ],
-        "seconds_per_session": [ (typical: "10.0" for all)
-            ##.#,
-            ##.#,
-            ##.#,
-            ##.#
-        ],
-        "seconds_count_down": [##.#] (typical: "10.0"),
-        "square_width": [###] (typical: "200")
-        "count_down_message": ["string"]
-        (example: "Practice session: Press SPACEBAR and observe the squares")
-    }
-\end{verbatim}
+        \begin{addmargin}[1em]{0em} % Start of "individual_<participantID>_<timestamp>.csv"
+            \textbf{individual\_<participantID>\_<timestamp>.csv}\\(semicolon delimited, 1st row is a header)\\
+            This CSV file is the Baseline Individual Affective Task Data/Statistics for
+            each Participant. The Participant ID is in the of the file name. There will be
+            three of these files in the directory. One for each Participant, Lion, Tiger,
+            and Leopard. A summary of data contained in this file is: Record Timestamp (in
+            Global, Monotonic, and Human formats), Name of Image being shown to the
+            Participant, Subject ID (Participant ID), The Participant's Arousal Score, The
+            Participant's Valence Score, and the Event Type (\verb|start_affective_task|,
+            \verb|show_blank_screen|, \verb|show_cross_screen|, \verb|show_image|,
+            \verb|show_rating_screen|, \verb|intermediate_selection|,
+            \verb|final_submission|).\\\\
+            Baseline Individual Affective Task Fields:
+            \begin{itemize}
+                \item \verb|time - [##########.######] (in seconds)|\\Unix Time \href{https://www.unixtimestamp.com/}{https://www.unixtimestamp.com/}.
+                \item \verb|monotonic_time - [#######.#########] (in seconds)|\\How long since the computer that hosts the task was booted up.
+                \item \verb|human_readable_time - [yyyy-mm-ddThh:nn:ss.######Z] (hh in 24 hour)|\\ UTC-0 time in human-readable format.
+                \item \verb|image_path -|\\Name of image being shown to the Participant. You can see these images in the code of baseline task.
+                \item \verb|subject_id - [#####]|\\Participant ID. (If an experimenter sat-in, the ID will be entered as 99999 for that Participant)
+                \item \verb|arousal_score - [-2 to +2]|\\Arousal measure of emotion (calm vs. intense).
+                \item \verb|valence_score - [-2 to +2]|\\Valence measure of emotion (unpleasant vs. pleasant).
+                \item \verb|event_type -|\\What event and when.
+                    (\verb|start_affective_task|, \verb|show_blank_screen|,
+                    \verb|show_cross_screen|, \verb|show_image|, \verb|show_rating_screen|,
+                    \verb|intermediate_selection|, \verb|final_submission|).
+            \end{itemize}
+        \end{addmargin} % End of "individual_<participantID>_<timestamp>.csv"
 
 
-
-\bigskip\item\textbf{Baseline Ping-Pong Task Files:}
-\medskip
-\item\verb|baseline_tasks/ping_pong/competitive_<team>_<timestamp>.csv|\\(semicolon delimited, 1st row is a header)\\
-This CSV file is for the Baseline Competitive Ping-Pong Task Data/Statistics. The <team> in the file name is "0" for Lion vs Tiger and "1" for Leopard vs Cheetah. (If an experimenter sat-in, the column name will be "99999" for that Participant). A summary of data contained in this file is: Record Timestamp (Unix Time, Monotonic, and Human-readable formats), Score on Left, Score on Right, Game Started (False = countdown for game to start, True = game has started), Ball's X Coordinates, Ball's Y Coordinates, Participant 1 Paddle X Coordinates, Participant 1 Paddle Y Coordinates, Participant 2 Paddle X Coordinates, Participant 2 Paddle Y Coordinates, Seconds Timer on Screen (If game has not started, \verb|started = False|, the \verb|seconds| will count down from 10 to 0. If game has started, \verb|started = True|, the \verb|seconds| will count down from 120 to 0.)
-
-Baseline Competitive Ping-Pong Task Fields:
-\begin{itemize}
-    \item \verb|time - [##########.######] (in seconds)|\\Unix Time \href{https://www.unixtimestamp.com/}{https://www.unixtimestamp.com/}.
-    \item \verb|monotonic_time - [#######.#########] (in seconds)|\\How long since the computer that hosts the task was booted up.
-    \item \verb|human_readable_time - [yyyy-mm-ddThh:nn:ss.######Z] (hh in 24h)|\\ UTC-0 time in human-readable format.
-    \item \verb|score_left - [##]|\\.
-    \item \verb|score_right - [##]|\\.
-    \item \verb|started| - \\.
-    \item \verb|ball_x| - \\.
-    \item \verb|ball_y| - \\.
-    \item \verb|<participant1_id>_x| -\\.
-    \item \verb|<participant1_id>_y>| -\\.
-    \item \verb|<participant2_id>_x| -\\.
-    \item \verb|<participant2_id>_y>| -\\.
-    \item \verb|seconds| - [\#\#\#]\\Seconds left in game (120 counts down to 0).
-\end{itemize}
+        \textbf{\\\\}
+        \begin{addmargin}[1em]{0em} % Start of "individual_<participantID>_<timestamp>_metadata.json"
+            \textbf{individual\_<participantID>\_<timestamp>\_metadata.json}\\(JSON data format)\\
+            Baseline Individual Affective Task Participant configuration information.
+            This is the sequence that the computer shows for each image: blank screen, cross screen, blank screen, image, rating screen.
+            The timing for each screen is specified in this JSON file as shown below.\\\\
+            Participant Configuration Information JSON File:
+            \begin{verbatim}
+                {
+                    "participant_ids": ["#####"] ("99999" for subbing-in experimenter),
+                    "blank_screen_milliseconds": [####],
+                    "cross_screen_milliseconds": [####],
+                    "individual_image_timer": [##.#] (in seconds),
+                    "individual_rating_timer": [##.#] (in seconds),
+                    "team_image_timer": [##.#] (in seconds),
+                    "team_discussion_timer": [##.#] (in seconds),
+                    "team_rating_timer": [##.#] (in seconds)
+                }
+            \end{verbatim}
+        \end{addmargin} % End of "individual_<participantID>_<timestamp>_metadata.json"
 
 
-\bigskip\bigskip\bigskip
-\item\textbf{XDF Files:}
+        \textbf{\\\\}
+        \begin{addmargin}[1em]{0em} % Start of "team_<timestamp>.csv"
+            \textbf{team\_<timestamp>.csv}\\(semicolon delimited, 1st row is a header)\\
+            This CSV file is the Baseline Team Affective Task Data/Statistics. A summary of data contained in this file is: Record Timestamps (in Global, Monotonic, and Human formats), Name of Image being shown to the Participants, Subject ID (Participant ID), The Participant's Arousal Score (blank if this participant was not selected to score this image), The Participant's Valence Score (blank if this participant was not selected to score this image), and the Event Type
+            (\verb|start_affective_task|, \verb|show_blank_screen|,
+            \verb|show_cross_screen|, \verb|show_image|, \verb|show_rating_screen|,
+            \verb|intermediate_selection|, \verb|final_submission|).\\\\
+            Baseline Team Affective Task Fields:
+            \begin{itemize}
+                \item \verb|time| - [\#\#\#\#\#\#\#\#\#\#.\#\#\#\#\#\#] (in seconds)\\Unix Time \href{https://www.unixtimestamp.com/}{https://www.unixtimestamp.com/}.
+                \item \verb|monotonic_time| - [\#\#\#\#\#\#\#.\#\#\#\#\#\#\#\#\#] (in seconds)\\How long since the computer that hosts the task was booted up.
+                \item \verb|human_readable_time| - [yyyy-mm-ddThh:nn:ss.\#\#\#\#\#\#Z] (hh in 24 hour)\\ UTC-0 time in human-readable format.
+                \item \verb|image_path| - [Team\#\#\#.jpg]\\Name of image being shown to the participants. You can see these images in the code of baseline task.
+                \item \verb|subject_id| - [\#\#\#\#\#]\\Participant ID. (If an experimenter sat-in, the ID will be entered as 99999 for that Participant)
+                \item \verb|arousal_score| - [-2 to +2]\\Arousal measure of emotion (calm vs. intense, will be blank if this participant was not selected to score this image).
+                \item \verb|valence_score| - [-2 to +2]\\Valence measure of emotion (unpleasant vs. pleasant, will be blank if this participant was not selected to score this image).
+                \item \verb|event_type| -\\What event and when.
+                    (\verb|start_affective_task|, \verb|show_blank_screen|,
+                    \verb|show_cross_screen|, \verb|show_image|, \verb|show_rating_screen|,
+                    \verb|intermediate_selection|, \verb|final_submission|).
+            \end{itemize}
+        \end{addmargin} % End of "team_<timestamp>.csv"
+
+
+        \textbf{\\\\}
+        \begin{addmargin}[1em]{0em} % Start of "team\_<timestamp>\_metadata.json"
+            \textbf{team\_<timestamp>\_metadata.json}\\(JSON data format)\\
+            Baseline Team Affective Task Participant configuration information.
+            This is the sequence that the computer shows for each image: blank screen, cross screen, blank screen, image, rating screen.
+            The timing for each screen is specified in this JSON file as shown below.\\\\
+            Team Configuration Information JSON File:
+            \begin{verbatim}
+                {
+                    "participants_ids": [
+                        ("#####","#####","#####"; "99999" for experimenter)
+                        "<lion_participant_id>",
+                        "<tiger_participant_id>",
+                        "<leopard_participant_id>"
+                    ],
+                    "blank_screen_milliseconds": [####],
+                    "cross_screen_milliseconds": [####],
+                    "individual_image_timer": [##.#] (in seconds),
+                    "individual_rating_timer": [##.#] (in seconds),
+                    "team_image_timer": [##.#] (in seconds),
+                    "team_discussion_timer": [##.#] (in seconds),
+                    "team_rating_timer": [##.#] (in seconds)
+                }
+            \end{verbatim}
+        \end{addmargin} % End of "team\_<timestamp>\_metadata.json"
+
+    \end{addmargin} % End of "baseline_tasks/affective/" 
+
+
+    \textbf{\\\\}
+    \begin{addmargin}[0em]{0em} % Start of "baseline_tasks/finger_tapping/"
+        \textbf{finger\_tapping/ ...}
+
+        \begin{addmargin}[1em]{0em} % Start of "<timestamp>.csv"
+            \textbf{<timestamp>.csv}\\(semicolon delimited, 1st row is a header)\\
+            This CSV file is the Baseline Finger Tapping Task Data/Statistics.
+            A summary of data contained in this file is: Record Timestamp (Unix Time, Monotonic, and Human-readable formats),
+            Row Data Event (team, individual), Countdown Timer (intiger - 10 to 0), Was a Tap on Keyboard recorded for each participant (0 = no-tap, 1 = tap).
+            The last three column (Fields) names for the Tap Data are the IDs of the Participants (\verb|<lion_participant_id>|, \verb|<tiger_participant_id>|,
+            \verb|<leopard_participant_id>|, If an experimenter sat-in, the column name will be "99999" for that Participant).\\\\
+            Baseline Individual Affective Task Fields:
+            \begin{itemize}
+                \item \verb|time| - [\#\#\#\#\#\#\#\#\#\#.\#\#\#\#\#\#] (in seconds)\\Unix Time \href{https://www.unixtimestamp.com/}{https://www.unixtimestamp.com/}.
+                \item \verb|monotonic_time| - [\#\#\#\#\#\#\#.\#\#\#\#\#\#\#\#\#] (in seconds)\\How long since the computer that hosts the task was booted up.
+                \item \verb|human_readable_time| - [yyyy-mm-ddThh:nn:ss.\#\#\#\#\#\#Z] (hh in 24 hour)\\ UTC-0 time in human-readable format.
+                \item \verb|event_type| -\\What event and when. (team, individual).
+                \item \verb|countdown_timer| - [\#\#] (intiger - 10 to 0)\\Countdown Timer.
+                \item \verb|<lion_participant_id>| - [0 or 1]\\Tap on keyboard from Lion (0 = no-tap, 1 = tap).
+                \item \verb|<tiger_participant_id>| - [0 or 1]\\Tap on keyboard from Tiger (0 = no-tap, 1 = tap).
+                \item \verb|<leopard_participant_id>| - [0 or 1]\\Tap on keyboard from Leopard (0 = no-tap, 1 = tap).
+            \end{itemize}
+        \end{addmargin} % End of "<timestamp>.csv"
+
+
+        \textbf{\\\\}
+        \begin{addmargin}[1em]{0em} % Start of "<timestamp>_metadata.json"
+            \textbf{<timestamp>\_metadata.json}\\(JSON data format)\\
+            Baseline Finger Tapping Task configuration information. The configuration
+            information in this file: \verb|participants_ids| \verb|session|
+            \verb|seconds_per_session| \verb|seconds_count_down| \verb|square_width| and
+            \verb|count_down_message|.\\\\
+            Finger Tapping Configuration Information JSON File:
+            \begin{verbatim}
+                {
+                    "participants_ids": [
+                        ("#####","#####","#####"; "99999" for experimenter)
+                        "<lion_participant_id>",
+                        "<tiger_participant_id>",
+                        "<leopard_participant_id>"
+                    ],
+                    "session": [ (typical: "0,1,0,1")
+                        (0 or 1),
+                        (0 or 1),
+                        (0 or 1),
+                        (0 or 1)
+                    ],
+                    "seconds_per_session": [ (typical: "10.0" for all)
+                        ##.#,
+                        ##.#,
+                        ##.#,
+                        ##.#
+                    ],
+                    "seconds_count_down": [##.#] (typical: "10.0"),
+                    "square_width": [###] (typical: "200")
+                    "count_down_message": ["string"]
+                    (example: "Practice session: Press SPACEBAR and observe the squares")
+                }
+            \end{verbatim}
+        \end{addmargin} % End of "<timestamp>_metadata.json"
+
+    \end{addmargin} % End of "baseline_tasks/finger_tapping/" 
+
+
+    \textbf{\\\\}
+    \begin{addmargin}[0em]{0em} % Start of "baseline_tasks/ping_pong/"
+        \textbf{ping\_pong/ ...}
+
+        \begin{addmargin}[1em]{0em} % Start of "competitive_<team>_<timestamp>.csv"
+            \textbf{competitive\_<team>\_<timestamp>.csv}\\(semicolon delimited, 1st row is a header)\\
+            This CSV file is for the Baseline Competitive Ping-Pong Task Data/Statistics.
+            The <team> in the file name is "0" for Lion vs Tiger and "1" for Leopard vs Cheetah.
+            (If an experimenter sat-in, the column name will be "99999" for that Participant).
+            (For <team> = "1" in the file name, the participant2 ID will always be "exp").
+            A summary of data contained in this file is: Record Timestamp (Unix Time, Monotonic, and Human-readable formats),
+            Score on Left, Score on Right (For <team> = "1" in the file name, right score will be for experimenter on "Cheetah"), Game Started (False = countdown for game to start, True = game has started),
+            Ball's X Coordinates, Ball's Y Coordinates, Participant 1 Paddle X Coordinates, Participant 1 Paddle Y Coordinates,
+            Participant 2 Paddle X Coordinates , Participant 2 Paddle Y Coordinates, Seconds Timer on Screen (If game has not started, \verb|started = False|,
+            the \verb|seconds| will count down from 10 to 0. If game has started, \verb|started = True|, the \verb|seconds| will count down from 120 to 0.)\\\\
+            Baseline Competitive Ping-Pong Task Fields:
+            \begin{itemize}
+                \item \verb|time - [##########.######] (in seconds)|\\Unix Time \href{https://www.unixtimestamp.com/}{https://www.unixtimestamp.com/}.
+                \item \verb|monotonic_time - [#######.#########] (in seconds)|\\How long since the computer that hosts the task was booted up.
+                \item \verb|human_readable_time - [yyyy-mm-ddThh:nn:ss.######Z] (hh in 24h)|\\ UTC-0 time in human-readable format.
+                \item \verb|score_left - [##]|\\ Current score for left team participant.
+                \item \verb|score_right - [##]|\\ Current score for right team participant (For <team> = "1" in the file name, right score will be for experimenter on "Cheetah").
+                \item \verb|started - [False or True]|\\Has the Ping-Pong game started.
+                \item \verb|ball_x - [####]| - \\The ball's X coordinate on the screen.
+                \item \verb|ball_y - [####]| - \\The ball's Y coordinate on the screen.
+                \item \verb|<participant1_id>_x - [####]| -\\Participant1's (left team) paddle's X coordinate on the screen.
+                \item \verb|<participant1_id>_y - [####]| -\\Participant1's (left team) paddle's Y coordinate on the screen.
+                \item \verb|<participant2_id>_x - [####]| -\\Participant2's (right team) paddle's X coordinate on the screen (For <team> = "1" in the file name, the participant2 ID will always be "exp").
+                \item \verb|<participant2_id>_y - [####]| -\\Participant2's (right team) paddle's Y coordinate on the screen (For <team> = "1" in the file name, the participant2 ID will always be "exp").
+                \item \verb|seconds - [###]|\\Seconds left in game (120 counts down to 0).
+            \end{itemize}
+        \end{addmargin} % End of "competitive_<team>_<timestamp>.csv"
+
+
+        \textbf{\\\\}
+        \begin{addmargin}[1em]{0em} % Start of "competitive_<team>_<timestamp>_metadata.json"
+            \textbf{competitive\_<team>\_<timestamp>\_metadata.json}\\(JSON data format)\\
+            Baseline Competitive Ping-Pong Configuration Information.
+            (For <team> = "1" in the file name, the participant2 ID will always be "exp").
+            The configuration information in this file: \verb|left_team participant ID|, \verb|right_team participant ID|,
+            \verb|client_window_height|, \verb|client_window_width|, \verb|session_time_seconds|,
+            \verb|seconds_count_down|, \verb|count_down_message|, \verb|paddle_width|, \verb|paddle_height|,
+            \verb|ai_paddle_max_speed|, \verb|paddle_speed_scaling|, \verb|paddle_max_speed|, \verb|ball_x_speed|,
+            \verb|ball_bounce_on_paddle_scale|.\\\\
+            Baseline Competitive Ping-Pong Configuration Information JSON File:
+            \begin{verbatim}
+                {
+                    "left_team": [
+                        "#####" (left team participant ID, "99999" for experimenter)
+                    ],
+                    "right_team": [
+                        "#####" (right team participant ID, "99999" for experimenter, "exp" for <team> = "1" in file name.)
+                    ],
+                    "client_window_height": [####] (typical: 1440),
+                    "client_window_width": [####] (typical: 2560),
+                    "session_time_seconds": [###.#] (typical: 120.0),
+                    "seconds_count_down": [##.#] (typical: 10.0),
+                    "count_down_message": ["string"] (typical:"Move the mouse to move the blue paddle"),
+                    "paddle_width": [##] (typical: 20),
+                    "paddle_height": [###] (typical: 120),
+                    "ai_paddle_max_speed": [##] (typical: 13),
+                    "paddle_speed_scaling": [#.#] (typical: 0.6),
+                    "paddle_max_speed": [###.#] (typical: null),
+                    "ball_x_speed": [##] (typical: 9),
+                    "ball_bounce_on_paddle_scale": [#.##] (typical: 0.25)
+                }
+            \end{verbatim}
+        \end{addmargin} % End of "competitive_<team>_<timestamp>_metadata.json"
+
+
+        \textbf{\\\\}
+        \begin{addmargin}[1em]{0em} % Start of "cooperative_0_<timestamp>.csv"
+            \textbf{cooperative\_0\_<timestamp>.csv}\\(semicolon delimited, 1st row is a header)\\
+            This CSV file is for the Baseline Cooperative Ping-Pong Task Data/Statistics.
+            For the Cooperative Ping-Pong Task, the participants on Lion, Tiger and Leopard play together as a team and play against the AI machine.
+            (If an experimenter sat-in, the column name will be "99999" for that Participant).
+            A summary of data contained in this file is: Record Timestamp (Unix Time, Monotonic, and Human-readable formats),
+            Score on Left, Score on Right, Game Started (False = countdown for game to start, True = game has started),
+            Ball's X Coordinates, Ball's Y Coordinates, Participant 1 Paddle X Coordinates, Participant 1 Paddle Y Coordinates,
+            Participant 2 Paddle X Coordinates, Participant 2 Paddle Y Coordinates, Seconds Timer on Screen (If game has not started, \verb|started = False|,
+            the \verb|seconds| will count down from 10 to 0. If game has started, \verb|started = True|, the \verb|seconds| will count down from 120 to 0.)\\\\
+            Baseline Cooperative Ping-Pong Task Fields:
+            \begin{itemize}
+                \item \verb|time - [##########.######] (in seconds)|\\Unix Time \href{https://www.unixtimestamp.com/}{https://www.unixtimestamp.com/}.
+                \item \verb|monotonic_time - [#######.#########] (in seconds)|\\How long since the computer that hosts the task was booted up.
+                \item \verb|human_readable_time - [yyyy-mm-ddThh:nn:ss.######Z] (hh in 24h)|\\UTC-0 time in human-readable format.
+                \item \verb|score_left - [##]|\\Current score for left team.
+                \item \verb|score_right - [##]|\\Current score for "AI" team.
+                \item \verb|started - [False or True]|\\Has the Ping-Pong game started.
+                \item \verb|ball_x - [####]|\\The ball's X coordinate on the screen.
+                \item \verb|ball_y - [####]| - \\The ball's Y coordinate on the screen.
+                \item \verb|<left_team_participant1_id>_x - [####]| -\\Participant1's (left team) paddle's X coordinate on the screen.
+                \item \verb|<left_team_participant1_id>_y - [####]| -\\Participant1's (left team) paddle's Y coordinate on the screen.
+                \item \verb|<left_team_participant2_id>_x - [####]| -\\Participant2's (left team) paddle's X coordinate on the screen.
+                \item \verb|<left_team_participant2_id>_y - [####]| -\\Participant2's (left team) paddle's Y coordinate on the screen.
+                \item \verb|<left_team_participant3_id>_x - [####]| -\\Participant3's (left team) paddle's X coordinate on the screen.
+                \item \verb|<left_team_participant3_id>_y - [####]| -\\Participant3's (left team) paddle's Y coordinate on the screen.
+                \item \verb|ai_x - [####]| -\\AI's (right team) paddle's X coordinate on the screen.
+                \item \verb|ai_y - [####]| -\\AI's (right team) paddle's Y coordinate on the screen.
+                \item \verb|seconds - [###]|\\Seconds left in game (120 counts down to 0).
+            \end{itemize}
+        \end{addmargin} % End of "cooperative_0_<timestamp>.csv"
+
+
+        \textbf{\\\\}
+        \begin{addmargin}[1em]{0em} % Start of "cooperative_0_<timestamp>_metadata.json"
+            \textbf{cooperative\_0\_<timestamp>\_metadata.json}\\(JSON data format)\\
+            Baseline Cooperative Ping-Pong Configuration Information. The configuration
+            information in this file: \verb|left_team (participant IDs for Lion, Tiger, and Leopard)|, \verb|right_team ("ai")|,
+            \verb|client_window_height|, \verb|client_window_width|, \verb|session_time_seconds|,
+            \verb|seconds_count_down|, \verb|count_down_message|, \verb|paddle_width|, \verb|paddle_height|,
+            \verb|ai_paddle_max_speed|, \verb|paddle_speed_scaling|, \verb|paddle_max_speed|, \verb|ball_x_speed|,
+            \verb|ball_bounce_on_paddle_scale|.\\\\
+            Baseline Cooperative Ping-Pong Configuration Information JSON File:
+            \begin{verbatim}
+                {
+                    "left_team": [
+                        "#####", (left team member 1 ID, "99999" for experimenter)
+                        "#####", (left team member 2 ID, "99999" for experimenter)
+                        "#####"  (left team member 3 ID, "99999" for experimenter)
+                    ],
+                    "right_team": [
+                        "ai"
+                    ],
+                    "client_window_height": [####] (typical: 1440),
+                    "client_window_width": [####] (typical: 2560),
+                    "session_time_seconds": [###.#] (typical: 120.0),
+                    "seconds_count_down": [##.#] (typical: 10.0),
+                    "count_down_message": ["string"] (typical:"Move the mouse to move the blue paddle"),
+                    "paddle_width": [##] (typical: 20),
+                    "paddle_height": [###] (typical: 90),
+                    "ai_paddle_max_speed": [##] (typical: 20),
+                    "paddle_speed_scaling": [#.#] (typical: 0.6),
+                    "paddle_max_speed": [###.#] (typical: null),
+                    "ball_x_speed": [##] (typical: 12),
+                    "ball_bounce_on_paddle_scale": [#.##] (typical: 0.4)
+                }
+            \end{verbatim}
+        \end{addmargin} % End of "cooperative_0_<timestamp>_metadata.json"
+
+    \end{addmargin} % End of "baseline_tasks/ping_pong/" 
+
+
+    \textbf{\\\\}
+    \begin{addmargin}[0em]{0em} % Start of "baseline_tasks/rest_state/"
+        \textbf{rest\_state/ ...}
+
+        \begin{addmargin}[1em]{0em} % Start of "<timestamp>.csv"
+            \textbf{<timestamp>.csv}\\(semicolon delimited, 1st row is a header)\\
+            This CSV file records the Start Time and End Time for the Baseline Rest State.
+            A summary of data contained in this file is: Record Timestamp (Unix Time, Monotonic, and Human-readable formats),
+            and Event Type (\verb|"start_rest_state" or "end_rest_state"|).\\\\
+            Baseline Rest State Timestamp CSV Fields:
+            \begin{itemize}
+                \item \verb|time - [##########.######] (in seconds)|\\Unix Time \href{https://www.unixtimestamp.com/}{https://www.unixtimestamp.com/}.
+                \item \verb|monotonic_time - [#######.#########] (in seconds)|\\How long since the computer that hosts the task was booted up.
+                \item \verb|human_readable_time - [yyyy-mm-ddThh:nn:ss.######Z] (hh in 24h)|\\UTC-0 time in human-readable format.
+                \item \verb|event_type - [string]|\\Start or End of Rest State (\verb|"start_rest_state" or "end_rest_state"|).
+            \end{itemize}
+        \end{addmargin} % End of "<timestamp>.csv"
+
+    \end{addmargin} % End of "baseline_tasks/rest_state/"
+    
+% End of "baseline_tasks/"
+
+
+
+\textbf{\\\\\\}
+\item\textbf{lsl/ ... \textit{(Only for experiments starting April 2023)}}
 \begin{addmargin}[0em]{0em}
-    \item\textbf{Only for experiments before April 2023 (<cat>/<cat>\_eeg\_fnirs\_pupil.xdf)}\\
-    \item\verb|<cat>/<cat>_eeg_fnirs_pupil.xdf|\\(Extensible Data Format XDF, binary file format)\\
-    The \verb|<cat>_eeg_fnirs_pupil.xdf| contains <cat> data files and data streams for the Experiment. You must use a XDF viewer program to view or extract the data contained in this file. Some common software packages used to view or extract data from this XDF file are: MNE-Python, Matplotlib, and Qtgraph. A summary of data recorded in this XDF file is: fNIRS LSL Streams, EEG LSL Streams, and Pupil Data.
-
-    Data files and streams contained in the \verb|<cat>_eeg_fnirs_pupil.xdf|:
-
-    \begin{itemize}
-        \item \verb|fNIRS LSL Streams| -\\fNIRS LSL Streams being transmitted from the "NIRx - Aurora" software programs running on the "fNIRS Server Computer" during the Experiment for participants on Lion, Tiger, and Leopard.
-        \item \verb|EEG LSL Streams| -\\EEG LSL Streams being transmitted from the "Brain Vision - LSL-actiChamp" software programs running on the "EEG Server Computer" during the Experiment for participants on Lion, Tiger, and Leopard.
-        \item \verb|Pupil Data| -\\Pupil Data files recorded from the "Pupil Labs - Pupil Capture" software programs running on the participant's iMacs, Lion, Tiger, and Leopard during the Experiment.
-    \end{itemize}
-
-\end{addmargin}
-
-\bigskip
-\begin{addmargin}[0em]{0em}
-    \item\textbf{Only for experiments starting April 2023 (block\_1.xdf and block\_2.xdf)\\}
-    \item\verb|lsl/block_1.xdf|\\(Extensible Data Format XDF, binary file format)\\
-    The \verb|block_1.xdf| contains data files and data streams for the Baseline Tasks portion of the Experiment. You must use a XDF viewer program to view or extract the data contained in this file. Some common software packages used to view or extract data from this XDF file are: MNE-Python, Matplotlib, and Qtgraph. A summary of data recorded in this XDF file is: fNIRS LSL Streams, EEG LSL Streams, Baseline Data, Filenames of the Face and Screen Images, and Pupil Data.
-
+    \textbf{block\_1.xdf}\\(Extensible Data Format XDF, binary file format)\\
+    The \verb|block_1.xdf| contains data files and data streams for the Baseline Tasks portion of the Experiment.
+    You must use a XDF viewer program to view or extract the data contained in this file.
+    Some common software packages used to view or extract data from this XDF file are: MNE-Python, Matplotlib, and Qtgraph.
+    A summary of data recorded in this XDF file is: fNIRS LSL Streams, EEG LSL Streams, Baseline Data,
+    Filenames of the Face and Screen Images, and Pupil Data.\\\\
     Data files and streams contained in the \verb|block_1.xdf|:
-
     \begin{itemize}
         \item \verb|fNIRS LSL Streams| -\\fNIRS LSL Streams being transmitted from the "NIRx - Aurora" software programs running on the "fNIRS Server Computer" during the Baseline Tasks portion of the Experiment for participants on Lion, Tiger, and Leopard.
         \item \verb|EEG LSL Streams| -\\EEG LSL Streams being transmitted from the "Brain Vision - LSL-actiChamp" software programs running on the "EEG Server Computer" during the Baseline Tasks portion of the Experiment for participants on Lion, Tiger, and Leopard.
@@ -447,10 +602,13 @@ Baseline Competitive Ping-Pong Task Fields:
     \end{itemize}
 
 
-    \medskip
-    \item\verb|lsl/block_2.xdf|\\(Extensible Data Format XDF, binary file format)\\
-    The \verb|block_2.xdf| contains data files and data streams for the Minecraft portion of the Experiment. You must use a XDF viewer program to view or extract the data contained in this file. Some common software packages used to view or extract data from this XDF file are: MNE-Python, Matplotlib, and Qtgraph. A summary of data recorded in this XDF file is: fNIRS LSL Streams, EEG LSL Streams, Individual and Central Audio, Filenames of the Face and Screen Images, and Pupil Data.
-
+    \textbf{\\\\}
+    \textbf{block\_2.xdf}\\(Extensible Data Format XDF, binary file format)\\
+    The \verb|block_2.xdf| contains data files and data streams for the Minecraft portion of the Experiment.
+    You must use a XDF viewer program to view or extract the data contained in this file.
+    Some common software packages used to view or extract data from this XDF file are: MNE-Python, Matplotlib, and Qtgraph.
+    A summary of data recorded in this XDF file is: fNIRS LSL Streams, EEG LSL Streams, Individual and Central Audio,
+    Filenames of the Face and Screen Images, and Pupil Data.\\\\
     Data files and streams contained in the \verb|block_2.xdf|:
     \begin{itemize}
         \item \verb|fNIRS LSL Streams| -\\fNIRS LSL Streams being transmitted from the "NIRx - Aurora" software programs running on the "fNIRS Server Computer" during the Minecraft portion of the Experiment for participants on Lion, Tiger, and Leopard.
@@ -464,6 +622,65 @@ Baseline Competitive Ping-Pong Task Fields:
     \end{itemize}
 
 \end{addmargin}
+
+
+
+\textbf{\\\\\\}
+\item\textbf{<cat>/ ...}
+\begin{addmargin}[0em]{0em}
+    \textbf{eeg\_fnirs\_pupil/ ... \textit{(Only for experiments before April 2023)}}
+    \begin{addmargin}[1em]{0em}
+        \textbf{<cat>\_eeg\_fnirs\_pupil.xdf}\\
+        (Extensible Data Format XDF, binary file format)\\
+        The \verb|<cat>_eeg_fnirs_pupil.xdf| contains <cat> data files and data streams for the Experiment.
+        You must use a XDF viewer program to view or extract the data contained in this file.
+        Some common software packages used to view or extract data from this XDF file are: MNE-Python, Matplotlib, and Qtgraph.
+        A summary of data recorded in this XDF file is: fNIRS LSL Streams, EEG LSL Streams, and Pupil Data.\\\\
+        Data files and streams contained in the \verb|<cat>_eeg_fnirs_pupil.xdf|:
+        \begin{itemize}
+            \item \verb|fNIRS LSL Streams| -\\fNIRS LSL Streams being transmitted from the "NIRx - Aurora" software programs running on the "fNIRS Server Computer" during the Experiment for participants on Lion, Tiger, and Leopard.
+            \item \verb|EEG LSL Streams| -\\EEG LSL Streams being transmitted from the "Brain Vision - LSL-actiChamp" software programs running on the "EEG Server Computer" during the Experiment for participants on Lion, Tiger, and Leopard.
+            \item \verb|Pupil Data| -\\Pupil Data files recorded from the "Pupil Labs - Pupil Capture" software programs running on the participant's iMacs, Lion, Tiger, and Leopard during the Experiment.
+        \end{itemize}
+    \end{addmargin}
+\end{addmargin}
+
+
+% \bigskip
+% \begin{addmargin}[0em]{0em}
+%     \item\textbf{Only for experiments starting April 2023 (block\_1.xdf and block\_2.xdf)\\}
+%     \item\verb|lsl/block_1.xdf|\\(Extensible Data Format XDF, binary file format)\\
+%     The \verb|block_1.xdf| contains data files and data streams for the Baseline Tasks portion of the Experiment. You must use a XDF viewer program to view or extract the data contained in this file. Some common software packages used to view or extract data from this XDF file are: MNE-Python, Matplotlib, and Qtgraph. A summary of data recorded in this XDF file is: fNIRS LSL Streams, EEG LSL Streams, Baseline Data, Filenames of the Face and Screen Images, and Pupil Data.
+
+%     Data files and streams contained in the \verb|block_1.xdf|:
+
+%     \begin{itemize}
+%         \item \verb|fNIRS LSL Streams| -\\fNIRS LSL Streams being transmitted from the "NIRx - Aurora" software programs running on the "fNIRS Server Computer" during the Baseline Tasks portion of the Experiment for participants on Lion, Tiger, and Leopard.
+%         \item \verb|EEG LSL Streams| -\\EEG LSL Streams being transmitted from the "Brain Vision - LSL-actiChamp" software programs running on the "EEG Server Computer" during the Baseline Tasks portion of the Experiment for participants on Lion, Tiger, and Leopard.
+%         \item \verb|Baseline Data for all Tasks| -\\All records that are outputted to the Baseline Tasks CSV files are also recorded in this XDF file for all Baseline Tasks.
+%         \item \verb|Filenames of the Face Images| -\\The Filenames of all Face Images created during the Baseline Tasks portion of the Experiment for participants on Lion, Tiger, and Leopard.
+%         \item \verb|Filenames of the Screen Images| -\\The Filenames of all Face Images created during the Baseline Tasks portion of the Experiment for participants on Lion, Tiger, and Leopard.
+%         \item \verb|Pupil Data| -\\Pupil Data files recorded from the "Pupil Labs - Pupil Capture" software programs running on the participant's iMacs, Lion, Tiger, and Leopard during the Baseline Tasks portion of the Experiment.
+%     \end{itemize}
+
+
+%     \medskip
+%     \item\verb|lsl/block_2.xdf|\\(Extensible Data Format XDF, binary file format)\\
+%     The \verb|block_2.xdf| contains data files and data streams for the Minecraft portion of the Experiment. You must use a XDF viewer program to view or extract the data contained in this file. Some common software packages used to view or extract data from this XDF file are: MNE-Python, Matplotlib, and Qtgraph. A summary of data recorded in this XDF file is: fNIRS LSL Streams, EEG LSL Streams, Individual and Central Audio, Filenames of the Face and Screen Images, and Pupil Data.
+
+%     Data files and streams contained in the \verb|block_2.xdf|:
+%     \begin{itemize}
+%         \item \verb|fNIRS LSL Streams| -\\fNIRS LSL Streams being transmitted from the "NIRx - Aurora" software programs running on the "fNIRS Server Computer" during the Minecraft portion of the Experiment for participants on Lion, Tiger, and Leopard.
+%         \item \verb|EEG LSL Streams| -\\EEG LSL Streams being transmitted from the "Brain Vision - LSL-actiChamp" software programs running on the "EEG Server Computer" during the Minecraft portion of the Experiment for participants on Lion, Tiger, and Leopard.
+%         \item \verb|Minecraft Messages| -\\A series of JSON strings recording the messages sent to and from participants during the three Minecraft missions, Training, Saturn A, and Saturn B.
+%         \item \verb|Individual Audio| -\\Audio Signals captured during the Minecraft portion of the Experiment from each participant's microphone, Lion, Tiger, and Leopard.
+%         \item \verb|Central Audio| -\\This is Audio File from the central array microphone located in the center of the experiment room that picks up all audio in the room during the experiment.
+%         \item \verb|Filenames of the Face Images| -\\The Filenames of all Face Images created during the Minecraft portion of the Experiment for participants on Lion, Tiger, and Leopard.
+%         \item \verb|Filenames of the Screen Images| -\\The Filenames of all Face Images created during the Minecraft portion of the Experiment for participants on Lion, Tiger, and Leopard.
+%         \item \verb|Pupil Data| -\\Pupil Data files recorded from the "Pupil Labs - Pupil Capture" software programs running on the participant's iMacs, Lion, Tiger, and Leopard during the Minecraft portion of the Experiment.
+%     \end{itemize}
+
+% \end{addmargin}
 
 
 \end{description}
