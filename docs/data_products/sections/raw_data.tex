@@ -626,10 +626,12 @@ the data for each file listed above is detailed as follows: \\
 
 
 \textbf{\\\\\\}
-\item\textbf{<cat>/ ...}
-\begin{addmargin}[0em]{0em}
+\item\textbf{<cat>/ ...} % Start of Experiment Directory "<cat>/"
+
+\begin{addmargin}[0em]{0em} % Start of Sub Directory "eeg_fnirs_pupil/" 
     \textbf{eeg\_fnirs\_pupil/ ... \textit{(Only for experiments before April 2023)}}
-    \begin{addmargin}[1em]{0em}
+
+    \begin{addmargin}[1em]{0em} % Start of File "<cat>_eeg_fnirs_pupil.xdf"
         \textbf{<cat>\_eeg\_fnirs\_pupil.xdf}\\
         (Extensible Data Format XDF, binary file format)\\
         The \verb|<cat>_eeg_fnirs_pupil.xdf| contains <cat> data files and data streams for the Experiment.
@@ -642,45 +644,76 @@ the data for each file listed above is detailed as follows: \\
             \item \verb|EEG LSL Streams| -\\EEG LSL Streams being transmitted from the "Brain Vision - LSL-actiChamp" software programs running on the "EEG Server Computer" during the Experiment for participants on Lion, Tiger, and Leopard.
             \item \verb|Pupil Data| -\\Pupil Data files recorded from the "Pupil Labs - Pupil Capture" software programs running on the participant's iMacs, Lion, Tiger, and Leopard during the Experiment.
         \end{itemize}
-    \end{addmargin}
-\end{addmargin}
+    \end{addmargin} % End of File "<cat>_eeg_fnirs_pupil.xdf"
+
+\end{addmargin} % End of Sub Directory "eeg_fnirs_pupil/"
 
 
-% \bigskip
-% \begin{addmargin}[0em]{0em}
-%     \item\textbf{Only for experiments starting April 2023 (block\_1.xdf and block\_2.xdf)\\}
-%     \item\verb|lsl/block_1.xdf|\\(Extensible Data Format XDF, binary file format)\\
-%     The \verb|block_1.xdf| contains data files and data streams for the Baseline Tasks portion of the Experiment. You must use a XDF viewer program to view or extract the data contained in this file. Some common software packages used to view or extract data from this XDF file are: MNE-Python, Matplotlib, and Qtgraph. A summary of data recorded in this XDF file is: fNIRS LSL Streams, EEG LSL Streams, Baseline Data, Filenames of the Face and Screen Images, and Pupil Data.
+\textbf{\\\\\\}
+\begin{addmargin}[0em]{0em} % Start of Sub Directory "face_images/" 
+    \textbf{face\_images/ ... \textit{(Only for experiments before April 2023)}}
 
-%     Data files and streams contained in the \verb|block_1.xdf|:
+    \begin{addmargin}[1em]{0em} % Start of File "Face Image Files <yyyy-mm-ddThh_mm_ss.#########Z>.png"
+        % 2023-02-21T22_50_04.976190450Z.png
+        \textbf{Face Image Files <yyyy-mm-dd>T<hh\_mm\_ss.sssssssss>Z.png}\\
+        (PNG - Portable Network Graphic, raster image file)\\
+        Participant Face Image files recorded from the built-in "web camera" on the Lion, Tiger, and Leopard iMacs.
+        The files are recorded at a frequency of 10Hz and have a resolution of 1920 x 1080 pixels.
+        Typically, there will be over 50,000 files per <cat> for the experiment. 
+    \end{addmargin} % End of File "Face Image Files <yyyy-mm-ddThh_mm_ss.#########Z>.png"
 
-%     \begin{itemize}
-%         \item \verb|fNIRS LSL Streams| -\\fNIRS LSL Streams being transmitted from the "NIRx - Aurora" software programs running on the "fNIRS Server Computer" during the Baseline Tasks portion of the Experiment for participants on Lion, Tiger, and Leopard.
-%         \item \verb|EEG LSL Streams| -\\EEG LSL Streams being transmitted from the "Brain Vision - LSL-actiChamp" software programs running on the "EEG Server Computer" during the Baseline Tasks portion of the Experiment for participants on Lion, Tiger, and Leopard.
-%         \item \verb|Baseline Data for all Tasks| -\\All records that are outputted to the Baseline Tasks CSV files are also recorded in this XDF file for all Baseline Tasks.
-%         \item \verb|Filenames of the Face Images| -\\The Filenames of all Face Images created during the Baseline Tasks portion of the Experiment for participants on Lion, Tiger, and Leopard.
-%         \item \verb|Filenames of the Screen Images| -\\The Filenames of all Face Images created during the Baseline Tasks portion of the Experiment for participants on Lion, Tiger, and Leopard.
-%         \item \verb|Pupil Data| -\\Pupil Data files recorded from the "Pupil Labs - Pupil Capture" software programs running on the participant's iMacs, Lion, Tiger, and Leopard during the Baseline Tasks portion of the Experiment.
-%     \end{itemize}
+\end{addmargin} % End of Sub Directory "face_images/"
 
 
-%     \medskip
-%     \item\verb|lsl/block_2.xdf|\\(Extensible Data Format XDF, binary file format)\\
-%     The \verb|block_2.xdf| contains data files and data streams for the Minecraft portion of the Experiment. You must use a XDF viewer program to view or extract the data contained in this file. Some common software packages used to view or extract data from this XDF file are: MNE-Python, Matplotlib, and Qtgraph. A summary of data recorded in this XDF file is: fNIRS LSL Streams, EEG LSL Streams, Individual and Central Audio, Filenames of the Face and Screen Images, and Pupil Data.
+\textbf{\\\\\\}
+\begin{addmargin}[0em]{0em} % Start of Sub Directory "face_images/block_1/" 
+    \textbf{face\_images/block\_1/ ... \textit{(Only for experiments starting April 2023)}}
 
-%     Data files and streams contained in the \verb|block_2.xdf|:
-%     \begin{itemize}
-%         \item \verb|fNIRS LSL Streams| -\\fNIRS LSL Streams being transmitted from the "NIRx - Aurora" software programs running on the "fNIRS Server Computer" during the Minecraft portion of the Experiment for participants on Lion, Tiger, and Leopard.
-%         \item \verb|EEG LSL Streams| -\\EEG LSL Streams being transmitted from the "Brain Vision - LSL-actiChamp" software programs running on the "EEG Server Computer" during the Minecraft portion of the Experiment for participants on Lion, Tiger, and Leopard.
-%         \item \verb|Minecraft Messages| -\\A series of JSON strings recording the messages sent to and from participants during the three Minecraft missions, Training, Saturn A, and Saturn B.
-%         \item \verb|Individual Audio| -\\Audio Signals captured during the Minecraft portion of the Experiment from each participant's microphone, Lion, Tiger, and Leopard.
-%         \item \verb|Central Audio| -\\This is Audio File from the central array microphone located in the center of the experiment room that picks up all audio in the room during the experiment.
-%         \item \verb|Filenames of the Face Images| -\\The Filenames of all Face Images created during the Minecraft portion of the Experiment for participants on Lion, Tiger, and Leopard.
-%         \item \verb|Filenames of the Screen Images| -\\The Filenames of all Face Images created during the Minecraft portion of the Experiment for participants on Lion, Tiger, and Leopard.
-%         \item \verb|Pupil Data| -\\Pupil Data files recorded from the "Pupil Labs - Pupil Capture" software programs running on the participant's iMacs, Lion, Tiger, and Leopard during the Minecraft portion of the Experiment.
-%     \end{itemize}
+    \begin{addmargin}[1em]{0em} % Start of Files "Face Image Files, block_1, <seq ######>_<yyyy-mm-dd>_<hh_mm_ss.sss.AM/PM>~<ms from last image ###>.png"
+        % 017627_2023-04-28_18-44-18.089.PM~113.png
+        \textbf{Face Image Files (block\_1):\\<seq \#\#\#\#\#\#>\_<yyyy-mm-dd>\_<hh\_mm\_ss.sss.AM/PM>~<ms last image \#\#\#>.png}\\
+        (PNG - Portable Network Graphic, raster image file)\\
+        Participant Face Image files (block\_1) recorded from the built-in "web camera" on the Lion, Tiger,
+        and Leopard iMacs during the Baseline Tasks portion of the Experiment.
+        The files are recorded at a frequency of 10Hz and have a resolution of 1920 x 1080 pixels.
+        Typically, there will be over 15,000 files in this directory per <cat> for the experiment. 
+    \end{addmargin} % End of Files "Face Image Files, block_1, <seq ######>_<yyyy-mm-dd>_<hh_mm_ss.sss.AM/PM>~<ms from last image ###>.png"
 
-% \end{addmargin}
+\end{addmargin} % End of Sub Directory "face_images/block_1/"
 
+
+\textbf{\\\\\\}
+\begin{addmargin}[0em]{0em} % Start of Sub Directory "face_images/block_2/" 
+    \textbf{face\_images/block\_2/ ... \textit{(Only for experiments starting April 2023)}}
+
+    \begin{addmargin}[1em]{0em} % Start of Files "Face Image Files, block_2, <seq ######>_<yyyy-mm-dd>_<hh_mm_ss.sss.AM/PM>~<ms from last image ###>.png"
+        % 017627_2023-04-28_18-44-18.089.PM~113.png
+        \textbf{Face Image Files (block\_2):\\<seq \#\#\#\#\#\#>\_<yyyy-mm-dd>\_<hh\_mm\_ss.sss.AM/PM>~<ms last image \#\#\#>.png}\\
+        (PNG - Portable Network Graphic, raster image file)\\
+        Participant Face Image files (block\_2) recorded from the built-in "web camera" on the Lion, Tiger,
+        and Leopard iMacs during the Minecraft portion of the Experiment.
+        The files are recorded at a frequency of 10Hz and have a resolution of 1920 x 1080 pixels.
+        Typically, there will be over 30,000 files in this directory per <cat> for the experiment. 
+    \end{addmargin} % End of Files "Face Image Files, block_2, <seq ######>_<yyyy-mm-dd>_<hh_mm_ss.sss.AM/PM>~<ms from last image ###>.png"
+
+\end{addmargin} % End of Sub Directory "face_images/block_2/"
+
+
+\textbf{\\\\\\}
+\begin{addmargin}[0em]{0em} % Start of Sub Directory "screenshots/" 
+    \textbf{screenshots/ ... \textit{(Only for experiments before April 2023)}}
+
+    \begin{addmargin}[1em]{0em} % Start of File "Screenshot Image Files <yyyy-mm-ddThh_mm_ss.#########Z>.png"
+        % 2023-02-21T22_50_04.976190450Z.png
+        \textbf{Screenshot Image Files <yyyy-mm-dd>T<hh\_mm\_ss.sssssssss>Z.png}\\
+        (PNG - Portable Network Graphic, raster image file)\\
+        Screenshot Image files recorded from the participant's iMac (Lion, Tiger, or Leopard).
+        The files are recorded at a frequency of 10Hz and have a resolution of 2560 x 1440 pixels.
+        Typically, there will be over 50,000 files per <cat> for the experiment. 
+    \end{addmargin} % End of File "Screenshot Image Files <yyyy-mm-ddThh_mm_ss.#########Z>.png"
+
+\end{addmargin} % End of Sub Directory "screenshots/"
+
+% Start of Experiment Directory "<cat>/"
 
 \end{description}
