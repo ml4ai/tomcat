@@ -649,6 +649,10 @@ the data for each file listed above is detailed as follows: \\
 \end{addmargin} % End of Sub Directory "eeg_fnirs_pupil/"
 
 
+% *** On gauss, using the "file" or "identify -verbose", the face and screenshot images come up as "1280 x 720, 8-bit/color RGB, non-interlaced".
+% *** But, when I rsync any of these images from gauss to some other computer,
+% *** "file" or "identify -verbose" says they are "1920 x 1080, 8-bit/color RGB, non-interlaced" or "2560 x 1440, 8-bit/color RGB, non-interlaced".
+% *** I will need to research this. 
 \textbf{\\\\\\}
 \begin{addmargin}[0em]{0em} % Start of Sub Directory "face_images/" 
     \textbf{face\_images/ ... \textit{(Only for experiments before April 2023)}}
@@ -658,11 +662,27 @@ the data for each file listed above is detailed as follows: \\
         \textbf{Face Image Files <yyyy-mm-dd>T<hh\_mm\_ss.sssssssss>Z.png}\\
         (PNG - Portable Network Graphic, raster image file)\\
         Participant Face Image files recorded from the built-in "web camera" on the Lion, Tiger, and Leopard iMacs.
-        The files are recorded at a frequency of 10Hz and have a resolution of 1920 x 1080 pixels.
+        The files are recorded at a frequency of 10Hz and have a resolution of 1280 x 720, 8-bit/color RGB, non-interlaced.
         Typically, there will be over 50,000 files per <cat> for the experiment. 
     \end{addmargin} % End of File "Face Image Files <yyyy-mm-ddThh_mm_ss.#########Z>.png"
 
 \end{addmargin} % End of Sub Directory "face_images/"
+
+
+\textbf{\\\\\\}
+\begin{addmargin}[0em]{0em} % Start of Sub Directory "screenshots/" 
+    \textbf{screenshots/ ... \textit{(Only for experiments before April 2023)}}
+
+    \begin{addmargin}[1em]{0em} % Start of File "Screenshot Image Files <yyyy-mm-ddThh_mm_ss.#########Z>.png"
+        % 2023-02-21T22_50_04.976190450Z.png
+        \textbf{Screenshot Image Files <yyyy-mm-dd>T<hh\_mm\_ss.sssssssss>Z.png}\\
+        (PNG - Portable Network Graphic, raster image file)\\
+        Screenshot Image files recorded from the participant's iMac (Lion, Tiger, or Leopard).
+        The files are recorded at a frequency of 10Hz and have a resolution of 1280 x 720, 8-bit/color RGB, non-interlaced.
+        Typically, there will be over 50,000 files per <cat> for the experiment. 
+    \end{addmargin} % End of File "Screenshot Image Files <yyyy-mm-ddThh_mm_ss.#########Z>.png"
+
+\end{addmargin} % End of Sub Directory "screenshots/"
 
 
 \textbf{\\\\\\}
@@ -675,7 +695,7 @@ the data for each file listed above is detailed as follows: \\
         (PNG - Portable Network Graphic, raster image file)\\
         Participant Face Image files (block\_1) recorded from the built-in "web camera" on the Lion, Tiger,
         and Leopard iMacs during the Baseline Tasks portion of the Experiment.
-        The files are recorded at a frequency of 10Hz and have a resolution of 1920 x 1080 pixels.
+        The files are recorded at a frequency of 10Hz and have a resolution of 1280 x 720, 8-bit/color RGB, non-interlaced.
         Typically, there will be over 15,000 files in this directory per <cat> for the experiment. 
     \end{addmargin} % End of Files "Face Image Files, block_1, <seq ######>_<yyyy-mm-dd>_<hh_mm_ss.sss.AM/PM>~<ms from last image ###>.png"
 
@@ -692,7 +712,7 @@ the data for each file listed above is detailed as follows: \\
         (PNG - Portable Network Graphic, raster image file)\\
         Participant Face Image files (block\_2) recorded from the built-in "web camera" on the Lion, Tiger,
         and Leopard iMacs during the Minecraft portion of the Experiment.
-        The files are recorded at a frequency of 10Hz and have a resolution of 1920 x 1080 pixels.
+        The files are recorded at a frequency of 10Hz and have a resolution of 1280 x 720, 8-bit/color RGB, non-interlaced.
         Typically, there will be over 30,000 files in this directory per <cat> for the experiment. 
     \end{addmargin} % End of Files "Face Image Files, block_2, <seq ######>_<yyyy-mm-dd>_<hh_mm_ss.sss.AM/PM>~<ms from last image ###>.png"
 
@@ -700,19 +720,75 @@ the data for each file listed above is detailed as follows: \\
 
 
 \textbf{\\\\\\}
-\begin{addmargin}[0em]{0em} % Start of Sub Directory "screenshots/" 
-    \textbf{screenshots/ ... \textit{(Only for experiments before April 2023)}}
+\begin{addmargin}[0em]{0em} % Start of Sub Directory "screenshots/block_1/" 
+    \textbf{screenshots/block\_1/ ... \textit{(Only for experiments starting April 2023)}}
 
-    \begin{addmargin}[1em]{0em} % Start of File "Screenshot Image Files <yyyy-mm-ddThh_mm_ss.#########Z>.png"
-        % 2023-02-21T22_50_04.976190450Z.png
-        \textbf{Screenshot Image Files <yyyy-mm-dd>T<hh\_mm\_ss.sssssssss>Z.png}\\
+    \begin{addmargin}[1em]{0em} % Start of Files "Face Image Files, block_1, <seq ######>_<yyyy-mm-dd>_<hh_mm_ss.sss.AM/PM>~<ms from last image ###>.png"
+        % 017627_2023-04-28_18-44-18.089.PM~113.png
+        \textbf{Screenshot Image Files (block\_1):\\<seq \#\#\#\#\#\#>\_<yyyy-mm-dd>\_<hh\_mm\_ss.sss.AM/PM>~<ms last image \#\#\#>.png}\\
         (PNG - Portable Network Graphic, raster image file)\\
-        Screenshot Image files recorded from the participant's iMac (Lion, Tiger, or Leopard).
-        The files are recorded at a frequency of 10Hz and have a resolution of 2560 x 1440 pixels.
-        Typically, there will be over 50,000 files per <cat> for the experiment. 
-    \end{addmargin} % End of File "Screenshot Image Files <yyyy-mm-ddThh_mm_ss.#########Z>.png"
+        Screenshot Image files (block\_1) recorded from the participant's iMac (Lion, Tiger, or Leopard)
+        during the Baseline Tasks portion of the Experiment.
+        The files are recorded at a frequency of 5Hz and have a resolution of 1280 x 720, 8-bit/color RGB, non-interlaced.
+        Typically, there will be over 8,000 files in this directory per <cat> for the experiment. 
+    \end{addmargin} % End of Files "Screenshot Image Files, block_1, <seq ######>_<yyyy-mm-dd>_<hh_mm_ss.sss.AM/PM>~<ms from last image ###>.png"
 
-\end{addmargin} % End of Sub Directory "screenshots/"
+\end{addmargin} % End of Sub Directory "screenshots/block_1/"
+
+
+\textbf{\\\\\\}
+\begin{addmargin}[0em]{0em} % Start of Sub Directory "screenshots/block_2/" 
+    \textbf{screenshots/block\_2/ ... \textit{(Only for experiments starting April 2023)}}
+
+    \begin{addmargin}[1em]{0em} % Start of Files "Face Image Files, block_2, <seq ######>_<yyyy-mm-dd>_<hh_mm_ss.sss.AM/PM>~<ms from last image ###>.png"
+        % 017627_2023-04-28_18-44-18.089.PM~113.png
+        \textbf{Screenshot Image Files (block\_2):\\<seq \#\#\#\#\#\#>\_<yyyy-mm-dd>\_<hh\_mm\_ss.sss.AM/PM>~<ms last image \#\#\#>.png}\\
+        (PNG - Portable Network Graphic, raster image file)\\
+        Screenshot Image files (block\_2) recorded from the participant's iMac (Lion, Tiger, or Leopard)
+        during the Minecraft Tasks portion of the Experiment.
+        The files are recorded at a frequency of 5Hz and have a resolution of 1280 x 720, 8-bit/color RGB, non-interlaced.
+        Typically, there will be over 14,000 files in this directory per <cat> for the experiment. 
+    \end{addmargin} % End of Files "Screenshot Image Files, block_2, <seq ######>_<yyyy-mm-dd>_<hh_mm_ss.sss.AM/PM>~<ms from last image ###>.png"
+
+\end{addmargin} % End of Sub Directory "screenshots/block_2/"
+
+
+\textbf{\\\\\\}
+\begin{addmargin}[0em]{0em} % Start of Sub Directory "presession/" 
+    \textbf{presession/ ... }
+
+    \begin{addmargin}[1em]{0em} % Start of Symbolic Link "participant_<participant_ID>.wav"
+        % participant_00053.wav
+        \textbf{participant\_<participant\_ID>.wav}\\
+        (Symbolic Link to a file in the "presession" directory)\\
+        This is a Symbolic Link to file "participant\_<participant\_ID>.wav" in the presession's directory
+        that has the presession files for this <cat>'s participant.\\
+        The "participant\_<participant\_ID>.wav" was created in the participant's presession and is the audio recording
+        of the participant's reading\\ % *** I need to find out what participant is reading???
+        Example of the Symbolic Link mapping:
+        \begin{verbatim}
+        participant_<participant_ID>.wav ->
+            <presession directory>/participant_<participant_ID>.wav
+            \end{verbatim}  
+        \end{addmargin} % End of Symbolic Link "participant_<participant_ID>.wav"
+
+    \textbf{\\\\}
+    \begin{addmargin}[1em]{0em} % Start of Symbolic Link "participant_<participant_ID>Task2.wav"
+        % participant_00053Task2.wav
+        \textbf{participant\_<participant\_ID>Task2.wav}\\
+        (Symbolic Link to a file in the "presession" directory)\\
+        This is a Symbolic Link to file "participant\_<participant\_ID>Task2.wav" in the presession's directory
+        that has the presession files for this <cat>'s participant.\\
+        The "participant\_<participant\_ID>Task2.wav" was created in the participant's presession and is the audio recording
+        of the participant's reading\\ % *** I need to find out what participant is reading???
+        Example of the Symbolic Link mapping:
+        \begin{verbatim}
+        participant_<participant_ID>Task2.wav ->
+            <presession directory>/participant_<participant_ID>Task2.wav
+        \end{verbatim}  
+    \end{addmargin} % End of Symbolic Link "participant_<participant_ID>Task2.wav"
+\end{addmargin} % End of Sub Directory "presession/"
+
 
 % Start of Experiment Directory "<cat>/"
 
