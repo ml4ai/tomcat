@@ -17,7 +17,7 @@ logging.basicConfig(
     level=logging.INFO,
     handlers=(
         logging.FileHandler(
-            filename="/space/adarsh/tomcat/build_base_tables.log",
+            filename=f"/space/{USER}/tomcat/build_base_tables.log",
             mode="w",
         ),
         logging.StreamHandler(stream=sys.stderr),

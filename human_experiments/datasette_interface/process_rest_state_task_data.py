@@ -22,7 +22,7 @@ logging.basicConfig(
     level=logging.INFO,
     handlers=(
         logging.FileHandler(
-            filename="/space/adarsh/tomcat/build_rest_state_task_table.log", mode="w"
+            filename=f"/space/{USER}/tomcat/build_rest_state_task_table.log", mode="w"
         ),
         logging.StreamHandler(stream=sys.stderr),
     ),

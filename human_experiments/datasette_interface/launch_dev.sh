@@ -3,7 +3,7 @@
 
 set -euo pipefail
 datasette -i \
-    /space/adarsh/tomcat/tomcat.db \
+    /space/${USER}/tomcat/tomcat.db \
     --metadata metadata.yml \
     --reload \
     --template-dir=templates \
