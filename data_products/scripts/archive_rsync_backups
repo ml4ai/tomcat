@@ -1,0 +1,67 @@
+#!/bin/bash 
+
+##############################################################################
+#
+# Identification: 
+#     Archive *RSYNC* files
+#     
+#
+# Description:
+#     Mirrored disks can get full if they are the same size as the source due to
+#     previous versions. This script patches this by moving these files that
+#     match '-RSYNC-' to a different disk, creating the same directory
+#     structure. 
+#
+# Exit status:
+#     Following unix convention, this script exits with 0 on success, and
+#     non-zero if there was an error. 
+#
+# Author:
+#     Kobus Barnard
+#
+##############################################################################
+
+if [[ "${1}" == "" || "${2}" == "" ]]; then 
+   echo ERR: This command needs two arguments. Source dir and target dir.
+   exit 1
+fi 
+
+set -u
+
+exit_status=0 
+
+# TOMCAT_DIR is either the github clone, a link to it, or a directory with
+# needed links that mimics the github clone structure where needed. 
+export TOMCAT_DIR="${HOME}/tomcat/" 
+
+source ${TOMCAT_DIR}shared_code/bash/ivi_preamble.bash  
+
+# We control the meaning of basic commands by limiting the path to standard root
+# controlled directories. We also add all the tomcat script directories we need. 
+export PATH="/usr/bin:/bin:${TOMCAT_DIR}data_products/scripts"
+
+source ${TOMCAT_DIR}shared_code/bash/ivi_error_trap.bash  
+
+if [[ ! -d "${1}" ]]; then 
+    echo ERR: The source directory $1 does not exist. 
+fi 
+
+export SOURCE_DIR="${1}" 
+export ARCHIVE_DIR="${2}" 
+
+if [[ ${exit_status} -eq 0 ]]; then
+    mkdir -p "${ARCHIVE_DIR}"
+    $VERBOSE_ECHO "Archive dir is ${ARCHIVE_DIR}"
+fi 
+
+if [[ ${exit_status} -eq 0 ]]; then
+    # Note that find will execute the command for all arguments, and return true
+    # even if some of them fail. There are alternatives, but none that I know of do
+    # the right thing in a partable way. Perhaps we just live with this behavior
+    # here.
+    #
+    find ${SOURCE_DIR} -type f -name '*-RSYNC-*' -exec ${TOMCAT_DIR}data_products/scripts/archive_rsync_backups_2 {} \;
+fi 
+
+exit ${exit_status}
+

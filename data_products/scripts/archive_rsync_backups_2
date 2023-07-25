@@ -1,0 +1,60 @@
+#!/bin/bash 
+
+##############################################################################
+#
+# Identification: 
+#     Helper for cleanup_rsync_backups
+#     
+#
+# Description:
+#     
+#
+# Output:
+#     
+#
+# Exit status:
+#     Following unix convention, this script exits with 0 on success, and
+#     non-zero if there was an error. 
+#
+# Author:
+#     Kobus Barnard
+#
+##############################################################################
+
+set -u
+
+source ${TOMCAT_DIR}shared_code/bash/ivi_error_trap.bash  
+
+exit_status=0
+
+# By assumption, $1 and thus file_name will have the string -RSYNC-
+file_name=`echo ${1} | sed 's#^./##'`
+echo file_name: $file_name
+
+is_dir=`echo ${file_name} | grep -c '/'`
+
+if [[ "${is_dir}" -ne 0 ]]; then 
+    dir_name=`echo ${file_name} | sed 's#^\(.*\)/.*$#\1#'`
+    echo mkdir -p "${ARCHIVE_DIR}${dir_name}"
+    exit_status=$?
+    dir_name="${dir_name}/"
+else 
+    dir_name=""
+fi 
+
+# Highly unlikely that we have a file by the same name in the way, but
+# just in case we will rename it.  
+if [[ ${exit_status} -eq 0 ]]; then
+    if [[ -e "${ARCHIVE_DIR}${dir_name}${file_name}" ]]; then
+        ${VERBOSE_ECHO} "mv ${file_name} ${ARCHIVE_DIR}${dir_name}${file_name}-$$"
+        # mv "${file_name}" "${ARCHIVE_DIR}${dir_name}${file_name}-$$"
+    fi 
+fi 
+
+if [[ ${exit_status} -eq 0 ]]; then
+    ${VERBOSE_ECHO} "mv ${file_name} ${ARCHIVE_DIR}${dir_name}"
+    # mv "${file_name}" "${ARCHIVE_DIR}${dir_name}"
+fi 
+
+exit ${exit_status}
+
