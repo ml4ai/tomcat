@@ -13,7 +13,7 @@ from utils import (
 import pyxdf
 import logging
 from logging import info, error
-from config import DB_PATH, logging_handlers
+from config import DB_PATH, logging_handlers, USER
 from tqdm import tqdm
 from tqdm.contrib.concurrent import process_map
 import random
@@ -23,7 +23,7 @@ logging.basicConfig(
     level=logging.INFO,
     handlers=(
         logging.FileHandler(
-            filename="/space/adarsh/tomcat/build_fnirs_table.log", mode="w"
+            filename=f"/space/{USER}/tomcat/build_fnirs_table.log", mode="w"
         ),
         logging.StreamHandler(stream=sys.stderr),
     ),

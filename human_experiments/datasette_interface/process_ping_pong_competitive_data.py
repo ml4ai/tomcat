@@ -23,7 +23,7 @@ logging.basicConfig(
     level=logging.INFO,
     handlers=(
         logging.FileHandler(
-            filename="/space/adarsh/tomcat/build_ping_pong_competitive_task_table.log",
+            filename=f"/space/{USER}/tomcat/build_ping_pong_competitive_task_table.log",
             mode="w",
         ),
         logging.StreamHandler(stream=sys.stderr),

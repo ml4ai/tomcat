@@ -8,7 +8,7 @@ services:
     ports:
         - "8001:8001"
     volumes:
-        - /space/adarsh/tomcat:/mnt
+        - /space/${USER}/tomcat:/mnt
 
     entrypoint: |
         datasette -p 8001 -h 0.0.0.0 -i /mnt/tomcat.db

@@ -23,7 +23,7 @@ logging.basicConfig(
     level=logging.INFO,
     handlers=(
         logging.FileHandler(
-            filename="/space/adarsh/tomcat/build_affective_task_data_table.log",
+            filename=f"/space/{USER}/tomcat/build_affective_task_data_table.log",
             mode="w",
         ),
         logging.StreamHandler(stream=sys.stderr),
