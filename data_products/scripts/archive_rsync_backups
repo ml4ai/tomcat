@@ -46,7 +46,10 @@ if [[ ! -d "${1}" ]]; then
     echo ERR: The source directory $1 does not exist. 
 fi 
 
-export SOURCE_DIR="${1}" 
+# export SOURCE_DIR="${1}" 
+
+pushd "${1}" > /dev/null
+
 export ARCHIVE_DIR="${2}" 
 
 if [[ ${exit_status} -eq 0 ]]; then
@@ -60,8 +63,10 @@ if [[ ${exit_status} -eq 0 ]]; then
     # the right thing in a partable way. Perhaps we just live with this behavior
     # here.
     #
-    find ${SOURCE_DIR} -type f -name '*-RSYNC-*' -exec ${TOMCAT_DIR}data_products/scripts/archive_rsync_backups_2 {} \;
+    find . -type f -name '*-RSYNC-*' -exec ${TOMCAT_DIR}data_products/scripts/archive_rsync_backups_2 {} \;
 fi 
+
+popd > /dev/null 
 
 exit ${exit_status}
 

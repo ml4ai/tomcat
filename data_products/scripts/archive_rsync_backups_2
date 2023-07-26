@@ -35,7 +35,8 @@ is_dir=`echo ${file_name} | grep -c '/'`
 
 if [[ "${is_dir}" -ne 0 ]]; then 
     dir_name=`echo ${file_name} | sed 's#^\(.*\)/.*$#\1#'`
-    echo mkdir -p "${ARCHIVE_DIR}${dir_name}"
+    ${VERBOSE_ECHO} "mkdir -p ${ARCHIVE_DIR}${dir_name}"
+    mkdir -p "${ARCHIVE_DIR}${dir_name}"
     exit_status=$?
     dir_name="${dir_name}/"
 else 
@@ -47,13 +48,13 @@ fi
 if [[ ${exit_status} -eq 0 ]]; then
     if [[ -e "${ARCHIVE_DIR}${dir_name}${file_name}" ]]; then
         ${VERBOSE_ECHO} "mv ${file_name} ${ARCHIVE_DIR}${dir_name}${file_name}-$$"
-        # mv "${file_name}" "${ARCHIVE_DIR}${dir_name}${file_name}-$$"
+        mv "${file_name}" "${ARCHIVE_DIR}${dir_name}${file_name}-$$"
     fi 
 fi 
 
 if [[ ${exit_status} -eq 0 ]]; then
     ${VERBOSE_ECHO} "mv ${file_name} ${ARCHIVE_DIR}${dir_name}"
-    # mv "${file_name}" "${ARCHIVE_DIR}${dir_name}"
+    mv "${file_name}" "${ARCHIVE_DIR}${dir_name}"
 fi 
 
 exit ${exit_status}
