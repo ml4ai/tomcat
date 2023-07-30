@@ -36,7 +36,7 @@ def recreate_eeg_table():
     with db_connection:
         db_connection.execute("PRAGMA foreign_keys = 1;")
         info("Dropping eeg table")
-        db_connection.execute("DROP TABLE IF EXISTS eef_raw")
+        db_connection.execute("DROP TABLE IF EXISTS eeg_raw")
         db_connection.execute(
             """
             CREATE TABLE eeg_raw (
