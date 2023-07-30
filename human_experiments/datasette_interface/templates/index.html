@@ -56,4 +56,12 @@ Sign up for our [mailing list](/mailing-list) to get updates on the dataset!
                 <p>{% for table in database.tables_and_views_truncated %}<a href="{{ urls.table(database.name, table.name) }}"{% if table.count %} title="{{ table.count }} rows"{% endif %}>{{ table.name }}</a>{% if table.private %} 🔒{% endif %}{% if not loop.last %}, {% endif %}{% endfor %}{% if database.tables_and_views_more %}, <a href="{{ urls.database(database.name) }}">...</a>{% endif %}</p>
             {% endfor %}
 
+{{ render_markdown("""
+## Funding Acknowledgment
+
+The creation of this dataset was funded by the Army Research Office and was
+accomplished under Grant Number W911NF-20-1-0002. The grant was awarded through
+the Defense Advanced Research Projects Agency (DARPA). We would also like to
+acknowledge intramural seed funding from the University of Arizona's SensorLab.
+""") }}
 {% endblock %}
