@@ -141,7 +141,7 @@ def insert_data_into_table(stream, session, station, db_connection):
             + ",".join(
                 [
                     "?"
-                    for i in stream["info"]["desc"][0]["channels"][0][
+                    for _ in stream["info"]["desc"][0]["channels"][0][
                         "channel"
                     ][41:]
                 ]
@@ -249,7 +249,6 @@ def label_rest_state_task_data(
         """
         ).fetchall()[0]
 
-
         # Update participant ID and label task.
         db_connection.execute(
             f"""
@@ -263,6 +262,7 @@ def label_rest_state_task_data(
                 and station='{station}'
         """
         )
+
 
 def label_affective_task_individual_data(
     group_session, station, is_valid, participant_id, task, db_connection
@@ -299,9 +299,9 @@ def label_affective_task_individual_data(
                 ORDER BY timestamp_unix DESC LIMIT 1
             """
             ).fetchall()[0][0]
-        except:
+        except Exception as e:
             error(f"Unable to get stop timestamp for {group_session}, {station}, {participant_id}, {task}")
-            raise IndexError(e)
+            raise Exception(e)
 
         # Update participant ID and label task.
         db_connection.execute(
@@ -316,6 +316,7 @@ def label_affective_task_individual_data(
                 AND station='{station}'
         """
         )
+
 
 def label_affective_task_team_data(
     group_session, station, is_valid, participant_id, task, db_connection
@@ -361,7 +362,6 @@ def label_affective_task_team_data(
         )
 
 
-
 def update_labels(
     group_session, station, is_valid, participant_id, task, db_connection,
     table_name
@@ -382,7 +382,6 @@ def update_labels(
         except IndexError:
             error(f"""IndexError! Cannot update labels for {group_session},
                     {station}, {participant_id}, {task}, {table_name}.""")
-
 
         stop_timestamp = db_connection.execute(
             f"""
@@ -406,6 +405,7 @@ def update_labels(
                 AND station='{station}'
         """
         )
+
 
 def label_minecraft_data(
     group_session, station, is_valid, participant_id, task, db_connection,
@@ -552,6 +552,7 @@ def remove_invalid_data():
                     AND task = '{task}'
             """
             )
+
 
 if __name__ == "__main__":
     info("Starting building fNIRS table.")

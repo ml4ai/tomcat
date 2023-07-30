@@ -9,7 +9,7 @@ import csv
 import pandas as pd
 from pprint import pprint
 from utils import cd
-from config import DB_PATH, logging_handlers
+from config import DB_PATH, logging_handlers, USER
 
 
 
