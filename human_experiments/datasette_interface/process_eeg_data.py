@@ -99,16 +99,17 @@ def insert_raw_unlabeled_data():
         db_connection = sqlite3.connect(DB_PATH)
         with db_connection:
             db_connection.execute("PRAGMA foreign_keys = 1;")
-            for session in tqdm(
-                    sorted(directories_to_process), unit="directories"
-            ):
+            for session in tqdm(sorted(directories_to_process), unit="directories"):
                 if not is_directory_with_unified_xdf_files(session):
                     process_directory_v1(session, db_connection)
                 else:
                     process_directory_v2(session, db_connection)
 
 
-def insert_data_into_table(stream, session, station, db_connection):
+def insert_data_into_table(stream: dict,
+                           session: str,
+                           station: str,
+                           db_connection: sqlite3.Connection):
     # We insert a participant ID of -1 since we don't actually know for sure
     # who the participant is - we will need to consult the data validity table
     # to learn the ID, since the originally scheduled participant might be
@@ -123,38 +124,25 @@ def insert_data_into_table(stream, session, station, db_connection):
             participant_id,
             timestamp,
             convert_unix_timestamp_to_iso8601(timestamp),
-            *list(map(str, stream["time_series"][i][41:])),
+            *list(map(str, stream["time_series"][i])),
         ]
         for i, timestamp in enumerate(stream["time_stamps"])
     ]
 
     with db_connection:
-        query = (
-                "INSERT into eeg_raw VALUES(?, ?, ?, ?, ?, ?,"
-                + ",".join(
-            [
-                "?"
-                for _ in stream["info"]["desc"][0]["channels"][0][
-                             "channel"
-                         ][41:]
-            ]
-        )
-                + ")"
-        )
+        query = ("INSERT into eeg_raw VALUES(?, ?, ?, ?, ?, ?,"
+                 + ",".join(["?" for _ in stream["info"]["desc"][0]["channels"][0]["channel"]])
+                 + ")")
         db_connection.executemany(query, data)
 
 
-def process_directory_v1(session, db_connection):
+def process_directory_v1(session: str, db_connection: sqlite3.Connection):
     info(f"Processing directory {session}")
     with cd(f"{session}"):
         for station in ("lion", "tiger", "leopard"):
-            xdf_file = (
-                f"{station}/eeg_fnirs_pupil/{station}_eeg_fnirs_pupil.xdf"
-            )
+            xdf_file = f"{station}/eeg_fnirs_pupil/{station}_eeg_fnirs_pupil.xdf"
             try:
-                streams, header = pyxdf.load_xdf(
-                    xdf_file, select_streams=[{"type": "EEG"}]
-                )
+                streams, header = pyxdf.load_xdf(xdf_file, select_streams=[{"type": "EEG"}])
             except ValueError as e:
                 error(f"[MISSING DATA]: No EEG stream found in {xdf_file}!")
                 print(e)
@@ -167,15 +155,13 @@ def process_directory_v1(session, db_connection):
             insert_data_into_table(stream, session, station, db_connection)
 
 
-def process_directory_v2(session, db_connection):
+def process_directory_v2(session: str, db_connection: sqlite3.Connection):
     """Process directory assuming unified XDF files."""
     info(f"Processing directory {session}")
     with cd(f"{session}/lsl"):
         for xdf_file in ("block_1.xdf", "block_2.xdf"):
             try:
-                streams, header = pyxdf.load_xdf(
-                    xdf_file, select_streams=[{"type": "EEG"}]
-                )
+                streams, header = pyxdf.load_xdf(xdf_file, select_streams=[{"type": "EEG"}])
             except ValueError as e:
                 error(f"[MISSING DATA]: No EEG stream found in {xdf_file}!")
                 print(e)
