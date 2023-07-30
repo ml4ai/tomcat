@@ -199,47 +199,50 @@ def create_indices():
             """
             CREATE INDEX IF NOT EXISTS idx_group_session_station
             ON eeg_raw (group_session, station);
-        """
+            """
         )
 
         db_connection.execute(
             """
             CREATE INDEX IF NOT EXISTS idx_timestamp_unix
             ON eeg_raw (timestamp_unix);
-        """
+            """
         )
 
         db_connection.execute(
             """
             CREATE INDEX IF NOT EXISTS idx_participant
             ON eeg_raw (participant);
-        """
+            """
         )
 
         db_connection.execute(
             """
             CREATE INDEX IF NOT EXISTS idx_group_session
             ON eeg_raw (group_session);
-        """
+            """
         )
 
         db_connection.execute(
             """
             CREATE INDEX IF NOT EXISTS idx_task
             ON eeg_raw (task);
-        """
+            """
         )
 
 
-def label_rest_state_task_data(
-        group_session, station, is_valid, participant_id, modality, db_connection
-):
+def label_rest_state_task_data(group_session_query: str,
+                               station_query: str,
+                               is_valid_label: bool,
+                               participant_id_label: str,
+                               modality_label: str,
+                               db_connection: sqlite3.Connection):
     with db_connection:
         start_timestamp, stop_timestamp = db_connection.execute(
             f"""
             SELECT start_timestamp_unix, stop_timestamp_unix from rest_state_task
-            WHERE group_session='{group_session}';
-        """
+            WHERE group_session='{group_session_query}';
+            """
         ).fetchall()[0]
 
         # Update participant ID and label task.
@@ -248,18 +251,21 @@ def label_rest_state_task_data(
             UPDATE eeg_raw
             SET
                 task='rest_state',
-                participant='{participant_id}'
+                participant='{participant_id_label}'
             WHERE
                 timestamp_unix >= '{start_timestamp}'
                 AND timestamp_unix < '{stop_timestamp}'
-                and station='{station}'
-        """
+                and station='{station_query}'
+            """
         )
 
 
-def label_affective_task_individual_data(
-        group_session, station, is_valid, participant_id, task, db_connection
-):
+def label_affective_task_individual_data(group_session_query: str,
+                                         station_query: str,
+                                         is_valid: bool,
+                                         participant_id_query: str,
+                                         task,
+                                         db_connection: sqlite3.Connection):
     with db_connection:
         db_connection.execute("PRAGMA foreign_keys = 1;")
 
@@ -269,15 +275,16 @@ def label_affective_task_individual_data(
                 f"""
                 SELECT timestamp_unix from affective_task_event
                 WHERE
-                    group_session='{group_session}'
+                    group_session='{group_session_query}'
                     AND task_type='individual'
-                    AND participant='{participant_id}'
+                    AND participant='{participant_id_query}'
                     AND event_type='start_affective_task'
                 ORDER BY timestamp_unix LIMIT 1
             """
             ).fetchall()[0][0]
         except IndexError as e:
-            error(f"Unable to get starting timestamp for {group_session}, {station}, {participant_id}, {task}")
+            error(f"Unable to get start timestamp for "
+                  f"{group_session_query}, {station_query}, {participant_id_query}, {task}")
             raise IndexError(e)
 
         try:
@@ -285,16 +292,17 @@ def label_affective_task_individual_data(
                 f"""
                 SELECT timestamp_unix from affective_task_event
                 WHERE
-                    group_session='{group_session}'
+                    group_session='{group_session_query}'
                     AND task_type='individual'
-                    AND participant='{participant_id}'
+                    AND participant='{participant_id_query}'
                     AND event_type='final_submission'
                 ORDER BY timestamp_unix DESC LIMIT 1
             """
             ).fetchall()[0][0]
-        except Exception as e:
-            error(f"Unable to get stop timestamp for {group_session}, {station}, {participant_id}, {task}")
-            raise Exception(e)
+        except IndexError as e:
+            error(f"Unable to get stop timestamp for "
+                  f"{group_session_query}, {station_query}, {participant_id_query}, {task}")
+            raise IndexError(e)
 
         # Update participant ID and label task.
         db_connection.execute(
@@ -302,18 +310,21 @@ def label_affective_task_individual_data(
             UPDATE eeg_raw
             SET
                 task='affective_individual',
-                participant='{participant_id}'
+                participant='{participant_id_query}'
             WHERE
                 timestamp_unix >= '{start_timestamp}'
                 AND timestamp_unix <= '{stop_timestamp}'
-                AND station='{station}'
-        """
+                AND station='{station_query}'
+            """
         )
 
 
-def label_affective_task_team_data(
-        group_session, station, is_valid, participant_id, task, db_connection
-):
+def label_affective_task_team_data(group_session_query: str,
+                                   station_query: str,
+                                   is_valid_label: bool,
+                                   participant_id_label: str,
+                                   task: str,
+                                   db_connection: sqlite3.Connection):
     with db_connection:
         db_connection.execute("PRAGMA foreign_keys = 1;")
 
@@ -322,22 +333,22 @@ def label_affective_task_team_data(
             f"""
             SELECT timestamp_unix from affective_task_event
             WHERE
-                group_session='{group_session}'
+                group_session='{group_session_query}'
                 AND task_type='team'
                 AND event_type='start_affective_task'
             ORDER BY timestamp_unix LIMIT 1
-        """
+            """
         ).fetchall()[0][0]
 
         stop_timestamp = db_connection.execute(
             f"""
             SELECT timestamp_unix from affective_task_event
             WHERE
-                group_session='{group_session}'
+                group_session='{group_session_query}'
                 AND task_type='team'
                 AND event_type='final_submission'
             ORDER BY timestamp_unix DESC LIMIT 1
-        """
+            """
         ).fetchall()[0][0]
 
         # Update participant ID and label task.
@@ -346,19 +357,22 @@ def label_affective_task_team_data(
             UPDATE eeg_raw
             SET
                 task='affective_team',
-                participant='{participant_id}'
+                participant='{participant_id_label}'
             WHERE
                 timestamp_unix >= '{start_timestamp}'
                 AND timestamp_unix <= '{stop_timestamp}'
-                AND station='{station}'
-        """
+                AND station='{station_query}'
+            """
         )
 
 
-def update_labels(
-        group_session, station, is_valid, participant_id, task, db_connection,
-        table_name
-):
+def update_labels(group_session_query: str,
+                  station_query: str,
+                  is_valid_label: bool,
+                  participant_id_query: str,
+                  task: str,
+                  db_connection: sqlite3.Connection,
+                  table_name: str):
     with db_connection:
         db_connection.execute("PRAGMA foreign_keys = 1;")
 
@@ -368,21 +382,21 @@ def update_labels(
                 f"""
                 SELECT timestamp_unix from {table_name}
                 WHERE
-                    group_session='{group_session}'
+                    group_session='{group_session_query}'
                 ORDER BY timestamp_unix LIMIT 1
-            """
+                """
             ).fetchall()[0][0]
         except IndexError:
-            error(f"""IndexError! Cannot update labels for {group_session},
-                    {station}, {participant_id}, {task}, {table_name}.""")
+            error(f"""IndexError! Cannot update labels for {group_session_query},
+                    {station_query}, {participant_id_query}, {task}, {table_name}.""")
 
         stop_timestamp = db_connection.execute(
             f"""
             SELECT timestamp_unix from {table_name}
             WHERE
-                group_session='{group_session}'
+                group_session='{group_session_query}'
             ORDER BY timestamp_unix DESC LIMIT 1
-        """
+            """
         ).fetchall()[0][0]
 
         # Update participant ID and label task.
@@ -391,18 +405,21 @@ def update_labels(
             UPDATE eeg_raw
             SET
                 task='{task}',
-                participant='{participant_id}'
+                participant='{participant_id_query}'
             WHERE
                 timestamp_unix >= '{start_timestamp}'
                 AND timestamp_unix <= '{stop_timestamp}'
-                AND station='{station}'
-        """
+                AND station='{station_query}'
+            """
         )
 
 
-def label_minecraft_data(
-        group_session, station, is_valid, participant_id, task, db_connection,
-):
+def label_minecraft_data(group_session_query: str,
+                         station_query: str,
+                         is_valid_label: bool,
+                         participant_id_label: str,
+                         task: str,
+                         db_connection: sqlite3.Connection):
     if task == "saturn_a":
         mission = "Saturn_A"
     elif task == "saturn_b":
@@ -420,18 +437,18 @@ def label_minecraft_data(
             f"""
             SELECT start_timestamp_unix from mission
             WHERE
-                group_session='{group_session}'
+                group_session='{group_session_query}'
                 and name = '{mission}'
-        """
+            """
         ).fetchall()[0][0]
 
         stop_timestamp = db_connection.execute(
             f"""
             SELECT stop_timestamp_unix from mission
             WHERE
-                group_session='{group_session}'
+                group_session='{group_session_query}'
                 and name = '{mission}'
-        """
+            """
         ).fetchall()[0][0]
 
         # Update participant ID and label task.
@@ -440,12 +457,12 @@ def label_minecraft_data(
             UPDATE eeg_raw
             SET
                 task='{task}',
-                participant='{participant_id}'
+                participant='{participant_id_label}'
             WHERE
                 timestamp_unix >= '{start_timestamp}'
                 AND timestamp_unix <= '{stop_timestamp}'
-                AND station='{station}'
-        """
+                AND station='{station_query}'
+            """
         )
 
 
@@ -458,7 +475,7 @@ def label_data():
             f"""
             SELECT * from data_validity
             WHERE modality='eeg';
-        """
+            """
         ).fetchall()
 
     for row in tqdm(validity_rows):
@@ -522,7 +539,7 @@ def remove_invalid_data():
             f"""
             SELECT * from data_validity
             WHERE modality='eeg';
-        """
+            """
         ).fetchall()
 
     eeg_rows = [row for row in validity_rows if row[-2] == "eeg"]
@@ -543,7 +560,7 @@ def remove_invalid_data():
                     group_session='{group_session}'
                     AND station='{station}'
                     AND task = '{task}'
-            """
+                """
             )
 
 
