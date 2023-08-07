@@ -16,7 +16,7 @@ from utils import (
 import logging
 from logging import info, warning, error, debug
 from tqdm import tqdm
-from config import DB_PATH, logging_handlers
+from config import DB_PATH, logging_handlers, USER
 import pyxdf
 
 logging.basicConfig(

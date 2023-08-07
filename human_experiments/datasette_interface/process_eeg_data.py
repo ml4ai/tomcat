@@ -3,20 +3,22 @@
 import os
 import sys
 import sqlite3
+
+import pandas as pd
+import numpy as np
+from common import extract_signal_xdf
 from utils import (
     cd,
     should_ignore_directory,
-    logging_handlers,
     convert_unix_timestamp_to_iso8601,
     is_directory_with_unified_xdf_files,
+    is_directory_with_white_noise_eeg_channels
 )
 import pyxdf
 import logging
 from logging import info, error
-from config import DB_PATH, logging_handlers, USER
+from config import DB_PATH, USER
 from tqdm import tqdm
-from tqdm.contrib.concurrent import process_map
-import random
 
 logging.basicConfig(
     level=logging.INFO,
@@ -29,7 +31,7 @@ logging.basicConfig(
 )
 
 
-def recreate_eeg_table():
+def recreate_eeg_table(channel_names: list[str]):
     info("Processing directories...")
 
     db_connection = sqlite3.connect(DB_PATH)
@@ -37,58 +39,32 @@ def recreate_eeg_table():
         db_connection.execute("PRAGMA foreign_keys = 1;")
         info("Dropping eeg table")
         db_connection.execute("DROP TABLE IF EXISTS eeg_raw")
-        db_connection.execute(
-            """
-            CREATE TABLE eeg_raw (
-                group_session TEXT NOT NULL,
-                task TEXT,
-                station TEXT NOT NULL,
-                participant TEXT NOT NULL,
-                timestamp_unix TEXT NOT NULL,
-                timestamp_iso8601 TEXT NOT NULL,
-                AFF1h REAL NOT NULL,
-                AFF5h REAL NOT NULL,
-                F7 REAL NOT NULL,
-                FC5 REAL NOT NULL,
-                FC1 REAL NOT NULL,
-                C3 REAL NOT NULL,
-                T7 REAL NOT NULL,
-                TP9 REAL NOT NULL,
-                CP5 REAL NOT NULL,
-                CP1 REAL NOT NULL,
-                Pz REAL NOT NULL,
-                P3 REAL NOT NULL,
-                P7 REAL NOT NULL,
-                PO9 REAL NOT NULL,
-                O1 REAL NOT NULL,
-                Oz REAL NOT NULL,
-                O2 REAL NOT NULL,
-                PO10 REAL NOT NULL,
-                P8 REAL NOT NULL,
-                P4 REAL NOT NULL,
-                TP10 REAL NOT NULL,
-                CP6 REAL NOT NULL,
-                CP2 REAL NOT NULL,
-                Cz REAL NOT NULL,
-                C4 REAL NOT NULL,
-                T8 REAL NOT NULL,
-                FC6 REAL NOT NULL,
-                FC2 REAL NOT NULL,
-                FCz REAL NOT NULL,
-                F8 REAL NOT NULL,
-                AFF6h REAL NOT NULL,
-                AFF2h REAL NOT NULL,
-                AUX_GSR REAL NOT NULL,
-                AUX_EKG REAL NOT NULL,
-                FOREIGN KEY(group_session) REFERENCES group_session(id),
-                FOREIGN KEY(task) REFERENCES task(id),
-                FOREIGN KEY(station) REFERENCES station(id),
-                FOREIGN KEY(participant) REFERENCES participant(id),
-            );"""
-        )
+
+        # Generate the SQL code for the EEG channel columns
+        channel_columns_sql = ", ".join(f"{name} REAL" for name in channel_names)
+
+        # Now you can use `EEG_channel_columns_sql` in your SQL statement
+        create_table = f"CREATE TABLE eeg_raw (" \
+                       "group_session TEXT NOT NULL," \
+                       "task TEXT," \
+                       "station TEXT NOT NULL," \
+                       "participant TEXT NOT NULL," \
+                       "timestamp_unix TEXT NOT NULL," \
+                       "timestamp_iso8601 TEXT NOT NULL," \
+                       f"{channel_columns_sql}," \
+                       "FOREIGN KEY(group_session) REFERENCES group_session(id)," \
+                       "FOREIGN KEY(task) REFERENCES task(id)," \
+                       "FOREIGN KEY(station) REFERENCES station(id)," \
+                       "FOREIGN KEY(participant) REFERENCES participant(id)" \
+                       ");"
+
+        db_connection.execute(create_table)
 
 
-def insert_raw_unlabeled_data():
+def insert_raw_unlabeled_data(channel_names: list[str],
+                              white_noise_channels: list[str] | None = None):
+    exp_info = pd.read_csv('/space/eduong/exp_info_v2/exp_info.csv', dtype=str)
+
     with cd("/tomcat/data/raw/LangLab/experiments/study_3_pilot/group"):
         directories_to_process = [
             directory
@@ -99,44 +75,63 @@ def insert_raw_unlabeled_data():
         db_connection = sqlite3.connect(DB_PATH)
         with db_connection:
             db_connection.execute("PRAGMA foreign_keys = 1;")
-            for session in tqdm(sorted(directories_to_process), unit="directories"):
+
+            pbar = tqdm(sorted(directories_to_process), unit="directories")
+            for session in pbar:
+                pbar.set_description(f'Processing {session}')
+
                 if not is_directory_with_unified_xdf_files(session):
-                    process_directory_v1(session, db_connection)
+                    process_directory_v1(session,
+                                         channel_names,
+                                         white_noise_channels)
                 else:
-                    process_directory_v2(session, db_connection)
+                    process_directory_v2(session,
+                                         exp_info,
+                                         channel_names,
+                                         white_noise_channels)
 
 
 def insert_data_into_table(stream: dict,
                            session: str,
                            station: str,
-                           db_connection: sqlite3.Connection):
+                           channel_names: list[str],
+                           white_noise_channels: list[str] | None = None):
     # We insert a participant ID of -1 since we don't actually know for sure
     # who the participant is - we will need to consult the data validity table
     # to learn the ID, since the originally scheduled participant might be
     # replaced by an experimenter partway through the group session.
-    task = None
+    task = np.nan
     participant_id = -1
-    data = [
-        [
-            session,
-            task,
-            station,
-            participant_id,
-            timestamp,
-            convert_unix_timestamp_to_iso8601(timestamp),
-            *list(map(str, stream["time_series"][i])),
-        ]
-        for i, timestamp in enumerate(stream["time_stamps"])
-    ]
 
-    with db_connection:
-        query = ("INSERT into eeg_raw VALUES(?, ?, ?, ?, ?, ?,"
-                 + ",".join(["?" for _ in stream["info"]["desc"][0]["channels"][0]["channel"]])
-                 + ")")
-        db_connection.executemany(query, data)
+    if is_directory_with_white_noise_eeg_channels(session):
+        remove_channels = white_noise_channels
+    else:
+        remove_channels = None
+
+    signal_df = extract_signal_xdf(stream,
+                                   remove_channels=remove_channels,
+                                   desired_channels=channel_names,
+                                   unit_conversion=1e-6)
+
+    # Insert experiment data into df
+    signal_df.insert(0, 'group_session', session)
+    signal_df.insert(1, 'task', task)
+    signal_df.insert(2, 'station', station)
+    signal_df.insert(3, 'participant', participant_id)
+    timestamp_iso8601 = np.array(
+        map(convert_unix_timestamp_to_iso8601,
+            signal_df["timestamp_unix"])
+    )
+    signal_df.insert(5, 'timestamp_iso8601', timestamp_iso8601)
+
+    # Insert signals into database
+    db_connection = sqlite3.connect(DB_PATH)
+    signal_df.to_sql('eeg_raw', db_connection, if_exists='append', index=False)
 
 
-def process_directory_v1(session: str, db_connection: sqlite3.Connection):
+def process_directory_v1(session: str,
+                         channel_names,
+                         white_noise_channels):
     info(f"Processing directory {session}")
     with cd(f"{session}"):
         for station in ("lion", "tiger", "leopard"):
@@ -152,10 +147,33 @@ def process_directory_v1(session: str, db_connection: sqlite3.Connection):
                 continue
 
             stream = streams[0]
-            insert_data_into_table(stream, session, station, db_connection)
+            insert_data_into_table(stream,
+                                   session,
+                                   station,
+                                   channel_names,
+                                   white_noise_channels)
 
 
-def process_directory_v2(session: str, db_connection: sqlite3.Connection):
+def _get_station_from_actichamp(exp_info: pd.DataFrame,
+                                exp_id: str,
+                                actichamp_id: str) -> str | None:
+    # Filtering rows that match with experiment_id
+    exp_row = exp_info[exp_info['experiment_id'] == exp_id]
+
+    # For the filtered row, check each column (station)
+    for col in exp_row.columns:
+        # If actiCHamp value matches, return station name (remove "_actiCHamp" part)
+        if exp_row[col].values[0] == actichamp_id:
+            return col.replace('_actiCHamp', '')
+
+    # If no match found, return None
+    return None
+
+
+def process_directory_v2(session: str,
+                         exp_info: pd.DataFrame,
+                         channel_names: list[str],
+                         white_noise_channels: list[str]):
     """Process directory assuming unified XDF files."""
     info(f"Processing directory {session}")
     with cd(f"{session}/lsl"):
@@ -171,8 +189,14 @@ def process_directory_v2(session: str, db_connection: sqlite3.Connection):
                 continue
 
             for stream in streams:
-                station = stream["info"]["name"][0].split("_")[0]
-                insert_data_into_table(stream, session, station, db_connection)
+                actichamp_id = stream["info"]["name"][0].split('-')[1]
+                station = _get_station_from_actichamp(exp_info, session, actichamp_id)
+                assert station is not None, f"Could not find station for {actichamp_id}!"
+                insert_data_into_table(stream,
+                                       session,
+                                       station,
+                                       channel_names,
+                                       white_noise_channels)
 
 
 def create_indices():
@@ -552,9 +576,61 @@ def remove_invalid_data():
 
 if __name__ == "__main__":
     info("Starting building EEG table.")
-    recreate_eeg_table()
+
+    EEG_channel_names = [
+        "AFF1h",
+        "AFF5h",
+        "F7",
+        "FC5",
+        "FC1",
+        "C3",
+        "T7",
+        "TP9",
+        "CP5",
+        "CP1",
+        "Pz",
+        "P3",
+        "P7",
+        "PO9",
+        "O1",
+        "Oz",
+        "O2",
+        "PO10",
+        "P8",
+        "P4",
+        "TP10",
+        "CP6",
+        "CP2",
+        "Cz",
+        "C4",
+        "T8",
+        "FC6",
+        "FC2",
+        "FCz",
+        "F8",
+        "AFF6h",
+        "AFF2h",
+        "AUX_GSR",
+        "AUX_EKG"
+    ]
+
+    white_noise_EEG_channels = [
+        'AFF5h',
+        'FC1',
+        'CP5',
+        'CP1',
+        'PO9',
+        'Oz',
+        'PO10',
+        'CP6',
+        'CP2',
+        'FC2',
+        'AFF6h'
+    ]
+
+    recreate_eeg_table(EEG_channel_names)
     create_indices()
-    insert_raw_unlabeled_data()
+    insert_raw_unlabeled_data(EEG_channel_names, white_noise_EEG_channels)
     label_data()
     remove_invalid_data()
     info("Finished building EEG table.")

@@ -13,7 +13,7 @@ from utils import (
 import pyxdf
 import logging
 from logging import info, error, debug
-from config import DB_PATH, logging_handlers
+from config import DB_PATH, logging_handlers, USER
 from tqdm import tqdm
 import pandas as pd
 from glob import glob
