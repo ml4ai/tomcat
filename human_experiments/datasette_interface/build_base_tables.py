@@ -9,8 +9,7 @@ import csv
 import pandas as pd
 from pprint import pprint
 from utils import cd
-from config import DB_PATH, logging_handlers
-
+from config import DB_PATH, logging_handlers, USER
 
 
 logging.basicConfig(
@@ -48,6 +47,37 @@ STATIONS = [
     "leopard",
 ]
 
+DEMOGRAPHICS_FIELDS = {
+    "age": "INTEGER",
+    "sex": "TEXT",
+    "hisp": "BOOLEAN",
+    "race": "TEXT",
+    "income": "TEXT",
+    "edu": "TEXT",
+    "exp": "TEXT",
+    "exp_mc": "TEXT",
+    "handedness": "TEXT",
+    "trackpad_preference": "TEXT",
+    "sph_label": "TEXT",
+    "shl_impairements": "TEXT", # Typo :(
+    "shl_impairments_specify": "TEXT",
+    "shl_impairments_agediagnosis": "TEXT",
+    "shl_impairments_therapy": "TEXT",
+    "first_language": "TEXT",
+    "languages_spoken": "TEXT",
+    "language_age_learned": "TEXT",
+    "countries_live_one_year": "TEXT",
+    "major_schooling_country": "TEXT",
+    "health_label": "TEXT",
+    "health_concussion": "TEXT",
+    "health_seizure": "TEXT",
+    "health_trauma": "TEXT",
+    "health_other_trauma_specify": "TEXT",
+    "health_medications": "TEXT",
+    "health_vision": "TEXT",
+    "health_vision_specify": "TEXT",
+}
+
 
 def recreate_station_table(db_connection):
     db_connection.execute("DROP TABLE IF EXISTS station")
@@ -83,19 +113,36 @@ def recreate_participant_table(db_connection):
     db_connection.execute(
         """
         CREATE TABLE participant (
-            id INTEGER PRIMARY KEY
-        );"""
+            id INTEGER PRIMARY KEY,
+            {}
+        );""".format(
+            ", ".join([f"{k} {v}" for k, v in DEMOGRAPHICS_FIELDS.items()])
+        )
     )
+
+    qmarks = ",".join("?" for k in DEMOGRAPHICS_FIELDS)
     # Insert a participant ID of -1 to represent 'unknown participant'
-    db_connection.execute("INSERT into participant VALUES(?)", [-1])
+    db_connection.execute(
+        f"INSERT into participant VALUES(?, {qmarks})",
+        [-1] + [None for k in DEMOGRAPHICS_FIELDS],
+    )
 
     # Insert a participant ID of -2 to represent the team (for affective task
     # event data)
-    db_connection.execute("INSERT into participant VALUES(?)", [-2])
+    db_connection.execute(
+        f"INSERT into participant VALUES(?, {qmarks})",
+        [-2] + [None for k in DEMOGRAPHICS_FIELDS],
+    )
+    # db_connection.execute("INSERT into participant VALUES(?)", [-2])
 
     # Insert a participant ID of -3 to represent an unknown experimenter (for
     # the ping pong task data)
-    db_connection.execute("INSERT into participant VALUES(?)", [-3])
+    db_connection.execute(
+        f"INSERT into participant VALUES(?, {qmarks})",
+        [-3] + [None for k in DEMOGRAPHICS_FIELDS],
+    )
+    # db_connection.execute("INSERT into participant VALUES(?)", [-3])
+
 
 def recreate_group_session_table(db_connection):
     db_connection.execute("DROP TABLE IF EXISTS group_session")
@@ -200,9 +247,13 @@ def process_rick_workbook():
                 series["leopard_subject_id"],
             ]
 
+            qmarks = ",".join("?" for k in DEMOGRAPHICS_FIELDS)
             db_connection.executemany(
-                "INSERT OR IGNORE into participant VALUES(?)",
-                [(participant,) for participant in participants],
+                f"INSERT OR IGNORE into participant VALUES(?, {qmarks})",
+                [
+                    [participant] + [None for k in DEMOGRAPHICS_FIELDS]
+                    for participant in participants
+                ],
             )
 
             # For the group session on 2022-09-30, confederate with ID 99901
@@ -211,7 +262,8 @@ def process_rick_workbook():
             # experiment.
             if group_session_id == "exp_2022_09_30_10":
                 db_connection.execute(
-                    "INSERT OR IGNORE into participant VALUES(?)", (99901,)
+                    f"INSERT OR IGNORE into participant VALUES(?, {qmarks})",
+                    [99901] + [None for k in DEMOGRAPHICS_FIELDS],
                 )
 
             db_connection.execute(
@@ -220,8 +272,13 @@ def process_rick_workbook():
             )
 
             # TODO: Deal with 'no_face_image' case for eeg data.
-            tasks_new = TASKS + ["ping_pong_competitive_0", "ping_pong_competitive_1"]
-            tasks_new = [task for task in tasks_new if task != "ping_pong_competitive"]
+            tasks_new = TASKS + [
+                "ping_pong_competitive_0",
+                "ping_pong_competitive_1",
+            ]
+            tasks_new = [
+                task for task in tasks_new if task != "ping_pong_competitive"
+            ]
             for station in STATIONS:
                 for modality in MODALITIES:
                     modality_in_csv = modality.replace("gaze", "pupil")
@@ -233,7 +290,8 @@ def process_rick_workbook():
                             (task == "ping_pong_competitive_0")
                             and (station == "leopard")
                         ):
-                            info(f"""
+                            info(
+                                f"""
                                 [ERROR]: Task = {task} and station = {station},
                                 a combination that is not possible.
                                 ping_pong_competitive_0 was performed on the
@@ -244,7 +302,8 @@ def process_rick_workbook():
                                 did not record who the experimenter was).
                                 We will skip entering this combination in the
                                 data_validity table.
-                            """)
+                            """
+                            )
                             continue
 
                         task_in_csv = (
@@ -265,11 +324,10 @@ def process_rick_workbook():
                         if participant_id == "mission_not_run":
                             continue
 
-
                         # Remove the _0, _1 suffixes from the names of the
                         # ping pong competitive tasks before we write them to
                         # the database.
-                        task = task.replace("_0","").replace("_1","")
+                        task = task.replace("_0", "").replace("_1", "")
                         db_connection.execute(
                             f"""
                             INSERT INTO data_validity
@@ -288,5 +346,23 @@ def process_rick_workbook():
                         )
 
 
+def insert_demographic_data():
+
+    df = pd.read_table(
+        "/tomcat/data/raw/LangLab/experiments/study_3_pilot/ToMCATSelfReport_DATA_2023-06-11_2358.tsv",
+    )
+    db_connection = sqlite3.connect(DB_PATH)
+
+    for i, row in df.iterrows():
+        # Check if subject ID is in table
+        with db_connection:
+            results = db_connection.execute(
+                    f"SELECT * from participant where id='{row['subject_id']}'"
+                    ).fetchall()
+            if len(results) != 0:
+                print(row["subject_id"])
+
+
 if __name__ == "__main__":
-    process_rick_workbook()
+    # process_rick_workbook()
+    insert_demographic_data()
