@@ -804,9 +804,70 @@ the data for each file listed above is detailed as follows: \\
     \end{addmargin} % End of Symbolic Link "participant_<participant_ID>Task2.wav"
 \end{addmargin} % End of Sub Directory "presession/"
 
-% redcap_data/
-% <cat>_post_game_survey_data.csv
-% <cat>_self_report_data.csv
+
+\textbf{\\\\\\}
+\begin{addmargin}[0em]{0em} % Start of Sub Directory "pupil_recorder/ 000/ and 001/" 
+    \textbf{pupil\_recorder/ 000/ and 001/... }
+
+    \begin{addmargin}[1em]{0em} % Start of File "blinks.pldata"
+        % blinks.pldata
+        \textbf{blinks.pldata}\\
+        Blink data for the Pupil Capture glasses and system.
+        Blinks are subsequently detected based on onset and offset confidence thresholds and a filter length in seconds.
+    \end{addmargin} % End of File "blinks.pldata"
+
+    \textbf{\\\\}
+    \begin{addmargin}[1em]{0em} % Start of File "blinks_timestamps.npy"
+        % blinks_timestamps.npy
+        \textbf{blinks\_timestamps.npy}\\
+        Blink timestamps for the Pupil Capture glasses and system.
+        Blinks are subsequently detected based on onset and offset confidence thresholds and a filter length in seconds.
+    \end{addmargin} % End of File "blinks_timestamps.npy"
+
+    \textbf{\\\\}
+    \begin{addmargin}[1em]{0em} % Start of File "eye0.intrinsics"
+        % eye0.intrinsics
+        \textbf{eye0.intrinsics}\\
+        Eye 0 data for the Pupil Capture glasses and system.
+    \end{addmargin} % End of File "eye0.intrinsics"
+
+    \textbf{\\\\}
+    \begin{addmargin}[1em]{0em} % Start of File "eye0.mp4"
+        % eye0.mp4
+        \textbf{eye0.mp4}\\
+        Eye 0 data for the Pupil Capture glasses and system.
+    \end{addmargin} % End of File "eye0.mp4"
+
+    \textbf{\\\\}
+    \begin{addmargin}[1em]{0em} % Start of File "eye0_timestamps.npy"
+        % eye0_timestamps.npy
+        \textbf{eye0\_timestamps.npy}\\
+        Eye 0 timestamps for the Pupil Capture glasses and system.
+    \end{addmargin} % End of File "eye0_timestamps.npy"
+
+    \textbf{\\\\}
+    \begin{addmargin}[1em]{0em} % Start of File "eye1.intrinsics"
+        % eye1.intrinsics
+        \textbf{eye1.intrinsics}\\
+        Eye 1 data for the Pupil Capture glasses and system.
+    \end{addmargin} % End of File "eye1.intrinsics"
+
+    \textbf{\\\\}
+    \begin{addmargin}[1em]{0em} % Start of File "eye1.mp4"
+        % eye1.mp4
+        \textbf{eye1.mp4}\\
+        Eye 1 data for the Pupil Capture glasses and system.
+    \end{addmargin} % End of File "eye1.mp4"
+
+    \textbf{\\\\}
+    \begin{addmargin}[1em]{0em} % Start of File "eye1_timestamps.npy"
+        % eye1_timestamps.npy
+        \textbf{eye1\_timestamps.npy}\\
+        Eye 1 timestamps for the Pupil Capture glasses and system.
+    \end{addmargin} % End of File "eye1_timestamps.npy"
+
+\end{addmargin} % End of Sub Directory "pupil_recorder/ 000/ and 001/"
+
 
 
 \textbf{\\\\\\}
@@ -814,7 +875,6 @@ the data for each file listed above is detailed as follows: \\
     \textbf{redcap\_data/ ... }
 
     \begin{addmargin}[1em]{0em} % Start of File "<cat>_self_report_data.csv"
-        % <cat>_self_report_data.csv
         \textbf{<cat>\_self\_report\_data.csv}\\(semicolon delimited text file, 1st row is a header)\\
         This file has information and answers for the following categories: "Subject Information Sheet",
         "Informed Consent Form - Multiple Subject-Two Sessions", "COVID-19 Screening", "Demographics Survey",
@@ -839,10 +899,11 @@ the data for each file listed above is detailed as follows: \\
             \item \verb|subject_information_sheet_complete - [0=Incomplete, 1=Unverified, 2=Complete]|\\Subject Information Sheet Complete.
             \item \verb|informed_consent_form_timestamp - [text](yyyy-mm-dd hh:mm:ss)|\\Informed Consent Form Timestamp.
             \item \verb|consent_date - [text](yyyy-mm-dd)|\\Consent Form date.
-            \item \verb|informed_consent_form_complete - [0=Incomplete, 1=Unverified, 2=Complete]|\\Informed Consent Form Complete.
+            \item \verb|informed_consent_form_complete - [0 = Incomplete; 1 = Unverified; 2 = Complete]|\\Informed Consent Form Complete.
             \item \verb|informed_consent_form_multiple_subjecttwo_sessions_timestamp -|\\\verb|[text](yyyy-mm-dd hh:mm:ss)|\\Informed Consent Form Multiple Subject Two Sessions Timestamp.
             \item \verb|consent_date_2 - [text](yyyy-mm-dd)|\\Consent Form 2 date.
-            \item \verb|informed_consent_form_multiple_subjecttwo_sessions_complete -|\\\verb|[0=Incomplete, 1=Unverified, 2=Complete]|\\Informed Consent Form Multiple Subject Two Sessions Complete.
+            \item \verb|informed_consent_form_multiple_subjecttwo_sessions_complete -|\\\verb|[0 = Incomplete; 1 = Unverified; 2 = Complete]|\\Informed Consent Form Multiple Subject Two Sessions Complete.\\
+
             \item \verb|covid19_screening_timestamp - [text](yyyy-mm-dd hh:mm:ss)|\\COVID-19 Screening Timestamp.
             \item \verb|covid_symptoms___1 - [checkbox]|\\Fever or chills.
             \item \verb|covid_symptoms___2 - [checkbox]|\\Cough.
@@ -858,264 +919,310 @@ the data for each file listed above is detailed as follows: \\
             \item \verb|covid_symptoms___12 - [checkbox]|\\No Symptoms now or in the past 72 hours.
             \item \verb|covid_symptoms___13 - [checkbox]|\\Not applicable, I recovered from COVID-19 in the last 90 days.
             \item \verb|covid_symptoms___14 - [checkbox]|\\Yes, I have symptoms or was diagnosed with COVID-19 in the past 10 days.
-            \item \verb|covid_close_contact - [1=No, 2=Yes I was in contact]|\\During the past 14 days, have you been in close contact (within 6 feet for 15 minutes or more) with a confirmed case or someone with symptoms of COVID-19?.
-            \item \verb|covid19_screening_complete - [0=Incomplete, 1=Unverified, 2=Complete]|\\COVID-19 Screening Complete.
+            \item \verb|covid_close_contact - [1 = No; 2 = Yes I was in contact]|\\During the past 14 days, have you been in close contact (within 6 feet for 15 minutes or more) with a confirmed case or someone with symptoms of COVID-19?.
+            \item \verb|covid19_screening_complete - [0 = Incomplete; 1 = Unverified; 2=Complete]|\\COVID-19 Screening Complete.\\
+
             \item \verb|demographics_survey_timestamp - [text](yyyy-mm-dd hh:mm:ss)|\\Demographics Survey Timestamp.
-            \item \verb|age - [text](Required)|\\Your age in years.
-            \item \verb|sex - [1=Male, 2=Female, 3=Other, 4=Prefer not to say](Required)|\\What is your sex?
-            \item \verb|hisp - [0=No, 1=Yes]|(Required)\\Are you of Cuban, Mexican, Puerto Rican, South or Central American, or other Spanish culture of origin (Hispanic)?.
-            \item \verb|race -|\\\verb|[0=European American, 1=African American, 2=Asian American,|\\\verb| 3=Native Hawaiian or Pacific Islander, 4=Non-Hispanic White, 5=Other](Required)|\\Which best describes your racial background?.
-            \item \verb|income - [text]|\\What is your typical yearly household income before taxes?
-            \item \verb|edu - [text]|\\What is the highest level of education you have completed?
-            \item \verb|exp - [text]|\\How much experience do you have playing video games?
-            \item \verb|exp_mc - [text]|\\How much experience do you have playing Minecraft?
-            \item \verb|handedness - [text]|\\Which is your dominant hand?
-            \item \verb|trackpad_preference - [text]|\\Do you prefer using a trackpad or mouse when working on the computer?
-            \item \verb|sph_label - [text]("SPEECH/HEARING & LANGUAGE")|\\Label for the speech/hearing or language impairments.
-            \item \verb|shl_impairements - [text]|\\Do you have any speech/hearing or language impairments?
+            \item \verb|age - (Required)[text]|\\Your age in years.
+            \item \verb|sex - (Required)[1 = Male; 2 = Female; 3 = Other; 4 = Prefer not to say]|\\What is your sex?
+            \item \verb|hisp - (Required)[0 = No; 1 = Yes]|\\Are you of Cuban, Mexican, Puerto Rican, South or Central American, or other Spanish culture of origin (Hispanic)?.
+            \item \verb|race - (Required)|\\\verb|[0 = European American; 1 = African American; 2 = Asian American;|\\\verb| 3 = Native Hawaiian or Pacific Islander; 4 = Non-Hispanic White; 5 = Other]|\\Which best describes your racial background?.
+            \item \verb|income - (Required)|\\\verb|[0 = $0 - $25,000; 1 = $25,000 - $ 50,000; 2 = $50,000 - $75,000;|\\\verb| 3 = $75,000 - $ 100,000; 4 = $100,000 - $150,000; 5 = Greater than $150,000]|\\What is your typical yearly household income before taxes?
+            \item \verb|edu - (Required)|\\\verb|[0 = Less than high-school; 1 = High-school; 2 = Professional program;|\\\verb| 3 = Some college; 4 = Undergraduate degree; 5 = Graduate degree]|\\What is the highest level of education you have completed?
+            \item \verb|exp - (Required)|\\\verb|[0 = Never played them; 1 = Have played them occasionally;|\\\verb| 2 = Have played them fairly often; 3 = Have played them regularly for years]|\\How much experience do you have playing video games?
+            \item \verb|exp_mc - (Required)|\\\verb|[0 = Never played it; 1 = Have played it occasionally;|\\\verb| 2 = Have played it fairly often; 3 = Have played it regularly for years]|\\How much experience do you have playing Minecraft?
+            \item \verb|handedness - (Required)|\\\verb|[0 = Right-handed; 1 = Left-handed; 2 = Ambidextrous]|\\Which is your dominant hand?
+            \item \verb|trackpad_preference - (Required)|\\\verb|[0 = Trackpad; 1 = Mouse; 2 = Doesn't matter]|\\Do you prefer using a trackpad or mouse when working on the computer?
+            \item \verb|sph_label - ("SPEECH/HEARING & LANGUAGE")[text]|\\Label for the speech/hearing or language impairments.
+            \item \verb|shl_impairements - (Required)[0 = No; 1 = Yes]|\\Do you have any speech/hearing or language impairments?
             \item \verb|shl_impairment_specify - [text]|\\Please specify the speech/hearing or language impairment?
             \item \verb|shl_impairment_agediagnosis - [text]|\\When was the first time you got diagnosed with the speech/hearing or language impairment?
             \item \verb|shl_impairment_therapy - [text]|\\Do you currently see a speech therapist or other healthcare professional for the impairment?
             \item \verb|first_language - [text]|\\What would you say is your first language(s)?
             \item \verb|languages_spoken - [text]|\\What languages do you speak on a daily/weekly/monthly basis?
             \item \verb|language_age_learned - [text]|\\At what age did you learn the language? (For example, if you learned Spanish when you were 5 years-old, then enter the name of the language and in parentheses the age; so Spanish (5-years-old).).
-            \item \verb|countries_live_one_year - [text]|\\.
-            \item \verb|major_schooling_country - [text]|\\.
-            \item \verb|health_label - [text]|\\.
-            \item \verb|health_concussion - [text]|\\.
-            \item \verb|health_seizure - [text]|\\.
-            \item \verb|health_trauma - [text]|\\.
-            \item \verb|health_other_trauma_specify - [text]|\\.
-            \item \verb|health_medications - [text]|\\.
-            \item \verb|health_vision - [text]|\\.
-            \item \verb|health_vision_specify - [text]|\\.
-            \item \verb|demographics_survey_complete - [text]|\\.
-            \item \verb|big_five_inventory_2_short_form_bfi2s_timestamp - [text]|\\.
-            \item \verb|bfi2_q11 - [text]|\\.
-            \item \verb|bfi2_q12 - [text]|\\.
-            \item \verb|bfi2_q13 - [text]|\\.
-            \item \verb|bfi2_q14 - [text]|\\.
-            \item \verb|bfi2_q15 - [text]|\\.
-            \item \verb|bfi2_q16 - [text]|\\.
-            \item \verb|bfi2_q17 - [text]|\\.
-            \item \verb|bfi2_q18 - [text]|\\.
-            \item \verb|bfi2_q19 - [text]|\\.
-            \item \verb|bfi2_q20 - [text]|\\.
-            \item \verb|bfi2_q21 - [text]|\\.
-            \item \verb|bfi2_q22 - [text]|\\.
-            \item \verb|bfi2_q23 - [text]|\\.
-            \item \verb|bfi2_q24 - [text]|\\.
-            \item \verb|bfi2_q25 - [text]|\\.
-            \item \verb|bfi2_q26 - [text]|\\.
-            \item \verb|bfi2_q27 - [text]|\\.
-            \item \verb|bfi2_q28 - [text]|\\.
-            \item \verb|bfi2_q29 - [text]|\\.
-            \item \verb|bfi2_q30 - [text]|\\.
-            \item \verb|big_five_inventory_2_short_form_bfi2s_complete - [text]|\\.
-            \item \verb|attachment_style_questionnaire_timestamp - [text]|\\.
-            \item \verb|attach_q1 - [text]|\\.
-            \item \verb|attach_q2 - [text]|\\.
-            \item \verb|attach_q3 - [text]|\\.
-            \item \verb|attach_q4 - [text]|\\.
-            \item \verb|attach_q5 - [text]|\\.
-            \item \verb|attach_q6 - [text]|\\.
-            \item \verb|attach_q7 - [text]|\\.
-            \item \verb|attach_q8 - [text]|\\.
-            \item \verb|attach_q9 - [text]|\\.
-            \item \verb|attach_q10 - [text]|\\.
-            \item \verb|attach_q11 - [text]|\\.
-            \item \verb|attach_q12 - [text]|\\.
-            \item \verb|attachment_style_questionnaire_complete - [text]|\\.
-            \item \verb|presession_notes_for_research_team_only_timestamp - [text]|\\.
-            \item \verb|notes_presession_date - [text]|\\.
-            \item \verb|notes_presession_exp___1 - [text]|\\.
-            \item \verb|notes_presession_exp___2 - [text]|\\.
-            \item \verb|notes_presession_exp___3 - [text]|\\.
-            \item \verb|notes_presession_exp___4 - [text]|\\.
-            \item \verb|notes_presession_exp___5 - [text]|\\.
-            \item \verb|notes_presession_exp___6 - [text]|\\.
-            \item \verb|notes_presession_exp___7 - [text]|\\.
-            \item \verb|notes_presession_consentedby___1 - [text]|\\.
-            \item \verb|notes_presession_consentedby___2 - [text]|\\.
-            \item \verb|notes_presession_consentedby___3 - [text]|\\.
-            \item \verb|notes_presession_consentedby___4 - [text]|\\.
-            \item \verb|notes_presession_consentedby___5 - [text]|\\.
-            \item \verb|notes_presession_consentedby___6 - [text]|\\.
-            \item \verb|notes_credit_type___1 - [text]|\\.
-            \item \verb|notes_credit_type___2 - [text]|\\.
-            \item \verb|notes_credit_granted___1 - [text]|\\.
-            \item \verb|notes_credit_granted___2 - [text]|\\.
-            \item \verb|notes_speech_baseline - [text]|\\.
-            \item \verb|notes_other - [text]|\\.
-            \item \verb|presession_notes_for_research_team_only_complete - [text]|\\.
-            \item \verb|session_1_notes_for_research_team_only_timestamp - [text]|\\.
-            \item \verb|session1notes_session_date - [text]|\\.
-            \item \verb|notes_session_exp_v2___1 - [text]|\\.
-            \item \verb|notes_session_exp_v2___2 - [text]|\\.
-            \item \verb|notes_session_exp_v2___3 - [text]|\\.
-            \item \verb|notes_credit_type_v2___1 - [text]|\\.
-            \item \verb|notes_credit_type_v2___2 - [text]|\\.
-            \item \verb|notes_credit_granted_v2___1 - [text]|\\.
-            \item \verb|notes_credit_granted_v2___2 - [text]|\\.
-            \item \verb|notes_other_v2 - [text]|\\.
-            \item \verb|note_session_observations_v2 - [text]|\\.
-            \item \verb|session_1_notes_for_research_team_only_complete - [text]|\\.
+            \item \verb|countries_live_one_year - [text]|\\What countries did you live in for more than one year?
+            \item \verb|major_schooling_country - [text]|\\Where did you complete the majority of your schooling?
+            \item \verb|health_label - ("HEALTH")[text]|\\Label for the health questions.
+            \item \verb|health_concussion - (Required)[0 = No; 1 = Yes]|\\Have you ever been diagnosed with or experienced concussions?
+            \item \verb|health_seizure - (Required)[0 = No; 1 = Yes]|\\Have you ever been diagnosed with or experienced seizures?
+            \item \verb|health_trauma - (Required)[0 = No; 1 = Yes]|\\Have you ever been diagnosed with or experienced other neurological trauma (e.g., traumatic brain injury)?
+            \item \verb|health_other_trauma_specify - [text]|\\Other neurological trauma.
+            \item \verb|health_medications - (Required)[0 = No; 1 = Yes]|\\Are you currently taking any psychoactive medication (e.g., anti-depressants, ADHD medication, etc.)?
+            \item \verb|health_vision - (Required)[0 = No; 1 = Yes]|\\Do you have any visual impairments other than wearing glasses/contacts, such as partial or full colorblindness?
+            \item \verb|health_vision_specify - [text]|\\Visual impairments.
+            \item \verb|demographics_survey_complete - [0 = Incomplete; 1 = Unverified; 2=Complete]|\\Demographics survey complete.\\
+
+            \item \verb|big_five_inventory_2_short_form_bfi2s_timestamp - [text](yyyy-mm-dd hh:mm:ss)|\\Big five inventory 2 short form timestamp.
+            \item \verb|bfi2_q1 - |I am someone who: Tends to be quiet.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q2 - |I am someone who: Is compassionate, has a soft heart.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q3 - |I am someone who: Tends to be disorganized.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q4 - |I am someone who: Worries a lot.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q5 - |I am someone who: Is fascinated by art, music, or literature.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q6 - |I am someone who: Is dominant, acts as a leader.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q7 - |I am someone who: Is sometimes rude to others.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q8 - |I am someone who: Has difficulty getting started on tasks.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q9 - |I am someone who: Tends to feel depressed, blue.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q10 - |I am someone who: Has little interest in abstract ideas.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q11 - |I am someone who: Is full of energy.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q12 - |I am someone who: Assumes the best about people.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q13 - |I am someone who: Is reliable, can always be counted on.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q14 - |I am someone who: Is emotionally stable, not easily upset.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q15 - |I am someone who: Is original, comes up with new ideas.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q16 - |I am someone who: Is outgoing, sociable.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q17 - |I am someone who: Can be cold and uncaring.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q18 - |I am someone who: Keeps things neat and tidy.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q19 - |I am someone who: Is relaxed, handles stress well.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q20 - |I am someone who: Has few artistic interests.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q21 - |I am someone who: Prefers to have others take charge.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q22 - |I am someone who: Is respectful, treats others with respect.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q23 - |I am someone who: Is persistent, works until the task is finished.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q24 - |I am someone who: Feels secure, comfortable with self.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q25 - |I am someone who: Is complex, a deep thinker.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q26 - |I am someone who: Is less active than other people.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q27 - |I am someone who: Tends to find fault with others.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q28 - |I am someone who: Can be somewhat careless.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q29 - |I am someone who: Is temperamental, gets emotional easily.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q30 - |I am someone who: Has little creativity.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|big_five_inventory_2_short_form_bfi2s_complete - |\\Big five inventory 2 short form complete.\\\verb|[0 = Incomplete; 1 = Unverified; 2=Complete]|\\
+
+            \item \verb|attachment_style_questionnaire_timestamp - [text](yyyy-mm-dd hh:mm:ss)|\\Attachment style questionnaire timestamp.
+            \item \verb|attach_q1 - |I find it relatively easy to get close to other people.\\\verb|[1 (totally disagree) to 6 (totally agree)]|
+            \item \verb|attach_q2 - |I feel confident that other people will be there for me when I need them.\\\verb|[1 (totally disagree) to 6 (totally agree)]|
+            \item \verb|attach_q3 - |I feel confident about relating to others.\\\verb|[1 (totally disagree) to 6 (totally agree)]|
+            \item \verb|attach_q4 - |I am confident that other people will like and respect me.\\\verb|[1 (totally disagree) to 6 (totally agree)]|
+            \item \verb|attach_q5 - |I find that others are reluctant to get as close as I would like.\\\verb|[1 (totally disagree) to 6 (totally agree)]|
+            \item \verb|attach_q6 - |I worry that others won't care about me as much as I care about them.\\\verb|[1 (totally disagree) to 6 (totally agree)]|
+            \item \verb|attach_q7 - |I worry a lot about my relationships.\\\verb|[1 (totally disagree) to 6 (totally agree)]|
+            \item \verb|attach_q8 - |I often feel left out or alone.\\\verb|[1 (totally disagree) to 6 (totally agree)]|
+            \item \verb|attach_q9 - |I prefer to keep to myself.\\\verb|[1 (totally disagree) to 6 (totally agree)]|
+            \item \verb|attach_q10 - |I find it hard to trust other people.\\\verb|[1 (totally disagree) to 6 (totally agree)]|
+            \item \verb|attach_q11 - |I have mixed feelings about being close to others.\\\verb|[1 (totally disagree) to 6 (totally agree)]|
+            \item \verb|attach_q12 - |While I want to get close to others, I feel uneasy about it.\\\verb|[1 (totally disagree) to 6 (totally agree)]|
+            \item \verb|attachment_style_questionnaire_complete - |\\Attachment style questionnaire complete.\\\verb|[0 = Incomplete; 1 = Unverified; 2=Complete]|\\
+
+            \item \verb|presession_notes_for_research_team_only_timestamp - [text](yyyy-mm-dd hh:mm:ss)|\\Presession notes for research team only timestamp.
+            \item \verb|notes_presession_date - [text](yyyy-mm-dd hh:mm:ss)|\\Notes Presession Date.
+            \item \verb|notes_presession_exp___1 - [checkbox]|\\Paloma Bernardo.
+            \item \verb|notes_presession_exp___2 - [checkbox]|\\Savannah Boyd.
+            \item \verb|notes_presession_exp___3 - [checkbox]|\\Valeria Pfeifer.
+            \item \verb|notes_presession_exp___4 - [checkbox]|\\Eric Andrews.
+            \item \verb|notes_presession_exp___5 - [checkbox]|\\Diheng Zhang.
+            \item \verb|notes_presession_exp___6 - [checkbox]|\\Ashley Minks.
+            \item \verb|notes_presession_exp___7 - [checkbox]|\\Daria Letson.
+            \item \verb|notes_presession_consentedby___1 - [checkbox]|\\Paloma Bernardo.
+            \item \verb|notes_presession_consentedby___2 - [checkbox]|\\Savannah Boyd.
+            \item \verb|notes_presession_consentedby___3 - [checkbox]|\\Valeria Pfeifer.
+            \item \verb|notes_presession_consentedby___4 - [checkbox]|\\Payal Khosla.
+            \item \verb|notes_presession_consentedby___5 - [checkbox]|\\Eric Andrews.
+            \item \verb|notes_presession_consentedby___6 - [checkbox]|\\Diheng Zhang.
+            \item \verb|notes_credit_type___1 - [checkbox]|\\SONA.
+            \item \verb|notes_credit_type___2 - [checkbox]|\\Amazon gift card.
+            \item \verb|notes_credit_granted___1 - [checkbox]|\\Yes.
+            \item \verb|notes_credit_granted___2 - [checkbox]|\\In process.
+            \item \verb|notes_speech_baseline - [text]|\\Speech Baseline Notes.
+            \item \verb|notes_other - [text]|\\Other Notes.
+            \item \verb|presession_notes_for_research_team_only_complete - |\\Presession notes for research team only complete.\\\verb|[0 = Incomplete; 1 = Unverified; 2=Complete]|\\
+            
+            \item \verb|session_1_notes_for_research_team_only_timestamp - [text](yyyy-mm-dd hh:mm:ss)|\\Session 1 notes for research team only timestamp.
+            \item \verb|session1notes_session_date - [text](yyyy-mm-dd hh:mm:ss)|\\Session 1 Notes Session Date.
+            \item \verb|notes_session_exp_v2___1 - [checkbox]|\\Paloma Bernardo.
+            \item \verb|notes_session_exp_v2___2 - [checkbox]|\\Savannah Boyd.
+            \item \verb|notes_session_exp_v2___3 - [checkbox]|\\Valeria Pfeifer.
+            \item \verb|notes_credit_type_v2___1 - [checkbox]|\\SONA.
+            \item \verb|notes_credit_type_v2___2 - [checkbox]|\\Amazon gift card.
+            \item \verb|notes_credit_granted_v2___1 - [checkbox]|\\Yes.
+            \item \verb|notes_credit_granted_v2___2 - [checkbox]|\\In process.
+            \item \verb|notes_other_v2 - [text]|\\Other Notes.
+            \item \verb|note_session_observations_v2 - [text]|\\Testing Session \#1 Observations (upload the hardcopy).
+            \item \verb|session_1_notes_for_research_team_only_complete - |\\Session 1 notes for research team only complete.\\\verb|[0 = Incomplete; 1 = Unverified; 2=Complete]|
         \end{itemize}
     \end{addmargin} % End of File "<cat>_self_report_data.csv"
 
 
     \textbf{\\\\}
     \begin{addmargin}[1em]{0em} % Start of File "<cat>_post_game_survey_data.csv"
-        % <cat>_post_game_survey_data.csv
         \textbf{<cat>\_post\_game\_survey\_data.csv}\\(semicolon delimited text file, 1st row is a header)\\
         This file is the participant's answers to the REDCap's "Post Game Survey".
         The survey is presented to the participant at the end of the experiment.\\ 
         <cat>\_post\_game\_survey\_data.csv Fields:
         \begin{itemize}
-            % record_id,redcap_survey_identifier,subject_information_sheet_timestamp,subject_id,session1_date,session1_exp_initials,session1_comp_name,
-            % session1_player_name,session1_game_crash,session1_updated_player_name,subject_information_sheet_complete,postgame_survey_timestamp,
-            \item \verb|record_id - [#####]|\\.
-            \item \verb|redcap_survey_identifier - [text]|\\.
-            \item \verb|subject_information_sheet_timestamp - [text]|\\.
-            \item \verb|subject_id - [text]|\\.
-            \item \verb|session1_date - [text]|\\.
-            \item \verb|session1_exp_initials - [text]|\\.
-            \item \verb|session1_comp_name - [text]|\\.
-            \item \verb|session1_player_name - [text]|\\.
-            \item \verb|session1_game_crash - [text]|\\.
-            \item \verb|session1_updated_player_name - [text]|\\.
-            \item \verb|subject_information_sheet_complete - [text]|\\.
-            \item \verb|postgame_survey_timestamp - [text]|\\.
-            % post_game_survey_subject_id,survey_date,agent_calm,agent_anxious,agent_excited,agent_sad,agent_guilty,agent_angry,agent_happy,agent_lonely,
-            % agent_proud,agent_friendly,game_calm,game_anxious,game_excited,game_sad,game_guilty,game_angry,game_happy,game_lonely,game_proud,game_friendly,
-            \item \verb|post_game_survey_subject_id - [text]|\\.
-            \item \verb|survey_date - [text]|\\.
-            \item \verb|agent_calm - [text]|\\.
-            \item \verb|agent_anxious - [text]|\\.
-            \item \verb|agent_excited - [text]|\\.
-            \item \verb|agent_sad - [text]|\\.
-            \item \verb|agent_guilty - [text]|\\.
-            \item \verb|agent_angry - [text]|\\.
-            \item \verb|agent_happy - [text]|\\.
-            \item \verb|agent_lonely - [text]|\\.
-            \item \verb|agent_proud - [text]|\\.
-            \item \verb|agent_friendly - [text]|\\.
-            \item \verb|game_calm - [text]|\\.
-            \item \verb|game_anxious - [text]|\\.
-            \item \verb|game_excited - [text]|\\.
-            \item \verb|game_sad - [text]|\\.
-            \item \verb|game_guilty - [text]|\\.
-            \item \verb|game_angry - [text]|\\.
-            \item \verb|game_happy - [text]|\\.
-            \item \verb|game_lonely - [text]|\\.
-            \item \verb|game_proud - [text]|\\.
-            \item \verb|game_friendly - [text]|\\.
-            % agent_intell,agent_care,agent_honest,agent_expert,agent_concern,agent_trust,agent_comp,agent_insens,agent_honor,agent_bright,agent_understand,
-            % agent_phoney,agent_well,agent_smooth,agent_acc,agent_like,agent_enjoy,agent_awk,agent_place,agent_play,agent_perform,team_calm,team_anxious,
-            \item \verb|agent_intell - [text]|\\.
-            \item \verb|agent_care - [text]|\\.
-            \item \verb|agent_honest - [text]|\\.
-            \item \verb|agent_expert - [text]|\\.
-            \item \verb|agent_concern - [text]|\\.
-            \item \verb|agent_trust - [text]|\\.
-            \item \verb|agent_comp - [text]|\\.
-            \item \verb|agent_insens - [text]|\\.
-            \item \verb|agent_honor - [text]|\\.
-            \item \verb|agent_bright - [text]|\\.
-            \item \verb|agent_understand - [text]|\\.
-            \item \verb|agent_phoney - [text]|\\.
-            \item \verb|agent_well - [text]|\\.
-            \item \verb|agent_smooth - [text]|\\.
-            \item \verb|agent_acc - [text]|\\.
-            \item \verb|agent_like - [text]|\\.
-            \item \verb|agent_enjoy - [text]|\\.
-            \item \verb|agent_awk - [text]|\\.
-            \item \verb|agent_place - [text]|\\.
-            \item \verb|agent_play - [text]|\\.
-            \item \verb|agent_perform - [text]|\\.
-            \item \verb|team_calm - [text]|\\.
-            \item \verb|team_anxious - [text]|\\.
-            % team_excited,team_sad,team_guilt,team_angry,team_happy,team_lonely,team_proud,team_friendly,team_intel,team_care,team_honest,team_expert,
-            % team_concern,team_trust,team_comp,team_insens,team_honor,team_bright,team_understand,team_phoney,team_wrong,team_forget,team_minimize,
-            \item \verb|team_excited - [text]|\\.
-            \item \verb|team_sad - [text]|\\.
-            \item \verb|team_guilt - [text]|\\.
-            \item \verb|team_angry - [text]|\\.
-            \item \verb|team_happy - [text]|\\.
-            \item \verb|team_lonely - [text]|\\.
-            \item \verb|team_proud - [text]|\\.
-            \item \verb|team_friendly - [text]|\\.
-            \item \verb|team_intel - [text]|\\.
-            \item \verb|team_care - [text]|\\.
-            \item \verb|team_honest - [text]|\\.
-            \item \verb|team_expert - [text]|\\.
-            \item \verb|team_concern - [text]|\\.
-            \item \verb|team_trust - [text]|\\.
-            \item \verb|team_comp - [text]|\\.
-            \item \verb|team_insens - [text]|\\.
-            \item \verb|team_honor - [text]|\\.
-            \item \verb|team_bright - [text]|\\.
-            \item \verb|team_understand - [text]|\\.
-            \item \verb|team_phoney - [text]|\\.
-            \item \verb|team_wrong - [text]|\\.
-            \item \verb|team_forget - [text]|\\.
-            \item \verb|team_minimize - [text]|\\.
-            % team_insult,team_irrat,team_crit,team_fault,team_ignore,team_impt,team_weak,team_along,team_smooth,team_accept,team_like,team_enjoy,team_awk,
-            % team_place,team_likeme,team_genuine,team_part,team_listen,team_ilike,team_interact,team_itrust,team_fit,team_cohesion,team_work,team_knit,
-            \item \verb|team_insult - [text]|\\.
-            \item \verb|team_irrat - [text]|\\.
-            \item \verb|team_crit - [text]|\\.
-            \item \verb|team_fault - [text]|\\.
-            \item \verb|team_ignore - [text]|\\.
-            \item \verb|team_impt - [text]|\\.
-            \item \verb|team_weak - [text]|\\.
-            \item \verb|team_along - [text]|\\.
-            \item \verb|team_smooth - [text]|\\.
-            \item \verb|team_accept - [text]|\\.
-            \item \verb|team_like - [text]|\\.
-            \item \verb|team_enjoy - [text]|\\.
-            \item \verb|team_awk - [text]|\\.
-            \item \verb|team_place - [text]|\\.
-            \item \verb|team_likeme - [text]|\\.
-            \item \verb|team_genuine - [text]|\\.
-            \item \verb|team_part - [text]|\\.
-            \item \verb|team_listen - [text]|\\.
-            \item \verb|team_ilike - [text]|\\.
-            \item \verb|team_interact - [text]|\\.
-            \item \verb|team_itrust - [text]|\\.
-            \item \verb|team_fit - [text]|\\.
-            \item \verb|team_cohesion - [text]|\\.
-            \item \verb|team_work - [text]|\\.
-            \item \verb|team_knit - [text]|\\.
-            % team_like_mem,team_work_well,team_decisision,team_express,team_organize,team_accomplish,team_approp,team_alt,team_influ,team_contrib,agent_emot1,
-            % agent_emot2,agent_emot3,agent_emot4,agent_emot5,agent_emot6,agent_emot7,agent_emot8,agent_emot9,agent_emot10,know_team_members,
-            \item \verb|team_like_mem - [text]|\\.
-            \item \verb|team_work_well - [text]|\\.
-            \item \verb|team_decisision - [text]|\\.
-            \item \verb|team_express - [text]|\\.
-            \item \verb|team_organize - [text]|\\.
-            \item \verb|team_accomplish - [text]|\\.
-            \item \verb|team_approp - [text]|\\.
-            \item \verb|team_alt - [text]|\\.
-            \item \verb|team_influ - [text]|\\.
-            \item \verb|team_contrib - [text]|\\.
-            \item \verb|agent_emot1 - [text]|\\.
-            \item \verb|agent_emot2 - [text]|\\.
-            \item \verb|agent_emot3 - [text]|\\.
-            \item \verb|agent_emot4 - [text]|\\.
-            \item \verb|agent_emot5 - [text]|\\.
-            \item \verb|agent_emot6 - [text]|\\.
-            \item \verb|agent_emot7 - [text]|\\.
-            \item \verb|agent_emot8 - [text]|\\.
-            \item \verb|agent_emot9 - [text]|\\.
-            \item \verb|agent_emot10 - [text]|\\.
-            \item \verb|know_team_members - [text]|\\.
-            % know_person_at_cheetah,know_person_at_lion,know_person_at_tiger,know_person_at_leopard,postgame_survey_complete
-            \item \verb|know_person_at_cheetah - [text]|\\.
-            \item \verb|know_person_at_lion - [text]|\\.
-            \item \verb|know_person_at_tiger - [text]|\\.
-            \item \verb|know_person_at_leopard - [text]|\\.
-            \item \verb|postgame_survey_complete - [text]|\\.
+            \item \verb|record_id - [text]|\\Record ID created by REDCap system.
+            \item \verb|redcap_survey_identifier - [text]|\\Survey Identifier.
+            \item \verb|subject_information_sheet_timestamp - [text](yyyy-mm-dd hh:mm:ss)|\\Sheet Timestamp.
+            \item \verb|subject_id - [#####](Required)|\\Subject ID assigned to participant.
+            \item \verb|session1_date - [text](yyyy-mm-dd hh:mm:ss)|\\Session 1 Date.
+            \item \verb|session1_exp_initials - [text]|\\Session 1 Experimenter(s) (Initials only).
+            \item \verb|session1_comp_name - |Computer Name.\\\verb|[1=Cheetah; 2=Lion; 3=Tiger; 4=Leopard]|
+            \item \verb|session1_player_name - [text]|\\Minecraft Player Name.
+            \item \verb|session1_game_crash - |Did the game crash between missions?\\\verb|[1=Yes; 0=No]|
+            \item \verb|session1_updated_player_name - [text]|\\Updated Player Name.
+            \item \verb|subject_information_sheet_complete - |\\Subject information sheet complete.\\\verb|[0 = Incomplete; 1 = Unverified; 2=Complete]|
+            \item \verb|postgame_survey_timestamp - [text](yyyy-mm-dd hh:mm:ss)|\\Postgame survey timestamp.
+            \item \verb|post_game_survey_subject_id - [#####](Required)|\\Postgame survey Subject ID assigned to participant.
+            \item \verb|survey_date - [text](yyyy-mm-dd hh:mm:ss)|\\Survey Date.\\
+        \end{itemize}
+        \begin{addmargin}[1em]{0em}
+            \textit{Please indicate how much you felt the emotions DUE TO THE AGENT\\(not due to how the game went):}
+        \end{addmargin}
+        \begin{itemize}
+            \item \verb|agent_calm - |calm or relaxed.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|agent_anxious - |anxious or stressed.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|agent_excited - |excited or energized.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|agent_sad - |sad or depresse.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|agent_guilty - |guilty or ashamed.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|agent_angry - |frustrated or angry.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|agent_happy - |happy or content.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|agent_lonely - |lonely or ignored.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|agent_proud - |confident or proud.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|agent_friendly - |friendly or amused.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+        \end{itemize}
+        \begin{addmargin}[1em]{0em}
+            \textit{Please indicate how much you felt the emotions during the game\\DUE TO HOW THE ENTIRE GAME WENT (not due to how the game went):}
+        \end{addmargin}
+        \begin{itemize}
+            \item \verb|game_calm - |calm or relaxed.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|game_anxious - |anxious or stressed.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|game_excited - |excited or energized.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|game_sad - |sad or depressed.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|game_guilty - |guilty or ashamed.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|game_angry - |frustrated or angry.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|game_happy - |happy or content.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|game_lonely - |lonely or ignored.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|game_proud - |confident or proud.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|game_friendly - |friendly or amused.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+        \end{itemize}
+        \begin{addmargin}[1em]{0em}
+            \textit{Please indicate your impression of the AGENT by dragging the sliding bar between the pairs of adjectives below. The closer the bar is to the adjective, the more certain you are of your evaluation:}
+        \end{addmargin}
+        \begin{itemize}
+            \item \verb|agent_intell - (Slider)| "Intelligent" \verb|(0) <-> (100)| "Unintelligent".
+            \item \verb|agent_care - (Slider)| "Cares about me" \verb|(0) <-> (100)| "Doesn't care about me".
+            \item \verb|agent_honest - (Slider)| "Honest" \verb|(0) <-> (100)| "Dishonest".
+            \item \verb|agent_expert - (Slider)| "Inexpert" \verb|(0) <-> (100)| "Expert".
+            \item \verb|agent_concern -(Slider)|"Concerned about me"\verb|(0) <-> (100)|"Unconcerned about me".
+            \item \verb|agent_trust - (Slider)| "Untrustworthy" \verb|(0) <-> (100)| "Trustworthy".
+            \item \verb|agent_comp - (Slider)| "Incompetent" \verb|(0) <-> (100)| "Competent".
+            \item \verb|agent_insens - (Slider)| "Insensitive" \verb|(0) <-> (100)| "Sensitive".
+            \item \verb|agent_honor - (Slider)| "Honorable" \verb|(0) <-> (100)| "Dishonorable".
+            \item \verb|agent_bright - (Slider)| "Bright" \verb|(0) <-> (100)| "Stupid".
+            \item \verb|agent_understand - (Slider)| "Not understanding" \verb|(0) <-> (100)| "Understanding".
+            \item \verb|agent_phoney - (Slider)| "Phoney" \verb|(0) <-> (100)| "Genuine".
+        \end{itemize}
+        \begin{addmargin}[1em]{0em}
+            \textit{Overall, how much do you agree or disagree with the following statements:}
+        \end{addmargin}
+        \begin{itemize}
+            \item \verb|agent_well - |I got along with the agent pretty well.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|agent_smooth - |The interaction with the agent was smooth.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|agent_acc - |I felt accepted and respected by the agent.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|agent_like - |I think the agent is likeable.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|agent_enjoy - |I enjoyed the interaction.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|agent_awk - |The interaction with the agent was forced, awkward and strained.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|agent_place - |The agent said things that were out of place.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|agent_play - |If I were to play the video game again, I would want to have the agent there.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|agent_perform - |I think having the agent there helped me to perform better in the game.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+        \end{itemize}
+        \begin{addmargin}[1em]{0em}
+            \textit{How much did you feel the following emotions during the game DUE TO THE OTHER TEAM MEMBER(S) (e.g., not due to due to the agent or how the game went):}
+        \end{addmargin}
+        \begin{itemize}
+            \item \verb|team_calm - |calm or relaxed.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|team_anxious - |anxious or stressed.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|team_excited - |excited or energized.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|team_sad - |sad or depressed.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|team_guilt - |guilty or ashamed.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|team_angry - |frustrated or angry.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|team_happy - |happy or content.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|team_lonely - |lonely or ignored.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|team_proud - |confident or proud.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|team_friendly - |friendly or amused.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+        \end{itemize}
+        \begin{addmargin}[1em]{0em}
+            \textit{Please indicate your impression of THE OTHER TEAM MEMBER(S) by sliding the bar between the pairs of adjectives below. The closer the bar is to the adjective, the more certain you are of your evaluation:}
+        \end{addmargin}
+        \begin{itemize}
+            \item \verb|team_intel - (Slider)| "Intelligent" \verb|(0) <-> (100)| "Unintelligent".
+            \item \verb|team_care - (Slider)| "Cares about me," \verb|(0) <-> (100)| "Doesn't care about me".
+            \item \verb|team_honest - (Slider)| "Honest" \verb|(0) <-> (100)| "Dishonest".
+            \item \verb|team_expert - (Slider)| "Inexpert" \verb|(0) <-> (100)| "Expert".
+            \item \verb|team_concern - (Slider)|"Concerned about me"\verb|(0) <-> (100)|"Unconcerned about me".
+            \item \verb|team_trust - (Slider)| "Untrustworthy" \verb|(0) <-> (100)| "Trustworthy".
+            \item \verb|team_comp - (Slider)| "Incompetent" \verb|(0) <-> (100)| "Competent".
+            \item \verb|team_insens - (Slider)| "Insensitive" \verb|(0) <-> (100)| "Sensitive".
+            \item \verb|team_honor - (Slider)| "Honorable" \verb|(0) <-> (100)| "Dishonorable".
+            \item \verb|team_bright - (Slider)| "Bright" \verb|(0) <-> (100)| "Stupid".
+            \item \verb|team_understand - (Slider)| "Not understanding" \verb|(0) <-> (100)| "Understanding".
+            \item \verb|team_phoney - (Slider)| "Phoney" \verb|(0) <-> (100)| "Genuine".
+        \end{itemize}
+        \begin{addmargin}[1em]{0em}
+            \textit{Please answer the following questions about THE OTHER TEAM MEMBER(S):}
+        \end{addmargin}
+        \begin{itemize}
+            \item \verb|team_wrong - |It seemed like my emotional reaction was wrong or incorrect because of my team member's responses.\\\verb|[5=Strongly Agree; 4=Agree; 3=Neither Agree nor Disagree; 2=Disagree; 1=Strongly Disagree]|
+            \item \verb|team_forget - |I felt like I should forget about my feelings and move on because of my team member's responses.\\\verb|[5=Strongly Agree; 4=Agree; 3=Neither Agree nor Disagree; 2=Disagree; 1=Strongly Disagree]|
+            \item \verb|team_minimize - |It seemed like my feelings were minimized because of my team member's responses.\\\verb|[5=Strongly Agree; 4=Agree; 3=Neither Agree nor Disagree; 2=Disagree; 1=Strongly Disagree]|
+            \item \verb|team_insult - |I felt insulted when I shared my feelings.\\\verb|[5=Strongly Agree; 4=Agree; 3=Neither Agree nor Disagree; 2=Disagree; 1=Strongly Disagree]|
+            \item \verb|team_irrat - |I felt like my feelings were irrational because of my team member's responses.\\\verb|[5=Strongly Agree; 4=Agree; 3=Neither Agree nor Disagree; 2=Disagree; 1=Strongly Disagree]|
+            \item \verb|team_crit - |I felt my team members were being critical of my feelings.\\\verb|[5=Strongly Agree; 4=Agree; 3=Neither Agree nor Disagree; 2=Disagree; 1=Strongly Disagree]|
+            \item \verb|team_fault - |I felt like my feelings were my fault because of my team member's response.\\\verb|[5=Strongly Agree; 4=Agree; 3=Neither Agree nor Disagree; 2=Disagree; 1=Strongly Disagree]|
+            \item \verb|team_ignore - |I felt ignored when I shared my feelings.\\\verb|[5=Strongly Agree; 4=Agree; 3=Neither Agree nor Disagree; 2=Disagree; 1=Strongly Disagree]|
+            \item \verb|team_impt - |I felt like my feelings were unimportant because of my team member's response.\\\verb|[5=Strongly Agree; 4=Agree; 3=Neither Agree nor Disagree; 2=Disagree; 1=Strongly Disagree]|
+            \item \verb|team_weak - |I felt weak because of my team member's response to my emotional reactions.\\\verb|[5=Strongly Agree; 4=Agree; 3=Neither Agree nor Disagree; 2=Disagree; 1=Strongly Disagree]|
+        \end{itemize}
+        \begin{addmargin}[1em]{0em}
+            \textit{Overall, how much do you agree or disagree with the following statements:}
+        \end{addmargin}
+        \begin{itemize}
+            \item \verb|team_along - |I got along with my team members pretty well.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_smooth - |The interaction with my team members was smooth.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_accept - |I felt accepted and respected by my team members.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_like - |I think my team members are likable.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_enjoy - |I enjoyed the interaction.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_awk - |The interaction with my team members was forced, awkward and strained.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_place - |My team members said things that were out of place.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_likeme - |I believe other group members liked me.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_genuine - |I felt that I was a genuine member of the group.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_part - |During the game, I got to participate whenever I wanted to.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_listen - |Other members of the group really listened to what I had to say.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_ilike - |I liked the group I was in.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_interact - |I enjoyed interacting with this group very much.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_itrust - |I trusted group members.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_fit - |The group was composed of people who fit together.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_cohesion - |There was a feeling of unity and cohesion in the group.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_work - |Compared to other groups I have been a part of in life, this group worked well together.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_knit - |We were a closely knit group.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_like_mem - |I like the members of the group.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_work_well - |Our group worked well together.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_decisision - |This group used effective decision making techniques.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_express - |This group provided for comfortable expression for members.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_organize - |I believe we approached the game in an organized manner.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_accomplish - |The group accomplished what it set out to do.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_approp - |I believe our group's decisions were appropriate.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_alt - |I believe we selected the right alternatives.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_influ - |I believe I had a lot of influence on group decisions.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_contrib - |I contributed important information during the decision process.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+        \end{itemize}
+        \begin{addmargin}[1em]{0em}
+            \textit{Please answer the following questions about how the agent made you feel:}
+        \end{addmargin}
+        \begin{itemize}
+            \item \verb|agent_emot1 - |It seemed like my emotional reaction was wrong or incorrect because of the agent's response.\\\verb|[5=Strongly Agree; 4=Agree; 3=Neither Agree nor Disagree; 2=Disagree; 1=Strongly Disagree]|
+            \item \verb|agent_emot2 - |I felt like I should forget about my feelings and move on because of the agent's response.\\\verb|[5=Strongly Agree; 4=Agree; 3=Neither Agree nor Disagree; 2=Disagree; 1=Strongly Disagree]|
+            \item \verb|agent_emot3 - |It seemed like my feelings were minimized because of the agent's reaction.\\\verb|[5=Strongly Agree; 4=Agree; 3=Neither Agree nor Disagree; 2=Disagree; 1=Strongly Disagree]|
+            \item \verb|agent_emot4 - |I felt insulted when I shared my feelings.\\\verb|[5=Strongly Agree; 4=Agree; 3=Neither Agree nor Disagree; 2=Disagree; 1=Strongly Disagree]|
+            \item \verb|agent_emot5 - |I felt like my feelings were irrational because of the agent's response.\\\verb|[5=Strongly Agree; 4=Agree; 3=Neither Agree nor Disagree; 2=Disagree; 1=Strongly Disagree]|
+            \item \verb|agent_emot6 - |I felt the agent was being critical of my feelings.\\\verb|[5=Strongly Agree; 4=Agree; 3=Neither Agree nor Disagree; 2=Disagree; 1=Strongly Disagree]|
+            \item \verb|agent_emot7 - |I felt like my feelings were my fault because of the agent's response.\\\verb|[5=Strongly Agree; 4=Agree; 3=Neither Agree nor Disagree; 2=Disagree; 1=Strongly Disagree]|
+            \item \verb|agent_emot8 - |I felt ignored when I shared my feelings.\\\verb|[5=Strongly Agree; 4=Agree; 3=Neither Agree nor Disagree; 2=Disagree; 1=Strongly Disagree]|
+            \item \verb|agent_emot9 - |I felt like my feelings were unimportant because of the agent's response.\\\verb|[5=Strongly Agree; 4=Agree; 3=Neither Agree nor Disagree; 2=Disagree; 1=Strongly Disagree]|
+            \item \verb|agent_emot10 - |I felt weak because of the agent's response to my emotional reactions.\\\verb|[5=Strongly Agree; 4=Agree; 3=Neither Agree nor Disagree; 2=Disagree; 1=Strongly Disagree]|
+            \item \verb|know_team_members - |Did you know any of the other team members?\\\verb|[1 = Yes; 0 = No]|
+            \item \verb|know_person_at_cheetah - [text]|\\Did you know the team member on Computer 1: Cheetah? If so, then to what extent have you known this team member?
+            \item \verb|know_person_at_lion - [text]|\\Did you know the team member on Computer 2: Lion?If so, then to what extent have you known this team member?
+            \item \verb|know_person_at_tiger - [text]|\\Did you know the team member on Computer 3: Tiger?If so, then to what extent have you known this team member?
+            \item \verb|know_person_at_leopard - [text]|\\Did you know the team member on Computer 4: Leopard?If so, then to what extent have you known this team member?
+            \item \verb|postgame_survey_complete - |\\Postgame survey complete.\\\verb|[0 = Incomplete; 1 = Unverified; 2=Complete]|
         \end{itemize}
     \end{addmargin} % End of File "<cat>_post_game_survey_data.csv"
 \end{addmargin} % End of Sub Directory "redcap_data/"
