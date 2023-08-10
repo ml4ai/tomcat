@@ -58,17 +58,15 @@ DEMOGRAPHICS_FIELDS = {
     "exp_mc": "TEXT",
     "handedness": "TEXT",
     "trackpad_preference": "TEXT",
-    "sph_label": "TEXT",
-    "shl_impairements": "TEXT", # Typo :(
-    "shl_impairments_specify": "TEXT",
-    "shl_impairments_agediagnosis": "TEXT",
-    "shl_impairments_therapy": "TEXT",
+    "shl_impairments": "TEXT", # Typo :(
+    "shl_impairment_specify": "TEXT",
+    "shl_impairment_agediagnosis": "TEXT",
+    "shl_impairment_therapy": "TEXT",
     "first_language": "TEXT",
     "languages_spoken": "TEXT",
     "language_age_learned": "TEXT",
     "countries_live_one_year": "TEXT",
     "major_schooling_country": "TEXT",
-    "health_label": "TEXT",
     "health_concussion": "TEXT",
     "health_seizure": "TEXT",
     "health_trauma": "TEXT",
@@ -78,6 +76,7 @@ DEMOGRAPHICS_FIELDS = {
     "health_vision_specify": "TEXT",
 }
 
+DEMOGRAPHICS_QMARKS = ",".join("?" for k in DEMOGRAPHICS_FIELDS)
 
 def recreate_station_table(db_connection):
     db_connection.execute("DROP TABLE IF EXISTS station")
@@ -120,17 +119,16 @@ def recreate_participant_table(db_connection):
         )
     )
 
-    qmarks = ",".join("?" for k in DEMOGRAPHICS_FIELDS)
     # Insert a participant ID of -1 to represent 'unknown participant'
     db_connection.execute(
-        f"INSERT into participant VALUES(?, {qmarks})",
+        f"INSERT into participant VALUES(?, {DEMOGRAPHICS_QMARKS})",
         [-1] + [None for k in DEMOGRAPHICS_FIELDS],
     )
 
     # Insert a participant ID of -2 to represent the team (for affective task
     # event data)
     db_connection.execute(
-        f"INSERT into participant VALUES(?, {qmarks})",
+        f"INSERT into participant VALUES(?, {DEMOGRAPHICS_QMARKS})",
         [-2] + [None for k in DEMOGRAPHICS_FIELDS],
     )
     # db_connection.execute("INSERT into participant VALUES(?)", [-2])
@@ -138,7 +136,7 @@ def recreate_participant_table(db_connection):
     # Insert a participant ID of -3 to represent an unknown experimenter (for
     # the ping pong task data)
     db_connection.execute(
-        f"INSERT into participant VALUES(?, {qmarks})",
+        f"INSERT into participant VALUES(?, {DEMOGRAPHICS_QMARKS})",
         [-3] + [None for k in DEMOGRAPHICS_FIELDS],
     )
     # db_connection.execute("INSERT into participant VALUES(?)", [-3])
@@ -247,9 +245,8 @@ def process_rick_workbook():
                 series["leopard_subject_id"],
             ]
 
-            qmarks = ",".join("?" for k in DEMOGRAPHICS_FIELDS)
             db_connection.executemany(
-                f"INSERT OR IGNORE into participant VALUES(?, {qmarks})",
+                f"INSERT OR IGNORE into participant VALUES(?, {DEMOGRAPHICS_QMARKS})",
                 [
                     [participant] + [None for k in DEMOGRAPHICS_FIELDS]
                     for participant in participants
@@ -262,7 +259,7 @@ def process_rick_workbook():
             # experiment.
             if group_session_id == "exp_2022_09_30_10":
                 db_connection.execute(
-                    f"INSERT OR IGNORE into participant VALUES(?, {qmarks})",
+                    f"INSERT OR IGNORE into participant VALUES(?, {DEMOGRAPHICS_QMARKS})",
                     [99901] + [None for k in DEMOGRAPHICS_FIELDS],
                 )
 
@@ -347,9 +344,13 @@ def process_rick_workbook():
 
 
 def insert_demographic_data():
+    data_dictionary_df = pd.read_table("/tomcat/data/raw/LangLab/experiments/study_3_pilot/ToMCATSelfReport_DataDictionary_2023-08-08.tsv",
+            index_col=0)
+    # print(data_dictionary_df)
 
     df = pd.read_table(
         "/tomcat/data/raw/LangLab/experiments/study_3_pilot/ToMCATSelfReport_DATA_2023-06-11_2358.tsv",
+        usecols=["subject_id"] + [k.replace("impairments", "impairements") for k in DEMOGRAPHICS_FIELDS]
     )
     db_connection = sqlite3.connect(DB_PATH)
 
@@ -360,9 +361,32 @@ def insert_demographic_data():
                     f"SELECT * from participant where id='{row['subject_id']}'"
                     ).fetchall()
             if len(results) != 0:
-                print(row["subject_id"])
+                for label in row.index:
+                    field = data_dictionary_df.loc[label]
+                    field_type = field["Field Type"]
+                    entry = row.loc[label]
+                    if pd.isna(entry):
+                        entry = None
+
+                    if entry is not None:
+                        if field_type == "radio":
+                            choices = field["Choices, Calculations, OR Slider Labels"]
+                            choices = {int(k): v for k, v in [x.strip().split(", ") for x in choices.split("|")]}
+                            row.loc[label] = choices[row.loc[label]]
+
+
+                try:
+                    db_connection.execute(f"""
+                        INSERT OR REPLACE INTO participant VALUES(?, {DEMOGRAPHICS_QMARKS})
+                    """,
+                    row
+                    )
+                except sqlite3.IntegrityError as e:
+                    error(f"Unable to insert row {row}!")
+                    raise sqlite3.IntegrityError(e)
+
 
 
 if __name__ == "__main__":
-    # process_rick_workbook()
+    process_rick_workbook()
     insert_demographic_data()
