@@ -374,6 +374,10 @@ def insert_demographic_data():
                             choices = {int(k): v for k, v in [x.strip().split(", ") for x in choices.split("|")]}
                             row.loc[label] = choices[row.loc[label]]
 
+                # Participant 14 entered their age as 18` instead of 18.
+                if row.loc["age"] == "18`":
+                    row.loc["age"] = 18
+
 
                 try:
                     db_connection.execute(f"""
