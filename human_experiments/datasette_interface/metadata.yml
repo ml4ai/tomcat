@@ -41,7 +41,6 @@ databases:
                         Whether the data for the relevant
                         participant/task/modality is valid (1) or invalid (0).
 
-
             fnirs_raw:
                 description: >
                     Table with raw fNIRS data.
@@ -58,6 +57,23 @@ databases:
                         ID.
                     timestamp_unix: The Unix timestamp of the event.
                     timestamp_iso8601: The ISO-8601 timestamp of the event.
+
+            eeg_raw:
+              description: >
+                Table with raw EEG data.
+              columns:
+                group_session: Group session ID
+                task: Task ID.
+                station: The iMac that the participant was stationed at.
+                participant: >
+                  Participant ID. A participant ID of -1 indicates an
+                  unknown participant. All rows that do not have values
+                  for the `task` column will have their participant ID
+                  set to -1. In the future, we will label some of these
+                  inter/pre/post task rows with the correct participant
+                  ID.
+                timestamp_unix: The Unix timestamp of the event.
+                timestamp_iso8601: The ISO-8601 timestamp of the event.
 
             group_session:
                 description: Table with group session IDs.

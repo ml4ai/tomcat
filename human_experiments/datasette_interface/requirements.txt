@@ -3,3 +3,6 @@ pytz
 python-dateutil
 datasette-render-markdown
 datasette-pretty-json
+pandas
+pyxdf
+numpy
