@@ -174,7 +174,7 @@ def process_directory_v2(session, db_connection):
                 continue
 
             for stream in streams:
-                station = stream["info"]["info"]["hostname"][0]
+                station = stream["info"]["hostname"][0]
                 insert_data_into_table(stream, session, station, db_connection)
 
 
