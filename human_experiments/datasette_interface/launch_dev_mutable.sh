@@ -4,6 +4,7 @@
 set -euo pipefail
 datasette \
     /space/${USER}/tomcat/tomcat.db \
+    --port ${TOMCAT_DATASETTE_PORT:-8001} \
     --metadata metadata.yml \
     --reload \
     --template-dir=templates \
