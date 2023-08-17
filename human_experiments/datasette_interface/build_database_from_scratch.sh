@@ -13,6 +13,7 @@ echo "Building database from scratch."
 && ./process_testbed_messages.py \
 && ./process_fnirs_data.py \
 && ./process_eeg_data.py \
+&& ./process_gaze_data.py \
 && ./update_inspect_file.sh
 
 echo "Finished building database from scratch"
