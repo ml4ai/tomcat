@@ -2,7 +2,7 @@
 # Shell script for launching the Datasette instance in dev mode
 
 set -euo pipefail
-datasette \
+datasette -i \
     /space/${USER}/tomcat/tomcat.db \
     --metadata metadata.yml \
     --reload \
