@@ -1,8 +1,8 @@
 from multiprocessing import Pool
 
+import mne
 import pandas as pd
 from tqdm import tqdm
-import mne
 
 
 def filter_signal(signal_df: pd.DataFrame, filter_method: callable):
@@ -31,6 +31,8 @@ def _filter_signal_per_exp(process_arg: tuple[dict[str, any], callable]) -> dict
 
     for station in ["lion", "tiger", "leopard"]:
         signal_df = experiment[station]
+        if len(signal_df) == 0:
+            continue
         filter_signal(signal_df, filter_method)
         experiment[station] = signal_df
 
