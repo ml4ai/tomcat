@@ -611,6 +611,17 @@ def write_experiment_results_to_db(exp_data: list[dict[str, any]]):
                 exp["signals"].to_sql("eeg_raw", db_connection, if_exists="append", index=False)
 
 
+def write_experiment_results_to_csv(exp_data: list[dict[str, any]],
+                                    output_dir: str):
+    pbar = tqdm(exp_data, unit="directories")
+    for exp in pbar:
+        session = exp["experiment_name"]
+        pbar.set_description(f'Processing {session}')
+
+        if "signals" in exp:
+            exp["signals"].to_csv(f"{output_dir}/{session}.csv", index=False)
+
+
 if __name__ == "__main__":
     info("Starting building EEG table.")
 
@@ -677,6 +688,11 @@ if __name__ == "__main__":
     )
 
     experiments_data = multiprocess_experiments(experiments_info)
+
+    csv_output_path = f"/space/{USER}/eeg_raw/"
+    os.makedirs(csv_output_path, exist_ok=True)
+    write_experiment_results_to_csv(experiments_data, csv_output_path)
+
     write_experiment_results_to_db(experiments_data)
 
     info("Finished building EEG table.")
