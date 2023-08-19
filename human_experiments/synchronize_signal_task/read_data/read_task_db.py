@@ -1,4 +1,4 @@
-from .tasks import affective_individual, affective_team
+from .tasks import affective_individual, affective_team, rest_state, finger_tapping
 
 
 def read_task_db(db_path: str, experiment: str) -> list[dict[str, any]]:
@@ -38,6 +38,18 @@ def read_task_db(db_path: str, experiment: str) -> list[dict[str, any]]:
     # return task_data
 
     task_data = []
+
+    rest_state_data = rest_state(db_path, experiment)
+    task_data.append({
+        "task_name": "rest_state",
+        "task_data": rest_state_data
+    })
+
+    finger_tapping_data = finger_tapping(db_path, experiment)
+    task_data.append({
+        "task_name": "finger_tapping",
+        "task_data": finger_tapping_data
+    })
 
     affective_individual_data = affective_individual(db_path, experiment)
     task_data.append({
