@@ -3,7 +3,7 @@ import sqlite3
 import pandas as pd
 
 
-def ping_pong_competitive(db_path: str, experiment: str) -> dict[tuple[str, str], pd.DataFrame]:
+def ping_pong_competitive(db_path: str, experiment: str) -> dict[tuple[str, str], pd.DataFrame] | None:
     db = sqlite3.connect(db_path)
 
     query = f"""
@@ -12,6 +12,9 @@ def ping_pong_competitive(db_path: str, experiment: str) -> dict[tuple[str, str]
             WHERE group_session = ?;
             """
     ping_pong_competitive_df = pd.read_sql_query(query, db, params=[experiment])
+
+    if ping_pong_competitive_df.empty:
+        return None
 
     ping_pong_competitive_df = ping_pong_competitive_df.drop(columns=['group_session',
                                                                       'player_1_id',
@@ -32,7 +35,8 @@ def ping_pong_competitive(db_path: str, experiment: str) -> dict[tuple[str, str]
     for match_df in match_dfs:
         player_1_station = match_df['player_1_station'].unique()[0]
         player_2_station = match_df['player_2_station'].unique()[0]
-        match_df["timestamp_unix"] = match_df["timestamp_unix"].copy().astype(float)
+        match_df = match_df.copy()
+        match_df["timestamp_unix"] = match_df["timestamp_unix"].astype(float)
         match_df = match_df.reset_index(drop=True)
         ids_matches[(player_1_station, player_2_station)] = match_df
 

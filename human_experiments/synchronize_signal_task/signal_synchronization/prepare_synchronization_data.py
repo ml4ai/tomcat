@@ -31,7 +31,8 @@ def prepare_synchronization_data(signal_type_info: list[dict[str, any]], desired
                 if experiment_signal["experiment_name"] == experiment_to_process:
                     for station in ["lion", "tiger", "leopard"]:
                         if station in experiment_signal:
-                            sync_signal_info[station] = experiment_signal[station]
+                            if len(experiment_signal[station]) > 0:
+                                sync_signal_info[station] = experiment_signal[station]
 
             sync_signals_info.append(sync_signal_info)
 

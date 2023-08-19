@@ -1,10 +1,11 @@
+import os
+
+from common import remove_columns_all_exp
 from config import DB_PATH, FNIRS_FILTERED_PATH, NUM_PROCESSES, EXPERIMENT_SESSIONS, OUTPUT_DIR
 from read_data import read_raw_csv_all
-from common import remove_columns_all_exp
 from signal_synchronization import prepare_synchronization_data, synchronize_signals_all
 from task_synchronization import synchronize_task_signal_all, prepare_task_synchronization_data
 from write_data import write_csv_all
-
 
 if __name__ == "__main__":
     desired_freq = 10
@@ -34,4 +35,6 @@ if __name__ == "__main__":
 
     task_synchronization_info = prepare_task_synchronization_data(synchronized_signals, DB_PATH, NUM_PROCESSES)
     synchronized_task_signals = synchronize_task_signal_all(task_synchronization_info)
-    write_csv_all(synchronized_task_signals, OUTPUT_DIR, NUM_PROCESSES)
+
+    output_dir = os.path.join(OUTPUT_DIR, "fnirs")
+    write_csv_all(synchronized_task_signals, output_dir, NUM_PROCESSES)

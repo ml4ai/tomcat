@@ -11,7 +11,16 @@ def _get_testbed_messages(db_path: str, experiment: str, mission: str) -> pd.Dat
                             SELECT id
                             FROM mission
                             WHERE group_session = '{experiment}' AND name = '{mission}';
-                            """).fetchone()[0]
+                            """)
+
+    if mission_id is None:
+        return None
+
+    mission_id_result = mission_id.fetchone()
+    if mission_id_result is None or len(mission_id_result) == 0:
+        return None
+
+    mission_id = mission_id_result[0]
 
     query = f"""
             SELECT * 
@@ -19,6 +28,10 @@ def _get_testbed_messages(db_path: str, experiment: str, mission: str) -> pd.Dat
             WHERE mission = ? AND topic IN ('observations/events/mission', 'observations/events/scoreboard');
             """
     minecraft_df = pd.read_sql_query(query, db, params=[mission_id])
+
+    if minecraft_df.empty:
+        return None
+
     minecraft_df = minecraft_df.drop(columns=['mission', 'timestamp_iso8601'])
     minecraft_df['timestamp_unix'] = minecraft_df['timestamp_unix'].astype(float)
     minecraft_df = minecraft_df.sort_values(by='timestamp_unix').reset_index(drop=True)

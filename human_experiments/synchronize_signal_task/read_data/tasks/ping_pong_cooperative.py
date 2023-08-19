@@ -6,7 +6,7 @@ import pandas as pd
 from common import get_station
 
 
-def ping_pong_cooperative(db_path: str, experiment: str) -> pd.DataFrame:
+def ping_pong_cooperative(db_path: str, experiment: str) -> pd.DataFrame | None:
     db = sqlite3.connect(db_path)
 
     query = f"""
@@ -15,6 +15,9 @@ def ping_pong_cooperative(db_path: str, experiment: str) -> pd.DataFrame:
             WHERE group_session = ?;
             """
     ping_pong_competitive_df = pd.read_sql_query(query, db, params=[experiment])
+
+    if ping_pong_competitive_df.empty:
+        return None
 
     # Map participant id to station
     player_1_id = ping_pong_competitive_df['player_1_id'].unique()[0]

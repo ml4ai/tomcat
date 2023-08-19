@@ -17,46 +17,53 @@ def read_task_db(db_path: str, experiment: str) -> dict[str, any]:
     task_data = []
 
     rest_state_data = rest_state(db_path, experiment)
-    task_data.append({
-        "task_name": "rest_state",
-        "task_data": rest_state_data
-    })
+    if rest_state_data is not None:
+        task_data.append({
+            "task_name": "rest_state",
+            "task_data": rest_state_data
+        })
 
     finger_tapping_data = finger_tapping(db_path, experiment)
-    task_data.append({
-        "task_name": "finger_tapping",
-        "task_data": finger_tapping_data
-    })
+    if finger_tapping_data is not None:
+        task_data.append({
+            "task_name": "finger_tapping",
+            "task_data": finger_tapping_data
+        })
 
     affective_individual_data = affective_individual(db_path, experiment)
-    task_data.append({
-        "task_name": "affective_individual",
-        "task_data": affective_individual_data
-    })
+    if affective_individual_data is not None:
+        task_data.append({
+            "task_name": "affective_individual",
+            "task_data": affective_individual_data
+        })
 
     affective_team_data = affective_team(db_path, experiment)
-    task_data.append({
-        "task_name": "affective_team",
-        "task_data": affective_team_data
-    })
+    if affective_team_data is not None:
+        task_data.append({
+            "task_name": "affective_team",
+            "task_data": affective_team_data
+        })
 
     ping_pong_competitive_data = ping_pong_competitive(db_path, experiment)
-    task_data.append({
-        "task_name": "ping_pong_competitive",
-        "task_data": ping_pong_competitive_data
-    })
+    if ping_pong_competitive_data is not None:
+        task_data.append({
+            "task_name": "ping_pong_competitive",
+            "task_data": ping_pong_competitive_data
+        })
 
     ping_pong_cooperative_data = ping_pong_cooperative(db_path, experiment)
-    task_data.append({
-        "task_name": "ping_pong_cooperative",
-        "task_data": ping_pong_cooperative_data
-    })
+    if ping_pong_cooperative_data is not None:
+        task_data.append({
+            "task_name": "ping_pong_cooperative",
+            "task_data": ping_pong_cooperative_data
+        })
 
     minecraft_data = minecraft(db_path, experiment)
-    task_data.append({
-        "task_name": "minecraft",
-        "task_data": minecraft_data
-    })
+    if minecraft_data is not None:
+        task_data.append({
+            "task_name": "minecraft",
+            "task_data": minecraft_data
+        })
 
     task_data_dict = {
         "experiment_name": experiment,

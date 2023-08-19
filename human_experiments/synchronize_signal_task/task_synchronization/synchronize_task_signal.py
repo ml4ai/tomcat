@@ -33,7 +33,9 @@ def synchronize_task_signal(experiment: dict[str, any]) -> dict[str, any]:
 
         match task_name:
             case "rest_state" | "affective_team":
-                synchronized_df = synchronize_task_event_signal(signal_df, task_data)
+                synchronized_df = synchronize_task_event_signal(
+                    signal_df, task_data, check_event_assignments=False
+                )
                 results[task_name] = synchronized_df
             case "finger_tapping" | "ping_pong_cooperative":
                 synchronized_df = synchronize_task_status_signal(signal_df, task_data)
@@ -41,7 +43,9 @@ def synchronize_task_signal(experiment: dict[str, any]) -> dict[str, any]:
             case "affective_individual":
                 for station, task_df in task_data.items():
                     station_signal_df = _filter_stations(signal_df, [station])
-                    synchronized_df = synchronize_task_event_signal(station_signal_df, task_df)
+                    synchronized_df = synchronize_task_event_signal(
+                        station_signal_df, task_df, check_event_assignments=False
+                    )
                     results[f"{task_name}_{station}"] = synchronized_df
             case "ping_pong_competitive":
                 for stations, task_df in task_data.items():

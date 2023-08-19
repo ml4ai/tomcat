@@ -4,7 +4,7 @@ USER = os.getenv("USER")
 DB_PATH = f"/space/{USER}/tomcat/tomcat.db"
 EEG_FILTERED_PATH = f"/space/{USER}/eeg_filtered"
 FNIRS_FILTERED_PATH = f"/space/{USER}/fnirs_filtered"
-NUM_PROCESSES = 2
+NUM_PROCESSES = 40
 OUTPUT_DIR = "/tomcat/data/derived/drafts/release_2023_08_19_15"
 
 EXPERIMENT_SESSIONS = [

@@ -3,7 +3,7 @@ import sqlite3
 import pandas as pd
 
 
-def rest_state(db_path: str, experiment: str) -> pd.DataFrame:
+def rest_state(db_path: str, experiment: str) -> pd.DataFrame | None:
     db = sqlite3.connect(db_path)
 
     query = f"""
@@ -12,6 +12,9 @@ def rest_state(db_path: str, experiment: str) -> pd.DataFrame:
             WHERE group_session = ?;
             """
     rest_state_df = pd.read_sql_query(query, db, params=[experiment])
+
+    if rest_state_df.empty:
+        return None
 
     rest_state_df = rest_state_df.drop(columns=['group_session',
                                                 'start_timestamp_iso8601',

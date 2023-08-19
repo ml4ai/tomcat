@@ -6,7 +6,7 @@ import pandas as pd
 from common import get_station
 
 
-def affective_individual(db_path: str, experiment: str) -> dict[str, pd.DataFrame]:
+def affective_individual(db_path: str, experiment: str) -> dict[str, pd.DataFrame] | None:
     db = sqlite3.connect(db_path)
 
     query = f"""
@@ -15,6 +15,9 @@ def affective_individual(db_path: str, experiment: str) -> dict[str, pd.DataFram
             WHERE group_session = ? AND task_type = 'individual';
             """
     affective_individual_df = pd.read_sql_query(query, db, params=[experiment])
+
+    if affective_individual_df.empty:
+        return None
 
     # Map participant id to station
     unique_participants = affective_individual_df['participant'].unique()
