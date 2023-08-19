@@ -1,14 +1,19 @@
+from multiprocessing import Pool
+
+from tqdm import tqdm
+
 from .tasks import (
     affective_individual,
     affective_team,
     rest_state,
     finger_tapping,
     ping_pong_competitive,
-    ping_pong_cooperative
+    ping_pong_cooperative,
+    minecraft
 )
 
 
-def read_task_db(db_path: str, experiment: str) -> list[dict[str, any]]:
+def read_task_db(db_path: str, experiment: str) -> dict[str, any]:
     task_data = []
 
     rest_state_data = rest_state(db_path, experiment)
@@ -47,4 +52,30 @@ def read_task_db(db_path: str, experiment: str) -> list[dict[str, any]]:
         "task_data": ping_pong_cooperative_data
     })
 
-    return task_data
+    minecraft_data = minecraft(db_path, experiment)
+    task_data.append({
+        "task_name": "minecraft",
+        "task_data": minecraft_data
+    })
+
+    task_data_dict = {
+        "experiment_name": experiment,
+        "task_data": task_data
+    }
+
+    return task_data_dict
+
+
+def _multiprocess_task_db(process_arg: tuple[str, str]) -> dict[str, any]:
+    return read_task_db(*process_arg)
+
+
+def read_task_db_all(db_path: str,
+                     experiments: list[str],
+                     num_processes: int = 1) -> list[dict[str, any]]:
+    process_args = [(db_path, experiment) for experiment in experiments]
+
+    with Pool(processes=num_processes) as pool:
+        results = list(tqdm(pool.imap(_multiprocess_task_db, process_args), total=len(process_args)))
+
+    return results
