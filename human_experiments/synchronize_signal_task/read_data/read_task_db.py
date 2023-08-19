@@ -1,4 +1,4 @@
-from .tasks import affective_individual
+from .tasks import affective_individual, affective_team
 
 
 def read_task_db(db_path: str, experiment: str) -> list[dict[str, any]]:
@@ -43,6 +43,12 @@ def read_task_db(db_path: str, experiment: str) -> list[dict[str, any]]:
     task_data.append({
         "task_name": "affective_individual",
         "task_data": affective_individual_data
+    })
+
+    affective_team_data = affective_team(db_path, experiment)
+    task_data.append({
+        "task_name": "affective_team",
+        "task_data": affective_team_data
     })
 
     return task_data
