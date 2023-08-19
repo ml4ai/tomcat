@@ -32,6 +32,7 @@ def ping_pong_competitive(db_path: str, experiment: str) -> dict[tuple[str, str]
     for match_df in match_dfs:
         player_1_station = match_df['player_1_station'].unique()[0]
         player_2_station = match_df['player_2_station'].unique()[0]
+        match_df["timestamp_unix"] = match_df["timestamp_unix"].copy().astype(float)
         match_df = match_df.reset_index(drop=True)
         ids_matches[(player_1_station, player_2_station)] = match_df
 

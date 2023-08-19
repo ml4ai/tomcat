@@ -42,6 +42,7 @@ def affective_team(db_path: str, experiment: str) -> pd.DataFrame:
     cols = [cols[0]] + ['station'] + [col for col in cols[1:] if col != 'station']
     affective_team_df = affective_team_df.reindex(columns=cols)
 
+    affective_team_df["timestamp_unix"] = affective_team_df["timestamp_unix"].astype(float)
     affective_team_df = affective_team_df.reset_index(drop=True)
 
     return affective_team_df

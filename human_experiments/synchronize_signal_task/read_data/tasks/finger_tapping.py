@@ -16,6 +16,7 @@ def finger_tapping(db_path: str, experiment: str) -> pd.DataFrame:
     finger_tapping_df = finger_tapping_df.drop(columns=['group_session',
                                                         'timestamp_iso8601'])
 
+    finger_tapping_df["timestamp_unix"] = finger_tapping_df["timestamp_unix"].astype(float)
     finger_tapping_df = finger_tapping_df.reset_index(drop=True)
 
     return finger_tapping_df

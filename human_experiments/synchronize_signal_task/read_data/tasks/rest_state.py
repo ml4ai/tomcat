@@ -19,4 +19,11 @@ def rest_state(db_path: str, experiment: str) -> pd.DataFrame:
 
     rest_state_df = rest_state_df.reset_index(drop=True)
 
-    return rest_state_df
+    # Creating a new DataFrame with two rows based on the existing DataFrame
+    new_rest_state_df = pd.DataFrame({
+        'timestamp_unix': [float(rest_state_df.loc[0, 'start_timestamp_unix']),
+                           float(rest_state_df.loc[0, 'stop_timestamp_unix'])],
+        'event_type': ['start_task', 'end_task']
+    })
+
+    return new_rest_state_df

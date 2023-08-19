@@ -20,10 +20,12 @@ def prepare_task_synchronization_data(synchronized_signals: list[dict[str, any]]
             if task_dict['experiment_name'] == experiment_name:
                 merged_dict = {
                     'experiment_name': experiment_name,
-                    'signal': signal_dict,
-                    'task': task_dict
+                    'signals': signal_dict["signals"],
+                    'tasks': task_dict["task_data"]
                 }
                 pairing.append(merged_dict)
                 break
+
+    pairing.sort(key=lambda x: x['experiment_name'])
 
     return pairing

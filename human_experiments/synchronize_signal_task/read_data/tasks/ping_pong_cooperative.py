@@ -51,4 +51,6 @@ def ping_pong_cooperative(db_path: str, experiment: str) -> pd.DataFrame:
     new_order = cols_to_move + other_cols
     ping_pong_competitive_df = ping_pong_competitive_df[new_order]
 
+    ping_pong_competitive_df["timestamp_unix"] = ping_pong_competitive_df["timestamp_unix"].astype(float)
+
     return ping_pong_competitive_df

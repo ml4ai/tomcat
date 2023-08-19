@@ -42,6 +42,7 @@ def affective_individual(db_path: str, experiment: str) -> dict[str, pd.DataFram
         cols = [cols[0]] + ['station'] + [col for col in cols[1:] if col != 'station']
         station_affective_df = station_affective_df.reindex(columns=cols)
 
+        station_affective_df["timestamp_unix"] = station_affective_df["timestamp_unix"].astype(float)
         station_affective_df = station_affective_df.reset_index(drop=True)
 
         station_task_map[station] = station_affective_df

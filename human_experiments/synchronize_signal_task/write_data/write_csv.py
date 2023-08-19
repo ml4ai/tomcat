@@ -1,21 +1,18 @@
 import os
 from multiprocessing import Pool
 
-import pandas as pd
 from tqdm import tqdm
 
 
 def write_csv(experiment: dict[str, any], dir_path: str):
-    merged_df = None
-    for station in ["lion", "tiger", "leopard"]:
-        df = experiment[station]
-        if merged_df is None:
-            merged_df = df
-        else:
-            merged_df = pd.concat([merged_df, df], ignore_index=True)
+    experiment_name = experiment["experiment_name"]
+    output_dir_path = os.path.join(dir_path, experiment_name)
+    os.makedirs(output_dir_path, exist_ok=True)
 
-    exp_name = experiment["experiment_name"]
-    merged_df.to_csv(os.path.join(dir_path, f'{exp_name}.csv'), index=False)
+    for task, df in experiment.items():
+        if task == "experiment_name":
+            continue
+        df.to_csv(os.path.join(output_dir_path, f'{task}.csv'), index=False)
 
 
 def _write_experiment_csv(process_args: tuple[dict[str, any], str]):
