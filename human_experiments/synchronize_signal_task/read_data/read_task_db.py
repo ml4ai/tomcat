@@ -3,7 +3,8 @@ from .tasks import (
     affective_team,
     rest_state,
     finger_tapping,
-    ping_pong_competitive
+    ping_pong_competitive,
+    ping_pong_cooperative
 )
 
 
@@ -38,6 +39,12 @@ def read_task_db(db_path: str, experiment: str) -> list[dict[str, any]]:
     task_data.append({
         "task_name": "ping_pong_competitive",
         "task_data": ping_pong_competitive_data
+    })
+
+    ping_pong_cooperative_data = ping_pong_cooperative(db_path, experiment)
+    task_data.append({
+        "task_name": "ping_pong_cooperative",
+        "task_data": ping_pong_cooperative_data
     })
 
     return task_data
