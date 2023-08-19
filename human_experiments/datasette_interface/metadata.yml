@@ -25,7 +25,7 @@ databases:
                     involved in the tasks, and whether the data from the EEG,
                     fNIRS, and eye tracking modalities are valid. In most
                     cases, when an experimenter stepped in to replace a
-                    participant (e.g., for a now-show participant), they did
+                    participant (e.g., for a no-show participant), they did
                     not wear fNIRS/EEG devices, and in some cases, they did not
                     wear the eye tracker either. Not all groups completed all
                     the tasks, and for some tasks, the data is missing. In
