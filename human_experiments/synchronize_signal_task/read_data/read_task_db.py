@@ -1,42 +1,13 @@
-from .tasks import affective_individual, affective_team, rest_state, finger_tapping
+from .tasks import (
+    affective_individual,
+    affective_team,
+    rest_state,
+    finger_tapping,
+    ping_pong_competitive
+)
 
 
 def read_task_db(db_path: str, experiment: str) -> list[dict[str, any]]:
-    # db_connection = sqlite3.connect(db_path)
-    # task_data = {}
-    #
-    # # Rest state
-    # query = f"""
-    #         SELECT *
-    #         FROM rest_state_task
-    #         WHERE group_session = ?;
-    #         """
-    # rest_state_df = pd.read_sql_query(query, db_connection, params=[experiment])
-    # if len(rest_state_df) > 0:
-    #     task_data["rest_state"] = rest_state_df
-    #
-    # # Finger tapping
-    # query = f"""
-    #         SELECT *
-    #         FROM fingertapping_task_observation
-    #         WHERE group_session = ?;
-    #         """
-    # finger_tapping_df = pd.read_sql_query(query, db_connection, params=[experiment])
-    # if len(finger_tapping_df) > 0:
-    #     task_data["finger_tapping"] = finger_tapping_df
-    #
-    # # Affective task individual
-    # query = f"""
-    #         SELECT *
-    #         FROM affective_task_event
-    #         WHERE group_session = ? AND task_type = 'individual';
-    #         """
-    # finger_tapping_df = pd.read_sql_query(query, db_connection, params=[experiment])
-    # if len(finger_tapping_df) > 0:
-    #     task_data["finger_tapping"] = finger_tapping_df
-    #
-    # return task_data
-
     task_data = []
 
     rest_state_data = rest_state(db_path, experiment)
@@ -61,6 +32,12 @@ def read_task_db(db_path: str, experiment: str) -> list[dict[str, any]]:
     task_data.append({
         "task_name": "affective_team",
         "task_data": affective_team_data
+    })
+
+    ping_pong_competitive_data = ping_pong_competitive(db_path, experiment)
+    task_data.append({
+        "task_name": "ping_pong_competitive",
+        "task_data": ping_pong_competitive_data
     })
 
     return task_data
