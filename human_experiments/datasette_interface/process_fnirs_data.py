@@ -148,6 +148,7 @@ def insert_data_into_table(stream, session, station, db_connection):
             )
             + ")"
         )
+        db_connection.execute("PRAGMA foreign_keys = 1;")
         db_connection.executemany(query, data)
 
 
