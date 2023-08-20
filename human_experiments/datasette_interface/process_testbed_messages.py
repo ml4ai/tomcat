@@ -534,7 +534,7 @@ def recreate_table():
                 mission TEXT,
                 topic TEXT,
                 message JSON,
-                FOREIGN KEY(mission) REFERENCES mission(id)
+                FOREIGN KEY(mission) REFERENCES mission(id) ON DELETE CASCADE
             );
             """
         )
