@@ -36,5 +36,5 @@ if __name__ == "__main__":
     task_synchronization_info = prepare_task_synchronization_data(synchronized_signals, DB_PATH, NUM_PROCESSES)
     synchronized_task_signals = synchronize_task_signal_all(task_synchronization_info)
 
-    output_dir = os.path.join(OUTPUT_DIR, "fnirs")
+    output_dir = os.path.join(OUTPUT_DIR, f"fnirs_{desired_freq}hz")
     write_csv_all(synchronized_task_signals, output_dir, NUM_PROCESSES)
