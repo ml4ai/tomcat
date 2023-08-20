@@ -3,7 +3,13 @@ from multiprocessing import Pool
 import pandas as pd
 from tqdm import tqdm
 
-from .utils import synchronize_task_event_signal, synchronize_task_status_signal
+from .utils import (
+    group_signal_for_task_event,
+    group_signal_for_task_status,
+    synchronize_task_status_signal,
+    synchronize_affective_team_task_event,
+    synchronize_task_event_signal
+)
 
 
 def _filter_stations(df: pd.DataFrame, station_names: list[str]) -> pd.DataFrame:
@@ -32,30 +38,42 @@ def synchronize_task_signal(experiment: dict[str, any]) -> dict[str, any]:
         task_data = task["task_data"]
 
         match task_name:
-            case "rest_state" | "affective_team":
-                synchronized_df = synchronize_task_event_signal(
+            case "rest_state":
+                grouped_signal_df = group_signal_for_task_event(
                     signal_df, task_data, check_event_assignments=False
                 )
+                synchronized_df = synchronize_task_event_signal(grouped_signal_df, task_data)
+                results[task_name] = synchronized_df
+            case "affective_team":
+                grouped_signal_df = group_signal_for_task_event(
+                    signal_df, task_data, check_event_assignments=False
+                )
+                # synchronized_df = synchronize_affective_team_task_event(grouped_signal_df, task_data)
+                synchronized_df = synchronize_task_event_signal(grouped_signal_df, task_data)
                 results[task_name] = synchronized_df
             case "finger_tapping" | "ping_pong_cooperative":
-                synchronized_df = synchronize_task_status_signal(signal_df, task_data)
+                grouped_signal_df = group_signal_for_task_status(signal_df, task_data)
+                synchronized_df = synchronize_task_status_signal(grouped_signal_df, task_data)
                 results[task_name] = synchronized_df
             case "affective_individual":
                 for station, task_df in task_data.items():
                     station_signal_df = _filter_stations(signal_df, [station])
-                    synchronized_df = synchronize_task_event_signal(
+                    grouped_station_signal_df = group_signal_for_task_event(
                         station_signal_df, task_df, check_event_assignments=False
                     )
+                    synchronized_df = synchronize_task_event_signal(grouped_station_signal_df, task_df)
                     results[f"{task_name}_{station}"] = synchronized_df
             case "ping_pong_competitive":
                 for stations, task_df in task_data.items():
                     player_1_station, player_2_station = stations
                     stations_signal_df = _filter_stations(signal_df, [player_1_station, player_2_station])
-                    synchronized_df = synchronize_task_status_signal(stations_signal_df, task_df)
+                    grouped_stations_signal_df = group_signal_for_task_status(stations_signal_df, task_df)
+                    synchronized_df = synchronize_task_status_signal(grouped_stations_signal_df, task_df)
                     results[f"{task_name}_{player_1_station}_{player_2_station}"] = synchronized_df
             case "minecraft":
                 for mission_name, mission_df in task_data.items():
-                    synchronized_df = synchronize_task_status_signal(signal_df, mission_df)
+                    grouped_signal_df = group_signal_for_task_status(signal_df, mission_df)
+                    synchronized_df = synchronize_task_status_signal(grouped_signal_df, mission_df)
                     results[f"{task_name}_{mission_name}"] = synchronized_df
             case _:
                 raise ValueError(f"Unknown task name: {task_name}")

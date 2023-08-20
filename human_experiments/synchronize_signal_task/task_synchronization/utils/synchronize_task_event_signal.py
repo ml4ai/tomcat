@@ -1,78 +1,49 @@
-import bisect
+from bisect import bisect_right
 
 import numpy as np
 import pandas as pd
 
 
-def _check_event_signal_assignments(signal_times, event_times):
-    # Create a list to track assignments
-    assignments = [False] * len(signal_times)
-
-    for event_time in event_times:
-        # Find the position where this event time would be inserted in sorted_signals
-        position = bisect.bisect(signal_times, event_time)
-
-        # Make sure the event time doesn't fall after all signal times
-        if position == len(signal_times):
-            position -= 1
-
-        # Make sure the event time doesn't fall before all signal times
-        if position > 0 and abs(signal_times[position - 1] - event_time) <= abs(
-                signal_times[position] - event_time):
-            position -= 1
-
-        # Assert that the signal at this position hasn't been assigned yet
-        assert not assignments[position], \
-            f"Signal at position {position} and time {signal_times[position]} already assigned"
-
-        # Assign this signal
-        assignments[position] = True
-
-
 def synchronize_task_event_signal(signal_df: pd.DataFrame,
-                                  task_df: pd.DataFrame,
-                                  check_event_assignments: bool = True) -> pd.DataFrame:
+                                  task_df: pd.DataFrame) -> pd.DataFrame:
     """
-    Group signals relevant to a task
+    Synchronize signal data with task event data
     :param signal_df: signal dataframe
     :param task_df: task dataframe
-    :param check_event_assignments: whether to check if all events have been assigned to a signal
-    :return: signal dataframe with signals relevant to the task
+    :return: signal dataframe with task data synchronized
     """
     # Check time column sorted
     assert task_df["timestamp_unix"].is_monotonic_increasing, "timestamp_unix column must be sorted"
     assert signal_df["timestamp_unix"].is_monotonic_increasing, "timestamp_unix column must be sorted"
 
-    # Get task start and end time
-    start_time = task_df["timestamp_unix"].min()
-    end_time = task_df["timestamp_unix"].max()
+    # Get the 'unix_time' values as a list for binary search
+    unix_times = signal_df['timestamp_unix'].tolist()
 
-    # Get the index of the element closest to start_time
-    start_index = bisect.bisect_left(signal_df["timestamp_unix"].values, start_time)
-    # Check if the index is not at the end of the array and if the next value is closer
-    if start_index != len(signal_df) and \
-            np.abs(signal_df.iloc[start_index]["timestamp_unix"] - start_time) > \
-            np.abs(signal_df.iloc[start_index + 1]["timestamp_unix"] - start_time):
-        start_index += 1
+    task_df.rename(columns={'timestamp_unix': 'task_timestamp_unix'}, inplace=True)
 
-    # Get the index of the element closest to end_time
-    end_index = bisect.bisect_right(signal_df["timestamp_unix"].values, end_time)
-    # Check if the index is not at the start of the array and if the previous value is closer
-    if end_index != 0 and end_index < len(signal_df) and \
-            np.abs(signal_df.iloc[end_index - 1]["timestamp_unix"] - end_time) <= \
-            np.abs(signal_df.iloc[end_index]["timestamp_unix"] - end_time):
-        end_index -= 1
+    # Initialize new columns in the signal data and set as NaN
+    signal_df[task_df.columns] = np.nan
 
-    # Filter signal_df
-    signal_df = signal_df.iloc[start_index:end_index + 1]
+    for _, row in task_df.iterrows():
+        # Find the index of the closest signal data entry which is before the current task data
+        idx = bisect_right(unix_times, row['task_timestamp_unix']) - 1
 
-    # Check that all event times are assigned to a signal
-    if check_event_assignments:
-        signal_times = signal_df["timestamp_unix"].values
-        event_times = task_df["timestamp_unix"].values
-        _check_event_signal_assignments(signal_times, event_times)
+        # If there's a next timestamp, and it's closer to the current timestamp
+        if idx + 1 < len(unix_times) and \
+                abs(unix_times[idx + 1] - row['task_timestamp_unix']) < abs(unix_times[idx] - row['task_timestamp_unix']):
+            idx += 1  # assign to the next timestamp
 
-    # Drop the columns with any NaN value
-    signal_df = signal_df.dropna(axis=1, how='any')
+        if idx >= 0:
+            # Filter the columns with the "_event_type" suffix
+            row_with_suffix = signal_df.loc[signal_df.index[idx]].filter(like='_event_type')
+
+            # Check if any columns were found with the "_event_type" suffix
+            if not row_with_suffix.empty and (row_with_suffix == "final_submission").any():
+                continue  # Skip this iteration if "final_submission" is found in any of the "_event_type" columns
+
+            # Assign the task data to this signal data entry
+            signal_df.loc[signal_df.index[idx], task_df.columns] = row
+
+    signal_df = signal_df.drop(columns=['task_timestamp_unix'])
 
     return signal_df

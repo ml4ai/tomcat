@@ -5,7 +5,7 @@ DB_PATH = f"/space/{USER}/tomcat/tomcat.db"
 EEG_FILTERED_PATH = f"/space/{USER}/eeg_filtered"
 FNIRS_FILTERED_PATH = f"/space/{USER}/fnirs_filtered"
 NUM_PROCESSES = 40
-OUTPUT_DIR = "/tomcat/data/derived/drafts/release_2023_08_19_15"
+OUTPUT_DIR = "/tomcat/data/derived/drafts/release_2023_08_19_17"
 
 EXPERIMENT_SESSIONS = [
     "exp_2022_09_30_10", "exp_2022_11_01_10", "exp_2022_12_02_15", "exp_2023_02_21_14",

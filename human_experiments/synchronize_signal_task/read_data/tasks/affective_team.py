@@ -48,4 +48,16 @@ def affective_team(db_path: str, experiment: str) -> pd.DataFrame | None:
     affective_team_df["timestamp_unix"] = affective_team_df["timestamp_unix"].astype(float)
     affective_team_df = affective_team_df.reset_index(drop=True)
 
+    # Iterate through the unique non-NaN station values
+    for station in affective_team_df['station'].dropna().unique():
+        # Create a new column named as <station>_event_type
+        col_name = f'{station}_event_type'
+        # Fill the new column with the 'event_type' value where the 'station' column matches the current station
+        affective_team_df[col_name] = affective_team_df.apply(
+            lambda row: row['event_type'] if row['station'] == station else None,
+            axis=1
+        )
+
+    affective_team_df = affective_team_df.drop(columns=["event_type"])
+
     return affective_team_df
