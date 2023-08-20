@@ -75,6 +75,45 @@ databases:
                 timestamp_unix: The Unix timestamp of the event.
                 timestamp_iso8601: The ISO-8601 timestamp of the event.
 
+            gaze_raw:
+              description: >
+                Table with raw Gaze data.
+              columns:
+                group_session: Group session ID
+                task: Task ID.
+                station: The iMac that the participant was stationed at.
+                participant: >
+                  Participant ID. A participant ID of -1 indicates an
+                  unknown participant. All rows that do not have values
+                  for the `task` column will have their participant ID
+                  set to -1. In the future, we will label some of these
+                  inter/pre/post task rows with the correct participant
+                  ID.
+                timestamp_unix: The Unix timestamp of the event.
+                timestamp_iso8601: The ISO-8601 timestamp of the event.
+                confidence: Computed confidence between 0 (not confident) - 1 (confident).
+                norm_pos_x: X position in the eye image frame in normalized coordinates.
+                norm_pos_y: Y position in the eye image frame in normalized coordinates.
+                gaze_point_3d_x: X position of the 3d gaze point (the point the subject looks at) in the world camera coordinate system.
+                gaze_point_3d_y: Y position of the 3d gaze point (the point the subject looks at) in the world camera coordinate system.
+                gaze_point_3d_z: X position of the 3d gaze point (the point the subject looks at) in the world camera coordinate system.
+                eye_center0_3d_x: X center of eye-ball 0 in the world camera coordinate system.
+                eye_center0_3d_y: Y center of eye-ball 0 in the world camera coordinate system.
+                eye_center0_3d_z: Z center of eye-ball 0 in the world camera coordinate system.
+                eye_center1_3d_x: X center of eye-ball 1 in the world camera coordinate system.
+                eye_center1_3d_y: Y center of eye-ball 1 in the world camera coordinate system.
+                eye_center1_3d_z: Z center of eye-ball 1 in the world camera coordinate system.
+                gaze_normal0_x: X normal of the visual axis for eye 0 in the world camera coordinate system. The visual axis goes through the eye ball center and the object that is looked at.
+                gaze_normal0_y: Y normal of the visual axis for eye 0 in the world camera coordinate system. The visual axis goes through the eye ball center and the object that is looked at.
+                gaze_normal0_z: Z normal of the visual axis for eye 0 in the world camera coordinate system. The visual axis goes through the eye ball center and the object that is looked at.
+                gaze_normal1_x: X normal of the visual axis for eye 1 in the world camera coordinate system. The visual axis goes through the eye ball center and the object that is looked at.
+                gaze_normal1_y: Y normal of the visual axis for eye 1 in the world camera coordinate system. The visual axis goes through the eye ball center and the object that is looked at.
+                gaze_normal1_z: Z normal of the visual axis for eye 1 in the world camera coordinate system. The visual axis goes through the eye ball center and the object that is looked at.
+                diameter0_2d: Diameter of the eye-ball 0's pupil in image pixels as observed in the eye image frame (not corrected for perspective).
+                diameter1_2d: Diameter of the eye-ball 1's pupil in image pixels as observed in the eye image frame (not corrected for perspective).
+                diameter0_3d: Diameter of the eye-ball 0's pupil scaled to mm based on anthropomorphic avg eye ball diameter and corrected for perspective.
+                diameter1_3d: Diameter of the eye-ball 1's pupil scaled to mm based on anthropomorphic avg eye ball diameter and corrected for perspective.
+
             group_session:
                 description: Table with group session IDs.
                 columns:

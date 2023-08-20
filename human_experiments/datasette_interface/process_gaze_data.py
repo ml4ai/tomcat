@@ -1,92 +1,74 @@
 #!/usr/bin/env python
 
+import logging
 import os
-import sys
 import sqlite3
+import sys
+from logging import info, error
+
+import pyxdf
+from tqdm import tqdm
+
+from config import DB_PATH, USER
 from utils import (
     cd,
     should_ignore_directory,
-    logging_handlers,
     convert_unix_timestamp_to_iso8601,
     is_directory_with_unified_xdf_files,
 )
-import pyxdf
-import logging
-from logging import info, error
-from config import DB_PATH, logging_handlers, USER
-from tqdm import tqdm
-from tqdm.contrib.concurrent import process_map
-import random
-
 
 logging.basicConfig(
     level=logging.INFO,
     handlers=(
         logging.FileHandler(
-            filename=f"/space/{USER}/tomcat/build_fnirs_table.log", mode="w"
+            filename=f"/space/{USER}/tomcat/build_gaze_table.log", mode="w"
         ),
         logging.StreamHandler(stream=sys.stderr),
     ),
 )
 
 
-def recreate_fnirs_table():
+def recreate_gaze_table():
     info("Processing directories...")
 
     db_connection = sqlite3.connect(DB_PATH)
     with db_connection:
+        # Foreign key constraints are disabled by default (for backwards compatibility), so must be enabled separately f
+        # or each database connection (https://www.sqlite.org/foreignkeys.html).
         db_connection.execute("PRAGMA foreign_keys = 1;")
-        info("Dropping fnirs table")
-        db_connection.execute("DROP TABLE IF EXISTS fnirs_raw")
+        info("Dropping gaze table")
+        db_connection.execute("DROP TABLE IF EXISTS gaze_raw")
         db_connection.execute(
             """
-            CREATE TABLE fnirs_raw (
+            CREATE TABLE gaze_raw (
                 group_session TEXT NOT NULL,
                 task TEXT,
                 station TEXT NOT NULL,
                 participant TEXT NOT NULL,
                 timestamp_unix TEXT NOT NULL,
                 timestamp_iso8601 TEXT NOT NULL,
-                S1_D1_HbO REAL NOT NULL,
-                S1_D2_HbO REAL NOT NULL,
-                S2_D1_HbO REAL NOT NULL,
-                S2_D3_HbO REAL NOT NULL,
-                S3_D1_HbO REAL NOT NULL,
-                S3_D3_HbO REAL NOT NULL,
-                S3_D4_HbO REAL NOT NULL,
-                S4_D2_HbO REAL NOT NULL,
-                S4_D4_HbO REAL NOT NULL,
-                S4_D5_HbO REAL NOT NULL,
-                S5_D3_HbO REAL NOT NULL,
-                S5_D4_HbO REAL NOT NULL,
-                S5_D6_HbO REAL NOT NULL,
-                S6_D4_HbO REAL NOT NULL,
-                S6_D6_HbO REAL NOT NULL,
-                S6_D7_HbO REAL NOT NULL,
-                S7_D5_HbO REAL NOT NULL,
-                S7_D7_HbO REAL NOT NULL,
-                S8_D6_HbO REAL NOT NULL,
-                S8_D7_HbO REAL NOT NULL,
-                S1_D1_HbR REAL NOT NULL,
-                S1_D2_HbR REAL NOT NULL,
-                S2_D1_HbR REAL NOT NULL,
-                S2_D3_HbR REAL NOT NULL,
-                S3_D1_HbR REAL NOT NULL,
-                S3_D3_HbR REAL NOT NULL,
-                S3_D4_HbR REAL NOT NULL,
-                S4_D2_HbR REAL NOT NULL,
-                S4_D4_HbR REAL NOT NULL,
-                S4_D5_HbR REAL NOT NULL,
-                S5_D3_HbR REAL NOT NULL,
-                S5_D4_HbR REAL NOT NULL,
-                S5_D6_HbR REAL NOT NULL,
-                S6_D4_HbR REAL NOT NULL,
-                S6_D6_HbR REAL NOT NULL,
-                S6_D7_HbR REAL NOT NULL,
-                S7_D5_HbR REAL NOT NULL,
-                S7_D7_HbR REAL NOT NULL,
-                S8_D6_HbR REAL NOT NULL,
-                S8_D7_HbR REAL NOT NULL,
+                confidence REAL NOT NULL,
+                norm_pos_x REAL NOT NULL,
+                norm_pos_y REAL NOT NULL,
+                gaze_point_3d_x REAL NOT NULL,
+                gaze_point_3d_y REAL NOT NULL,
+                gaze_point_3d_z REAL NOT NULL,
+                eye_center0_3d_x REAL NOT NULL,
+                eye_center0_3d_y REAL NOT NULL,
+                eye_center0_3d_z REAL NOT NULL,
+                eye_center1_3d_x REAL NOT NULL,
+                eye_center1_3d_y REAL NOT NULL,
+                eye_center1_3d_z REAL NOT NULL,
+                gaze_normal0_x REAL NOT NULL,
+                gaze_normal0_y REAL NOT NULL,
+                gaze_normal0_z REAL NOT NULL,
+                gaze_normal1_x REAL NOT NULL,
+                gaze_normal1_y REAL NOT NULL,
+                gaze_normal1_z REAL NOT NULL,
+                diameter0_2d REAL NOT NULL,
+                diameter1_2d REAL NOT NULL,
+                diameter0_3d REAL NOT NULL,
+                diameter1_3d REAL NOT NULL,
                 FOREIGN KEY(group_session) REFERENCES group_session(id)
                 FOREIGN KEY(task) REFERENCES task(id)
                 FOREIGN KEY(station) REFERENCES station(id)
@@ -130,20 +112,20 @@ def insert_data_into_table(stream, session, station, db_connection):
             participant_id,
             timestamp,
             convert_unix_timestamp_to_iso8601(timestamp),
-            *list(map(str, stream["time_series"][i][41:])),
+            *list(map(str, stream["time_series"][i])),
         ]
         for i, timestamp in enumerate(stream["time_stamps"])
     ]
 
     with db_connection:
         query = (
-            "INSERT into fnirs_raw VALUES(?, ?, ?, ?, ?, ?,"
+            "INSERT into gaze_raw VALUES(?, ?, ?, ?, ?, ?,"
             + ",".join(
                 [
                     "?"
                     for _ in stream["info"]["desc"][0]["channels"][0][
                         "channel"
-                    ][41:]
+                    ]
                 ]
             )
             + ")"
@@ -161,10 +143,10 @@ def process_directory_v1(session, db_connection):
             )
             try:
                 streams, header = pyxdf.load_xdf(
-                    xdf_file, select_streams=[{"type": "NIRS"}]
+                    xdf_file, select_streams=[{"type": "Gaze"}]
                 )
             except ValueError as e:
-                error(f"[MISSING DATA]: No fNIRS stream found in {xdf_file}!")
+                error(f"[MISSING DATA]: No Gaze stream found in {xdf_file}!")
                 print(e)
                 continue
             except Exception as e:
@@ -182,10 +164,10 @@ def process_directory_v2(session, db_connection):
         for xdf_file in ("block_1.xdf", "block_2.xdf"):
             try:
                 streams, header = pyxdf.load_xdf(
-                    xdf_file, select_streams=[{"type": "NIRS"}]
+                    xdf_file, select_streams=[{"type": "Gaze"}]
                 )
             except ValueError as e:
-                error(f"[MISSING DATA]: No fNIRS stream found in {xdf_file}!")
+                error(f"[MISSING DATA]: No Gaze stream found in {xdf_file}!")
                 print(e)
                 continue
             except Exception as e:
@@ -193,54 +175,54 @@ def process_directory_v2(session, db_connection):
                 continue
 
             for stream in streams:
-                station = stream["info"]["name"][0].split("_")[0]
+                station = stream["info"]["hostname"][0]
                 insert_data_into_table(stream, session, station, db_connection)
 
 
 def create_indices():
     """Create indices for efficient querying"""
-    info("Creating index for fnirs_raw table.")
+    info("Creating index for Gaze table.")
     db_connection = sqlite3.connect(DB_PATH)
 
     with db_connection:
         db_connection.execute(
             """
             CREATE INDEX IF NOT EXISTS idx_group_session_station
-            ON fnirs_raw (group_session, station);
+            ON gaze_raw (group_session, station);
         """
         )
 
         db_connection.execute(
             """
             CREATE INDEX IF NOT EXISTS idx_timestamp_unix
-            ON fnirs_raw (timestamp_unix);
+            ON gaze_raw (timestamp_unix);
         """
         )
 
         db_connection.execute(
             """
             CREATE INDEX IF NOT EXISTS idx_participant
-            ON fnirs_raw (participant);
+            ON gaze_raw (participant);
         """
         )
 
         db_connection.execute(
             """
             CREATE INDEX IF NOT EXISTS idx_group_session
-            ON fnirs_raw (group_session);
+            ON gaze_raw (group_session);
         """
         )
 
         db_connection.execute(
             """
             CREATE INDEX IF NOT EXISTS idx_task
-            ON fnirs_raw (task);
+            ON gaze_raw (task);
         """
         )
 
 
 def label_rest_state_task_data(
-    group_session, station, is_valid, participant_id, modality, db_connection
+    group_session, station, participant_id, db_connection
 ):
     with db_connection:
         start_timestamp, stop_timestamp = db_connection.execute(
@@ -253,7 +235,7 @@ def label_rest_state_task_data(
         # Update participant ID and label task.
         db_connection.execute(
             f"""
-            UPDATE fnirs_raw
+            UPDATE gaze_raw
             SET
                 task='rest_state',
                 participant='{participant_id}'
@@ -266,7 +248,7 @@ def label_rest_state_task_data(
 
 
 def label_affective_task_individual_data(
-    group_session, station, is_valid, participant_id, task, db_connection
+    group_session, station, participant_id, task, db_connection
 ):
     with db_connection:
         db_connection.execute("PRAGMA foreign_keys = 1;")
@@ -307,7 +289,7 @@ def label_affective_task_individual_data(
         # Update participant ID and label task.
         db_connection.execute(
             f"""
-            UPDATE fnirs_raw
+            UPDATE gaze_raw
             SET
                 task='affective_individual',
                 participant='{participant_id}'
@@ -320,7 +302,7 @@ def label_affective_task_individual_data(
 
 
 def label_affective_task_team_data(
-    group_session, station, is_valid, participant_id, task, db_connection
+    group_session, station, participant_id, db_connection
 ):
     with db_connection:
         db_connection.execute("PRAGMA foreign_keys = 1;")
@@ -351,7 +333,7 @@ def label_affective_task_team_data(
         # Update participant ID and label task.
         db_connection.execute(
             f"""
-            UPDATE fnirs_raw
+            UPDATE gaze_raw
             SET
                 task='affective_team',
                 participant='{participant_id}'
@@ -364,8 +346,7 @@ def label_affective_task_team_data(
 
 
 def update_labels(
-    group_session, station, is_valid, participant_id, task, db_connection,
-    table_name
+    group_session, station, participant_id, task, db_connection, table_name
 ):
     with db_connection:
         db_connection.execute("PRAGMA foreign_keys = 1;")
@@ -396,7 +377,7 @@ def update_labels(
         # Update participant ID and label task.
         db_connection.execute(
             f"""
-            UPDATE fnirs_raw
+            UPDATE gaze_raw
             SET
                 task='{task}',
                 participant='{participant_id}'
@@ -409,7 +390,7 @@ def update_labels(
 
 
 def label_minecraft_data(
-    group_session, station, is_valid, participant_id, task, db_connection,
+    group_session, station, participant_id, task, db_connection,
 ):
     if task == "saturn_a":
         mission = "Saturn_A"
@@ -445,7 +426,7 @@ def label_minecraft_data(
         # Update participant ID and label task.
         db_connection.execute(
             f"""
-            UPDATE fnirs_raw
+            UPDATE gaze_raw
             SET
                 task='{task}',
                 participant='{participant_id}'
@@ -465,13 +446,13 @@ def label_data():
         validity_rows = db_connection.execute(
             f"""
             SELECT * from data_validity
-            WHERE modality='fnirs';
+            WHERE modality='gaze';
         """
         ).fetchall()
 
     for row in tqdm(validity_rows):
         group_session, participant_id, station, task, modality, is_valid = row
-        if modality != "fnirs":
+        if modality != "gaze":
             continue
 
         if task == "rest_state":
@@ -484,42 +465,41 @@ def label_data():
                 )
             else:
                 label_rest_state_task_data(
-                    group_session, station, is_valid, participant_id, modality, db_connection
+                    group_session, station, participant_id, db_connection
                 )
 
         elif "affective" in task:
             if task == "affective_individual":
                 label_affective_task_individual_data(
-                    group_session, station, is_valid, participant_id, task, db_connection
+                    group_session, station, participant_id, task, db_connection
                 )
             elif task == "affective_team":
                 label_affective_task_team_data(
-                    group_session, station, is_valid, participant_id, task, db_connection
+                    group_session, station, participant_id, db_connection
                 )
             else:
                 raise ValueError(f"Bad task: {task}!")
 
         elif task == "finger_tapping":
             update_labels(
-                group_session, station, is_valid, participant_id, task,
+                group_session, station, participant_id, task,
                 db_connection, "fingertapping_task_observation"
             )
 
         elif task == "ping_pong_competitive":
             update_labels(
-                group_session, station, is_valid, participant_id, task,
+                group_session, station, participant_id, task,
                 db_connection, "ping_pong_competitive_task_observation"
             )
 
         elif task == "ping_pong_cooperative":
             update_labels(
-                group_session, station, is_valid, participant_id, task,
+                group_session, station, participant_id, task,
                 db_connection, "ping_pong_cooperative_task_observation"
             )
         else:
             label_minecraft_data(
-                group_session, station, is_valid, participant_id, task,
-                db_connection
+                group_session, station, participant_id, task, db_connection
             )
 
 
@@ -529,13 +509,13 @@ def remove_invalid_data():
         validity_rows = db_connection.execute(
             f"""
             SELECT * from data_validity
-            WHERE modality='fnirs';
+            WHERE modality='gaze';
         """
         ).fetchall()
 
-    fnirs_rows = [row for row in validity_rows if row[-2] == "fnirs"]
+    gaze_rows = [row for row in validity_rows if row[-2] == "gaze"]
 
-    for row in tqdm(fnirs_rows):
+    for row in tqdm(gaze_rows):
         group_session, participant_id, station, task, modality, is_valid = row
 
         if is_valid == 0:
@@ -546,7 +526,7 @@ def remove_invalid_data():
             )
             db_connection.execute(
                 f"""
-                DELETE FROM fnirs_raw
+                DELETE FROM gaze_raw
                 WHERE
                     group_session='{group_session}'
                     AND station='{station}'
@@ -556,10 +536,10 @@ def remove_invalid_data():
 
 
 if __name__ == "__main__":
-    info("Starting building fNIRS table.")
-    recreate_fnirs_table()
+    info("Starting building Gaze table.")
+    recreate_gaze_table()
     create_indices()
     insert_raw_unlabeled_data()
     label_data()
     remove_invalid_data()
-    info("Finished building fNIRS table.")
+    info("Finished building Gaze table.")
