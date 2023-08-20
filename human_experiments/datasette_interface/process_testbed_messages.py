@@ -539,6 +539,25 @@ def recreate_table():
             """
         )
 
+
+def delete_duplicate_missions(db_connection):
+    info("Deleting duplicate missions!")
+    INVALID_MISSIONS = [
+        "560d4c45-dc45-4e19-bdb3-e4e15021728a",  # exp_2022_10_07_15 Saturn A with timestamp in 03/2022
+        "a48f475f-40b0-46b9-8284-0db267dddb67",  # exp_2022_10_07_15 Saturn A with small duration
+        "171a8713-a554-4d8e-a4b1-3ec1b728d0a2",  # exp_2023_02_07_14 Hands-On Training with small duration
+        "9cde1985-1179-4aac-8b67-1fc60ed65243"   # exp_2023_02_10_10 Hands-On Training with small duration
+    ]
+
+    with db_connection:
+        db_connection.execute("PRAGMA foreign_keys = 1")
+        db_connection.execute(
+            f"""
+            DELETE FROM mission
+            WHERE id IN ({','.join(INVALID_MISSIONS)});            
+            """)
+
+
 def process_testbed_messages():
     info("Processing directories...")
 
@@ -558,6 +577,9 @@ def process_testbed_messages():
                 process_directory_v1(session, db_connection)
             else:
                 process_directory_v2(session, db_connection)
+
+        delete_duplicate_missions(db_connection)
+
 
 if __name__ == "__main__":
     recreate_table()
