@@ -549,12 +549,14 @@ def delete_duplicate_missions(db_connection):
         "9cde1985-1179-4aac-8b67-1fc60ed65243"   # exp_2023_02_10_10 Hands-On Training with small duration
     ]
 
+    invalid_missions_str = ','.join(list(map(lambda x: f"'{x}'", INVALID_MISSIONS)))
+
     with db_connection:
         db_connection.execute("PRAGMA foreign_keys = 1")
         db_connection.execute(
             f"""
             DELETE FROM mission
-            WHERE id IN ({','.join(INVALID_MISSIONS)});            
+            WHERE id IN ({invalid_missions_str});            
             """)
 
 
