@@ -1,5 +1,6 @@
 import json
 import sqlite3
+from config import MINECRAFT_MISSION_BLACKLIST
 
 import pandas as pd
 
@@ -16,11 +17,22 @@ def _get_testbed_messages(db_path: str, experiment: str, mission: str) -> pd.Dat
     if mission_id is None:
         return None
 
-    mission_id_result = mission_id.fetchone()
+    mission_id_result = mission_id.fetchall()
     if mission_id_result is None or len(mission_id_result) == 0:
         return None
 
-    mission_id = mission_id_result[0]
+    mission_found = False
+    for mission_id_considering in mission_id_result:
+        if mission_id_considering[0] not in MINECRAFT_MISSION_BLACKLIST:
+            mission_id = mission_id_considering[0]
+            mission_found = True
+            break
+
+    if not mission_found:
+        return None
+
+    if len(mission_id) != 36:
+        raise ValueError("Incorrect mission ID length")
 
     query = f"""
             SELECT * 
