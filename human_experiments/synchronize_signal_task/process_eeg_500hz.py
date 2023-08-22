@@ -37,4 +37,4 @@ if __name__ == "__main__":
     synchronized_task_signals = synchronize_task_signal_all(task_synchronization_info)
 
     output_dir = os.path.join(OUTPUT_DIR, f"eeg_{desired_freq}hz")
-    write_csv_all(synchronized_task_signals, OUTPUT_DIR, NUM_PROCESSES)
+    write_csv_all(synchronized_task_signals, output_dir, NUM_PROCESSES)
