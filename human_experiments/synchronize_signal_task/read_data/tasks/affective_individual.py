@@ -48,6 +48,8 @@ def affective_individual(db_path: str, experiment: str) -> dict[str, pd.DataFram
         station_affective_df["timestamp_unix"] = station_affective_df["timestamp_unix"].astype(float)
         station_affective_df = station_affective_df.reset_index(drop=True)
 
+        assert station_affective_df["timestamp_unix"].is_monotonic_increasing
+
         station_task_map[station] = station_affective_df
 
     return station_task_map

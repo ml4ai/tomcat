@@ -56,4 +56,6 @@ def ping_pong_cooperative(db_path: str, experiment: str) -> pd.DataFrame | None:
 
     ping_pong_competitive_df["timestamp_unix"] = ping_pong_competitive_df["timestamp_unix"].astype(float)
 
+    assert ping_pong_competitive_df["timestamp_unix"].is_monotonic_increasing
+
     return ping_pong_competitive_df

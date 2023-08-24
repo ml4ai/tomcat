@@ -186,6 +186,9 @@ def insert_data_into_dataframe(stream: dict,
                                    desired_channels=channel_names,
                                    unit_conversion=1e-6)
 
+    if not signal_df["timestamp_unix"].is_monotonic_increasing:
+        signal_df = signal_df.sort_values(by=["timestamp_unix"])
+
     # Insert experiment data into df
     signal_df.insert(0, 'group_session', session)
     signal_df.insert(1, 'task', task)
@@ -566,6 +569,10 @@ def process_experiment(experiment: dict[str, any]) -> dict[str, any]:
         "experiment_name": experiment["experiment_name"],
     }
 
+    # Debugging exp_2022_10_24. Do not remove
+    # if "2022_10_24" not in experiment["experiment_name"]:
+    #     return {}
+
     if not is_directory_with_unified_xdf_files(experiment["experiment_name"]):
         exp_signal = process_experiment_v1(experiment["experiment_name"],
                                            experiment["experiment_path"],
@@ -676,9 +683,11 @@ if __name__ == "__main__":
         'AFF6h'
     ]
 
-    recreate_eeg_table(EEG_channel_names)
-    create_indices()
+    print("Preparing eeg_raw table.")
+    # recreate_eeg_table(EEG_channel_names)
+    # create_indices()
 
+    print("Read EEG raw data")
     experiments_info = prepare_experiments_info(
         raw_data_path="/tomcat/data/raw/LangLab/experiments/study_3_pilot/group",
         exp_info_path="/space/eduong/exp_info_v2/exp_info.csv",
@@ -689,10 +698,11 @@ if __name__ == "__main__":
 
     experiments_data = multiprocess_experiments(experiments_info)
 
-    csv_output_path = f"/space/{USER}/eeg_raw/"
-    os.makedirs(csv_output_path, exist_ok=True)
-    write_experiment_results_to_csv(experiments_data, csv_output_path)
+    # print("Write EEG data.")
+    # csv_output_path = f"/space/{USER}/eeg_raw/"
+    # os.makedirs(csv_output_path, exist_ok=True)
+    # write_experiment_results_to_csv(experiments_data, csv_output_path)
 
-    write_experiment_results_to_db(experiments_data)
+    # write_experiment_results_to_db(experiments_data)
 
     info("Finished building EEG table.")

@@ -22,4 +22,6 @@ def finger_tapping(db_path: str, experiment: str) -> pd.DataFrame | None:
     finger_tapping_df["timestamp_unix"] = finger_tapping_df["timestamp_unix"].astype(float)
     finger_tapping_df = finger_tapping_df.reset_index(drop=True)
 
+    assert finger_tapping_df['timestamp_unix'].is_monotonic_increasing
+
     return finger_tapping_df

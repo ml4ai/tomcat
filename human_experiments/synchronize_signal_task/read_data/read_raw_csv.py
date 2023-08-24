@@ -12,13 +12,18 @@ def read_raw_csv(csv_path: str) -> dict[str, any]:
         'task': str,
         'station': str,
         'timestamp_iso8601': str,
+        'timestamp_unix': float,
         'participant': int,
     }
 
-    exp_df = pd.read_csv(csv_path, index_col=0, dtype=dtypes)
+    exp_df = pd.read_csv(csv_path, dtype=dtypes)
     lion_df = exp_df[exp_df['station'] == 'lion']
     tiger_df = exp_df[exp_df['station'] == 'tiger']
     leopard_df = exp_df[exp_df['station'] == 'leopard']
+
+    assert lion_df["timestamp_unix"].is_monotonic_increasing
+    assert tiger_df["timestamp_unix"].is_monotonic_increasing
+    assert leopard_df["timestamp_unix"].is_monotonic_increasing
 
     exp_name = os.path.splitext(os.path.basename(csv_path))[0]
 
@@ -41,7 +46,10 @@ def read_raw_csv_all(dir_path: str,
     if len(csv_paths) == 0:
         raise ValueError(f'No CSV files found')
 
-    with Pool(processes=num_processes) as pool:
-        raw_list = list(tqdm(pool.imap(read_raw_csv, csv_paths), total=len(csv_paths)))
+    if num_processes == 1:
+        raw_list = [read_raw_csv(csv_path) for csv_path in tqdm(csv_paths)]
+    else:
+        with Pool(processes=num_processes) as pool:
+            raw_list = list(tqdm(pool.imap(read_raw_csv, csv_paths), total=len(csv_paths)))
 
     return raw_list

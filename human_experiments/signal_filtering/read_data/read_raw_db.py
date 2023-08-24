@@ -21,6 +21,7 @@ def read_raw_db(db_path: str,
     exp_data = {"experiment_name": group_session}
     for station in ["lion", "tiger", "leopard"]:
         station_df = pd.read_sql_query(query, db_connection, params=[group_session, station])
+        assert station_df["timestamp_unix"].is_monotonic_increasing
         exp_data[station] = station_df
 
     return exp_data
