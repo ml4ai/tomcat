@@ -93,12 +93,7 @@ def synchronize_signals(experiment: dict[str, any]) -> dict[str, any]:
 
 def synchronize_signals_all(experiments: list[dict[str, any]],
                             num_processes: int = 1) -> list[dict[str, any]]:
-    if num_processes > 1:
-        with Pool(processes=num_processes) as pool:
-            synchronized_list = list(tqdm(pool.imap(synchronize_signals, experiments), total=len(experiments)))
-    else:
-        synchronized_list = []
-        for experiment in tqdm(experiments):
-            synchronized_list.append(synchronize_signals(experiment))
+    with Pool(processes=num_processes) as pool:
+        synchronized_list = list(tqdm(pool.imap(synchronize_signals, experiments), total=len(experiments)))
 
     return synchronized_list
