@@ -11,7 +11,8 @@ from utils import (
     should_ignore_directory,
     convert_unix_timestamp_to_iso8601,
     is_directory_with_unified_xdf_files,
-    is_directory_with_white_noise_eeg_channels
+    is_directory_with_white_noise_eeg_channels,
+    is_directory_ignore_eeg_channels
 )
 import pyxdf
 import logging
@@ -133,7 +134,8 @@ def prepare_experiments_info(raw_data_path: str,
     directories_to_process = sorted([
         directory
         for directory in os.listdir(raw_data_path)
-        if not should_ignore_directory(directory)
+        if (not should_ignore_directory(directory) and
+            not is_directory_ignore_eeg_channels(directory))
     ])
 
     exp_info = pd.read_csv(exp_info_path, dtype=str)
@@ -566,12 +568,8 @@ def remove_invalid_rows_df(signal_df: pd.DataFrame,
 
 def process_experiment(experiment: dict[str, any]) -> dict[str, any]:
     exp_data = {
-        "experiment_name": experiment["experiment_name"],
+        "experiment_name": experiment["experiment_name"]
     }
-
-    # Debugging exp_2022_10_24. Do not remove
-    # if "2022_10_24" not in experiment["experiment_name"]:
-    #     return {}
 
     if not is_directory_with_unified_xdf_files(experiment["experiment_name"]):
         exp_signal = process_experiment_v1(experiment["experiment_name"],
@@ -683,7 +681,7 @@ if __name__ == "__main__":
         'AFF6h'
     ]
 
-    print("Preparing eeg_raw table.")
+    # print("Preparing eeg_raw table.")
     # recreate_eeg_table(EEG_channel_names)
     # create_indices()
 
@@ -698,11 +696,12 @@ if __name__ == "__main__":
 
     experiments_data = multiprocess_experiments(experiments_info)
 
-    # print("Write EEG data.")
-    # csv_output_path = f"/space/{USER}/eeg_raw/"
-    # os.makedirs(csv_output_path, exist_ok=True)
-    # write_experiment_results_to_csv(experiments_data, csv_output_path)
+    print("Write EEG data.")
+    csv_output_path = f"/space/{USER}/eeg_raw/"
+    os.makedirs(csv_output_path, exist_ok=True)
+    write_experiment_results_to_csv(experiments_data, csv_output_path)
 
+    # print("Write EEG data to DB.")
     # write_experiment_results_to_db(experiments_data)
 
     info("Finished building EEG table.")

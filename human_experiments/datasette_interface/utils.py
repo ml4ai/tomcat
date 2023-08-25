@@ -9,6 +9,7 @@ from dateutil import parser
 import datetime
 from pytz import timezone
 import time
+from config import EEG_IGNORE_EXPERIMENTS
 
 MST = timezone("US/Arizona")
 
@@ -63,6 +64,10 @@ def is_directory_with_unified_xdf_files(session):
 def is_directory_with_white_noise_eeg_channels(session):
     year, month, day, hour = [int(x) for x in session.split("_")[1:]]
     return (year, month, day) >= (2022, 11, 22)
+
+
+def is_directory_ignore_eeg_channels(session):
+    return session in EEG_IGNORE_EXPERIMENTS
 
 
 def convert_unix_timestamp_to_iso8601(unix_timestamp):

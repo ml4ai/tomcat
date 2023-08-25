@@ -11,3 +11,7 @@ FILE_HANDLER = logging.FileHandler(filename=LOG_FILE_PATH, mode="w")
 STDERR_HANDLER = logging.StreamHandler(stream=sys.stderr)
 logging_handlers = [FILE_HANDLER, STDERR_HANDLER]
 NUM_PROCESSES = 40
+
+EEG_IGNORE_EXPERIMENTS = [
+    "exp_2022_10_24_12"  # this experiment has broken EEG signal timestamps
+]
