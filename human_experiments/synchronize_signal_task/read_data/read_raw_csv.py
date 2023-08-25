@@ -46,10 +46,7 @@ def read_raw_csv_all(dir_path: str,
     if len(csv_paths) == 0:
         raise ValueError(f'No CSV files found')
 
-    if num_processes == 1:
-        raw_list = [read_raw_csv(csv_path) for csv_path in tqdm(csv_paths)]
-    else:
-        with Pool(processes=num_processes) as pool:
-            raw_list = list(tqdm(pool.imap(read_raw_csv, csv_paths), total=len(csv_paths)))
+    with Pool(processes=num_processes) as pool:
+        raw_list = list(tqdm(pool.imap(read_raw_csv, csv_paths), total=len(csv_paths)))
 
     return raw_list
