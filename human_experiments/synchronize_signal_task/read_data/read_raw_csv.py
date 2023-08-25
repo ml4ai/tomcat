@@ -12,13 +12,18 @@ def read_raw_csv(csv_path: str) -> dict[str, any]:
         'task': str,
         'station': str,
         'timestamp_iso8601': str,
+        'timestamp_unix': float,
         'participant': int,
     }
 
-    exp_df = pd.read_csv(csv_path, index_col=0, dtype=dtypes)
+    exp_df = pd.read_csv(csv_path, dtype=dtypes)
     lion_df = exp_df[exp_df['station'] == 'lion']
     tiger_df = exp_df[exp_df['station'] == 'tiger']
     leopard_df = exp_df[exp_df['station'] == 'leopard']
+
+    assert lion_df["timestamp_unix"].is_monotonic_increasing
+    assert tiger_df["timestamp_unix"].is_monotonic_increasing
+    assert leopard_df["timestamp_unix"].is_monotonic_increasing
 
     exp_name = os.path.splitext(os.path.basename(csv_path))[0]
 

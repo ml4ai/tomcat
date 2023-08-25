@@ -29,4 +29,6 @@ def rest_state(db_path: str, experiment: str) -> pd.DataFrame | None:
         'event_type': ['start_task', 'end_task']
     })
 
+    assert new_rest_state_df['timestamp_unix'].is_monotonic_increasing
+
     return new_rest_state_df

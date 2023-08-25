@@ -11,7 +11,8 @@ from utils import (
     should_ignore_directory,
     convert_unix_timestamp_to_iso8601,
     is_directory_with_unified_xdf_files,
-    is_directory_with_white_noise_eeg_channels
+    is_directory_with_white_noise_eeg_channels,
+    is_directory_ignore_eeg_channels
 )
 import pyxdf
 import logging
@@ -133,7 +134,8 @@ def prepare_experiments_info(raw_data_path: str,
     directories_to_process = sorted([
         directory
         for directory in os.listdir(raw_data_path)
-        if not should_ignore_directory(directory)
+        if (not should_ignore_directory(directory) and
+            not is_directory_ignore_eeg_channels(directory))
     ])
 
     exp_info = pd.read_csv(exp_info_path, dtype=str)
@@ -185,6 +187,9 @@ def insert_data_into_dataframe(stream: dict,
                                    remove_channels=remove_channels,
                                    desired_channels=channel_names,
                                    unit_conversion=1e-6)
+
+    if not signal_df["timestamp_unix"].is_monotonic_increasing:
+        signal_df = signal_df.sort_values(by=["timestamp_unix"])
 
     # Insert experiment data into df
     signal_df.insert(0, 'group_session', session)
@@ -563,7 +568,7 @@ def remove_invalid_rows_df(signal_df: pd.DataFrame,
 
 def process_experiment(experiment: dict[str, any]) -> dict[str, any]:
     exp_data = {
-        "experiment_name": experiment["experiment_name"],
+        "experiment_name": experiment["experiment_name"]
     }
 
     if not is_directory_with_unified_xdf_files(experiment["experiment_name"]):
@@ -676,9 +681,11 @@ if __name__ == "__main__":
         'AFF6h'
     ]
 
-    recreate_eeg_table(EEG_channel_names)
-    create_indices()
+    # print("Preparing eeg_raw table.")
+    # recreate_eeg_table(EEG_channel_names)
+    # create_indices()
 
+    print("Read EEG raw data")
     experiments_info = prepare_experiments_info(
         raw_data_path="/tomcat/data/raw/LangLab/experiments/study_3_pilot/group",
         exp_info_path="/space/eduong/exp_info_v2/exp_info.csv",
@@ -689,10 +696,12 @@ if __name__ == "__main__":
 
     experiments_data = multiprocess_experiments(experiments_info)
 
+    print("Write EEG data.")
     csv_output_path = f"/space/{USER}/eeg_raw/"
     os.makedirs(csv_output_path, exist_ok=True)
     write_experiment_results_to_csv(experiments_data, csv_output_path)
 
-    write_experiment_results_to_db(experiments_data)
+    # print("Write EEG data to DB.")
+    # write_experiment_results_to_db(experiments_data)
 
     info("Finished building EEG table.")

@@ -27,6 +27,8 @@ def synchronize_signals(experiment: dict[str, any]) -> dict[str, any]:
         signal_frequency = signal["frequency"]
         for station in ["lion", "tiger", "leopard"]:
             if station in signal:
+                signal_start_time = signal[station]["timestamp_unix"].min()
+
                 # Resample signal
                 resampled_signal = mne_resample(
                     signal[station].drop(columns=["timestamp_unix"]),
@@ -35,13 +37,17 @@ def synchronize_signals(experiment: dict[str, any]) -> dict[str, any]:
 
                 # Assign timestamp for interpolation
                 resampled_signal["timestamp_unix"] = generate_time_series_num_samples(
-                    start_time, len(resampled_signal), desired_frequency
+                    signal_start_time, len(resampled_signal), desired_frequency
                 )
 
-                # Interpolate signal to synchronize with other signals
-                interpolated_signal = linear_interpolation(
-                    resampled_signal, desired_frequency, start_time
-                )
+                try:
+                    # Interpolate signal to synchronize with other signals
+                    interpolated_signal = linear_interpolation(
+                        resampled_signal, desired_frequency, start_time
+                    )
+                except AssertionError as e:
+                    print(f"{experiment_name} - {station} ERROR")
+                    raise e
 
                 # Drop current timestamp to use the unified timestamps later
                 interpolated_signal = interpolated_signal.drop(columns=["timestamp_unix"])

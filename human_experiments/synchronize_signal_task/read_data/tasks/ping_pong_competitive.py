@@ -38,6 +38,7 @@ def ping_pong_competitive(db_path: str, experiment: str) -> dict[tuple[str, str]
         match_df = match_df.copy()
         match_df["timestamp_unix"] = match_df["timestamp_unix"].astype(float)
         match_df = match_df.reset_index(drop=True)
+        assert match_df["timestamp_unix"].is_monotonic_increasing
         ids_matches[(player_1_station, player_2_station)] = match_df
 
     return ids_matches

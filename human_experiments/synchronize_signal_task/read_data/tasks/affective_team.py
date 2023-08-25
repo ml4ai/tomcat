@@ -48,6 +48,8 @@ def affective_team(db_path: str, experiment: str) -> pd.DataFrame | None:
     affective_team_df["timestamp_unix"] = affective_team_df["timestamp_unix"].astype(float)
     affective_team_df = affective_team_df.reset_index(drop=True)
 
+    assert affective_team_df["timestamp_unix"].is_monotonic_increasing
+
     # Iterate through the unique non-NaN station values
     for station in affective_team_df['station'].dropna().unique():
         # Create a new column named as <station>_event_type
