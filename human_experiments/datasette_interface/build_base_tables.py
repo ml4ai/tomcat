@@ -59,7 +59,7 @@ STATIONS = [
 
 
 def recreate_station_table(db_connection):
-    Station.__table__.drop(db_connection)
+    Station.__table__.drop(db_connection, checkfirst=True)
 
     with Session(db_connection) as session:
         stations = [Station(id=station) for station in STATIONS + ["cheetah"]]
