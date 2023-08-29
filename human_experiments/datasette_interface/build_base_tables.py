@@ -161,11 +161,8 @@ def process_rick_workbook(engine):
                 if not session.query(Participant.id).filter_by(id=participant_id).first():
                     participants.append(Participant(id=participant_id))
 
-            session.add_all(participants)
-
-            session.add(GroupSession(id=group_session_id))
-
             # TODO: Deal with 'no_face_image' case for eeg data.
+            data_validity_entries = []
             tasks_new = TASKS + ["ping_pong_competitive_0", "ping_pong_competitive_1"]
             tasks_new = [task for task in tasks_new if task != "ping_pong_competitive"]
             for station in STATIONS:
@@ -226,8 +223,12 @@ def process_rick_workbook(engine):
                             is_valid=is_valid
                         )
 
-                        session.add(data_validity)
-                        session.commit()
+                        data_validity_entries.append(data_validity)
+
+            session.add(GroupSession(id=group_session_id))
+            session.add_all(participants)
+            session.add_all(data_validity_entries)
+            session.commit()
 
 
 if __name__ == "__main__":
