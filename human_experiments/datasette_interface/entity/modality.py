@@ -9,3 +9,7 @@ class Modality(Base):
     __tablename__ = "modality"
 
     id: Mapped[str] = mapped_column(Text, primary_key=True)
+
+    def __init__(self, id: str):
+        super().__init__()
+        self.id = id

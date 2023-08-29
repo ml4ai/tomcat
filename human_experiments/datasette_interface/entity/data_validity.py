@@ -21,3 +21,13 @@ class DataValidity(Base):
 
     # No need to create objects (GroupSession etc.) at this point. Reassess that in the future.
     # e.g. group_session: Mapped["GroupSession"] = relationship(back_populates="data_validity")
+
+    def __init__(self, group_session_id: str, participant_id: int, station_id: str, task_id: str, modality_id: str, is_valid: bool):
+        super().__init__()
+
+        self.group_session_id = group_session_id
+        self.participant_id = participant_id
+        self.station_id = station_id
+        self.task_id = task_id
+        self.modality_id = modality_id
+        self.is_valid = is_valid
