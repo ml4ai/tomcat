@@ -11,6 +11,15 @@ from pprint import pprint
 from utils import cd
 from config import DB_PATH, logging_handlers, USER
 
+from entity.data_validity import DataValidity
+from entity.group_session import GroupSession
+from entity.modality import Modality
+from entity.participant import Participant
+from entity.station import Station
+from entity.task import Task
+from sqlalchemy.orm import Session
+
+from sqlalchemy import create_engine
 
 
 logging.basicConfig(
@@ -50,17 +59,24 @@ STATIONS = [
 
 
 def recreate_station_table(db_connection):
-    db_connection.execute("DROP TABLE IF EXISTS station")
-    db_connection.execute(
-        """
-        CREATE TABLE station (
-            id TEXT PRIMARY KEY
-        );"""
-    )
-    db_connection.executemany(
-        "INSERT INTO station VALUES(?)",
-        [(station,) for station in STATIONS + ["cheetah"]],
-    )
+    Station.__table__.drop(db_connection)
+
+    with Session(db_connection) as session:
+        stations = [Station(id=station) for station in STATIONS + ["cheetah"]]
+        session.add_all(stations)
+        session.commit()
+
+    # db_connection.execute("DROP TABLE IF EXISTS station")
+    # db_connection.execute(
+    #     """
+    #     CREATE TABLE station (
+    #         id TEXT PRIMARY KEY
+    #     );"""
+    # )
+    # db_connection.executemany(
+    #     "INSERT INTO station VALUES(?)",
+    #     [(station,) for station in STATIONS + ["cheetah"]],
+    # )
 
 
 def recreate_modality_table(db_connection):
@@ -289,4 +305,6 @@ def process_rick_workbook():
 
 
 if __name__ == "__main__":
-    process_rick_workbook()
+    # process_rick_workbook()
+    engine = create_engine("postgresql+psycopg2://paulosoares:tomcat@localhost:5433/tomcat")
+    recreate_station_table(engine)
