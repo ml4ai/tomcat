@@ -15,6 +15,7 @@ from entity.data_validity import DataValidity
 from entity.group_session import GroupSession
 from entity.modality import Modality
 from entity.participant import Participant
+from entity.base import Base
 from entity.station import Station
 from entity.task import Task
 from sqlalchemy.orm import Session
@@ -59,8 +60,6 @@ STATIONS = [
 
 
 def recreate_station_table(db_connection):
-    Station.__table__.drop(db_connection, checkfirst=True)
-
     with Session(db_connection) as session:
         stations = [Station(id=station) for station in STATIONS + ["cheetah"]]
         session.add_all(stations)
@@ -307,4 +306,7 @@ def process_rick_workbook():
 if __name__ == "__main__":
     # process_rick_workbook()
     engine = create_engine("postgresql+psycopg2://paulosoares:tomcat@localhost:5433/tomcat")
+    Base.metadata.drop_all(engine, checkfirst=True)
+    Base.metadata.create_all(engine)
+
     recreate_station_table(engine)
