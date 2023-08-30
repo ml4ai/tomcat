@@ -1,25 +1,24 @@
 #!/usr/bin/env python
 
+import logging
 import os
 import sys
-import sqlite3
+from glob import glob
+from logging import info, error
+
+import pandas as pd
+import pyxdf
+from sqlalchemy.orm import Session
+from tqdm import tqdm
+
+from config import USER
+from entity.task.rest_state_task import RestStateTask
 from utils import (
     cd,
     should_ignore_directory,
-    logging_handlers,
     convert_unix_timestamp_to_iso8601,
     is_directory_with_unified_xdf_files,
 )
-import pyxdf
-import logging
-from logging import info, error
-from config import DB_PATH, logging_handlers, USER
-from tqdm import tqdm
-import pandas as pd
-from glob import glob
-from sqlalchemy.orm import Session
-
-from entity.task.rest_state import RestStateTask
 
 logging.basicConfig(
     level=logging.INFO,

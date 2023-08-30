@@ -11,6 +11,7 @@ from entity.base.base import Base
 
 from process_base_tables import process_base_tables, recreate_base_tables
 from process_rest_state_task_data import process_rest_state_task_data, recreate_rest_state_table
+from process_affective_task_data import process_affective_task_data, recreate_affective_task_event_table
 
 logging.basicConfig(
     level=logging.INFO,
@@ -25,7 +26,8 @@ logging.basicConfig(
 
 TABLES = [
     "base",
-    "rest_state"
+    "rest_state",
+    "affective"
 ]
 
 
@@ -40,8 +42,11 @@ def recreate_tables(tables_to_recreate, database_engine):
                 info(f"Recreating base tables in {database_info}.")
                 recreate_base_tables(database_engine)
             elif table == "rest_state":
-                info(f"Recreating rest state tables in {database_info}.")
+                info(f"Recreating rest state table in {database_info}.")
                 recreate_rest_state_table(database_engine)
+            elif table == "affective":
+                info(f"Recreating affective task table in {database_info}.")
+                recreate_affective_task_event_table(database_engine)
 
 
 def populate_tables(tables_to_process, database_engine):
@@ -50,6 +55,8 @@ def populate_tables(tables_to_process, database_engine):
             process_base_tables(database_engine)
         elif table == "rest_state":
             process_rest_state_task_data(database_engine)
+        elif table == "affective":
+            process_affective_task_data(database_engine)
 
 
 if __name__ == "__main__":
@@ -69,7 +76,8 @@ if __name__ == "__main__":
                         help="Database name. Make sure the database was previously created before running this script.")
     parser.add_argument("--db_passwd", type=str, required=True, help="Password to connect to the database.")
     parser.add_argument("--no_base", action='store_true', help="Do not reprocess base tables.")
-    parser.add_argument("--no_rest_state", action='store_true', help="Do not reprocess rest state tables.")
+    parser.add_argument("--no_rest_state", action='store_true', help="Do not reprocess rest state table.")
+    parser.add_argument("--no_affective", action='store_true', help="Do not reprocess affective task table.")
 
     args = parser.parse_args()
 
@@ -82,6 +90,8 @@ if __name__ == "__main__":
         tables.remove("base")
     if args.no_rest_state:
         tables.remove("rest_state")
+    if args.no_affective:
+        tables.remove("affective")
 
     recreate_tables(tables, engine)
     populate_tables(tables, engine)
