@@ -35,8 +35,6 @@ logging.basicConfig(
 def process_directory_v1(group_session):
     info(f"Processing directory {group_session}")
 
-    rest_state_entries = []
-
     with cd(f"{group_session}/baseline_tasks/rest_state"):
         csv_files = glob("*.csv")
 
@@ -112,11 +110,15 @@ def process_rest_state_task_data(database_engine):
             sorted(directories_to_process), unit="directories"
         ):
             if not is_directory_with_unified_xdf_files(group_session):
-                rest_state_entries.append(process_directory_v1(group_session))
+                rest_state_entry = process_directory_v1(group_session)
             else:
-                rest_state_entries.append(process_directory_v2(group_session))
+                rest_state_entry = process_directory_v2(group_session)
+
+            if rest_state_entry:
+                rest_state_entries.append(rest_state_entry)
 
         # Insert all entries in bulk
+        info("Adding rest state entries to the database.")
         with Session(database_engine) as database_session:
             database_session.add_all(rest_state_entries)
             database_session.commit()
