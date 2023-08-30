@@ -209,19 +209,17 @@ def process_rick_workbook(database_engine):
 
 
 def recreate_base_tables(database_engine):
-    GroupSession.__table__.drop(database_engine, checkfirst=True)
-    DataValidity.__table__.drop(database_engine, checkfirst=True)
-    Task.__table__.drop(database_engine, checkfirst=True)
-    Station.__table__.drop(database_engine, checkfirst=True)
-    Modality.__table__.drop(database_engine, checkfirst=True)
-    Participant.__table__.drop(database_engine, checkfirst=True)
+    tables = [
+        GroupSession.__table__,
+        DataValidity.__table__,
+        Task.__table__,
+        Station.__table__,
+        Modality.__table__,
+        Participant.__table__
+    ]
 
-    GroupSession.__table__.create(database_engine, checkfirst=True)
-    Task.__table__.create(database_engine, checkfirst=True)
-    Station.__table__.create(database_engine, checkfirst=True)
-    Modality.__table__.create(database_engine, checkfirst=True)
-    Participant.__table__.create(database_engine, checkfirst=True)
-    DataValidity.__table__.create(database_engine, checkfirst=True)
+    Base.metadata.drop_all(database_engine, tables=tables, checkfirst=True)
+    Base.metadata.create_all(database_engine, tables=tables, checkfirst=True)
 
 
 def process_base_tables(database_engine):

@@ -75,13 +75,13 @@ if __name__ == "__main__":
 
     database_info = f"{args.db_user}:{args.db_name}@localhost:{args.db_port}"
     connection_string = f"postgresql+psycopg2://{database_info}/{args.db_passwd}"
-    database_engine = create_engine(connection_string)
+    engine = create_engine(connection_string)
 
-    tables_to_process = TABLES.copy()
+    tables = TABLES.copy()
     if args.no_base:
-        tables_to_process.remove("base")
+        tables.remove("base")
     if args.no_rest_state:
-        tables_to_process.remove("rest_state")
+        tables.remove("rest_state")
 
-    recreate_tables(tables_to_process, database_engine)
-    populate_tables(tables_to_process, database_engine)
+    recreate_tables(tables, engine)
+    populate_tables(tables, engine)
