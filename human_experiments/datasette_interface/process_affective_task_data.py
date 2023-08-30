@@ -114,12 +114,12 @@ def process_directory_v1(group_session, participants):
                     group_session_id=group_session,
                     participant_id=real_participant_id,
                     task_type="individual",
-                    timestamp_unix=str(row["time"]),
+                    timestamp_unix=row["time"],
                     timestamp_iso8601=convert_unix_timestamp_to_iso8601(df["time"].iloc[i]),
-                    event_type=str(row["event_type"]),
-                    image_path=str(row["image_path"]),
-                    arousal_score=int(row["arousal_score"]),
-                    valence_score=int(row["valence_score"])
+                    event_type=row["event_type"],
+                    image_path=row["image_path"],
+                    arousal_score=row["arousal_score"],
+                    valence_score=row["valence_score"]
                 )
                 affective_task_events.append(affective_task_event)
 
@@ -162,10 +162,10 @@ def process_directory_v1(group_session, participants):
                     task_type="team",
                     timestamp_unix=str(row["time"]),
                     timestamp_iso8601=convert_unix_timestamp_to_iso8601(df["time"].iloc[i]),
-                    event_type=str(row["event_type"]),
-                    image_path=str(row["image_path"]),
-                    arousal_score=int(row["arousal_score"]),
-                    valence_score=int(row["valence_score"])
+                    event_type=row["event_type"],
+                    image_path=row["image_path"],
+                    arousal_score=row["arousal_score"],
+                    valence_score=row["valence_score"]
                 )
                 affective_task_events.append(affective_task_event)
 
@@ -221,10 +221,10 @@ def process_directory_v2(group_session, participants):
                     task_type=task_type,
                     timestamp_unix=timestamp,
                     timestamp_iso8601=convert_unix_timestamp_to_iso8601(timestamp),
-                    event_type=str(data["event_type"]),
-                    image_path=str(data["image_path"]),
-                    arousal_score=int(data["arousal_score"]),
-                    valence_score=int(data["valence_score"])
+                    event_type=data["event_type"],
+                    image_path=data["image_path"],
+                    arousal_score=data["arousal_score"],
+                    valence_score=data["valence_score"]
                 )
                 affective_task_events.append(affective_task_event)
 
