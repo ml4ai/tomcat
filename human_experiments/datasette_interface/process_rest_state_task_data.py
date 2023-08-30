@@ -32,7 +32,7 @@ logging.basicConfig(
 )
 
 
-def process_directory_v1(group_session, database_engine):
+def process_directory_v1(group_session):
     info(f"Processing directory {group_session}")
 
     rest_state_entries = []
@@ -56,25 +56,18 @@ def process_directory_v1(group_session, database_engine):
         start_timestamp_unix = df["time"].iloc[0]
         stop_timestamp_unix = df["time"].iloc[-1]
 
-        rest_state = RestStateTask(
+        return RestStateTask(
             group_session_id=group_session,
             start_timestamp_unix=start_timestamp_unix,
             start_timestamp_iso8601=convert_unix_timestamp_to_iso8601(start_timestamp_unix),
             stop_timestamp_unix=stop_timestamp_unix,
             stop_timestamp_iso8601=convert_unix_timestamp_to_iso8601(stop_timestamp_unix)
         )
-        rest_state_entries.append(rest_state)
-
-    with Session(database_engine) as database_session:
-        database_session.add_all(rest_state_entries)
-        database_session.commit()
 
 
-def process_directory_v2(group_session, database_engine):
+def process_directory_v2(group_session):
     """Process directory assuming unified XDF files."""
     info(f"Processing directory {group_session}")
-
-    rest_state_entries = []
 
     with cd(f"{group_session}/lsl"):
         streams, header = pyxdf.load_xdf(
@@ -83,18 +76,13 @@ def process_directory_v2(group_session, database_engine):
         stream = streams[0]
         start_timestamp_lsl, stop_timestamp_lsl = stream["time_stamps"]
 
-        rest_state = RestStateTask(
+        return RestStateTask(
             group_session_id=group_session,
             start_timestamp_unix=start_timestamp_lsl,
             start_timestamp_iso8601=convert_unix_timestamp_to_iso8601(start_timestamp_lsl),
             stop_timestamp_unix=stop_timestamp_lsl,
             stop_timestamp_iso8601=convert_unix_timestamp_to_iso8601(stop_timestamp_lsl)
         )
-        rest_state_entries.append(rest_state)
-
-    with Session(database_engine) as database_session:
-        database_session.add_all(rest_state_entries)
-        database_session.commit()
 
 
 def process_rest_state_task_data(database_engine):
@@ -118,10 +106,17 @@ def process_rest_state_task_data(database_engine):
             if not should_ignore_directory(directory)
         ]
 
+        rest_state_entries = []
+
         for group_session in tqdm(
             sorted(directories_to_process), unit="directories"
         ):
             if not is_directory_with_unified_xdf_files(group_session):
-                process_directory_v1(group_session, database_engine)
+                rest_state_entries.append(process_directory_v1(group_session))
             else:
-                process_directory_v2(group_session, database_engine)
+                rest_state_entries.append(process_directory_v2(group_session))
+
+        # Insert all entries in bulk
+        with Session(database_engine) as database_session:
+            database_session.add_all(rest_state_entries)
+            database_session.commit()
