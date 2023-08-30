@@ -4,9 +4,8 @@ from sqlalchemy import ForeignKey
 from sqlalchemy import Boolean
 from sqlalchemy import Integer
 from sqlalchemy import Text
-from sqlalchemy.orm import relationship
 
-from entity.base import Base
+from entity.base.base import Base
 
 
 class DataValidity(Base):

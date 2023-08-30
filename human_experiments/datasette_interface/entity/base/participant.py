@@ -2,7 +2,7 @@ from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy import Integer
 
-from entity.base import Base
+from entity.base.base import Base
 
 
 class Participant(Base):

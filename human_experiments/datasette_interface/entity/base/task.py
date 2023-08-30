@@ -2,11 +2,11 @@ from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy import Text
 
-from entity.base import Base
+from entity.base.base import Base
 
 
-class GroupSession(Base):
-    __tablename__ = "group_session"
+class Task(Base):
+    __tablename__ = "task"
 
     id: Mapped[str] = mapped_column(Text, primary_key=True)
 

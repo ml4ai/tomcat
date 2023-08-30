@@ -17,6 +17,9 @@ from config import DB_PATH, logging_handlers, USER
 from tqdm import tqdm
 import pandas as pd
 from glob import glob
+from sqlalchemy.orm import Session
+
+from entity.task.rest_state import RestStateTask
 
 logging.basicConfig(
     level=logging.INFO,
@@ -28,9 +31,13 @@ logging.basicConfig(
     ),
 )
 
-def process_directory_v1(session, db_connection):
-    info(f"Processing directory {session}")
-    with cd(f"{session}/baseline_tasks/rest_state"):
+
+def process_directory_v1(group_session, database_engine):
+    info(f"Processing directory {group_session}")
+
+    rest_state_entries = []
+
+    with cd(f"{group_session}/baseline_tasks/rest_state"):
         csv_files = glob("*.csv")
 
         # We expect exactly one CSV file.
@@ -48,80 +55,49 @@ def process_directory_v1(session, db_connection):
 
         start_timestamp_unix = df["time"].iloc[0]
         stop_timestamp_unix = df["time"].iloc[-1]
-        row = (
-            session,
-            start_timestamp_unix,
-            convert_unix_timestamp_to_iso8601(start_timestamp_unix),
-            stop_timestamp_unix,
-            convert_unix_timestamp_to_iso8601(stop_timestamp_unix),
+
+        rest_state = RestStateTask(
+            group_session_id=group_session,
+            start_timestamp_unix=start_timestamp_unix,
+            start_timestamp_iso8601=convert_unix_timestamp_to_iso8601(start_timestamp_unix),
+            stop_timestamp_unix=stop_timestamp_unix,
+            stop_timestamp_iso8601=convert_unix_timestamp_to_iso8601(stop_timestamp_unix)
         )
+        rest_state_entries.append(rest_state)
 
-        with db_connection:
-            db_connection.execute(
-                "INSERT into rest_state_task VALUES(?, ?, ?, ?, ?);", row
-            )
+    with Session(database_engine) as database_session:
+        database_session.add_all(rest_state_entries)
+        database_session.commit()
 
 
-def process_directory_v2(session, db_connection):
+def process_directory_v2(group_session, database_engine):
     """Process directory assuming unified XDF files."""
-    info(f"Processing directory {session}")
-    with cd(f"{session}/lsl"):
+    info(f"Processing directory {group_session}")
+
+    rest_state_entries = []
+
+    with cd(f"{group_session}/lsl"):
         streams, header = pyxdf.load_xdf(
             "block_1.xdf", select_streams=[{"type": "rest_state"}]
         )
         stream = streams[0]
         start_timestamp_lsl, stop_timestamp_lsl = stream["time_stamps"]
 
-        row = (
-            session,
-            start_timestamp_lsl,
-            convert_unix_timestamp_to_iso8601(start_timestamp_lsl),
-            stop_timestamp_lsl,
-            convert_unix_timestamp_to_iso8601(stop_timestamp_lsl),
+        rest_state = RestStateTask(
+            group_session_id=group_session,
+            start_timestamp_unix=start_timestamp_lsl,
+            start_timestamp_iso8601=convert_unix_timestamp_to_iso8601(start_timestamp_lsl),
+            stop_timestamp_unix=stop_timestamp_lsl,
+            stop_timestamp_iso8601=convert_unix_timestamp_to_iso8601(stop_timestamp_lsl)
         )
+        rest_state_entries.append(rest_state)
 
-        with db_connection:
-            db_connection.execute(
-                "INSERT into rest_state_task VALUES(?, ?, ?, ?, ?);", row
-            )
-
-
-def process_rest_state_task_data():
-    info("Processing directories...")
-
-    db_connection = sqlite3.connect(DB_PATH)
-    with db_connection:
-        info("Dropping rest_state_task table")
-        db_connection.execute("DROP TABLE IF EXISTS rest_state_task")
-        db_connection.execute(
-            """
-            CREATE TABLE rest_state_task (
-                group_session TEXT NOT NULL,
-                start_timestamp_unix TEXT NOT NULL,
-                start_timestamp_iso8601 TEXT NOT NULL,
-                stop_timestamp_unix TEXT NOT NULL,
-                stop_timestamp_iso8601 TEXT NOT NULL,
-                FOREIGN KEY(group_session) REFERENCES group_session(id)
-            );"""
-        )
-
-    with cd("/tomcat/data/raw/LangLab/experiments/study_3_pilot/group"):
-        directories_to_process = [
-            directory
-            for directory in os.listdir(".")
-            if not should_ignore_directory(directory)
-        ]
-
-        for session in tqdm(
-            sorted(directories_to_process), unit="directories"
-        ):
-            if not is_directory_with_unified_xdf_files(session):
-                process_directory_v1(session, db_connection)
-            else:
-                process_directory_v2(session, db_connection)
+    with Session(database_engine) as database_session:
+        database_session.add_all(rest_state_entries)
+        database_session.commit()
 
 
-if __name__ == "__main__":
+def process_rest_state_task_data(database_engine):
     info(
         """
         Processing rest state task data. For the CSV files predating the
@@ -132,4 +108,20 @@ if __name__ == "__main__":
         separate invocations to monotonic() and datetime.utcnow() respectively.
         """
     )
-    process_rest_state_task_data()
+
+    info("Processing directories...")
+
+    with cd("/tomcat/data/raw/LangLab/experiments/study_3_pilot/group"):
+        directories_to_process = [
+            directory
+            for directory in os.listdir(".")
+            if not should_ignore_directory(directory)
+        ]
+
+        for group_session in tqdm(
+            sorted(directories_to_process), unit="directories"
+        ):
+            if not is_directory_with_unified_xdf_files(group_session):
+                process_directory_v1(group_session, database_engine)
+            else:
+                process_directory_v2(group_session, database_engine)

@@ -9,13 +9,13 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
 from config import USER
-from entity.base import Base
-from entity.data_validity import DataValidity
-from entity.group_session import GroupSession
-from entity.modality import Modality
-from entity.participant import Participant
-from entity.station import Station
-from entity.task import Task
+from entity.base.base import Base
+from entity.base.data_validity import DataValidity
+from entity.base.group_session import GroupSession
+from entity.base.modality import Modality
+from entity.base.participant import Participant
+from entity.base.station import Station
+from entity.base.task import Task
 
 logging.basicConfig(
     level=logging.INFO,
@@ -53,29 +53,29 @@ STATIONS = [
 ]
 
 
-def populate_task_table(engine):
-    with Session(engine) as session:
+def populate_task_table(database_engine):
+    with Session(database_engine) as session:
         modalities = [Task(id=task) for task in TASKS]
         session.add_all(modalities)
         session.commit()
 
 
-def populate_station_table(engine):
-    with Session(engine) as session:
+def populate_station_table(database_engine):
+    with Session(database_engine) as session:
         stations = [Station(id=station) for station in STATIONS + ["cheetah"]]
         session.add_all(stations)
         session.commit()
 
 
-def populate_modality_table(engine):
-    with Session(engine) as session:
+def populate_modality_table(database_engine):
+    with Session(database_engine) as session:
         modalities = [Modality(id=modality) for modality in MODALITIES]
         session.add_all(modalities)
         session.commit()
 
 
-def populate_participant_table(engine):
-    with Session(engine) as session:
+def populate_participant_table(database_engine):
+    with Session(database_engine) as session:
         participants = [
             # ID of -1 to represent 'unknown participant'
             Participant(id=-1),
@@ -88,15 +88,19 @@ def populate_participant_table(engine):
         session.commit()
 
 
-def populate_base_tables(engine):
-    populate_task_table(engine)
-    populate_station_table(engine)
-    populate_modality_table(engine)
-    populate_participant_table(engine)
+def populate_base_tables(database_engine):
+    info(f"Populating base tables.")
+
+    populate_task_table(database_engine)
+    populate_station_table(database_engine)
+    populate_modality_table(database_engine)
+    populate_participant_table(database_engine)
 
 
-def process_rick_workbook(engine):
+def process_rick_workbook(database_engine):
     """Process Rick's CSVs"""
+
+    info(f"Processing Rick's workbook.")
 
     # TODO Integrate the 'mask_on' statuses.
 
@@ -112,7 +116,7 @@ def process_rick_workbook(engine):
 
         participants = []
 
-        with Session(engine) as session:
+        with Session(database_engine) as session:
             for prefix in ["lion", "tiger", "leopard"]:
                 participant_id = series[f"{prefix}_subject_id"]
                 if not session.query(Participant.id).filter_by(id=participant_id).first():
@@ -204,15 +208,6 @@ def process_rick_workbook(engine):
             session.commit()
 
 
-def build_base_tables():
-    database_engine = create_engine("postgresql+psycopg2://paulosoares:tomcat@localhost:5433/tomcat")
-
-    Base.metadata.drop_all(database_engine, checkfirst=True)
-    Base.metadata.create_all(database_engine)
-
+def build_base_tables(database_engine):
     populate_base_tables(database_engine)
     process_rick_workbook(database_engine)
-
-
-if __name__ == "__main__":
-    build_base_tables()
