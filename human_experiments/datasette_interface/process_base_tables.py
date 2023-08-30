@@ -208,6 +208,20 @@ def process_rick_workbook(database_engine):
             session.commit()
 
 
-def build_base_tables(database_engine):
+def recreate_base_tables(database_engine):
+    Task.__table__.drop(database_engine, checkfirst=True)
+    Station.__table__.drop(database_engine, checkfirst=True)
+    Modality.__table__.drop(database_engine, checkfirst=True)
+    Participant.__table__.drop(database_engine, checkfirst=True)
+    DataValidity.__table__.drop(database_engine, checkfirst=True)
+
+    Task.__table__.create(database_engine, checkfirst=True)
+    Station.__table__.create(database_engine, checkfirst=True)
+    Modality.__table__.create(database_engine, checkfirst=True)
+    Participant.__table__.create(database_engine, checkfirst=True)
+    DataValidity.__table__.create(database_engine, checkfirst=True)
+
+
+def process_base_tables(database_engine):
     populate_base_tables(database_engine)
     process_rick_workbook(database_engine)

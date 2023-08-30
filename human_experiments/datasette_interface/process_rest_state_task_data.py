@@ -120,3 +120,8 @@ def process_rest_state_task_data(database_engine):
         with Session(database_engine) as database_session:
             database_session.add_all(rest_state_entries)
             database_session.commit()
+
+
+def recreate_rest_state_table(database_engine):
+    RestStateTask.__table__.drop(database_engine, checkfirst=True)
+    RestStateTask.__table__.create(database_engine, checkfirst=True)
