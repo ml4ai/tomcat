@@ -209,11 +209,11 @@ def process_rick_workbook(database_engine):
 
 
 def recreate_base_tables(database_engine):
+    DataValidity.__table__.drop(database_engine, checkfirst=True)
     Task.__table__.drop(database_engine, checkfirst=True)
     Station.__table__.drop(database_engine, checkfirst=True)
     Modality.__table__.drop(database_engine, checkfirst=True)
     Participant.__table__.drop(database_engine, checkfirst=True)
-    DataValidity.__table__.drop(database_engine, checkfirst=True)
 
     Task.__table__.create(database_engine, checkfirst=True)
     Station.__table__.create(database_engine, checkfirst=True)
