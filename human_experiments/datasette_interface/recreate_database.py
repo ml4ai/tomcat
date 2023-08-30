@@ -68,8 +68,8 @@ if __name__ == "__main__":
     parser.add_argument("--db_name", type=str, required=False, default=f"{USER}_tomcat",
                         help="Database name. Make sure the database was previously created before running this script.")
     parser.add_argument("--db_passwd", type=str, required=True, help="Password to connect to the database.")
-    parser.add_argument("--no_base", type=bool, action='store_false', help="Do not reprocess base tables.")
-    parser.add_argument("--no_rest_state", type=bool, action='store_false', help="Do not reprocess rest state tables.")
+    parser.add_argument("--no_base", action='store_false', help="Do not reprocess base tables.")
+    parser.add_argument("--no_rest_state", action='store_false', help="Do not reprocess rest state tables.")
 
     args = parser.parse_args()
 
