@@ -227,6 +227,8 @@ def process_rick_workbook(engine):
 
             session.add(GroupSession(id=group_session_id))
             session.add_all(participants)
+            session.flush()
+
             session.add_all(data_validity_entries)
             session.commit()
 
