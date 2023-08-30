@@ -2,6 +2,7 @@
 
 import json
 import logging
+import math
 import os
 import sys
 from glob import glob
@@ -102,8 +103,8 @@ def process_directory_v1(group_session, participants):
                     "time": str,
                     "image_path": str,
                     "subject_id": str,
-                    "arousal_score": str,
-                    "valence_score": str,
+                    "arousal_score": int,
+                    "valence_score": int,
                 },
             )
 
@@ -118,8 +119,8 @@ def process_directory_v1(group_session, participants):
                     timestamp_iso8601=convert_unix_timestamp_to_iso8601(df["time"].iloc[i]),
                     event_type=row["event_type"],
                     image_path=row["image_path"],
-                    arousal_score=row["arousal_score"],
-                    valence_score=row["valence_score"]
+                    arousal_score=None if math.isnan(row["arousal_score"]) else row["arousal_score"],
+                    valence_score=None if math.isnan(row["valence_score"]) else row["valence_score"]
                 )
                 affective_task_events.append(affective_task_event)
 
@@ -139,8 +140,8 @@ def process_directory_v1(group_session, participants):
                     "time": str,
                     "image_path": str,
                     "subject_id": str,
-                    "arousal_score": str,
-                    "valence_score": str,
+                    "arousal_score": int,
+                    "valence_score": int,
                 },
             )
 
@@ -164,8 +165,8 @@ def process_directory_v1(group_session, participants):
                     timestamp_iso8601=convert_unix_timestamp_to_iso8601(df["time"].iloc[i]),
                     event_type=row["event_type"],
                     image_path=row["image_path"],
-                    arousal_score=row["arousal_score"],
-                    valence_score=row["valence_score"]
+                    arousal_score=None if math.isnan(row["arousal_score"]) else row["arousal_score"],
+                    valence_score=None if math.isnan(row["valence_score"]) else row["valence_score"]
                 )
                 affective_task_events.append(affective_task_event)
 
@@ -223,8 +224,8 @@ def process_directory_v2(group_session, participants):
                     timestamp_iso8601=convert_unix_timestamp_to_iso8601(timestamp),
                     event_type=data["event_type"],
                     image_path=data["image_path"],
-                    arousal_score=data["arousal_score"],
-                    valence_score=data["valence_score"]
+                    arousal_score=None if math.isnan(data["arousal_score"]) else data["arousal_score"],
+                    valence_score=None if math.isnan(data["valence_score"]) else data["valence_score"]
                 )
                 affective_task_events.append(affective_task_event)
 
