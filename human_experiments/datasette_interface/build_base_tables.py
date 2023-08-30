@@ -88,37 +88,6 @@ def populate_participant_table(engine):
         session.commit()
 
 
-def insert_values(
-        db_connection,
-        table_name: str,
-        column_name_fragment: str,
-        group_session_id: str,
-        participants,
-        series,
-):
-    db_connection.execute(
-        f"""
-        INSERT INTO {table_name}
-        VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    """,
-        (
-            group_session_id,
-            participants[0],
-            participants[1],
-            participants[2],
-            series[f"lion_eeg_data_{column_name_fragment}"] == "ok",
-            series[f"tiger_eeg_data_{column_name_fragment}"] == "ok",
-            series[f"leopard_eeg_data_{column_name_fragment}"] == "ok",
-            series[f"lion_nirs_data_{column_name_fragment}"] == "ok",
-            series[f"tiger_nirs_data_{column_name_fragment}"] == "ok",
-            series[f"leopard_nirs_data_{column_name_fragment}"] == "ok",
-            series[f"lion_pupil_data_{column_name_fragment}"] == "ok",
-            series[f"tiger_pupil_data_{column_name_fragment}"] == "ok",
-            series[f"leopard_pupil_data_{column_name_fragment}"] == "ok",
-        ),
-    )
-
-
 def populate_base_tables(engine):
     populate_task_table(engine)
     populate_station_table(engine)
@@ -227,17 +196,23 @@ def process_rick_workbook(engine):
 
             session.add(GroupSession(id=group_session_id))
             session.add_all(participants)
+            # Flush to communicate changes to the database in a pending state such that we don't encounter
+            # foreign key errors when inserting data validity entries.
             session.flush()
 
             session.add_all(data_validity_entries)
             session.commit()
 
 
+def build_base_tables():
+    database_engine = create_engine("postgresql+psycopg2://paulosoares:tomcat@localhost:5433/tomcat")
+
+    Base.metadata.drop_all(database_engine, checkfirst=True)
+    Base.metadata.create_all(database_engine)
+
+    populate_base_tables(database_engine)
+    process_rick_workbook(database_engine)
+
+
 if __name__ == "__main__":
-    engine = create_engine("postgresql+psycopg2://paulosoares:tomcat@localhost:5433/tomcat")
-
-    Base.metadata.drop_all(engine, checkfirst=True)
-    Base.metadata.create_all(engine)
-
-    populate_base_tables(engine)
-    process_rick_workbook(engine)
+    build_base_tables()
