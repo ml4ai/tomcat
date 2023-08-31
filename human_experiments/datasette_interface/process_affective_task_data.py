@@ -283,21 +283,21 @@ def process_affective_task_data(database_engine):
 
         affective_task_events = []
         with Session(database_engine) as database_session:
-            for session in tqdm(
+            for group_session in tqdm(
                     sorted(directories_to_process), unit="directories"
             ):
                 # Get real participant IDs for the task
                 participants = {}
                 for station in ["lion", "tiger", "leopard"]:
                     participant = database_session.query(DataValidity.participant_id).filter(
-                        DataValidity.group_session_id == session,
+                        DataValidity.group_session_id == group_session,
                         DataValidity.task_id.like("affective%"),
                         DataValidity.station_id == station).first()[0]
                     participants[station] = participant
-                if not is_directory_with_unified_xdf_files(session):
-                    affective_task_events.extend(process_directory_v1(session, participants))
+                if not is_directory_with_unified_xdf_files(group_session):
+                    affective_task_events.extend(process_directory_v1(group_session, participants))
                 else:
-                    affective_task_events.extend(process_directory_v2(session, participants))
+                    affective_task_events.extend(process_directory_v2(group_session, participants))
 
         info("Adding affective task events to the database.")
         database_session.add_all(affective_task_events)

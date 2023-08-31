@@ -14,6 +14,8 @@ from process_rest_state_task_data import process_rest_state_task_data, recreate_
 from process_affective_task_data import process_affective_task_data, recreate_affective_task_event_table
 from process_finger_tapping_task_data import process_finger_tapping_task_data, \
     recreate_finger_tapping_task_observation_table
+from process_ping_pong_competitive_data import process_ping_pong_competitive_task_data, \
+    recreate_ping_pong_competitive_observation_table
 
 logging.basicConfig(
     level=logging.INFO,
@@ -61,7 +63,7 @@ def recreate_tables(tables_to_recreate, database_engine):
                 recreate_finger_tapping_task_observation_table(database_engine)
             elif table == "ping_pong_competitive":
                 info(f"Recreating ping-pong competitive table in {database_info}.")
-                # recreate_finger_tapping_task_observation_table(database_engine)
+                recreate_ping_pong_competitive_observation_table(database_engine)
             elif table == "ping_pong_cooperative":
                 info(f"Recreating ping-pong cooperative table in {database_info}.")
                 # recreate_finger_tapping_task_observation_table(database_engine)
@@ -90,8 +92,7 @@ def populate_tables(tables_to_process, database_engine):
         elif table == "finger_tapping":
             process_finger_tapping_task_data(database_engine)
         elif table == "ping_pong_competitive":
-            pass
-            # process_finger_tapping_task_data(database_engine)
+            process_ping_pong_competitive_task_data(database_engine)
         elif table == "ping_pong_cooperative":
             pass
             # process_finger_tapping_task_data(database_engine)
