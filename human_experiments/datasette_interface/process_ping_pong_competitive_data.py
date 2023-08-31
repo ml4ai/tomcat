@@ -89,16 +89,16 @@ def process_competitive_csv_files(competitive_csv_files, group_session, particip
                 player_2_station_id=right_station,
                 timestamp_unix=row["time"],
                 timestamp_iso8601=convert_unix_timestamp_to_iso8601(df["time"].iloc[i]),
-                task_started=current_started_value,
-                seconds=seconds,
-                ball_position_x=ball_x,
-                ball_position_y=ball_y,
-                player_1_paddle_position_x=player_1_x,
-                player_1_paddle_position_y=player_1_y,
-                player_2_paddle_position_x=player_2_x,
-                player_2_paddle_position_y=player_2_y,
-                player_1_score=row["score_left"],
-                player_2_score=row["score_right"]
+                task_started=bool(current_started_value),
+                seconds=int(seconds),
+                ball_position_x=int(ball_x),
+                ball_position_y=int(ball_y),
+                player_1_paddle_position_x=int(player_1_x),
+                player_1_paddle_position_y=int(player_1_y),
+                player_2_paddle_position_x=int(player_2_x),
+                player_2_paddle_position_y=int(player_2_y),
+                player_1_score=int(row["score_left"]),
+                player_2_score=int(row["score_right"])
             )
             ping_pong_observations.append(ping_pong_observation)
 
