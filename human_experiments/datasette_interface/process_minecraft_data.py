@@ -317,7 +317,7 @@ def process_metadata_file(filepath, group_session, file_to_key_messages_mapping)
     trial_id = key_messages["mission_start"][0]["msg"]["trial_id"]
 
     if trial_id in INVALID_MISSIONS:
-        error(f"[ANOMALY] Skipping {trial_id} as it is a duplicate not removed by the duplicate logic.")
+        error(f"[ANOMALY] Skipping {trial_id} as it is a duplicate not removed by the deduplicate logic.")
         return None, None
 
     minecraft_mission = MinecraftMission(
@@ -441,8 +441,10 @@ def process_directory_v2(group_session):
                 stop_timestamp_lsl = stream["time_stamps"][messages[-1][0]]
 
                 if trial_id in INVALID_MISSIONS:
-                    error(f"[ANOMALY] Skipping {trial_id} as it is a duplicate not removed by the duplicate logic.")
+                    error(f"[ANOMALY] Skipping {trial_id} as it is a duplicate not removed by the deduplicate logic.")
                 else:
+                    print(start_timestamp_lsl)
+                    print(stop_timestamp_lsl)
                     minecraft_mission = MinecraftMission(
                         group_session_id=group_session,
                         id=trial_id,
@@ -486,7 +488,8 @@ def process_minecraft_data(database_engine):
                 sorted(directories_to_process), unit="directories"
         ):
             if not is_directory_with_unified_xdf_files(group_session):
-                missions, messages = process_directory_v1(group_session)
+                pass
+                # missions, messages = process_directory_v1(group_session)
             else:
                 missions, messages = process_directory_v2(group_session)
 
