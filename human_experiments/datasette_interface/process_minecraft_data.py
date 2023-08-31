@@ -336,8 +336,7 @@ def process_metadata_file(filepath, group_session, file_to_key_messages_mapping)
 
     minecraft_testbed_messages = [
         MinecraftTestbedMessage(
-            group_session_id=group_session,
-            mission_id=key_messages["mission_start"][0]["msg"]["trial_id"],
+            mission_id=trial_id,
             timestamp_unix=message["header"]["timestamp"],
             timestamp_iso8601=convert_iso8601_timestamp_to_unix(message["header"]["timestamp"]),
             topic=message.pop("topic"),
@@ -461,7 +460,6 @@ def process_directory_v2(group_session):
 
                     minecraft_testbed_messages.extend([
                         MinecraftTestbedMessage(
-                            group_session_id=group_session,
                             mission_id=trial_id,
                             timestamp_unix=stream["time_stamps"][i],
                             timestamp_iso8601=convert_iso8601_timestamp_to_unix(stream["time_stamps"][i]),
@@ -476,7 +474,6 @@ def process_directory_v2(group_session):
 
 def process_minecraft_data(database_engine):
     info("Processing directories...")
-
 
     with cd("/tomcat/data/raw/LangLab/experiments/study_3_pilot/group"):
         directories_to_process = [
