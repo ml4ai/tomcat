@@ -461,7 +461,7 @@ def process_directory_v2(group_session):
                         MinecraftTestbedMessage(
                             mission_id=trial_id,
                             timestamp_unix=stream["time_stamps"][i],
-                            timestamp_iso8601=convert_iso8601_timestamp_to_unix(stream["time_stamps"][i]),
+                            timestamp_iso8601=convert_unix_timestamp_to_iso8601(stream["time_stamps"][i]),
                             topic=message.pop("topic"),
                             message=json.dumps(message),
                         )
