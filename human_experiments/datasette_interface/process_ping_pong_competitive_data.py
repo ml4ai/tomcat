@@ -224,9 +224,7 @@ def process_ping_pong_competitive_task_data(database_engine):
 
         ping_pong_observations = []
         with Session(database_engine) as database_session:
-            for group_session in tqdm(
-                    sorted(directories_to_process), unit="directories"
-            ):
+            for group_session in tqdm(sorted(directories_to_process), unit="directories"):
                 # Get real participant IDs for the task
                 participants = {}
                 for station in ["lion", "tiger", "leopard"]:
@@ -235,10 +233,11 @@ def process_ping_pong_competitive_task_data(database_engine):
                         task_id="ping_pong_competitive",
                         station_id=station).first()[0]
                     participants[station] = participant
-            if not is_directory_with_unified_xdf_files(group_session):
-                ping_pong_observations.extend(process_directory_v1(group_session, participants))
-            else:
-                ping_pong_observations.extend(process_directory_v2(group_session, participants))
+
+                if not is_directory_with_unified_xdf_files(group_session):
+                    ping_pong_observations.extend(process_directory_v1(group_session, participants))
+                else:
+                    ping_pong_observations.extend(process_directory_v2(group_session, participants))
 
             info("Adding ping-pong competitive observations to the database.")
             database_session.add_all(ping_pong_observations)
