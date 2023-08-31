@@ -31,8 +31,8 @@ class PingPongCooperativeTaskObservation(Base):
     player_2_paddle_position_y: Mapped[int] = mapped_column(Integer, CheckConstraint("player_2_paddle_position_y >= 0"))
     player_3_paddle_position_x: Mapped[int] = mapped_column(Integer, CheckConstraint("player_3_paddle_position_x >= 0"))
     player_3_paddle_position_y: Mapped[int] = mapped_column(Integer, CheckConstraint("player_3_paddle_position_y >= 0"))
-    ai_paddle_position_x: Mapped[int] = mapped_column(Integer, CheckConstraint("ai_paddle_position_x >= 0"))
-    ai_paddle_position_y: Mapped[int] = mapped_column(Integer, CheckConstraint("ai_paddle_position_y >= 0"))
+    ai_paddle_position_x: Mapped[Optional[int]] = mapped_column(Integer, CheckConstraint("ai_paddle_position_x >= 0"))
+    ai_paddle_position_y: Mapped[Optional[int]] = mapped_column(Integer, CheckConstraint("ai_paddle_position_y >= 0"))
     team_score: Mapped[int] = mapped_column(Integer, CheckConstraint("team_score >= 0"))
     ai_score: Mapped[int] = mapped_column(Integer, CheckConstraint("ai_score >= 0"))
 
