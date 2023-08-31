@@ -243,6 +243,6 @@ def process_ping_pong_competitive_task_data(database_engine):
             database_session.commit()
 
 
-def recreate_ping_pong_competitive_observation_table(database_engine):
+def recreate_ping_pong_competitive_observation_tables(database_engine):
     PingPongCompetitiveTaskObservation.__table__.drop(database_engine, checkfirst=True)
     PingPongCompetitiveTaskObservation.__table__.create(database_engine, checkfirst=True)

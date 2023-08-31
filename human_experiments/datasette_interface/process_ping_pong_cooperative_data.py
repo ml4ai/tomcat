@@ -119,7 +119,7 @@ def process_cooperative_csv_files(csv_file, group_session, participants):
 
 
 def process_directory_v1(group_session, participants):
-    info(f"Processing directory {group_session}")
+    debug(f"Processing directory {group_session}")
     with cd(f"{group_session}/baseline_tasks/ping_pong"):
         cooperative_csv_files = glob("cooperative*.csv")
         assert len(cooperative_csv_files) == 1
@@ -250,6 +250,6 @@ def process_ping_pong_cooperative_task_data(database_engine):
             database_session.commit()
 
 
-def recreate_ping_pong_cooperative_observation_table(database_engine):
+def recreate_ping_pong_cooperative_observation_tables(database_engine):
     PingPongCooperativeTaskObservation.__table__.drop(database_engine, checkfirst=True)
     PingPongCooperativeTaskObservation.__table__.create(database_engine, checkfirst=True)

@@ -11,13 +11,14 @@ from entity.base.base import Base
 
 from process_base_tables import process_base_tables, recreate_base_tables
 from process_rest_state_task_data import process_rest_state_task_data, recreate_rest_state_table
-from process_affective_task_data import process_affective_task_data, recreate_affective_task_event_table
+from process_affective_task_data import process_affective_task_data, recreate_affective_task_event_tables
 from process_finger_tapping_task_data import process_finger_tapping_task_data, \
-    recreate_finger_tapping_task_observation_table
+    recreate_finger_tapping_task_observation_tables
 from process_ping_pong_competitive_data import process_ping_pong_competitive_task_data, \
-    recreate_ping_pong_competitive_observation_table
+    recreate_ping_pong_competitive_observation_tables
 from process_ping_pong_cooperative_data import process_ping_pong_cooperative_task_data, \
-    recreate_ping_pong_cooperative_observation_table
+    recreate_ping_pong_cooperative_observation_tables
+from process_minecraft_data import process_minecraft_data, recreate_minecraft_tables
 
 logging.basicConfig(
     level=logging.INFO,
@@ -37,7 +38,7 @@ TABLES = [
     "finger_tapping",
     "ping_pong_competitive",
     "ping_pong_cooperative",
-    "testbed_message",
+    "minecraft",
     "fnirs",
     "eeg",
     "gaze"
@@ -59,19 +60,19 @@ def recreate_tables(tables_to_recreate, database_engine):
                 recreate_rest_state_table(database_engine)
             elif table == "affective":
                 info(f"Recreating affective task table in {database_info}.")
-                recreate_affective_task_event_table(database_engine)
+                recreate_affective_task_event_tables(database_engine)
             elif table == "finger_tapping":
                 info(f"Recreating finger tapping task table in {database_info}.")
-                recreate_finger_tapping_task_observation_table(database_engine)
+                recreate_finger_tapping_task_observation_tables(database_engine)
             elif table == "ping_pong_competitive":
                 info(f"Recreating ping-pong competitive table in {database_info}.")
-                recreate_ping_pong_competitive_observation_table(database_engine)
+                recreate_ping_pong_competitive_observation_tables(database_engine)
             elif table == "ping_pong_cooperative":
                 info(f"Recreating ping-pong cooperative table in {database_info}.")
-                recreate_ping_pong_cooperative_observation_table(database_engine)
-            elif table == "testbed_message":
-                info(f"Recreating testbed message table in {database_info}.")
-                # recreate_finger_tapping_task_observation_table(database_engine)
+                recreate_ping_pong_cooperative_observation_tables(database_engine)
+            elif table == "minecraft":
+                info(f"Recreating minecraft tables in {database_info}.")
+                recreate_minecraft_tables(database_engine)
             elif table == "fnirs":
                 info(f"Recreating fnirs table in {database_info}.")
                 # recreate_finger_tapping_task_observation_table(database_engine)
@@ -97,9 +98,8 @@ def populate_tables(tables_to_process, database_engine):
             process_ping_pong_competitive_task_data(database_engine)
         elif table == "ping_pong_cooperative":
             process_ping_pong_cooperative_task_data(database_engine)
-        elif table == "testbed_message":
-            pass
-            # process_finger_tapping_task_data(database_engine)
+        elif table == "minecraft":
+            process_minecraft_data(database_engine)
         elif table == "fnirs":
             pass
             # process_finger_tapping_task_data(database_engine)
@@ -127,18 +127,18 @@ if __name__ == "__main__":
     parser.add_argument("--db_name", type=str, required=False, default=f"{USER}_tomcat",
                         help="Database name. Make sure the database was previously created before running this script.")
     parser.add_argument("--db_passwd", type=str, required=True, help="Password to connect to the database.")
-    parser.add_argument("--no_base", action='store_true', help="Do not reprocess base tables.")
-    parser.add_argument("--no_rest_state", action='store_true', help="Do not reprocess rest state table.")
-    parser.add_argument("--no_affective", action='store_true', help="Do not reprocess affective task table.")
-    parser.add_argument("--no_finger_tapping", action='store_true', help="Do not reprocess finger tapping task table.")
+    parser.add_argument("--no_base", action='store_true', help="Do not recreate base tables.")
+    parser.add_argument("--no_rest_state", action='store_true', help="Do not recreate rest state tables.")
+    parser.add_argument("--no_affective", action='store_true', help="Do not recreate affective task tables.")
+    parser.add_argument("--no_finger_tapping", action='store_true', help="Do not recreate finger tapping task tables.")
     parser.add_argument("--no_ping_pong_comp", action='store_true',
-                        help="Do not reprocess ping-pong competitive table.")
+                        help="Do not recreate ping-pong competitive tables.")
     parser.add_argument("--no_ping_pong_coop", action='store_true',
-                        help="Do not reprocess ping-pong cooperative table.")
-    parser.add_argument("--no_testbed", action='store_true', help="Do not reprocess testbed message table.")
-    parser.add_argument("--no_fnirs", action='store_true', help="Do not reprocess fnirs table.")
-    parser.add_argument("--no_eeg", action='store_true', help="Do not reprocess eeg table.")
-    parser.add_argument("--no_gaze", action='store_true', help="Do not reprocess gaze table.")
+                        help="Do not recreate ping-pong cooperative tables.")
+    parser.add_argument("--no_minecraft", action='store_true', help="Do not recreate minecraft tables.")
+    parser.add_argument("--no_fnirs", action='store_true', help="Do not recreate fnirs tables.")
+    parser.add_argument("--no_eeg", action='store_true', help="Do not recreate eeg tables.")
+    parser.add_argument("--no_gaze", action='store_true', help="Do not recreate gaze tables.")
 
     args = parser.parse_args()
 
@@ -159,8 +159,8 @@ if __name__ == "__main__":
         tables.remove("ping_pong_competitive")
     if args.no_ping_pong_coop:
         tables.remove("ping_pong_cooperative")
-    if args.no_testbed:
-        tables.remove("testbed_message")
+    if args.no_minecraft:
+        tables.remove("minecraft")
     if args.no_fnirs:
         tables.remove("fnirs")
     if args.no_eeg:

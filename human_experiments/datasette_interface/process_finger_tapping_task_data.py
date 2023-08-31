@@ -175,6 +175,6 @@ def process_finger_tapping_task_data(database_engine):
             database_session.commit()
 
 
-def recreate_finger_tapping_task_observation_table(database_engine):
+def recreate_finger_tapping_task_observation_tables(database_engine):
     FingerTappingTaskObservation.__table__.drop(database_engine, checkfirst=True)
     FingerTappingTaskObservation.__table__.create(database_engine, checkfirst=True)

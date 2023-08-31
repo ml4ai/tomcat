@@ -304,6 +304,6 @@ def process_affective_task_data(database_engine):
         database_session.commit()
 
 
-def recreate_affective_task_event_table(database_engine):
+def recreate_affective_task_event_tables(database_engine):
     AffectiveTaskEvent.__table__.drop(database_engine, checkfirst=True)
     AffectiveTaskEvent.__table__.create(database_engine, checkfirst=True)

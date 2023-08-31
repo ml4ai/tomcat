@@ -19,6 +19,10 @@ from tqdm import tqdm
 from config import DB_PATH, logging_handlers, USER
 import pyxdf
 
+from sqlalchemy.orm import Session
+from entity.base.data_validity import DataValidity
+from entity.task.minecraft_task import MinecraftMission, MinecraftTestbedMessage
+
 logging.basicConfig(
     level=logging.INFO,
     handlers=(
@@ -28,6 +32,15 @@ logging.basicConfig(
         logging.StreamHandler(stream=sys.stderr),
     ),
 )
+
+# Duplicate, invalid missions. Do not save to the database
+INVALID_MISSIONS = [
+        "560d4c45-dc45-4e19-bdb3-e4e15021728a",  # exp_2022_10_07_15 Saturn A with timestamp in 03/2022
+        "a48f475f-40b0-46b9-8284-0db267dddb67",  # exp_2022_10_07_15 Saturn A with small duration
+        "171a8713-a554-4d8e-a4b1-3ec1b728d0a2",  # exp_2023_02_07_14 Hands-On Training with small duration
+        "9cde1985-1179-4aac-8b67-1fc60ed65243"  # exp_2023_02_10_10 Hands-On Training with small duration
+    ]
+
 
 def update_key_messages_dict(message, key_messages):
     """Populate key messages dictionary."""
@@ -69,8 +82,8 @@ def update_key_messages_dict(message, key_messages):
         else:
             pass
     elif (
-        topic == "observations/state"
-        and not key_messages["approximate_mission_start"]
+            topic == "observations/state"
+            and not key_messages["approximate_mission_start"]
     ):
         mission_timer = str(message["data"]["mission_timer"])
         if "not initialized" not in mission_timer.lower():
@@ -175,9 +188,6 @@ def collect_files_to_process(metadata_files):
 
         file_to_key_messages_mapping.update({metadata_file: key_messages})
         mission = key_messages["mission_start"][0]["data"]["mission"]
-        start_timestamp = key_messages["mission_start"][0]["header"][
-            "timestamp"
-        ]
 
         if mission not in missions:
             missions[mission] = {metadata_file: key_messages}
@@ -217,9 +227,8 @@ def collect_files_to_process(metadata_files):
                 f"\nMost recent .metadata file: {most_recent_file}"
             )
             info(f"Ignoring files: {files_to_ignore}")
-
-        for file in files_to_ignore:
-            del files[file]
+            for file in files_to_ignore:
+                del files[file]
 
     all_missions = {"Hands-on Training", "Saturn_A", "Saturn_B"}
     missing_missions = all_missions - set(missions.keys())
@@ -229,38 +238,38 @@ def collect_files_to_process(metadata_files):
     return file_to_key_messages_mapping
 
 
-def process_directory_v1(session, db_connection):
+def process_directory_v1(group_session):
     """Process directory assuming it is from before we had the unified XDF files."""
 
-    info(f"Processing directory {session}")
+    debug(f"Processing directory {group_session}")
+
+    minecraft_missions = []
+    testbed_messages = []
     try:
-        with cd(f"{session}/minecraft"):
+        with cd(f"{group_session}/minecraft"):
             metadata_files = sorted(glob("*.metadata"))
             file_to_key_messages_mapping = collect_files_to_process(
                 metadata_files
             )
             for metadata_file in file_to_key_messages_mapping:
                 info(f"\tProcessing {metadata_file}")
-                process_metadata_file(
+                mission, messages = process_metadata_file(
                     metadata_file,
-                    session,
-                    file_to_key_messages_mapping,
-                    db_connection,
+                    group_session,
+                    file_to_key_messages_mapping
                 )
+                if mission and messages:
+                    minecraft_missions.append(mission)
+                    testbed_messages.extend(messages)
     except FileNotFoundError:
         error(
-            f"[MISSING DATA]: No 'minecraft' directory found in {session}. Skipping the directory!"
+            f"[MISSING DATA]: No 'minecraft' directory found in {group_session}. Skipping the directory!"
         )
 
+    return minecraft_missions, testbed_messages
 
-def process_metadata_file(
-    filepath, session, file_to_key_messages_mapping, db_connection
-):
-    trial_uuid = None
-    mission = None
-    start_timestamp = None
-    stop_timestamp = None
-    testbed_version = None
+
+def process_metadata_file(filepath, group_session, file_to_key_messages_mapping):
     final_team_score = None
     scores = []
     key_messages = file_to_key_messages_mapping[filepath]
@@ -307,69 +316,50 @@ def process_metadata_file(
         )
         final_team_score = scores[-1]
 
-    mission_data = (
-        key_messages["mission_start"][0]["msg"]["trial_id"],
-        session,
-        mission_name,
-        start_timestamp,
-        convert_iso8601_timestamp_to_unix(start_timestamp),
-        stop_timestamp,
-        convert_iso8601_timestamp_to_unix(stop_timestamp),
-        final_team_score,
-        testbed_version,
+    trial_id = key_messages["mission_start"][0]["msg"]["trial_id"]
+
+    if trial_id in INVALID_MISSIONS:
+        error(f"[ANOMALY] Skipping {trial_id} as it is a duplicate not removed by the duplicate logic.")
+        return None, None
+
+    minecraft_mission = MinecraftMission(
+        group_session_id=group_session,
+        id=trial_id,
+        name=mission_name,
+        start_timestamp_unix=start_timestamp,
+        start_timestamp_iso8601=convert_iso8601_timestamp_to_unix(start_timestamp),
+        stop_timestamp_unix=stop_timestamp,
+        stop_timestamp_iso8601=convert_iso8601_timestamp_to_unix(stop_timestamp),
+        final_team_score=final_team_score,
+        testbed_version=testbed_version,
     )
 
-    try:
-        with db_connection:
-            db_connection.execute("PRAGMA foreign_keys = 1")
-            db_connection.execute(
-                "INSERT into mission VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                mission_data
-            )
-    except sqlite3.IntegrityError:
-        raise sqlite3.IntegrityError(f"Unable to insert row: {data}")
-
-    messages = [
-        (
-            convert_iso8601_timestamp_to_unix(message["header"]["timestamp"]),
-            message["header"]["timestamp"],
-            key_messages["mission_start"][0]["msg"]["trial_id"],
-            message.pop("topic"),
-            json.dumps(message),
+    minecraft_testbed_messages = [
+        MinecraftTestbedMessage(
+            group_session_id=group_session,
+            mission_id=key_messages["mission_start"][0]["msg"]["trial_id"],
+            timestamp_unix=message["header"]["timestamp"],
+            timestamp_iso8601=convert_iso8601_timestamp_to_unix(message["header"]["timestamp"]),
+            topic=message.pop("topic"),
+            message=json.dumps(message),
         )
         for message in messages_to_insert_into_db
     ]
 
-    with db_connection:
-        db_connection.execute("PRAGMA foreign_keys = 1")
-        try:
-            db_connection.executemany(
-                "INSERT into testbed_message VALUES(?, ?, ?, ?, ?)",
-                messages,
-            )
-        except sqlite3.IntegrityError as e:
-            raise sqlite3.IntegrityError(
-                f"Unable to insert row {data}, skipping. {e}"
-            )
+    return minecraft_mission, minecraft_testbed_messages
 
 
-
-def process_directory_v2(session, db_connection):
+def process_directory_v2(group_session):
     """Process directory assuming it contains unified XDF files."""
 
-    with cd(f"{session}/lsl"):
+    minecraft_missions = []
+    minecraft_testbed_messages = []
+    with cd(f"{group_session}/lsl"):
         streams, header = pyxdf.load_xdf(
             "block_2.xdf", select_streams=[{"type": "minecraft"}]
         )
         stream = streams[0]
-        info(f"Processing block_2.xdf for {session}.")
-        key_messages = {
-            "trial_start": [],
-            "trial_stop": [],
-            "mission_start": [],
-            "mission_stop": [],
-            "approximate_mission_start": None,
-        }
+        info(f"Processing block_2.xdf for {group_session}.")
 
         messages = {"Hands-on Training": [], "Saturn_A": [], "Saturn_B": []}
 
@@ -382,7 +372,7 @@ def process_directory_v2(session, db_connection):
 
             except json.decoder.JSONDecodeError as e:
                 topic = text.split()[0][1:-1]
-                error_message = f"Unable to parse message number {i+1} (topic: {topic} as JSON!"
+                error_message = f"Unable to parse message number {i + 1} (topic: {topic} as JSON!"
                 if topic in {
                     "agent/ac/belief_diff",
                     "agent/ac/threat_room_coordination",
@@ -417,11 +407,11 @@ def process_directory_v2(session, db_connection):
                 else:
                     pass
             elif (
-                topic == "trial"
-                and message["msg"]["sub_type"] == "start"
-                and testbed_version is None
-                # The line above assumes that we do not update the testbed in
-                # the middle of a trial.
+                    topic == "trial"
+                    and message["msg"]["sub_type"] == "start"
+                    and testbed_version is None
+                    # The line above assumes that we do not update the testbed in
+                    # the middle of a trial.
             ):
                 testbed_version = message["data"]["testbed_version"]
             else:
@@ -434,7 +424,6 @@ def process_directory_v2(session, db_connection):
             if messages:
                 trial_id = messages[0][1]["msg"]["trial_id"]
                 assert len(messages) >= 2
-
 
                 scoreboard_messages = [
                     message[1]
@@ -454,135 +443,73 @@ def process_directory_v2(session, db_connection):
                 start_timestamp_lsl = stream["time_stamps"][messages[0][0]]
                 stop_timestamp_lsl = stream["time_stamps"][messages[-1][0]]
 
-                mission_data = (
-                    trial_id,
-                    session,
-                    mission,
-                    convert_unix_timestamp_to_iso8601(start_timestamp_lsl),
-                    start_timestamp_lsl,
-                    convert_unix_timestamp_to_iso8601(stop_timestamp_lsl),
-                    stop_timestamp_lsl,
-                    final_team_score,
-                    testbed_version,
-                )
-
-                try:
-                    with db_connection:
-                        db_connection.execute("PRAGMA foreign_keys = 1")
-                        db_connection.execute(
-                            "INSERT into mission VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                            mission_data,
-                        )
-                except sqlite3.IntegrityError as e:
-                    error(f"Unable to insert row: {data} into table 'mission'")
-                    raise sqlite3.IntegrityError(e)
-
-                message_data = [
-                    (
-                        stream["time_stamps"][i],
-                        convert_unix_timestamp_to_iso8601(
-                            stream["time_stamps"][i]
-                        ),
-                        trial_id,
-                        message.pop("topic"),
-                        json.dumps(message),
+                if trial_id in INVALID_MISSIONS:
+                    error(f"[ANOMALY] Skipping {trial_id} as it is a duplicate not removed by the duplicate logic.")
+                else:
+                    minecraft_mission = MinecraftMission(
+                        group_session_id=group_session,
+                        id=trial_id,
+                        name=mission,
+                        start_timestamp_unix=start_timestamp_lsl,
+                        start_timestamp_iso8601=convert_iso8601_timestamp_to_unix(start_timestamp_lsl),
+                        stop_timestamp_unix=stop_timestamp_lsl,
+                        stop_timestamp_iso8601=convert_iso8601_timestamp_to_unix(stop_timestamp_lsl),
+                        final_team_score=final_team_score,
+                        testbed_version=testbed_version,
                     )
-                    for i, message in messages
-                ]
+                    minecraft_missions.append(minecraft_mission)
 
-                with db_connection:
-                    db_connection.execute("PRAGMA foreign_keys = 1")
-                    try:
-                        db_connection.executemany(
-                            "INSERT into testbed_message VALUES(?, ?, ?, ?, ?)",
-                            message_data,
+                    minecraft_testbed_messages.extend([
+                        MinecraftTestbedMessage(
+                            group_session_id=group_session,
+                            mission_id=trial_id,
+                            timestamp_unix=stream["time_stamps"][i],
+                            timestamp_iso8601=convert_iso8601_timestamp_to_unix(stream["time_stamps"][i]),
+                            topic=message.pop("topic"),
+                            message=json.dumps(message),
                         )
-                    except sqlite3.IntegrityError as e:
-                        raise sqlite3.IntegrityError(
-                            f"Unable to insert row {data}, skipping. {e}"
-                        )
+                        for message in messages
+                    ])
+
+    return minecraft_missions, minecraft_testbed_messages
 
 
-def recreate_table():
-    db_connection = sqlite3.connect(DB_PATH)
-    with db_connection:
-        info("Recreating mission table!")
-        db_connection.execute("DROP TABLE IF EXISTS mission")
-        db_connection.execute(
-            """
-            CREATE TABLE mission (
-                id TEXT PRIMARY KEY NOT NULL,
-                group_session TEXT NOT NULL,
-                name TEXT NOT NULL,
-                start_timestamp_iso8601 TEXT NOT NULL,
-                start_timestamp_unix TEXT NOT NULL,
-                stop_timestamp_iso8601 TEXT NOT NULL,
-                stop_timestamp_unix TEXT NOT NULL,
-                final_team_score INTEGER,
-                testbed_version TEXT NOT NULL,
-                FOREIGN KEY(group_session) REFERENCES group_session(id)
-            );"""
-        )
-
-        info("Recreating testbed_message table!")
-        db_connection.execute("DROP TABLE IF EXISTS testbed_message")
-        db_connection.execute(
-            """
-            CREATE TABLE testbed_message (
-                timestamp_unix TEXT,
-                timestamp_iso8601 TEXT,
-                mission TEXT,
-                topic TEXT,
-                message JSON,
-                FOREIGN KEY(mission) REFERENCES mission(id) ON DELETE CASCADE
-            );
-            """
-        )
-
-
-def delete_duplicate_missions(db_connection):
-    info("Deleting duplicate missions!")
-    INVALID_MISSIONS = [
-        "560d4c45-dc45-4e19-bdb3-e4e15021728a",  # exp_2022_10_07_15 Saturn A with timestamp in 03/2022
-        "a48f475f-40b0-46b9-8284-0db267dddb67",  # exp_2022_10_07_15 Saturn A with small duration
-        "171a8713-a554-4d8e-a4b1-3ec1b728d0a2",  # exp_2023_02_07_14 Hands-On Training with small duration
-        "9cde1985-1179-4aac-8b67-1fc60ed65243"   # exp_2023_02_10_10 Hands-On Training with small duration
-    ]
-
-    invalid_missions_str = ','.join(list(map(lambda x: f"'{x}'", INVALID_MISSIONS)))
-
-    with db_connection:
-        db_connection.execute("PRAGMA foreign_keys = 1")
-        db_connection.execute(
-            f"""
-            DELETE FROM mission
-            WHERE id IN ({invalid_missions_str});            
-            """)
-
-
-def process_testbed_messages():
+def process_minecraft_data(database_engine):
     info("Processing directories...")
 
-    db_connection = sqlite3.connect(DB_PATH)
 
     with cd("/tomcat/data/raw/LangLab/experiments/study_3_pilot/group"):
         directories_to_process = [
             directory
             for directory in os.listdir(".")
             if not should_ignore_directory(directory)
-            ]
+        ]
 
-        for session in tqdm(
-            sorted(directories_to_process), unit="directories"
+        minecraft_missions = []
+        testbed_messages = []
+        for group_session in tqdm(
+                sorted(directories_to_process), unit="directories"
         ):
-            if not is_directory_with_unified_xdf_files(session):
-                process_directory_v1(session, db_connection)
+            if not is_directory_with_unified_xdf_files(group_session):
+                missions, messages = process_directory_v1(group_session)
             else:
-                process_directory_v2(session, db_connection)
+                missions, messages = process_directory_v2(group_session)
 
-        delete_duplicate_missions(db_connection)
+            minecraft_missions.extend(missions)
+            testbed_messages.extend(messages)
+
+        with Session(database_engine) as database_session:
+            info("Adding affective task events to the database.")
+            database_session.add_all(minecraft_missions)
+            # Flush to avoid foreign key error in the messages related to the mission.
+            database_session.flush()
+            database_session.add_all(testbed_messages)
+            database_session.commit()
 
 
-if __name__ == "__main__":
-    recreate_table()
-    process_testbed_messages()
+def recreate_minecraft_tables(database_engine):
+    MinecraftTestbedMessage.__table__.drop(database_engine, checkfirst=True)
+    MinecraftMission.__table__.create(database_engine, checkfirst=True)
+
+    MinecraftMission.__table__.create(database_engine, checkfirst=True)
+    MinecraftTestbedMessage.__table__.create(database_engine, checkfirst=True)
