@@ -1,27 +1,26 @@
 #!/usr/bin/env python
 
+import json
+import logging
 import os
 import sys
-import sqlite3
+from glob import glob
+from logging import info, debug
+
+import pandas as pd
+import pyxdf
+from sqlalchemy.orm import Session
+from tqdm import tqdm
+
+from config import USER
+from entity.base.data_validity import DataValidity
+from entity.task.ping_pong_competitive_task_observation import PingPongCompetitiveTaskObservation
 from utils import (
     cd,
     should_ignore_directory,
-    logging_handlers,
     convert_unix_timestamp_to_iso8601,
     is_directory_with_unified_xdf_files,
 )
-import pyxdf
-import logging
-from logging import info, error, debug
-from config import DB_PATH, logging_handlers, USER
-from tqdm import tqdm
-import pandas as pd
-from glob import glob
-import json
-
-from sqlalchemy.orm import Session
-from entity.task.ping_pong_competitive_task_observation import PingPongCompetitiveTaskObservation
-from entity.base.data_validity import DataValidity
 
 logging.basicConfig(
     level=logging.INFO,
