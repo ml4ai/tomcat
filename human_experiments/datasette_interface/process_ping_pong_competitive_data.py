@@ -240,9 +240,9 @@ def process_ping_pong_competitive_task_data(database_engine):
             else:
                 ping_pong_observations.extend(process_directory_v2(group_session, participants))
 
-        info("Adding ping-pong competitive observations to the database.")
-        database_session.add_all(ping_pong_observations)
-        database_session.commit()
+            info("Adding ping-pong competitive observations to the database.")
+            database_session.add_all(ping_pong_observations)
+            database_session.commit()
 
 
 def recreate_ping_pong_competitive_observation_table(database_engine):
