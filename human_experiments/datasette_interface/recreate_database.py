@@ -12,6 +12,8 @@ from entity.base.base import Base
 from process_base_tables import process_base_tables, recreate_base_tables
 from process_rest_state_task_data import process_rest_state_task_data, recreate_rest_state_table
 from process_affective_task_data import process_affective_task_data, recreate_affective_task_event_table
+from process_finger_tapping_task_data import process_finger_tapping_task_data, \
+    recreate_finger_tapping_task_observation_table
 
 logging.basicConfig(
     level=logging.INFO,
@@ -27,7 +29,8 @@ logging.basicConfig(
 TABLES = [
     "base",
     "rest_state",
-    "affective"
+    "affective",
+    "finger_tapping"
 ]
 
 
@@ -47,6 +50,9 @@ def recreate_tables(tables_to_recreate, database_engine):
             elif table == "affective":
                 info(f"Recreating affective task table in {database_info}.")
                 recreate_affective_task_event_table(database_engine)
+            elif table == "finger_tapping":
+                info(f"Recreating finger tapping task table in {database_info}.")
+                recreate_finger_tapping_task_observation_table(database_engine)
 
 
 def populate_tables(tables_to_process, database_engine):
@@ -57,6 +63,8 @@ def populate_tables(tables_to_process, database_engine):
             process_rest_state_task_data(database_engine)
         elif table == "affective":
             process_affective_task_data(database_engine)
+        elif table == "finger_tapping":
+            process_finger_tapping_task_data(database_engine)
 
 
 if __name__ == "__main__":
@@ -78,6 +86,7 @@ if __name__ == "__main__":
     parser.add_argument("--no_base", action='store_true', help="Do not reprocess base tables.")
     parser.add_argument("--no_rest_state", action='store_true', help="Do not reprocess rest state table.")
     parser.add_argument("--no_affective", action='store_true', help="Do not reprocess affective task table.")
+    parser.add_argument("--no_finger_tapping", action='store_true', help="Do not reprocess finger tapping task table.")
 
     args = parser.parse_args()
 
@@ -92,6 +101,8 @@ if __name__ == "__main__":
         tables.remove("rest_state")
     if args.no_affective:
         tables.remove("affective")
+    if args.no_finger_tapping:
+        tables.remove("finger_tapping")
 
     recreate_tables(tables, engine)
     populate_tables(tables, engine)

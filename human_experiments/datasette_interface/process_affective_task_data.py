@@ -244,16 +244,6 @@ def process_directory_v2(group_session, participants):
                             ]
                         ]
 
-                # if math.isnan(float(data["arousal_score"])):
-                #     arousal = None
-                # else:
-                #     arousal = int(data["arousal_score"])
-                #
-                # if math.isnan(float(data["valence_score"])):
-                #     valence = None
-                # else:
-                #     valence = int(data["valence_score"])
-
                 affective_task_event = AffectiveTaskEvent(
                     group_session_id=group_session,
                     participant_id=real_participant_id,
