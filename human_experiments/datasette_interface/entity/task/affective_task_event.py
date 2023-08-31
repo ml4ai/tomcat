@@ -1,3 +1,5 @@
+from typing import Optional
+
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy import ForeignKey
@@ -11,16 +13,15 @@ class AffectiveTaskEvent(Base):
     __tablename__ = "affective_task_event"
 
     group_session_id: Mapped[str] = mapped_column("group_session", Text, ForeignKey("group_session.id"),
-                                                  primary_key=True, nullable=False)
-    participant_id: Mapped[int] = mapped_column("participant", Integer, ForeignKey("participant.id"), primary_key=True,
-                                                nullable=False)
-    task_type: Mapped[str] = mapped_column(Text, primary_key=True, nullable=False)
-    timestamp_unix: Mapped[str] = mapped_column(Text, primary_key=True, nullable=False)
-    timestamp_iso8601: Mapped[str] = mapped_column(Text, nullable=False)
-    event_type: Mapped[str] = mapped_column(Text, nullable=False)
-    image_path: Mapped[str] = mapped_column(Text, )
-    arousal_score: Mapped[int] = mapped_column(Integer)
-    valence_score: Mapped[int] = mapped_column(Integer)
+                                                  primary_key=True)
+    participant_id: Mapped[int] = mapped_column("participant", Integer, ForeignKey("participant.id"), primary_key=True)
+    task_type: Mapped[str] = mapped_column(Text, primary_key=True)
+    timestamp_unix: Mapped[str] = mapped_column(Text, primary_key=True)
+    timestamp_iso8601: Mapped[str] = mapped_column(Text)
+    event_type: Mapped[str] = mapped_column(Text)
+    image_path: Optional[Mapped[str]] = mapped_column(Text)
+    arousal_score: Optional[Mapped[int]] = mapped_column(Integer)
+    valence_score: Optional[Mapped[int]] = mapped_column(Integer)
 
     def __init__(self, group_session_id: str, participant_id: int, task_type: str, timestamp_unix: str,
                  timestamp_iso8601: str, event_type: str, image_path: str, arousal_score: int, valence_score: int):

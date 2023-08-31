@@ -109,6 +109,11 @@ def process_directory_v1(group_session, participants):
             )
 
             for i, row in df.iterrows():
+                if pd.isna(row["image_path"]):
+                    image_path = None
+                else:
+                    image_path = row["image_path"]
+
                 if pd.isna(row["arousal_score"]):
                     arousal = None
                 else:
@@ -126,7 +131,7 @@ def process_directory_v1(group_session, participants):
                     timestamp_unix=row["time"],
                     timestamp_iso8601=convert_unix_timestamp_to_iso8601(df["time"].iloc[i]),
                     event_type=row["event_type"],
-                    image_path=row["image_path"],
+                    image_path=image_path,
                     arousal_score=arousal,
                     valence_score=valence
                 )
@@ -165,6 +170,11 @@ def process_directory_v1(group_session, participants):
                         )[0]
                     )
 
+                if pd.isna(row["image_path"]):
+                    image_path = None
+                else:
+                    image_path = row["image_path"]
+
                 if pd.isna(row["arousal_score"]):
                     arousal = None
                 else:
@@ -182,7 +192,7 @@ def process_directory_v1(group_session, participants):
                     timestamp_unix=str(row["time"]),
                     timestamp_iso8601=convert_unix_timestamp_to_iso8601(df["time"].iloc[i]),
                     event_type=row["event_type"],
-                    image_path=row["image_path"],
+                    image_path=image_path,
                     arousal_score=arousal,
                     valence_score=valence
                 )

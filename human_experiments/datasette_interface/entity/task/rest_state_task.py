@@ -9,11 +9,11 @@ from entity.base.base import Base
 class RestStateTask(Base):
     __tablename__ = "rest_state_task"
 
-    group_session_id: Mapped[str] = mapped_column("group_session", Text, ForeignKey("group_session.id"), primary_key=True, nullable=False)
-    start_timestamp_unix: Mapped[str] = mapped_column(Text, nullable=False)
-    start_timestamp_iso8601: Mapped[str] = mapped_column(Text, nullable=False)
-    stop_timestamp_unix: Mapped[str] = mapped_column(Text, nullable=False)
-    stop_timestamp_iso8601: Mapped[str] = mapped_column(Text, nullable=False)
+    group_session_id: Mapped[str] = mapped_column("group_session", Text, ForeignKey("group_session.id"), primary_key=True)
+    start_timestamp_unix: Mapped[str] = mapped_column(Text)
+    start_timestamp_iso8601: Mapped[str] = mapped_column(Text)
+    stop_timestamp_unix: Mapped[str] = mapped_column(Text)
+    stop_timestamp_iso8601: Mapped[str] = mapped_column(Text)
 
     def __init__(self, group_session_id: str, start_timestamp_unix: str, start_timestamp_iso8601: str, stop_timestamp_unix: str, stop_timestamp_iso8601: str):
         super().__init__()
