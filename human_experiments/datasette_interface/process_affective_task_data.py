@@ -292,7 +292,7 @@ def process_affective_task_data(database_engine):
                     participant = database_session.query(DataValidity.participant_id).filter(
                         DataValidity.group_session_id == session,
                         DataValidity.task_id.like("affective%"),
-                        DataValidity.station_id == station).first()
+                        DataValidity.station_id == station).first()[0]
                     participants[station] = participant
                 if not is_directory_with_unified_xdf_files(session):
                     affective_task_events.extend(process_directory_v1(session, participants))
