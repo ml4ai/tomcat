@@ -437,14 +437,12 @@ def process_directory_v2(group_session):
                 else:
                     error("[MISSING DATA]: No scoreboard messages found!")
 
-                start_timestamp_lsl = stream["time_stamps"][messages[0][0]]
-                stop_timestamp_lsl = stream["time_stamps"][messages[-1][0]]
+                start_timestamp_lsl = str(stream["time_stamps"][messages[0][0]])
+                stop_timestamp_lsl = str(stream["time_stamps"][messages[-1][0]])
 
                 if trial_id in INVALID_MISSIONS:
                     error(f"[ANOMALY] Skipping {trial_id} as it is a duplicate not removed by the deduplicate logic.")
                 else:
-                    print(start_timestamp_lsl)
-                    print(stop_timestamp_lsl)
                     minecraft_mission = MinecraftMission(
                         group_session_id=group_session,
                         id=trial_id,
