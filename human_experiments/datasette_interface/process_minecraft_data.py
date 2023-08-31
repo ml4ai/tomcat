@@ -269,7 +269,6 @@ def process_directory_v1(group_session):
 
 
 def process_metadata_file(filepath, group_session, file_to_key_messages_mapping):
-    final_team_score = None
     scores = []
     key_messages = file_to_key_messages_mapping[filepath]
 
@@ -308,11 +307,13 @@ def process_metadata_file(filepath, group_session, file_to_key_messages_mapping)
         "testbed_version"
     ]
 
-    if len(scores) != 0:
+    if len(scores) == 0:
         error(
             f"[MISSING DATA]: No scoreboard messages found in {filepath}!"
             " This could be a bug in the testbed."
         )
+        final_team_score = None
+    else:
         final_team_score = scores[-1]
 
     trial_id = key_messages["mission_start"][0]["msg"]["trial_id"]
