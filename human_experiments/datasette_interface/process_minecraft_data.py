@@ -493,8 +493,8 @@ def process_minecraft_data(database_engine):
             else:
                 missions, messages = process_directory_v2(group_session)
 
-            minecraft_missions.extend(missions)
-            testbed_messages.extend(messages)
+                minecraft_missions.extend(missions)
+                testbed_messages.extend(messages)
 
         with Session(database_engine) as database_session:
             info("Adding affective task events to the database.")
