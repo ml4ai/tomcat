@@ -23,7 +23,7 @@ from utils import (
 )
 
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.INFO,
     handlers=(
         logging.FileHandler(
             filename=f"/space/{USER}/tomcat/build_ping_pong_cooperative_task_table.log",
@@ -104,7 +104,7 @@ def process_cooperative_csv_files(csv_file, group_session, participants):
 
 
 def process_directory_v1(group_session, participants):
-    debug(f"Processing directory {group_session}")
+    info(f"Processing directory {group_session}")
     with cd(f"{group_session}/baseline_tasks/ping_pong"):
         cooperative_csv_files = glob("cooperative*.csv")
         assert len(cooperative_csv_files) == 1
