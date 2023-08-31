@@ -52,8 +52,7 @@ def process_directory_v1(group_session_id):
             current_event_type = row["event_type"]
 
             countdown_timer = row["countdown_timer"]
-            if not pd.isna(countdown_timer):
-                countdown_timer = int(countdown_timer)
+            countdown_timer = None if pd.isna(countdown_timer) else int(countdown_timer)
 
             # For some reason, pygame sometimes outputs a negative value for seconds
             # elapsed - in this case, the baseline task program writes a
@@ -69,6 +68,9 @@ def process_directory_v1(group_session_id):
                     countdown_timer = 10
 
             lion_value, tiger_value, leopard_value = row.iloc[-3:]
+            lion_value = None if pd.isna(lion_value) else int(lion_value)
+            tiger_value = None if pd.isna(tiger_value) else int(tiger_value)
+            leopard_value = None if pd.isna(leopard_value) else int(leopard_value)
 
             finger_tapping_observation = FingerTappingTaskObservation(
                 group_session_id=group_session_id,
