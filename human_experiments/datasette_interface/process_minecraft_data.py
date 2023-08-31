@@ -1,27 +1,25 @@
 #!/usr/bin/env python
 """Script to process testbed messages"""
+import json
+import logging
 import os
 import sys
-import json
 from glob import glob
-import sqlite3
+from logging import info, error, debug
+
+import pyxdf
+from sqlalchemy.orm import Session
+from tqdm import tqdm
+
+from config import USER
+from entity.base.base import Base
+from entity.task.minecraft_task import MinecraftMission, MinecraftTestbedMessage
 from utils import (
     cd,
     should_ignore_directory,
-    logging_handlers,
     convert_iso8601_timestamp_to_unix,
-    convert_unix_timestamp_to_iso8601,
     is_directory_with_unified_xdf_files,
 )
-import logging
-from logging import info, warning, error, debug
-from tqdm import tqdm
-from config import DB_PATH, logging_handlers, USER
-import pyxdf
-
-from sqlalchemy.orm import Session
-from entity.base.data_validity import DataValidity
-from entity.task.minecraft_task import MinecraftMission, MinecraftTestbedMessage
 
 logging.basicConfig(
     level=logging.INFO,
@@ -505,8 +503,10 @@ def process_minecraft_data(database_engine):
 
 
 def recreate_minecraft_tables(database_engine):
-    MinecraftTestbedMessage.__table__.drop(database_engine, checkfirst=True)
-    MinecraftMission.__table__.create(database_engine, checkfirst=True)
+    tables = [
+        MinecraftMission.__table__,
+        MinecraftTestbedMessage.__table__
+    ]
 
-    MinecraftMission.__table__.create(database_engine, checkfirst=True)
-    MinecraftTestbedMessage.__table__.create(database_engine, checkfirst=True)
+    Base.metadata.drop_all(database_engine, tables=tables, checkfirst=True)
+    Base.metadata.create_all(database_engine, tables=tables, checkfirst=True)
