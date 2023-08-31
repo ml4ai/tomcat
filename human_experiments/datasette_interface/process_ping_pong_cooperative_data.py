@@ -112,8 +112,8 @@ def process_cooperative_csv_files(csv_file, group_session, participants):
             player_2_paddle_position_y=int(player_2_y),
             player_3_paddle_position_x=int(player_3_x),
             player_3_paddle_position_y=int(player_3_y),
-            ai_paddle_position_x=int(ai_x),
-            ai_paddle_position_y=int(ai_y),
+            ai_paddle_position_x=int(ai_x) if ai_x else None,
+            ai_paddle_position_y=int(ai_y) if ai_y else None,
             team_score=int(row["score_left"]),
             ai_score=int(row["score_right"])
         )
