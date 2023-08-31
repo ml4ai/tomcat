@@ -18,6 +18,7 @@ from utils import (
     cd,
     should_ignore_directory,
     convert_iso8601_timestamp_to_unix,
+    convert_unix_timestamp_to_iso8601,
     is_directory_with_unified_xdf_files,
 )
 
@@ -33,11 +34,11 @@ logging.basicConfig(
 
 # Duplicate, invalid missions. Do not save to the database
 INVALID_MISSIONS = [
-        "560d4c45-dc45-4e19-bdb3-e4e15021728a",  # exp_2022_10_07_15 Saturn A with timestamp in 03/2022
-        "a48f475f-40b0-46b9-8284-0db267dddb67",  # exp_2022_10_07_15 Saturn A with small duration
-        "171a8713-a554-4d8e-a4b1-3ec1b728d0a2",  # exp_2023_02_07_14 Hands-On Training with small duration
-        "9cde1985-1179-4aac-8b67-1fc60ed65243"  # exp_2023_02_10_10 Hands-On Training with small duration
-    ]
+    "560d4c45-dc45-4e19-bdb3-e4e15021728a",  # exp_2022_10_07_15 Saturn A with timestamp in 03/2022
+    "a48f475f-40b0-46b9-8284-0db267dddb67",  # exp_2022_10_07_15 Saturn A with small duration
+    "171a8713-a554-4d8e-a4b1-3ec1b728d0a2",  # exp_2023_02_07_14 Hands-On Training with small duration
+    "9cde1985-1179-4aac-8b67-1fc60ed65243"  # exp_2023_02_10_10 Hands-On Training with small duration
+]
 
 
 def update_key_messages_dict(message, key_messages):
@@ -437,8 +438,8 @@ def process_directory_v2(group_session):
                 else:
                     error("[MISSING DATA]: No scoreboard messages found!")
 
-                start_timestamp_lsl = str(stream["time_stamps"][messages[0][0]])
-                stop_timestamp_lsl = str(stream["time_stamps"][messages[-1][0]])
+                start_timestamp_lsl = stream["time_stamps"][messages[0][0]]
+                stop_timestamp_lsl = stream["time_stamps"][messages[-1][0]]
 
                 if trial_id in INVALID_MISSIONS:
                     error(f"[ANOMALY] Skipping {trial_id} as it is a duplicate not removed by the deduplicate logic.")
@@ -448,9 +449,9 @@ def process_directory_v2(group_session):
                         id=trial_id,
                         name=mission,
                         start_timestamp_unix=start_timestamp_lsl,
-                        start_timestamp_iso8601=convert_iso8601_timestamp_to_unix(start_timestamp_lsl),
+                        start_timestamp_iso8601=convert_unix_timestamp_to_iso8601(start_timestamp_lsl),
                         stop_timestamp_unix=stop_timestamp_lsl,
-                        stop_timestamp_iso8601=convert_iso8601_timestamp_to_unix(stop_timestamp_lsl),
+                        stop_timestamp_iso8601=convert_unix_timestamp_to_iso8601(stop_timestamp_lsl),
                         final_team_score=final_team_score,
                         testbed_version=testbed_version,
                     )
