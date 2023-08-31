@@ -46,7 +46,7 @@ class MinecraftTestbedMessage(Base):
 
     group_session_id: Mapped[str] = mapped_column("group_session", Text, ForeignKey("group_session.id"),
                                                   primary_key=True)
-    mission_id: Mapped[str] = mapped_column("mission", Text, ForeignKey("mission.id"), primary_key=True)
+    mission_id: Mapped[str] = mapped_column("mission", Text, ForeignKey("minecraft_mission.id"), primary_key=True)
     topic: Mapped[str] = mapped_column(Text, primary_key=True)
     timestamp_unix: Mapped[str] = mapped_column(Text, primary_key=True)
     timestamp_iso8601: Mapped[str] = mapped_column(Text)
