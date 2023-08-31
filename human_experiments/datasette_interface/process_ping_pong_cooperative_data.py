@@ -78,8 +78,6 @@ def process_cooperative_csv_files(csv_file, group_session, participants):
                 player_2_y,
                 player_3_x,
                 player_3_y,
-                ai_x,
-                ai_y,
             ) = row.iloc[-9:-1]
             ai_x = None
             ai_y = None
