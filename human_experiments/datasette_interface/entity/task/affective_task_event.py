@@ -19,9 +19,9 @@ class AffectiveTaskEvent(Base):
     timestamp_unix: Mapped[str] = mapped_column(Text, primary_key=True)
     timestamp_iso8601: Mapped[str] = mapped_column(Text)
     event_type: Mapped[str] = mapped_column(Text)
-    image_path: Optional[Mapped[str]] = mapped_column(Text)
-    arousal_score: Optional[Mapped[int]] = mapped_column(Integer)
-    valence_score: Optional[Mapped[int]] = mapped_column(Integer)
+    image_path: Mapped[Optional[str]] = mapped_column(Text)
+    arousal_score: Mapped[Optional[int]] = mapped_column(Integer)
+    valence_score: Mapped[Optional[int]] = mapped_column(Integer)
 
     def __init__(self, group_session_id: str, participant_id: int, task_type: str, timestamp_unix: str,
                  timestamp_iso8601: str, event_type: str, image_path: str, arousal_score: int, valence_score: int):
