@@ -23,7 +23,7 @@ from utils import (
 )
 
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,
     handlers=(
         logging.FileHandler(
             filename=f"/space/{USER}/tomcat/build_ping_pong_cooperative_task_table.log",
