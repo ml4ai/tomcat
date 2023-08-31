@@ -17,10 +17,10 @@ class FingerTappingTaskObservation(Base):
     timestamp_unix: Mapped[str] = mapped_column(Text, primary_key=True)
     timestamp_iso8601: Mapped[str] = mapped_column(Text)
     event_type: Mapped[str] = mapped_column(Text)
-    countdown_timer: Mapped[int] = mapped_column(Integer)
-    lion_spacebar_pressed: Mapped[int] = mapped_column(Integer)
-    tiger_spacebar_pressed: Mapped[int] = mapped_column(Integer)
-    leopard_spacebar_pressed: Mapped[int] = mapped_column(Integer)
+    countdown_timer: Mapped[Optional[int]] = mapped_column(Integer)
+    lion_spacebar_pressed: Mapped[Optional[int]] = mapped_column(Integer)
+    tiger_spacebar_pressed: Mapped[Optional[int]] = mapped_column(Integer)
+    leopard_spacebar_pressed: Mapped[Optional[int]] = mapped_column(Integer)
 
     def __init__(self, group_session_id: str, timestamp_unix: str, timestamp_iso8601: str, event_type: str,
                  countdown_timer: int, lion_spacebar_pressed: int, tiger_spacebar_pressed: int,
