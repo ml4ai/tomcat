@@ -465,7 +465,7 @@ def process_directory_v2(group_session):
                             topic=message.pop("topic"),
                             message=json.dumps(message),
                         )
-                        for message in messages
+                        for i, message in messages
                     ])
 
     return minecraft_missions, minecraft_testbed_messages
