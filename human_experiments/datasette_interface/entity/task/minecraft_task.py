@@ -1,5 +1,6 @@
 from typing import Any
 from typing import Dict
+from typing import Optional
 
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
@@ -21,7 +22,7 @@ class MinecraftMission(Base):
     start_timestamp_iso8601: Mapped[str] = mapped_column(Text)
     stop_timestamp_unix: Mapped[str] = mapped_column(Text)
     stop_timestamp_iso8601: Mapped[str] = mapped_column(Text)
-    final_team_score: Mapped[int] = mapped_column(Integer)
+    final_team_score: Mapped[Optional[int]] = mapped_column(Integer)
     testbed_version: Mapped[str] = mapped_column(Text)
 
     def __init__(self, id: str, group_session_id: str, name: str, start_timestamp_unix: str,
