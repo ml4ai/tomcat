@@ -488,13 +488,12 @@ def process_minecraft_data(database_engine):
                 sorted(directories_to_process), unit="directories"
         ):
             if not is_directory_with_unified_xdf_files(group_session):
-                pass
-                # missions, messages = process_directory_v1(group_session)
+                missions, messages = process_directory_v1(group_session)
             else:
                 missions, messages = process_directory_v2(group_session)
 
-                minecraft_missions.extend(missions)
-                testbed_messages.extend(messages)
+            minecraft_missions.extend(missions)
+            testbed_messages.extend(messages)
 
         with Session(database_engine) as database_session:
             info("Adding affective task events to the database.")
