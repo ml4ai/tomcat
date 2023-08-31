@@ -30,7 +30,13 @@ TABLES = [
     "base",
     "rest_state",
     "affective",
-    "finger_tapping"
+    "finger_tapping",
+    "ping_pong_competitive",
+    "ping_pong_cooperative",
+    "testbed_message",
+    "fnirs",
+    "eeg",
+    "gaze"
 ]
 
 
@@ -53,6 +59,24 @@ def recreate_tables(tables_to_recreate, database_engine):
             elif table == "finger_tapping":
                 info(f"Recreating finger tapping task table in {database_info}.")
                 recreate_finger_tapping_task_observation_table(database_engine)
+            elif table == "ping_pong_competitive":
+                info(f"Recreating ping-pong competitive table in {database_info}.")
+                # recreate_finger_tapping_task_observation_table(database_engine)
+            elif table == "ping_pong_cooperative":
+                info(f"Recreating ping-pong cooperative table in {database_info}.")
+                # recreate_finger_tapping_task_observation_table(database_engine)
+            elif table == "testbed_message":
+                info(f"Recreating testbed message table in {database_info}.")
+                # recreate_finger_tapping_task_observation_table(database_engine)
+            elif table == "fnirs":
+                info(f"Recreating fnirs table in {database_info}.")
+                # recreate_finger_tapping_task_observation_table(database_engine)
+            elif table == "eeg":
+                info(f"Recreating eeg table in {database_info}.")
+                # recreate_finger_tapping_task_observation_table(database_engine)
+            elif table == "gaze":
+                info(f"Recreating gaze table in {database_info}.")
+                # recreate_finger_tapping_task_observation_table(database_engine)
 
 
 def populate_tables(tables_to_process, database_engine):
@@ -65,6 +89,24 @@ def populate_tables(tables_to_process, database_engine):
             process_affective_task_data(database_engine)
         elif table == "finger_tapping":
             process_finger_tapping_task_data(database_engine)
+        elif table == "ping_pong_competitive":
+            pass
+            # process_finger_tapping_task_data(database_engine)
+        elif table == "ping_pong_cooperative":
+            pass
+            # process_finger_tapping_task_data(database_engine)
+        elif table == "testbed_message":
+            pass
+            # process_finger_tapping_task_data(database_engine)
+        elif table == "fnirs":
+            pass
+            # process_finger_tapping_task_data(database_engine)
+        elif table == "eeg":
+            pass
+            # process_finger_tapping_task_data(database_engine)
+        elif table == "gaze":
+            pass
+            # process_finger_tapping_task_data(database_engine)
 
 
 if __name__ == "__main__":
@@ -87,6 +129,14 @@ if __name__ == "__main__":
     parser.add_argument("--no_rest_state", action='store_true', help="Do not reprocess rest state table.")
     parser.add_argument("--no_affective", action='store_true', help="Do not reprocess affective task table.")
     parser.add_argument("--no_finger_tapping", action='store_true', help="Do not reprocess finger tapping task table.")
+    parser.add_argument("--no_ping_pong_comp", action='store_true',
+                        help="Do not reprocess ping-pong competitive table.")
+    parser.add_argument("--no_ping_pong_coop", action='store_true',
+                        help="Do not reprocess ping-pong cooperative table.")
+    parser.add_argument("--no_testbed", action='store_true', help="Do not reprocess testbed message table.")
+    parser.add_argument("--no_fnirs", action='store_true', help="Do not reprocess fnirs table.")
+    parser.add_argument("--no_eeg", action='store_true', help="Do not reprocess eeg table.")
+    parser.add_argument("--no_gaze", action='store_true', help="Do not reprocess gaze table.")
 
     args = parser.parse_args()
 
@@ -103,6 +153,18 @@ if __name__ == "__main__":
         tables.remove("affective")
     if args.no_finger_tapping:
         tables.remove("finger_tapping")
+    if args.no_ping_pong_comp:
+        tables.remove("ping_pong_competitive")
+    if args.no_ping_pong_coop:
+        tables.remove("ping_pong_cooperative")
+    if args.no_testbed:
+        tables.remove("testbed_message")
+    if args.no_fnirs:
+        tables.remove("fnirs")
+    if args.no_eeg:
+        tables.remove("eeg")
+    if args.no_gaze:
+        tables.remove("gaze")
 
     recreate_tables(tables, engine)
     populate_tables(tables, engine)
