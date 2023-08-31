@@ -64,11 +64,7 @@ def process_cooperative_csv_files(csv_file, group_session, participants):
                 seconds = 120
 
         if group_session == "exp_2023_01_31_14":
-            info(
-                "[CORRECTION]: For the cooperative ping-pong task in the exp_2023_01_31_14"
-                " session, the CSV file has no columns indicating the AI player's paddle position."
-                " We set the AI player's paddle positions to NULL in the database for this experiment."
-            )
+            # There is no AI player's paddle position in the .csv file for this experiment. Set it to NULL.
             (
                 ball_x,
                 ball_y,
@@ -127,6 +123,14 @@ def process_directory_v1(group_session, participants):
     with cd(f"{group_session}/baseline_tasks/ping_pong"):
         cooperative_csv_files = glob("cooperative*.csv")
         assert len(cooperative_csv_files) == 1
+
+        if group_session == "exp_2023_01_31_14":
+            info(
+                "[CORRECTION]: For the cooperative ping-pong task in the exp_2023_01_31_14"
+                " session, the CSV file has no columns indicating the AI player's paddle position."
+                " We set the AI player's paddle positions to NULL in the database for this experiment."
+            )
+
         return process_cooperative_csv_files(cooperative_csv_files[0], group_session, participants)
 
 
@@ -161,6 +165,19 @@ def process_directory_v2(group_session, participants):
                     current_started_value != previous_started_value
                 ) and (seconds == 110):
                     seconds = 120
+
+            (
+                ball_x,
+                ball_y,
+                player_1_x,
+                player_1_y,
+                player_2_x,
+                player_2_y,
+                player_3_x,
+                player_3_y,
+                ai_x,
+                ai_y,
+            ) = list(data.values())[-11:-1]
 
             ping_pong_observation = PingPongCooperativeTaskObservation(
                 group_session_id=group_session,
