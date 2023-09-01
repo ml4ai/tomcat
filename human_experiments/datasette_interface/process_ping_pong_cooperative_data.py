@@ -119,7 +119,6 @@ def process_cooperative_csv_files(csv_file, group_session, participants):
 
 
 def process_directory_v1(group_session, participants):
-    debug(f"Processing directory {group_session}")
     with cd(f"{group_session}/baseline_tasks/ping_pong"):
         cooperative_csv_files = glob("cooperative*.csv")
         assert len(cooperative_csv_files) == 1
@@ -136,8 +135,6 @@ def process_directory_v1(group_session, participants):
 
 def process_directory_v2(group_session, participants):
     """Process directory assuming unified XDF files."""
-    debug(f"Processing directory {group_session}")
-
     with cd(f"{group_session}/lsl"):
         streams, header = pyxdf.load_xdf(
             "block_1.xdf", select_streams=[{"name": "PingPong_cooperative_0"}]
@@ -227,11 +224,11 @@ def process_ping_pong_cooperative_task_data(database_engine):
             if not should_ignore_directory(directory)
         ]
 
-        ping_pong_observations = []
         with Session(database_engine) as database_session:
             for group_session in tqdm(
                 sorted(directories_to_process), unit="directories"
             ):
+                info(f"Processing directory {group_session}")
                 # Get real participant IDs for the task
                 participants = {}
                 for station in ["lion", "tiger", "leopard"]:
@@ -241,13 +238,13 @@ def process_ping_pong_cooperative_task_data(database_engine):
                         station_id=station).first()[0]
                     participants[station] = participant
                 if not is_directory_with_unified_xdf_files(group_session):
-                    ping_pong_observations.extend(process_directory_v1(group_session, participants))
+                    ping_pong_observations = process_directory_v1(group_session, participants)
                 else:
-                    ping_pong_observations.extend(process_directory_v2(group_session, participants))
+                    ping_pong_observations = process_directory_v2(group_session, participants)
 
-            info("Adding ping-pong cooperative observations to the database.")
-            database_session.add_all(ping_pong_observations)
-            database_session.commit()
+                if len(ping_pong_observations) > 0:
+                    database_session.add_all(ping_pong_observations)
+                    database_session.commit()
 
 
 def recreate_ping_pong_cooperative_observation_tables(database_engine):

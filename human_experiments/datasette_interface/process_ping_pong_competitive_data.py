@@ -237,9 +237,9 @@ def process_ping_pong_competitive_task_data(database_engine):
                 else:
                     ping_pong_observations = process_directory_v2(group_session, participants)
 
-            if len(ping_pong_observations) > 0:
-                database_session.add_all(ping_pong_observations)
-                database_session.commit()
+                if len(ping_pong_observations) > 0:
+                    database_session.add_all(ping_pong_observations)
+                    database_session.commit()
 
 
 def recreate_ping_pong_competitive_observation_tables(database_engine):
