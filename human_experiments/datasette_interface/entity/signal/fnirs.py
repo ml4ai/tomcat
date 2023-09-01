@@ -18,9 +18,9 @@ class FNIRSRaw(Base):
     group_session_id: Mapped[str] = mapped_column("group_session", Text, ForeignKey("group_session.id"),
                                                   primary_key=True)
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    station_id: Mapped[str] = mapped_column("station", Text, ForeignKey("station.id"), primary_key=True)
+    participant_id: Mapped[int] = mapped_column("participant", Integer, ForeignKey("participant.id"), primary_key=True)
     task_id: Mapped[Optional[str]] = mapped_column("task", Text, ForeignKey("task.id"))
-    station_id: Mapped[str] = mapped_column("station", Text, ForeignKey("station.id"))
-    participant_id: Mapped[int] = mapped_column("participant", Integer, ForeignKey("participant.id"))
     timestamp_unix: Mapped[str] = mapped_column(Text)
     timestamp_iso8601: Mapped[str] = mapped_column(Text)
     s1_d1_hbo: Mapped[float] = mapped_column(REAL)

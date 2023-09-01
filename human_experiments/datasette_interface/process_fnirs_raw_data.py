@@ -67,7 +67,6 @@ def get_signals(stream, group_session, station):
     participant_id = -1
     channels = [channel["custom_name"][0].lower().replace("-", "_") + channel["type"][0][-4:].lower() for channel in
                 stream["info"]["desc"][0]["channels"][0]["channel"][41:]]
-    print(channels)
     signals = [
         FNIRSRaw(group_session_id=group_session,
                  id=i,
