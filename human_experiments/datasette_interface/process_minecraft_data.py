@@ -240,8 +240,6 @@ def collect_files_to_process(metadata_files):
 def process_directory_v1(group_session):
     """Process directory assuming it is from before we had the unified XDF files."""
 
-    debug(f"Processing directory {group_session}")
-
     minecraft_missions = []
     testbed_messages = []
     try:
@@ -484,26 +482,22 @@ def process_minecraft_data(database_engine):
             if not should_ignore_directory(directory)
         ]
 
-        minecraft_missions = []
-        testbed_messages = []
-        for group_session in tqdm(
-                sorted(directories_to_process), unit="directories"
-        ):
-            if not is_directory_with_unified_xdf_files(group_session):
-                missions, messages = process_directory_v1(group_session)
-            else:
-                missions, messages = process_directory_v2(group_session)
-
-            minecraft_missions.extend(missions)
-            testbed_messages.extend(messages)
-
         with Session(database_engine) as database_session:
-            info("Adding minecraft data to the database.")
-            database_session.add_all(minecraft_missions)
-            # Flush to avoid foreign key error in the messages related to the mission.
-            database_session.flush()
-            database_session.add_all(testbed_messages)
-            database_session.commit()
+            for group_session in tqdm(
+                    sorted(directories_to_process), unit="directories"
+            ):
+                info(f"Processing directory {group_session}")
+
+                if not is_directory_with_unified_xdf_files(group_session):
+                    missions, messages = process_directory_v1(group_session)
+                else:
+                    missions, messages = process_directory_v2(group_session)
+
+                database_session.add_all(missions)
+                # Flush to avoid foreign key error in the messages related to the mission.
+                database_session.flush()
+                database_session.add_all(messages)
+                database_session.commit()
 
 
 def recreate_minecraft_tables(database_engine):
