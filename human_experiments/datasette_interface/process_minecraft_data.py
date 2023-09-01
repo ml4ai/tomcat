@@ -497,7 +497,8 @@ def process_minecraft_data(database_engine):
                 # Flush to avoid foreign key error in the messages related to the mission.
                 database_session.flush()
                 database_session.add_all(messages)
-                database_session.commit()
+
+            database_session.commit()
 
 
 def recreate_minecraft_tables(database_engine):
