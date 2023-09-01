@@ -65,7 +65,7 @@ def get_signals(stream, group_session, station):
     # replaced by an experimenter partway through the group session.
     task = None
     participant_id = -1
-    channels = stream["info"]["desc"][0]["channels"][0]["channel"][41:]
+    channels = [channel["custom_name"].lower() for channel in stream["info"]["desc"][0]["channels"][0]["channel"][41:]]
     print(channels)
     signals = [
         FNIRSRaw(group_session_id=group_session,
