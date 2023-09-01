@@ -8,6 +8,8 @@ from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
 from sqlalchemy import JSON
 from sqlalchemy import Text
+from sqlalchemy import func
+from sqlalchemy.orm import Session
 
 from entity.base.base import Base
 
@@ -45,16 +47,24 @@ class MinecraftTestbedMessage(Base):
     __tablename__ = "minecraft_testbed_message"
 
     mission_id: Mapped[str] = mapped_column("mission", Text, ForeignKey("minecraft_mission.id"), primary_key=True)
-    topic: Mapped[str] = mapped_column(Text, primary_key=True)
-    timestamp_unix: Mapped[str] = mapped_column(Text, primary_key=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    topic: Mapped[str] = mapped_column(Text)
+    timestamp_unix: Mapped[str] = mapped_column(Text)
     timestamp_iso8601: Mapped[str] = mapped_column(Text)
     message: Mapped[Dict[str, Any]] = mapped_column(JSON)
 
-    def __init__(self, mission_id: str, topic: str, timestamp_unix: str, timestamp_iso8601: str, message: str):
+    def __init__(self, mission_id: str, id: int, topic: str, timestamp_unix: str, timestamp_iso8601: str, message: str):
         super().__init__()
 
         self.mission_id = mission_id
+        self.id = id
         self.topic = topic
         self.timestamp_unix = timestamp_unix
         self.timestamp_iso8601 = timestamp_iso8601
         self.message = message
+
+    @staticmethod
+    def get_next_id(database_engine, mission_id):
+        with Session(database_engine) as session:
+            max_id = session.query(func.max(MinecraftTestbedMessage.id)).filter_by(mission_id = mission_id).scalar()
+            return max_id + 1 if max_id is not None else 1

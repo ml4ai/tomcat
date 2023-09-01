@@ -337,12 +337,13 @@ def process_metadata_file(filepath, group_session, file_to_key_messages_mapping)
     minecraft_testbed_messages = [
         MinecraftTestbedMessage(
             mission_id=trial_id,
+            id=i,
             timestamp_unix=message["header"]["timestamp"],
             timestamp_iso8601=convert_iso8601_timestamp_to_unix(message["header"]["timestamp"]),
             topic=message.pop("topic"),
             message=json.dumps(message),
         )
-        for message in messages_to_insert_into_db
+        for i, message in enumerate(messages_to_insert_into_db)
     ]
 
     return minecraft_mission, minecraft_testbed_messages
@@ -461,6 +462,7 @@ def process_directory_v2(group_session):
                     minecraft_testbed_messages.extend([
                         MinecraftTestbedMessage(
                             mission_id=trial_id,
+                            id=i,
                             timestamp_unix=stream["time_stamps"][i],
                             timestamp_iso8601=convert_unix_timestamp_to_iso8601(stream["time_stamps"][i]),
                             topic=message.pop("topic"),
