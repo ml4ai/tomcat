@@ -36,8 +36,6 @@ logging.basicConfig(
 
 
 def process_directory_v1(group_session, participants):
-    info(f"Processing directory {group_session}")
-
     affective_task_events = []
     with cd(f"{group_session}/baseline_tasks/affective"):
         info("Processing individual affective task files.")
@@ -281,11 +279,11 @@ def process_affective_task_data(database_engine):
             if not should_ignore_directory(directory)
         ]
 
-        affective_task_events = []
         with Session(database_engine) as database_session:
             for group_session in tqdm(
                     sorted(directories_to_process), unit="directories"
             ):
+                info(f"Processing directory {group_session}")
                 # Get real participant IDs for the task
                 participants = {}
                 for station in ["lion", "tiger", "leopard"]:
@@ -295,13 +293,13 @@ def process_affective_task_data(database_engine):
                         DataValidity.station_id == station).first()[0]
                     participants[station] = participant
                 if not is_directory_with_unified_xdf_files(group_session):
-                    affective_task_events.extend(process_directory_v1(group_session, participants))
+                    affective_task_events = process_directory_v1(group_session, participants)
                 else:
-                    affective_task_events.extend(process_directory_v2(group_session, participants))
+                    affective_task_events = process_directory_v2(group_session, participants)
 
-        info("Adding affective task events to the database.")
-        database_session.add_all(affective_task_events)
-        database_session.commit()
+                if len(affective_task_events) > 0:
+                    database_session.add_all(affective_task_events)
+                    database_session.commit()
 
 
 def recreate_affective_task_event_tables(database_engine):
