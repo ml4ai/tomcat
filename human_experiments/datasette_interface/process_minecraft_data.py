@@ -498,7 +498,7 @@ def process_minecraft_data(database_engine):
             testbed_messages.extend(messages)
 
         with Session(database_engine) as database_session:
-            info("Adding affective task events to the database.")
+            info("Adding minecraft data to the database.")
             database_session.add_all(minecraft_missions)
             # Flush to avoid foreign key error in the messages related to the mission.
             database_session.flush()
