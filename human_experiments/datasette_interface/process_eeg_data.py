@@ -1,12 +1,19 @@
 #!/usr/bin/env python
 
+import logging
 import os
-import sys
 import sqlite3
+import sys
+from logging import info, error
+from multiprocessing import Pool
 
-import pandas as pd
 import numpy as np
+import pandas as pd
+import pyxdf
+from tqdm import tqdm
+
 from common import extract_signal_xdf
+from config import DB_PATH, USER, NUM_PROCESSES
 from utils import (
     should_ignore_directory,
     convert_unix_timestamp_to_iso8601,
@@ -14,12 +21,6 @@ from utils import (
     is_directory_with_white_noise_eeg_channels,
     is_directory_ignore_eeg_channels
 )
-import pyxdf
-import logging
-from logging import info, error
-from config import DB_PATH, USER, NUM_PROCESSES
-from tqdm import tqdm
-from multiprocessing import Pool
 
 logging.basicConfig(
     level=logging.INFO,
@@ -566,6 +567,27 @@ def remove_invalid_rows_df(signal_df: pd.DataFrame,
             signal_df = signal_df.drop(index=signal_df[condition].index)
 
 
+def separate_eeg_ekg_gsr(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    shared_columns = [
+        "group_session",
+        "task",
+        "station",
+        "participant",
+        "timestamp_unix",
+        "timestamp_iso8601"
+    ]
+    ekg_channel = "AUX_EKG"
+    gsr_channel = "AUX_GSR"
+    eeg_columns = list(set(df.columns) - set(shared_columns) - {ekg_channel, gsr_channel})
+
+    # Create separate DataFrames for EEG, EKG, and GSR
+    eeg_df = df[shared_columns + eeg_columns]
+    ekg_df = df[shared_columns + [ekg_channel]]
+    gsr_df = df[shared_columns + [gsr_channel]]
+
+    return eeg_df, ekg_df, gsr_df
+
+
 def process_experiment(experiment: dict[str, any]) -> dict[str, any]:
     exp_data = {
         "experiment_name": experiment["experiment_name"]
@@ -586,8 +608,7 @@ def process_experiment(experiment: dict[str, any]) -> dict[str, any]:
     db_connection = sqlite3.connect(DB_PATH)
     label_df(exp_signal, db_connection, experiment["experiment_name"])
     remove_invalid_rows_df(exp_signal, db_connection, experiment["experiment_name"])
-
-    exp_data["signals"] = exp_signal
+    exp_data["eeg"], exp_data["ekg"], exp_data["gsr"] = separate_eeg_ekg_gsr(exp_signal)
 
     return exp_data
 
@@ -623,14 +644,24 @@ def write_experiment_results_to_csv(exp_data: list[dict[str, any]],
         session = exp["experiment_name"]
         pbar.set_description(f'Processing {session}')
 
-        if "signals" in exp:
-            exp["signals"].to_csv(f"{output_dir}/{session}.csv", index=False)
+        if "eeg" in exp:
+            output_signal_dir = f"{output_dir}/eeg_raw"
+            os.makedirs(output_signal_dir, exist_ok=True)
+            exp["eeg"].to_csv(f"{output_signal_dir}/{session}.csv", index=False)
+        if "ekg" in exp:
+            output_signal_dir = f"{output_dir}/ekg_raw"
+            os.makedirs(output_signal_dir, exist_ok=True)
+            exp["ekg"].to_csv(f"{output_signal_dir}/{session}.csv", index=False)
+        if "gsr" in exp:
+            output_signal_dir = f"{output_dir}/gsr_raw"
+            os.makedirs(output_signal_dir, exist_ok=True)
+            exp["gsr"].to_csv(f"{output_signal_dir}/{session}.csv", index=False)
 
 
 if __name__ == "__main__":
     info("Starting building EEG table.")
 
-    EEG_channel_names = [
+    EEG_EKG_GSR_channel_names = [
         "AFF1h",
         "AFF5h",
         "F7",
@@ -685,20 +716,19 @@ if __name__ == "__main__":
     # recreate_eeg_table(EEG_channel_names)
     # create_indices()
 
-    print("Read EEG raw data")
+    print("Read EEG-EKG-GSR raw data")
     experiments_info = prepare_experiments_info(
         raw_data_path="/tomcat/data/raw/LangLab/experiments/study_3_pilot/group",
         exp_info_path="/space/eduong/exp_info_v2/exp_info.csv",
         db_path=DB_PATH,
-        eeg_channel_names=EEG_channel_names,
+        eeg_channel_names=EEG_EKG_GSR_channel_names,
         white_noise_eeg_channels=white_noise_EEG_channels
     )
 
     experiments_data = multiprocess_experiments(experiments_info)
 
     print("Write EEG data.")
-    csv_output_path = f"/space/{USER}/eeg_raw/"
-    os.makedirs(csv_output_path, exist_ok=True)
+    csv_output_path = f"/space/{USER}/"
     write_experiment_results_to_csv(experiments_data, csv_output_path)
 
     # print("Write EEG data to DB.")

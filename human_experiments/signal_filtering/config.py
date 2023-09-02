@@ -3,7 +3,11 @@ import os
 USER = os.getenv("USER")
 DB_PATH = f"/space/{USER}/tomcat/tomcat.db"
 EEG_RAW_PATH = f"/space/{USER}/eeg_raw"
+EKG_RAW_PATH = f"/space/{USER}/ekg_raw"
+GSR_RAW_PATH = f"/space/{USER}/gsr_raw"
 EEG_FILTERED_PATH = f"/space/{USER}/eeg_filtered"
+EKG_FILTERED_PATH = f"/space/{USER}/ekg_filtered"
+GSR_FILTERED_PATH = f"/space/{USER}/gsr_filtered"
 FNIRS_FILTERED_PATH = f"/space/{USER}/fnirs_filtered"
 NUM_PROCESSES = 40
 
