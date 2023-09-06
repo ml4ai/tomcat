@@ -178,6 +178,7 @@ def label_data(database_engine, override):
                                                DataValidity.station_id,
                                                DataValidity.task_id).filter_by(modality_id="fnirs").all()
 
+        last_group_session_labeled = None
         for row in tqdm(validity_rows):
             group_session, participant_id, station, task = row
 
@@ -185,7 +186,12 @@ def label_data(database_engine, override):
                 info(f"All fNIRS entries for {group_session} are labeled in the database. Skipping group session.")
                 continue
 
-            info(f"Labeling {group_session}")
+            if group_session != last_group_session_labeled:
+                info(f"Labeling {group_session}")
+                last_group_session_labeled = group_session
+                if last_group_session_labeled:
+                    # Commit per group session
+                    database_session.commit()
 
             label_signals(
                 signal_modality_class=FNIRSRaw,
