@@ -64,7 +64,7 @@ def insert_raw_unlabeled_data(database_engine, override):
                     database_session.commit()
 
 
-def get_signals(stream, group_session, station):
+def get_signals(stream, group_session, station, initial_id):
     # We insert a participant ID of -1 since we don't actually know for sure
     # who the participant is - we will need to consult the data validity table
     # to learn the ID, since the originally scheduled participant might be
@@ -73,9 +73,10 @@ def get_signals(stream, group_session, station):
     participant_id = -1
     channels = [channel["custom_name"][0].lower().replace("-", "_") + channel["type"][0][-4:].lower() for channel in
                 stream["info"]["desc"][0]["channels"][0]["channel"][41:]]
+
     signals = [
         FNIRSRaw(group_session_id=group_session,
-                 id=i,
+                 id=i + initial_id,
                  task_id=task,
                  station_id=station,
                  participant_id=participant_id,
@@ -107,7 +108,7 @@ def process_directory_v1(group_session):
                 continue
 
             stream = streams[0]
-            signals.extend(get_signals(stream, group_session, station))
+            signals.extend(get_signals(stream, group_session, station, 0))
 
     return signals
 
@@ -116,6 +117,7 @@ def process_directory_v2(group_session):
     """Process directory assuming unified XDF files."""
     signals = []
     with cd(f"{group_session}/lsl"):
+        max_ids = {}
         for xdf_file in ("block_1.xdf", "block_2.xdf"):
             try:
                 streams, header = pyxdf.load_xdf(
@@ -130,8 +132,14 @@ def process_directory_v2(group_session):
                 continue
 
             for stream in streams:
+                # For v2, the signals are split in two files (block1 and 2). When processing block2 entries,
+                # we need to make sure we start the ID taking into account the last ID in the block 1 files for the same
+                # station, otherwise we get a duplicate key error during insertion.
                 station = stream["info"]["name"][0].split("_")[0]
-                signals.extend(get_signals(stream, group_session, station))
+                next_id = max_ids.get(station, -1) + 1
+                tmp = get_signals(stream, group_session, station, next_id)
+                signals.extend(tmp)
+                max_ids[station] = tmp[-1].id
 
     return signals
 
