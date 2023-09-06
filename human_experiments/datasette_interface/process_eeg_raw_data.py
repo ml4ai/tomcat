@@ -72,22 +72,21 @@ def get_signals(stream, group_session, station, initial_id):
     task = None
     participant_id = -1
 
-    print(stream["info"]["desc"])
+    print(stream["info"]["desc"][0]["channels"][0]["channel"])
 
-    channels = [channel["custom_name"][0].lower().replace("-", "_") + channel["type"][0][-4:].lower() for channel in
-                stream["info"]["desc"][0]["channels"][0]["channel"]]
+    channels = [channel["custom_name"][0].lower() for channel in stream["info"]["desc"][0]["channels"][0]["channel"]]
 
     print(channels)
 
     signals = [
         EEGRaw(group_session_id=group_session,
-                 id=i + initial_id,
-                 task_id=task,
-                 station_id=station,
-                 participant_id=participant_id,
-                 timestamp_unix=timestamp,
-                 timestamp_iso8601=convert_unix_timestamp_to_iso8601(timestamp),
-                 **{key: value for key, value in zip(channels, list(map(str, stream["time_series"][i])))})
+               id=i + initial_id,
+               task_id=task,
+               station_id=station,
+               participant_id=participant_id,
+               timestamp_unix=timestamp,
+               timestamp_iso8601=convert_unix_timestamp_to_iso8601(timestamp),
+               **{key: value for key, value in zip(channels, list(map(str, stream["time_series"][i])))})
         for i, timestamp in enumerate(stream["time_stamps"])]
 
     return signals
