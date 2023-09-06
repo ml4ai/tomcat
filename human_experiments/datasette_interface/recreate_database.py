@@ -108,7 +108,7 @@ def populate_tables(tables_to_process, database_engine, override):
         elif table == "eeg":
             process_eeg_raw_data(database_engine, override)
         elif table == "gaze":
-            process_gaze_raw_data()(database_engine)
+            process_gaze_raw_data()(database_engine, override)
 
 
 if __name__ == "__main__":
