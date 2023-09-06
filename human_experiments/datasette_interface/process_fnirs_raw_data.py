@@ -184,7 +184,7 @@ def label_data(database_engine, override):
             group_session, participant_id, station, task = row
 
             if not override and group_session in processed_group_sessions:
-                info(f"All fNIRS entries for {group_session} are labeled in the database. Skipping group session.")
+                # info(f"All fNIRS entries for {group_session} are labeled in the database. Skipping group session.")
                 continue
 
             info(f"Labeling {group_session}")
