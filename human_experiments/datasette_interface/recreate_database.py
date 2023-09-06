@@ -85,7 +85,7 @@ def recreate_tables(tables_to_recreate, database_engine):
                 # recreate_finger_tapping_task_observation_table(database_engine)
 
 
-def populate_tables(tables_to_process, database_engine):
+def populate_tables(tables_to_process, database_engine, override):
     for table in tables_to_process:
         if table == "base":
             process_base_tables(database_engine)
@@ -102,7 +102,7 @@ def populate_tables(tables_to_process, database_engine):
         elif table == "minecraft":
             process_minecraft_data(database_engine)
         elif table == "fnirs":
-            process_fnirs_raw_data(database_engine)
+            process_fnirs_raw_data(database_engine, override)
         elif table == "eeg":
             pass
             # process_finger_tapping_task_data(database_engine)
@@ -127,6 +127,10 @@ if __name__ == "__main__":
     parser.add_argument("--db_name", type=str, required=False, default=f"{USER}_tomcat",
                         help="Database name. Make sure the database was previously created before running this script.")
     parser.add_argument("--db_passwd", type=str, required=True, help="Password to connect to the database.")
+    parser.add_argument("--override", action='store_true',
+                        help="Do not reprocess data for group sessions already saved. This is performed independently"
+                             " per data modality. For signals, this is performed independently for the raw"
+                             " entries and labeling. Tables are recreated only if override is true.")
     parser.add_argument("--no_base", action='store_true', help="Do not recreate base tables.")
     parser.add_argument("--no_rest_state", action='store_true', help="Do not recreate rest state tables.")
     parser.add_argument("--no_affective", action='store_true', help="Do not recreate affective task tables.")
@@ -168,5 +172,9 @@ if __name__ == "__main__":
     if args.no_gaze:
         tables.remove("gaze")
 
-    recreate_tables(tables, engine)
-    populate_tables(tables, engine)
+    override = args.override is not None
+
+    if override:
+        recreate_tables(tables, engine)
+
+    populate_tables(tables, engine, override)

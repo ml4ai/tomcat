@@ -33,7 +33,7 @@ logging.basicConfig(
 )
 
 
-def insert_raw_unlabeled_data(database_engine):
+def insert_raw_unlabeled_data(database_engine, override):
     info(f"Inserting unlabeled data.")
     with cd("/tomcat/data/raw/LangLab/experiments/study_3_pilot/group"):
         directories_to_process = [
@@ -43,11 +43,16 @@ def insert_raw_unlabeled_data(database_engine):
         ]
 
         with Session(database_engine) as database_session:
+            processed_group_sessions = set(database_session.query(FNIRSRaw.group_session_id).distinct(FNIRSRaw.group_session_id).all())
+
             for group_session in tqdm(
                     sorted(directories_to_process), unit="directories"
             ):
-                info(f"Processing directory {group_session}")
+                if not override and group_session in processed_group_sessions:
+                    info(f"Found fNIRS data for {group_session}. Skipping group session.")
+                    continue
 
+                info(f"Processing directory {group_session}")
                 if not is_directory_with_unified_xdf_files(group_session):
                     signals = process_directory_v1(group_session)
                 else:
@@ -150,10 +155,12 @@ def create_indices(database_engine):
     idx_task.create(bind=database_engine)
 
 
-def label_data(database_engine):
+def label_data(database_engine, override):
     info("Labeling data")
 
     with Session(database_engine) as database_session:
+        processed_group_sessions = set(database_session.query(FNIRSRaw.group_session_id).distinct(FNIRSRaw.group_session_id).filter(FNIRSRaw.task_id is not None).all())
+
         validity_rows = database_session.query(DataValidity.group_session_id,
                                                DataValidity.participant_id,
                                                DataValidity.station_id,
@@ -161,6 +168,10 @@ def label_data(database_engine):
 
         for row in tqdm(validity_rows):
             group_session, participant_id, station, task = row
+
+            if not override and group_session in processed_group_sessions:
+                info(f"All fNIRS entries for {group_session} are labeled. Skipping group session.")
+                continue
 
             info(f"Labeling {group_session}")
 
@@ -200,11 +211,11 @@ def remove_invalid_data(database_engine):
         database_session.commit()
 
 
-def process_fnirs_raw_data(database_engine):
+def process_fnirs_raw_data(database_engine, override):
     info("Processing fNIRS data.")
-    insert_raw_unlabeled_data(database_engine)
+    insert_raw_unlabeled_data(database_engine, override)
     create_indices(database_engine)
-    label_data(database_engine)
+    label_data(database_engine, override)
     remove_invalid_data(database_engine)
 
 
