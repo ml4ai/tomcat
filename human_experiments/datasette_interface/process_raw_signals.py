@@ -90,6 +90,8 @@ def insert_raw_unlabeled_data(database_engine, override, signal_modality_class, 
         with Pool(processes=2) as pool:
             tqdm(pool.imap(process_experiment, group_sessions_to_process_in_parallel),
                           total=len(group_sessions_to_process_in_parallel))
+            pool.close()
+            pool.join()
 
 
 def get_signals(stream, group_session, station, initial_id, signal_modality_class, channel_from_xdf_parsing_fn):
