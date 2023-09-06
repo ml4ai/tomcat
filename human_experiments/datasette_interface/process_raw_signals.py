@@ -26,7 +26,7 @@ import sqlalchemy.pool
 
 def process_experiment(params):
     group_session = params["name"]
-    db_pool  = params["db_pool"]
+    db_pool = params["db_pool"]
 
     with Session(db_pool.connect()) as database_session:
         info(f"Processing directory {group_session}")
@@ -47,7 +47,6 @@ def process_experiment(params):
         if len(signals) > 0:
             database_session.add_all(signals)
             database_session.commit()
-
 
 
 def insert_raw_unlabeled_data(database_engine, override, signal_modality_class, modality_name, xdf_signal_type,
@@ -86,9 +85,10 @@ def insert_raw_unlabeled_data(database_engine, override, signal_modality_class, 
                     "station_from_xdf_v2_parsing_fn": station_from_xdf_v2_parsing_fn
                 })
 
+        info(f"Parsing experiments in parallel. Number of processes = {2}")
         with Pool(processes=2) as pool:
-            tqdm(pool.imap(process_experiment, group_sessions_to_process_in_parallel), total=len(group_sessions_to_process_in_parallel))
-
+            tqdm(pool.imap(process_experiment, group_sessions_to_process_in_parallel),
+                          total=len(group_sessions_to_process_in_parallel))
 
 
 def get_signals(stream, group_session, station, initial_id, signal_modality_class, channel_from_xdf_parsing_fn):
