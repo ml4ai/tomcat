@@ -23,28 +23,30 @@ from utils import (
 from multiprocessing import Pool
 import sqlalchemy.pool
 
+
 def process_experiment(params):
     group_session = params["name"]
+    db_pool  = params["db_pool"]
 
-    info(f"Processing directory {group_session}")
-    # if not is_directory_with_unified_xdf_files(group_session):
-    #     signals = process_directory_v1(group_session,
-    #                                    params["signal_modality_class"],
-    #                                    params["modality_name"],
-    #                                    params["xdf_signal_type"],
-    #                                    params["channel_from_xdf_parsing_fn"])
-    # else:
-    #     signals = process_directory_v2(group_session,
-    #                                    params["signal_modality_class"],
-    #                                    params["modality_name"],
-    #                                    params["xdf_signal_type"],
-    #                                    params["channel_from_xdf_parsing_fn"],
-    #                                    params["station_from_xdf_v2_parsing_fn"])
+    with Session(db_pool.connect()) as database_session:
+        info(f"Processing directory {group_session}")
+        if not is_directory_with_unified_xdf_files(group_session):
+            signals = process_directory_v1(group_session,
+                                           params["signal_modality_class"],
+                                           params["modality_name"],
+                                           params["xdf_signal_type"],
+                                           params["channel_from_xdf_parsing_fn"])
+        else:
+            signals = process_directory_v2(group_session,
+                                           params["signal_modality_class"],
+                                           params["modality_name"],
+                                           params["xdf_signal_type"],
+                                           params["channel_from_xdf_parsing_fn"],
+                                           params["station_from_xdf_v2_parsing_fn"])
 
-    # if len(signals) > 0:
-    #     database_session = params["database_session"]
-    #     database_session.add_all(signals)
-    #     database_session.commit()
+        if len(signals) > 0:
+            database_session.add_all(signals)
+            database_session.commit()
 
 
 
@@ -75,7 +77,7 @@ def insert_raw_unlabeled_data(database_engine, override, signal_modality_class, 
                     continue
 
                 group_sessions_to_process_in_parallel.append({
-                    "database_session": db_pool,
+                    "db_pool": db_pool,
                     "name": group_session,
                     "signal_modality_class": signal_modality_class,
                     "modality_name": modality_name,
