@@ -90,17 +90,17 @@ def populate_tables(tables_to_process, database_engine, override):
         if table == "base":
             process_base_tables(database_engine)
         elif table == "rest_state":
-            process_rest_state_task_data(database_engine)
+            process_rest_state_task_data(database_engine, override)
         elif table == "affective":
-            process_affective_task_data(database_engine)
+            process_affective_task_data(database_engine, override)
         elif table == "finger_tapping":
-            process_finger_tapping_task_data(database_engine)
+            process_finger_tapping_task_data(database_engine, override)
         elif table == "ping_pong_competitive":
-            process_ping_pong_competitive_task_data(database_engine)
+            process_ping_pong_competitive_task_data(database_engine, override)
         elif table == "ping_pong_cooperative":
-            process_ping_pong_cooperative_task_data(database_engine)
+            process_ping_pong_cooperative_task_data(database_engine, override)
         elif table == "minecraft":
-            process_minecraft_data(database_engine)
+            process_minecraft_data(database_engine, override)
         elif table == "fnirs":
             process_fnirs_raw_data(database_engine, override)
         elif table == "eeg":

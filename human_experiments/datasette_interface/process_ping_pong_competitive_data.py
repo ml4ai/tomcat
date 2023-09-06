@@ -5,7 +5,7 @@ import logging
 import os
 import sys
 from glob import glob
-from logging import info, debug
+from logging import info
 
 import pandas as pd
 import pyxdf
@@ -198,7 +198,7 @@ def process_directory_v2(group_session, participants):
     return ping_pong_observations
 
 
-def process_ping_pong_competitive_task_data(database_engine):
+def process_ping_pong_competitive_task_data(database_engine, override):
     info(
         """
         Processing ping pong competitive task data. For the CSV files predating the
@@ -220,7 +220,15 @@ def process_ping_pong_competitive_task_data(database_engine):
         ]
 
         with Session(database_engine) as database_session:
+            processed_group_sessions = set(
+                [s[0] for s in database_session.query(PingPongCompetitiveTaskObservation.group_session_id).distinct(
+                    PingPongCompetitiveTaskObservation.group_session_id).all()])
+
             for group_session in tqdm(sorted(directories_to_process), unit="directories"):
+                if not override and group_session in processed_group_sessions:
+                    info(f"Found saved ping-pong competitive data for {group_session} in the database. Skipping group session.")
+                    continue
+
                 info(f"Processing directory {group_session}")
 
                 # Get real participant IDs for the task

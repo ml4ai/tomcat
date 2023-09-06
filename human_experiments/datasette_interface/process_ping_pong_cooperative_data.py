@@ -5,7 +5,7 @@ import logging
 import os
 import sys
 from glob import glob
-from logging import info, debug
+from logging import info
 
 import pandas as pd
 import pyxdf
@@ -59,7 +59,7 @@ def process_cooperative_csv_files(csv_file, group_session, participants):
         if i != 0:
             previous_started_value = df.loc[i - 1]["started"]
             if (
-                current_started_value != previous_started_value
+                    current_started_value != previous_started_value
             ) and (seconds == 110):
                 seconds = 120
 
@@ -144,7 +144,7 @@ def process_directory_v2(group_session, participants):
 
         ping_pong_observations = []
         for i, (timestamp, data) in enumerate(
-            zip(stream["time_stamps"], stream["time_series"])
+                zip(stream["time_stamps"], stream["time_series"])
         ):
             data = json.loads(data[0])
             current_started_value = data["started"]
@@ -159,7 +159,7 @@ def process_directory_v2(group_session, participants):
             if i != 0:
                 previous_started_value = json.loads(stream["time_series"][i - 1][0])["started"]
                 if (
-                    current_started_value != previous_started_value
+                        current_started_value != previous_started_value
                 ) and (seconds == 110):
                     seconds = 120
 
@@ -203,7 +203,7 @@ def process_directory_v2(group_session, participants):
     return ping_pong_observations
 
 
-def process_ping_pong_cooperative_task_data(database_engine):
+def process_ping_pong_cooperative_task_data(database_engine, override):
     info(
         """
         Processing ping pong cooperative task data. For the CSV files predating the
@@ -225,9 +225,16 @@ def process_ping_pong_cooperative_task_data(database_engine):
         ]
 
         with Session(database_engine) as database_session:
-            for group_session in tqdm(
-                sorted(directories_to_process), unit="directories"
-            ):
+            processed_group_sessions = set(
+                [s[0] for s in database_session.query(PingPongCooperativeTaskObservation.group_session_id).distinct(
+                    PingPongCooperativeTaskObservation.group_session_id).all()])
+
+            for group_session in tqdm(sorted(directories_to_process), unit="directories"):
+                if not override and group_session in processed_group_sessions:
+                    info(
+                        f"Found saved ping-pong cooperative data for {group_session} in the database. Skipping group session.")
+                    continue
+
                 info(f"Processing directory {group_session}")
                 # Get real participant IDs for the task
                 participants = {}

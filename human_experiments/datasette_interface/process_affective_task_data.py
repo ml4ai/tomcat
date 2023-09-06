@@ -2,7 +2,6 @@
 
 import json
 import logging
-import math
 import os
 import sys
 from glob import glob
@@ -14,8 +13,8 @@ from sqlalchemy.orm import Session
 from tqdm import tqdm
 
 from config import USER
-from entity.task.affective_task_event import AffectiveTaskEvent
 from entity.base.data_validity import DataValidity
+from entity.task.affective_task_event import AffectiveTaskEvent
 from utils import (
     cd,
     should_ignore_directory,
@@ -258,7 +257,7 @@ def process_directory_v2(group_session, participants):
     return affective_task_events
 
 
-def process_affective_task_data(database_engine):
+def process_affective_task_data(database_engine, override):
     info(
         """
         Processing affective task data. For the CSV files predating the
@@ -280,9 +279,15 @@ def process_affective_task_data(database_engine):
         ]
 
         with Session(database_engine) as database_session:
-            for group_session in tqdm(
-                    sorted(directories_to_process), unit="directories"
-            ):
+            processed_group_sessions = set(
+                [s[0] for s in database_session.query(AffectiveTaskEvent.group_session_id).distinct(
+                    AffectiveTaskEvent.group_session_id).all()])
+
+            for group_session in tqdm(sorted(directories_to_process), unit="directories"):
+                if not override and group_session in processed_group_sessions:
+                    info(f"Found saved affective data for {group_session} in the database. Skipping group session.")
+                    continue
+
                 info(f"Processing directory {group_session}")
                 # Get real participant IDs for the task
                 participants = {}

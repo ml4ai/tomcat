@@ -78,7 +78,7 @@ def process_directory_v2(group_session):
         )
 
 
-def process_rest_state_task_data(database_engine):
+def process_rest_state_task_data(database_engine, override):
     info(
         """
         Processing rest state task data. For the CSV files predating the
@@ -100,9 +100,15 @@ def process_rest_state_task_data(database_engine):
         ]
 
         with Session(database_engine) as database_session:
-            for group_session in tqdm(
-                sorted(directories_to_process), unit="directories"
-            ):
+            processed_group_sessions = set(
+                [s[0] for s in database_session.query(RestStateTask.group_session_id).distinct(
+                    RestStateTask.group_session_id).all()])
+
+            for group_session in tqdm(sorted(directories_to_process), unit="directories"):
+                if not override and group_session in processed_group_sessions:
+                    info(f"Found saved rest state data for {group_session} in the database. Skipping group session.")
+                    continue
+
                 info(f"Processing directory {group_session}")
                 if not is_directory_with_unified_xdf_files(group_session):
                     rest_state_entry = process_directory_v1(group_session)

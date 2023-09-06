@@ -33,10 +33,9 @@ logging.basicConfig(
 )
 
 
-def process_directory_v1(group_session_id):
-
+def process_directory_v1(group_session):
     finger_tapping_observations = []
-    with cd(f"{group_session_id}/baseline_tasks/finger_tapping"):
+    with cd(f"{group_session}/baseline_tasks/finger_tapping"):
         csv_files = glob("*.csv")
         # We expect exactly 1 CSV file.
         assert len(csv_files) == 1
@@ -63,7 +62,7 @@ def process_directory_v1(group_session_id):
             if i != 0:
                 previous_event_type = df.loc[i - 1]["event_type"]
                 if (current_event_type != previous_event_type) and (
-                    countdown_timer == 1
+                        countdown_timer == 1
                 ):
                     countdown_timer = 10
 
@@ -73,7 +72,7 @@ def process_directory_v1(group_session_id):
             leopard_value = None if pd.isna(leopard_value) else int(leopard_value)
 
             finger_tapping_observation = FingerTappingTaskObservation(
-                group_session_id=group_session_id,
+                group_session_id=group_session,
                 timestamp_unix=row["time"],
                 timestamp_iso8601=convert_unix_timestamp_to_iso8601(df["time"].iloc[i]),
                 event_type=row["event_type"],
@@ -87,18 +86,18 @@ def process_directory_v1(group_session_id):
     return finger_tapping_observations
 
 
-def process_directory_v2(group_session_id):
+def process_directory_v2(group_session):
     """Process directory assuming unified XDF files."""
 
     finger_tapping_observations = []
-    with cd(f"{group_session_id}/lsl"):
+    with cd(f"{group_session}/lsl"):
         streams, header = pyxdf.load_xdf(
             "block_1.xdf", select_streams=[{"type": "finger_tapping"}]
         )
         stream = streams[0]
 
         for i, (timestamp, data) in enumerate(
-            zip(stream["time_stamps"], stream["time_series"])
+                zip(stream["time_stamps"], stream["time_series"])
         ):
             data = json.loads(data[0])
             current_event_type = data["event_type"]
@@ -118,14 +117,14 @@ def process_directory_v2(group_session_id):
                     stream["time_series"][i - 1][0]
                 )["event_type"]
                 if (current_event_type != previous_event_type) and (
-                    countdown_timer == 1
+                        countdown_timer == 1
                 ):
                     countdown_timer = 10
 
             lion_value, tiger_value, leopard_value = list(data.values())[-3:]
 
             finger_tapping_observation = FingerTappingTaskObservation(
-                group_session_id=group_session_id,
+                group_session_id=group_session,
                 timestamp_unix=data["time"],
                 timestamp_iso8601=convert_unix_timestamp_to_iso8601(data["time"]),
                 event_type=current_event_type,
@@ -139,7 +138,7 @@ def process_directory_v2(group_session_id):
     return finger_tapping_observations
 
 
-def process_finger_tapping_task_data(database_engine):
+def process_finger_tapping_task_data(database_engine, override):
     info(
         """
         Processing finger tapping task data. For the CSV files predating the
@@ -161,16 +160,23 @@ def process_finger_tapping_task_data(database_engine):
         ]
 
         finger_tapping_observations = []
-        for session in tqdm(
-            sorted(directories_to_process), unit="directories"
-        ):
-            if not is_directory_with_unified_xdf_files(session):
-                finger_tapping_observations.extend(process_directory_v1(session))
-            else:
-                finger_tapping_observations.extend(process_directory_v2(session))
 
-        info("Adding finger tapping task observations to the database.")
         with Session(database_engine) as database_session:
+            processed_group_sessions = set(
+                [s[0] for s in database_session.query(FingerTappingTaskObservation.group_session_id).distinct(
+                    FingerTappingTaskObservation.group_session_id).all()])
+
+            for group_session in tqdm(sorted(directories_to_process), unit="directories"):
+                if not override and group_session in processed_group_sessions:
+                    info(f"Found saved finger tapping for {group_session} in the database. Skipping group session.")
+                    continue
+
+                if not is_directory_with_unified_xdf_files(group_session):
+                    finger_tapping_observations.extend(process_directory_v1(group_session))
+                else:
+                    finger_tapping_observations.extend(process_directory_v2(group_session))
+
+            info("Adding finger tapping task observations to the database.")
             database_session.add_all(finger_tapping_observations)
             database_session.commit()
 

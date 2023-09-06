@@ -50,7 +50,7 @@ def insert_raw_unlabeled_data(database_engine, override):
                     sorted(directories_to_process), unit="directories"
             ):
                 if not override and group_session in processed_group_sessions:
-                    info(f"Found fNIRS data for {group_session}. Skipping group session.")
+                    info(f"Found saved fNIRS data for {group_session} in the database. Skipping group session.")
                     continue
 
                 info(f"Processing directory {group_session}")
@@ -174,7 +174,7 @@ def label_data(database_engine, override):
             group_session, participant_id, station, task = row
 
             if not override and group_session in processed_group_sessions:
-                info(f"All fNIRS entries for {group_session} are labeled. Skipping group session.")
+                info(f"All fNIRS entries for {group_session} are labeled in the database. Skipping group session.")
                 continue
 
             info(f"Labeling {group_session}")

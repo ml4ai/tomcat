@@ -144,9 +144,7 @@ def collect_files_to_process(metadata_files):
                     f" found 0 instead!"
                     " Using the timestamp of the first observations/state message as the mission start."
                 )
-                approximate_timestamp = key_messages[
-                    "approximate_mission_start"
-                ]["header"]["timestamp"]
+                approximate_timestamp = key_messages["approximate_mission_start"]["header"]["timestamp"]
 
                 # Create a fake mission start message with the approximate timestamp
                 key_messages["mission_start"].append(
@@ -472,7 +470,7 @@ def process_directory_v2(group_session):
     return minecraft_missions, minecraft_testbed_messages
 
 
-def process_minecraft_data(database_engine):
+def process_minecraft_data(database_engine, override):
     info("Processing directories...")
 
     with cd("/tomcat/data/raw/LangLab/experiments/study_3_pilot/group"):
@@ -483,9 +481,15 @@ def process_minecraft_data(database_engine):
         ]
 
         with Session(database_engine) as database_session:
-            for group_session in tqdm(
-                    sorted(directories_to_process), unit="directories"
-            ):
+            processed_group_sessions = set(
+                [s[0] for s in database_session.query(MinecraftMission.group_session_id).distinct(
+                    MinecraftMission.group_session_id).all()])
+
+            for group_session in tqdm(sorted(directories_to_process), unit="directories"):
+                if not override and group_session in processed_group_sessions:
+                    info(f"Found saved Minecraft data for {group_session} in the database. Skipping group session.")
+                    continue
+
                 info(f"Processing directory {group_session}")
 
                 if not is_directory_with_unified_xdf_files(group_session):
