@@ -146,7 +146,7 @@ def process_directory_v2(group_session):
 
 def create_indices(database_engine, check):
     """Create indices for efficient querying"""
-    info("Creating database indices for fnirs_raw table.")
+    info("Creating database indices for eeg_raw table.")
 
     idx_group_session_station = Index('idx_group_session_station', EEGRaw.group_session_id, EEGRaw.station_id)
     idx_group_session_station.create(bind=database_engine, checkfirst=check)
