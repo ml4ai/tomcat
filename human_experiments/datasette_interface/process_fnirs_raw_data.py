@@ -43,7 +43,8 @@ def insert_raw_unlabeled_data(database_engine, override):
         ]
 
         with Session(database_engine) as database_session:
-            processed_group_sessions = set(database_session.query(FNIRSRaw.group_session_id).distinct(FNIRSRaw.group_session_id).all())
+            processed_group_sessions = set([s[0] for s in database_session.query(FNIRSRaw.group_session_id).distinct(
+                FNIRSRaw.group_session_id).all()])
 
             for group_session in tqdm(
                     sorted(directories_to_process), unit="directories"
@@ -159,7 +160,10 @@ def label_data(database_engine, override):
     info("Labeling data")
 
     with Session(database_engine) as database_session:
-        processed_group_sessions = set(database_session.query(FNIRSRaw.group_session_id).distinct(FNIRSRaw.group_session_id).filter(FNIRSRaw.task_id is not None).all())
+        processed_group_sessions = set([s[0] for s in
+                                        database_session.query(FNIRSRaw.group_session_id).distinct(
+                                            FNIRSRaw.group_session_id).filter(
+                                            FNIRSRaw.task_id is not None).all()])
 
         validity_rows = database_session.query(DataValidity.group_session_id,
                                                DataValidity.participant_id,
