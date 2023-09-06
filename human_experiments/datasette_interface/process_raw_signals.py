@@ -72,7 +72,7 @@ def insert_raw_unlabeled_data(database_engine, override, signal_modality_class, 
                     continue
 
                 group_sessions_to_process_in_parallel.append({
-                    # "database_session": database_session,
+                    "database_session": database_engine,
                     "name": group_session,
                     "signal_modality_class": signal_modality_class,
                     "modality_name": modality_name,
