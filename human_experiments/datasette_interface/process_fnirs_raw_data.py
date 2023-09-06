@@ -171,9 +171,7 @@ def label_data(database_engine, override):
         processed_group_sessions = set([s[0] for s in
                                         database_session.query(FNIRSRaw.group_session_id).distinct(
                                             FNIRSRaw.group_session_id).filter(
-                                            FNIRSRaw.task_id is not None).all()])
-
-        print(processed_group_sessions)
+                                            FNIRSRaw.task_id.is_not(None)).all()])
 
         validity_rows = database_session.query(DataValidity.group_session_id,
                                                DataValidity.participant_id,
@@ -184,7 +182,7 @@ def label_data(database_engine, override):
             group_session, participant_id, station, task = row
 
             if not override and group_session in processed_group_sessions:
-                # info(f"All fNIRS entries for {group_session} are labeled in the database. Skipping group session.")
+                info(f"All fNIRS entries for {group_session} are labeled in the database. Skipping group session.")
                 continue
 
             info(f"Labeling {group_session}")

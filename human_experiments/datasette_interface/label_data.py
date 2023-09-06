@@ -239,8 +239,8 @@ def delete_invalid_signals(signal_modality_class, group_session, station, task, 
     stmt = (
         delete(signal_modality_class)
         .where(signal_modality_class.group_session_id == group_session)
-        .where(signal_modality_class.station == station)
-        .where(signal_modality_class.task == task)
+        .where(signal_modality_class.station_id == station)
+        .where(signal_modality_class.task_id == task)
     )
 
     database_session.execute(stmt)
