@@ -105,7 +105,6 @@ def populate_tables(tables_to_process, database_engine, override):
         elif table == "fnirs":
             process_fnirs_raw_data(database_engine, override)
         elif table == "eeg":
-            pass
             process_eeg_raw_data(database_engine, override)
         elif table == "gaze":
             pass
