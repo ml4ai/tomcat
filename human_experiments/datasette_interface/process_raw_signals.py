@@ -28,6 +28,8 @@ def process_experiment(params):
     group_session = params["name"]
     db_pool = params["db_pool"]
 
+    print(group_session)
+
     with Session(db_pool.connect()) as database_session:
         info(f"Processing directory {group_session}")
         if not is_directory_with_unified_xdf_files(group_session):
