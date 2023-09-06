@@ -144,24 +144,24 @@ def process_directory_v2(group_session):
     return signals
 
 
-def create_indices(database_engine):
+def create_indices(database_engine, check):
     """Create indices for efficient querying"""
     info("Creating database indices for fnirs_raw table.")
 
     idx_group_session_station = Index('idx_group_session_station', FNIRSRaw.group_session_id, FNIRSRaw.station_id)
-    idx_group_session_station.create(bind=database_engine)
+    idx_group_session_station.create(bind=database_engine, checkfirst=check)
 
     idx_timestamp_unix = Index('idx_timestamp_unix', FNIRSRaw.timestamp_unix)
-    idx_timestamp_unix.create(bind=database_engine)
+    idx_timestamp_unix.create(bind=database_engine, checkfirst=check)
 
     idx_participant = Index('idx_participant', FNIRSRaw.participant_id)
-    idx_participant.create(bind=database_engine)
+    idx_participant.create(bind=database_engine, checkfirst=check)
 
     idx_group_session = Index('idx_group_session', FNIRSRaw.group_session_id)
-    idx_group_session.create(bind=database_engine)
+    idx_group_session.create(bind=database_engine, checkfirst=check)
 
     idx_task = Index('idx_task', FNIRSRaw.group_session_id)
-    idx_task.create(bind=database_engine)
+    idx_task.create(bind=database_engine, checkfirst=check)
 
 
 def label_data(database_engine, override):
@@ -228,7 +228,7 @@ def remove_invalid_data(database_engine):
 def process_fnirs_raw_data(database_engine, override):
     info("Processing fNIRS data.")
     insert_raw_unlabeled_data(database_engine, override)
-    create_indices(database_engine)
+    create_indices(database_engine, not override)
     label_data(database_engine, override)
     remove_invalid_data(database_engine)
 
