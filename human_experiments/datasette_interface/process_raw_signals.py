@@ -21,16 +21,16 @@ from utils import (
     is_directory_with_unified_xdf_files,
 )
 from multiprocessing import Pool
-import sqlalchemy.pool
+from sqlalchemy import  create_engine
 
 
 def process_experiment(params):
     group_session = params["name"]
-    db_pool = params["db_pool"]
 
-    print(group_session)
+    connection_string = f"postgresql+psycopg2://localhost:5433/tomcat"
+    database_engine = create_engine(connection_string)
 
-    with Session(db_pool.connect()) as database_session:
+    with Session(database_engine) as database_session:
         info(f"Processing directory {group_session}")
         if not is_directory_with_unified_xdf_files(group_session):
             signals = process_directory_v1(group_session,
@@ -61,8 +61,6 @@ def insert_raw_unlabeled_data(database_engine, override, signal_modality_class, 
             if not should_ignore_directory(directory)
         ]
 
-        db_pool = sqlalchemy.pool.QueuePool(database_engine, max_overflow=10, pool_size=5)
-
         with Session(database_engine.connect()) as database_session:
             processed_group_sessions = set(
                 [s[0] for s in database_session.query(signal_modality_class.group_session_id).distinct(
@@ -78,7 +76,6 @@ def insert_raw_unlabeled_data(database_engine, override, signal_modality_class, 
                     continue
 
                 group_sessions_to_process_in_parallel.append({
-                    "db_pool": db_pool,
                     "name": group_session,
                     "signal_modality_class": signal_modality_class,
                     "modality_name": modality_name,
