@@ -172,12 +172,7 @@ if __name__ == "__main__":
     if args.no_gaze:
         tables.remove("gaze")
 
-    print(args.override)
-    override = args.override is not None
-    print(override)
+    if args.override:
+        recreate_tables(tables, engine)
 
-    if override:
-        print("Recreate Table")
-        # recreate_tables(tables, engine)
-
-    # populate_tables(tables, engine, override)
+    populate_tables(tables, engine, args.override)
