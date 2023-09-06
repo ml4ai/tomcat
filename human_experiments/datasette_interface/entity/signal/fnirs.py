@@ -125,7 +125,8 @@ class FNIRSRaw(Base):
         self.s8_d7_hbr = s8_d7_hbr
 
     @staticmethod
-    def get_next_id(database_engine, group_session_id):
+    def get_next_id(database_engine, group_session_id, station_id):
         with Session(database_engine) as session:
-            max_id = session.query(func.max(FNIRSRaw.id)).filter_by(group_session_id=group_session_id).scalar()
+            max_id = session.query(func.max(FNIRSRaw.id)).filter_by(group_session_id=group_session_id,
+                                                                    station_id=station_id).scalar()
             return max_id + 1 if max_id is not None else 1
