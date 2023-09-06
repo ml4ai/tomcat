@@ -531,8 +531,7 @@ logging.basicConfig(
 
 
 def get_channel_names_from_xdf_stream(stream):
-    print(stream["info"]["desc"][0]["channels"][0]["channel"])
-    return [channel["custom_name"][0].lower() for channel in stream["info"]["desc"][0]["channels"][0]["channel"]]
+    return [channel["label"][0].lower() for channel in stream["info"]["desc"][0]["channels"][0]["channel"]]
 
 
 def get_station_from_xdf_stream(stream):
