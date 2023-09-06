@@ -21,7 +21,7 @@ from utils import (
     is_directory_with_unified_xdf_files,
 )
 from multiprocessing import Pool
-
+import sqlalchemy.pool
 
 def process_experiment(params):
     group_session = params["name"]
@@ -47,6 +47,7 @@ def process_experiment(params):
     #     database_session.commit()
 
 
+
 def insert_raw_unlabeled_data(database_engine, override, signal_modality_class, modality_name, xdf_signal_type,
                               channel_from_xdf_parsing_fn, station_from_xdf_v2_parsing_fn):
     info(f"Inserting unlabeled data.")
@@ -57,7 +58,9 @@ def insert_raw_unlabeled_data(database_engine, override, signal_modality_class, 
             if not should_ignore_directory(directory)
         ]
 
-        with Session(database_engine) as database_session:
+        db_pool = sqlalchemy.pool.QueuePool(database_engine, max_overflow=10, pool_size=5)
+
+        with Session(database_engine.connect()) as database_session:
             processed_group_sessions = set(
                 [s[0] for s in database_session.query(signal_modality_class.group_session_id).distinct(
                     signal_modality_class.group_session_id).all()])
@@ -72,7 +75,7 @@ def insert_raw_unlabeled_data(database_engine, override, signal_modality_class, 
                     continue
 
                 group_sessions_to_process_in_parallel.append({
-                    "database_session": database_engine,
+                    "database_session": db_pool,
                     "name": group_session,
                     "signal_modality_class": signal_modality_class,
                     "modality_name": modality_name,
@@ -81,8 +84,9 @@ def insert_raw_unlabeled_data(database_engine, override, signal_modality_class, 
                     "station_from_xdf_v2_parsing_fn": station_from_xdf_v2_parsing_fn
                 })
 
-            with Pool(processes=2) as pool:
-                list(tqdm(pool.imap(process_experiment, group_sessions_to_process_in_parallel), total=len(group_sessions_to_process_in_parallel)))
+        with Pool(processes=2) as pool:
+            tqdm(pool.imap(process_experiment, group_sessions_to_process_in_parallel), total=len(group_sessions_to_process_in_parallel))
+
 
 
 def get_signals(stream, group_session, station, initial_id, signal_modality_class, channel_from_xdf_parsing_fn):
