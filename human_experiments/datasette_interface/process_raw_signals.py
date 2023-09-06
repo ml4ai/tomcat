@@ -89,7 +89,7 @@ def insert_raw_unlabeled_data(database_engine, override, signal_modality_class, 
 
         info(f"Parsing experiments in parallel. Number of processes = {2}")
         print(len(group_sessions_to_process_in_parallel))
-        with Pool(processes=2) as pool:
+        with Pool(10) as pool:
             # tqdm(pool.imap(process_experiment, group_sessions_to_process_in_parallel),
             #               total=len(group_sessions_to_process_in_parallel))
             pool.imap(process_experiment, group_sessions_to_process_in_parallel)
