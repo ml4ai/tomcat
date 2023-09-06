@@ -27,24 +27,24 @@ def process_experiment(params):
     group_session = params["name"]
 
     info(f"Processing directory {group_session}")
-    if not is_directory_with_unified_xdf_files(group_session):
-        signals = process_directory_v1(group_session,
-                                       params["signal_modality_class"],
-                                       params["modality_name"],
-                                       params["xdf_signal_type"],
-                                       params["channel_from_xdf_parsing_fn"])
-    else:
-        signals = process_directory_v2(group_session,
-                                       params["signal_modality_class"],
-                                       params["modality_name"],
-                                       params["xdf_signal_type"],
-                                       params["channel_from_xdf_parsing_fn"],
-                                       params["station_from_xdf_v2_parsing_fn"])
+    # if not is_directory_with_unified_xdf_files(group_session):
+    #     signals = process_directory_v1(group_session,
+    #                                    params["signal_modality_class"],
+    #                                    params["modality_name"],
+    #                                    params["xdf_signal_type"],
+    #                                    params["channel_from_xdf_parsing_fn"])
+    # else:
+    #     signals = process_directory_v2(group_session,
+    #                                    params["signal_modality_class"],
+    #                                    params["modality_name"],
+    #                                    params["xdf_signal_type"],
+    #                                    params["channel_from_xdf_parsing_fn"],
+    #                                    params["station_from_xdf_v2_parsing_fn"])
 
-    if len(signals) > 0:
-        database_session = params["database_session"]
-        database_session.add_all(signals)
-        database_session.commit()
+    # if len(signals) > 0:
+    #     database_session = params["database_session"]
+    #     database_session.add_all(signals)
+    #     database_session.commit()
 
 
 def insert_raw_unlabeled_data(database_engine, override, signal_modality_class, modality_name, xdf_signal_type,
@@ -253,15 +253,3 @@ def remove_invalid_data(database_engine, signal_modality_class, modality_name):
             delete_invalid_signals(signal_modality_class, group_session, station, task, database_session)
 
         database_session.commit()
-
-# def process_eeg_raw_data(database_engine, override):
-#     info("Processing EEGRaw data.")
-#     insert_raw_unlabeled_data(database_engine, override)
-#     create_indices(database_engine, not override)
-#     label_data(database_engine, override)
-#     remove_invalid_data(database_engine)
-#
-#
-# def recreate_eeg_raw_tables(database_engine):
-#     EEGRaw.__table__.drop(database_engine, checkfirst=True)
-#     EEGRaw.__table__.create(database_engine, checkfirst=True)

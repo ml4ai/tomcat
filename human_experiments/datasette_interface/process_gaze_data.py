@@ -542,9 +542,9 @@ def process_gaze_raw_data(database_engine, override):
     info("Processing GazeRaw data.")
     insert_raw_unlabeled_data(database_engine, override, GAZERaw, "Gaze", "Gaze", get_channel_names_from_xdf_stream,
                               get_station_from_xdf_stream)
-    create_indices(database_engine, not override, GAZERaw, "Gaze")
-    label_data(database_engine, override, GAZERaw, "Gaze")
-    remove_invalid_data(database_engine, GAZERaw, "Gaze")
+    # create_indices(database_engine, not override, GAZERaw, "Gaze")
+    # label_data(database_engine, override, GAZERaw, "Gaze")
+    # remove_invalid_data(database_engine, GAZERaw, "Gaze")
 
 
 def recreate_gaze_raw_tables(database_engine):
