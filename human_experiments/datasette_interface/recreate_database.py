@@ -21,6 +21,7 @@ from process_ping_pong_cooperative_data import process_ping_pong_cooperative_tas
 from process_minecraft_data import process_minecraft_data, recreate_minecraft_tables
 from process_fnirs_raw_data import process_fnirs_raw_data, recreate_fnirs_raw_tables
 from process_eeg_raw_data import process_eeg_raw_data, recreate_eeg_raw_tables
+from process_gaze_data import process_gaze_raw_data, recreate_gaze_raw_tables
 
 logging.basicConfig(
     level=logging.INFO,
@@ -82,8 +83,8 @@ def recreate_tables(tables_to_recreate, database_engine):
                 info(f"Recreating eeg tables in {database_info}.")
                 recreate_eeg_raw_tables(database_engine)
             elif table == "gaze":
-                info(f"Recreating gaze tables    in {database_info}.")
-                # recreate_finger_tapping_task_observation_table(database_engine)
+                info(f"Recreating gaze tables in {database_info}.")
+                recreate_gaze_raw_tables(database_engine)
 
 
 def populate_tables(tables_to_process, database_engine, override):
@@ -107,8 +108,7 @@ def populate_tables(tables_to_process, database_engine, override):
         elif table == "eeg":
             process_eeg_raw_data(database_engine, override)
         elif table == "gaze":
-            pass
-            # process_finger_tapping_task_data(database_engine)
+            process_gaze_raw_data()(database_engine)
 
 
 if __name__ == "__main__":
