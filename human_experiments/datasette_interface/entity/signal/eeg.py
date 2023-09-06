@@ -53,8 +53,8 @@ class EEGRaw(Base):
     fc2: Mapped[float] = mapped_column(REAL)
     fcz: Mapped[float] = mapped_column(REAL)
     f8: Mapped[float] = mapped_column(REAL)
-    afF6h: Mapped[float] = mapped_column(REAL)
-    afF2h: Mapped[float] = mapped_column(REAL)
+    aff6h: Mapped[float] = mapped_column(REAL)
+    aff2h: Mapped[float] = mapped_column(REAL)
     aux_gsr: Mapped[float] = mapped_column(REAL)
     aux_ekg: Mapped[float] = mapped_column(REAL)
 
@@ -63,7 +63,7 @@ class EEGRaw(Base):
                  fc1: float, c3: float, t7: float, tp9: float, cp5: float, cp1: float, pz: float, p3: float, p7: float,
                  po9: float, o1: float, oz: float, o2: float, po10: float, p8: float, p4: float, tp10: float,
                  cp6: float, cp2: float, cz: float, c4: float, t8: float, fc6: float, fc2: float, fcz: float, f8: float,
-                 afF6h: float, afF2h: float, aux_gsr: float, aux_ekg: float):
+                 aff6h: float, aff2h: float, aux_gsr: float, aux_ekg: float):
         super().__init__()
 
         self.group_session_id = group_session_id
@@ -103,8 +103,8 @@ class EEGRaw(Base):
         self.fc2 = fc2
         self.fcz = fcz
         self.f8 = f8
-        self.afF6h = afF6h
-        self.afF2h = afF2h
+        self.aff6h = aff6h
+        self.aff2h = aff2h
         self.aux_gsr = aux_gsr
         self.aux_ekg = aux_ekg
 

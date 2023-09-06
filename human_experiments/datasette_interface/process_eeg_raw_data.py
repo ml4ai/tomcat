@@ -71,12 +71,7 @@ def get_signals(stream, group_session, station, initial_id):
     # replaced by an experimenter partway through the group session.
     task = None
     participant_id = -1
-
-    print(stream["info"]["desc"][0]["channels"][0]["channel"])
-
     channels = [channel["label"][0].lower() for channel in stream["info"]["desc"][0]["channels"][0]["channel"]]
-
-    print(channels)
 
     signals = [
         EEGRaw(group_session_id=group_session,
