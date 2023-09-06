@@ -173,6 +173,8 @@ def label_data(database_engine, override):
                                             FNIRSRaw.group_session_id).filter(
                                             FNIRSRaw.task_id is not None).all()])
 
+        print(processed_group_sessions)
+
         validity_rows = database_session.query(DataValidity.group_session_id,
                                                DataValidity.participant_id,
                                                DataValidity.station_id,
