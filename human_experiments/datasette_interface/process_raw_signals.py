@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
-import logging
 import os
-import sys
 from logging import info, error
 
 import pyxdf
@@ -10,7 +8,6 @@ from sqlalchemy import Index
 from sqlalchemy.orm import Session
 from tqdm import tqdm
 
-from config import USER
 from entity.base.data_validity import DataValidity
 from label_data import delete_invalid_signals
 from label_data import label_signals
@@ -20,35 +17,6 @@ from utils import (
     convert_unix_timestamp_to_iso8601,
     is_directory_with_unified_xdf_files,
 )
-from multiprocessing import Pool
-from sqlalchemy import  create_engine
-
-
-def process_experiment(params):
-    group_session = params["name"]
-
-    connection_string = f"postgresql+psycopg2://localhost:5433/tomcat"
-    database_engine = create_engine(connection_string)
-
-    with Session(database_engine) as database_session:
-        info(f"Processing directory {group_session}")
-        if not is_directory_with_unified_xdf_files(group_session):
-            signals = process_directory_v1(group_session,
-                                           params["signal_modality_class"],
-                                           params["modality_name"],
-                                           params["xdf_signal_type"],
-                                           params["channel_from_xdf_parsing_fn"])
-        else:
-            signals = process_directory_v2(group_session,
-                                           params["signal_modality_class"],
-                                           params["modality_name"],
-                                           params["xdf_signal_type"],
-                                           params["channel_from_xdf_parsing_fn"],
-                                           params["station_from_xdf_v2_parsing_fn"])
-
-        if len(signals) > 0:
-            database_session.add_all(signals)
-            database_session.commit()
 
 
 def insert_raw_unlabeled_data(database_engine, override, signal_modality_class, modality_name, xdf_signal_type,
@@ -66,7 +34,6 @@ def insert_raw_unlabeled_data(database_engine, override, signal_modality_class, 
                 [s[0] for s in database_session.query(signal_modality_class.group_session_id).distinct(
                     signal_modality_class.group_session_id).all()])
 
-            group_sessions_to_process_in_parallel = []
             for group_session in tqdm(
                     sorted(directories_to_process), unit="directories"
             ):
@@ -75,23 +42,24 @@ def insert_raw_unlabeled_data(database_engine, override, signal_modality_class, 
                         f"Found saved {modality_name} data for {group_session} in the database. Skipping group session.")
                     continue
 
-                group_sessions_to_process_in_parallel.append({
-                    "name": group_session,
-                    "signal_modality_class": signal_modality_class,
-                    "modality_name": modality_name,
-                    "xdf_signal_type": xdf_signal_type,
-                    "channel_from_xdf_parsing_fn": channel_from_xdf_parsing_fn,
-                    "station_from_xdf_v2_parsing_fn": station_from_xdf_v2_parsing_fn
-                })
+                info(f"Processing directory {group_session}")
+                if not is_directory_with_unified_xdf_files(group_session):
+                    signals = process_directory_v1(group_session,
+                                                   signal_modality_class,
+                                                   modality_name,
+                                                   xdf_signal_type,
+                                                   channel_from_xdf_parsing_fn)
+                else:
+                    signals = process_directory_v2(group_session,
+                                                   signal_modality_class,
+                                                   modality_name,
+                                                   xdf_signal_type,
+                                                   channel_from_xdf_parsing_fn,
+                                                   station_from_xdf_v2_parsing_fn)
 
-        info(f"Parsing experiments in parallel. Number of processes = {2}")
-        print(len(group_sessions_to_process_in_parallel))
-        with Pool(10) as pool:
-            # tqdm(pool.imap(process_experiment, group_sessions_to_process_in_parallel),
-            #               total=len(group_sessions_to_process_in_parallel))
-            tqdm(list(pool.imap(process_experiment, group_sessions_to_process_in_parallel)))
-            pool.close()
-            pool.join()
+                if len(signals) > 0:
+                    database_session.add_all(signals)
+                    database_session.commit()
 
 
 def get_signals(stream, group_session, station, initial_id, signal_modality_class, channel_from_xdf_parsing_fn):
