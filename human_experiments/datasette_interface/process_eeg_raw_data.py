@@ -74,7 +74,7 @@ def get_signals(stream, group_session, station, initial_id):
 
     print(stream["info"]["desc"][0]["channels"][0]["channel"])
 
-    channels = [channel["custom_name"][0].lower() for channel in stream["info"]["desc"][0]["channels"][0]["channel"]]
+    channels = [channel["label"][0].lower() for channel in stream["info"]["desc"][0]["channels"][0]["channel"]]
 
     print(channels)
 
