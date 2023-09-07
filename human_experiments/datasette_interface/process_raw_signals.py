@@ -71,8 +71,10 @@ def get_signals(stream, group_session, station, initial_id, signal_modality_clas
     participant_id = -1
     channels = channel_from_xdf_parsing_fn(stream)
 
-    signals = [
-        signal_modality_class(group_session_id=group_session,
+    signals = []
+    for i, timestamp in enumerate(stream["time_stamps"]):
+        try:
+            signal = signal_modality_class(group_session_id=group_session,
                               id=i + initial_id,
                               task_id=task,
                               station_id=station,
@@ -80,7 +82,10 @@ def get_signals(stream, group_session, station, initial_id, signal_modality_clas
                               timestamp_unix=timestamp,
                               timestamp_iso8601=convert_unix_timestamp_to_iso8601(timestamp),
                               **{key: value for key, value in zip(channels, list(map(str, stream["time_series"][i])))})
-        for i, timestamp in enumerate(stream["time_stamps"])]
+            signals.append(signal)
+        except ValueError as e:
+            error(f"[INVALID DATA]: Error in {i+1}-th timestamp. {e}")
+            continue
 
     return signals
 
