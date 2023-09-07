@@ -158,20 +158,22 @@ def create_indices(database_engine, check, signal_modality_class, modality_name)
     """Create indices for efficient querying"""
     info(f"Creating database indices for {modality_name} table.")
 
-    idx_group_session_station = Index('idx_group_session_station', signal_modality_class.group_session_id,
+    suffix = modality_name.lower()
+
+    idx_group_session_station = Index(f'idx_group_session_station_{modality_name}', signal_modality_class.group_session_id,
                                       signal_modality_class.station_id)
     idx_group_session_station.create(bind=database_engine, checkfirst=check)
 
-    idx_timestamp_unix = Index('idx_timestamp_unix', signal_modality_class.timestamp_unix)
+    idx_timestamp_unix = Index(f'idx_timestamp_unix_{suffix}', signal_modality_class.timestamp_unix)
     idx_timestamp_unix.create(bind=database_engine, checkfirst=check)
 
-    idx_participant = Index('idx_participant', signal_modality_class.participant_id)
+    idx_participant = Index(f'idx_participant_{suffix}', signal_modality_class.participant_id)
     idx_participant.create(bind=database_engine, checkfirst=check)
 
-    idx_group_session = Index('idx_group_session', signal_modality_class.group_session_id)
+    idx_group_session = Index(f'idx_group_session_{suffix}', signal_modality_class.group_session_id)
     idx_group_session.create(bind=database_engine, checkfirst=check)
 
-    idx_task = Index('idx_task', signal_modality_class.group_session_id)
+    idx_task = Index(f'idx_task_{suffix}', signal_modality_class.group_session_id)
     idx_task.create(bind=database_engine, checkfirst=check)
 
 
