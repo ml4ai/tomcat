@@ -31,7 +31,7 @@ def get_station_from_xdf_stream(stream):
     return stream["info"]["name"][0].split("_")[0]
 
 
-def process_eeg_raw_data(database_engine, override):
+def process_fnirs_raw_data(database_engine, override):
     info("Processing FNIRSRaw data.")
     insert_raw_unlabeled_data(database_engine, override, FNIRSRaw, "fnirs", "NIRS", get_channel_names_from_xdf_stream,
                               get_station_from_xdf_stream)
@@ -40,7 +40,7 @@ def process_eeg_raw_data(database_engine, override):
     remove_invalid_data(database_engine, FNIRSRaw, "fnirs")
 
 
-def recreate_eeg_raw_tables(database_engine):
+def recreate_fnirs_raw_tables(database_engine):
     FNIRSRaw.__table__.drop(database_engine, checkfirst=True)
     FNIRSRaw.__table__.create(database_engine, checkfirst=True)
 
