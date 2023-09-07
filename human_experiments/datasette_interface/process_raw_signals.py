@@ -74,18 +74,22 @@ def get_signals(stream, group_session, station, initial_id, signal_modality_clas
     signals = []
     for i, timestamp in enumerate(stream["time_stamps"]):
         try:
-            signal = signal_modality_class(group_session_id=group_session,
-                              id=i + initial_id,
-                              task_id=task,
-                              station_id=station,
-                              participant_id=participant_id,
-                              timestamp_unix=timestamp,
-                              timestamp_iso8601=convert_unix_timestamp_to_iso8601(timestamp),
-                              **{key: value for key, value in zip(channels, list(map(str, stream["time_series"][i])))})
-            signals.append(signal)
+            iso_timestamp = convert_unix_timestamp_to_iso8601(timestamp)
         except ValueError as e:
-            error(f"[INVALID DATA]: Error in {i+1}-th timestamp. {e}")
+            error(f"[INVALID DATA]: Error in {i + 1}-th timestamp. {e}")
+            print(stream)
             continue
+
+        signal = signal_modality_class(group_session_id=group_session,
+                                       id=i + initial_id,
+                                       task_id=task,
+                                       station_id=station,
+                                       participant_id=participant_id,
+                                       timestamp_unix=timestamp,
+                                       timestamp_iso8601=iso_timestamp,
+                                       **{key: value for key, value in
+                                          zip(channels, list(map(str, stream["time_series"][i])))})
+        signals.append(signal)
 
     return signals
 
