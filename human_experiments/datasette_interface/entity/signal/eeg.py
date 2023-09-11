@@ -24,46 +24,49 @@ class EEGRaw(Base):
     timestamp_unix: Mapped[str] = mapped_column(Text)
     timestamp_iso8601: Mapped[str] = mapped_column(Text)
     aff1h: Mapped[float] = mapped_column(REAL)
-    aff5h: Mapped[float] = mapped_column(REAL)
     f7: Mapped[float] = mapped_column(REAL)
     fc5: Mapped[float] = mapped_column(REAL)
-    fc1: Mapped[float] = mapped_column(REAL)
     c3: Mapped[float] = mapped_column(REAL)
     t7: Mapped[float] = mapped_column(REAL)
     tp9: Mapped[float] = mapped_column(REAL)
-    cp5: Mapped[float] = mapped_column(REAL)
-    cp1: Mapped[float] = mapped_column(REAL)
     pz: Mapped[float] = mapped_column(REAL)
     p3: Mapped[float] = mapped_column(REAL)
     p7: Mapped[float] = mapped_column(REAL)
-    po9: Mapped[float] = mapped_column(REAL)
     o1: Mapped[float] = mapped_column(REAL)
-    oz: Mapped[float] = mapped_column(REAL)
     o2: Mapped[float] = mapped_column(REAL)
-    po10: Mapped[float] = mapped_column(REAL)
     p8: Mapped[float] = mapped_column(REAL)
     p4: Mapped[float] = mapped_column(REAL)
     tp10: Mapped[float] = mapped_column(REAL)
-    cp6: Mapped[float] = mapped_column(REAL)
-    cp2: Mapped[float] = mapped_column(REAL)
     cz: Mapped[float] = mapped_column(REAL)
     c4: Mapped[float] = mapped_column(REAL)
     t8: Mapped[float] = mapped_column(REAL)
     fc6: Mapped[float] = mapped_column(REAL)
-    fc2: Mapped[float] = mapped_column(REAL)
     fcz: Mapped[float] = mapped_column(REAL)
     f8: Mapped[float] = mapped_column(REAL)
-    aff6h: Mapped[float] = mapped_column(REAL)
     aff2h: Mapped[float] = mapped_column(REAL)
     aux_gsr: Mapped[float] = mapped_column(REAL)
     aux_ekg: Mapped[float] = mapped_column(REAL)
 
+    # Channels not recorded in v2 of the experimental design.
+    aff5h: Mapped[Optional[float]] = mapped_column(REAL)
+    fc1: Mapped[Optional[float]] = mapped_column(REAL)
+    cp5: Mapped[Optional[float]] = mapped_column(REAL)
+    cp1: Mapped[Optional[float]] = mapped_column(REAL)
+    po9: Mapped[Optional[float]] = mapped_column(REAL)
+    oz: Mapped[Optional[float]] = mapped_column(REAL)
+    po10: Mapped[Optional[float]] = mapped_column(REAL)
+    cp6: Mapped[Optional[float]] = mapped_column(REAL)
+    cp2: Mapped[Optional[float]] = mapped_column(REAL)
+    fc2: Mapped[Optional[float]] = mapped_column(REAL)
+    aff6h: Mapped[Optional[float]] = mapped_column(REAL)
+
     def __init__(self, group_session_id: str, id: int, task_id: Optional[str], station_id: str, participant_id: int,
-                 timestamp_unix: str, timestamp_iso8601: str, aff1h: float, aff5h: float, f7: float, fc5: float,
-                 fc1: float, c3: float, t7: float, tp9: float, cp5: float, cp1: float, pz: float, p3: float, p7: float,
-                 po9: float, o1: float, oz: float, o2: float, po10: float, p8: float, p4: float, tp10: float,
-                 cp6: float, cp2: float, cz: float, c4: float, t8: float, fc6: float, fc2: float, fcz: float, f8: float,
-                 aff6h: float, aff2h: float, aux_gsr: float, aux_ekg: float):
+                 timestamp_unix: str, timestamp_iso8601: str, aff1h: float, f7: float, fc5: float, c3: float, t7: float,
+                 tp9: float, pz: float, p3: float, p7: float, o1: float, o2: float, p8: float, p4: float, tp10: float,
+                 cz: float, c4: float, t8: float, fc6: float, fcz: float, f8: float, aff2h: float, aux_gsr: float,
+                 aux_ekg: float, aff5h: float = None, fc1: float = None, cp5: float = None, cp1: float = None,
+                 po9: float = None, oz: float = None, po10: float = None, cp6: float = None, cp2: float = None,
+                 fc2: float = None, aff6h: float = None, ):
         super().__init__()
 
         self.group_session_id = group_session_id
