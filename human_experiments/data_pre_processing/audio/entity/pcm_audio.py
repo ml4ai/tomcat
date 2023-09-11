@@ -1,5 +1,7 @@
 import os
 
+import pandas as pd
+
 
 class PCMAudio:
 
@@ -31,3 +33,7 @@ class PCMAudio:
             # Write subchunk2size at 40th byte
             output_file.seek(40)
             output_file.write(subchunk2size_in_bytes)
+
+
+    def extract_vocalic_features(self) -> pd.DataFrame:
+        return None

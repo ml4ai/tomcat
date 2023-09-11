@@ -8,27 +8,8 @@ import os
 from audio.entity.pcm_audio import PCMAudio
 from tqdm import tqdm
 
-"""
-Some audio files do not contain the Subchunk2Size part of the PCM-format header filled, which causes the file not
-to be recognized by the apple audio player or even python libraries to read wave files. This script completes the
-Subchunk2Size data in the header of the audio files according to what it is supposed to contain as described in
-http://soundfile.sapp.org/doc/WaveFormat/
-"""
 
-logging.basicConfig(
-    level=logging.INFO,
-    handlers=(
-        logging.FileHandler(
-            # filename=f"/space/{USER}/tomcat/fix_audio_header.log",
-            filename=f"/Users/{USER}/data/langlab/study3/fix_audio_header.log",
-            mode="w",
-        ),
-        logging.StreamHandler(stream=sys.stderr),
-    ),
-)
-
-
-def fix_audio_header(experiments_dir: str, out_dir: str):
+def extract_vocalic_features(experiments_dir: str, out_dir: str):
     info("Processing directories...")
 
     with cd(experiments_dir):
@@ -48,7 +29,7 @@ def process_directory_v1(group_session: str, out_dir: str):
 
 
 def process_directory_v2(group_session: str, out_dir: str):
-    return process_directory(group_session, out_dir, lambda g, s:  f"{g}/{s}/audio/block_2")
+    return process_directory(group_session, out_dir, lambda g, s: f"{g}/{s}/audio/block_2")
 
 
 def process_directory(group_session: str, out_dir: str, audio_dir_fn: Callable):
@@ -62,20 +43,22 @@ def process_directory(group_session: str, out_dir: str, audio_dir_fn: Callable):
             audio = PCMAudio(filepath=f"{audio_dir}/{audio_file}")
 
             os.makedirs(f"{out_dir}/{audio_dir}", exist_ok=True)
-            audio.fix_header(out_filepath=f"{out_dir}/{audio_dir}/{audio_file}")
+            df = audio.extract_vocalic_features()
+
+            vocalic_filename = audio_file[:audio_file.rfind(".")] + "csv"
+            df.to_csv(f"{out_dir}/{audio_dir}/{vocalic_filename}")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Parses a collection of experiments, finds the audio files, fix their header by filling the"
-                    " Subchunk2Size portion and save them to the output folder, maintaining the folder structure"
-                    " in the original experiment."
+        description="Parses a collection of experiments, finds the audio files, extracts vocalic features from the audio "
+                    " and save them to a .csv file."
     )
 
     parser.add_argument("--experiments_dir", type=str, required=False, default=EXP_DIR,
                         help="Directory containing experiment folders.")
     parser.add_argument("--out_dir", type=str, required=False, default=OUT_DIR,
-                        help="Directory where experiment folder structure containing fixed audios must be saved.")
+                        help="Directory where experiment folder structure containing vocalic features files must be saved.")
     parser.add_argument("--log_dir", type=str, required=False, default=LOG_DIR,
                         help="Directory where log files must be saved.")
 
@@ -85,11 +68,11 @@ if __name__ == "__main__":
         level=logging.INFO,
         handlers=(
             logging.FileHandler(
-                filename=f"{LOG_DIR}/fix_audio_header.log",
+                filename=f"{LOG_DIR}/extract_vocalic_features.log",
                 mode="w",
             ),
             logging.StreamHandler(stream=sys.stderr),
         ),
     )
 
-    fix_audio_header(args.experiments_dir, args.out_dir)
+    extract_vocalic_features(args.experiments_dir, args.out_dir)
