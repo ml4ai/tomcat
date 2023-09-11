@@ -78,9 +78,9 @@ if __name__ == "__main__":
                     " in the original experiment."
     )
 
-    parser.add_argument("--experiments_dir", type=str, required=True, default=EXP_DIR,
+    parser.add_argument("--experiments_dir", type=str, required=False, default=EXP_DIR,
                         help="Directory containing experiment folders.")
-    parser.add_argument("--out_dir", type=str, required=True, default=OUT_DIR,
+    parser.add_argument("--out_dir", type=str, required=False, default=OUT_DIR,
                         help="Directory where experiment folder structure containing fixed audios must be saved.")
 
     args = parser.parse_args()
