@@ -31,31 +31,33 @@ logging.basicConfig(
 def fix_audio_header(experiments_dir: str, out_dir: str):
     info("Processing directories...")
 
-    with cd(experiments_dir):
-        directories_to_process = [directory for directory in os.listdir(".") if directory[:4] == "exp_"]
+    directories_to_process = [directory for directory in os.listdir(experiments_dir) if
+                              os.path.basename(directory)[:4] == "exp_"]
 
-        for group_session in tqdm(sorted(directories_to_process), unit="directories"):
-            info(f"Processing group session {group_session}")
+    for group_session in tqdm(sorted(directories_to_process), unit="directories"):
+        info(f"Processing group session {group_session}")
+        experiment_dir = f"{experiments_dir}/{group_session}"
 
-            if not is_directory_with_unified_xdf_files(group_session):
-                process_directory_v1(group_session, out_dir)
-            else:
-                process_directory_v2(group_session, out_dir)
-
-
-def process_directory_v1(group_session: str, out_dir: str):
-    return process_directory(group_session, out_dir, lambda g, s: f"{g}/{s}/audio")
+        if not is_directory_with_unified_xdf_files(experiment_dir):
+            process_directory_v1(experiment_dir, out_dir)
+        else:
+            process_directory_v2(experiment_dir, out_dir)
 
 
-def process_directory_v2(group_session: str, out_dir: str):
-    return process_directory(group_session, out_dir, lambda g, s:  f"{g}/{s}/audio/block_2")
+def process_directory_v1(experiment_dir: str, out_dir: str):
+    return process_directory(experiment_dir, out_dir, lambda g, s: f"{g}/{s}/audio")
 
 
-def process_directory(group_session: str, out_dir: str, audio_dir_fn: Callable):
+def process_directory_v2(experiment_dir: str, out_dir: str):
+    return process_directory(experiment_dir, out_dir, lambda g, s: f"{g}/{s}/audio/block_2")
+
+
+def process_directory(experiment_dir: str, out_dir: str, audio_dir_fn: Callable):
     for station in ["lion", "tiger", "leopard"]:
-        audio_dir = audio_dir_fn(group_session, station)
+        audio_dir = audio_dir_fn(experiment_dir, station)
         if not os.path.exists(audio_dir):
-            error(f"Audio folder does not exist for station {station} in group session {group_session}.")
+            error(
+                f"Audio folder does not exist for station {station} in group session {os.path.basename(experiment_dir)}.")
             continue
 
         for audio_file in os.listdir(audio_dir):
@@ -81,11 +83,12 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    os.makedirs(args.log_dir, exist_ok=True)
     logging.basicConfig(
         level=logging.INFO,
         handlers=(
             logging.FileHandler(
-                filename=f"{LOG_DIR}/fix_audio_header.log",
+                filename=f"{args.log_dir}/fix_audio_header.log",
                 mode="w",
             ),
             logging.StreamHandler(stream=sys.stderr),

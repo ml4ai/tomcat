@@ -1,6 +1,9 @@
 import os
 
 import pandas as pd
+import opensmile
+import audiofile
+import logging
 
 
 class PCMAudio:
@@ -34,6 +37,13 @@ class PCMAudio:
             output_file.seek(40)
             output_file.write(subchunk2size_in_bytes)
 
-
     def extract_vocalic_features(self) -> pd.DataFrame:
-        return None
+        # signal, sampling_rate = audiofile.read(self.filepath)
+
+        smile = opensmile.Smile(
+            feature_set="opensmile/is09-13/IS13_ComParE.conf",
+            feature_level='lld;lld_de',
+            logfile=logging.getLoggerClass().root.handlers[0].baseFilename,
+            options={"frameTime": False, "timeFrame": False, "append": False, "quoteStrings": True}
+        )
+        return smile.process_file(self.filepath)

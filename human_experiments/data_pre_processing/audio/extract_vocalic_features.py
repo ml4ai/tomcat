@@ -1,42 +1,48 @@
-from utils import cd, is_directory_with_unified_xdf_files
-import logging
-from logging import info, error
 import argparse
-from common.config import EXP_DIR, OUT_DIR, USER, LOG_DIR
-import sys
+import logging
 import os
-from audio.entity.pcm_audio import PCMAudio
+import sys
+from logging import info, error
+from typing import Callable
+
 from tqdm import tqdm
+
+from audio.entity.pcm_audio import PCMAudio
+from common.config import EXP_DIR, OUT_DIR, LOG_DIR
+from utils import cd, is_directory_with_unified_xdf_files
 
 
 def extract_vocalic_features(experiments_dir: str, out_dir: str):
     info("Processing directories...")
 
-    with cd(experiments_dir):
-        directories_to_process = [directory for directory in os.listdir(".") if directory[:4] == "exp_"]
+    directories_to_process = [directory for directory in os.listdir(experiments_dir) if
+                              os.path.basename(directory)[:4] == "exp_"]
 
-        for group_session in tqdm(sorted(directories_to_process), unit="directories"):
-            info(f"Processing group session {group_session}")
+    for group_session in tqdm(sorted(directories_to_process), unit="directories"):
+        info(f"Processing group session {group_session}")
 
-            if not is_directory_with_unified_xdf_files(group_session):
-                process_directory_v1(group_session, out_dir)
-            else:
-                process_directory_v2(group_session, out_dir)
+        experiment_dir = f"{experiments_dir}/{group_session}"
 
-
-def process_directory_v1(group_session: str, out_dir: str):
-    return process_directory(group_session, out_dir, lambda g, s: f"{g}/{s}/audio")
+        if not is_directory_with_unified_xdf_files(experiment_dir):
+            process_directory_v1(experiment_dir, out_dir)
+        else:
+            process_directory_v2(experiment_dir, out_dir)
 
 
-def process_directory_v2(group_session: str, out_dir: str):
-    return process_directory(group_session, out_dir, lambda g, s: f"{g}/{s}/audio/block_2")
+def process_directory_v1(experiment_dir: str, out_dir: str):
+    return process_directory(experiment_dir, out_dir, lambda g, s: f"{g}/{s}/audio")
 
 
-def process_directory(group_session: str, out_dir: str, audio_dir_fn: Callable):
+def process_directory_v2(experiment_dir: str, out_dir: str):
+    return process_directory(experiment_dir, out_dir, lambda g, s: f"{g}/{s}/audio/block_2")
+
+
+def process_directory(experiment_dir: str, out_dir: str, audio_dir_fn: Callable):
     for station in ["lion", "tiger", "leopard"]:
-        audio_dir = audio_dir_fn(group_session, station)
+        audio_dir = audio_dir_fn(experiment_dir, station)
         if not os.path.exists(audio_dir):
-            error(f"Audio folder does not exist for station {station} in group session {group_session}.")
+            error(
+                f"Audio folder does not exist for station {station} in group session {os.path.basename(experiment_dir)}.")
             continue
 
         for audio_file in os.listdir(audio_dir):
@@ -45,8 +51,17 @@ def process_directory(group_session: str, out_dir: str, audio_dir_fn: Callable):
             os.makedirs(f"{out_dir}/{audio_dir}", exist_ok=True)
             df = audio.extract_vocalic_features()
 
-            vocalic_filename = audio_file[:audio_file.rfind(".")] + "csv"
-            df.to_csv(f"{out_dir}/{audio_dir}/{vocalic_filename}")
+            # Replace pcm_ with wave_ to match column name with CLI extraction
+            # df = df.drop(columns=["file", "start", "end"])
+            df.columns = [f"wave_{col[3:]}" if col[3:] == "pcm" else col for col in df.columns]
+
+            vocalic_filename = audio_file[:audio_file.rfind(".")] + "_2.csv"
+            sub_dir = audio_dir[audio_dir.find("exp_"):]
+
+            os.makedirs(f"{out_dir}/{sub_dir}", exist_ok=True)
+            df.to_csv(f"{out_dir}/{sub_dir}/{vocalic_filename}", sep=";")
+
+            sys.exit()
 
 
 if __name__ == "__main__":
@@ -64,11 +79,12 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    os.makedirs(args.log_dir, exist_ok=True)
     logging.basicConfig(
         level=logging.INFO,
         handlers=(
             logging.FileHandler(
-                filename=f"{LOG_DIR}/extract_vocalic_features.log",
+                filename=f"{args.log_dir}/extract_vocalic_features.log",
                 mode="w",
             ),
             logging.StreamHandler(stream=sys.stderr),
