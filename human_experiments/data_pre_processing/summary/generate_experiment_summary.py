@@ -5,7 +5,7 @@ import os
 import pandas as pd
 from tqdm import tqdm
 
-from summary.experiment_summary import ExperimentSummary
+from summary.entity.experiment_summary import ExperimentSummary
 
 
 def generate_summary(experiments_dir: str, out_dir: str):

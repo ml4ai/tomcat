@@ -9,7 +9,7 @@ import json
 import logging
 import pandas as pd
 
-from summary.task_summary import TaskSummary
+from summary.entity.task_summary import TaskSummary
 from common.constants import MISSING_INFO
 
 logger = logging.getLogger()

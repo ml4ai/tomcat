@@ -2,10 +2,10 @@ from utils import cd, is_directory_with_unified_xdf_files
 import logging
 from logging import info, error
 import argparse
-from config import EXP_DIR, OUT_DIR, USER
+from common.config import EXP_DIR, OUT_DIR, USER
 import sys
 import os
-from entity.pcm_audio import PCMAudio
+from audio.entity.pcm_audio import PCMAudio
 from tqdm import tqdm
 
 """
