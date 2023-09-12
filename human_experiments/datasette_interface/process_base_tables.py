@@ -244,6 +244,7 @@ def process_experiment_info_workbook(database_engine):
 
     with Session(database_engine) as database_session:
         database_session.add_all(eeg_devices)
+        database_session.commit()
 
 
 def recreate_base_tables(database_engine):
