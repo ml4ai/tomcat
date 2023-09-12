@@ -222,22 +222,25 @@ def process_experiment_info_workbook(database_engine):
     for group_session_id, series in df.iterrows():
         group_session_id = str(group_session_id)
 
+        device_id = float(series["lion_actiCHamp"])
         lion_eeg_device = EEGDevice(
             group_session_id=group_session_id,
             station_id="lion",
-            device_id=None if series["lion_actiCHamp"].lower() == "nan" else series["lion_actiCHamp"]
+            device_id=None if math.isnan(device_id) else str(int(device_id))
         )
 
+        device_id = float(series["tiger_actiCHamp"])
         tiger_eeg_device = EEGDevice(
             group_session_id=group_session_id,
             station_id="tiger",
-            device_id=None if series["tiger_actiCHamp"].lower() == "nan" else series["tiger_actiCHamp"]
+            device_id=None if math.isnan(device_id) else str(int(device_id))
         )
 
+        device_id = float(series["leopard_actiCHamp"])
         leopard_eeg_device = EEGDevice(
             group_session_id=group_session_id,
             station_id="leopard",
-            device_id=None if series["leopard_actiCHamp"].lower() == "nan" else series["leopard_actiCHamp"]
+            device_id=None if math.isnan(device_id) else str(int(device_id))
         )
 
         eeg_devices.extend([lion_eeg_device, tiger_eeg_device, leopard_eeg_device])
