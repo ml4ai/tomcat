@@ -46,22 +46,17 @@ def process_directory(experiment_dir: str, out_dir: str, audio_dir_fn: Callable)
             continue
 
         for audio_file in os.listdir(audio_dir):
+            if audio_file[audio_file.rfind("."):].lower() != ".wav":
+                continue
+
             audio = PCMAudio(filepath=f"{audio_dir}/{audio_file}")
+            logging.info(f"Processing audio {audio_file}.")
 
-            os.makedirs(f"{out_dir}/{audio_dir}", exist_ok=True)
-            df = audio.extract_vocalic_features()
-
-            # Replace pcm_ with wave_ to match column name with CLI extraction
-            # df = df.drop(columns=["file", "start", "end"])
-            df.columns = [f"wave_{col[3:]}" if col[3:] == "pcm" else col for col in df.columns]
-
-            vocalic_filename = audio_file[:audio_file.rfind(".")] + "_2.csv"
-            sub_dir = audio_dir[audio_dir.find("exp_"):]
-
+            sub_dir = audio_dir[audio_dir.find("exp_"):] + "/vocalics"
             os.makedirs(f"{out_dir}/{sub_dir}", exist_ok=True)
-            df.to_csv(f"{out_dir}/{sub_dir}/{vocalic_filename}", sep=";")
 
-            sys.exit()
+            vocalic_filename = audio_file[:audio_file.rfind(".")] + ".csv"
+            audio.extract_vocalic_features(f"{out_dir}/{sub_dir}/{vocalic_filename}")
 
 
 if __name__ == "__main__":

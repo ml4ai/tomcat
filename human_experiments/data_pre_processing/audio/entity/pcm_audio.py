@@ -5,6 +5,8 @@ import opensmile
 import audiofile
 import logging
 
+import subprocess
+
 
 class PCMAudio:
 
@@ -37,13 +39,15 @@ class PCMAudio:
             output_file.seek(40)
             output_file.write(subchunk2size_in_bytes)
 
-    def extract_vocalic_features(self) -> pd.DataFrame:
-        # signal, sampling_rate = audiofile.read(self.filepath)
+    def extract_vocalic_features(self, out_filepath: str):
+        """
+        We use shell execution to generate the vocalics. There is a Python wrapper but I could not make it produce
+        a csv file with the same columns so I opted for the CLI solution. Also, this does not change the OpenSmile
+        input and output in the config files.
+        """
+        command = f"SMILExtract -C opensmile/is09-13/IS13_ComParE.conf -I {self.filepath} -D {out_filepath}"
 
-        smile = opensmile.Smile(
-            feature_set="opensmile/is09-13/IS13_ComParE.conf",
-            feature_level='lld;lld_de',
-            logfile=logging.getLoggerClass().root.handlers[0].baseFilename,
-            options={"frameTime": False, "timeFrame": False, "append": False, "quoteStrings": True}
-        )
-        return smile.process_file(self.filepath)
+        logs = logging.getLoggerClass().root.handlers[0].baseFilename
+        with open(logs, "a") as log_file:
+            if subprocess.call(command, shell=True, stdout=log_file, stderr=subprocess.STDOUT) != 0:
+                logging.error(f"Error extracting vocalic features from {self.filepath}.")
