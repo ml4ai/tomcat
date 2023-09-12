@@ -39,9 +39,9 @@ def process_eeg_raw_data(database_engine, override):
 
     device_id_to_station_map = {}
     with Session(database_engine) as database_session:
-        for group_session, station_id, device_id in database_session.query(EEGDevice).all():
-            if device_id:
-                device_id_to_station_map[group_session] = {device_id: station_id}
+        for eeg_device in database_session.query(EEGDevice).all():
+            if eeg_device.device_id:
+                device_id_to_station_map[eeg_device.group_session_id] = {eeg_device.device_id: eeg_device.station_id}
     print(device_id_to_station_map)
 
     insert_raw_unlabeled_data(database_engine, override, EEGRaw, "eeg", "EEG", get_channel_names_from_xdf_stream,
