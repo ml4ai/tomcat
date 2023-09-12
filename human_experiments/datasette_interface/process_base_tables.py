@@ -265,7 +265,6 @@ def recreate_base_tables(database_engine):
 
 
 def process_base_tables(database_engine):
-    # populate_base_tables(database_engine)
-    # process_rick_workbook(database_engine)
-    EEGDevice.__table__.create(database_engine)
+    populate_base_tables(database_engine)
+    process_rick_workbook(database_engine)
     process_experiment_info_workbook(database_engine)
