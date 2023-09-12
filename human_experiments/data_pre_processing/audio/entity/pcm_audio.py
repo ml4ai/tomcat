@@ -4,8 +4,17 @@ import pandas as pd
 import opensmile
 import audiofile
 import logging
+from scipy.io import wavfile
+import whisper
+from tqdm import tqdm
 
 import subprocess
+
+from pydub import AudioSegment
+
+from audio.entity.praat_annotation import PraatAnnotation
+
+from audio.entity.transcriber import Transcriber
 
 
 class PCMAudio:
@@ -51,3 +60,15 @@ class PCMAudio:
         with open(logs, "a") as log_file:
             if subprocess.call(command, shell=True, stdout=log_file, stderr=subprocess.STDOUT) != 0:
                 logging.error(f"Error extracting vocalic features from {self.filepath}.")
+
+    def transcribe_annotated_utterances(self, transcriber: Transcriber, annotation: PraatAnnotation):
+        annotation.reset_transcript_tier()
+
+        full_audio = AudioSegment.from_wav(self.filepath)
+        intervals = list(annotation.sound_intervals)
+        for index, start_frame, end_frame in tqdm(intervals, position=1, leave=False):
+            lb = int(start_frame * full_audio.frame_rate)
+            ub = int(end_frame * full_audio.frame_rate)
+            audio_segment = full_audio.get_sample_slice(lb, ub)
+            result = transcriber.transcribe(audio_segment)
+            annotation.set_transcript(index, result["text"])
