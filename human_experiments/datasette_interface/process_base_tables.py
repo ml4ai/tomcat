@@ -18,6 +18,7 @@ from entity.base.participant import Participant
 from entity.base.station import Station
 from entity.base.task import Task
 from entity.base.eeg_device import EEGDevice
+import math
 
 logging.basicConfig(
     level=logging.INFO,
@@ -223,21 +224,21 @@ def process_experiment_info_workbook(database_engine):
     for group_session_id, series in df.iterrows():
         group_session_id = str(group_session_id)
 
-        device_id = series["lion_actiCHamp"]
+        device_id = float(series["lion_actiCHamp"])
         lion_eeg_device = EEGDevice(
             group_session_id=group_session_id,
             station_id="lion",
             device_id=None if math.isnan(device_id) else str(device_id)
         )
 
-        device_id = series["tiger_actiCHamp"]
+        device_id = float(series["tiger_actiCHamp"])
         tiger_eeg_device = EEGDevice(
             group_session_id=group_session_id,
             station_id="tiger",
             device_id=None if math.isnan(device_id) else str(device_id)
         )
 
-        device_id = series["leopard_actiCHamp"]
+        device_id = float(series["leopard_actiCHamp"])
         leopard_eeg_device = EEGDevice(
             group_session_id=group_session_id,
             station_id="leopard",
