@@ -6,19 +6,17 @@ import sys
 from logging import info
 
 import pandas as pd
-from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
 from config import USER
 from entity.base.base import Base
 from entity.base.data_validity import DataValidity
+from entity.base.eeg_device import EEGDevice
 from entity.base.group_session import GroupSession
 from entity.base.modality import Modality
 from entity.base.participant import Participant
 from entity.base.station import Station
 from entity.base.task import Task
-from entity.base.eeg_device import EEGDevice
-import math
 
 logging.basicConfig(
     level=logging.INFO,
@@ -267,7 +265,6 @@ def recreate_base_tables(database_engine):
 
 
 def process_base_tables(database_engine):
-    # populate_base_tables(database_engine)
-    # process_rick_workbook(database_engine)
-    EEGDevice.__table__.create(database_engine)
+    populate_base_tables(database_engine)
+    process_rick_workbook(database_engine)
     process_experiment_info_workbook(database_engine)

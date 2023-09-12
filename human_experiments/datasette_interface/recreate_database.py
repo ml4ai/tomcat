@@ -175,6 +175,4 @@ if __name__ == "__main__":
     if args.override:
         recreate_tables(tables, engine)
 
-    # populate_tables(tables, engine, args.override)
-
-    process_base_tables(engine)
+    populate_tables(tables, engine, args.override)
