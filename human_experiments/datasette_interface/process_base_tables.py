@@ -16,6 +16,7 @@ from entity.base.modality import Modality
 from entity.base.participant import Participant
 from entity.base.station import Station
 from entity.base.task import Task
+from entity.base.eeg_device import EEGDevice
 
 logging.basicConfig(
     level=logging.INFO,
@@ -54,28 +55,28 @@ STATIONS = [
 
 
 def populate_task_table(database_engine):
-    with Session(database_engine) as session:
+    with Session(database_engine) as database_session:
         modalities = [Task(id=task) for task in TASKS]
-        session.add_all(modalities)
-        session.commit()
+        database_session.add_all(modalities)
+        database_session.commit()
 
 
 def populate_station_table(database_engine):
-    with Session(database_engine) as session:
+    with Session(database_engine) as database_session:
         stations = [Station(id=station) for station in STATIONS + ["cheetah"]]
-        session.add_all(stations)
-        session.commit()
+        database_session.add_all(stations)
+        database_session.commit()
 
 
 def populate_modality_table(database_engine):
-    with Session(database_engine) as session:
+    with Session(database_engine) as database_session:
         modalities = [Modality(id=modality) for modality in MODALITIES]
-        session.add_all(modalities)
-        session.commit()
+        database_session.add_all(modalities)
+        database_session.commit()
 
 
 def populate_participant_table(database_engine):
-    with Session(database_engine) as session:
+    with Session(database_engine) as database_session:
         participants = [
             # ID of -1 to represent 'unknown participant'
             Participant(id=-1),
@@ -84,8 +85,8 @@ def populate_participant_table(database_engine):
             # ID of - 3 to represent an unknown experimenter(for the ping pong task data)
             Participant(id=-3)
         ]
-        session.add_all(participants)
-        session.commit()
+        database_session.add_all(participants)
+        database_session.commit()
 
 
 def populate_base_tables(database_engine):
@@ -208,6 +209,43 @@ def process_rick_workbook(database_engine):
             session.commit()
 
 
+def process_experiment_info_workbook(database_engine):
+    info(f"Process experiment info workbook.")
+
+    # TODO move file to /tomcat/data/raw/LangLab/experiments/study_3_pilot
+    # csv_path = "/tomcat/data/raw/LangLab/experiments/study_3_pilot/rchamplin_data_validity_table.csv"
+    csv_path = "/space/eduong/exp_info_v2/exp_info.csv"
+
+    df = pd.read_csv(csv_path, index_col="experiment_id", dtype=str)
+
+    eeg_devices = []
+    for group_session_id, series in df.iterrows():
+        group_session_id = str(group_session_id)
+
+        lion_eeg_device = EEGDevice(
+            group_session_id=group_session_id,
+            station_id="lion",
+            device_id=str(series["lion_actiCHamp"])
+        )
+
+        tiger_eeg_device = EEGDevice(
+            group_session_id=group_session_id,
+            station_id="tiger",
+            device_id=str(series["tiger_actiCHamp"])
+        )
+
+        leopard_eeg_device = EEGDevice(
+            group_session_id=group_session_id,
+            station_id="leopard",
+            device_id=str(series["leopard_actiCHamp"])
+        )
+
+        eeg_devices.extend([lion_eeg_device, tiger_eeg_device, leopard_eeg_device])
+
+    with Session(database_engine) as database_session:
+        database_session.add_all(eeg_devices)
+
+
 def recreate_base_tables(database_engine):
     tables = [
         GroupSession.__table__,
@@ -223,5 +261,7 @@ def recreate_base_tables(database_engine):
 
 
 def process_base_tables(database_engine):
-    populate_base_tables(database_engine)
-    process_rick_workbook(database_engine)
+    # populate_base_tables(database_engine)
+    # process_rick_workbook(database_engine)
+    EEGDevice.__table__.create(database_engine)
+    process_experiment_info_workbook(database_engine)
