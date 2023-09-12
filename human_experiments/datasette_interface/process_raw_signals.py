@@ -147,7 +147,7 @@ def process_directory_v2(group_session, signal_modality_class, modality_name, xd
                 # For v2, the signals are split in two files (block1 and 2). When processing block2 entries,
                 # we need to make sure we start the ID taking into account the last ID in the block 1 files for the same
                 # station, otherwise we get a duplicate key error during insertion.
-                station = station_from_xdf_v2_parsing_fn(stream)
+                station = station_from_xdf_v2_parsing_fn(group_session, stream)
                 next_id = max_ids.get(station, -1) + 1
                 tmp = get_signals(stream, group_session, station, next_id, signal_modality_class,
                                   channel_from_xdf_parsing_fn)

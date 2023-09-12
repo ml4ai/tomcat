@@ -26,7 +26,7 @@ def get_channel_names_from_xdf_stream(stream):
     return [channel["label"][0].lower() for channel in stream["info"]["desc"][0]["channels"][0]["channel"]]
 
 
-def get_station_from_xdf_stream(stream):
+def get_station_from_xdf_stream(group_session, stream):
     return stream["info"]["hostname"][0]
 
 
