@@ -2,11 +2,12 @@ from utils import cd, is_directory_with_unified_xdf_files
 import logging
 from logging import info, error
 import argparse
-from common.config import EXP_DIR, OUT_DIR, USER, LOG_DIR
+from common.config import EXP_DIR, OUT_DIR, LOG_DIR
 import sys
 import os
 from audio.entity.pcm_audio import PCMAudio
 from tqdm import tqdm
+from typing import Callable
 
 """
 Some audio files do not contain the Subchunk2Size part of the PCM-format header filled, which causes the file not
@@ -14,6 +15,7 @@ to be recognized by the apple audio player or even python libraries to read wave
 Subchunk2Size data in the header of the audio files according to what it is supposed to contain as described in
 http://soundfile.sapp.org/doc/WaveFormat/
 """
+
 
 def fix_audio_header(experiments_dir: str, out_dir: str):
     info("Processing directories...")
