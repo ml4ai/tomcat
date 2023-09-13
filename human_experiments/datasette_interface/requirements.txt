@@ -9,3 +9,4 @@ numpy
 py
 sqlalchemy
 psycopg2
+db-to-sqlite[postgresql]

@@ -3,10 +3,11 @@
 import argparse
 from sqlalchemy import create_engine
 import logging
-from logging import info
+from logging import info, error
 import sys
+import subprocess
 
-from config import USER
+from config import USER, SQLITE_DB_PATH
 from entity.base.base import Base
 
 from process_base_tables import process_base_tables, recreate_base_tables
@@ -22,6 +23,7 @@ from process_minecraft_data import process_minecraft_data, recreate_minecraft_ta
 from process_fnirs_raw_data import process_fnirs_raw_data, recreate_fnirs_raw_tables
 from process_eeg_raw_data import process_eeg_raw_data, recreate_eeg_raw_tables
 from process_gaze_data import process_gaze_raw_data, recreate_gaze_raw_tables
+
 
 logging.basicConfig(
     level=logging.INFO,
@@ -143,6 +145,7 @@ if __name__ == "__main__":
     parser.add_argument("--no_fnirs", action='store_true', help="Do not recreate fnirs tables.")
     parser.add_argument("--no_eeg", action='store_true', help="Do not recreate eeg tables.")
     parser.add_argument("--no_gaze", action='store_true', help="Do not recreate gaze tables.")
+    parser.add_argument("--to_sqlite", action='store_true', help="Export the full Postgres database to SQLite.")
 
     args = parser.parse_args()
 
@@ -176,3 +179,11 @@ if __name__ == "__main__":
         recreate_tables(tables, engine)
 
     populate_tables(tables, engine, args.override)
+
+    if args.to_sqlite:
+        info("Exporting database to SQLite.")
+        command = f"db-to-sqlite --all {connection_string} {SQLITE_DB_PATH}"
+        if subprocess.call(command) == 0:
+            info(f"Database to successfully exported to SQLite. Saved in {SQLITE_DB_PATH}")
+        else:
+            error("Could not export database to SQLite.")
