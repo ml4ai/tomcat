@@ -43,5 +43,3 @@ def process_fnirs_raw_data(database_engine, override):
 def recreate_fnirs_raw_tables(database_engine):
     FNIRSRaw.__table__.drop(database_engine, checkfirst=True)
     FNIRSRaw.__table__.create(database_engine, checkfirst=True)
-
-

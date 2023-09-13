@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import os
-import sys
 from logging import info, error
 
 import pyxdf
