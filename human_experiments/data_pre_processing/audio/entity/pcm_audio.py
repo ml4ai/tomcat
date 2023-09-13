@@ -1,19 +1,11 @@
-import os
-
-import pandas as pd
-import opensmile
-import audiofile
 import logging
-from scipy.io import wavfile
-import whisper
-from tqdm import tqdm
-
+import os
 import subprocess
 
 from pydub import AudioSegment
+from tqdm import tqdm
 
 from audio.entity.praat_annotation import PraatAnnotation
-
 from audio.entity.transcriber import Transcriber
 
 

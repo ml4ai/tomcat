@@ -7,3 +7,4 @@ tqdm==4.65.0
 pydub==0.25.1
 praat-textgrids==1.4.0
 openai-whisper
+audiofile
