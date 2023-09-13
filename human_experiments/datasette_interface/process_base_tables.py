@@ -98,14 +98,12 @@ def populate_base_tables(database_engine):
     populate_participant_table(database_engine)
 
 
-def process_rick_workbook(database_engine):
-    """Process Rick's CSVs"""
-
-    info(f"Processing Rick's workbook.")
+def process_data_validity_workbook(database_engine):
+    info(f"Processing data validity workbook.")
 
     # TODO Integrate the 'mask_on' statuses.
 
-    csv_path = "/tomcat/data/raw/LangLab/experiments/study_3_pilot/rchamplin_data_validity_table.csv"
+    csv_path = "/tomcat/data/raw/LangLab/experiments/study_3_pilot/data_validity_table.csv"
 
     df = pd.read_csv(csv_path, index_col="experiment_id", dtype=str)
 
@@ -209,12 +207,10 @@ def process_rick_workbook(database_engine):
             session.commit()
 
 
-def process_experiment_info_workbook(database_engine):
-    info(f"Process experiment info workbook.")
+def process_station_to_eeg_amp_mapping_workbook(database_engine):
+    info(f"Process station to eeg amp mapping workbook.")
 
-    # TODO move file to /tomcat/data/raw/LangLab/experiments/study_3_pilot
-    # csv_path = "/tomcat/data/raw/LangLab/experiments/study_3_pilot/rchamplin_data_validity_table.csv"
-    csv_path = "/space/eduong/exp_info_v2/exp_info.csv"
+    csv_path = "/tomcat/data/raw/LangLab/experiments/study_3_pilot/station_to_eeg_amp_mapping.csv"
 
     df = pd.read_csv(csv_path, index_col="experiment_id", dtype=str)
 
@@ -266,5 +262,5 @@ def recreate_base_tables(database_engine):
 
 def process_base_tables(database_engine):
     populate_base_tables(database_engine)
-    process_rick_workbook(database_engine)
-    process_experiment_info_workbook(database_engine)
+    process_data_validity_workbook(database_engine)
+    process_station_to_eeg_amp_mapping_workbook(database_engine)
