@@ -24,7 +24,6 @@ from process_fnirs_raw_data import process_fnirs_raw_data, recreate_fnirs_raw_ta
 from process_eeg_raw_data import process_eeg_raw_data, recreate_eeg_raw_tables
 from process_gaze_data import process_gaze_raw_data, recreate_gaze_raw_tables
 
-
 logging.basicConfig(
     level=logging.INFO,
     handlers=(
@@ -174,6 +173,12 @@ if __name__ == "__main__":
         tables.remove("eeg")
     if args.no_gaze:
         tables.remove("gaze")
+
+    if "base" in tables and len(tables) != len(TABLES):
+        raise Exception("It is not possible to recreate base tables without recreating all other tables altogether"
+                        " since all the content in the base tables will be erased and they are foreign keys to other"
+                        " tables. If you want to recreate all the tables, you have to explicitly not provide any no_*"
+                        " option.")
 
     if args.override:
         recreate_tables(tables, engine)
