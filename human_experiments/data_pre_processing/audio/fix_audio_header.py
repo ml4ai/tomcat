@@ -15,19 +15,6 @@ Subchunk2Size data in the header of the audio files according to what it is supp
 http://soundfile.sapp.org/doc/WaveFormat/
 """
 
-logging.basicConfig(
-    level=logging.INFO,
-    handlers=(
-        logging.FileHandler(
-            # filename=f"/space/{USER}/tomcat/fix_audio_header.log",
-            filename=f"/Users/{USER}/data/langlab/study3/fix_audio_header.log",
-            mode="w",
-        ),
-        logging.StreamHandler(stream=sys.stderr),
-    ),
-)
-
-
 def fix_audio_header(experiments_dir: str, out_dir: str):
     info("Processing directories...")
 
