@@ -183,7 +183,7 @@ if __name__ == "__main__":
     if args.to_sqlite:
         info("Exporting database to SQLite.")
         postgres_connection_string = f"postgresql://{database_info}/{args.db_passwd}"
-        command = f"db-to-sqlite --all {postgres_connection_string} {SQLITE_DB_PATH}"
+        command = f"db-to-sqlite -p --all {postgres_connection_string} {SQLITE_DB_PATH}"
         if subprocess.call(command, shell=True) == 0:
             info(f"Database to successfully exported to SQLite. Saved in {SQLITE_DB_PATH}")
         else:
