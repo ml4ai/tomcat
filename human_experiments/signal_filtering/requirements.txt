@@ -6,3 +6,4 @@ mne
 tqdm
 python-dotenv
 python-dateutil
+neurokit2
