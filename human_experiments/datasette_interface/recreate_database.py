@@ -126,7 +126,7 @@ if __name__ == "__main__":
                         help="User with granted writing permissions in the database.")
     parser.add_argument("--db_port", type=int, required=True,
                         help="Port where the cluster is running. Make sure to set the port to your local cluster.")
-    parser.add_argument("--db_name", type=str, required=False, default=f"{USER}_tomcat",
+    parser.add_argument("--db_name", type=str, required=False, default=f"tomcat",
                         help="Database name. Make sure the database was previously created before running this script.")
     parser.add_argument("--db_passwd", type=str, required=True, help="Password to connect to the database.")
     parser.add_argument("--override", action='store_true',
