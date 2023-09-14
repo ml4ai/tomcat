@@ -50,15 +50,19 @@ def process_directory(experiment_dir: str, group_session: str, out_dir: str, aud
             continue
 
         for audio_file in os.listdir(audio_dir):
-            fixed_audio_filepath = f"{out_dir}/{audio_dir}/{audio_file}"
+            sub_dir = audio_dir[audio_dir.find("exp_"):]
+            fixed_audio_filepath = f"{out_dir}/{sub_dir}/{audio_file}"
+
             if os.path.exists(fixed_audio_filepath) and not override:
                 info(f"Skipping file {audio_file}. Audio file already found in {out_dir}.")
                 continue
 
-            audio = PCMAudio(filepath=f"{audio_dir}/{audio_file}")
+            print(fixed_audio_filepath)
 
-            os.makedirs(f"{out_dir}/{audio_dir}", exist_ok=True)
-            audio.fix_header(out_filepath=fixed_audio_filepath)
+            # audio = PCMAudio(filepath=f"{audio_dir}/{audio_file}")
+            #
+            # os.makedirs(f"{out_dir}/{sub_dir}", exist_ok=True)
+            # audio.fix_header(out_filepath=fixed_audio_filepath)
 
 
 if __name__ == "__main__":
