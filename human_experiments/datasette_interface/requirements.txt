@@ -6,3 +6,7 @@ datasette-pretty-json
 pandas
 pyxdf
 numpy
+py
+sqlalchemy
+psycopg2
+db-to-sqlite[postgresql]

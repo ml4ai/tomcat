@@ -58,6 +58,14 @@ databases:
                     timestamp_unix: The Unix timestamp of the event.
                     timestamp_iso8601: The ISO-8601 timestamp of the event.
 
+            eeg_device:
+              description: >
+                Table with a mapping between station and EEG device id used in each experiment.
+              columns:
+                group_session: Group session ID.
+                station: The iMac that the participant was stationed at.
+                device_id: The id of the EEG device used in the station.
+
             eeg_raw:
               description: >
                 Table with raw EEG data.
