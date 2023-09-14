@@ -13,7 +13,7 @@ from common.config import EXP_DIR, OUT_DIR, LOG_DIR
 from utils import is_directory_with_unified_xdf_files
 
 
-def label_transcriptions(experiments_dir: str, out_dir: str, labeler: SentenceLabeler):
+def label_transcriptions(experiments_dir: str, out_dir: str, labeler: SentenceLabeler, override: bool):
     info("Processing directories...")
 
     directories_to_process = [directory for directory in os.listdir(experiments_dir) if
@@ -25,20 +25,20 @@ def label_transcriptions(experiments_dir: str, out_dir: str, labeler: SentenceLa
         experiment_dir = f"{experiments_dir}/{group_session}"
 
         if not is_directory_with_unified_xdf_files(experiment_dir):
-            process_directory_v1(experiment_dir, out_dir, labeler)
+            process_directory_v1(experiment_dir, out_dir, labeler, override)
         else:
-            process_directory_v2(experiment_dir, out_dir, labeler)
+            process_directory_v2(experiment_dir, out_dir, labeler, override)
 
 
-def process_directory_v1(experiment_dir: str, out_dir: str, labeler: SentenceLabeler):
-    return process_directory(experiment_dir, out_dir, lambda g, s: f"{g}/{s}/audio", labeler)
+def process_directory_v1(experiment_dir: str, out_dir: str, labeler: SentenceLabeler, override: bool):
+    return process_directory(experiment_dir, out_dir, lambda g, s: f"{g}/{s}/audio", labeler, override)
 
 
-def process_directory_v2(experiment_dir: str, out_dir: str, labeler: SentenceLabeler):
-    return process_directory(experiment_dir, out_dir, lambda g, s: f"{g}/{s}/audio/block_2", labeler)
+def process_directory_v2(experiment_dir: str, out_dir: str, labeler: SentenceLabeler, override: bool):
+    return process_directory(experiment_dir, out_dir, lambda g, s: f"{g}/{s}/audio/block_2", labeler, override)
 
 
-def process_directory(experiment_dir: str, out_dir: str, audio_dir_fn: Callable, labeler: SentenceLabeler):
+def process_directory(experiment_dir: str, out_dir: str, audio_dir_fn: Callable, labeler: SentenceLabeler, override: bool):
     for station in ["lion", "tiger", "leopard"]:
         audio_dir = audio_dir_fn(experiment_dir, station)
         transcriptions_annotation_dir = f"{audio_dir}/transcriptions"
@@ -51,15 +51,21 @@ def process_directory(experiment_dir: str, out_dir: str, audio_dir_fn: Callable,
             if annotation_file[annotation_file.rfind("."):].lower() != ".textgrid":
                 continue
 
+            sub_dir = audio_dir[audio_dir.find("exp_"):] + "/dialog_labels"
+
+            labels_filename = annotation_file[:annotation_file.rfind(".")]
+            labels_filepath = f"{out_dir}/{sub_dir}/{labels_filename}"
+
+            if os.path.exists(labels_filepath) and not override:
+                info(f"Skipping file {annotation_file}. Label annotations already found in {out_dir}.")
+                continue
+
             annotation = PraatAnnotation(filepath=f"{transcriptions_annotation_dir}/{annotation_file}")
             labeler.annotate_labels(annotation)
 
-            # Save new annotation with transcriptions
-            sub_dir = audio_dir[audio_dir.find("exp_"):] + "/dialog_labels"
+            # Save new annotation with labels
             os.makedirs(f"{out_dir}/{sub_dir}", exist_ok=True)
-
-            labels_filename = annotation_file[:annotation_file.rfind(".")]
-            annotation.save(f"{out_dir}/{sub_dir}/{labels_filename}")
+            annotation.save(labels_filepath)
 
 
 if __name__ == "__main__":
@@ -78,6 +84,7 @@ if __name__ == "__main__":
                         help="Host of the REST API for the dialog agent.")
     parser.add_argument("--api_port", type=int, required=False, default=8080,
                         help="Ports of the REST API for the dialog agent.")
+    parser.add_argument("--override", action='store_true', help="Do not reprocess data already processed.")
 
     args = parser.parse_args()
 
@@ -94,4 +101,4 @@ if __name__ == "__main__":
     )
 
     dialog_agent = ToMCATDialogAgent(args.api_host, args.api_port)
-    label_transcriptions(args.experiments_dir, args.out_dir, dialog_agent)
+    label_transcriptions(args.experiments_dir, args.out_dir, dialog_agent, args.override)

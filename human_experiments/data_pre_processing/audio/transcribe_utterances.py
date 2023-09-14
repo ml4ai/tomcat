@@ -15,7 +15,7 @@ from utils import cd, is_directory_with_unified_xdf_files
 from audio.entity.transcriber import Whisper
 
 
-def transcribe_utterances(experiments_dir: str, out_dir: str):
+def transcribe_utterances(experiments_dir: str, out_dir: str, override: bool):
     info("Processing directories...")
 
     directories_to_process = [directory for directory in os.listdir(experiments_dir) if
@@ -27,20 +27,20 @@ def transcribe_utterances(experiments_dir: str, out_dir: str):
         experiment_dir = f"{experiments_dir}/{group_session}"
 
         if not is_directory_with_unified_xdf_files(experiment_dir):
-            process_directory_v1(experiment_dir, out_dir)
+            process_directory_v1(experiment_dir, out_dir, override)
         else:
-            process_directory_v2(experiment_dir, out_dir)
+            process_directory_v2(experiment_dir, out_dir, override)
 
 
-def process_directory_v1(experiment_dir: str, out_dir: str):
-    return process_directory(experiment_dir, out_dir, lambda g, s: f"{g}/{s}/audio")
+def process_directory_v1(experiment_dir: str, out_dir: str, override: bool):
+    return process_directory(experiment_dir, out_dir, lambda g, s: f"{g}/{s}/audio", override)
 
 
-def process_directory_v2(experiment_dir: str, out_dir: str):
-    return process_directory(experiment_dir, out_dir, lambda g, s: f"{g}/{s}/audio/block_2")
+def process_directory_v2(experiment_dir: str, out_dir: str, override: bool):
+    return process_directory(experiment_dir, out_dir, lambda g, s: f"{g}/{s}/audio/block_2", override)
 
 
-def process_directory(experiment_dir: str, out_dir: str, audio_dir_fn: Callable):
+def process_directory(experiment_dir: str, out_dir: str, audio_dir_fn: Callable, override: bool):
     transcriber = Whisper()
 
     for station in ["lion", "tiger", "leopard"]:
@@ -55,6 +55,15 @@ def process_directory(experiment_dir: str, out_dir: str, audio_dir_fn: Callable)
             if annotation_file[annotation_file.rfind("."):].lower() != ".textgrid":
                 continue
 
+            sub_dir = audio_dir[audio_dir.find("exp_"):] + "/transcriptions"
+
+            transcripts_filename = annotation_file[:annotation_file.rfind(".")]
+            transcripts_filepath = f"{out_dir}/{sub_dir}/{transcripts_filename}"
+
+            if os.path.exists(transcripts_filepath) and not override:
+                info(f"Skipping file {annotation_file}. Transcript annotations already found in {out_dir}.")
+                continue
+
             annotation = PraatAnnotation(filepath=f"{annotation_dir}/{annotation_file}")
 
             audio_file = annotation_file[:annotation_file.rfind(".")] + ".wav"
@@ -63,11 +72,8 @@ def process_directory(experiment_dir: str, out_dir: str, audio_dir_fn: Callable)
             audio.transcribe_annotated_utterances(transcriber, annotation)
 
             # Save new annotation with transcriptions
-            sub_dir = audio_dir[audio_dir.find("exp_"):] + "/transcriptions"
             os.makedirs(f"{out_dir}/{sub_dir}", exist_ok=True)
-
-            transcriptions_filename = audio_file[:audio_file.rfind(".")]
-            annotation.save(f"{out_dir}/{sub_dir}/{transcriptions_filename}")
+            annotation.save(transcripts_filepath)
 
 
 if __name__ == "__main__":
@@ -82,6 +88,7 @@ if __name__ == "__main__":
                         help="Directory where experiment folder structure containing vocalic features files must be saved.")
     parser.add_argument("--log_dir", type=str, required=False, default=LOG_DIR,
                         help="Directory where log files must be saved.")
+    parser.add_argument("--override", action='store_true', help="Do not reprocess data already processed.")
 
     args = parser.parse_args()
 
@@ -97,4 +104,4 @@ if __name__ == "__main__":
         ),
     )
 
-    transcribe_utterances(args.experiments_dir, args.out_dir)
+    transcribe_utterances(args.experiments_dir, args.out_dir, args.override)
