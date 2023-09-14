@@ -12,6 +12,7 @@ from .utils import get_shared_start_time, generate_time_series_num_samples
 
 def synchronize_signals(experiment: dict[str, any]) -> dict[str, any]:
     desired_frequency = experiment["desired_freq"]
+    upsample_frequency = experiment["upsample_freq"]
     experiment_name = experiment["experiment_name"]
     signals = experiment["signals"]
 
@@ -32,18 +33,18 @@ def synchronize_signals(experiment: dict[str, any]) -> dict[str, any]:
                 # Resample signal
                 resampled_signal = mne_resample(
                     signal[station].drop(columns=["timestamp_unix"]),
-                    signal_frequency, desired_frequency
+                    signal_frequency, upsample_frequency
                 )
 
                 # Assign timestamp for interpolation
                 resampled_signal["timestamp_unix"] = generate_time_series_num_samples(
-                    signal_start_time, len(resampled_signal), desired_frequency
+                    signal_start_time, len(resampled_signal), upsample_frequency
                 )
 
                 try:
                     # Interpolate signal to synchronize with other signals
                     interpolated_signal = linear_interpolation(
-                        resampled_signal, desired_frequency, start_time
+                        resampled_signal, upsample_frequency, start_time
                     )
                 except AssertionError as e:
                     print(f"{experiment_name} - {station} ERROR")
@@ -69,6 +70,11 @@ def synchronize_signals(experiment: dict[str, any]) -> dict[str, any]:
 
     # Concatenate the dataframes column-wise
     synchronized_signal = pd.concat(ready_for_synchronization_signals, axis=1)
+
+    # Downsample to desired frequency
+    synchronized_signal = mne_resample(
+        synchronized_signal, upsample_frequency, desired_frequency
+    )
 
     time_series_frequency = desired_frequency
 

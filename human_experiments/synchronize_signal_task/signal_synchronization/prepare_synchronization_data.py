@@ -10,7 +10,9 @@ def _common_experiment_names(signal_type_info: list[dict[str, any]]):
     return sorted(list(common_names))
 
 
-def prepare_synchronization_data(signal_type_info: list[dict[str, any]], desired_freq: int) -> list[dict[str, any]]:
+def prepare_synchronization_data(signal_type_info: list[dict[str, any]],
+                                 upsample_freq: int,
+                                 desired_freq: int) -> list[dict[str, any]]:
     experiments_to_process = _common_experiment_names(signal_type_info)
 
     sync_experiments_info = []
@@ -18,13 +20,14 @@ def prepare_synchronization_data(signal_type_info: list[dict[str, any]], desired
         sync_experiment_info = {
             "experiment_name": experiment_to_process,
             "desired_freq": desired_freq,
+            "upsample_freq": upsample_freq,
         }
 
         sync_signals_info = []
         for signal_info in signal_type_info:
             sync_signal_info = {
                 "signal_type": signal_info["signal_type"],
-                "frequency": signal_info["recording_frequency"]
+                "frequency": signal_info["recording_frequency"],
             }
 
             for experiment_signal in signal_info["experiment_signals"]:

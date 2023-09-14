@@ -14,9 +14,10 @@ from config import (
 from read_data import read_raw_csv_all
 from signal_synchronization import prepare_synchronization_data, synchronize_signals_all
 from task_synchronization import synchronize_task_signal_all, prepare_task_synchronization_data
-from write_data import write_csv_all
+from write_data import write_csv_all, write_signal_csv_all
 
 if __name__ == "__main__":
+    upsample_frequency = 2000
     desired_freq = 1000
 
     print("Reading data...")
@@ -62,13 +63,17 @@ if __name__ == "__main__":
     ]
 
     print("Synchronizing signals...")
-    sync_experiments_info = prepare_synchronization_data(signal_type_info, desired_freq)
+    sync_experiments_info = prepare_synchronization_data(signal_type_info, upsample_frequency, desired_freq)
     synchronized_signals = synchronize_signals_all(sync_experiments_info)
+
+    print("Writing synchronized signals...")
+    output_dir = os.path.join(OUTPUT_DIR, f"fnirs_eeg_ekg_gsr_{desired_freq}hz")
+    write_signal_csv_all(synchronized_signals, output_dir, NUM_PROCESSES)
 
     print("Synchronizing task signals...")
     task_synchronization_info = prepare_task_synchronization_data(synchronized_signals, DB_PATH, NUM_PROCESSES)
     synchronized_task_signals = synchronize_task_signal_all(task_synchronization_info)
 
-    print("Writing data...")
+    print("Writing synchronized signals and tasks...")
     output_dir = os.path.join(OUTPUT_DIR, f"fnirs_eeg_ekg_gsr_{desired_freq}hz")
     write_csv_all(synchronized_task_signals, output_dir, NUM_PROCESSES)
