@@ -1,4 +1,4 @@
-from utils import cd, is_directory_with_unified_xdf_files
+from utils import is_directory_with_unified_xdf_files
 import logging
 from logging import info, error
 import argparse
@@ -17,7 +17,7 @@ http://soundfile.sapp.org/doc/WaveFormat/
 """
 
 
-def fix_audio_header(experiments_dir: str, out_dir: str):
+def fix_audio_header(experiments_dir: str, out_dir: str, override: bool):
     info("Processing directories...")
 
     directories_to_process = [directory for directory in os.listdir(experiments_dir) if
@@ -27,33 +27,38 @@ def fix_audio_header(experiments_dir: str, out_dir: str):
         info(f"Processing group session {group_session}")
         experiment_dir = f"{experiments_dir}/{group_session}"
 
-        if not is_directory_with_unified_xdf_files(experiment_dir):
-            process_directory_v1(experiment_dir, out_dir)
+        if not is_directory_with_unified_xdf_files(group_session):
+            process_directory_v1(experiment_dir, group_session, out_dir, override)
         else:
-            process_directory_v2(experiment_dir, out_dir)
+            process_directory_v2(experiment_dir, group_session, out_dir, override)
 
 
-def process_directory_v1(experiment_dir: str, out_dir: str):
-    return process_directory(experiment_dir, out_dir, lambda g, s: f"{g}/{s}/audio")
+def process_directory_v1(experiment_dir: str, group_session: str, out_dir: str, override: bool):
+    return process_directory(experiment_dir, group_session, out_dir, lambda g, s: f"{g}/{s}/audio", override)
 
 
-def process_directory_v2(experiment_dir: str, out_dir: str):
-    return process_directory(experiment_dir, out_dir, lambda g, s: f"{g}/{s}/audio/block_2")
+def process_directory_v2(experiment_dir: str, group_session: str, out_dir: str, override: bool):
+    return process_directory(experiment_dir, group_session, out_dir, lambda g, s: f"{g}/{s}/audio/block_2", override)
 
 
-def process_directory(experiment_dir: str, out_dir: str, audio_dir_fn: Callable):
+def process_directory(experiment_dir: str, group_session: str, out_dir: str, audio_dir_fn: Callable, override: bool):
     for station in ["lion", "tiger", "leopard"]:
         audio_dir = audio_dir_fn(experiment_dir, station)
         if not os.path.exists(audio_dir):
             error(
-                f"Audio folder does not exist for station {station} in group session {os.path.basename(experiment_dir)}.")
+                f"Audio folder does not exist for station {station} in group session {group_session}.")
             continue
 
         for audio_file in os.listdir(audio_dir):
+            fixed_audio_filepath = f"{out_dir}/{audio_dir}/{audio_file}"
+            if os.path.exists(fixed_audio_filepath) and not override:
+                info(f"Skipping file {audio_file}. Audio file already found in {out_dir}.")
+                continue
+
             audio = PCMAudio(filepath=f"{audio_dir}/{audio_file}")
 
             os.makedirs(f"{out_dir}/{audio_dir}", exist_ok=True)
-            audio.fix_header(out_filepath=f"{out_dir}/{audio_dir}/{audio_file}")
+            audio.fix_header(out_filepath=fixed_audio_filepath)
 
 
 if __name__ == "__main__":
@@ -69,6 +74,7 @@ if __name__ == "__main__":
                         help="Directory where experiment folder structure containing fixed audios must be saved.")
     parser.add_argument("--log_dir", type=str, required=False, default=LOG_DIR,
                         help="Directory where log files must be saved.")
+    parser.add_argument("--override", action='store_true', help="Do not reprocess data already processed.")
 
     args = parser.parse_args()
 
@@ -84,4 +90,4 @@ if __name__ == "__main__":
         ),
     )
 
-    fix_audio_header(args.experiments_dir, args.out_dir)
+    fix_audio_header(args.experiments_dir, args.out_dir, args.override)

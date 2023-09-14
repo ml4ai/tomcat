@@ -56,7 +56,7 @@ def process_directory(experiment_dir: str, out_dir: str, audio_dir_fn: Callable,
             vocalic_filepath = f"{out_dir}/{sub_dir}/{vocalic_filename}"
 
             if os.path.exists(vocalic_filepath) and not override:
-                info(f"Skipping file {audio_file}. Vocalics already found.")
+                info(f"Skipping file {audio_file}. Vocalics already found in {out_dir}.")
                 continue
 
             audio = PCMAudio(filepath=f"{audio_dir}/{audio_file}")
