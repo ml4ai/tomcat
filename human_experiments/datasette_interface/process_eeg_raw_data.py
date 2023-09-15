@@ -18,7 +18,7 @@ logging.basicConfig(
     level=logging.INFO,
     handlers=(
         logging.FileHandler(
-            filename=f"/space/{USER}/tomcat/build_eeg_table.log", mode="w"
+            filename=f"/space/{USER}/tomcat/build_eeg_table_tmp.log", mode="w"
         ),
         logging.StreamHandler(stream=sys.stderr),
     ),
@@ -51,7 +51,6 @@ def process_eeg_raw_data(database_engine, override):
                               partial(get_station_from_xdf_stream, device_id_to_station_map=device_id_to_station_map))
     create_indices(database_engine, not override, EEGRaw, "eeg")
     label_data(database_engine, override, EEGRaw, "eeg")
-    remove_invalid_data(database_engine, EEGRaw, "eeg")
 
 
 def recreate_eeg_raw_tables(database_engine):

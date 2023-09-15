@@ -15,7 +15,7 @@ logging.basicConfig(
     level=logging.INFO,
     handlers=(
         logging.FileHandler(
-            filename=f"/space/{USER}/tomcat/build_gaze_table.log", mode="w"
+            filename=f"/space/{USER}/tomcat/build_gaze_table_tmp.log", mode="w"
         ),
         logging.StreamHandler(stream=sys.stderr),
     ),
@@ -36,7 +36,6 @@ def process_gaze_raw_data(database_engine, override):
                               get_station_from_xdf_stream)
     create_indices(database_engine, not override, GAZERaw, "Gaze")
     label_data(database_engine, override, GAZERaw, "Gaze")
-    remove_invalid_data(database_engine, GAZERaw, "Gaze")
 
 
 def recreate_gaze_raw_tables(database_engine):

@@ -15,7 +15,7 @@ logging.basicConfig(
     level=logging.INFO,
     handlers=(
         logging.FileHandler(
-            filename=f"/space/{USER}/tomcat/build_fnirs_table.log", mode="w"
+            filename=f"/space/{USER}/tomcat/build_fnirs_table_tmp.log", mode="w"
         ),
         logging.StreamHandler(stream=sys.stderr),
     ),
@@ -37,7 +37,6 @@ def process_fnirs_raw_data(database_engine, override):
                               get_station_from_xdf_stream)
     create_indices(database_engine, not override, FNIRSRaw, "fnirs")
     label_data(database_engine, override, FNIRSRaw, "fnirs")
-    remove_invalid_data(database_engine, FNIRSRaw, "fnirs")
 
 
 def recreate_fnirs_raw_tables(database_engine):
