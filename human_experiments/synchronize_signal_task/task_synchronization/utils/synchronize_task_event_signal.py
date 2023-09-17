@@ -30,7 +30,8 @@ def synchronize_task_event_signal(signal_df: pd.DataFrame,
 
         # If there's a next timestamp, and it's closer to the current timestamp
         if idx + 1 < len(unix_times) and \
-                abs(unix_times[idx + 1] - row['task_timestamp_unix']) < abs(unix_times[idx] - row['task_timestamp_unix']):
+                abs(unix_times[idx + 1] - row['task_timestamp_unix']) < abs(
+            unix_times[idx] - row['task_timestamp_unix']):
             idx += 1  # assign to the next timestamp
 
         if idx >= 0:

@@ -23,9 +23,13 @@ def synchronize_signals(experiment: dict[str, any]) -> dict[str, any]:
                 signals_df.append(signal[station])
     start_time = float(math.ceil(get_shared_start_time(signals_df)))
 
+    all_signal_types = []
     processed_signals = {}
     for signal in signals:
         signal_frequency = signal["frequency"]
+        signal_type = signal["signal_type"]
+        all_signal_types.append(signal_type)
+
         for station in ["lion", "tiger", "leopard"]:
             if station in signal:
                 signal_start_time = signal[station]["timestamp_unix"].min()
@@ -53,7 +57,6 @@ def synchronize_signals(experiment: dict[str, any]) -> dict[str, any]:
                 # Drop current timestamp to use the unified timestamps later
                 interpolated_signal = interpolated_signal.drop(columns=["timestamp_unix"])
 
-                signal_type = signal["signal_type"]
                 processed_signals[f"{station}_{signal_type}"] = interpolated_signal
 
     # Align signals
@@ -91,7 +94,8 @@ def synchronize_signals(experiment: dict[str, any]) -> dict[str, any]:
 
     synchronization_results = {
         "experiment_name": experiment_name,
-        "signals": synchronized_signal
+        "signals": synchronized_signal,
+        "signal_types": all_signal_types,
     }
 
     return synchronization_results

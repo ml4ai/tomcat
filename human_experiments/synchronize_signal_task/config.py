@@ -6,6 +6,7 @@ EEG_FILTERED_PATH = f"/space/{USER}/eeg_filtered"
 EKG_FILTERED_PATH = f"/space/{USER}/ekg_filtered"
 GSR_FILTERED_PATH = f"/space/{USER}/gsr_filtered"
 FNIRS_FILTERED_PATH = f"/space/{USER}/fnirs_filtered"
+POSTGRESQL_ENGINE = f"postgresql://{USER}@localhost:5433/tomcat"
 NUM_PROCESSES = 40
 OUTPUT_DIR = "/tomcat/data/derived/drafts/release_2023_09_13_20"
 

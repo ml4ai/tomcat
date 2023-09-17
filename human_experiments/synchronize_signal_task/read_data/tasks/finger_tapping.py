@@ -1,17 +1,17 @@
-import sqlite3
-
 import pandas as pd
+from sqlalchemy import create_engine
+
+from config import POSTGRESQL_ENGINE
 
 
-def finger_tapping(db_path: str, experiment: str) -> pd.DataFrame | None:
-    db = sqlite3.connect(db_path)
-
+def finger_tapping(experiment: str) -> pd.DataFrame | None:
     query = f"""
             SELECT * 
-            FROM fingertapping_task_observation
-            WHERE group_session = ?;
+            FROM finger_tapping_task_observation
+            WHERE group_session = '{experiment}';
             """
-    finger_tapping_df = pd.read_sql_query(query, db, params=[experiment])
+    engine = create_engine(POSTGRESQL_ENGINE)
+    finger_tapping_df = pd.read_sql_query(query, engine)
 
     if finger_tapping_df.empty:
         return None
@@ -20,6 +20,7 @@ def finger_tapping(db_path: str, experiment: str) -> pd.DataFrame | None:
                                                         'timestamp_iso8601'])
 
     finger_tapping_df["timestamp_unix"] = finger_tapping_df["timestamp_unix"].astype(float)
+    finger_tapping_df = finger_tapping_df.sort_values("timestamp_unix", ascending=True)
     finger_tapping_df = finger_tapping_df.reset_index(drop=True)
 
     assert finger_tapping_df['timestamp_unix'].is_monotonic_increasing

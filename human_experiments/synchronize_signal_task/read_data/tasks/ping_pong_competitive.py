@@ -1,17 +1,17 @@
-import sqlite3
-
 import pandas as pd
+from sqlalchemy import create_engine
+
+from config import POSTGRESQL_ENGINE
 
 
-def ping_pong_competitive(db_path: str, experiment: str) -> dict[tuple[str, str], pd.DataFrame] | None:
-    db = sqlite3.connect(db_path)
-
+def ping_pong_competitive(experiment: str) -> dict[tuple[str, str], pd.DataFrame] | None:
     query = f"""
             SELECT * 
             FROM ping_pong_competitive_task_observation
-            WHERE group_session = ?;
+            WHERE group_session = '{experiment}';
             """
-    ping_pong_competitive_df = pd.read_sql_query(query, db, params=[experiment])
+    engine = create_engine(POSTGRESQL_ENGINE)
+    ping_pong_competitive_df = pd.read_sql_query(query, engine)
 
     if ping_pong_competitive_df.empty:
         return None
@@ -37,6 +37,7 @@ def ping_pong_competitive(db_path: str, experiment: str) -> dict[tuple[str, str]
         player_2_station = match_df['player_2_station'].unique()[0]
         match_df = match_df.copy()
         match_df["timestamp_unix"] = match_df["timestamp_unix"].astype(float)
+        match_df = match_df.sort_values("timestamp_unix", ascending=True)
         match_df = match_df.reset_index(drop=True)
         assert match_df["timestamp_unix"].is_monotonic_increasing
         ids_matches[(player_1_station, player_2_station)] = match_df

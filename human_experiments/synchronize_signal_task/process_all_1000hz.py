@@ -2,7 +2,6 @@ import os
 
 from common import remove_columns_all_exp
 from config import (
-    DB_PATH,
     FNIRS_FILTERED_PATH,
     NUM_PROCESSES,
     EXPERIMENT_SESSIONS,
@@ -71,7 +70,7 @@ if __name__ == "__main__":
     write_signal_csv_all(synchronized_signals, output_dir, NUM_PROCESSES)
 
     print("Synchronizing task signals...")
-    task_synchronization_info = prepare_task_synchronization_data(synchronized_signals, DB_PATH, NUM_PROCESSES)
+    task_synchronization_info = prepare_task_synchronization_data(synchronized_signals, NUM_PROCESSES)
     synchronized_task_signals = synchronize_task_signal_all(task_synchronization_info)
 
     print("Writing synchronized signals and tasks...")

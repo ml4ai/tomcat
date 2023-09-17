@@ -1,20 +1,19 @@
-import sqlite3
-
 import numpy as np
 import pandas as pd
+from sqlalchemy import create_engine
 
 from common import get_station
+from config import POSTGRESQL_ENGINE
 
 
-def affective_team(db_path: str, experiment: str) -> pd.DataFrame | None:
-    db = sqlite3.connect(db_path)
-
+def affective_team(experiment: str) -> pd.DataFrame | None:
     query = f"""
             SELECT * 
             FROM affective_task_event
-            WHERE group_session = ? AND task_type = 'team';
+            WHERE group_session = '{experiment}' AND task_type = 'team';
             """
-    affective_team_df = pd.read_sql_query(query, db, params=[experiment])
+    engine = create_engine(POSTGRESQL_ENGINE)
+    affective_team_df = pd.read_sql_query(query, engine)
 
     if affective_team_df.empty:
         return None
@@ -25,7 +24,7 @@ def affective_team(db_path: str, experiment: str) -> pd.DataFrame | None:
     for participant_id in unique_participants:
         if participant_id < 0:
             continue
-        station = get_station(db_path, experiment, participant_id, "affective_team")
+        station = get_station(experiment, participant_id, "affective_team")
         id_station_map[participant_id] = station
 
     # Create a new column with the mapped stations
@@ -46,6 +45,7 @@ def affective_team(db_path: str, experiment: str) -> pd.DataFrame | None:
     affective_team_df = affective_team_df.reindex(columns=cols)
 
     affective_team_df["timestamp_unix"] = affective_team_df["timestamp_unix"].astype(float)
+    affective_team_df = affective_team_df.sort_values("timestamp_unix", ascending=True)
     affective_team_df = affective_team_df.reset_index(drop=True)
 
     assert affective_team_df["timestamp_unix"].is_monotonic_increasing

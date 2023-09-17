@@ -1,20 +1,19 @@
-import sqlite3
-
 import numpy as np
 import pandas as pd
+from sqlalchemy import create_engine
 
 from common import get_station
+from config import POSTGRESQL_ENGINE
 
 
-def ping_pong_cooperative(db_path: str, experiment: str) -> pd.DataFrame | None:
-    db = sqlite3.connect(db_path)
-
+def ping_pong_cooperative(experiment: str) -> pd.DataFrame | None:
     query = f"""
             SELECT * 
             FROM ping_pong_cooperative_task_observation
-            WHERE group_session = ?;
+            WHERE group_session = '{experiment}';
             """
-    ping_pong_competitive_df = pd.read_sql_query(query, db, params=[experiment])
+    engine = create_engine(POSTGRESQL_ENGINE)
+    ping_pong_competitive_df = pd.read_sql_query(query, engine)
 
     if ping_pong_competitive_df.empty:
         return None
@@ -24,9 +23,9 @@ def ping_pong_cooperative(db_path: str, experiment: str) -> pd.DataFrame | None:
     player_2_id = ping_pong_competitive_df['player_2_id'].unique()[0]
     player_3_id = ping_pong_competitive_df['player_3_id'].unique()[0]
 
-    player_1_station = get_station(db_path, experiment, player_1_id, "ping_pong_cooperative")
-    player_2_station = get_station(db_path, experiment, player_2_id, "ping_pong_cooperative")
-    player_3_station = get_station(db_path, experiment, player_3_id, "ping_pong_cooperative")
+    player_1_station = get_station(experiment, player_1_id, "ping_pong_cooperative")
+    player_2_station = get_station(experiment, player_2_id, "ping_pong_cooperative")
+    player_3_station = get_station(experiment, player_3_id, "ping_pong_cooperative")
 
     id_station_map = {
         player_1_id: player_1_station,
@@ -55,6 +54,7 @@ def ping_pong_cooperative(db_path: str, experiment: str) -> pd.DataFrame | None:
     ping_pong_competitive_df = ping_pong_competitive_df[new_order]
 
     ping_pong_competitive_df["timestamp_unix"] = ping_pong_competitive_df["timestamp_unix"].astype(float)
+    ping_pong_competitive_df = ping_pong_competitive_df.sort_values("timestamp_unix", ascending=True)
 
     assert ping_pong_competitive_df["timestamp_unix"].is_monotonic_increasing
 

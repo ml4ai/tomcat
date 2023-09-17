@@ -7,3 +7,5 @@ tqdm
 python-dotenv
 python-dateutil
 neurokit2
+psycopg2
+sqlalchemy
