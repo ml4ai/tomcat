@@ -8,7 +8,7 @@ GSR_FILTERED_PATH = f"/space/{USER}/gsr_filtered"
 FNIRS_FILTERED_PATH = f"/space/{USER}/fnirs_filtered"
 POSTGRESQL_ENGINE = f"postgresql://{USER}@localhost:5433/tomcat"
 NUM_PROCESSES = 40
-OUTPUT_DIR = "/tomcat/data/derived/drafts/release_2023_09_13_20"
+OUTPUT_DIR = "/tomcat/data/derived/drafts/release_2023_09_18_11"
 
 MINECRAFT_MISSION_BLACKLIST = [
     "560d4c45-dc45-4e19-bdb3-e4e15021728a",

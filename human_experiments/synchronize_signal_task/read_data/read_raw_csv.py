@@ -37,11 +37,11 @@ def read_raw_csv(csv_path: str, message_queue=None) -> dict[str, any]:
     exp_name = os.path.splitext(os.path.basename(csv_path))[0]
 
     if lion_df.empty:
-        _log_message(f'WARNING: {exp_name} No lion data found.', message_queue)
+        _log_message(f'{exp_name} No lion data found.', message_queue)
     if tiger_df.empty:
-        _log_message(f'WARNING: {exp_name} No tiger data found.', message_queue)
+        _log_message(f'{exp_name} No tiger data found.', message_queue)
     if leopard_df.empty:
-        _log_message(f'WARNING: {exp_name} No leopard data found.', message_queue)
+        _log_message(f'{exp_name} No leopard data found.', message_queue)
 
     return {
         'experiment_name': exp_name,

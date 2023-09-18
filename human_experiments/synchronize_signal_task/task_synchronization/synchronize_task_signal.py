@@ -3,6 +3,9 @@ from multiprocessing import Pool
 import pandas as pd
 from tqdm import tqdm
 
+from sqlalchemy import create_engine
+from config import POSTGRESQL_ENGINE
+
 from .utils import (
     group_signal_for_task_event,
     group_signal_for_task_status,
@@ -16,11 +19,12 @@ from .utils import (
 def _remove_invalid_signals(signal_df: pd.DataFrame,
                             signal_types: list[str],
                             experiment_name: str,
-                            task: str) -> pd.DataFrame:
+                            task: str,
+                            engine) -> pd.DataFrame:
     resulting_df = signal_df
     for signal_type in signal_types:
         resulting_df = remove_invalid_columns(
-            resulting_df, experiment_name, task, signal_type
+            resulting_df, experiment_name, task, signal_type, engine
         )
 
     return resulting_df
@@ -49,6 +53,8 @@ def synchronize_task_signal(experiment: dict[str, any]) -> dict[str, any]:
         "experiment_name": experiment_name
     }
 
+    engine = create_engine(POSTGRESQL_ENGINE)
+
     for task in tasks:
         task_name = task["task_name"]
         task_data = task["task_data"]
@@ -59,7 +65,7 @@ def synchronize_task_signal(experiment: dict[str, any]) -> dict[str, any]:
                     signal_df, task_data, check_event_assignments=False
                 )
                 grouped_signal_df = _remove_invalid_signals(
-                    grouped_signal_df, signal_types, experiment_name, tasks
+                    grouped_signal_df, signal_types, experiment_name, task_name, engine
                 )
                 synchronized_df = synchronize_task_event_signal(grouped_signal_df, task_data)
                 results[task_name] = synchronized_df
@@ -68,7 +74,7 @@ def synchronize_task_signal(experiment: dict[str, any]) -> dict[str, any]:
                     signal_df, task_data, check_event_assignments=False
                 )
                 grouped_signal_df = _remove_invalid_signals(
-                    grouped_signal_df, signal_types, experiment_name, tasks
+                    grouped_signal_df, signal_types, experiment_name, task_name, engine
                 )
                 # synchronized_df = synchronize_affective_team_task_event(grouped_signal_df, task_data)
                 synchronized_df = synchronize_task_event_signal(grouped_signal_df, task_data)
@@ -76,7 +82,7 @@ def synchronize_task_signal(experiment: dict[str, any]) -> dict[str, any]:
             case "finger_tapping" | "ping_pong_cooperative":
                 grouped_signal_df = group_signal_for_task_status(signal_df, task_data)
                 grouped_signal_df = _remove_invalid_signals(
-                    grouped_signal_df, signal_types, experiment_name, tasks
+                    grouped_signal_df, signal_types, experiment_name, task_name, engine
                 )
                 synchronized_df = synchronize_task_status_signal(grouped_signal_df, task_data)
                 results[task_name] = synchronized_df
@@ -87,7 +93,7 @@ def synchronize_task_signal(experiment: dict[str, any]) -> dict[str, any]:
                         station_signal_df, task_df, check_event_assignments=False
                     )
                     grouped_station_signal_df = _remove_invalid_signals(
-                        grouped_station_signal_df, signal_types, experiment_name, tasks
+                        grouped_station_signal_df, signal_types, experiment_name, task_name, engine
                     )
                     synchronized_df = synchronize_task_event_signal(grouped_station_signal_df, task_df)
                     results[f"{task_name}_{station}"] = synchronized_df
@@ -97,7 +103,7 @@ def synchronize_task_signal(experiment: dict[str, any]) -> dict[str, any]:
                     stations_signal_df = _filter_stations(signal_df, [player_1_station, player_2_station])
                     grouped_stations_signal_df = group_signal_for_task_status(stations_signal_df, task_df)
                     grouped_stations_signal_df = _remove_invalid_signals(
-                        grouped_stations_signal_df, signal_types, experiment_name, tasks
+                        grouped_stations_signal_df, signal_types, experiment_name, task_name, engine
                     )
                     synchronized_df = synchronize_task_status_signal(grouped_stations_signal_df, task_df)
                     results[f"{task_name}_{player_1_station}_{player_2_station}"] = synchronized_df
@@ -105,7 +111,7 @@ def synchronize_task_signal(experiment: dict[str, any]) -> dict[str, any]:
                 for mission_name, mission_df in task_data.items():
                     grouped_signal_df = group_signal_for_task_status(signal_df, mission_df)
                     grouped_signal_df = _remove_invalid_signals(
-                        grouped_signal_df, signal_types, experiment_name, tasks
+                        grouped_signal_df, signal_types, experiment_name, mission_name, engine
                     )
                     synchronized_df = synchronize_task_status_signal(grouped_signal_df, mission_df)
                     results[f"{task_name}_{mission_name}"] = synchronized_df

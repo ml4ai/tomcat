@@ -35,7 +35,7 @@ def read_task_db(experiment: str, message_queue=None) -> dict[str, any]:
             "task_data": rest_state_data
         })
     else:
-        message = f"ERROR: {experiment} No rest state data found."
+        message = f"{experiment} No rest state data found."
         _log_message(message, message_queue)
 
     finger_tapping_data = finger_tapping(experiment, engine)
@@ -45,7 +45,7 @@ def read_task_db(experiment: str, message_queue=None) -> dict[str, any]:
             "task_data": finger_tapping_data
         })
     else:
-        message = f"ERROR: {experiment} No finger tapping data found."
+        message = f"{experiment} No finger tapping data found."
         _log_message(message, message_queue)
 
     affective_individual_data = affective_individual(experiment, engine)
@@ -55,7 +55,7 @@ def read_task_db(experiment: str, message_queue=None) -> dict[str, any]:
             "task_data": affective_individual_data
         })
     else:
-        message = f"ERROR: {experiment} No affective individual data found."
+        message = f"{experiment} No affective individual data found."
         _log_message(message, message_queue)
 
     affective_team_data = affective_team(experiment, engine)
@@ -65,7 +65,7 @@ def read_task_db(experiment: str, message_queue=None) -> dict[str, any]:
             "task_data": affective_team_data
         })
     else:
-        message = f"ERROR: {experiment} No affective team data found."
+        message = f"{experiment} No affective team data found."
         _log_message(message, message_queue)
 
     ping_pong_competitive_data = ping_pong_competitive(experiment, engine)
@@ -75,7 +75,7 @@ def read_task_db(experiment: str, message_queue=None) -> dict[str, any]:
             "task_data": ping_pong_competitive_data
         })
     else:
-        message = f"ERROR: {experiment} No ping pong competitive data found."
+        message = f"{experiment} No ping pong competitive data found."
         _log_message(message, message_queue)
 
     ping_pong_cooperative_data = ping_pong_cooperative(experiment, engine)
@@ -85,7 +85,7 @@ def read_task_db(experiment: str, message_queue=None) -> dict[str, any]:
             "task_data": ping_pong_cooperative_data
         })
     else:
-        message = f"ERROR: {experiment} No ping pong cooperative data found."
+        message = f"{experiment} No ping pong cooperative data found."
         _log_message(message, message_queue)
 
     minecraft_data = minecraft(experiment, engine)
@@ -96,16 +96,16 @@ def read_task_db(experiment: str, message_queue=None) -> dict[str, any]:
         })
 
         if 'hands_on_training' not in minecraft_data:
-            message = f"ERROR: {experiment} No minecraft hands on training data found."
+            message = f"{experiment} No minecraft hands on training data found."
             _log_message(message, message_queue)
         if 'saturn_a' not in minecraft_data:
-            message = f"ERROR: {experiment} No minecraft saturn A data found."
+            message = f"{experiment} No minecraft saturn A data found."
             _log_message(message, message_queue)
         if 'saturn_b' not in minecraft_data:
-            message = f"ERROR: {experiment} No minecraft saturn B data found."
+            message = f"{experiment} No minecraft saturn B data found."
             _log_message(message, message_queue)
     else:
-        message = f"ERROR: {experiment} No minecraft data found."
+        message = f"{experiment} No minecraft data found."
         _log_message(message, message_queue)
 
     engine.dispose(close=True)

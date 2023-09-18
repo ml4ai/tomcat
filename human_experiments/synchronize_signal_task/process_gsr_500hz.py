@@ -1,4 +1,6 @@
+import logging
 import os
+import sys
 
 from common import remove_columns_all_exp
 from config import GSR_FILTERED_PATH, NUM_PROCESSES, EXPERIMENT_SESSIONS, OUTPUT_DIR
@@ -10,6 +12,20 @@ from write_data import write_csv_all, write_signal_csv_all
 if __name__ == "__main__":
     upsample_frequency = 2000
     desired_freq = 500
+
+    output_dir = os.path.join(OUTPUT_DIR, f"gsr_{desired_freq}hz")
+    os.makedirs(output_dir, exist_ok=True)
+
+    logging_file = os.path.join(output_dir, "log.txt")
+    logging.basicConfig(
+        level=logging.INFO,
+        handlers=(
+            logging.FileHandler(
+                filename=logging_file, mode="w"
+            ),
+            logging.StreamHandler(stream=sys.stderr),
+        ),
+    )
 
     print("Reading data...")
     experiment_gsr_signal = read_raw_csv_all(GSR_FILTERED_PATH, NUM_PROCESSES, EXPERIMENT_SESSIONS)
@@ -45,5 +61,4 @@ if __name__ == "__main__":
     synchronized_task_signals = synchronize_task_signal_all(task_synchronization_info)
 
     print("Writing synchronized signals and tasks...")
-    output_dir = os.path.join(OUTPUT_DIR, f"gsr_{desired_freq}hz")
     write_csv_all(synchronized_task_signals, output_dir, NUM_PROCESSES)
