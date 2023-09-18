@@ -1,16 +1,12 @@
 import pandas as pd
-from sqlalchemy import create_engine
-
-from config import POSTGRESQL_ENGINE
 
 
-def rest_state(experiment: str) -> pd.DataFrame | None:
+def rest_state(experiment: str, engine) -> pd.DataFrame | None:
     query = f"""
             SELECT * 
             FROM rest_state_task
             WHERE group_session = '{experiment}';
             """
-    engine = create_engine(POSTGRESQL_ENGINE)
     rest_state_df = pd.read_sql_query(query, engine)
 
     if rest_state_df.empty:

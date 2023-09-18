@@ -1,10 +1,8 @@
-from sqlalchemy import create_engine, text
-
-from config import POSTGRESQL_ENGINE
+from sqlalchemy import text
 
 
-def get_station(session: str, participant_id: int, task: str) -> str:
-    with create_engine(POSTGRESQL_ENGINE).connect() as conn:
+def get_station(session: str, participant_id: int, task: str, engine) -> str:
+    with engine.connect() as conn:
         query = text(
             f"""
             SELECT station

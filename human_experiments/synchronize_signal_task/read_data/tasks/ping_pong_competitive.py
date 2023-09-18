@@ -1,16 +1,12 @@
 import pandas as pd
-from sqlalchemy import create_engine
-
-from config import POSTGRESQL_ENGINE
 
 
-def ping_pong_competitive(experiment: str) -> dict[tuple[str, str], pd.DataFrame] | None:
+def ping_pong_competitive(experiment: str, engine) -> dict[tuple[str, str], pd.DataFrame] | None:
     query = f"""
             SELECT * 
             FROM ping_pong_competitive_task_observation
             WHERE group_session = '{experiment}';
             """
-    engine = create_engine(POSTGRESQL_ENGINE)
     ping_pong_competitive_df = pd.read_sql_query(query, engine)
 
     if ping_pong_competitive_df.empty:

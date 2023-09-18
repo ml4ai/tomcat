@@ -1,16 +1,12 @@
 import pandas as pd
-from sqlalchemy import create_engine
-
-from config import POSTGRESQL_ENGINE
 
 
-def finger_tapping(experiment: str) -> pd.DataFrame | None:
+def finger_tapping(experiment: str, engine) -> pd.DataFrame | None:
     query = f"""
             SELECT * 
             FROM finger_tapping_task_observation
             WHERE group_session = '{experiment}';
             """
-    engine = create_engine(POSTGRESQL_ENGINE)
     finger_tapping_df = pd.read_sql_query(query, engine)
 
     if finger_tapping_df.empty:

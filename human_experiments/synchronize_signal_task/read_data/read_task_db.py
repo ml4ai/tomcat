@@ -1,5 +1,7 @@
 import logging
 from multiprocessing import Pool, Manager
+from sqlalchemy import create_engine
+from config import POSTGRESQL_ENGINE
 
 from tqdm import tqdm
 
@@ -22,9 +24,11 @@ def _log_message(message: str, message_queue=None):
 
 
 def read_task_db(experiment: str, message_queue=None) -> dict[str, any]:
+    engine = create_engine(POSTGRESQL_ENGINE)
+
     task_data = []
 
-    rest_state_data = rest_state(experiment)
+    rest_state_data = rest_state(experiment, engine)
     if rest_state_data is not None:
         task_data.append({
             "task_name": "rest_state",
@@ -34,7 +38,7 @@ def read_task_db(experiment: str, message_queue=None) -> dict[str, any]:
         message = f"ERROR: {experiment} No rest state data found."
         _log_message(message, message_queue)
 
-    finger_tapping_data = finger_tapping(experiment)
+    finger_tapping_data = finger_tapping(experiment, engine)
     if finger_tapping_data is not None:
         task_data.append({
             "task_name": "finger_tapping",
@@ -44,7 +48,7 @@ def read_task_db(experiment: str, message_queue=None) -> dict[str, any]:
         message = f"ERROR: {experiment} No finger tapping data found."
         _log_message(message, message_queue)
 
-    affective_individual_data = affective_individual(experiment)
+    affective_individual_data = affective_individual(experiment, engine)
     if affective_individual_data is not None:
         task_data.append({
             "task_name": "affective_individual",
@@ -54,7 +58,7 @@ def read_task_db(experiment: str, message_queue=None) -> dict[str, any]:
         message = f"ERROR: {experiment} No affective individual data found."
         _log_message(message, message_queue)
 
-    affective_team_data = affective_team(experiment)
+    affective_team_data = affective_team(experiment, engine)
     if affective_team_data is not None:
         task_data.append({
             "task_name": "affective_team",
@@ -64,7 +68,7 @@ def read_task_db(experiment: str, message_queue=None) -> dict[str, any]:
         message = f"ERROR: {experiment} No affective team data found."
         _log_message(message, message_queue)
 
-    ping_pong_competitive_data = ping_pong_competitive(experiment)
+    ping_pong_competitive_data = ping_pong_competitive(experiment, engine)
     if ping_pong_competitive_data is not None:
         task_data.append({
             "task_name": "ping_pong_competitive",
@@ -74,7 +78,7 @@ def read_task_db(experiment: str, message_queue=None) -> dict[str, any]:
         message = f"ERROR: {experiment} No ping pong competitive data found."
         _log_message(message, message_queue)
 
-    ping_pong_cooperative_data = ping_pong_cooperative(experiment)
+    ping_pong_cooperative_data = ping_pong_cooperative(experiment, engine)
     if ping_pong_cooperative_data is not None:
         task_data.append({
             "task_name": "ping_pong_cooperative",
@@ -84,7 +88,7 @@ def read_task_db(experiment: str, message_queue=None) -> dict[str, any]:
         message = f"ERROR: {experiment} No ping pong cooperative data found."
         _log_message(message, message_queue)
 
-    minecraft_data = minecraft(experiment)
+    minecraft_data = minecraft(experiment, engine)
     if minecraft_data is not None:
         task_data.append({
             "task_name": "minecraft",
@@ -103,6 +107,8 @@ def read_task_db(experiment: str, message_queue=None) -> dict[str, any]:
     else:
         message = f"ERROR: {experiment} No minecraft data found."
         _log_message(message, message_queue)
+
+    engine.dispose(close=True)
 
     task_data_dict = {
         "experiment_name": experiment,

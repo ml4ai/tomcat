@@ -1,18 +1,15 @@
 import numpy as np
 import pandas as pd
-from sqlalchemy import create_engine
 
 from common import get_station
-from config import POSTGRESQL_ENGINE
 
 
-def ping_pong_cooperative(experiment: str) -> pd.DataFrame | None:
+def ping_pong_cooperative(experiment: str, engine) -> pd.DataFrame | None:
     query = f"""
             SELECT * 
             FROM ping_pong_cooperative_task_observation
             WHERE group_session = '{experiment}';
             """
-    engine = create_engine(POSTGRESQL_ENGINE)
     ping_pong_competitive_df = pd.read_sql_query(query, engine)
 
     if ping_pong_competitive_df.empty:
@@ -23,9 +20,9 @@ def ping_pong_cooperative(experiment: str) -> pd.DataFrame | None:
     player_2_id = ping_pong_competitive_df['player_2_id'].unique()[0]
     player_3_id = ping_pong_competitive_df['player_3_id'].unique()[0]
 
-    player_1_station = get_station(experiment, player_1_id, "ping_pong_cooperative")
-    player_2_station = get_station(experiment, player_2_id, "ping_pong_cooperative")
-    player_3_station = get_station(experiment, player_3_id, "ping_pong_cooperative")
+    player_1_station = get_station(experiment, player_1_id, "ping_pong_cooperative", engine)
+    player_2_station = get_station(experiment, player_2_id, "ping_pong_cooperative", engine)
+    player_3_station = get_station(experiment, player_3_id, "ping_pong_cooperative", engine)
 
     id_station_map = {
         player_1_id: player_1_station,

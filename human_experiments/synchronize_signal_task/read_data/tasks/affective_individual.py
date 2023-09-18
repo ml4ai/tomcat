@@ -1,18 +1,15 @@
 import numpy as np
 import pandas as pd
-from sqlalchemy import create_engine
 
 from common import get_station
-from config import POSTGRESQL_ENGINE
 
 
-def affective_individual(experiment: str) -> dict[str, pd.DataFrame] | None:
+def affective_individual(experiment: str, engine) -> dict[str, pd.DataFrame] | None:
     query = f"""
             SELECT * 
             FROM affective_task_event
             WHERE group_session = '{experiment}' AND task_type = 'individual';
             """
-    engine = create_engine(POSTGRESQL_ENGINE)
     affective_individual_df = pd.read_sql_query(query, engine)
 
     if affective_individual_df.empty:
@@ -22,7 +19,7 @@ def affective_individual(experiment: str) -> dict[str, pd.DataFrame] | None:
     unique_participants = affective_individual_df['participant'].unique()
     id_station_map = {}
     for participant_id in unique_participants:
-        station = get_station(experiment, participant_id, "affective_individual")
+        station = get_station(experiment, participant_id, "affective_individual", engine)
         id_station_map[participant_id] = station
 
     # Create a new column with the mapped stations
