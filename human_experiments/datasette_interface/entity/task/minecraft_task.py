@@ -15,7 +15,7 @@ from entity.base.base import Base
 
 
 class MinecraftMission(Base):
-    __tablename__ = "minecraft_mission_tmp"
+    __tablename__ = "minecraft_mission"
 
     id: Mapped[str] = mapped_column(Text, primary_key=True)
     group_session_id: Mapped[str] = mapped_column("group_session", Text, ForeignKey("group_session.id"))
@@ -63,9 +63,9 @@ class MinecraftMission(Base):
 
 
 class MinecraftTestbedMessage(Base):
-    __tablename__ = "minecraft_testbed_message_tmp"
+    __tablename__ = "minecraft_testbed_message"
 
-    mission_id: Mapped[str] = mapped_column("mission", Text, ForeignKey("minecraft_mission_tmp.id"), primary_key=True)
+    mission_id: Mapped[str] = mapped_column("mission", Text, ForeignKey("minecraft_mission.id"), primary_key=True)
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     topic: Mapped[str] = mapped_column(Text)
     timestamp_unix: Mapped[str] = mapped_column(Text)
