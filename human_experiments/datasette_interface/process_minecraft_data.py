@@ -290,13 +290,17 @@ def process_metadata_file(filepath, group_session, file_to_key_messages_mapping)
             if mission_in_progress:
                 messages_to_insert_into_db.append(message)
 
-    start_timestamp = key_messages["mission_start"][0]["header"]["timestamp"]
+    mission_start_timestamp = key_messages["mission_start"][0]["header"]["timestamp"]
 
-    stop_timestamp = (
+    mission_stop_timestamp = (
         key_messages["mission_stop"][0]["header"]["timestamp"]
         if len(key_messages["mission_stop"]) == 1
         else key_messages["trial_stop"][0]["header"]["timestamp"]
     )
+
+    # Important to align audio with data
+    trial_start_timestamp = key_messages["trial_start"][0]["header"]["timestamp"]
+    trial_stop_timestamp = key_messages["trial_stop"][0]["header"]["timestamp"]
 
     mission_name = key_messages["mission_start"][0]["data"]["mission"]
     testbed_version = key_messages["trial_start"][-1]["data"][
@@ -322,10 +326,14 @@ def process_metadata_file(filepath, group_session, file_to_key_messages_mapping)
         group_session_id=group_session,
         id=trial_id,
         name=mission_name,
-        start_timestamp_unix=convert_iso8601_timestamp_to_unix(start_timestamp),
-        start_timestamp_iso8601=start_timestamp,
-        stop_timestamp_unix=convert_iso8601_timestamp_to_unix(stop_timestamp),
-        stop_timestamp_iso8601=stop_timestamp,
+        mission_start_timestamp_unix=convert_iso8601_timestamp_to_unix(mission_start_timestamp),
+        mission_start_timestamp_iso8601=mission_start_timestamp,
+        mission_stop_timestamp_unix=convert_iso8601_timestamp_to_unix(mission_stop_timestamp),
+        mission_stop_timestamp_iso8601=mission_stop_timestamp,
+        trial_start_timestamp_unix=convert_iso8601_timestamp_to_unix(trial_start_timestamp),
+        trial_start_timestamp_iso8601=trial_start_timestamp,
+        trial_stop_timestamp_unix=convert_iso8601_timestamp_to_unix(trial_stop_timestamp),
+        trial_stop_timestamp_iso8601=trial_stop_timestamp,
         final_team_score=final_team_score,
         testbed_version=testbed_version,
     )
