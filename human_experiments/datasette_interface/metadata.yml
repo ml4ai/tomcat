@@ -134,10 +134,14 @@ databases:
                     id: The unique ID of the mission.
                     group_session_id: The group session that the mission was a part of.
                     name: The name of the mission (Hands-on Training, Saturn A, or Saturn B)
-                    start_timestamp_iso8601: The starting timestamp of the mission in ISO-8601 format.
-                    start_timestamp_unix: The starting Unix timestamp of the mission.
-                    stop_timestamp_iso8601: The stop timestamp of the mission in ISO-8601 format.
-                    stop_timestamp_unix: The stopping Unix timestamp of the mission.
+                    mission_start_timestamp_iso8601: The starting timestamp of the mission in ISO-8601 format.
+                    mission_start_timestamp_unix: The starting Unix timestamp of the mission.
+                    mission_stop_timestamp_iso8601: The stop timestamp of the mission in ISO-8601 format.
+                    mission_stop_timestamp_unix: The stopping Unix timestamp of the mission.
+                    trial_start_timestamp_iso8601: The starting timestamp of the trial in ISO-8601 format.
+                    trial_start_timestamp_unix: The starting Unix timestamp of the trial.
+                    trial_stop_timestamp_iso8601: The stop timestamp of the trial in ISO-8601 format.
+                    trial_stop_timestamp_unix: The stopping Unix timestamp of the trial.
                     final_team_score: The final mission score achieved by the team.
                     testbed_version: The version of the testbed used for the mission.
 

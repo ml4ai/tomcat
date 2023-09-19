@@ -477,17 +477,18 @@ def process_directory_v2(group_session):
                     )
                     minecraft_missions.append(minecraft_mission)
 
-                    minecraft_testbed_messages.extend([
-                        MinecraftTestbedMessage(
-                            mission_id=trial_id,
-                            id=i,
-                            timestamp_unix=stream["time_stamps"][i],
-                            timestamp_iso8601=convert_unix_timestamp_to_iso8601(stream["time_stamps"][i]),
-                            topic=message.pop("topic"),
-                            message=json.dumps(message),
+                    for i, message in messages:
+                        print(message)
+                        minecraft_testbed_messages.append(
+                            MinecraftTestbedMessage(
+                                mission_id=trial_id,
+                                id=i,
+                                timestamp_unix=stream["time_stamps"][i],
+                                timestamp_iso8601=convert_unix_timestamp_to_iso8601(stream["time_stamps"][i]),
+                                topic=message["topic"],
+                                message=json.dumps(message),
+                            )
                         )
-                        for i, message in messages
-                    ])
 
     return minecraft_missions, minecraft_testbed_messages
 
