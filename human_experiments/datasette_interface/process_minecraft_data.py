@@ -366,8 +366,10 @@ def process_directory_v2(group_session):
         info(f"Processing block_2.xdf for {group_session}.")
 
         messages = {"Hands-on Training": [], "Saturn_A": [], "Saturn_B": []}
+        trial_timestamps = {"Hands-on Training": [], "Saturn_A": [], "Saturn_B": []}
 
         current_mission = None
+        trial_mission = None  # For trial labeling
         testbed_version = None
         for i, timestamp in enumerate(stream["time_stamps"]):
             text = stream["time_series"][i][0]
@@ -398,6 +400,7 @@ def process_directory_v2(group_session):
                 mission_state = message["data"]["mission_state"]
                 if mission_state == "Start":
                     current_mission = message["data"]["mission"]
+                    trial_mission = current_mission
                     if messages[current_mission]:
                         info(
                             f"There was already a mission of type {current_mission}"
@@ -410,17 +413,21 @@ def process_directory_v2(group_session):
                     current_mission = None
                 else:
                     pass
-            elif (
-                    topic == "trial"
-                    and message["msg"]["sub_type"] == "start"
-                    and testbed_version is None
-                    # The line above assumes that we do not update the testbed in
-                    # the middle of a trial.
-            ):
-                testbed_version = message["data"]["testbed_version"]
-            else:
-                if current_mission is not None:
-                    messages[current_mission].append((i, message))
+            elif topic == "trial":
+                if message["msg"]["sub_type"] == "start":
+                    trial_start_index = i
+
+                    if testbed_version is None:
+                        # The line above assumes that we do not update the testbed in
+                        # the middle of a trial.
+                        testbed_version = message["data"]["testbed_version"]
+                elif message["msg"]["sub_type"] == "stop":
+                    trial_stop_index = i
+                    trial_timestamps[trial_mission] = (trial_start_index, trial_stop_index)
+                    trial_mission = None
+
+            if current_mission is not None:
+                messages[current_mission].append((i, message))
 
         for mission, messages in messages.items():
             print(mission, "\t", len(messages))
@@ -444,8 +451,11 @@ def process_directory_v2(group_session):
                 else:
                     error("[MISSING DATA]: No scoreboard messages found!")
 
-                start_timestamp_lsl = stream["time_stamps"][messages[0][0]]
-                stop_timestamp_lsl = stream["time_stamps"][messages[-1][0]]
+                mission_start_timestamp_lsl = stream["time_stamps"][messages[0][0]]
+                mission_stop_timestamp_lsl = stream["time_stamps"][messages[-1][0]]
+
+                trial_start_timestamp_lsl = stream["time_stamps"][trial_timestamps[mission][0]]
+                trial_stop_timestamp_lsl = stream["time_stamps"][trial_timestamps[mission][1]]
 
                 if trial_id in INVALID_MISSIONS:
                     error(f"[ANOMALY] Skipping {trial_id} as it is a duplicate not removed by the deduplicate logic.")
@@ -454,10 +464,14 @@ def process_directory_v2(group_session):
                         group_session_id=group_session,
                         id=trial_id,
                         name=mission,
-                        start_timestamp_unix=start_timestamp_lsl,
-                        start_timestamp_iso8601=convert_unix_timestamp_to_iso8601(start_timestamp_lsl),
-                        stop_timestamp_unix=stop_timestamp_lsl,
-                        stop_timestamp_iso8601=convert_unix_timestamp_to_iso8601(stop_timestamp_lsl),
+                        mission_start_timestamp_unix=mission_start_timestamp_lsl,
+                        mission_start_timestamp_iso8601=convert_unix_timestamp_to_iso8601(mission_start_timestamp_lsl),
+                        mission_stop_timestamp_unix=mission_stop_timestamp_lsl,
+                        mission_stop_timestamp_iso8601=convert_unix_timestamp_to_iso8601(mission_stop_timestamp_lsl),
+                        trial_start_timestamp_unix=trial_start_timestamp_lsl,
+                        trial_start_timestamp_iso8601=convert_unix_timestamp_to_iso8601(trial_start_timestamp_lsl),
+                        trial_stop_timestamp_unix=trial_stop_timestamp_lsl,
+                        trial_stop_timestamp_iso8601=convert_unix_timestamp_to_iso8601(trial_stop_timestamp_lsl),
                         final_team_score=final_team_score,
                         testbed_version=testbed_version,
                     )
