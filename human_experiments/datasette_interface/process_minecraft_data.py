@@ -26,7 +26,7 @@ logging.basicConfig(
     level=logging.INFO,
     handlers=(
         logging.FileHandler(
-            filename=f"/space/{USER}/tomcat/build_testbed_message_table.log", mode="w"
+            filename=f"/space/{USER}/tomcat/build_testbed_message_table_tmp.log", mode="w"
         ),
         logging.StreamHandler(stream=sys.stderr),
     ),
