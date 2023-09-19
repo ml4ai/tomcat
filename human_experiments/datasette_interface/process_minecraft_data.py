@@ -485,7 +485,7 @@ def process_directory_v2(group_session):
                                 id=i,
                                 timestamp_unix=stream["time_stamps"][i],
                                 timestamp_iso8601=convert_unix_timestamp_to_iso8601(stream["time_stamps"][i]),
-                                topic=message["topic"],
+                                topic=message.pop("topic"),
                                 message=json.dumps(message),
                             )
                         )
