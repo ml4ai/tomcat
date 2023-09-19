@@ -22,7 +22,7 @@ from process_ping_pong_cooperative_data import process_ping_pong_cooperative_tas
 from process_minecraft_data import process_minecraft_data, recreate_minecraft_tables
 from process_fnirs_raw_data import process_fnirs_raw_data, recreate_fnirs_raw_tables
 from process_eeg_raw_data import process_eeg_raw_data, recreate_eeg_raw_tables
-from process_gaze_data import process_gaze_raw_data, recreate_gaze_raw_tables
+from process_gaze_raw_data import process_gaze_raw_data, recreate_gaze_raw_tables
 
 logging.basicConfig(
     level=logging.INFO,

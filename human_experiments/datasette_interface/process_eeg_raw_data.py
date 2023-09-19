@@ -10,7 +10,6 @@ from entity.base.eeg_device import EEGDevice
 from process_raw_signals import create_indices
 from process_raw_signals import insert_raw_unlabeled_data
 from process_raw_signals import label_data
-from process_raw_signals import remove_invalid_data
 from sqlalchemy.orm import Session
 from functools import partial
 
@@ -18,7 +17,7 @@ logging.basicConfig(
     level=logging.INFO,
     handlers=(
         logging.FileHandler(
-            filename=f"/space/{USER}/tomcat/build_eeg_table_tmp.log", mode="w"
+            filename=f"/space/{USER}/tomcat/build_eeg_table.log", mode="w"
         ),
         logging.StreamHandler(stream=sys.stderr),
     ),

@@ -13,7 +13,7 @@ from entity.base.base import Base
 
 
 class GAZERaw(Base):
-    __tablename__ = "gaze_raw_tmp"
+    __tablename__ = "gaze_raw"
 
     group_session_id: Mapped[str] = mapped_column("group_session", Text, ForeignKey("group_session.id"),
                                                   primary_key=True)

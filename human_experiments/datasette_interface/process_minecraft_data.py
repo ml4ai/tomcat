@@ -322,10 +322,10 @@ def process_metadata_file(filepath, group_session, file_to_key_messages_mapping)
         group_session_id=group_session,
         id=trial_id,
         name=mission_name,
-        start_timestamp_unix=start_timestamp,
-        start_timestamp_iso8601=convert_iso8601_timestamp_to_unix(start_timestamp),
-        stop_timestamp_unix=stop_timestamp,
-        stop_timestamp_iso8601=convert_iso8601_timestamp_to_unix(stop_timestamp),
+        start_timestamp_unix=convert_iso8601_timestamp_to_unix(start_timestamp),
+        start_timestamp_iso8601=start_timestamp,
+        stop_timestamp_unix=convert_iso8601_timestamp_to_unix(stop_timestamp),
+        stop_timestamp_iso8601=stop_timestamp,
         final_team_score=final_team_score,
         testbed_version=testbed_version,
     )
@@ -334,8 +334,8 @@ def process_metadata_file(filepath, group_session, file_to_key_messages_mapping)
         MinecraftTestbedMessage(
             mission_id=trial_id,
             id=i,
-            timestamp_unix=message["header"]["timestamp"],
-            timestamp_iso8601=convert_iso8601_timestamp_to_unix(message["header"]["timestamp"]),
+            timestamp_unix=convert_iso8601_timestamp_to_unix(message["header"]["timestamp"]),
+            timestamp_iso8601=message["header"]["timestamp"],
             topic=message.pop("topic"),
             message=json.dumps(message),
         )
