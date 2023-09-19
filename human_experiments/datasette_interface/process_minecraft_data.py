@@ -425,9 +425,9 @@ def process_directory_v2(group_session):
                     trial_stop_index = i
                     trial_timestamps[trial_mission] = (trial_start_index, trial_stop_index)
                     trial_mission = None
-
-            if current_mission is not None:
-                messages[current_mission].append((i, message))
+            else:
+                if current_mission is not None:
+                    messages[current_mission].append((i, message))
 
         for mission, messages in messages.items():
             print(mission, "\t", len(messages))
@@ -478,7 +478,6 @@ def process_directory_v2(group_session):
                     minecraft_missions.append(minecraft_mission)
 
                     for i, message in messages:
-                        print(message)
                         minecraft_testbed_messages.append(
                             MinecraftTestbedMessage(
                                 mission_id=trial_id,
