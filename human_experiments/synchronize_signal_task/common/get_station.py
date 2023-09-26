@@ -1,13 +1,15 @@
-import sqlite3
+from sqlalchemy import text
 
 
-def get_station(db_path: str, session: str, participant_id: int, task: str) -> str:
-    db = sqlite3.connect(db_path)
-
-    station = db.execute(f"""
-        SELECT station
-        FROM data_validity
-        WHERE group_session = '{session}' AND participant = '{participant_id}' AND task = '{task}'
-    """).fetchall()[0][0]
+def get_station(session: str, participant_id: int, task: str, engine) -> str:
+    with engine.connect() as conn:
+        query = text(
+            f"""
+            SELECT station
+            FROM data_validity
+            WHERE group_session = '{session}' AND participant = '{participant_id}' AND task = '{task}'
+            """
+        )
+        station = conn.execute(query).fetchone()[0]
 
     return station

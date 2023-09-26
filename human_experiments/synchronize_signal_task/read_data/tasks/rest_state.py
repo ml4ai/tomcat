@@ -1,17 +1,13 @@
-import sqlite3
-
 import pandas as pd
 
 
-def rest_state(db_path: str, experiment: str) -> pd.DataFrame | None:
-    db = sqlite3.connect(db_path)
-
+def rest_state(experiment: str, engine) -> pd.DataFrame | None:
     query = f"""
             SELECT * 
             FROM rest_state_task
-            WHERE group_session = ?;
+            WHERE group_session = '{experiment}';
             """
-    rest_state_df = pd.read_sql_query(query, db, params=[experiment])
+    rest_state_df = pd.read_sql_query(query, engine)
 
     if rest_state_df.empty:
         return None

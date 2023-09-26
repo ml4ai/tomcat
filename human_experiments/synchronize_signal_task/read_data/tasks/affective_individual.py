@@ -1,20 +1,16 @@
-import sqlite3
-
 import numpy as np
 import pandas as pd
 
 from common import get_station
 
 
-def affective_individual(db_path: str, experiment: str) -> dict[str, pd.DataFrame] | None:
-    db = sqlite3.connect(db_path)
-
+def affective_individual(experiment: str, engine) -> dict[str, pd.DataFrame] | None:
     query = f"""
             SELECT * 
             FROM affective_task_event
-            WHERE group_session = ? AND task_type = 'individual';
+            WHERE group_session = '{experiment}' AND task_type = 'individual';
             """
-    affective_individual_df = pd.read_sql_query(query, db, params=[experiment])
+    affective_individual_df = pd.read_sql_query(query, engine)
 
     if affective_individual_df.empty:
         return None
@@ -23,7 +19,7 @@ def affective_individual(db_path: str, experiment: str) -> dict[str, pd.DataFram
     unique_participants = affective_individual_df['participant'].unique()
     id_station_map = {}
     for participant_id in unique_participants:
-        station = get_station(db_path, experiment, participant_id, "affective_individual")
+        station = get_station(experiment, participant_id, "affective_individual", engine)
         id_station_map[participant_id] = station
 
     # Create a new column with the mapped stations
@@ -46,6 +42,7 @@ def affective_individual(db_path: str, experiment: str) -> dict[str, pd.DataFram
         station_affective_df = station_affective_df.reindex(columns=cols)
 
         station_affective_df["timestamp_unix"] = station_affective_df["timestamp_unix"].astype(float)
+        station_affective_df = station_affective_df.sort_values("timestamp_unix", ascending=True)
         station_affective_df = station_affective_df.reset_index(drop=True)
 
         assert station_affective_df["timestamp_unix"].is_monotonic_increasing

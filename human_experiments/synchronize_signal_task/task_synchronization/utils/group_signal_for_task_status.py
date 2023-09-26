@@ -28,7 +28,4 @@ def group_signal_for_task_status(signal_df: pd.DataFrame, task_df: pd.DataFrame)
     # Filter signal_df
     signal_df = signal_df.iloc[start_index:end_index + 1]
 
-    # Drop the columns with any NaN value
-    signal_df = signal_df.dropna(axis=1, how='any')
-
     return signal_df

@@ -6,3 +6,5 @@ mne
 tqdm
 python-dotenv
 python-dateutil
+sqlalchemy
+psycopg2
