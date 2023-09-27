@@ -1,0 +1,20 @@
+from typing import List
+
+from entity.modality import Modality
+
+import pandas as pd
+
+
+class EKG(Modality):
+
+    @property
+    def table_name(self) -> str:
+        return "eeg_raw"
+
+    @property
+    def channels(self) -> List[str]:
+        return ["*"]
+
+    def filter(self, data: pd.DataFrame) -> pd.DataFrame:
+        # TODO: Implement signal filtering
+        pass
