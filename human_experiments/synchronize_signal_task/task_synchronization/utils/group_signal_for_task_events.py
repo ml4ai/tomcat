@@ -72,7 +72,4 @@ def group_signal_for_task_event(signal_df: pd.DataFrame,
         event_times = task_df["timestamp_unix"].values
         _check_event_signal_assignments(signal_times, event_times)
 
-    # Drop the columns with any NaN value
-    signal_df = signal_df.dropna(axis=1, how='any')
-
     return signal_df

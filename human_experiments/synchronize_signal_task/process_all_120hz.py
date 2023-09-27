@@ -1,8 +1,9 @@
+import logging
 import os
+import sys
 
 from common import remove_columns_all_exp
 from config import (
-    DB_PATH,
     FNIRS_FILTERED_PATH,
     NUM_PROCESSES,
     EXPERIMENT_SESSIONS,
@@ -19,6 +20,20 @@ from write_data import write_csv_all, write_signal_csv_all
 if __name__ == "__main__":
     upsample_frequency = 2000
     desired_freq = 120
+
+    output_dir = os.path.join(OUTPUT_DIR, f"fnirs_eeg_ekg_gsr_{desired_freq}hz")
+    os.makedirs(output_dir, exist_ok=True)
+
+    logging_file = os.path.join(output_dir, "log.txt")
+    logging.basicConfig(
+        level=logging.INFO,
+        handlers=(
+            logging.FileHandler(
+                filename=logging_file, mode="w"
+            ),
+            logging.StreamHandler(stream=sys.stderr),
+        ),
+    )
 
     print("Reading data...")
     experiment_fnirs_signal = read_raw_csv_all(FNIRS_FILTERED_PATH, NUM_PROCESSES, EXPERIMENT_SESSIONS)
@@ -71,9 +86,8 @@ if __name__ == "__main__":
     write_signal_csv_all(synchronized_signals, output_dir, NUM_PROCESSES)
 
     print("Synchronizing task signals...")
-    task_synchronization_info = prepare_task_synchronization_data(synchronized_signals, DB_PATH, NUM_PROCESSES)
+    task_synchronization_info = prepare_task_synchronization_data(synchronized_signals, NUM_PROCESSES)
     synchronized_task_signals = synchronize_task_signal_all(task_synchronization_info)
 
     print("Writing synchronized signals and tasks...")
-    output_dir = os.path.join(OUTPUT_DIR, f"fnirs_eeg_ekg_gsr_{desired_freq}hz")
     write_csv_all(synchronized_task_signals, output_dir, NUM_PROCESSES)

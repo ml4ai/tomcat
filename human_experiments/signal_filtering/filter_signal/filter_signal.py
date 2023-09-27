@@ -3,25 +3,19 @@ from multiprocessing import Pool
 import mne
 import pandas as pd
 from tqdm import tqdm
+from config import COMMON_COLUMNS
 
 
 def filter_signal(signal_df: pd.DataFrame, filter_method: callable):
     # Set the log level to 'ERROR' to suppress informational messages
     mne.set_log_level('ERROR')
 
-    columns_to_ignore = [
-        "group_session",
-        "task",
-        "station",
-        "participant",
-        "timestamp_unix",
-        "timestamp_iso8601"
-    ]
+    columns_to_ignore = COMMON_COLUMNS
 
     # Iterate through the columns
     for column in signal_df.columns:
-        # Check if the column is not in the ignore list
-        if column not in columns_to_ignore:
+        # Check if the column is not in the ignore list or all values are NaN
+        if column not in columns_to_ignore and not signal_df[column].isna().all():
             # Apply the filter method to the column
             signal_df[column] = filter_method(signal_df[column].to_numpy())
 
