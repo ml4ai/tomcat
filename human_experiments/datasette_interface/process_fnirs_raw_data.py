@@ -9,7 +9,6 @@ from entity.signal.fnirs import FNIRSRaw
 from process_raw_signals import create_indices
 from process_raw_signals import insert_raw_unlabeled_data
 from process_raw_signals import label_data
-from process_raw_signals import remove_invalid_data
 
 logging.basicConfig(
     level=logging.INFO,
@@ -37,7 +36,6 @@ def process_fnirs_raw_data(database_engine, override):
                               get_station_from_xdf_stream)
     create_indices(database_engine, not override, FNIRSRaw, "fnirs")
     label_data(database_engine, override, FNIRSRaw, "fnirs")
-    remove_invalid_data(database_engine, FNIRSRaw, "fnirs")
 
 
 def recreate_fnirs_raw_tables(database_engine):

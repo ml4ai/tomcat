@@ -10,7 +10,6 @@ from entity.base.eeg_device import EEGDevice
 from process_raw_signals import create_indices
 from process_raw_signals import insert_raw_unlabeled_data
 from process_raw_signals import label_data
-from process_raw_signals import remove_invalid_data
 from sqlalchemy.orm import Session
 from functools import partial
 
@@ -51,7 +50,6 @@ def process_eeg_raw_data(database_engine, override):
                               partial(get_station_from_xdf_stream, device_id_to_station_map=device_id_to_station_map))
     create_indices(database_engine, not override, EEGRaw, "eeg")
     label_data(database_engine, override, EEGRaw, "eeg")
-    remove_invalid_data(database_engine, EEGRaw, "eeg")
 
 
 def recreate_eeg_raw_tables(database_engine):

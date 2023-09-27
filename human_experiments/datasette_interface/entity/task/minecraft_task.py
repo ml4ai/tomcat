@@ -20,25 +20,44 @@ class MinecraftMission(Base):
     id: Mapped[str] = mapped_column(Text, primary_key=True)
     group_session_id: Mapped[str] = mapped_column("group_session", Text, ForeignKey("group_session.id"))
     name: Mapped[str] = mapped_column(Text)
-    start_timestamp_unix: Mapped[str] = mapped_column(Text)
-    start_timestamp_iso8601: Mapped[str] = mapped_column(Text)
-    stop_timestamp_unix: Mapped[str] = mapped_column(Text)
-    stop_timestamp_iso8601: Mapped[str] = mapped_column(Text)
+    mission_start_timestamp_unix: Mapped[str] = mapped_column(Text)
+    mission_start_timestamp_iso8601: Mapped[str] = mapped_column(Text)
+    mission_stop_timestamp_unix: Mapped[str] = mapped_column(Text)
+    mission_stop_timestamp_iso8601: Mapped[str] = mapped_column(Text)
+    trial_start_timestamp_unix: Mapped[str] = mapped_column(Text)
+    trial_start_timestamp_iso8601: Mapped[str] = mapped_column(Text)
+    trial_stop_timestamp_unix: Mapped[str] = mapped_column(Text)
+    trial_stop_timestamp_iso8601: Mapped[str] = mapped_column(Text)
     final_team_score: Mapped[Optional[int]] = mapped_column(Integer)
     testbed_version: Mapped[str] = mapped_column(Text)
 
-    def __init__(self, id: str, group_session_id: str, name: str, start_timestamp_unix: str,
-                 start_timestamp_iso8601: str, stop_timestamp_unix: str, stop_timestamp_iso8601: str,
-                 final_team_score: int, testbed_version: str):
+    def __init__(self,
+                 id: str,
+                 group_session_id: str,
+                 name: str,
+                 mission_start_timestamp_unix: str,
+                 mission_start_timestamp_iso8601: str,
+                 mission_stop_timestamp_unix: str,
+                 mission_stop_timestamp_iso8601: str,
+                 trial_start_timestamp_unix: str,
+                 trial_start_timestamp_iso8601: str,
+                 trial_stop_timestamp_unix: str,
+                 trial_stop_timestamp_iso8601: str,
+                 final_team_score: int,
+                 testbed_version: str):
         super().__init__()
 
         self.id = id
         self.group_session_id = group_session_id
         self.name = name
-        self.start_timestamp_unix = start_timestamp_unix
-        self.start_timestamp_iso8601 = start_timestamp_iso8601
-        self.stop_timestamp_unix = stop_timestamp_unix
-        self.stop_timestamp_iso8601 = stop_timestamp_iso8601
+        self.mission_start_timestamp_unix = mission_start_timestamp_unix
+        self.mission_start_timestamp_iso8601 = mission_start_timestamp_iso8601
+        self.mission_stop_timestamp_unix = mission_stop_timestamp_unix
+        self.mission_stop_timestamp_iso8601 = mission_stop_timestamp_iso8601
+        self.trial_start_timestamp_unix = trial_start_timestamp_unix
+        self.trial_start_timestamp_iso8601 = trial_start_timestamp_iso8601
+        self.trial_stop_timestamp_unix = trial_stop_timestamp_unix
+        self.trial_stop_timestamp_iso8601 = trial_stop_timestamp_iso8601
         self.final_team_score = final_team_score
         self.testbed_version = testbed_version
 

@@ -22,7 +22,7 @@ from process_ping_pong_cooperative_data import process_ping_pong_cooperative_tas
 from process_minecraft_data import process_minecraft_data, recreate_minecraft_tables
 from process_fnirs_raw_data import process_fnirs_raw_data, recreate_fnirs_raw_tables
 from process_eeg_raw_data import process_eeg_raw_data, recreate_eeg_raw_tables
-from process_gaze_data import process_gaze_raw_data, recreate_gaze_raw_tables
+from process_gaze_raw_data import process_gaze_raw_data, recreate_gaze_raw_tables
 
 logging.basicConfig(
     level=logging.INFO,
@@ -125,7 +125,7 @@ if __name__ == "__main__":
                         help="User with granted writing permissions in the database.")
     parser.add_argument("--db_port", type=int, required=True,
                         help="Port where the cluster is running. Make sure to set the port to your local cluster.")
-    parser.add_argument("--db_name", type=str, required=False, default=f"tomcat",
+    parser.add_argument("--db_name", type=str, required=False, default="tomcat",
                         help="Database name. Make sure the database was previously created before running this script.")
     parser.add_argument("--db_passwd", type=str, required=False, default="", help="Password to connect to the database.")
     parser.add_argument("--override", action='store_true',
@@ -150,6 +150,7 @@ if __name__ == "__main__":
 
     database_info = f"{args.db_user}:{args.db_name}@localhost:{args.db_port}"
     connection_string = f"postgresql+psycopg2://{database_info}/{args.db_passwd}"
+    info(f"Establishing connection to database {connection_string}")
     engine = create_engine(connection_string)
 
     tables = TABLES.copy()

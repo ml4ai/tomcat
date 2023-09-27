@@ -9,7 +9,6 @@ from entity.signal.gaze import GAZERaw
 from process_raw_signals import create_indices
 from process_raw_signals import insert_raw_unlabeled_data
 from process_raw_signals import label_data
-from process_raw_signals import remove_invalid_data
 
 logging.basicConfig(
     level=logging.INFO,
@@ -36,7 +35,6 @@ def process_gaze_raw_data(database_engine, override):
                               get_station_from_xdf_stream)
     create_indices(database_engine, not override, GAZERaw, "Gaze")
     label_data(database_engine, override, GAZERaw, "Gaze")
-    remove_invalid_data(database_engine, GAZERaw, "Gaze")
 
 
 def recreate_gaze_raw_tables(database_engine):
