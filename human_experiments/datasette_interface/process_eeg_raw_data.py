@@ -47,7 +47,8 @@ def process_eeg_raw_data(database_engine, override):
                     device_id_to_station_map[eeg_device.group_session_id][eeg_device.device_id] = eeg_device.station_id
 
     insert_raw_unlabeled_data(database_engine, override, EEGRaw, "eeg", "EEG", get_channel_names_from_xdf_stream,
-                              partial(get_station_from_xdf_stream, device_id_to_station_map=device_id_to_station_map))
+                              partial(get_station_from_xdf_stream, device_id_to_station_map=device_id_to_station_map),
+                              lambda x: x * 1-6)  # From micro-volt to volt
     create_indices(database_engine, not override, EEGRaw, "eeg")
     label_data(database_engine, override, EEGRaw, "eeg")
 

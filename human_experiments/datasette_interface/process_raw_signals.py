@@ -21,7 +21,7 @@ from utils import (
 
 def insert_raw_unlabeled_data(database_engine, override, signal_modality_class, modality_name, xdf_signal_type,
                               channel_from_xdf_parsing_fn, station_from_xdf_v2_parsing_fn,
-                              slice_series_fn: lambda x: x):
+                              slice_series_fn=lambda x: x):
     info(f"Inserting unlabeled data.")
     with cd("/tomcat/data/raw/LangLab/experiments/study_3_pilot/group"):
         directories_to_process = [
