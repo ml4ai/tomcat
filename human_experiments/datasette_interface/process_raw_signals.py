@@ -20,7 +20,8 @@ from utils import (
 
 
 def insert_raw_unlabeled_data(database_engine, override, signal_modality_class, modality_name, xdf_signal_type,
-                              channel_from_xdf_parsing_fn, station_from_xdf_v2_parsing_fn):
+                              channel_from_xdf_parsing_fn, station_from_xdf_v2_parsing_fn,
+                              slice_series_fn: lambda x: x):
     info(f"Inserting unlabeled data.")
     with cd("/tomcat/data/raw/LangLab/experiments/study_3_pilot/group"):
         directories_to_process = [
@@ -48,21 +49,24 @@ def insert_raw_unlabeled_data(database_engine, override, signal_modality_class, 
                                                    signal_modality_class,
                                                    modality_name,
                                                    xdf_signal_type,
-                                                   channel_from_xdf_parsing_fn)
+                                                   channel_from_xdf_parsing_fn,
+                                                   slice_series_fn)
                 else:
                     signals = process_directory_v2(group_session,
                                                    signal_modality_class,
                                                    modality_name,
                                                    xdf_signal_type,
                                                    channel_from_xdf_parsing_fn,
-                                                   station_from_xdf_v2_parsing_fn)
+                                                   station_from_xdf_v2_parsing_fn,
+                                                   slice_series_fn)
 
                 if len(signals) > 0:
                     database_session.add_all(signals)
                     database_session.commit()
 
 
-def get_signals(stream, group_session, station, initial_id, signal_modality_class, channel_from_xdf_parsing_fn):
+def get_signals(stream, group_session, station, initial_id, signal_modality_class, channel_from_xdf_parsing_fn,
+                slice_series_fn):
     # We insert a participant ID of -1 since we don't actually know for sure
     # who the participant is - we will need to consult the data validity table
     # to learn the ID, since the originally scheduled participant might be
@@ -80,6 +84,7 @@ def get_signals(stream, group_session, station, initial_id, signal_modality_clas
             print(stream)
             continue
 
+        values = slice_series_fn(stream["time_series"][i])
         signal = signal_modality_class(group_session_id=group_session,
                                        id=i + initial_id,
                                        task_id=task,
@@ -88,14 +93,14 @@ def get_signals(stream, group_session, station, initial_id, signal_modality_clas
                                        timestamp_unix=timestamp,
                                        timestamp_iso8601=iso_timestamp,
                                        **{key: value for key, value in
-                                          zip(channels, list(map(str, stream["time_series"][i])))})
+                                          zip(channels, list(map(str, values)))})
         signals.append(signal)
 
     return signals
 
 
 def process_directory_v1(group_session, signal_modality_class, modality_name, xdf_signal_type,
-                         channel_from_xdf_parsing_fn):
+                         channel_from_xdf_parsing_fn, slice_series_fn):
     signals = []
     with cd(f"{group_session}"):
         for station in ("lion", "tiger", "leopard"):
@@ -116,13 +121,14 @@ def process_directory_v1(group_session, signal_modality_class, modality_name, xd
 
             stream = streams[0]
             signals.extend(
-                get_signals(stream, group_session, station, 0, signal_modality_class, channel_from_xdf_parsing_fn))
+                get_signals(stream, group_session, station, 0, signal_modality_class, channel_from_xdf_parsing_fn,
+                            slice_series_fn))
 
     return signals
 
 
 def process_directory_v2(group_session, signal_modality_class, modality_name, xdf_signal_type,
-                         channel_from_xdf_parsing_fn, station_from_xdf_v2_parsing_fn):
+                         channel_from_xdf_parsing_fn, station_from_xdf_v2_parsing_fn, slice_series_fn):
     """Process directory assuming unified XDF files."""
     signals = []
     with cd(f"{group_session}/lsl"):
@@ -147,7 +153,7 @@ def process_directory_v2(group_session, signal_modality_class, modality_name, xd
                 station = station_from_xdf_v2_parsing_fn(group_session, stream)
                 next_id = max_ids.get(station, -1) + 1
                 tmp = get_signals(stream, group_session, station, next_id, signal_modality_class,
-                                  channel_from_xdf_parsing_fn)
+                                  channel_from_xdf_parsing_fn, slice_series_fn)
                 signals.extend(tmp)
                 max_ids[station] = tmp[-1].id
 
@@ -160,7 +166,8 @@ def create_indices(database_engine, check, signal_modality_class, modality_name)
 
     suffix = modality_name.lower()
 
-    idx_group_session_station = Index(f'idx_group_session_station_{modality_name}', signal_modality_class.group_session_id,
+    idx_group_session_station = Index(f'idx_group_session_station_{modality_name}',
+                                      signal_modality_class.group_session_id,
                                       signal_modality_class.station_id)
     idx_group_session_station.create(bind=database_engine, checkfirst=check)
 
