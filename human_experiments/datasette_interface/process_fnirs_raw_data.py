@@ -23,7 +23,7 @@ logging.basicConfig(
 
 def get_channel_names_from_xdf_stream(stream):
     return [channel["custom_name"][0].lower().replace("-", "_") + channel["type"][0][-4:].lower() for channel in
-                stream["info"]["desc"][0]["channels"][0]["channel"][41:]]
+            stream["info"]["desc"][0]["channels"][0]["channel"][41:]]
 
 
 def get_station_from_xdf_stream(group_session, stream):
@@ -33,7 +33,7 @@ def get_station_from_xdf_stream(group_session, stream):
 def process_fnirs_raw_data(database_engine, override):
     info("Processing FNIRSRaw data.")
     insert_raw_unlabeled_data(database_engine, override, FNIRSRaw, "fnirs", "NIRS", get_channel_names_from_xdf_stream,
-                              get_station_from_xdf_stream)
+                              get_station_from_xdf_stream, lambda x: x[41:])
     create_indices(database_engine, not override, FNIRSRaw, "fnirs")
     label_data(database_engine, override, FNIRSRaw, "fnirs")
 

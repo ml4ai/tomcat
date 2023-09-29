@@ -5,13 +5,11 @@ from entity.task.ping_pong_competitive_task_observation import PingPongCompetiti
 from entity.task.ping_pong_cooperative_task_observation import PingPongCooperativeTaskObservation
 from entity.task.minecraft_task import MinecraftMission
 
-from sqlalchemy.orm import Session
-from sqlalchemy import Index
 from sqlalchemy import func
 from sqlalchemy import delete
 from sqlalchemy import update
 
-from logging import info, error
+from logging import error
 
 
 def label_signals_with_task(signal_modality_class, task, station, participant_id, start_timestamp, stop_timestamp,
@@ -143,8 +141,8 @@ def label_minecraft_data(signal_modality_class, group_session, station, particip
     else:
         raise ValueError(f"Bad task: {task}!")
 
-    start_timestamp, stop_timestamp = database_session.query(MinecraftMission.start_timestamp_unix,
-                                                             MinecraftMission.stop_timestamp_unix).filter(
+    start_timestamp, stop_timestamp = database_session.query(MinecraftMission.mission_start_timestamp_unix,
+                                                             MinecraftMission.mission_stop_timestamp_unix).filter(
         MinecraftMission.group_session_id == group_session,
         MinecraftMission.name == mission,
     ).first()
