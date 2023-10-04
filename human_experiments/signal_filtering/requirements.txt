@@ -1,0 +1,11 @@
+numpy
+scipy
+pandas
+scikit-learn
+mne
+tqdm
+python-dotenv
+python-dateutil
+neurokit2
+psycopg2
+sqlalchemy

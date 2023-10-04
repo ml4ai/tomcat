@@ -1,0 +1,38 @@
+from typing import Optional
+
+from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import mapped_column
+from sqlalchemy import ForeignKey
+from sqlalchemy import Integer
+from sqlalchemy import Text
+
+from entity.base.base import Base
+
+
+class AffectiveTaskEvent(Base):
+    __tablename__ = "affective_task_event"
+
+    group_session_id: Mapped[str] = mapped_column("group_session", Text, ForeignKey("group_session.id"),
+                                                  primary_key=True)
+    participant_id: Mapped[int] = mapped_column("participant", Integer, ForeignKey("participant.id"), primary_key=True)
+    task_type: Mapped[str] = mapped_column(Text, primary_key=True)
+    timestamp_unix: Mapped[str] = mapped_column(Text, primary_key=True)
+    timestamp_iso8601: Mapped[str] = mapped_column(Text)
+    event_type: Mapped[str] = mapped_column(Text)
+    image_path: Mapped[Optional[str]] = mapped_column(Text)
+    arousal_score: Mapped[Optional[int]] = mapped_column(Integer)
+    valence_score: Mapped[Optional[int]] = mapped_column(Integer)
+
+    def __init__(self, group_session_id: str, participant_id: int, task_type: str, timestamp_unix: str,
+                 timestamp_iso8601: str, event_type: str, image_path: str, arousal_score: int, valence_score: int):
+        super().__init__()
+
+        self.group_session_id = group_session_id
+        self.participant_id = participant_id
+        self.task_type = task_type
+        self.timestamp_unix = timestamp_unix
+        self.timestamp_iso8601 = timestamp_iso8601
+        self.event_type = event_type
+        self.image_path = image_path
+        self.arousal_score = arousal_score
+        self.valence_score = valence_score

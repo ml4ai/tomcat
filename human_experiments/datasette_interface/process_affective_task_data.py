@@ -1,23 +1,26 @@
 #!/usr/bin/env python
 
+import json
+import logging
 import os
 import sys
-import sqlite3
+from glob import glob
+from logging import info, debug
+
+import pandas as pd
+import pyxdf
+from sqlalchemy.orm import Session
+from tqdm import tqdm
+
+from config import USER
+from entity.base.data_validity import DataValidity
+from entity.task.affective_task_event import AffectiveTaskEvent
 from utils import (
     cd,
     should_ignore_directory,
-    logging_handlers,
     convert_unix_timestamp_to_iso8601,
     is_directory_with_unified_xdf_files,
 )
-import pyxdf
-import logging
-from logging import info, error, debug
-from config import DB_PATH, logging_handlers
-from tqdm import tqdm
-import pandas as pd
-from glob import glob
-import json
 
 logging.basicConfig(
     level=logging.INFO,
@@ -31,41 +34,12 @@ logging.basicConfig(
 )
 
 
-def recreate_table():
-    db_connection = sqlite3.connect(DB_PATH)
-    with db_connection:
-        db_connection.execute("PRAGMA foreign_keys = 1")
-        info("Dropping affective_task_event table.")
-
-        db_connection.execute("DROP TABLE IF EXISTS affective_task_event")
-        db_connection.execute(
-            """
-            CREATE TABLE affective_task_event (
-                group_session TEXT NOT NULL,
-                participant INTEGER,
-                task_type TEXT NOT NULL,
-                timestamp_unix TEXT NOT NULL,
-                timestamp_iso8601 TEXT NOT NULL,
-                event_type TEXT NOT NULL,
-                image_path TEXT,
-                arousal_score INTEGER,
-                valence_score INTEGER,
-                FOREIGN KEY(group_session) REFERENCES group_session(id)
-                FOREIGN KEY(participant) REFERENCES participant(id)
-            );"""
-        )
-
-
-def process_directory_v1(session, participants, db_connection):
-    info(f"Processing directory {session}")
-    with cd(f"{session}/baseline_tasks/affective"):
+def process_directory_v1(group_session, participants):
+    affective_task_events = []
+    with cd(f"{group_session}/baseline_tasks/affective"):
         info("Processing individual affective task files.")
         individual_csv_files = glob("individual_*.csv")
         team_csv_files = glob("team_*.csv")
-        csv_files = {
-            "individual": individual_csv_files,
-            "team": team_csv_files,
-        }
 
         # We expect exactly 3 CSV file.
         assert len(individual_csv_files) == 3
@@ -80,7 +54,7 @@ def process_directory_v1(session, participants, db_connection):
         for csv_file in individual_csv_files:
             nominal_participant_id = int(csv_file.split("_")[1])
 
-            if session == "exp_2022_11_04_10":
+            if group_session == "exp_2022_11_04_10":
                 info(
                     "[CORRECTION]: For the affective task in the exp_2022_11_04_10"
                     " session, the CSV files have participant IDs 00052, 00058, and"
@@ -131,29 +105,34 @@ def process_directory_v1(session, participants, db_connection):
                 },
             )
 
-            with db_connection:
-                db_connection.execute("PRAGMA foreign_keys = 1")
-                for i, row in df.iterrows():
-                    row = (
-                        session,
-                        real_participant_id,
-                        "individual",
-                        row["time"],
-                        convert_unix_timestamp_to_iso8601(df["time"].iloc[i]),
-                        row["event_type"],
-                        row["image_path"],
-                        row["arousal_score"],
-                        row["valence_score"],
-                    )
-                    try:
-                        db_connection.execute(
-                            "INSERT into affective_task_event VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);",
-                            row,
-                        )
-                    except sqlite3.IntegrityError as e:
-                        raise sqlite3.IntegrityError(
-                            f"Unable to insert row: {row}! Error: {e}"
-                        )
+            for i, row in df.iterrows():
+                if pd.isna(row["image_path"]):
+                    image_path = None
+                else:
+                    image_path = row["image_path"]
+
+                if pd.isna(row["arousal_score"]):
+                    arousal = None
+                else:
+                    arousal = int(row["arousal_score"])
+
+                if pd.isna(row["valence_score"]):
+                    valence = None
+                else:
+                    valence = int(row["valence_score"])
+
+                affective_task_event = AffectiveTaskEvent(
+                    group_session_id=group_session,
+                    participant_id=real_participant_id,
+                    task_type="individual",
+                    timestamp_unix=row["time"],
+                    timestamp_iso8601=convert_unix_timestamp_to_iso8601(df["time"].iloc[i]),
+                    event_type=row["event_type"],
+                    image_path=image_path,
+                    arousal_score=arousal,
+                    valence_score=valence
+                )
+                affective_task_events.append(affective_task_event)
 
         for csv_file in team_csv_files:
             df = pd.read_csv(
@@ -188,33 +167,42 @@ def process_directory_v1(session, participants, db_connection):
                         )[0]
                     )
 
-                row = (
-                    session,
-                    real_participant_id,
-                    "team",
-                    row["time"],
-                    convert_unix_timestamp_to_iso8601(df["time"].iloc[i]),
-                    row["event_type"],
-                    row["image_path"],
-                    row["arousal_score"],
-                    row["valence_score"],
+                if pd.isna(row["image_path"]):
+                    image_path = None
+                else:
+                    image_path = row["image_path"]
+
+                if pd.isna(row["arousal_score"]):
+                    arousal = None
+                else:
+                    arousal = int(row["arousal_score"])
+
+                if pd.isna(row["valence_score"]):
+                    valence = None
+                else:
+                    valence = int(row["valence_score"])
+
+                affective_task_event = AffectiveTaskEvent(
+                    group_session_id=group_session,
+                    participant_id=real_participant_id,
+                    task_type="team",
+                    timestamp_unix=str(row["time"]),
+                    timestamp_iso8601=convert_unix_timestamp_to_iso8601(df["time"].iloc[i]),
+                    event_type=row["event_type"],
+                    image_path=image_path,
+                    arousal_score=arousal,
+                    valence_score=valence
                 )
+                affective_task_events.append(affective_task_event)
 
-                with db_connection:
-                    try:
-                        db_connection.execute(
-                            "INSERT into affective_task_event VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);",
-                            row,
-                        )
-                    except sqlite3.IntegrityError as e:
-                        raise sqlite3.IntegrityError(
-                            f"Unable to insert row: {row}! Error: {e}"
-                        )
+    return affective_task_events
 
 
-def process_directory_v2(session, participants, db_connection):
+def process_directory_v2(group_session, participants):
     """Process directory assuming unified XDF files."""
-    with cd(f"{session}/lsl"):
+
+    affective_task_events = []
+    with cd(f"{group_session}/lsl"):
         streams, header = pyxdf.load_xdf(
             "block_1.xdf", select_streams=[{"type": "affective_task"}]
         )
@@ -226,12 +214,8 @@ def process_directory_v2(session, participants, db_connection):
 
             task_type = "individual" if i != 3 else "team"
 
-            rows = []
-
-            real_participants_set = set(participants.values())
-
             for timestamp, data in zip(
-                stream["time_stamps"], stream["time_series"]
+                    stream["time_stamps"], stream["time_series"]
             ):
                 data = json.loads(data[0])
 
@@ -240,8 +224,8 @@ def process_directory_v2(session, participants, db_connection):
                 if task_type == "individual":
                     real_participant_id = participants[stream_source]
                     if (
-                        nominal_participant_id
-                        not in nominal_participant_to_stream_map
+                            nominal_participant_id
+                            not in nominal_participant_to_stream_map
                     ):
                         nominal_participant_to_stream_map[
                             nominal_participant_id
@@ -257,67 +241,23 @@ def process_directory_v2(session, participants, db_connection):
                             ]
                         ]
 
-                row = (
-                    session,
-                    real_participant_id,
-                    task_type,
-                    timestamp,
-                    convert_unix_timestamp_to_iso8601(timestamp),
-                    data["event_type"],
-                    data["image_path"],
-                    data["arousal_score"],
-                    data["valence_score"],
+                affective_task_event = AffectiveTaskEvent(
+                    group_session_id=group_session,
+                    participant_id=real_participant_id,
+                    task_type=task_type,
+                    timestamp_unix=timestamp,
+                    timestamp_iso8601=convert_unix_timestamp_to_iso8601(timestamp),
+                    event_type=data["event_type"],
+                    image_path=data["image_path"],
+                    arousal_score=data["arousal_score"],
+                    valence_score=data["valence_score"]
                 )
-                rows.append(row)
+                affective_task_events.append(affective_task_event)
 
-            with db_connection:
-                db_connection.execute("PRAGMA foreign_keys = 1")
-                for row in rows:
-                    try:
-                        db_connection.execute(
-                            "INSERT into affective_task_event VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);",
-                            row,
-                        )
-                    except sqlite3.IntegrityError as e:
-                        raise sqlite3.IntegrityError(
-                            f"Unable to insert row: {row}! Error: {e}"
-                        )
+    return affective_task_events
 
 
-def process_affective_task_data():
-    info("Processing directories...")
-
-    db_connection = sqlite3.connect(DB_PATH)
-    with cd("/tomcat/data/raw/LangLab/experiments/study_3_pilot/group"):
-        directories_to_process = [
-            directory
-            for directory in os.listdir(".")
-            if not should_ignore_directory(directory)
-        ]
-
-        for session in tqdm(
-            sorted(directories_to_process), unit="directories"
-        ):
-            # Get real participant IDs for the task
-            with db_connection:
-                db_connection.execute("PRAGMA foreign_keys = 1")
-                participants = {}
-                for station in ["lion", "tiger", "leopard"]:
-                    participant = db_connection.execute(
-                        f"""
-                        SELECT DISTINCT(participant) from data_validity
-                        WHERE group_session = '{session}' AND task LIKE 'finger%'
-                        AND station = '{station}'
-                        """
-                    ).fetchall()[0][0]
-                    participants[station] = participant
-            if not is_directory_with_unified_xdf_files(session):
-                process_directory_v1(session, participants, db_connection)
-            else:
-                process_directory_v2(session, participants, db_connection)
-
-
-if __name__ == "__main__":
+def process_affective_task_data(database_engine, override):
     info(
         """
         Processing affective task data. For the CSV files predating the
@@ -328,5 +268,45 @@ if __name__ == "__main__":
         separate invocations to monotonic() and datetime.utcnow() respectively.
         """
     )
-    recreate_table()
-    process_affective_task_data()
+
+    info("Processing directories...")
+
+    with cd("/tomcat/data/raw/LangLab/experiments/study_3_pilot/group"):
+        directories_to_process = [
+            directory
+            for directory in os.listdir(".")
+            if not should_ignore_directory(directory)
+        ]
+
+        with Session(database_engine) as database_session:
+            processed_group_sessions = set(
+                [s[0] for s in database_session.query(AffectiveTaskEvent.group_session_id).distinct(
+                    AffectiveTaskEvent.group_session_id).all()])
+
+            for group_session in tqdm(sorted(directories_to_process), unit="directories"):
+                if not override and group_session in processed_group_sessions:
+                    info(f"Found saved affective data for {group_session} in the database. Skipping group session.")
+                    continue
+
+                info(f"Processing directory {group_session}")
+                # Get real participant IDs for the task
+                participants = {}
+                for station in ["lion", "tiger", "leopard"]:
+                    participant = database_session.query(DataValidity.participant_id).filter(
+                        DataValidity.group_session_id == group_session,
+                        DataValidity.task_id.like("affective%"),
+                        DataValidity.station_id == station).first()[0]
+                    participants[station] = participant
+                if not is_directory_with_unified_xdf_files(group_session):
+                    affective_task_events = process_directory_v1(group_session, participants)
+                else:
+                    affective_task_events = process_directory_v2(group_session, participants)
+
+                if len(affective_task_events) > 0:
+                    database_session.add_all(affective_task_events)
+                    database_session.commit()
+
+
+def recreate_affective_task_event_tables(database_engine):
+    AffectiveTaskEvent.__table__.drop(database_engine, checkfirst=True)
+    AffectiveTaskEvent.__table__.create(database_engine, checkfirst=True)
