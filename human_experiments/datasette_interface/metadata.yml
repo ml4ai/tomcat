@@ -124,12 +124,14 @@ databases:
 
             group_session:
                 description: Table with group session IDs.
+                label_column: id
                 columns:
                     id: >
                         Group session ID. Format: `exp_YYYY_MM_DD_HH`.
 
             mission:
                 description: Metadata about the Minecraft missions.
+                label_column: id
                 columns:
                     id: The unique ID of the mission.
                     group_session_id: The group session that the mission was a part of.
@@ -152,6 +154,7 @@ databases:
 
             participant:
                 description: Table with participant IDs.
+                label_column: id
                 columns:
                     id: >
                         Participant ID.
@@ -229,11 +232,13 @@ databases:
                     competitive ping pong task, when an experimenter steps in
                     to play against the participant seated at the 'leopard'
                     station.
+                label_column: id
                 columns:
                     id: Station ID.
 
             task:
                 description: The different tasks that take place during a group session.
+                label_column: id
                 columns:
                     id: Task ID.
 
