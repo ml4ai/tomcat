@@ -3,7 +3,7 @@ from typing import List
 import pandas as pd
 
 
-class Modality:
+class SignalModality:
 
     def synchronize(self, data: pd.DataFrame) -> pd.DataFrame:
         # TODO: implement synchronization

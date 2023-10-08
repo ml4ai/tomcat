@@ -1,15 +1,55 @@
 import argparse
-
+from functools import partial
 from logging import info
+import math
+from typing import List
+
+from mne.filter import resample
+import numpy as np
+from tqdm import tqdm
 
 from config import NUM_PROCESSES
 from reader.data_reader import DataReader
 
-
-def sync_raw_signals(data_reader: DataReader, frequency: int, num_jobs: int):
-    pass
+from multiprocessing import Pool
 
 
+def sync_raw_signals_single_job(group_sessions: List[str],
+                                data_reader: DataReader,
+                                source_frequency: int,
+                                target_frequency: int):
+    for group_session in group_sessions:
+        # TODO add message to queue
+        data = data_reader.read(group_session)
+
+        start_time = data_reader.get_overlapping_window(data)[0]
+
+        for station in data["station"].unique():
+            station_data = data[data["station"] == station]
+            original_values = station_data[data_reader.signal_modality.channels].values
+
+            upsampled_values = resample(x=original_values, up=target_frequency / source_frequency, npad="auto", axis=0)
+
+            interpolated_signal = linear_interpolation(
+                upsampled_values, target_frequency, start_time
+            )
+
+
+
+        # TODO: start_time = float(math.ceil(get_shared_start_time(data)))
+        # Is ceiling really necessary here?
+        start_time = data_reader.get_overlapping_window(data)[0]
+
+
+def sync_raw_signals_in_parallel(data_reader: DataReader, source_frequency: int, target_frequency: int, num_jobs: int):
+    job_fn = partial(sync_raw_signals_single_job,
+                     data_reader=data_reader,
+                     source_frequency=source_frequency,
+                     target_frequency=target_frequency)
+    group_sessions = data_reader.get_group_sessions()
+
+    with Pool(processes=num_jobs) as pool:
+        list(tqdm(pool.imap(job_fn, group_sessions), total=len(group_sessions)))
 
 
 if __name__ == "__main__":

@@ -1,11 +1,11 @@
 from typing import List
 
-from entity.modality import Modality
+from entity.signal import SignalModality
 
 import pandas as pd
 
 
-class FNIRS(Modality):
+class FNIRS(SignalModality):
 
     @property
     def table_name(self) -> str:
