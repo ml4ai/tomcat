@@ -52,9 +52,7 @@ def process_directory(experiment_dir: str, out_dir: str, audio_dir_fn: Callable,
                 continue
 
             sub_dir = audio_dir[audio_dir.find("exp_"):] + "/dialog_labels"
-
-            labels_filename = annotation_file[:annotation_file.rfind(".")]
-            labels_filepath = f"{out_dir}/{sub_dir}/{labels_filename}"
+            labels_filepath = f"{out_dir}/{sub_dir}/{annotation_file}"
 
             if os.path.exists(labels_filepath) and not override:
                 info(f"Skipping file {annotation_file}. Label annotations already found in {out_dir}.")
@@ -77,7 +75,7 @@ if __name__ == "__main__":
     parser.add_argument("--experiments_dir", type=str, required=False, default=EXP_DIR,
                         help="Directory containing experiment folders.")
     parser.add_argument("--out_dir", type=str, required=False, default=OUT_DIR,
-                        help="Directory where experiment folder structure containing vocalic features files must be saved.")
+                        help="Directory where experiment folder structure containing semantic labels must be saved.")
     parser.add_argument("--log_dir", type=str, required=False, default=LOG_DIR,
                         help="Directory where log files must be saved.")
     parser.add_argument("--api_host", type=str, required=False, default="localhost",
