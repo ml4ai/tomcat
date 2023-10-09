@@ -24,7 +24,7 @@ def label_transcriptions(experiments_dir: str, out_dir: str, labeler: SentenceLa
 
         experiment_dir = f"{experiments_dir}/{group_session}"
 
-        if not is_directory_with_unified_xdf_files(experiment_dir):
+        if not is_directory_with_unified_xdf_files(group_session):
             process_directory_v1(experiment_dir, out_dir, labeler, override)
         else:
             process_directory_v2(experiment_dir, out_dir, labeler, override)

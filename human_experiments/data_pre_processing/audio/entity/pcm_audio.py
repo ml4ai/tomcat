@@ -58,9 +58,15 @@ class PCMAudio:
 
         full_audio = AudioSegment.from_wav(self.filepath)
         intervals = list(annotation.sound_intervals)
-        for index, start_frame, end_frame in tqdm(intervals, position=1, leave=False):
+        for index, start_frame, end_frame in tqdm(intervals, position=2, leave=False):
             lb = int(start_frame * full_audio.frame_rate)
             ub = int(end_frame * full_audio.frame_rate)
             audio_segment = full_audio.get_sample_slice(lb, ub)
             result = transcriber.transcribe(audio_segment)
-            annotation.set_transcript(index, result["text"])
+
+            # Remove double quotes not to break the annotation, whitespaces in the extremities and capitalize the
+            # first letter.
+            text = result["text"].replace('"', '').strip()
+            if len(text) > 0:
+                text = text[0].upper() + text[1:]
+            annotation.set_transcript(index, text)

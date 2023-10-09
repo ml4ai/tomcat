@@ -13,8 +13,8 @@ class PraatAnnotation:
         self._grid = TextGrid(filepath)
 
     @property
-    def sound_intervals(self, standardized: bool = False) -> Tuple[float, float]:
-        tier_name = "standardized_silences" if standardized else "silences"
+    def sound_intervals(self) -> Tuple[float, float]:
+        tier_name = "standardized_silences" if "standardized_silences" in self._grid else "silences"
         for index, sound_period in enumerate(self._grid[tier_name]):
             if sound_period.text == "s":
                 yield index, sound_period.xmin, sound_period.xmax
@@ -26,7 +26,8 @@ class PraatAnnotation:
                 yield index, sound_period.text
 
     def reset_transcript_tier(self):
-        self._grid["transcripts"] = deepcopy(self._grid["silences"])
+        tier_name = "standardized_silences" if "standardized_silences" in self._grid else "silences"
+        self._grid["transcripts"] = deepcopy(self._grid[tier_name])
         for i in range(len(self._grid["transcripts"])):
             self._grid["transcripts"][i].text = ""
 

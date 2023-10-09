@@ -15,7 +15,7 @@ from utils import cd, is_directory_with_unified_xdf_files
 from audio.entity.transcriber import Whisper
 
 
-def transcribe_utterances(experiments_dir: str, out_dir: str, override: bool):
+def transcribe_utterances(experiments_dir: str, annotations_dir_name: str, out_dir: str, override: bool):
     info("Processing directories...")
 
     directories_to_process = [directory for directory in os.listdir(experiments_dir) if
@@ -26,26 +26,28 @@ def transcribe_utterances(experiments_dir: str, out_dir: str, override: bool):
 
         experiment_dir = f"{experiments_dir}/{group_session}"
 
-        if not is_directory_with_unified_xdf_files(experiment_dir):
-            process_directory_v1(experiment_dir, out_dir, override)
+        if not is_directory_with_unified_xdf_files(group_session):
+            process_directory_v1(experiment_dir, annotations_dir_name, out_dir, override)
         else:
-            process_directory_v2(experiment_dir, out_dir, override)
+            process_directory_v2(experiment_dir, annotations_dir_name, out_dir, override)
 
 
-def process_directory_v1(experiment_dir: str, out_dir: str, override: bool):
-    return process_directory(experiment_dir, out_dir, lambda g, s: f"{g}/{s}/audio", override)
+def process_directory_v1(experiment_dir: str, annotations_dir_name: str, out_dir: str, override: bool):
+    return process_directory(experiment_dir, annotations_dir_name, out_dir, lambda g, s: f"{g}/{s}/audio", override)
 
 
-def process_directory_v2(experiment_dir: str, out_dir: str, override: bool):
-    return process_directory(experiment_dir, out_dir, lambda g, s: f"{g}/{s}/audio/block_2", override)
+def process_directory_v2(experiment_dir: str, annotations_dir_name: str, out_dir: str, override: bool):
+    return process_directory(experiment_dir, annotations_dir_name, out_dir, lambda g, s: f"{g}/{s}/audio/block_2",
+                             override)
 
 
-def process_directory(experiment_dir: str, out_dir: str, audio_dir_fn: Callable, override: bool):
+def process_directory(experiment_dir: str, annotations_dir_name: str, out_dir: str, audio_dir_fn: Callable,
+                      override: bool):
     transcriber = Whisper()
 
-    for station in ["lion", "tiger", "leopard"]:
+    for station in tqdm(["lion", "tiger", "leopard"], position=1, leave=False, total=3, desc="Station"):
         audio_dir = audio_dir_fn(experiment_dir, station)
-        annotation_dir = f"{audio_dir}/annotations"
+        annotation_dir = f"{audio_dir}/{annotations_dir_name}"
         if not os.path.exists(annotation_dir):
             error(
                 f"Annotation folder does not exist for station {station} in group session {os.path.basename(experiment_dir)}.")
@@ -82,6 +84,8 @@ if __name__ == "__main__":
 
     parser.add_argument("--experiments_dir", type=str, required=False, default=EXP_DIR,
                         help="Directory containing experiment folders.")
+    parser.add_argument("--annotations_dir_name", type=str, required=False, default="annotations",
+                        help="Name of the directory containing annotations inside the audio folder.")
     parser.add_argument("--out_dir", type=str, required=False, default=OUT_DIR,
                         help="Directory where experiment folder structure containing transcriptions must be saved.")
     parser.add_argument("--log_dir", type=str, required=False, default=LOG_DIR,
@@ -102,4 +106,4 @@ if __name__ == "__main__":
         ),
     )
 
-    transcribe_utterances(args.experiments_dir, args.out_dir, args.override)
+    transcribe_utterances(args.experiments_dir, args.annotations_dir_name, args.out_dir, args.override)
