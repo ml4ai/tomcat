@@ -12,6 +12,7 @@ from .utils import get_shared_start_time, generate_time_series_num_samples
 
 def synchronize_signals(experiment: dict[str, any]) -> dict[str, any]:
     desired_frequency = experiment["desired_freq"]
+    upsample_frequency = experiment["upsample_freq"]
     experiment_name = experiment["experiment_name"]
     signals = experiment["signals"]
 
@@ -22,9 +23,13 @@ def synchronize_signals(experiment: dict[str, any]) -> dict[str, any]:
                 signals_df.append(signal[station])
     start_time = float(math.ceil(get_shared_start_time(signals_df)))
 
+    all_signal_types = []
     processed_signals = {}
     for signal in signals:
         signal_frequency = signal["frequency"]
+        signal_type = signal["signal_type"]
+        all_signal_types.append(signal_type)
+
         for station in ["lion", "tiger", "leopard"]:
             if station in signal:
                 signal_start_time = signal[station]["timestamp_unix"].min()
@@ -32,18 +37,18 @@ def synchronize_signals(experiment: dict[str, any]) -> dict[str, any]:
                 # Resample signal
                 resampled_signal = mne_resample(
                     signal[station].drop(columns=["timestamp_unix"]),
-                    signal_frequency, desired_frequency
+                    signal_frequency, upsample_frequency
                 )
 
                 # Assign timestamp for interpolation
                 resampled_signal["timestamp_unix"] = generate_time_series_num_samples(
-                    signal_start_time, len(resampled_signal), desired_frequency
+                    signal_start_time, len(resampled_signal), upsample_frequency
                 )
 
                 try:
                     # Interpolate signal to synchronize with other signals
                     interpolated_signal = linear_interpolation(
-                        resampled_signal, desired_frequency, start_time
+                        resampled_signal, upsample_frequency, start_time
                     )
                 except AssertionError as e:
                     print(f"{experiment_name} - {station} ERROR")
@@ -52,7 +57,6 @@ def synchronize_signals(experiment: dict[str, any]) -> dict[str, any]:
                 # Drop current timestamp to use the unified timestamps later
                 interpolated_signal = interpolated_signal.drop(columns=["timestamp_unix"])
 
-                signal_type = signal["signal_type"]
                 processed_signals[f"{station}_{signal_type}"] = interpolated_signal
 
     # Align signals
@@ -70,6 +74,11 @@ def synchronize_signals(experiment: dict[str, any]) -> dict[str, any]:
     # Concatenate the dataframes column-wise
     synchronized_signal = pd.concat(ready_for_synchronization_signals, axis=1)
 
+    # Downsample to desired frequency
+    synchronized_signal = mne_resample(
+        synchronized_signal, upsample_frequency, desired_frequency
+    )
+
     time_series_frequency = desired_frequency
 
     # Assign timestamp
@@ -85,7 +94,8 @@ def synchronize_signals(experiment: dict[str, any]) -> dict[str, any]:
 
     synchronization_results = {
         "experiment_name": experiment_name,
-        "signals": synchronized_signal
+        "signals": synchronized_signal,
+        "signal_types": all_signal_types,
     }
 
     return synchronization_results

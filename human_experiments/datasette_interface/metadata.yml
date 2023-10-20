@@ -25,7 +25,7 @@ databases:
                     involved in the tasks, and whether the data from the EEG,
                     fNIRS, and eye tracking modalities are valid. In most
                     cases, when an experimenter stepped in to replace a
-                    participant (e.g., for a now-show participant), they did
+                    participant (e.g., for a no-show participant), they did
                     not wear fNIRS/EEG devices, and in some cases, they did not
                     wear the eye tracker either. Not all groups completed all
                     the tasks, and for some tasks, the data is missing. In
@@ -57,6 +57,14 @@ databases:
                         ID.
                     timestamp_unix: The Unix timestamp of the event.
                     timestamp_iso8601: The ISO-8601 timestamp of the event.
+
+            eeg_device:
+              description: >
+                Table with a mapping between station and EEG device id used in each experiment.
+              columns:
+                group_session: Group session ID.
+                station: The iMac that the participant was stationed at.
+                device_id: The id of the EEG device used in the station.
 
             eeg_raw:
               description: >
@@ -116,20 +124,26 @@ databases:
 
             group_session:
                 description: Table with group session IDs.
+                label_column: id
                 columns:
                     id: >
                         Group session ID. Format: `exp_YYYY_MM_DD_HH`.
 
             mission:
                 description: Metadata about the Minecraft missions.
+                label_column: id
                 columns:
                     id: The unique ID of the mission.
                     group_session_id: The group session that the mission was a part of.
                     name: The name of the mission (Hands-on Training, Saturn A, or Saturn B)
-                    start_timestamp_iso8601: The starting timestamp of the mission in ISO-8601 format.
-                    start_timestamp_unix: The starting Unix timestamp of the mission.
-                    stop_timestamp_iso8601: The stop timestamp of the mission in ISO-8601 format.
-                    stop_timestamp_unix: The stopping Unix timestamp of the mission.
+                    mission_start_timestamp_iso8601: The starting timestamp of the mission in ISO-8601 format.
+                    mission_start_timestamp_unix: The starting Unix timestamp of the mission.
+                    mission_stop_timestamp_iso8601: The stop timestamp of the mission in ISO-8601 format.
+                    mission_stop_timestamp_unix: The stopping Unix timestamp of the mission.
+                    trial_start_timestamp_iso8601: The starting timestamp of the trial in ISO-8601 format.
+                    trial_start_timestamp_unix: The starting Unix timestamp of the trial.
+                    trial_stop_timestamp_iso8601: The stop timestamp of the trial in ISO-8601 format.
+                    trial_stop_timestamp_unix: The stopping Unix timestamp of the trial.
                     final_team_score: The final mission score achieved by the team.
                     testbed_version: The version of the testbed used for the mission.
 
@@ -140,6 +154,7 @@ databases:
 
             participant:
                 description: Table with participant IDs.
+                label_column: id
                 columns:
                     id: >
                         Participant ID.
@@ -217,11 +232,13 @@ databases:
                     competitive ping pong task, when an experimenter steps in
                     to play against the participant seated at the 'leopard'
                     station.
+                label_column: id
                 columns:
                     id: Station ID.
 
             task:
                 description: The different tasks that take place during a group session.
+                label_column: id
                 columns:
                     id: Task ID.
 

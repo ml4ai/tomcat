@@ -1,18 +1,21 @@
 import json
-import sqlite3
-from config import MINECRAFT_MISSION_BLACKLIST
 
 import pandas as pd
+from sqlalchemy import create_engine, text
+
+from config import MINECRAFT_MISSION_BLACKLIST, POSTGRESQL_ENGINE
 
 
-def _get_testbed_messages(db_path: str, experiment: str, mission: str) -> pd.DataFrame | None:
-    db = sqlite3.connect(db_path)
-
-    mission_id = db.execute(f"""
-                            SELECT id
-                            FROM mission
-                            WHERE group_session = '{experiment}' AND name = '{mission}';
-                            """)
+def _get_testbed_messages(experiment: str, mission: str, engine) -> pd.DataFrame | None:
+    with engine.connect() as conn:
+        query = text(
+            f"""
+            SELECT id
+            FROM minecraft_mission
+            WHERE group_session = '{experiment}' AND name = '{mission}';
+            """
+        )
+        mission_id = conn.execute(query)
 
     if mission_id is None:
         return None
@@ -34,12 +37,14 @@ def _get_testbed_messages(db_path: str, experiment: str, mission: str) -> pd.Dat
     if len(mission_id) != 36:
         raise ValueError("Incorrect mission ID length")
 
-    query = f"""
+    with engine.connect() as conn:
+        query = \
+            f"""
             SELECT * 
-            FROM testbed_message
-            WHERE mission = ? AND topic IN ('observations/events/mission', 'observations/events/scoreboard');
+            FROM minecraft_testbed_message
+            WHERE mission = '{mission_id}' AND topic IN ('observations/events/mission', 'observations/events/scoreboard');
             """
-    minecraft_df = pd.read_sql_query(query, db, params=[mission_id])
+        minecraft_df = pd.read_sql_query(query, conn)
 
     if minecraft_df.empty:
         return None
@@ -88,10 +93,10 @@ def _get_testbed_messages(db_path: str, experiment: str, mission: str) -> pd.Dat
     return minecraft_df
 
 
-def minecraft(db_path: str, experiment: str) -> dict[str, pd.DataFrame]:
-    training = _get_testbed_messages(db_path, experiment, 'Hands-on Training')
-    saturn_a = _get_testbed_messages(db_path, experiment, 'Saturn_A')
-    saturn_b = _get_testbed_messages(db_path, experiment, 'Saturn_B')
+def minecraft(experiment: str, engine) -> dict[str, pd.DataFrame]:
+    training = _get_testbed_messages(experiment, 'Hands-on Training', engine)
+    saturn_a = _get_testbed_messages(experiment, 'Saturn_A', engine)
+    saturn_b = _get_testbed_messages(experiment, 'Saturn_B', engine)
 
     minecraft_data = {}
     if training is not None:

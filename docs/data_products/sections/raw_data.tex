@@ -34,7 +34,7 @@ is \verb|study_3_pilot|.  This study name is a bit misleading, but makes senses
 as this study gradually morphed from an initial pilot study to a real one as we
 developed the system, but most data is informative.
 
-\verb|<raw_data>| has two subdirectories, ``presession'' and ``group'', containing data
+\verb|<raw_data>| has a few \verb|.csv| files containing structured experimental notes we use to determine data validity (e.g., equipment not working during a specific task), internal mappings and conventions (see \autoref{subsec:exp_notes}). In addition, it contains two subdirectories, ``presession'' and ``group'', containing data
 from the presession experiments and main experiments separately. In both cases, we put the
 data from one experimental instance into a directory named
 \verb|exp_<yyyy>_<mm>_<dd>_<hh>|. Since we only run one main session at a time, and
@@ -629,3 +629,78 @@ this \href{https://github.com/labstreaminglayer/App-LabRecorder/issues/101}{\tex
 GitHub discussion}} and the LSL
 \href{https://labstreaminglayer.readthedocs.io/info/time_synchronization.html}{time
 synchronization documentation}.
+
+\subsection{Experimental notes}
+\label{subsec:exp_notes}
+
+Underneath \verb|<root>/<study>| directory, we have the following
+files containing relevant experimental notes:
+%
+\begin{itemize}
+\item\verb|experimenter_ids.csv|\\
+    (colon delimited, 1st row is a header)\\
+    This CSV file contains a mapping between experimenters and assigned IDs. Experimenters receive unique 5-digit IDs starting at 99901 used whenever they participate as a third person in the experiment. 
+    
+File Fields:
+\begin{itemize}
+    \item \verb|Experimenter_ID|\\.        
+    \item \verb|First_Name|\\.
+    \item \verb|Last_Name|\\.
+    \item \verb|Initials|\\.
+    \item \verb|Position (e.g. PhD Student)|\\.
+\end{itemize}
+\end{itemize}
+
+\begin{itemize}
+\item\verb|data_validity_table.csv|\\
+    (colon delimited, 1st row is a header)\\
+    This CSV file contains participant IDs and data signals broken down per station and task. Typically a participant will not change stations during an experiment. However, it may be the case we need to move participants around in the middle of an experiment due to equipment malfunctioning or motion sickness. The information in this file helps us to keep track of who was seating on which station and which equipments were not functioning for each task in the experiment.
+    
+File Fields:
+\begin{itemize}
+    \item \verb|experiment_id|\\.
+    \item \verb|<station>_subject_id|\\
+    Original ID attributed to participant in \verb|<station>|. 
+    \item \verb|<station>_<task>_participant_id|\\
+	ID of the participant in \verb|<station>| during \verb|<task>|.
+	\item \verb|<station>_mask_status|\\
+    Whether the participant in \verb|<station>| is wearing a mask (e.g. mask\_on).
+    \item \verb|<station>_eeg_data_<task>|\\
+	Status of EEG signals during \verb|<task>| (e.g. ok).
+	\item \verb|<station>_fnirs_data_<task>|\\
+	Status of fNIRS signals during \verb|<task>|.
+	\item \verb|<station>_pupil_data_<task>|\\
+	Status of eye-tracking signals during \verb|<task>|.
+\end{itemize}
+
+\bigskip
+Tasks:
+\begin{itemize}
+    \item \verb|rest_state|\\.
+    \item \verb|finger_tapping|\\.
+    \item \verb|affective_task_individual|\\.	
+	\item \verb|affective_task_team|\\.
+    \item \verb|ping_pong_competitive_0|\\.
+    \item \verb|ping_pong_competitive_1|\\.
+	\item \verb|ping_pong_cooperative_0|\\.
+	\item \verb|hands_on_training|\\.
+	\item \verb|saturn_a|\\.
+	\item \verb|saturn_b|\\.	
+\end{itemize}
+\end{itemize}
+
+\begin{itemize}
+\item\verb|station_to_eeg_amp_mapping.csv|\\
+    (colon delimited, 1st row is a header)\\
+    This CSV file contains a mapping between the ID of the device used to record EEG and station. Typically the devices will not change  stations, but we may have to do so if they are malfunctioning. Knowing the device ID used in each station is specially important for \emph{v2} because all EEG signals will be recorded in a single, differentiated only by the device ID. A mapping between the device ID and station is necessary to correctly assign EEG signals to a station and consequently to a participant.
+    
+File Fields:
+\begin{itemize}
+    \item \verb|experiment_id|\\.        
+    \item \verb|<station>_actiCHamp|\\
+	ID of the EEG device in \verb|<station>|.
+\end{itemize}
+\end{itemize}
+
+
+
