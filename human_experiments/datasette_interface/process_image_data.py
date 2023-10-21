@@ -44,8 +44,7 @@ def process_directory_v1(group_session, image_table_class):
                     timestamp_iso8601 = filename[:filename.rfind(".")]
                     timestamp_unix = convert_iso8601_timestamp_to_unix(timestamp_iso8601)
                 else:
-                    mod_time = os.path.getmtime(filename)
-                    timestamp_unix = parser.parse(time.ctime(mod_time)).timestamp()
+                    timestamp_unix = os.path.getmtime(filename)
                     timestamp_iso8601 = convert_unix_timestamp_to_iso8601(timestamp_unix)
 
                 # Task and participant will be filled later in the labeling part.
