@@ -137,7 +137,7 @@ def process_directory_v2(group_session, image_table_class, image_type, xdf_signa
                 # entries, we need to make sure we start the ID taking into account the last ID in
                 # the block 1 files for the same station, otherwise we get a duplicate key error
                 # during insertion.
-                station = stream["info"]["hostname"]
+                station = stream["info"]["hostname"][0]
                 next_id = max_ids.get(station, - 1) + 1
                 station = stream["info"]["hostname"][0]
                 tmp = [image_table_class(**signal_dict, timestamp_origin="lsl") for signal_dict in
