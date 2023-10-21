@@ -23,6 +23,7 @@ class ScreenCapture(Base):
     timestamp_unix: Mapped[str] = mapped_column(Text, primary_key=True)
     timestamp_iso8601: Mapped[str] = mapped_column(Text)
     filename: Mapped[str] = mapped_column(Text)
+    timestamp_origin: Mapped[str] = mapped_column(Text)
 
     def __init__(self, group_session_id: str,
                  id: int,
@@ -31,7 +32,8 @@ class ScreenCapture(Base):
                  participant_id: int,
                  timestamp_unix: str,
                  timestamp_iso8601: str,
-                 filename: int):
+                 filename: int,
+                 timestamp_origin: str):
         super().__init__()
 
         self.group_session_id = group_session_id
@@ -42,3 +44,4 @@ class ScreenCapture(Base):
         self.timestamp_unix = timestamp_unix
         self.timestamp_iso8601 = timestamp_iso8601
         self.filename = filename
+        self.timestamp_origin = timestamp_origin

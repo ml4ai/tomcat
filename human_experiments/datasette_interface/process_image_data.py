@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
-
 import os
 import time
 from logging import info, error
 
 import pandas as pd
 import pyxdf
+import datetime
 from dateutil import parser
 from sqlalchemy.orm import Session
 from tqdm import tqdm
@@ -19,6 +19,7 @@ from utils import (
     convert_iso8601_timestamp_to_unix,
     convert_unix_timestamp_to_iso8601,
     is_directory_with_unified_xdf_files,
+    MST
 )
 
 
@@ -34,8 +35,10 @@ def process_directory_v1(group_session, image_table_class):
                 # Sometimes outFile.csv exists but the image filenames are still the original ones.
                 # When this is the case, we map the image filename to the timestamps in this file.
                 filename_to_timestamp = pd.read_csv("outFile.csv", index_col=0, header=None)
+                utc_timestamp = False
                 if len(filename_to_timestamp.columns) == 0:
-                    # Some of the files have ";" as delimiter
+                    # Files started to be created with ";" as delimiter and UTC timestamps
+                    utc_timestamp = True
                     filename_to_timestamp = pd.read_csv("outFile.csv", index_col=0, header=None,
                                                         delimiter=";")
                 filename_to_timestamp.index.name = "filename"
@@ -56,19 +59,37 @@ def process_directory_v1(group_session, image_table_class):
                     # Get timestamp from file last modification date
                     timestamp_unix = os.path.getmtime(filename)
                     timestamp_iso8601 = convert_unix_timestamp_to_iso8601(timestamp_unix)
+                    timestamp_origin = "modification"
                 else:
+                    timestamp_origin = "creation"
                     try:
                         # Get timestamp from the image filename
                         timestamp_iso8601 = filename[:filename.rfind(".")].replace("_", ":")
-                        timestamp_unix = convert_iso8601_timestamp_to_unix(timestamp_iso8601)
                     except Exception:
                         # The filename does not contain a valid timestamp. Get the timestamp from
                         # the outFile.csv.
-                        timestamp_iso8601 = filename_to_timestamp.loc[filename, "timestamp"]
-                        timestamp_unix = convert_iso8601_timestamp_to_unix(timestamp_iso8601)
+                        if filename in filename_to_timestamp.index:
+                            timestamp_iso8601 = filename_to_timestamp.loc[filename, "timestamp"]
+                        else:
+                            # The outFile.csv does not contain entries for all the images.
+                            info(
+                                f"[ANOMALY] No entry for {filename} in {station} was found in outFile.csv. Using the file modification timestamp instead.")
+                            timestamp_unix = os.path.getmtime(filename)
+                            timestamp_iso8601 = convert_unix_timestamp_to_iso8601(timestamp_unix)
+                            timestamp_origin = "modification"
 
-                    # Convert back to ISO to transform from MST to UTC
-                    timestamp_iso8601 = convert_unix_timestamp_to_iso8601(timestamp_unix)
+                    if not utc_timestamp:
+                        # Convert from MST to UTC
+                        timestamp_iso8601_mst = timestamp_iso8601.replace("Z", "") + "MST"
+                        timestamp_iso8601 = parser.parse(timestamp_iso8601_mst,
+                                                         tzinfos={"MST": MST}).astimezone(
+                            tz=datetime.timezone.utc).isoformat(timespec='microseconds')
+                    else:
+                        # Guarantees all ISO timestamps have the same format
+                        timestamp_iso8601 = parser.parse(timestamp_iso8601).isoformat(
+                            timespec='microseconds')
+
+                    timestamp_unix = convert_iso8601_timestamp_to_unix(timestamp_iso8601)
 
                 # Task and participant will be filled later in the labeling part.
                 image_record = image_table_class(
@@ -79,7 +100,8 @@ def process_directory_v1(group_session, image_table_class):
                     participant_id=-1,
                     timestamp_unix=timestamp_unix,
                     timestamp_iso8601=timestamp_iso8601,
-                    filename=filename
+                    filename=filename,
+                    timestamp_origin=timestamp_origin
                 )
                 image_records.append(image_record)
 
@@ -115,8 +137,9 @@ def process_directory_v2(group_session, image_table_class, image_type, xdf_signa
                 station = stream["info"]["hostname"]
                 next_id = max_ids.get(station, - 1) + 1
                 station = stream["info"]["hostname"][0]
-                tmp = get_signals(stream, group_session, station, next_id, image_table_class,
-                                  lambda x: ["filename"], slice_series_fn=lambda x: x)
+                tmp = [ScreenCapture(**signal_dict, timestamp_origin="lsl") for signal_dict in
+                       get_signals(stream, group_session, station, next_id, lambda x: ["filename"],
+                                   slice_series_fn=lambda x: x)]
                 records.extend(tmp)
                 max_ids[station] = tmp[-1].id
 
