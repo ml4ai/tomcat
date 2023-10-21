@@ -52,9 +52,16 @@ def process_directory_v1(group_session, image_table_class):
                     # Skip files that are not images.
                     continue
 
-                if timestamp_from_name:
+                filename_mapped = filename not in filename_to_timestamp.index
+
+                if not filename_mapped:
+                    info(f"[ANOMALY] {filename} in {station} is not in outFile.csv.")
+
+                if timestamp_from_name and filename_mapped:
                     timestamp_iso8601 = filename_to_timestamp.loc[filename, "timestamp"]
                     timestamp_unix = convert_iso8601_timestamp_to_unix(timestamp_iso8601)
+                    # Convert back to ISO to transform from MST to UTC
+                    timestamp_iso8601 = convert_unix_timestamp_to_iso8601(timestamp_unix)
                 else:
                     timestamp_unix = os.path.getmtime(filename)
                     timestamp_iso8601 = convert_unix_timestamp_to_iso8601(timestamp_unix)
