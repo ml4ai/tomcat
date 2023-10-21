@@ -34,7 +34,7 @@ def process_directory_v1(group_session, image_table_class):
                 timestamp_from_name = True
 
             unique_id = 0
-            sorted_filenames = os.listdir(".").sort()
+            sorted_filenames = sorted(os.listdir("."))
             for filename in sorted_filenames:
                 if filename[filename.rfind(".") + 1:] != "png":
                     # Skip files that are not images.
