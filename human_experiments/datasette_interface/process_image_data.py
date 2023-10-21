@@ -31,8 +31,6 @@ def process_directory_v1(group_session, image_table_class):
             # have their creation date saved. In this case we use their last modified date as
             # timestamp, which we can retrieve from the file's metadata.
             if os.path.exists("outFile.csv"):
-                timestamp_from_name = True
-
                 # Instead of using the timestamps in the filenames we will read from the mapping
                 # in the outFile.csv because sometimes this file exists but the image filenames
                 # were still the original ones. So, to standardize the behavior of the code below,
@@ -43,7 +41,7 @@ def process_directory_v1(group_session, image_table_class):
             else:
                 info(f"There isn't an outFile.csv in {station}. The last file modification "
                      f"timestamp will be used as the record's timestamp.")
-                timestamp_from_name = False
+                filename_to_timestamp = None
 
             unique_id = 0
             sorted_filenames = sorted(os.listdir("."))
@@ -52,12 +50,16 @@ def process_directory_v1(group_session, image_table_class):
                     # Skip files that are not images.
                     continue
 
-                filename_mapped = filename not in filename_to_timestamp.index
+                filename_mapped = False
+                if filename_to_timestamp:
+                    filename_mapped = filename in filename_to_timestamp.index
 
-                if not filename_mapped:
-                    info(f"[ANOMALY] {filename} in {station} is not in outFile.csv.")
+                    if not filename_mapped:
+                        info(
+                            f"[ANOMALY] {filename} in {station} is not in outFile.csv. "
+                            f"We'll use the file modification timestamp instead.")
 
-                if timestamp_from_name and filename_mapped:
+                if filename_to_timestamp and filename_mapped:
                     timestamp_iso8601 = filename_to_timestamp.loc[filename, "timestamp"]
                     timestamp_unix = convert_iso8601_timestamp_to_unix(timestamp_iso8601)
                     # Convert back to ISO to transform from MST to UTC
