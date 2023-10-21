@@ -110,8 +110,6 @@ def insert_raw_unlabeled_data(database_engine, override, image_table_class, imag
             if not should_ignore_directory(directory)
         ]
 
-        image_records = []
-
         with Session(database_engine) as database_session:
             processed_group_sessions = set(
                 [s[0] for s in
@@ -126,11 +124,11 @@ def insert_raw_unlabeled_data(database_engine, override, image_table_class, imag
 
                 info(f"Processing directory {group_session}")
                 if not is_directory_with_unified_xdf_files(group_session):
-                    image_records.extend(process_directory_v1(group_session, image_table_class))
+                    image_records = process_directory_v1(group_session, image_table_class)
                 else:
-                    image_records.extend(
-                        process_directory_v2(group_session, image_table_class, image_type,
-                                             xdf_signal_name))
+                    image_records = process_directory_v2(group_session, image_table_class,
+                                                         image_type,
+                                                         xdf_signal_name)
 
                 info("Adding records to the database.")
                 database_session.add_all(image_records)
