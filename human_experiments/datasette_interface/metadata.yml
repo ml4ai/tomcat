@@ -236,6 +236,28 @@ databases:
                 columns:
                     id: Station ID.
 
+            screen_capture:
+              description: >
+                Table with screen capture data.
+              columns:
+                group_session: Group session ID
+                task: Task ID.
+                station: The iMac that the participant was stationed at.
+                participant: >
+                  Participant ID. A participant ID of -1 indicates an
+                  unknown participant. All rows that do not have values
+                  for the `task` column will have their participant ID
+                  set to -1. In the future, we will label some of these
+                  inter/pre/post task rows with the correct participant
+                  ID.
+                timestamp_unix: The Unix timestamp of the event.
+                timestamp_iso8601: The ISO-8601 timestamp of the event.
+                filename: Name of the screenshot file.
+                timestamp_origin: > 
+                  The source of the timestamp. The priority is precision-driven. LSL time are 
+                  used if available, otherwise, creation time is used if available. Modification 
+                  time is used as last resort.
+
             task:
                 description: The different tasks that take place during a group session.
                 label_column: id
