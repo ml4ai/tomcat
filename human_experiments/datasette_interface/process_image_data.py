@@ -65,6 +65,9 @@ def process_directory_v1(group_session, image_table_class):
                     try:
                         # Get timestamp from the image filename
                         timestamp_iso8601 = filename[:filename.rfind(".")].replace("_", ":")
+
+                        # Test if  filename is a valid timestamp
+                        parser.parse(timestamp_iso8601)
                     except Exception:
                         # The filename does not contain a valid timestamp. Get the timestamp from
                         # the outFile.csv.
@@ -137,7 +140,7 @@ def process_directory_v2(group_session, image_table_class, image_type, xdf_signa
                 station = stream["info"]["hostname"]
                 next_id = max_ids.get(station, - 1) + 1
                 station = stream["info"]["hostname"][0]
-                tmp = [ScreenCapture(**signal_dict, timestamp_origin="lsl") for signal_dict in
+                tmp = [image_table_class(**signal_dict, timestamp_origin="lsl") for signal_dict in
                        get_signals(stream, group_session, station, next_id, lambda x: ["filename"],
                                    slice_series_fn=lambda x: x)]
                 records.extend(tmp)
