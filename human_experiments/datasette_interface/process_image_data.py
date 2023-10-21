@@ -132,6 +132,6 @@ def insert_raw_unlabeled_data(database_engine, override, image_table_class, imag
                         process_directory_v2(group_session, image_table_class, image_type,
                                              xdf_signal_name))
 
-            info("Adding records to the database.")
-            database_session.add_all(image_records)
-            database_session.commit()
+                info("Adding records to the database.")
+                database_session.add_all(image_records)
+                database_session.commit()
