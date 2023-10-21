@@ -59,7 +59,7 @@ def process_directory_v1(group_session, image_table_class):
                 else:
                     try:
                         # Get timestamp from the image filename
-                        timestamp_iso8601 = filename[:filename.rfind(".")]
+                        timestamp_iso8601 = filename[:filename.rfind(".")].replace("_", ":")
                         timestamp_unix = convert_iso8601_timestamp_to_unix(timestamp_iso8601)
                     except Exception:
                         # The filename does not contain a valid timestamp. Get the timestamp from
