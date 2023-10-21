@@ -52,9 +52,13 @@ def process_directory_v1(group_session, image_table_class):
                     # Skip files that are not images.
                     continue
 
-                if filename_to_timestamp is not None:
+                if filename_to_timestamp is None:
+                    # Get timestamp from file last modification date
+                    timestamp_unix = os.path.getmtime(filename)
+                    timestamp_iso8601 = convert_unix_timestamp_to_iso8601(timestamp_unix)
+                else:
                     try:
-                        # Get timestamp from the filename
+                        # Get timestamp from the image filename
                         timestamp_iso8601 = filename[:filename.rfind(".")]
                         timestamp_unix = convert_iso8601_timestamp_to_unix(timestamp_iso8601)
                     except Exception:
@@ -64,9 +68,6 @@ def process_directory_v1(group_session, image_table_class):
                         timestamp_unix = convert_iso8601_timestamp_to_unix(timestamp_iso8601)
 
                     # Convert back to ISO to transform from MST to UTC
-                    timestamp_iso8601 = convert_unix_timestamp_to_iso8601(timestamp_unix)
-                else:
-                    timestamp_unix = os.path.getmtime(filename)
                     timestamp_iso8601 = convert_unix_timestamp_to_iso8601(timestamp_unix)
 
                 # Task and participant will be filled later in the labeling part.
