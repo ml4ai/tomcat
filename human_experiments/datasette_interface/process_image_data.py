@@ -51,7 +51,7 @@ def process_directory_v1(group_session, image_table_class):
                     continue
 
                 filename_mapped = False
-                if filename_to_timestamp:
+                if filename_to_timestamp is not None:
                     filename_mapped = filename in filename_to_timestamp.index
 
                     if not filename_mapped:
@@ -59,7 +59,7 @@ def process_directory_v1(group_session, image_table_class):
                             f"[ANOMALY] {filename} in {station} is not in outFile.csv. "
                             f"We'll use the file modification timestamp instead.")
 
-                if filename_to_timestamp and filename_mapped:
+                if filename_to_timestamp is not None and filename_mapped:
                     timestamp_iso8601 = filename_to_timestamp.loc[filename, "timestamp"]
                     timestamp_unix = convert_iso8601_timestamp_to_unix(timestamp_iso8601)
                     # Convert back to ISO to transform from MST to UTC
