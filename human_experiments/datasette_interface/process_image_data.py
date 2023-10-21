@@ -5,6 +5,7 @@ import os
 import time
 from logging import info, error
 
+import pandas as pd
 import pyxdf
 from dateutil import parser
 from sqlalchemy.orm import Session
@@ -25,13 +26,24 @@ def process_directory_v1(group_session, image_table_class):
     image_records = []
     for station in ("lion", "tiger", "leopard"):
         with cd(f"{group_session}/{station}/screenshots/"):
-            timestamp_from_name = False
+            # The images were renamed with their creation date, so the timestamp of each image
+            # can be retrieved directly from their filename. # Images before 2022-11-07 do not
+            # have their creation date saved. In this case we use their last modified date as
+            # timestamp, which we can retrieve from the file's metadata.
             if os.path.exists("outFile.csv"):
-                # The images were renamed with their creation date, so the timestamp of each image
-                # can be retrieved directly from their filename. # Images before 2022-11-07 do not
-                # have their creation date saved. In this case we use their last modified date as
-                # timestamp, which we can retrieve from the file's metadata.
                 timestamp_from_name = True
+
+                # Instead of using the timestamps in the filenames we will read from the mapping
+                # in the outFile.csv because sometimes this file exists but the image filenames
+                # were still the original ones. So, to standardize the behavior of the code below,
+                # we just use the contents of outFile.csv directly when it exists.
+                filename_to_timestamp = pd.read_csv("outFile.csv", index_col=0, header=None)
+                filename_to_timestamp.index.name = "filename"
+                filename_to_timestamp.columns = ["timestamp"]
+            else:
+                info(f"There isn't an outFile.csv in {station}. The last file modification "
+                     f"timestamp will be used as the record's timestamp.")
+                timestamp_from_name = False
 
             unique_id = 0
             sorted_filenames = sorted(os.listdir("."))
@@ -41,7 +53,7 @@ def process_directory_v1(group_session, image_table_class):
                     continue
 
                 if timestamp_from_name:
-                    timestamp_iso8601 = filename[:filename.rfind(".")]
+                    timestamp_iso8601 = filename_to_timestamp.loc[filename, "timestamp"]
                     timestamp_unix = convert_iso8601_timestamp_to_unix(timestamp_iso8601)
                 else:
                     timestamp_unix = os.path.getmtime(filename)
