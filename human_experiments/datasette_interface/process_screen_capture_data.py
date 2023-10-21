@@ -1,30 +1,13 @@
 #!/usr/bin/env python
 """Script to process screen capture data"""
-import json
 import logging
-import os
 import sys
-from glob import glob
-from logging import info, error, debug
-import time
-from dateutil import parser
-
-import pyxdf
-from sqlalchemy.orm import Session
-from tqdm import tqdm
+from logging import info
 
 from config import USER
-from entity.base.base import Base
 from entity.signal.screen_capture import ScreenCapture
-from utils import (
-    cd,
-    should_ignore_directory,
-    convert_iso8601_timestamp_to_unix,
-    convert_unix_timestamp_to_iso8601,
-    is_directory_with_unified_xdf_files,
-)
-from process_raw_signals import create_indices, label_data
 from process_image_data import insert_raw_unlabeled_data
+from process_raw_signals import create_indices, label_data
 
 logging.basicConfig(
     level=logging.INFO,
