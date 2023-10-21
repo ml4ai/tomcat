@@ -24,7 +24,7 @@ from utils import (
 def process_directory_v1(group_session, image_table_class):
     image_records = []
     for station in ("lion", "tiger", "leopard"):
-        with cd(f"{group_session}/baseline_tasks/screenshots/{station}"):
+        with cd(f"{group_session}/{station}/screenshots/"):
             timestamp_from_name = False
             if os.path.exists("outFile.csv"):
                 # The images were renamed with their creation date, so the timestamp of each image
