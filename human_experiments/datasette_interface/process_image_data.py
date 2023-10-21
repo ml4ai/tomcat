@@ -36,6 +36,10 @@ def process_directory_v1(group_session, image_table_class):
                 # were still the original ones. So, to standardize the behavior of the code below,
                 # we just use the contents of outFile.csv directly when it exists.
                 filename_to_timestamp = pd.read_csv("outFile.csv", index_col=0, header=None)
+                if len(filename_to_timestamp.columns) == 0:
+                    # Some of the files have ";" as delimiter
+                    filename_to_timestamp = pd.read_csv("outFile.csv", index_col=0, header=None,
+                                                        delimiter=";")
                 filename_to_timestamp.index.name = "filename"
                 filename_to_timestamp.columns = ["timestamp"]
             else:
