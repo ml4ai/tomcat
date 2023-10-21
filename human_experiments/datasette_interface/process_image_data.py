@@ -31,10 +31,8 @@ def process_directory_v1(group_session, image_table_class):
             # have their creation date saved. In this case we use their last modified date as
             # timestamp, which we can retrieve from the file's metadata.
             if os.path.exists("outFile.csv"):
-                # Instead of using the timestamps in the filenames we will read from the mapping
-                # in the outFile.csv because sometimes this file exists but the image filenames
-                # were still the original ones. So, to standardize the behavior of the code below,
-                # we just use the contents of outFile.csv directly when it exists.
+                # Sometimes outFile.csv exists but the image filenames are still the original ones.
+                # When this is the case, we map the image filename to the timestamps in this file.
                 filename_to_timestamp = pd.read_csv("outFile.csv", index_col=0, header=None)
                 if len(filename_to_timestamp.columns) == 0:
                     # Some of the files have ";" as delimiter
@@ -54,18 +52,17 @@ def process_directory_v1(group_session, image_table_class):
                     # Skip files that are not images.
                     continue
 
-                filename_mapped = False
                 if filename_to_timestamp is not None:
-                    filename_mapped = filename in filename_to_timestamp.index
+                    try:
+                        # Get timestamp from the filename
+                        timestamp_iso8601 = filename[:filename.rfind(".")]
+                        timestamp_unix = convert_iso8601_timestamp_to_unix(timestamp_iso8601)
+                    except Exception:
+                        # The filename does not contain a valid timestamp. Get the timestamp from
+                        # the outFile.csv.
+                        timestamp_iso8601 = filename_to_timestamp.loc[filename, "timestamp"]
+                        timestamp_unix = convert_iso8601_timestamp_to_unix(timestamp_iso8601)
 
-                    if not filename_mapped:
-                        info(
-                            f"[ANOMALY] {filename} in {station} is not in outFile.csv. "
-                            f"We'll use the file modification timestamp instead.")
-
-                if filename_to_timestamp is not None and filename_mapped:
-                    timestamp_iso8601 = filename_to_timestamp.loc[filename, "timestamp"]
-                    timestamp_unix = convert_iso8601_timestamp_to_unix(timestamp_iso8601)
                     # Convert back to ISO to transform from MST to UTC
                     timestamp_iso8601 = convert_unix_timestamp_to_iso8601(timestamp_unix)
                 else:
