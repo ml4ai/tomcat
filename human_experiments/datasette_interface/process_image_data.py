@@ -1,12 +1,10 @@
 #!/usr/bin/env python
 
 import os
-import time
 from logging import info, error
 
 import pandas as pd
 import pyxdf
-import datetime
 from dateutil import parser
 from sqlalchemy.orm import Session
 from tqdm import tqdm
@@ -19,7 +17,7 @@ from utils import (
     convert_iso8601_timestamp_to_unix,
     convert_unix_timestamp_to_iso8601,
     is_directory_with_unified_xdf_files,
-    MST
+    is_directory_with_correct_image_creation_time
 )
 
 
@@ -31,21 +29,18 @@ def process_directory_v1(group_session, image_table_class):
             # can be retrieved directly from their filename. # Images before 2022-11-07 do not
             # have their creation date saved. In this case we use their last modified date as
             # timestamp, which we can retrieve from the file's metadata.
-            if os.path.exists("outFile.csv"):
+            if is_directory_with_correct_image_creation_time(group_session) and os.path.exists(
+                    "outFile.csv"):
                 # Sometimes outFile.csv exists but the image filenames are still the original ones.
                 # When this is the case, we map the image filename to the timestamps in this file.
-                filename_to_timestamp = pd.read_csv("outFile.csv", index_col=0, header=None)
-                utc_timestamp = False
-                if len(filename_to_timestamp.columns) == 0:
-                    # Files started to be created with ";" as delimiter and UTC timestamps
-                    utc_timestamp = True
-                    filename_to_timestamp = pd.read_csv("outFile.csv", index_col=0, header=None,
-                                                        delimiter=";")
+                filename_to_timestamp = pd.read_csv("outFile.csv", index_col=0, header=None,
+                                                    delimiter=";")
                 filename_to_timestamp.index.name = "filename"
                 filename_to_timestamp.columns = ["timestamp"]
             else:
-                info(f"There isn't an outFile.csv in {station}. The last file modification "
-                     f"timestamp will be used as the record's timestamp.")
+                info(f"There isn't an outFile.csv in {station} or the creation timestamps are "
+                     f"incorrect. The last file modification timestamp will be used as the "
+                     f"record's timestamp.")
                 filename_to_timestamp = None
 
             unique_id = 0
@@ -81,17 +76,8 @@ def process_directory_v1(group_session, image_table_class):
                             timestamp_iso8601 = convert_unix_timestamp_to_iso8601(timestamp_unix)
                             timestamp_origin = "modification"
 
-                    if not utc_timestamp:
-                        # Convert from MST to UTC
-                        timestamp_iso8601_mst = timestamp_iso8601.replace("Z", "") + "MST"
-                        timestamp_iso8601 = parser.parse(timestamp_iso8601_mst,
-                                                         tzinfos={"MST": MST}).astimezone(
-                            tz=datetime.timezone.utc).isoformat(timespec='microseconds')
-                    else:
-                        # Guarantees all ISO timestamps have the same format
-                        timestamp_iso8601 = parser.parse(timestamp_iso8601).isoformat(
-                            timespec='microseconds')
-
+                    timestamp_iso8601 = parser.parse(timestamp_iso8601).isoformat(
+                        timespec='microseconds')
                     timestamp_unix = convert_iso8601_timestamp_to_unix(timestamp_iso8601)
 
                 # Task and participant will be filled later in the labeling part.
