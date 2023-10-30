@@ -1,15 +1,15 @@
 from typing import List
 
-from entity.signal import SignalModality
+from signal.entity.modality import Modality
 
 import pandas as pd
 
 
-class Gaze(SignalModality):
+class FNIRS(Modality):
 
     @property
     def table_name(self) -> str:
-        return "gaze_raw"
+        return "fnirs_raw"
 
     @property
     def channels(self) -> List[str]:

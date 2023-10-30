@@ -1,11 +1,11 @@
 from typing import List
 
-from entity.signal import SignalModality
-
 import pandas as pd
 
+from signal.entity.modality import Modality
 
-class EEG(SignalModality):
+
+class EEG(Modality):
 
     @property
     def table_name(self) -> str:
