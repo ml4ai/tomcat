@@ -1,6 +1,6 @@
 from typing import List
 
-from signal.entity.modality import Modality
+from data_pre_processing.signal.entity.modality import Modality
 
 import pandas as pd
 

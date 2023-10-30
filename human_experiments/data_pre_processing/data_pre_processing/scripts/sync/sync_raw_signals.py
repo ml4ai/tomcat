@@ -8,9 +8,9 @@ import sys
 
 from tqdm import tqdm
 
-from common.config import NUM_PROCESSES, LOG_DIR, OUT_DIR, USER
-from signal.reader.data_reader import DataReader, PostgresDataReader
-from signal.common.constants import MODALITIES
+from data_pre_processing.common.config import NUM_PROCESSES, LOG_DIR, OUT_DIR, USER
+from data_pre_processing.signal.reader.data_reader import DataReader, PostgresDataReader
+from data_pre_processing.signal.common.constants import MODALITIES
 
 from multiprocessing import Pool
 
@@ -21,8 +21,8 @@ def sync_raw_signals_in_parallel(data_reader: DataReader, source_frequency: int,
                      data_reader=data_reader,
                      source_frequency=source_frequency,
                      target_frequency=target_frequency)
-    group_sessions = data_reader.get_group_sessions()
 
+    group_sessions = data_reader.read_group_sessions()
     with Pool(processes=num_jobs) as pool:
         list(tqdm(pool.imap(job_fn, group_sessions), total=len(group_sessions)))
 

@@ -2,7 +2,7 @@ from typing import List
 
 import pandas as pd
 
-from signal.entity.modality import Modality
+from data_pre_processing.signal.entity.modality import Modality
 
 
 class EEG(Modality):

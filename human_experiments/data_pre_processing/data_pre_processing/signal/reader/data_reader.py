@@ -2,9 +2,9 @@ from abc import ABC, abstractmethod
 from typing import List
 
 import pandas as pd
-import psycopg2 as pg
+from sqlalchemy import create_engine, Connection, text
 
-from signal.entity.modality import Modality
+from data_pre_processing.signal.entity.modality import Modality
 
 
 class DataReader(ABC):
@@ -21,7 +21,7 @@ class DataReader(ABC):
         self.signal_modality = signal_modality
 
     @abstractmethod
-    def get_group_sessions(self) -> List[str]:
+    def read_group_sessions(self) -> List[str]:
         """
         Returns a list of group sessions from a source (e.g. database).
 
@@ -49,7 +49,8 @@ class PostgresDataReader(DataReader):
                  db_name: str,
                  db_user: str,
                  db_host: str,
-                 db_port: str):
+                 db_port: str,
+                 db_passwd: str):
         """
         Creates an instance of the Postgres data reader.
 
@@ -58,27 +59,25 @@ class PostgresDataReader(DataReader):
         :param db_user: user with reading privileges in the database.
         :param db_host: address of the database (e.g., localhost).
         :param db_port: port of the database (e.g., 5432).
+        :param db_passwd: password to read from the database.
         """
         super().__init__(signal_modality)
         self.db_name = db_name
         self.db_user = db_user
         self.db_host = db_host
         self.db_port = db_port
+        self.db_passwd = db_passwd
 
-    def get_group_sessions(self) -> List[str]:
+    def read_group_sessions(self) -> List[str]:
         """
         Gets a list of group sessions saved in the database.
 
         :return: a list of group sessions.
         """
-        with pg.connect(user=self.db_user,
-                        host=self.db_host,
-                        port=self.db_port,
-                        database=self.db_name) as conn:
-            with conn.cursor() as cursor:
-                query = "SELECT * FROM group_session"
-                cursor.execute(query)
-                rows = cursor.fetchall()
+        with self._connect() as conn, conn.begin():
+            query = "SELECT * FROM group_session ORDER BY group_session"
+            res = conn.execute(text(query))
+            rows = res.fetchall()
 
         return [r[0] for r in rows]
 
@@ -96,16 +95,24 @@ class PostgresDataReader(DataReader):
                 group_session, 
                 station, 
                 timestamp_unix,
-                {channels},
+                {channels}
             FROM {self.signal_modality.table_name} 
             WHERE group_session = '{group_session}'
             ORDER BY station, timestamp_unix
         """
 
-        with pg.connect(user=self.db_user,
-                        host=self.db_host,
-                        port=self.db_port,
-                        database=self.db_name) as conn:
-            data = pd.read_sql_query(query, conn)
+        with self._connect() as conn, conn.begin():
+            data = pd.read_sql_query(text(query), conn)
+            data["timestamp_unix"] = data["timestamp_unix"].astype(float)
 
         return data
+
+    def _connect(self) -> Connection:
+        """
+        Opens a connection with the database.
+
+        :return: a connection object. Make sure to close it properly.
+        """
+        database_info = f"{self.db_user}:{self.db_name}@{self.db_host}:{self.db_port}"
+        connection_string = f"postgresql+psycopg2://{database_info}/{self.db_passwd}"
+        return create_engine(connection_string).connect()

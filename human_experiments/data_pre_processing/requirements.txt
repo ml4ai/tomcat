@@ -10,3 +10,4 @@ mne==1.5.1
 praat-textgrids==1.4.0
 openai-whisper
 audiofile
+sqlalchemy==2.0.22
