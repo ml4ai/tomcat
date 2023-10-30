@@ -11,3 +11,5 @@
 inspect-data.json
 
 cache/
+
+.ipynb_checkpoints/
