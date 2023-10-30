@@ -25,7 +25,7 @@ databases:
                     involved in the tasks, and whether the data from the EEG,
                     fNIRS, and eye tracking modalities are valid. In most
                     cases, when an experimenter stepped in to replace a
-                    participant (e.g., for a now-show participant), they did
+                    participant (e.g., for a no-show participant), they did
                     not wear fNIRS/EEG devices, and in some cases, they did not
                     wear the eye tracker either. Not all groups completed all
                     the tasks, and for some tasks, the data is missing. In
@@ -124,12 +124,14 @@ databases:
 
             group_session:
                 description: Table with group session IDs.
+                label_column: id
                 columns:
                     id: >
                         Group session ID. Format: `exp_YYYY_MM_DD_HH`.
 
             mission:
                 description: Metadata about the Minecraft missions.
+                label_column: id
                 columns:
                     id: The unique ID of the mission.
                     group_session_id: The group session that the mission was a part of.
@@ -152,6 +154,7 @@ databases:
 
             participant:
                 description: Table with participant IDs.
+                label_column: id
                 columns:
                     id: >
                         Participant ID.
@@ -229,11 +232,35 @@ databases:
                     competitive ping pong task, when an experimenter steps in
                     to play against the participant seated at the 'leopard'
                     station.
+                label_column: id
                 columns:
                     id: Station ID.
 
+            screen_capture:
+              description: >
+                Table with screen capture data.
+              columns:
+                group_session: Group session ID
+                task: Task ID.
+                station: The iMac that the participant was stationed at.
+                participant: >
+                  Participant ID. A participant ID of -1 indicates an
+                  unknown participant. All rows that do not have values
+                  for the `task` column will have their participant ID
+                  set to -1. In the future, we will label some of these
+                  inter/pre/post task rows with the correct participant
+                  ID.
+                timestamp_unix: The Unix timestamp of the event.
+                timestamp_iso8601: The ISO-8601 timestamp of the event.
+                filename: Name of the screenshot file.
+                timestamp_origin: > 
+                  The source of the timestamp. The priority is precision-driven. LSL time are 
+                  used if available, otherwise, creation time is used if available. Modification 
+                  time is used as last resort.
+
             task:
                 description: The different tasks that take place during a group session.
+                label_column: id
                 columns:
                     id: Task ID.
 

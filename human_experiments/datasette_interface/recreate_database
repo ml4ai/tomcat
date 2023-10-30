@@ -23,6 +23,7 @@ from process_minecraft_data import process_minecraft_data, recreate_minecraft_ta
 from process_fnirs_raw_data import process_fnirs_raw_data, recreate_fnirs_raw_tables
 from process_eeg_raw_data import process_eeg_raw_data, recreate_eeg_raw_tables
 from process_gaze_raw_data import process_gaze_raw_data, recreate_gaze_raw_tables
+from process_screen_capture_data import process_screen_capture_data, recreate_screen_capture_tables
 
 logging.basicConfig(
     level=logging.INFO,
@@ -45,7 +46,8 @@ TABLES = [
     "minecraft",
     "fnirs",
     "eeg",
-    "gaze"
+    "gaze",
+    "screen_capture"
 ]
 
 
@@ -86,6 +88,9 @@ def recreate_tables(tables_to_recreate, database_engine):
             elif table == "gaze":
                 info(f"Recreating gaze tables in {database_info}.")
                 recreate_gaze_raw_tables(database_engine)
+            elif table == "screen_capture":
+                info(f"Recreating screen capture tables in {database_info}.")
+                recreate_screen_capture_tables(database_engine)
 
 
 def populate_tables(tables_to_process, database_engine, override):
@@ -110,6 +115,8 @@ def populate_tables(tables_to_process, database_engine, override):
             process_eeg_raw_data(database_engine, override)
         elif table == "gaze":
             process_gaze_raw_data(database_engine, override)
+        elif table == "screen_capture":
+            process_screen_capture_data(database_engine, override)
 
 
 if __name__ == "__main__":
@@ -144,6 +151,7 @@ if __name__ == "__main__":
     parser.add_argument("--no_fnirs", action='store_true', help="Do not recreate fnirs tables.")
     parser.add_argument("--no_eeg", action='store_true', help="Do not recreate eeg tables.")
     parser.add_argument("--no_gaze", action='store_true', help="Do not recreate gaze tables.")
+    parser.add_argument("--no_screen_capture", action='store_true', help="Do not recreate screen capture tables.")
     parser.add_argument("--to_sqlite", action='store_true', help="Export the full Postgres database to SQLite.")
 
     args = parser.parse_args()
@@ -174,6 +182,8 @@ if __name__ == "__main__":
         tables.remove("eeg")
     if args.no_gaze:
         tables.remove("gaze")
+    if args.no_screen_capture:
+        tables.remove("screen_capture")
 
     if "base" in tables and len(tables) != len(TABLES):
         raise Exception("It is not possible to recreate base tables without recreating all other tables altogether"

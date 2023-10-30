@@ -71,3 +71,8 @@ def convert_iso8601_timestamp_to_unix(iso8601_timestamp):
     d = parser.parse(iso8601_timestamp)
     unix_timestamp = d.timestamp()
     return unix_timestamp
+
+
+def is_directory_with_correct_image_creation_time(session):
+    year, month, day, hour = [int(x) for x in session.split("_")[1:]]
+    return (year, month, day) >= (2022, 11, 7)

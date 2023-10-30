@@ -3,7 +3,7 @@ from __future__ import annotations
 from glob import glob
 import pandas as pd
 
-from summary.task_summary import TaskSummary
+from summary.entity.task_summary import TaskSummary
 from common.constants import MISSING_INFO
 
 

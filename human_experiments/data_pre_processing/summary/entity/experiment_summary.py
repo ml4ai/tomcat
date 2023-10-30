@@ -4,11 +4,11 @@ from typing import List
 import pandas as pd
 import os
 
-from summary.competitive_ping_pong_summary import CompetitivePingPongSummary
-from summary.cooperative_ping_pong_summary import CooperativePingPongSummary
-from summary.redcap_summary import TeamREDCapSummary, ParticipantREDCapSummary
-from summary.task_summary import TaskSummary
-from summary.usar_summary import USARSummary
+from summary.entity.competitive_ping_pong_summary import CompetitivePingPongSummary
+from summary.entity.cooperative_ping_pong_summary import CooperativePingPongSummary
+from summary.entity.redcap_summary import TeamREDCapSummary, ParticipantREDCapSummary
+from summary.entity.task_summary import TaskSummary
+from summary.entity.usar_summary import USARSummary
 
 
 class ExperimentSummary:

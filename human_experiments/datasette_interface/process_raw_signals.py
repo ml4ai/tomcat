@@ -19,7 +19,8 @@ from utils import (
 )
 
 
-def insert_raw_unlabeled_data(database_engine, override, signal_modality_class, modality_name, xdf_signal_type,
+def insert_raw_unlabeled_data(database_engine, override, signal_modality_class, modality_name,
+                              xdf_signal_type,
                               channel_from_xdf_parsing_fn, station_from_xdf_v2_parsing_fn,
                               slice_series_fn=lambda x: x):
     info(f"Inserting unlabeled data.")
@@ -32,8 +33,9 @@ def insert_raw_unlabeled_data(database_engine, override, signal_modality_class, 
 
         with Session(database_engine.connect()) as database_session:
             processed_group_sessions = set(
-                [s[0] for s in database_session.query(signal_modality_class.group_session_id).distinct(
-                    signal_modality_class.group_session_id).all()])
+                [s[0] for s in
+                 database_session.query(signal_modality_class.group_session_id).distinct(
+                     signal_modality_class.group_session_id).all()])
 
             for group_session in tqdm(
                     sorted(directories_to_process), unit="directories"
@@ -65,7 +67,7 @@ def insert_raw_unlabeled_data(database_engine, override, signal_modality_class, 
                     database_session.commit()
 
 
-def get_signals(stream, group_session, station, initial_id, signal_modality_class, channel_from_xdf_parsing_fn,
+def get_signals(stream, group_session, station, initial_id, channel_from_xdf_parsing_fn,
                 slice_series_fn):
     # We insert a participant ID of -1 since we don't actually know for sure
     # who the participant is - we will need to consult the data validity table
@@ -85,15 +87,17 @@ def get_signals(stream, group_session, station, initial_id, signal_modality_clas
             continue
 
         values = slice_series_fn(stream["time_series"][i])
-        signal = signal_modality_class(group_session_id=group_session,
-                                       id=i + initial_id,
-                                       task_id=task,
-                                       station_id=station,
-                                       participant_id=participant_id,
-                                       timestamp_unix=timestamp,
-                                       timestamp_iso8601=iso_timestamp,
-                                       **{key: value for key, value in
-                                          zip(channels, list(map(str, values)))})
+        signal = {
+            "group_session_id": group_session,
+            "id": i + initial_id,
+            "task_id": task,
+            "station_id": station,
+            "participant_id": participant_id,
+            "timestamp_unix": timestamp,
+            "timestamp_iso8601": iso_timestamp
+        }
+        signal.update({key: value for key, value in
+                       zip(channels, list(map(str, values)))})
         signals.append(signal)
 
     return signals
@@ -120,15 +124,17 @@ def process_directory_v1(group_session, signal_modality_class, modality_name, xd
                 continue
 
             stream = streams[0]
-            signals.extend(
-                get_signals(stream, group_session, station, 0, signal_modality_class, channel_from_xdf_parsing_fn,
-                            slice_series_fn))
+            tmp = [signal_modality_class(**signal_dict) for signal_dict in
+                   get_signals(stream, group_session, station, 0, channel_from_xdf_parsing_fn,
+                               slice_series_fn)]
+            signals.extend(tmp)
 
     return signals
 
 
 def process_directory_v2(group_session, signal_modality_class, modality_name, xdf_signal_type,
-                         channel_from_xdf_parsing_fn, station_from_xdf_v2_parsing_fn, slice_series_fn):
+                         channel_from_xdf_parsing_fn, station_from_xdf_v2_parsing_fn,
+                         slice_series_fn):
     """Process directory assuming unified XDF files."""
     signals = []
     with cd(f"{group_session}/lsl"):
@@ -152,8 +158,9 @@ def process_directory_v2(group_session, signal_modality_class, modality_name, xd
                 # station, otherwise we get a duplicate key error during insertion.
                 station = station_from_xdf_v2_parsing_fn(group_session, stream)
                 next_id = max_ids.get(station, -1) + 1
-                tmp = get_signals(stream, group_session, station, next_id, signal_modality_class,
-                                  channel_from_xdf_parsing_fn, slice_series_fn)
+                tmp = [signal_modality_class(**signal_dict) for signal_dict in
+                       get_signals(stream, group_session, station, next_id,
+                                   channel_from_xdf_parsing_fn, slice_series_fn)]
                 signals.extend(tmp)
                 max_ids[station] = tmp[-1].id
 
@@ -189,14 +196,16 @@ def label_data(database_engine, override, signal_modality_class, modality_name):
 
     with Session(database_engine) as database_session:
         processed_group_sessions = set([s[0] for s in
-                                        database_session.query(signal_modality_class.group_session_id).distinct(
+                                        database_session.query(
+                                            signal_modality_class.group_session_id).distinct(
                                             signal_modality_class.group_session_id).filter(
                                             signal_modality_class.task_id.is_not(None)).all()])
 
         validity_rows = database_session.query(DataValidity.group_session_id,
                                                DataValidity.participant_id,
                                                DataValidity.station_id,
-                                               DataValidity.task_id).filter_by(modality_id=modality_name.lower()).all()
+                                               DataValidity.task_id).filter_by(
+            modality_id=modality_name.lower()).all()
 
         last_group_session_labeled = None
         for row in tqdm(validity_rows):
@@ -233,8 +242,9 @@ def remove_invalid_data(database_engine, signal_modality_class, modality_name):
         invalid_rows = database_session.query(DataValidity.group_session_id,
                                               DataValidity.station_id,
                                               DataValidity.participant_id,
-                                              DataValidity.task_id).filter_by(modality_id=modality_name.lower(),
-                                                                              is_valid=False).all()
+                                              DataValidity.task_id).filter_by(
+            modality_id=modality_name.lower(),
+            is_valid=False).all()
 
         for row in tqdm(invalid_rows):
             group_session, station, participant_id, task = row
@@ -245,6 +255,7 @@ def remove_invalid_data(database_engine, signal_modality_class, modality_name):
                 " is not valid. We will delete this data from the table."
             )
 
-            delete_invalid_signals(signal_modality_class, group_session, station, task, database_session)
+            delete_invalid_signals(signal_modality_class, group_session, station, task,
+                                   database_session)
 
         database_session.commit()

@@ -17,9 +17,9 @@ services:
         --metadata /repo/metadata.yml
         --template-dir /repo/templates
         --plugins-dir /repo/plugins
-        --inspect-file /repo/inspect-data.json
+        --inspect-file /repo/inspect_file.json
         --static assets:/repo/static
         --setting sql_time_limit_ms 10000
-        --setting facet_time_limit_ms 10000 
+        --setting facet_time_limit_ms 10000
         --setting num_sql_threads 10
         --setting max_csv_mb 12000

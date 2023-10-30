@@ -1,16 +1,21 @@
 #!/usr/bin/env bash
 
 # This script generates an up-to-date schema diagram for the ToMCAT database.
-# It uses the SchemaCrawler tool. You can get it from here: https://github.com/schemacrawler/SchemaCrawler/releases
-# To run the script, ensure that the directory containing the schemacrawler.sh
-# script is in your PATH.
+# It uses the visualize-sqlite tool
+# (https://github.com/uhhhwaitwhat/visualize-sqlite).
+# The tool can be installed by running 'cargo install visualize-sqlite'
+# (assuming you have Cargo installed)
+# Invocation: ./generate_database_diagram.sh <path_to_database>
 
-schemacrawler.sh \
-    -c schema \
-    -F png \
-    -o static/db_diagram.png \
-    --database /space/$USER/tomcat/tomcat.db \
-    --info-level standard \
-    --server sqlite \
-    -g schemacrawler.config.properties \
-    --portable-names
+
+export DATABASE=$1
+
+visualize-sqlite $DATABASE \
+    | dot \
+    -Tpng \
+    -Gfontname='Fira Mono'\
+    -Gfontcolor='#586e75' \
+    -Gbgcolor='#fdf6e3' \
+    -Nfontname='Fira Mono'\
+    -Nfontcolor='#586e75' \
+    -Efontname='Fira Mono' > static/db_diagram.png

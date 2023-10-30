@@ -7,3 +7,6 @@ tqdm==4.65.0
 pydub==0.25.1
 psycopg2==2.9.7
 mne=1.5.1
+praat-textgrids==1.4.0
+openai-whisper
+audiofile
