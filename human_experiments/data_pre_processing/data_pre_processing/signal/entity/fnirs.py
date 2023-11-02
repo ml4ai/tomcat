@@ -1,26 +1,43 @@
-from typing import List
-
-from data_pre_processing.signal.entity.modality import Modality
+from typing import List, Type
 
 import pandas as pd
+
+from data_pre_processing.signal.entity.modality import Modality
+from data_pre_processing.signal.table.fnirs_sync import FNIRSSync
 
 
 class FNIRS(Modality):
 
-    @property
-    def table_name(self) -> str:
-        return "fnirs_raw"
+    def __init__(self):
+        """
+        Creates an fNIRS modality.
+        """
+        super().__init__("fnirs")
 
     @property
     def channels(self) -> List[str]:
-        return FNIRS_CHANNELS
+        return CHANNELS
+
+    def get_data_mode_table_class(self, data_mode: str) -> Type[FNIRSSync]:
+        """
+        Gets table class for a specific data mode.
+
+        :param data_mode: one of ["sync", "filtered"], indicating synchronized and filtered data
+            tables.
+        :return class of the table.
+        """
+
+        if data_mode == "sync":
+            return FNIRSSync
+        else:
+            raise NotImplementedError
 
     def filter(self, data: pd.DataFrame) -> pd.DataFrame:
         # TODO: Implement signal filtering
         pass
 
 
-FNIRS_CHANNELS = [
+CHANNELS = [
     "s1_d1_hbo",
     "s1_d2_hbo",
     "s2_d1_hbo",

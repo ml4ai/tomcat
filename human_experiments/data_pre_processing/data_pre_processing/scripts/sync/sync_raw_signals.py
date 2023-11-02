@@ -4,12 +4,14 @@ import logging
 from typing import List
 import os
 import sys
-
+import numpy as np
+import pandas as pd
 
 from tqdm import tqdm
 
 from data_pre_processing.common.config import NUM_PROCESSES, LOG_DIR, OUT_DIR, USER
 from data_pre_processing.signal.reader.data_reader import DataReader, PostgresDataReader
+from data_pre_processing.signal.writer.data_writer import DataWriter, PostgresDataWriter
 from data_pre_processing.signal.common.constants import MODALITIES
 
 from multiprocessing import Pool
@@ -29,42 +31,39 @@ def sync_raw_signals_in_parallel(data_reader: DataReader, source_frequency: int,
 
 def sync_raw_signals_single_job(group_sessions: List[str],
                                 data_reader: DataReader,
+                                data_writer: DataWriter,
                                 source_frequency: int,
                                 target_frequency: int):
     for group_session in group_sessions:
         # TODO add message to queue
         data = data_reader.read(group_session)
 
-        start_time, end_time = get_overlapping_window_across_stations(data)
+        common_start_time, common_end_time = get_overlapping_window_across_stations(data)
 
+        all_session_data = []
         for station in data["station"].unique():
             station_data = data[data["station"] == station]
             raw_values = station_data[data_reader.signal_modality.channels].values
 
             upsampled_values = data_reader.signal_modality.upsample(
                 data=raw_values,
-                source_frequency=source_frequency,
-                target_frequency=target_frequency
+                upsampling_factor=int(target_frequency / source_frequency)
             )
 
-            data_reader.signal_modality.interpolate(
+            interpolated_values = data_reader.signal_modality.interpolate(
                 data=upsampled_values,
-                source_frequency=source_frequency,
+                start_time=common_start_time,
+                end_time=common_end_time,
                 target_frequency=target_frequency
             )
 
-            upsampled_values = resample(x=original_values,
-                                        up=target_frequency / source_frequency,
-                                        npad="auto",
-                                        axis=0)
+            interpolated_values["group_session"] = group_session
+            interpolated_values["station"] = station
+            interpolated_values["id"] = np.arange(len(interpolated_values), dtype=np.int)
+            all_session_data.append(interpolated_values)
 
-            interpolated_signal = linear_interpolation(
-                upsampled_values, target_frequency, start_time
-            )
-
-        # TODO: start_time = float(math.ceil(get_shared_start_time(data)))
-        # Is ceiling really necessary here?
-        start_time = data_reader.get_overlapping_window(data)[0]
+        all_session_data = pd.concat(all_session_data, axis=0)
+        data_writer.write(all_session_data)
 
 
 def get_overlapping_window_across_stations(data: pd.DataFrame) -> Tuple[float, float]:
@@ -97,7 +96,6 @@ def get_overlapping_window_across_stations(data: pd.DataFrame) -> Tuple[float, f
     return tuple(global_interval)
 
 
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="""
@@ -121,9 +119,9 @@ if __name__ == "__main__":
                         help="Name of the Postgres database where raw data is stored.")
     parser.add_argument("--db_user", type=str, required=False, default=USER,
                         help="User with granted reading permissions in the database.")
-    parser.add_argument("--db_host", type=int, required=True,
+    parser.add_argument("--db_host", type=int, required=False, default="localhost",
                         help="Host where the database cluster is running.")
-    parser.add_argument("--db_port", type=int, required=True,
+    parser.add_argument("--db_port", type=int, required=True, default=5433,
                         help="Port where the database cluster is running.")
     parser.add_argument("--out_dir", type=str, required=False, default=OUT_DIR,
                         help="Directory where experiment folder structure containing semantic "
@@ -136,6 +134,10 @@ if __name__ == "__main__":
     if args.recording_freq >= args.upsampled_freq:
         raise ValueError(f"Upsampled frequency ({args.upsampled_freq}) is smaller or "
                          f"equal than the recording frequency ({args.recording_freq}).")
+
+    if args.upsampled_freq % args.recording_freq != 0:
+        raise ValueError(f"Upsampled frequency ({args.upsampled_freq}) must be a multiple of the "
+                         f"recording frequency ({args.recording_freq}).")
 
     os.makedirs(args.log_dir, exist_ok=True)
     logging.basicConfig(

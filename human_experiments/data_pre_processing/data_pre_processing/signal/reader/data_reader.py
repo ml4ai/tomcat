@@ -2,9 +2,12 @@ from abc import ABC, abstractmethod
 from typing import List
 
 import pandas as pd
-from sqlalchemy import create_engine, Connection, text
+from sqlalchemy import text
 
 from data_pre_processing.signal.entity.modality import Modality
+from data_pre_processing.common.data_source.db import PostgresDB
+
+DATA_MODES = ["raw", "sync", "filtered"]
 
 
 class DataReader(ABC):
@@ -12,13 +15,20 @@ class DataReader(ABC):
     This class handles data reading from different modalities.
     """
 
-    def __init__(self, signal_modality: Modality):
+    def __init__(self, signal_modality: Modality, data_mode: str):
         """
         Creates a reader instance.
 
         :param signal_modality: modality of the signal to be read.
+        :param data_mode: one of ["raw", "sync", "filtered"], indicating whether we wish to read
+            raw, synchronized or filtered data.
         """
+
+        if data_mode not in DATA_MODES:
+            raise ValueError(f"Invalid data_mode ({data_mode}). It must be one of {DATA_MODES}.")
+
         self.signal_modality = signal_modality
+        self.data_mode = data_mode
 
     @abstractmethod
     def read_group_sessions(self) -> List[str]:
@@ -46,27 +56,19 @@ class PostgresDataReader(DataReader):
 
     def __init__(self,
                  signal_modality: Modality,
-                 db_name: str,
-                 db_user: str,
-                 db_host: str,
-                 db_port: str,
-                 db_passwd: str):
+                 data_mode: str,
+                 db: PostgresDB):
         """
         Creates an instance of the Postgres data reader.
 
         :param signal_modality: modality of the signal to be read.
-        :param db_name: name of the postgres database.
-        :param db_user: user with reading privileges in the database.
-        :param db_host: address of the database (e.g., localhost).
-        :param db_port: port of the database (e.g., 5432).
-        :param db_passwd: password to read from the database.
+        :param data_mode: one of ["raw", "sync", "filtered"], indicating whether we wish to read
+            raw, synchronized or filtered data.
+        :param db: db object to handle operations on a Postgres cluster.
         """
-        super().__init__(signal_modality)
-        self.db_name = db_name
-        self.db_user = db_user
-        self.db_host = db_host
-        self.db_port = db_port
-        self.db_passwd = db_passwd
+        super().__init__(signal_modality, data_mode)
+
+        self.db = db
 
     def read_group_sessions(self) -> List[str]:
         """
@@ -74,7 +76,7 @@ class PostgresDataReader(DataReader):
 
         :return: a list of group sessions.
         """
-        with self._connect() as conn, conn.begin():
+        with self.db.create_engine().connect() as conn, conn.begin():
             query = "SELECT * FROM group_session ORDER BY group_session"
             res = conn.execute(text(query))
             rows = res.fetchall()
@@ -96,23 +98,13 @@ class PostgresDataReader(DataReader):
                 station, 
                 timestamp_unix,
                 {channels}
-            FROM {self.signal_modality.table_name} 
+            FROM {self.signal_modality.name}_{self.data_mode} 
             WHERE group_session = '{group_session}'
             ORDER BY station, timestamp_unix
         """
 
-        with self._connect() as conn, conn.begin():
+        with self.db.create_engine().connect() as conn, conn.begin():
             data = pd.read_sql_query(text(query), conn)
             data["timestamp_unix"] = data["timestamp_unix"].astype(float)
 
         return data
-
-    def _connect(self) -> Connection:
-        """
-        Opens a connection with the database.
-
-        :return: a connection object. Make sure to close it properly.
-        """
-        database_info = f"{self.db_user}:{self.db_name}@{self.db_host}:{self.db_port}"
-        connection_string = f"postgresql+psycopg2://{database_info}/{self.db_passwd}"
-        return create_engine(connection_string).connect()
