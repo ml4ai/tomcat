@@ -91,14 +91,20 @@ class PostgresDataReader(DataReader):
         :return signals (a time series of data values over time).
         """
 
-        channels = ",".join(self.signal_modality.channels)
+        if self.data_mode == "raw" and self.signal_modality.name in ("ekg", "gsr"):
+            # Raw GSR and EKG values are in the EEG table.
+            modality_name = "eeg"
+        else:
+            modality_name = self.signal_modality.name
+
+        channels_str = ",".join(self.signal_modality.channels)
         query = f"""
             SELECT 
-                group_session, 
-                station, 
+                group_session,
+                station,
                 timestamp_unix,
-                {channels}
-            FROM {self.signal_modality.name}_{self.data_mode} 
+                {channels_str}
+            FROM {modality_name}_{self.data_mode} 
             WHERE group_session = '{group_session}'
             ORDER BY station, timestamp_unix
         """

@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from data_pre_processing.signal.entity.modality import Modality
 from data_pre_processing.common.data_source.db import PostgresDB
+from sqlalchemy import insert
 
 # Writing to raw data tables is not allowed with this writer class..
 DATA_MODES = ["sync", "filtered"]
@@ -61,19 +62,34 @@ class PostgresDataWriter(DataWriter):
 
         self.db = db
 
+        self._create_table()
+
+    def _create_table(self):
+        table_class = self.signal_modality.get_data_mode_table_class(self.data_mode)
+        table_class.__table__.create(self.db.create_engine(), checkfirst=True)
+
     def write(self, data: pd.DataFrame):
         """
         Writes data to the database external source.
 
         :param data: data to be written.
         """
-
+        # db_records = []
         table_class = self.signal_modality.get_data_mode_table_class(self.data_mode)
-        db_records = []
-        for _, row in data.iterrows():
-            db_records.append(table_class(**data.to_dict()))
+        # for _, row in data.iterrows():
+        #     # record = table_class(**row.to_dict())
+        #     # db_records.append(record)
+        #     db_records.append(row.to_dict())
 
-        with self.db.create_engine() as engine:
-            with Session(engine) as db_session:
-                db_session.add_all(db_records)
-                db_session.commit()
+        db_records = data.to_dict("records")
+
+        print(f"Saving {len(db_records)} records to the database")
+        with Session(self.db.create_engine()) as db_session:
+            db_session.execute(
+                insert(table_class),
+                db_records
+            )
+            # db_session.add_all(db_records)
+            db_session.commit()
+        # with self.db.create_engine().connect() as conn:
+        #     data.to_sql(name=table_class.__table__, con=conn, if_exists='append')

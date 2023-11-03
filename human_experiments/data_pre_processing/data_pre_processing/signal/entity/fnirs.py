@@ -1,9 +1,9 @@
-from typing import List, Type
+from typing import List, Type, Union
 
 import pandas as pd
 
 from data_pre_processing.signal.entity.modality import Modality
-from data_pre_processing.signal.table.fnirs_sync import FNIRSSync
+from data_pre_processing.signal.table.fnirs import FNIRSSync, FNIRSFiltered
 
 
 class FNIRS(Modality):
@@ -16,9 +16,14 @@ class FNIRS(Modality):
 
     @property
     def channels(self) -> List[str]:
+        """
+        Gets list of fNIRS channels.
+
+        :return: list of fNIRS channels.
+        """
         return CHANNELS
 
-    def get_data_mode_table_class(self, data_mode: str) -> Type[FNIRSSync]:
+    def get_data_mode_table_class(self, data_mode: str) -> Type[Union[FNIRSSync, FNIRSFiltered]]:
         """
         Gets table class for a specific data mode.
 
@@ -29,8 +34,11 @@ class FNIRS(Modality):
 
         if data_mode == "sync":
             return FNIRSSync
-        else:
-            raise NotImplementedError
+
+        if data_mode == "filtered":
+            return FNIRSFiltered
+
+        raise ValueError(f"There's no table class for data_mode ({data_mode}).")
 
     def filter(self, data: pd.DataFrame) -> pd.DataFrame:
         # TODO: Implement signal filtering

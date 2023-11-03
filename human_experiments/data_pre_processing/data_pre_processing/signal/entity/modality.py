@@ -1,11 +1,12 @@
 from __future__ import annotations
+
+import math
 from abc import ABC, abstractmethod
 from typing import List, Optional, Type
 
 from mne.filter import resample
 import numpy as np
 import pandas as pd
-
 
 from data_pre_processing.signal.table.base import Base
 
@@ -52,15 +53,20 @@ class Modality(ABC):
 
         # Creates a list of timestamps to fit the samples. upsampling_factor -1 samples are created
         # between two original points. We attribute these samples to evenly spaced timestamps
-        # between the timestamps of the original points.
+        # between the timestamps of the original points. These new samples are evenly spaced in
+        # time because the FFT and IFFT operations preserve the regular time spacing between the
+        # original samples.
         timestamps = []
+        seq = np.arange(upsampling_factor)
         for i in range(len(data) - 1):
             start_value = data.iloc[i]["timestamp_unix"]
             end_value = data.iloc[i + 1]["timestamp_unix"]
             dt = (end_value - start_value) / upsampling_factor
 
-            # Generate evenly spaced timestamps between start and end for n-1 points
-            evenly_spaced_timestamps = np.arange(start_value, end_value, dt)
+            # Generate evenly spaced timestamps between start and end for n-1 points. The
+            # start_value is included. Using arange between the start_value and end_value with
+            # step size dt is not numerically stable with small float numbers.
+            evenly_spaced_timestamps = start_value + seq * dt
 
             # Add these values to the new_rows list
             timestamps.extend(evenly_spaced_timestamps)
@@ -115,18 +121,17 @@ class Modality(ABC):
             if end_time > data["timestamp_unix"].max():
                 raise ValueError("end_time must be <= df['timestamp_unix'].max()")
 
-        # np.arange is not numerically stable when working with high frequency data like EEG.
-        # So we manually fill the array of evenly paced time points.
-        evenly_spaced_timestamps = [start_time]
-        step_size = 1 / target_frequency
-        while evenly_spaced_timestamps[-1] < end_time:
-            evenly_spaced_timestamps.append(evenly_spaced_timestamps[-1] + step_size)
-        evenly_spaced_timestamps = np.array(evenly_spaced_timestamps)
+        # The arange function is not numerically stable with small float numbers. So we use the
+        # number of points to create a sequence and scale the sequence by the inverse of the
+        # frequency.
+        num_time_points = math.floor((end_time - start_time) * target_frequency) + 1
+        evenly_spaced_timestamps = start_time + np.arange(num_time_points) / target_frequency
 
         df = data.drop(columns=["timestamp_unix"]).apply(
-            lambda col: np.interp(evenly_spaced_timestamps, data['timestamp_unix'], col)
+            func=lambda col: np.interp(evenly_spaced_timestamps, data["timestamp_unix"], col),
+            axis=0
         )
-        df['timestamp_unix'] = evenly_spaced_timestamps
+        df["timestamp_unix"] = evenly_spaced_timestamps
 
         # Rearrange columns in the same order as the original data.
         return df[data.columns]
