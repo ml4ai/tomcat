@@ -4,13 +4,18 @@
 and creates directories to hold the corresponding screenshots. This is meant to
 be run on the ivilab server."""
 
+import os
 import sqlite3
-from entity.signal.screen_capture import ScreenCapture
-from sqlalchemy import create_engine, select
-from sqlalchemy.orm import Session
+from tqdm import tqdm
 
-database_engine = create_engine("sqlite:////var/www/data/tomcat/tomcat.db")
-with Session(database_engine.connect()) as database_session:
-    statement = select(ScreenCapture)
-    objects = database_session.scalars(statement).fetchmany(10)
-    print(objects)
+with sqlite3.connect("/var/www/data/tomcat/tomcat.db") as connection:
+    group_sessions = [
+        x[0]
+        for x in connection.execute("SELECT id from group_session;").fetchall()
+    ]
+    for session in tqdm(group_sessions):
+        for station in ["lion", "tiger", "leopard", "cheetah"]:
+            os.makedirs(
+                f"/var/www/data/tomcat/screenshots/{session}/{station}",
+                exist_ok=True
+            )
