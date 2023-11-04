@@ -7,28 +7,20 @@ from sqlalchemy import text
 from data_pre_processing.signal.entity.modality import Modality
 from data_pre_processing.common.data_source.db import PostgresDB
 
-DATA_MODES = ["raw", "sync", "filtered"]
-
 
 class DataReader(ABC):
     """
     This class handles data reading from different modalities.
     """
 
-    def __init__(self, signal_modality: Modality, data_mode: str):
+    def __init__(self, signal_modality: Modality):
         """
         Creates a reader instance.
 
         :param signal_modality: modality of the signal to be read.
-        :param data_mode: one of ["raw", "sync", "filtered"], indicating whether we wish to read
-            raw, synchronized or filtered data.
         """
 
-        if data_mode not in DATA_MODES:
-            raise ValueError(f"Invalid data_mode ({data_mode}). It must be one of {DATA_MODES}.")
-
         self.signal_modality = signal_modality
-        self.data_mode = data_mode
 
     @abstractmethod
     def read_group_sessions(self) -> List[str]:
@@ -56,17 +48,14 @@ class PostgresDataReader(DataReader):
 
     def __init__(self,
                  signal_modality: Modality,
-                 data_mode: str,
                  db: PostgresDB):
         """
         Creates an instance of the Postgres data reader.
 
         :param signal_modality: modality of the signal to be read.
-        :param data_mode: one of ["raw", "sync", "filtered"], indicating whether we wish to read
-            raw, synchronized or filtered data.
         :param db: db object to handle operations on a Postgres cluster.
         """
-        super().__init__(signal_modality, data_mode)
+        super().__init__(signal_modality)
 
         self.db = db
 
@@ -91,7 +80,7 @@ class PostgresDataReader(DataReader):
         :return signals (a time series of data values over time).
         """
 
-        if self.data_mode == "raw" and self.signal_modality.name in ("ekg", "gsr"):
+        if self.signal_modality.name in ("ekg", "gsr"):
             # Raw GSR and EKG values are in the EEG table.
             modality_name = "eeg"
         else:
@@ -104,7 +93,7 @@ class PostgresDataReader(DataReader):
                 station,
                 timestamp_unix,
                 {channels_str}
-            FROM {modality_name}_{self.data_mode} 
+            FROM {modality_name}_raw
             WHERE group_session = '{group_session}'
             ORDER BY station, timestamp_unix
         """

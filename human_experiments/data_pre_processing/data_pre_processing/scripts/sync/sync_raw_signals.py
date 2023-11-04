@@ -16,6 +16,7 @@ from data_pre_processing.signal.reader.data_reader import DataReader, PostgresDa
 from data_pre_processing.signal.writer.data_writer import DataWriter, PostgresDataWriter
 from data_pre_processing.common.utils import convert_unix_timestamp_to_iso8601
 from data_pre_processing.signal.entity.factory import create_modality
+from data_pre_processing.signal.entity.modality import Modality
 
 from multiprocessing import Pool
 
@@ -23,7 +24,8 @@ from multiprocessing import Pool
 def sync_raw_signals_in_parallel(data_reader: DataReader,
                                  data_writer: DataWriter,
                                  source_frequency: int,
-                                 target_frequency: int,
+                                 upsampling_frequency: int,
+                                 final_frequency: int,
                                  num_jobs: int):
     """
     Synchronizes data from one modality for different group sessions in parallel.
@@ -38,7 +40,8 @@ def sync_raw_signals_in_parallel(data_reader: DataReader,
                      data_reader=data_reader,
                      data_writer=data_writer,
                      source_frequency=source_frequency,
-                     target_frequency=target_frequency)
+                     upsampling_frequency=upsampling_frequency,
+                     final_frequency=final_frequency)
     #
     # group_sessions = data_reader.read_group_sessions()
     # with Pool(processes=num_jobs) as pool:
@@ -50,7 +53,8 @@ def sync_raw_signals_single_job(group_sessions: List[str],
                                 data_reader: DataReader,
                                 data_writer: DataWriter,
                                 source_frequency: int,
-                                target_frequency: int):
+                                upsampling_frequency: int,
+                                final_frequency: int):
     for group_session in group_sessions:
         print(f"Processing group session {group_session}.")
         data = data_reader.read(group_session)
@@ -61,34 +65,41 @@ def sync_raw_signals_single_job(group_sessions: List[str],
         common_start_time = math.ceil(common_start_time)
         common_end_time = math.floor(common_end_time)
 
+        downsampling_factor = final_frequency / upsampling_frequency
+
         for station in sorted(data["station"].unique()):
             print(f"Processing station {station}.")
 
-            station_data = data[data["station"] == station].drop(
+            raw_station_data = data[data["station"] == station].drop(
                 columns=["group_session", "station"])
 
-            upsampled_values = data_reader.signal_modality.upsample(
-                data=station_data,
-                upsampling_factor=int(target_frequency / source_frequency)
-            )
+            sync_station_data = Modality.sync(data=raw_station_data,
+                                              source_frequency=source_frequency,
+                                              target_frequency=upsampling_frequency,
+                                              start_time=common_start_time,
+                                              end_time=common_end_time)
 
-            interpolated_values = data_reader.signal_modality.interpolate(
-                data=upsampled_values,
-                start_time=common_start_time,
-                end_time=common_end_time,
-                target_frequency=target_frequency
-            )
+            filtered_station_data = data_reader.signal_modality.filter(sync_station_data,
+                                                                       upsampling_frequency)
 
-            interpolated_values["group_session"] = group_session
-            interpolated_values["station"] = station
-            interpolated_values["id"] = np.arange(len(interpolated_values), dtype=int)
-            interpolated_values["timestamp_iso8601"] = interpolated_values[
-                "timestamp_unix"].apply(convert_unix_timestamp_to_iso8601)
+            downsampled_unfiltered_station_data = Modality.downsample(sync_station_data,
+                                                                      downsampling_factor)
+            downsampled_filtered_station_data = Modality.downsample(filtered_station_data,
+                                                                    downsampling_factor)
+
+            # Add extra info
+            for df in [downsampled_unfiltered_station_data, downsampled_filtered_station_data]:
+                df["group_session"] = group_session
+                df["station"] = station
+                df["id"] = np.arange(len(df), dtype=int)
+                df["timestamp_iso8601"] = df["timestamp_unix"].apply(
+                    convert_unix_timestamp_to_iso8601)
 
             # We save to the database per station to reduce the overhead since this essentially
             # can multiply the number of raw samples by a lot.
-            print("Flushing...")
-            data_writer.write(interpolated_values)
+            print("Saving unfiltered data")
+            data_writer.write_unfiltered(downsampled_unfiltered_station_data)
+            data_writer.write_filtered(downsampled_filtered_station_data)
 
 
 def get_overlapping_window_across_stations(data: pd.DataFrame) -> Tuple[float, float]:
@@ -138,9 +149,12 @@ if __name__ == "__main__":
                         help="Modality of the raw data.")
     parser.add_argument("--recording_freq", type=int, required=True,
                         help="Recording frequency. Frequency used when data was recorded.")
-    parser.add_argument("--upsampled_freq", type=int, required=True,
+    parser.add_argument("--upsampling_freq", type=int, required=True,
                         help="Desired frequency after upsampling. Higher than the recording "
                              "frequency.")
+    parser.add_argument("--final_freq", type=int, required=True,
+                        help="Desired frequency after downsampling. This is the final frequency the "
+                             "signals will have when saved.")
     parser.add_argument("--n_jobs", type=int, required=False, default=NUM_PROCESSES,
                         help="Number of jobs for parallel processing.")
     parser.add_argument("--db_name", type=str, required=False, default="tomcat",
@@ -161,13 +175,13 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    if args.recording_freq >= args.upsampled_freq:
-        raise ValueError(f"Upsampled frequency ({args.upsampled_freq}) is smaller or "
+    if args.recording_freq >= args.upsampling_freq:
+        raise ValueError(f"Upsampling frequency ({args.upsampled_freq}) is smaller or "
                          f"equal than the recording frequency ({args.recording_freq}).")
 
-    if args.upsampled_freq % args.recording_freq != 0:
-        raise ValueError(f"Upsampled frequency ({args.upsampled_freq}) must be a multiple of the "
-                         f"recording frequency ({args.recording_freq}).")
+    if args.final_freq >= args.upsampling_freq:
+        raise ValueError(f"Final frequency ({args.final_freq}) is larger or "
+                         f"equal than the upsampling frequency ({args.recording_freq}).")
 
     os.makedirs(args.log_dir, exist_ok=True)
     logging.basicConfig(
@@ -186,21 +200,26 @@ if __name__ == "__main__":
                     db_host=args.db_host,
                     db_port=args.db_port,
                     db_passwd=args.db_passwd)
-    modality = create_modality(args.modality)
+    modality = create_modality(modality=args.modality)
     reader = PostgresDataReader(
         signal_modality=modality,
-        data_mode="raw",
         db=db
     )
     writer = PostgresDataWriter(
         signal_modality=modality,
-        data_mode="sync",
         db=db
     )
+
+    print("Create tables")
+    modality.get_data_mode_table_class("filtered").__table__.create(db.create_engine(),
+                                                                    checkfirst=True)
+    modality.get_data_mode_table_class("unfiltered").__table__.create(db.create_engine(),
+                                                                      checkfirst=True)
 
     sync_raw_signals_in_parallel(
         data_reader=reader,
         data_writer=writer,
         source_frequency=args.recording_freq,
-        target_frequency=args.upsampled_freq,
+        upsampling_frequency=args.upsampling_freq,
+        final_frequency=args.final_freq,
         num_jobs=args.n_jobs)

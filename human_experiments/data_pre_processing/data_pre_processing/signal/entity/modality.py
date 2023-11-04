@@ -4,9 +4,10 @@ import math
 from abc import ABC, abstractmethod
 from typing import List, Optional, Type
 
-from mne.filter import resample
+from mne.filter import resample as mne_resample
 import numpy as np
 import pandas as pd
+from scipy.interpolate import interp1d
 
 from data_pre_processing.signal.table.base import Base
 
@@ -24,16 +25,50 @@ class Modality(ABC):
         """
         self.name = name
 
-    def upsample(self,
-                 data: pd.DataFrame,
-                 upsampling_factor: int) -> pd.DataFrame:
+    @staticmethod
+    def sync(data: pd.DataFrame,
+             source_frequency: float,
+             target_frequency: float,
+             start_time: Optional[float] = None,
+             end_time: Optional[float] = None) -> pd.DataFrame:
         """
-        Upsamples signals to by an integer factor. We upsample using an integer factor so we can
-        align the new samples to raw timestamps. (upsampling_factor - 1) new samples will be
-        created between each subsequent points. Because the samples are equally spaced and because
-        we know the timestamps of the original points, we can estimate the timestamp of the new
-        samples. If the upsampling_factor was a float number, this algorithm wouldn't work as the
-        number of points created between each two subsequent points wouldn't be well defined.
+        Synchronizes data such that samples are evenly spaced in time according to a target start
+        point and pre-defined frequency.
+
+        :param data: timestamped signal values. Each row in data must contain one data point. One
+            of the columns must be called timestamp_unix, which stores a unix timestamp for each
+            data point. The remaining columns are the data channels/features.
+        :param source_frequency: theoretical frequency of the data.
+        :param target_frequency: frequency of the synchronized data.
+        :param start_time: timestamp of the initial point. If not entered, the first timestamp of
+            the data will be used as starting point.
+        :param end_time: timestamp of the final point. If not entered, the last timestamp of
+            the data will be used as ending point.
+        :return: data frame with evenly spaced signal values in time at a certain frequency.
+        """
+
+        upsampling_factor = target_frequency / source_frequency
+        upsampled_data = Modality.upsample(data, upsampling_factor)
+        sync_data = Modality.interpolate(
+            data=upsampled_data,
+            start_time=start_time,
+            end_time=end_time,
+            target_frequency=target_frequency
+        )
+
+        return sync_data
+
+    @staticmethod
+    def upsample(data: pd.DataFrame,
+                  upsampling_factor: float) -> pd.DataFrame:
+        """
+        Upsamples a signal up to a factor. This generates a time series of size defined by
+        #original samples * upsampling_factor. We use the mne resample function which applies
+        the resampling in the frequency domain via FFT and then projects the series back to the
+        time domain with IFFT.
+
+        To map the new samples to timestamps, we first perform linear interpolation on the original
+        timestamps and use that to estimate the timestamps of the upsampled data.
 
         :param data: timestamped signal values. Each row in data must contain one data point. One
             of the columns must be called timestamp_unix, which stores a unix timestamp for each
@@ -43,39 +78,22 @@ class Modality(ABC):
             more rows of data.
         """
 
+        if upsampling_factor == 1:
+            return data
+
         if not data["timestamp_unix"].is_monotonic_increasing:
             raise ValueError("timestamp_unix column must be sorted in ascending order.")
 
-        upsampled_data = resample(x=data.drop(columns="timestamp_unix").values,
-                                  up=upsampling_factor,
-                                  npad="auto",
-                                  axis=0)
+        upsampled_data = mne_resample(x=data.drop(columns="timestamp_unix").values,
+                                      up=upsampling_factor,
+                                      npad="auto",
+                                      axis=0)
+        timestamps = Modality._resample_timestamps(
+            original_timestamps=data["timestamp_unix"].values,
+            resampled_size=len(upsampled_data)
+        )
 
-        # Creates a list of timestamps to fit the samples. upsampling_factor -1 samples are created
-        # between two original points. We attribute these samples to evenly spaced timestamps
-        # between the timestamps of the original points. These new samples are evenly spaced in
-        # time because the FFT and IFFT operations preserve the regular time spacing between the
-        # original samples.
-        timestamps = []
-        seq = np.arange(upsampling_factor)
-        for i in range(len(data) - 1):
-            start_value = data.iloc[i]["timestamp_unix"]
-            end_value = data.iloc[i + 1]["timestamp_unix"]
-            dt = (end_value - start_value) / upsampling_factor
-
-            # Generate evenly spaced timestamps between start and end for n-1 points. The
-            # start_value is included. Using arange between the start_value and end_value with
-            # step size dt is not numerically stable with small float numbers.
-            evenly_spaced_timestamps = start_value + seq * dt
-
-            # Add these values to the new_rows list
-            timestamps.extend(evenly_spaced_timestamps)
-        timestamps.append(data.iloc[-1]["timestamp_unix"])
-
-        # Remove samples generated after the final point because we cannot estimate their
-        # timestamps.
-        upsampled_data = upsampled_data[:-(upsampling_factor - 1), :]
-
+        # Copy data and timestamps to a Data frame
         df = pd.DataFrame(data=upsampled_data,
                           columns=[c for c in data.columns if c != "timestamp_unix"])
         df["timestamp_unix"] = timestamps
@@ -83,8 +101,73 @@ class Modality(ABC):
         # Rearrange columns in the same order as the original data.
         return df[data.columns]
 
-    def interpolate(self,
-                    data: pd.DataFrame,
+    @staticmethod
+    def downsample(data: pd.DataFrame,
+                   downsampling_factor: int) -> pd.DataFrame:
+        """
+        Downsampled a signal up to a factor. This generates a time series of size defined by
+        #original samples / downsampling_factor. We use the mne resample function which applies
+        the resampling in the frequency domain via FFT and then projects the series back to the
+        time domain with IFFT.
+
+        Note: Raw -> upsample -> downsample does not perfectly recover the raw data because the
+        downsample operation uses a low-pass filtering to avoid aliasing, which may slightly change
+        the values of the upsampled data.
+
+        To map the new samples to timestamps, we first perform linear interpolation on the original
+        timestamps and use that to estimate the timestamps of the upsampled data.
+
+        :param data: timestamped signal values. Each row in data must contain one data point. One
+            of the columns must be called timestamp_unix, which stores a unix timestamp for each
+            data point. The remaining columns are the data channels/features.
+        :param upsampling_factor: by how many times to upsample the series.
+        :return: data frame with upsampled data with the same columns as the original data and
+            more rows of data.
+        """
+
+        if downsampling_factor == 1:
+            return data
+
+        if not data["timestamp_unix"].is_monotonic_increasing:
+            raise ValueError("timestamp_unix column must be sorted in ascending order.")
+
+        upsampled_data = mne_resample(x=data.drop(columns="timestamp_unix").values,
+                                      down=downsampling_factor,
+                                      npad="auto",
+                                      axis=0)
+        timestamps = Modality._resample_timestamps(
+            original_timestamps=data["timestamp_unix"].values,
+            resampled_size=len(upsampled_data)
+        )
+
+        # Copy data and timestamps to a Data frame
+        df = pd.DataFrame(data=upsampled_data,
+                          columns=[c for c in data.columns if c != "timestamp_unix"])
+        df["timestamp_unix"] = timestamps
+
+        # Rearrange columns in the same order as the original data.
+        return df[data.columns]
+
+    @staticmethod
+    def _resample_timestamps(original_timestamps: np.ndarray, resampled_size: int):
+        """
+        Performs linear interpolation on original timestamps to find a new list of time stamps on
+        the resampled data. The size of the resampled data can be either larger (upsampling) or
+        smaller (downsampling) than the original data.
+
+        :param original_timestamps: the list of original numerical timestamps.
+        :param resampled_size: the number of samples in the resampled data.
+
+        :return: a list with timestamps of the resampled data.
+        """
+
+        seq = np.arange(len(original_timestamps))
+        interp_func = interp1d(seq, original_timestamps, kind='linear')
+        new_seq = np.linspace(0, seq[-1], resampled_size)
+        return interp_func(new_seq)
+
+    @staticmethod
+    def interpolate(data: pd.DataFrame,
                     target_frequency: float,
                     start_time: Optional[float] = None,
                     end_time: Optional[float] = None) -> pd.DataFrame:
@@ -141,17 +224,32 @@ class Modality(ABC):
         """
         Gets table class for a specific data mode.
 
-        :param data_mode: one of ["sync", "filtered"], indicating synchronized and filtered data
-            tables.
+        :param data_mode: one of ["unfiltered", "filtered"], indicating synchronized unfiltered
+            and filtered data tables.
         :return class of the table.
         """
         pass
 
     @abstractmethod
-    def filter(self, data: pd.DataFrame) -> pd.DataFrame:
+    def filter(self, data: pd.DataFrame, data_frequency: int) -> pd.DataFrame:
+        """
+        Filters data to remove unwanted artifacts.
+
+        :param data: timestamped signal values. Each row in data must contain one data point. One
+            of the columns must be called timestamp_unix, which stores a unix timestamp for each
+            data point. The remaining columns are the data channels/features.
+        :param data_frequency: frequency of the signal.
+
+        :return: filtered data in the same format as the original.
+        """
         pass
 
     @property
     @abstractmethod
     def channels(self) -> List[str]:
+        """
+        Gets the list of channels of the signal data.
+
+        :return: list of channel names.
+        """
         pass

@@ -1,9 +1,10 @@
 from typing import List, Type, Union
 
+from mne.filter import filter_data as mne_filter_data
 import pandas as pd
 
 from data_pre_processing.signal.entity.modality import Modality
-from data_pre_processing.signal.table.eeg import EEGSync, EEGFiltered
+from data_pre_processing.signal.table.eeg import EEGSyncUnfiltered, EEGSyncFiltered
 
 
 class EEG(Modality):
@@ -23,7 +24,9 @@ class EEG(Modality):
         """
         return CHANNELS
 
-    def get_data_mode_table_class(self, data_mode: str) -> Type[Union[EEGSync, EEGFiltered]]:
+    def get_data_mode_table_class(
+            self,
+            data_mode: str) -> Type[Union[EEGSyncUnfiltered, EEGSyncFiltered]]:
         """
         Gets table class for a specific data mode.
 
@@ -33,16 +36,40 @@ class EEG(Modality):
         """
 
         if data_mode == "sync":
-            return EEGSync
+            return EEGSyncUnfiltered
 
         if data_mode == "filtered":
-            return EEGFiltered
+            return EEGSyncFiltered
 
         raise ValueError(f"There's no table class for data_mode ({data_mode}).")
 
-    def filter(self, data: pd.DataFrame) -> pd.DataFrame:
-        # TODO: Implement signal filtering
-        pass
+    def filter(self, data: pd.DataFrame, data_frequency: int) -> pd.DataFrame:
+        """
+        Filters EEG to remove unwanted artifacts like breathing and heart beat by applying a
+        bandpass filter.
+
+        :param data: timestamped signal values. Each row in data must contain one data point. One
+            of the columns must be called timestamp_unix, which stores a unix timestamp for each
+            data point. The remaining columns are the data channels/features.
+        :param data_frequency: frequency of the signal.
+
+        :return: filtered data in the same format as the original.
+        """
+        # Transpose values because the filter_data function in MNE assumes the time dimension is
+        # the last one.
+        filtered_values = mne_filter_data(data.drop(columns=["timestamp_unix"]).values.T,
+                                          sfreq=data_frequency,
+                                          l_freq=self.low_frequency_threshold,
+                                          h_freq=self.high_frequency_threshold,
+                                          method=self.bandpass_filter_method).T
+
+        # Copy data and timestamps to a Data frame
+        df = pd.DataFrame(data=filtered_values,
+                          columns=[c for c in data.columns if c != "timestamp_unix"])
+        df["timestamp_unix"] = data["timestamp_unix"]
+
+        # Rearrange columns in the same order as the original data.
+        return df[data.columns]
 
 
 CHANNELS = [
