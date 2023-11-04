@@ -65,7 +65,7 @@ def sync_raw_signals_single_job(group_sessions: List[str],
         common_start_time = math.ceil(common_start_time)
         common_end_time = math.floor(common_end_time)
 
-        downsampling_factor = final_frequency / upsampling_frequency
+        downsampling_factor = upsampling_frequency / final_frequency
 
         for station in sorted(data["station"].unique()):
             print(f"Processing station {station}.")
@@ -73,33 +73,54 @@ def sync_raw_signals_single_job(group_sessions: List[str],
             raw_station_data = data[data["station"] == station].drop(
                 columns=["group_session", "station"])
 
-            sync_station_data = Modality.sync(data=raw_station_data,
-                                              source_frequency=source_frequency,
-                                              target_frequency=upsampling_frequency,
-                                              start_time=common_start_time,
-                                              end_time=common_end_time)
+            print("Upsampling")
+            upsampling_factor = upsampling_frequency / source_frequency
+            upsampled_data = Modality.upsample(raw_station_data, upsampling_factor)
 
-            filtered_station_data = data_reader.signal_modality.filter(sync_station_data,
-                                                                       upsampling_frequency)
+            print("Filtering")
+            filtered_data = data_reader.signal_modality.filter(upsampled_data,
+                                                               upsampling_frequency)
 
-            downsampled_unfiltered_station_data = Modality.downsample(sync_station_data,
-                                                                      downsampling_factor)
-            downsampled_filtered_station_data = Modality.downsample(filtered_station_data,
-                                                                    downsampling_factor)
+            print("Interpolating unfiltered")
+            interpolated_data = Modality.interpolate(
+                data=upsampled_data,
+                start_time=common_start_time,
+                end_time=common_end_time,
+                target_frequency=upsampling_frequency
+            )
+
+            print("Interpolating filtered")
+            filtered_interpolated_data = Modality.interpolate(
+                data=filtered_data,
+                start_time=common_start_time,
+                end_time=common_end_time,
+                target_frequency=upsampling_frequency
+            )
+
+            print("Downsampling unfiltered")
+            downsampled_unfiltered_data = Modality.downsample(interpolated_data,
+                                                              downsampling_factor)
+
+            print("Downsampling filtered")
+            downsampled_filtered_data = Modality.downsample(filtered_interpolated_data,
+                                                            downsampling_factor)
 
             # Add extra info
-            for df in [downsampled_unfiltered_station_data, downsampled_filtered_station_data]:
+            for df in [downsampled_unfiltered_data, downsampled_filtered_data]:
                 df["group_session"] = group_session
                 df["station"] = station
                 df["id"] = np.arange(len(df), dtype=int)
+                df["frequency"] = final_frequency
                 df["timestamp_iso8601"] = df["timestamp_unix"].apply(
                     convert_unix_timestamp_to_iso8601)
 
             # We save to the database per station to reduce the overhead since this essentially
             # can multiply the number of raw samples by a lot.
             print("Saving unfiltered data")
-            data_writer.write_unfiltered(downsampled_unfiltered_station_data)
-            data_writer.write_filtered(downsampled_filtered_station_data)
+            data_writer.write_unfiltered(downsampled_unfiltered_data)
+
+            print("Saving filtered data")
+            data_writer.write_filtered(downsampled_filtered_data)
 
 
 def get_overlapping_window_across_stations(data: pd.DataFrame) -> Tuple[float, float]:

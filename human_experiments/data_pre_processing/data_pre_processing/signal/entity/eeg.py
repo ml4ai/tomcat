@@ -1,19 +1,30 @@
 from typing import List, Type, Union
 
-from mne.filter import filter_data as mne_filter_data
+from mne.filter import notch_filter
+import numpy as np
 import pandas as pd
 
 from data_pre_processing.signal.entity.modality import Modality
 from data_pre_processing.signal.table.eeg import EEGSyncUnfiltered, EEGSyncFiltered
+from data_pre_processing.signal.common.constants import (EEG_NOTCH_FILTER_FREQUENCY,
+                                                         EEG_NOTCH_WIDTH,
+                                                         EEG_TRANSISION_BANDWIDTH)
 
 
 class EEG(Modality):
 
-    def __init__(self):
+    def __init__(self,
+                 notch_filter_frequency: float = EEG_NOTCH_FILTER_FREQUENCY,
+                 notch_width: float = EEG_NOTCH_WIDTH,
+                 transition_bandwidth: float = EEG_TRANSISION_BANDWIDTH):
         """
         Creates an EEG modality.
         """
         super().__init__("eeg")
+
+        self.notch_filter_frequency = notch_filter_frequency
+        self.notch_width = notch_width
+        self.transition_bandwidth = transition_bandwidth
 
     @property
     def channels(self) -> List[str]:
@@ -55,13 +66,13 @@ class EEG(Modality):
 
         :return: filtered data in the same format as the original.
         """
-        # Transpose values because the filter_data function in MNE assumes the time dimension is
+        # Transpose values because the notch_filter function in MNE assumes the time dimension is
         # the last one.
-        filtered_values = mne_filter_data(data.drop(columns=["timestamp_unix"]).values.T,
-                                          sfreq=data_frequency,
-                                          l_freq=self.low_frequency_threshold,
-                                          h_freq=self.high_frequency_threshold,
-                                          method=self.bandpass_filter_method).T
+        filtered_values = np.array(notch_filter(data.drop(columns=["timestamp_unix"]).values.T,
+                                                Fs=data_frequency,
+                                                freqs=self.notch_filter_frequency,
+                                                notch_widths=self.notch_width,
+                                                trans_bandwidth=self.transition_bandwidth)).T
 
         # Copy data and timestamps to a Data frame
         df = pd.DataFrame(data=filtered_values,

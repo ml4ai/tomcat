@@ -26,39 +26,6 @@ class Modality(ABC):
         self.name = name
 
     @staticmethod
-    def sync(data: pd.DataFrame,
-             source_frequency: float,
-             target_frequency: float,
-             start_time: Optional[float] = None,
-             end_time: Optional[float] = None) -> pd.DataFrame:
-        """
-        Synchronizes data such that samples are evenly spaced in time according to a target start
-        point and pre-defined frequency.
-
-        :param data: timestamped signal values. Each row in data must contain one data point. One
-            of the columns must be called timestamp_unix, which stores a unix timestamp for each
-            data point. The remaining columns are the data channels/features.
-        :param source_frequency: theoretical frequency of the data.
-        :param target_frequency: frequency of the synchronized data.
-        :param start_time: timestamp of the initial point. If not entered, the first timestamp of
-            the data will be used as starting point.
-        :param end_time: timestamp of the final point. If not entered, the last timestamp of
-            the data will be used as ending point.
-        :return: data frame with evenly spaced signal values in time at a certain frequency.
-        """
-
-        upsampling_factor = target_frequency / source_frequency
-        upsampled_data = Modality.upsample(data, upsampling_factor)
-        sync_data = Modality.interpolate(
-            data=upsampled_data,
-            start_time=start_time,
-            end_time=end_time,
-            target_frequency=target_frequency
-        )
-
-        return sync_data
-
-    @staticmethod
     def upsample(data: pd.DataFrame,
                   upsampling_factor: float) -> pd.DataFrame:
         """
