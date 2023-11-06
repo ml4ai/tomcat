@@ -134,7 +134,7 @@ def process_directory_v2(group_session, image_table_class, image_type, xdf_signa
                                       slice_series_fn=lambda x: x)
                 tmp = []
                 for signal_dict in signals:
-                    url = f"{IMAGE_URL_ROOT_DIR}/{group_session}/{station}/{image_dir}/block_{block_num}/{signal_dict['filename']}"
+                    url = f"{IMAGE_URL_ROOT_DIR}/{group_session}/{station}/{image_dir}/block_{block_num + 1}/{signal_dict['filename']}"
                     tmp.append(image_table_class(**signal_dict, timestamp_origin="lsl", url=url))
 
                 records.extend(tmp)
@@ -167,7 +167,8 @@ def insert_raw_unlabeled_data(database_engine, override, image_table_class, imag
 
                 info(f"Processing directory {group_session}")
                 if not is_directory_with_unified_xdf_files(group_session):
-                    image_records = process_directory_v1(group_session, image_table_class, image_dir)
+                    image_records = process_directory_v1(group_session, image_table_class,
+                                                         image_dir)
                 else:
                     image_records = process_directory_v2(group_session, image_table_class,
                                                          image_type,
