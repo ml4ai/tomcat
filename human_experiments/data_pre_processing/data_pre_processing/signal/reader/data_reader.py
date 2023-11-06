@@ -32,11 +32,25 @@ class DataReader(ABC):
         pass
 
     @abstractmethod
-    def read(self, group_session: str) -> pd.DataFrame:
+    def read_raw(self, group_session: str) -> pd.DataFrame:
         """
-        Returns data signals from a group session.
+        Returns raw data signals from a group session.
 
         :return signals (a time series of data values over time).
+        """
+        pass
+
+    @abstractmethod
+    def sync_data_exists(self, group_session: str, station: str,
+                                  frequency: int) -> bool:
+        """
+        Checks whether there's sync and filtered signals saved for a specific group session,
+        station and frequency.
+
+        :param group_session: group session
+        :param station: station
+        :param frequency: frequency of the sync signal.
+        :return True if there's saved data.
         """
         pass
 
@@ -72,7 +86,7 @@ class PostgresDataReader(DataReader):
 
         return [r[0] for r in rows]
 
-    def read(self, group_session: str) -> pd.DataFrame:
+    def read_raw(self, group_session: str) -> pd.DataFrame:
         """
         Reads data signals from a group session from a modality-specific table.
 
@@ -103,3 +117,27 @@ class PostgresDataReader(DataReader):
             data["timestamp_unix"] = data["timestamp_unix"].astype(float)
 
         return data
+
+    def sync_data_exists(self, group_session: str, station: str, frequency: int) -> bool:
+        """
+        Checks whether there's sync and filtered signals saved for a specific group session,
+        station and frequency.
+
+        :param group_session: group session
+        :param station: station
+        :param frequency: frequency of the sync signal.
+        :return True if there's saved data.
+        """
+
+        query = f"""
+                    SELECT 
+                        COUNT(*)
+                    FROM {self.signal_modality.name}_sync_filtered
+                    WHERE group_session = '{group_session}'
+                      AND frequency = {frequency}
+                      AND station = '{station}'
+                """
+
+        with self.db.create_engine().connect() as conn, conn.begin():
+            res = conn.execute(text(query))
+            return res.fetchone()[0] > 0

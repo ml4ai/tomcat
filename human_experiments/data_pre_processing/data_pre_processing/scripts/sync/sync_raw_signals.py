@@ -26,27 +26,35 @@ def sync_raw_signals_in_parallel(data_reader: DataReader,
                                  source_frequency: int,
                                  upsampling_frequency: int,
                                  final_frequency: int,
-                                 num_jobs: int):
+                                 num_jobs: int,
+                                 log_dir: str):
     """
     Synchronizes data from one modality for different group sessions in parallel.
 
     :param data_reader: object responsible for reading the data to be synchronized.
     :param data_writer: object responsible for writing the synchronized data.
     :param source_frequency: theoretical frequency of the original data.
-    :param target_frequency: final frequency of the synchronized data.
+    :param upsampling_frequency: frequency to upsample signals for interpolation.
+    :param final_frequency: final frequency of the synchronized data.
     :param num_jobs: number of jobs for parallelization.
+    :param log_dir: directory where to create the log files.
     """
+    os.makedirs(log_dir, exist_ok=True)
+
     job_fn = partial(sync_raw_signals_single_job,
                      data_reader=data_reader,
                      data_writer=data_writer,
                      source_frequency=source_frequency,
                      upsampling_frequency=upsampling_frequency,
-                     final_frequency=final_frequency)
-    #
-    # group_sessions = data_reader.read_group_sessions()
-    # with Pool(processes=num_jobs) as pool:
-    #     list(tqdm(pool.imap(job_fn, group_sessions), total=len(group_sessions)))
-    job_fn(["exp_2022_10_04_09"])
+                     final_frequency=final_frequency,
+                     log_dir=log_dir)
+
+    group_sessions = data_reader.read_group_sessions()
+    group_session_batches = np.array_split(["exp_2022_10_04_09", "exp_2022_10_07_15"],
+                                    np.min(num_jobs, len(group_sessions)))
+    print(f"Synchronizing signals from {len(group_sessions)} group sessions.")
+    with Pool(processes=num_jobs) as pool:
+        list(tqdm(pool.imap(job_fn, group_session_batches), total=len(group_sessions)))
 
 
 def sync_raw_signals_single_job(group_sessions: List[str],
@@ -54,10 +62,33 @@ def sync_raw_signals_single_job(group_sessions: List[str],
                                 data_writer: DataWriter,
                                 source_frequency: int,
                                 upsampling_frequency: int,
-                                final_frequency: int):
+                                final_frequency: int,
+                                log_dir: str):
+    """
+    Synchronizes data from one modality for different group sessions in sequence.
+
+    :param group_sessions: group sessions to process.
+    :param data_reader: object responsible for reading the data to be synchronized.
+    :param data_writer: object responsible for writing the synchronized data.
+    :param source_frequency: theoretical frequency of the original data.
+    :param upsampling_frequency: frequency to upsample signals for interpolation.
+    :param final_frequency: final frequency of the synchronized data.
+    :param log_dir: directory where to create the log files.
+    """
     for group_session in group_sessions:
-        print(f"Processing group session {group_session}.")
-        data = data_reader.read(group_session)
+        logging.basicConfig(
+            level=logging.INFO,
+            handlers=(
+                logging.FileHandler(
+                    filename=f"{log_dir}/{group_session}.log",
+                    mode="w",
+                ),
+            ),
+        )
+        logger = logging.getLogger()
+
+        logger.info(f"Processing group session {group_session}.")
+        data = data_reader.read_raw(group_session)
 
         common_start_time, common_end_time = get_overlapping_window_across_stations(data)
 
@@ -68,20 +99,24 @@ def sync_raw_signals_single_job(group_sessions: List[str],
         downsampling_factor = upsampling_frequency / final_frequency
 
         for station in sorted(data["station"].unique()):
-            print(f"Processing station {station}.")
+            logger.info(f"Processing station {station}.")
+
+            if reader.sync_data_exists(group_session, station, final_frequency):
+                logger.info(f"Skipping. Sync data already persisted to the database.")
+                continue
 
             raw_station_data = data[data["station"] == station].drop(
                 columns=["group_session", "station"])
 
-            print("Upsampling")
+            logger.info("Upsampling")
             upsampling_factor = upsampling_frequency / source_frequency
             upsampled_data = Modality.upsample(raw_station_data, upsampling_factor)
 
-            print("Filtering")
+            logger.info("Filtering")
             filtered_data = data_reader.signal_modality.filter(upsampled_data,
                                                                upsampling_frequency)
 
-            print("Interpolating unfiltered")
+            logger.info("Interpolating unfiltered")
             interpolated_data = Modality.interpolate(
                 data=upsampled_data,
                 start_time=common_start_time,
@@ -89,7 +124,7 @@ def sync_raw_signals_single_job(group_sessions: List[str],
                 target_frequency=upsampling_frequency
             )
 
-            print("Interpolating filtered")
+            logger.info("Interpolating filtered")
             filtered_interpolated_data = Modality.interpolate(
                 data=filtered_data,
                 start_time=common_start_time,
@@ -97,11 +132,11 @@ def sync_raw_signals_single_job(group_sessions: List[str],
                 target_frequency=upsampling_frequency
             )
 
-            print("Downsampling unfiltered")
+            logger.info("Downsampling unfiltered")
             downsampled_unfiltered_data = Modality.downsample(interpolated_data,
                                                               downsampling_factor)
 
-            print("Downsampling filtered")
+            logger.info("Downsampling filtered")
             downsampled_filtered_data = Modality.downsample(filtered_interpolated_data,
                                                             downsampling_factor)
 
@@ -116,10 +151,10 @@ def sync_raw_signals_single_job(group_sessions: List[str],
 
             # We save to the database per station to reduce the overhead since this essentially
             # can multiply the number of raw samples by a lot.
-            print("Saving unfiltered data")
+            logger.info("Saving unfiltered data")
             data_writer.write_unfiltered(downsampled_unfiltered_data)
 
-            print("Saving filtered data")
+            logger.info("Saving filtered data")
             data_writer.write_filtered(downsampled_filtered_data)
 
 
@@ -159,9 +194,20 @@ def get_overlapping_window_across_stations(data: pd.DataFrame) -> Tuple[float, f
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="""
-            Synchronizes raw signals from a specific modality across participants in a specific frequency. We first,
-            resample (typically upsample) the signals and interpolate to generate equally spaced values, which we 
-            can then align across participants.           
+            Synchronizes and filters raw signals from a specific modality across participants in a 
+            specific frequency and saves to the database. We save both filtered and unfiltered 
+            data.
+            
+            To synchronize the data, we need to interpolate to find the values of the signal stream
+            at the shared time points across stations. However, interpolating at the raw points
+            changes the properties of the signal, introducing considerable noise in the power
+            spectrum density plots. Thus, we perform interpolation in a upsampled version of the 
+            signal. Furthermore, we found empirically that filtering first and interpolating next 
+            preserves the such properties the most, so we adopt the following sequence here:
+            Raw -> upsampling -> filtering -> interpolation -> downsample.
+            
+            In the downsample step we move the samples to the desired final frequency by discarding
+            samples and applying anti-aliasing.      
         """
     )
 
@@ -188,10 +234,8 @@ if __name__ == "__main__":
                         help="Port where the database cluster is running.")
     parser.add_argument("--db_passwd", type=str, required=False, default="",
                         help="Password to connect to the database.")
-    parser.add_argument("--out_dir", type=str, required=False, default=OUT_DIR,
-                        help="Directory where experiment folder structure containing semantic "
-                             "labels must be saved.")
-    parser.add_argument("--log_dir", type=str, required=False, default=LOG_DIR,
+    parser.add_argument("--log_dir", type=str, required=False,
+                        default=f"{LOG_DIR}/sync_raw_signal",
                         help="Directory where log files must be saved.")
 
     args = parser.parse_args()
@@ -205,16 +249,6 @@ if __name__ == "__main__":
                          f"equal than the upsampling frequency ({args.recording_freq}).")
 
     os.makedirs(args.log_dir, exist_ok=True)
-    logging.basicConfig(
-        level=logging.INFO,
-        handlers=(
-            logging.FileHandler(
-                filename=f"{args.log_dir}/sync_raw_signals.log",
-                mode="w",
-            ),
-            logging.StreamHandler(stream=sys.stderr),
-        ),
-    )
 
     db = PostgresDB(db_name=args.db_name,
                     db_user=args.db_user,
@@ -243,4 +277,5 @@ if __name__ == "__main__":
         source_frequency=args.recording_freq,
         upsampling_frequency=args.upsampling_freq,
         final_frequency=args.final_freq,
-        num_jobs=args.n_jobs)
+        num_jobs=args.n_jobs,
+        log_dir=args.log_dir)

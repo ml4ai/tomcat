@@ -4,14 +4,15 @@ from typing import Type
 import pandas as pd
 from sqlalchemy.orm import Session
 from sqlalchemy import insert
+import logging
+import time
 
 from data_pre_processing.signal.entity.modality import Modality
 from data_pre_processing.common.data_source.db import PostgresDB
 from data_pre_processing.signal.table.base import Base
 
 
-# Writing to raw data tables is not allowed with this writer class..
-DATA_MODES = ["sync", "filtered"]
+BATCH_SIZE = 5000
 
 
 class DataWriter(ABC):
@@ -91,12 +92,24 @@ class PostgresDataWriter(DataWriter):
         :param table_class: ORM representation of the table where data must be persisted to.
         """
 
+        logger = logging.getLogger()
+
+        logger.info("Records to dict.")
         db_records = data.to_dict("records")
 
-        print(f"Saving {len(db_records)} records to the database")
+        # Saving in batches is a bit faster than calling execute once for all records.
+        start_time = time.time()
+        batches = [db_records[i:i + BATCH_SIZE] for i in range(0, len(db_records), BATCH_SIZE)]
+
+        logger.info(f"Saving {len(db_records)} records to the database in {len(batches)}.")
         with Session(self.db.create_engine()) as db_session:
-            db_session.execute(
-                insert(table_class),
-                db_records
-            )
+            for i, batch in enumerate(batches):
+                logger.info(f"Inserting batch {i + 1} out of {len(batches)}.")
+                db_session.execute(
+                    insert(table_class),
+                    batch
+                )
             db_session.commit()
+        self.exec_batch = False
+        logger.info(f"---------------> {time.time() - start_time} seconds")
+
