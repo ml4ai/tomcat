@@ -102,7 +102,7 @@ def process_directory_v1(group_session, image_table_class, image_dir):
     return image_records
 
 
-def process_directory_v2(group_session, image_table_class, image_dir, image_type, xdf_signal_name):
+def process_directory_v2(group_session, image_table_class, image_type, xdf_signal_name, image_dir):
     """Process directory assuming unified XDF files."""
 
     records = []
@@ -144,7 +144,7 @@ def process_directory_v2(group_session, image_table_class, image_dir, image_type
 
 
 def insert_raw_unlabeled_data(database_engine, override, image_table_class, image_type,
-                              xdf_signal_name):
+                              xdf_signal_name, image_dir):
     info(f"Inserting unlabeled data.")
     with cd("/tomcat/data/raw/LangLab/experiments/study_3_pilot/group"):
         directories_to_process = [
@@ -167,11 +167,12 @@ def insert_raw_unlabeled_data(database_engine, override, image_table_class, imag
 
                 info(f"Processing directory {group_session}")
                 if not is_directory_with_unified_xdf_files(group_session):
-                    image_records = process_directory_v1(group_session, image_table_class)
+                    image_records = process_directory_v1(group_session, image_table_class, image_dir)
                 else:
                     image_records = process_directory_v2(group_session, image_table_class,
                                                          image_type,
-                                                         xdf_signal_name)
+                                                         xdf_signal_name,
+                                                         image_dir)
 
                 info("Adding records to the database.")
                 database_session.add_all(image_records)

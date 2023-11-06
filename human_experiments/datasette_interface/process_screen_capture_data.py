@@ -32,7 +32,8 @@ def process_screen_capture_data(database_engine, override):
 
     info("Processing directories...")
 
-    insert_raw_unlabeled_data(database_engine, override, ScreenCapture, "screen capture", "Screen")
+    insert_raw_unlabeled_data(database_engine, override, ScreenCapture, "screen capture", "Screen",
+                              "screenshots")
     create_indices(database_engine, not override, ScreenCapture, "screen_capture")
     # Here we can pass any physio modality. This is used just to retrieve distinct rows of the data
     # validity table. We pass eeg but it could have been fnirs or gaze.
