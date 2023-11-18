@@ -28,7 +28,7 @@ We removed noise and smoothed the GSR signals using a low-pass filter with a 3 H
 
 \subsubsection{Synchronization of EEG, EKG, GSR, and fNIRS Signals}
 
-After the EEG, EKG, GSR, and fNIRS signals are pre-processed to remove noise, the signals are resampled to a common sampling rate using the FFT-based resampling method \texttt{mne.filter.resample} available in the Python MNE library \cite{GramfortEtAl2013a}. To synchronize the signals, we generate a time series matching the common sampling rate of the resampled signals, with the first timestamp rounded to the nearest second. Then, the signals are interpolated to this generated time series via linear interpolation. The result of the interpolation and the synchronization process for fNIRS is shown in \autoref{fig:fnirs_filtered} and for EEG is shown in \autoref{fig:eeg_filtered}.
+After the EEG, EKG, GSR, and fNIRS signals are pre-processed to remove noise, the signals are resampled to a common sampling rate using the FFT-based resampling method \texttt{mne.filter.resample} available in the Python MNE library \cite{GramfortEtAl2013a}. To synchronize the signals, we generate a time series matching the common sampling rate of the resampled signals, with the first timestamp rounded to the nearest second. Then, the signals are interpolated to this generated time series via linear interpolation.
 
 \subsection{Synchronizing Task Data with EEG and fNIRS Resampled Signals}
 
