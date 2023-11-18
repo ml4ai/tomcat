@@ -4,7 +4,7 @@
 
 In multimodal neuroimaging studies, synchronizing signals from multiple modalities is a crucial step to conducting comprehensive studies on all these modalities together. The discrepancy between EEG and fNIRS signals' time series is an issue that researchers encounter frequently due to the limitations of recording hardware or the necessity to remove invalid signals. Additionally, these two modalities have distinct recording rates, further complicating their alignment. To facilitate comprehensive evaluation of EEG and fNIRS signals, it is essential to synchronize these two signals.
 
-The synchronization process is a three-step approach involving the interpolation of EEG and fNIRS signals to ensure a regular interval, then noise artifacts removal, followed by resampling and synchronization of the interpolated signals at the desired sampling rate.
+The synchronization process is a two-step approach involving the noise artifacts removal from the signals, followed by resampling and synchronization of the interpolated signals at the desired sampling rate.
 
 \subsubsection{Removing Noise in EEG Signals with Notch Filter}
 
