@@ -20,20 +20,18 @@ Welcome to the ToMCAT dataset!
 The dataset currently is served via a [single SQLite database](/tomcat),
 but we may add additional ones in the future.
 
-Currently, there are tables for the participant information, group session,
-raw fNIRS data, the testbed messages, and the baseline tasks. More
-tables (EEG, EKG, GSR, eye tracking, vocalic features, demographic data,
-questionnaires) will be added in the near future.
-
 For users who are not familiar with SQL, we will provide some sample SQL
 queries to demonstrate how to use this database and the associated Datasette
 interface.
 
 For more advanced users, feel free to try different queries, use the
 programmatic APIs provided by Datasette, or simply [download the whole SQLite
-database](https://tomcat.ivilab.org/tomcat.db).
+database](https://tomcat.ivilab.org/tomcat.db). Note that queries that take
+too long to execute (i.e., > 10 seconds) will be aborted, in order to keep the
+site running smoothly. If you would like to perform such complex queries, we
+recommend downloading the database locally to perform them.
 
-The database schema diagram is available here: [Database
+The entity relationship diagram describing the database schema diagram is available here: [ERD
 diagram](/assets/db_diagram.png).
 
 Sign up for our [mailing list](/mailing-list) to get updates on the dataset!
