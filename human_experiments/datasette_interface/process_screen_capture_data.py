@@ -7,7 +7,7 @@ from logging import info
 from config import USER
 from entity.signal.screen_capture import ScreenCapture
 from process_image_data import insert_raw_unlabeled_data
-from process_raw_signals import create_indices, label_data
+from process_raw_signals import create_indices, label_data, remove_unlabeled_data
 
 logging.basicConfig(
     level=logging.INFO,
@@ -38,6 +38,7 @@ def process_screen_capture_data(database_engine, override):
     # Here we can pass any physio modality. This is used just to retrieve distinct rows of the data
     # validity table. We pass eeg but it could have been fnirs or gaze.
     label_data(database_engine, override, ScreenCapture, "eeg")
+    remove_unlabeled_data(database_engine, ScreenCapture)
 
 
 def recreate_screen_capture_tables(database_engine):

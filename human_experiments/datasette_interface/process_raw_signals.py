@@ -178,13 +178,15 @@ def create_indices(database_engine, check, signal_modality_class, modality_name)
                                       signal_modality_class.station_id)
     idx_group_session_station.create(bind=database_engine, checkfirst=check)
 
-    idx_timestamp_unix = Index(f'idx_timestamp_unix_{suffix}', signal_modality_class.timestamp_unix)
+    idx_timestamp_unix = Index(f'idx_timestamp_unix_{suffix}',
+                               signal_modality_class.timestamp_unix)
     idx_timestamp_unix.create(bind=database_engine, checkfirst=check)
 
     idx_participant = Index(f'idx_participant_{suffix}', signal_modality_class.participant_id)
     idx_participant.create(bind=database_engine, checkfirst=check)
 
-    idx_group_session = Index(f'idx_group_session_{suffix}', signal_modality_class.group_session_id)
+    idx_group_session = Index(f'idx_group_session_{suffix}',
+                              signal_modality_class.group_session_id)
     idx_group_session.create(bind=database_engine, checkfirst=check)
 
     idx_task = Index(f'idx_task_{suffix}', signal_modality_class.group_session_id)
@@ -258,4 +260,19 @@ def remove_invalid_data(database_engine, signal_modality_class, modality_name):
             delete_invalid_signals(signal_modality_class, group_session, station, task,
                                    database_session)
 
+        database_session.commit()
+
+
+def remove_unlabeled_data(database_engine, signal_modality_class):
+    """
+    Remove unlabeled data from the database. That is, data without a task label.
+    """
+    info("Removing unlabeled data")
+
+    with Session(database_engine) as database_session:
+        delete_invalid_signals(signal_modality_class,
+                               group_session,
+                               station,
+                               None,  # no task
+                               database_session)
         database_session.commit()
