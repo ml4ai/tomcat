@@ -147,6 +147,7 @@ def extract_vocalic_features_callback(experiment_dir: str, has_unified_xdf: bool
                     TARGET_DATABASE_ENGINE,
                     index=False,
                     if_exists="append",
+                    method="multi",
                 )
                 os.remove(fixed_audio_filepath)
                 os.remove(vocalics_filepath)
