@@ -11,3 +11,4 @@
 inspect-data.json
 
 cache/
+.tmp/
