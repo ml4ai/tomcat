@@ -46,7 +46,7 @@ class PCMAudio:
             output_file.seek(40)
             output_file.write(subchunk2size_in_bytes)
 
-    def extract_vocalic_features(self, out_filepath: str):
+    def extract_vocalic_features(self, out_filepath: str) -> bool:
         """
         We use shell execution to generate the vocalics. There is a Python wrapper but I could not
         make it produce a csv file with the same columns so I opted for the CLI solution. Also,
@@ -72,6 +72,8 @@ class PCMAudio:
 
         if not success:
             error(f"Error extracting vocalic features from {self.filepath}.")
+
+        return success
 
     def transcribe_annotated_utterances(
         self, transcriber: Transcriber, annotation: PraatAnnotation

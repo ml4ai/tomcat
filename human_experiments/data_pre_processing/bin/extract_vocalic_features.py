@@ -7,6 +7,7 @@ configuration files defined under data_pre_processing/audio/opensmile.
 """
 import logging
 import os.path
+import sys
 
 import pandas as pd
 from sqlalchemy import create_engine, text
@@ -103,7 +104,8 @@ def extract_vocalic_features_callback(experiment_dir: str, has_unified_xdf: bool
             vocalics_filepath = f"{TMP_DIR}/{audio_filename_no_extension}.csv"
             if not os.path.exists(vocalics_filepath):
                 # Avoid generating twice if the process broke before but vocalics were generated.
-                audio.extract_vocalic_features(vocalics_filepath)
+                if not audio.extract_vocalic_features(vocalics_filepath):
+                    continue
 
             # Parses the saved .csv file with the vocalics to assemble persistent objects to be s
             # saved to the database.
@@ -169,5 +171,6 @@ def extract_vocalic_features_callback(experiment_dir: str, has_unified_xdf: bool
                 pass
 
 
+logging.basicConfig(level=logging.INFO)
 crawler = ExperimentsCrawler(callback=extract_vocalic_features_callback)
 crawler.crawl()
