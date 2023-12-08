@@ -166,7 +166,7 @@ def extract_vocalic_features_callback(experiment_dir: str, has_unified_xdf: bool
                             )
                         )
                         con.commit()
-            except Exception as ex:
+            except Exception:
                 # Do nothing. It will complain when we try to set the primary key again anyway.
                 pass
 

@@ -25,7 +25,7 @@ class PCMAudio:
 
         file_size = os.path.getsize(self.filepath)
         chunksize = (
-            file_size - 8
+                file_size - 8
         )  # file size in bytes - 8 bytes of header (ChunkID and ChunkSize)
         chunksize = chunksize.to_bytes(4, "little")
 
@@ -33,7 +33,7 @@ class PCMAudio:
         subchunk2size_in_bytes = subchunk2size.to_bytes(4, "little")
 
         with open(self.filepath, "rb") as input_file, open(
-            out_filepath, "wb"
+                out_filepath, "wb"
         ) as output_file:
             input_data = input_file.read()
             output_file.write(input_data)
@@ -57,17 +57,17 @@ class PCMAudio:
             f"{self.filepath} -D {out_filepath}"
         )
 
-        if len(logging.getLoggerClass().root.handlers) > 0:
+        try:
             # Log is written to a file
             logs = logging.getLoggerClass().root.handlers[0].baseFilename
             with open(logs, "a") as log_file:
                 success = (
-                    subprocess.call(
-                        command, shell=True, stdout=log_file, stderr=subprocess.STDOUT
-                    )
-                    == 0
+                        subprocess.call(
+                            command, shell=True, stdout=log_file, stderr=subprocess.STDOUT
+                        )
+                        == 0
                 )
-        else:
+        except Exception:
             success = subprocess.call(command, shell=True) == 0
 
         if not success:
@@ -76,7 +76,7 @@ class PCMAudio:
         return success
 
     def transcribe_annotated_utterances(
-        self, transcriber: Transcriber, annotation: PraatAnnotation
+            self, transcriber: Transcriber, annotation: PraatAnnotation
     ):
         annotation.reset_transcript_tier()
 
