@@ -142,6 +142,7 @@ def extract_vocalic_features_callback(experiment_dir: str, has_unified_xdf: bool
             df["timestamp_unix"] = df["timestamp_unix"].astype(str)
 
             try:
+                info("Saving to database")
                 df.to_sql(
                     "audio_vocalics",
                     TARGET_DATABASE_ENGINE,
@@ -150,6 +151,8 @@ def extract_vocalic_features_callback(experiment_dir: str, has_unified_xdf: bool
                     method="multi",
                     chunksize=10000
                 )
+
+                info("Removing temporary files")
                 os.remove(fixed_audio_filepath)
                 os.remove(vocalics_filepath)
             except Exception as ex:
