@@ -19,12 +19,13 @@ from utils import (
     is_directory_with_unified_xdf_files,
     is_directory_with_correct_image_creation_time
 )
+from config import IMAGE_URL_ROOT_DIR
 
 
-def process_directory_v1(group_session, image_table_class):
+def process_directory_v1(group_session, image_table_class, image_dir):
     image_records = []
     for station in ("lion", "tiger", "leopard"):
-        with cd(f"{group_session}/{station}/screenshots/"):
+        with cd(f"{group_session}/{station}/{image_dir}/"):
             # The images were renamed with their creation date, so the timestamp of each image
             # can be retrieved directly from their filename. # Images before 2022-11-07 do not
             # have their creation date saved. In this case we use their last modified date as
@@ -81,6 +82,7 @@ def process_directory_v1(group_session, image_table_class):
                     timestamp_unix = convert_iso8601_timestamp_to_unix(timestamp_iso8601)
 
                 # Task and participant will be filled later in the labeling part.
+                url = f"{IMAGE_URL_ROOT_DIR}/{group_session}/{station}/{image_dir}/{filename}"
                 image_record = image_table_class(
                     group_session_id=group_session,
                     id=unique_id,
@@ -90,6 +92,7 @@ def process_directory_v1(group_session, image_table_class):
                     timestamp_unix=timestamp_unix,
                     timestamp_iso8601=timestamp_iso8601,
                     filename=filename,
+                    url=url,
                     timestamp_origin=timestamp_origin
                 )
                 image_records.append(image_record)
@@ -99,13 +102,13 @@ def process_directory_v1(group_session, image_table_class):
     return image_records
 
 
-def process_directory_v2(group_session, image_table_class, image_type, xdf_signal_name):
+def process_directory_v2(group_session, image_table_class, image_type, xdf_signal_name, image_dir):
     """Process directory assuming unified XDF files."""
 
     records = []
     with cd(f"{group_session}/lsl"):
         max_ids = {}
-        for xdf_file in ("block_1.xdf", "block_2.xdf"):
+        for block_num, xdf_file in enumerate(("block_1.xdf", "block_2.xdf")):
             try:
                 streams, header = pyxdf.load_xdf(
                     xdf_file, select_streams=[{"name": xdf_signal_name}]
@@ -126,9 +129,14 @@ def process_directory_v2(group_session, image_table_class, image_type, xdf_signa
                 station = stream["info"]["hostname"][0]
                 next_id = max_ids.get(station, - 1) + 1
                 station = stream["info"]["hostname"][0]
-                tmp = [image_table_class(**signal_dict, timestamp_origin="lsl") for signal_dict in
-                       get_signals(stream, group_session, station, next_id, lambda x: ["filename"],
-                                   slice_series_fn=lambda x: x)]
+                signals = get_signals(stream, group_session, station, next_id,
+                                      lambda x: ["filename"],
+                                      slice_series_fn=lambda x: x)
+                tmp = []
+                for signal_dict in signals:
+                    url = f"{IMAGE_URL_ROOT_DIR}/{group_session}/{station}/{image_dir}/block_{block_num + 1}/{signal_dict['filename']}"
+                    tmp.append(image_table_class(**signal_dict, timestamp_origin="lsl", url=url))
+
                 records.extend(tmp)
                 max_ids[station] = tmp[-1].id
 
@@ -136,7 +144,7 @@ def process_directory_v2(group_session, image_table_class, image_type, xdf_signa
 
 
 def insert_raw_unlabeled_data(database_engine, override, image_table_class, image_type,
-                              xdf_signal_name):
+                              xdf_signal_name, image_dir):
     info(f"Inserting unlabeled data.")
     with cd("/tomcat/data/raw/LangLab/experiments/study_3_pilot/group"):
         directories_to_process = [
@@ -159,11 +167,13 @@ def insert_raw_unlabeled_data(database_engine, override, image_table_class, imag
 
                 info(f"Processing directory {group_session}")
                 if not is_directory_with_unified_xdf_files(group_session):
-                    image_records = process_directory_v1(group_session, image_table_class)
+                    image_records = process_directory_v1(group_session, image_table_class,
+                                                         image_dir)
                 else:
                     image_records = process_directory_v2(group_session, image_table_class,
                                                          image_type,
-                                                         xdf_signal_name)
+                                                         xdf_signal_name,
+                                                         image_dir)
 
                 info("Adding records to the database.")
                 database_session.add_all(image_records)
