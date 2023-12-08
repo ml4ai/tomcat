@@ -1,8 +1,7 @@
 import os
 
 DEFAULT_EXPERIMENTS_ROOT_DIR = os.getenv(
-    "EXP_ROOT_DIR",
-    "/tomcat/data/raw/LangLab/experiments/study_3_pilot/group"
+    "EXP_ROOT_DIR", "/tomcat/data/raw/LangLab/experiments/study_3_pilot/group"
 )
 OPENSMILE_CONFIG_DIR = os.getenv("OPENSMILE_DIR", "config/opensmile")
 

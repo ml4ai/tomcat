@@ -1,22 +1,19 @@
-from copy import deepcopy
-from typing import Any
-
-from audio.entity.praat_annotation import PraatAnnotation
-from tqdm import tqdm
 import json
 from logging import error
+from typing import Any
 
 import requests
+from tqdm import tqdm
+
+from audio.entity.praat_annotation import PraatAnnotation
 
 
 class SentenceLabeler:
-
     def annotate_labels(self, transcripts_annotation: PraatAnnotation) -> Any:
         raise NotImplementedError
 
 
 class ToMCATDialogAgent(SentenceLabeler):
-
     def __init__(self, host: str = "localhost", port: int = 8080):
         self._api_url = f"http://{host}:{port}"
         response = requests.post(self._api_url, data={"message": "status"})
@@ -41,6 +38,8 @@ class ToMCATDialogAgent(SentenceLabeler):
             for res in results:
                 labels.extend(res["labels"])
         else:
-            error(f"Server Error! Request status code {response.status_code}. Sentence: {sentence}.")
+            error(
+                f"Server Error! Request status code {response.status_code}. Sentence: {sentence}."
+            )
 
         return labels

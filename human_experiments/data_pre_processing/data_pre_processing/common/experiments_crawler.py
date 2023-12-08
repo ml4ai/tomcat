@@ -1,9 +1,10 @@
+import logging
 import os
+from typing import Callable
+
+from tqdm import tqdm
 
 from data_pre_processing.common.constants import DEFAULT_EXPERIMENTS_ROOT_DIR
-import logging
-from typing import Callable
-from tqdm import tqdm
 
 info = logging.getLogger().info
 
@@ -14,9 +15,11 @@ class ExperimentsCrawler:
     directory and invokes callbacks for treatment of the data in the experiment.
     """
 
-    def __init__(self,
-                 callback: Callable,
-                 experiments_root_dir: str = DEFAULT_EXPERIMENTS_ROOT_DIR):
+    def __init__(
+        self,
+        callback: Callable,
+        experiments_root_dir: str = DEFAULT_EXPERIMENTS_ROOT_DIR,
+    ):
         """
         Creates a crawler.
 
@@ -57,7 +60,9 @@ class ExperimentsCrawler:
             if not ExperimentsCrawler._should_ignore_experiment(experiment_id):
                 self.callback(
                     experiment_dir,
-                    ExperimentsCrawler._has_experiment_have_unified_xdf_files(experiment_id)
+                    ExperimentsCrawler._has_experiment_have_unified_xdf_files(
+                        experiment_id
+                    ),
                 )
 
     @staticmethod
