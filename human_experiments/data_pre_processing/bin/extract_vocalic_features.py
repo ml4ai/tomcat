@@ -140,7 +140,7 @@ def extract_vocalic_features_callback(experiment_dir: str, has_unified_xdf: bool
             df["timestamp_unix"] = df["timestamp_unix"].astype(str)
 
             try:
-                df.iloc[:100, :].to_sql(
+                df.to_sql(
                     "audio_vocalics",
                     TARGET_DATABASE_ENGINE,
                     index=False,
