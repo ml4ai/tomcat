@@ -62,9 +62,9 @@ def extract_vocalic_features_callback(experiment_dir: str, has_unified_xdf: bool
                 continue
 
             minecraft_mission_id = audio_filename[
-                audio_filename.find("-") + 1 : audio_filename.find("_Team")
-            ]
-            group_session = experiment_dir[experiment_dir.rfind("/") + 1 :]
+                                   audio_filename.find("-") + 1: audio_filename.find("_Team")
+                                   ]
+            group_session = experiment_dir[experiment_dir.rfind("/") + 1:]
 
             minecraft_query = f"""
                 SELECT
@@ -102,10 +102,8 @@ def extract_vocalic_features_callback(experiment_dir: str, has_unified_xdf: bool
             # vocalics from their audios without having to write a python script for it.
             audio_filename_no_extension = audio_filename[: audio_filename.rfind(".")]
             vocalics_filepath = f"{TMP_DIR}/{audio_filename_no_extension}.csv"
-            if not os.path.exists(vocalics_filepath):
-                # Avoid generating twice if the process broke before but vocalics were generated.
-                if not audio.extract_vocalic_features(vocalics_filepath):
-                    continue
+            if not audio.extract_vocalic_features(vocalics_filepath):
+                continue
 
             # Parses the saved .csv file with the vocalics to assemble persistent objects to be s
             # saved to the database.
@@ -118,7 +116,7 @@ def extract_vocalic_features_callback(experiment_dir: str, has_unified_xdf: bool
             df = df[
                 ["group_session", "station", "minecraft_mission_id"]
                 + list(df.columns[:-3])
-            ]
+                ]
 
             first_timestamp_unix = float(
                 minecraft_df.iloc[0]["trial_start_timestamp_unix"]
@@ -135,33 +133,21 @@ def extract_vocalic_features_callback(experiment_dir: str, has_unified_xdf: bool
                 list(df.columns[:4])
                 + ["timestamp_unix", "timestamp_iso8601"]
                 + list(df.columns[4:-2])
-            ]
+                ]
             df.columns = [c.lower() for c in df.columns]
 
             # To conform with the other tables, save this as a string.
             df["timestamp_unix"] = df["timestamp_unix"].astype(str)
 
+            # Table creation and PK attribution.
             try:
-                info("Saving to database")
-                df.to_sql(
-                    "audio_vocalics",
-                    TARGET_DATABASE_ENGINE,
-                    index=False,
-                    if_exists="append",
-                    method="multi",
-                    chunksize=10000
-                )
+                info("Creating audio_vocalics table")
+                df.head(0).to_sql('audio_vocalics',
+                                  TARGET_DATABASE_ENGINE,
+                                  if_exists='fail',
+                                  index=False)
 
-                info("Removing temporary files")
-                os.remove(fixed_audio_filepath)
-                os.remove(vocalics_filepath)
-            except Exception as ex:
-                error(f"Could not save vocalics to the database. {ex}")
-
-            try:
                 if not DEBUG:
-                    # We need to set the primary key manually because pandas to_sql has no option
-                    # to do so.
                     with TARGET_DATABASE_ENGINE.connect() as con:
                         con.execute(
                             text(
@@ -172,8 +158,19 @@ def extract_vocalic_features_callback(experiment_dir: str, has_unified_xdf: bool
                         )
                         con.commit()
             except Exception:
-                # Do nothing. It will complain when we try to set the primary key again anyway.
-                pass
+                info(f"Table already exists.")
+
+            # Save to the database using COPY because to_sql is too slow in this case with about
+            # 100K rows and 200 columns.
+            info("Saving to the database")
+            with TARGET_DATABASE_ENGINE.connect() as con:
+                df.to_csv(vocalics_filepath, index=False)
+                con.execute(
+                    text(f"COPY audio_vocalics FROM '{vocalics_filepath}' WITH CSV HEADER"))
+
+            info("Removing temporary files")
+            os.remove(fixed_audio_filepath)
+            os.remove(vocalics_filepath)
 
 
 logging.basicConfig(level=logging.INFO)
