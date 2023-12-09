@@ -163,6 +163,7 @@ def extract_vocalic_features_callback(experiment_dir: str, has_unified_xdf: bool
                 df.to_csv(vocalics_filepath, index=False)
                 con.execute(
                     text(f"COPY audio_vocalics FROM '{vocalics_filepath}' WITH CSV HEADER"))
+                con.commit()
 
             info("Removing temporary files")
             os.remove(fixed_audio_filepath)
