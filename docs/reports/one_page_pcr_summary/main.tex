@@ -1,0 +1,192 @@
+\documentclass[11pt,article,oneside]{memoir}
+
+\usepackage[dvipsnames]{xcolor}
+\usepackage[scale=0.85]{cascadia-code}
+\usepackage[
+    colorlinks,
+    linkcolor=Blue,
+    citecolor=Blue,
+    urlcolor=Blue
+]{hyperref}       % hyperlinks
+\def\sectionautorefname{\S}
+\def\subsectionautorefname{\S}
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage[tracking]{microtype}      % microtypography
+\usepackage[
+    natbib,
+    style=numeric-comp,
+    sorting=none,
+    doi=false,
+    isbn=false,
+    url=true,
+    eprint=false,
+    maxbibnames=10,
+    hyperref
+]{biblatex}
+\addbibresource{bibliography.bib}
+%\renewcommand\bibfont{\small}
+%\newbibmacro{string+doiurlisbn}[1]{%
+  %\iffieldundef{doi}{%
+    %\iffieldundef{url}{%
+      %\iffieldundef{isbn}{%
+        %\iffieldundef{issn}{%
+          %#1%
+        %}{%
+          %\href{http://books.google.com/books?vid=ISSN\thefield{issn}}{#1}%
+        %}%
+      %}{%
+        %\href{http://books.google.com/books?vid=ISBN\thefield{isbn}}{#1}%
+      %}%
+    %}{%
+      %\href{\thefield{url}}{#1}%
+    %}%
+  %}{%
+    %\href{http://dx.doi.org/\thefield{doi}}{#1}%
+  %}%
+%}
+
+%\DeclareFieldFormat[article,book,incollection,inproceedings,data]{title}%
+    %{\usebibmacro{string+doiurlisbn}{#1}}
+
+%\DeclareFieldFormat*{url}{}
+%\DeclareFieldFormat[online]{url}{\mkbibacro{URL}\addcolon\space\url{#1}}
+
+%\DeclareFieldFormat[misc]{title}{\usebibmacro{string+doiurlisbn}{\mkbibemph{#1}}}
+
+\usepackage{fontspec}
+% ==========================================================================
+% Fonts
+% ==========================================================================
+
+\setmainfont[%
+  Ligatures = {Common, TeX},
+  %ItalicFeatures={Style=Swash},
+  SmallCapsFeatures={Letters=SmallCaps,LetterSpace=6},
+  Numbers = {OldStyle, Proportional},
+]{Arno Pro}
+\setsansfont[%
+    Numbers = {OldStyle, Proportional},
+]{Myriad Pro}
+\setmonofont{Menlo}[Scale=MatchLowercase]
+
+
+% =============================================================================
+% Memoir package - layout and styling
+% =============================================================================
+% Here we set typeblock widths for the main body and the footnotes
+\setlxvchars[\normalfont] % about 66 characters per column
+\setxlvchars[\normalfont\footnotesize] % about 45 characters per column
+
+% Arno Pro 11pt
+% lxvchars: 3.9049805556 inches
+% xlvchars: 2.32066152778 inches
+\setlrmarginsandblock{1in}{1in}{}
+%\setlrmarginsandblock{1in}{3.6in}{}
+\setulmarginsandblock{1in}{1in}{*}
+
+% Arno Pro 12pt
+% lxvchars: 4.2349340277804 inches
+% xlvchars: 2.54297319445 inches
+%\setlrmarginsandblock{1in}{3.3in}{}
+%\setulmarginsandblock{1in}{1in}{*}
+
+
+\headstyles{bringhurst}
+
+\sidebarmargin{right}
+\setsidebars{*}{2in}{*}{*}{*}{*}
+\renewcommand*{\sidebarform}{\raggedright}
+
+% Remove preceding chapter number for section headings.
+\counterwithout{section}{chapter}
+
+% Set properties of margin notes, sidecaptioned floats, and footnotes in the
+% margin.
+
+% Set sidepar margin
+\sideparmargin{outer}
+
+% For Arno Pro 11 pt, change 2.1in to 2.4in
+% Set width of footnotes in margin
+\setmarginnotes{0.2in}{2.4in}{2\onelineskip}
+
+% Set width of \sidefootnote
+\setsidefeet{0.2in}{2.4in}{*}{*}{\tiny}{*}
+
+% Set width of sidecaptions
+\setsidecaps{0.2in}{2.4in}
+
+\footnotesinmargin
+\sidecapmargin{outer}
+\renewcommand*{\sidecapstyle}{\normalfont\footnotesize}
+\setsidecappos{t}
+
+% Set footnote style
+\renewcommand{\foottextfont}{\footnotesize}
+
+
+% Make marginfigures centered by default
+\setfloatadjustment{marginfigure}{\centering}
+
+% Number subsections
+\setsecnumdepth{subsection}
+
+% Add subsections to the table of contents
+\settocdepth{subsection}
+
+% Set caption style
+\captionstyle[\centering]{\footnotesize}
+\captionnamefont{\color{Maroon}\footnotesize}
+
+% Shading
+\definecolor{shadecolor}{gray}{0.95}
+
+\tightlists
+
+\checkandfixthelayout
+
+\begin{document}
+\chapter*{ToMCAT Summary for ASIST PCR}
+
+\section{Main successes}
+
+\paragraph{Real-time spoken dialog analysis system}
+\section{Lessons learned}
+\section{Products}
+
+\begin{itemize}
+    \item The ToMCAT Dataset~\citep{pyarelal2023the}.
+    \item Probabilistic Modeling of Human Teams to Infer False
+        Beliefs~\citep{Soares.ea:2021}.
+    \item Using Features at Multiple Temporal and Spatial Resolutions to
+        Predict Human Behavior in Real Time~\citep{Zhang.ea:2022c}.
+    \item Modular Procedural Generation for Voxel Maps~\citep{Pyarelal.ea:2022}
+    \item Rule Based Event Extraction for Artificial Social
+        Intelligence~\citep{nitschke-etal-2022-rule}
+    \item Multi-Timescale Modeling of Human Behavior~\citep{Basavaraj.ea:2022}
+    \item Deep Reinforcement Learning with Vector Quantized
+        Encoding~\citep{Zhang.ea:2022a}
+    \item Generalized Skill Discovery in Video Games Based on Semantic
+        Clustering~\citep{Zhang.ea:2022b}
+    \item MultiCAT: Multimodal Communication Annotations for
+        Teams~\citep{Culnan.ea:2023}.
+    \item Me, myself, and ire: Effects of automatic transcription quality on
+        emotion, sarcasm, and personality
+        detection~\citep{culnan-etal-2021-ire}.
+    \item Hierarchical Fusion for Online Multimodal Dialog Act
+        Classification~\citep{miah2023hierarchical}
+    \item Who is Speaking? Speaker-Aware Multiparty Dialogue Act
+        Classification~\citep{qamar2023who}
+    \item Team Plan Recognition: A Review of the State of the Art~\citep{Rieffer_Champlin_2023}
+    \item Preregistrations and results
+        registrations~\citep{study_1_preregistration_and_results,
+        study_2_preregistration, study_2_results, study_3_preregistration,
+    study_3_results}.
+
+\end{itemize}
+
+
+\newpage
+\printbibliography
+\end{document}
