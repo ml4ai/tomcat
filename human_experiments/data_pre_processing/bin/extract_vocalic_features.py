@@ -110,14 +110,12 @@ def extract_vocalic_features_callback(experiment_dir: str, has_unified_xdf: bool
             df = pd.read_csv(vocalics_filepath, sep=";")
             df = df.drop("name", axis=1)
             df = df.rename(columns={"frameTime": "frame_time"})
-            df = df.reset_index().rename(columns={"index": "id"})
 
             vocalics_columns = list(df.columns)
 
             df["group_session"] = group_session
             df["station"] = station
             df["minecraft_mission_id"] = minecraft_mission_id
-            # df = df[["group_session", "station", "minecraft_mission_id"]]
 
             first_timestamp_unix = float(
                 minecraft_df.iloc[0]["trial_start_timestamp_unix"]
@@ -133,6 +131,7 @@ def extract_vocalic_features_callback(experiment_dir: str, has_unified_xdf: bool
 
             # Place group_session, station, minecraft_mission_id, id, timestamp_unix,
             # timestamp_iso8601 in the beginning and transform vocalic features to lower case.
+            df = df.reset_index().rename(columns={"index": "id"})
             df = df[["group_session", "station", "minecraft_mission_id", "id", "timestamp_unix",
                      "timestamp_iso8601"] + vocalics_columns]
 
@@ -146,6 +145,7 @@ def extract_vocalic_features_callback(experiment_dir: str, has_unified_xdf: bool
 
                 if not DEBUG:
                     with TARGET_DATABASE_ENGINE.connect() as con:
+                        # Adding id as part of the PK because the frame_time can repeat sometimes.
                         con.execute(
                             text(
                                 "ALTER TABLE audio_vocalics ADD PRIMARY KEY (group_session, "
@@ -153,8 +153,8 @@ def extract_vocalic_features_callback(experiment_dir: str, has_unified_xdf: bool
                             )
                         )
                         con.commit()
-            except Exception:
-                info(f"Table already exists.")
+            except Exception as ex:
+                info(f"Table already exists. ({ex})")
 
             # Save to the database using COPY because to_sql is too slow in this case with about
             # 100K rows and 200 columns.
