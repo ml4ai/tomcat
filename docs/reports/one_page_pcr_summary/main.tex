@@ -151,40 +151,81 @@
 
 \section{Main successes}
 
-\paragraph{Real-time spoken dialog analysis system}
-\section{Lessons learned}
+\paragraph{Real-time multi-party spoken dialog analysis system}
+
+We developed a system for real-time analysis (real-time transcription, event
+extraction, and labeling of sentiment/emotion) of multi-party spoken dialog in
+remote experiments. This system is included in the publicly-released ASIST
+Study 3 testbed. Our rule-based event extraction system outperforms a zero-shot
+neural classifier baseline, even in an oracle setting where the neural
+classifier knows how many events should be extracted from each
+utterance~\citep{nitschke-etal-2022-rule}. The system is designed to be
+extended to perform other speech analysis tasks, such as entrainment detection
+and dialog act classification---we have published novel approaches for the
+latter that use multimodal data~\citep{miah-etal-2023-hierarchical} and
+speaker-enriched utterance representations~\citep{qamar-etal-2023-speaking}.
+
+For the ASIST Study 4 testbed, we added a rule-based spellchecking system to
+meet the unique requirements of analyzing natural language in Study 4
+(reproducibility, real-time output, high precision, and the ability to deal
+with domain-specific terms and new types of errors arising from
+the informal nature of text chat) that were not met by existing systems.
+
+\paragraph{Rich, multimodal dataset for human-machine teaming} We used the
+ASIST Study 3 testbed to collect data from 40 teams of 3 humans each, while
+instrumenting participants with a large array of physiological sensors.
+Modalities include two kinds of brain scan data— functional near-infrared
+spectroscopy (fNIRS) and electroencephalography (EEG), as well as skin
+conductance, heart rate, eye tracking, face images, spoken dialog audio data
+with automatic speech recognition (ASR) transcriptions, screenshots, gameplay
+data, demographic data, and self-report questionnaires. In addition to the
+Study 3 USAR dataset also contains data from a set of novel behavioral baseline
+tasks.
+
+The dataset is publicly available~\citep{pyarelal2023the}. Notably, this is
+the \emph{largest} publicly available fNIRS dataset to date, approximately
+\textbf{13.5 times} the size of the next-largest one.
+
+%\section{Lessons learned}
+
+%Besides the inevitable lesson on how everything takes a lot longer than you
+%planned, we learned j
+
 \section{Products}
 
-\begin{itemize}
-    \item The ToMCAT Dataset~\citep{pyarelal2023the}.
-    \item Probabilistic Modeling of Human Teams to Infer False
-        Beliefs~\citep{Soares.ea:2021}.
-    \item Using Features at Multiple Temporal and Spatial Resolutions to
-        Predict Human Behavior in Real Time~\citep{Zhang.ea:2022c}.
-    \item Modular Procedural Generation for Voxel Maps~\citep{Pyarelal.ea:2022}
-    \item Rule Based Event Extraction for Artificial Social
-        Intelligence~\citep{nitschke-etal-2022-rule}
-    \item Multi-Timescale Modeling of Human Behavior~\citep{Basavaraj.ea:2022}
-    \item Deep Reinforcement Learning with Vector Quantized
-        Encoding~\citep{Zhang.ea:2022a}
-    \item Generalized Skill Discovery in Video Games Based on Semantic
-        Clustering~\citep{Zhang.ea:2022b}
-    \item MultiCAT: Multimodal Communication Annotations for
-        Teams~\citep{Culnan.ea:2023}.
-    \item Me, myself, and ire: Effects of automatic transcription quality on
-        emotion, sarcasm, and personality
-        detection~\citep{culnan-etal-2021-ire}.
-    \item Hierarchical Fusion for Online Multimodal Dialog Act
-        Classification~\citep{miah2023hierarchical}
-    \item Who is Speaking? Speaker-Aware Multiparty Dialogue Act
-        Classification~\citep{qamar2023who}
-    \item Team Plan Recognition: A Review of the State of the Art~\citep{Rieffer_Champlin_2023}
-    \item Preregistrations and results
-        registrations~\citep{study_1_preregistration_and_results,
-        study_2_preregistration, study_2_results, study_3_preregistration,
-    study_3_results}.
+\paragraph{Publications and Datasets} We have published papers at competitive
+venues on our public physio dataset~\citep{pyarelal2023the} and dialog act
+classification approaches~\citep{qamar-etal-2023-speaking,
+miah-etal-2023-hierarchical}.  Additionally, we have published book chapters on
+our procedural generation library for voxel maps~\citep{Pyarelal.ea:2022} and
+using features at multiple spatial and temporal resolutions to predict human
+behavior in real-time~\citep{Zhang.ea:2022c}. We have also disseminated some of
+our work through workshops and non-CS/ML/AI conferences---namely, our work on
+our ASIST Study 3 event extraction system~\citep{nitschke-etal-2022-rule},
+probabilistic modeling of human teams to infer false
+beliefs~\citep{Soares.ea:2021}, studying the effect of automated transcription
+on emotion, sarcasm, and personality detection from speech data, and our review
+on team plan recognition~\citep{Rieffer_Champlin_2023}.  We have published
+preprints that explore reinforcement learning with vector quantized
+encoding~\citep{Zhang.ea:2022a} and multi-timescale modeling of human
+behavior~\citep{Basavaraj.ea:2022}. Finally, we also have another multimodal
+dialog dataset~\citep{multicat} based on annotating ASIST Study 3 data in
+preparation that will be submitted for publication in early 2024.
 
-\end{itemize}
+\paragraph{Registrations} We published public preregistrations and results
+registrations that detailed our approaches and results ASIST Studes
+1--3~\citep{study_1_preregistration_and_results, study_2_preregistration,
+    study_2_results, study_3_preregistration, study_3_results}.
+
+\paragraph{Software} Besides the main ToMCAT repository~\citep{tomcat_repo}
+that contains the code for our single-player `zombie attack` missions,
+procedural generation library and physio data collection, analysis, and
+dissemination, we also have public repositories that contain the code for our
+ASI~\citep{tomcat_asi}, plan recognition approaches~\citep{tomcat_planrec},
+event extraction~\citep{tomcat-text}, and speech
+analysis~\citep{tomcat_speech}. Additionally, our updated event extractor and
+spellchecker for Study 4 will become public when the Study 4 testbed becomes
+public.
 
 
 \newpage
