@@ -1,20 +1,21 @@
-from textgrids import TextGrid, Tier
-
-from typing import Tuple
-from copy import deepcopy
 import os
+from copy import deepcopy
+from typing import List, Tuple
 
-from typing import List
+from textgrids import TextGrid, Tier
 
 
 class PraatAnnotation:
-
     def __init__(self, filepath: str):
         self._grid = TextGrid(filepath)
 
     @property
     def sound_intervals(self) -> Tuple[float, float]:
-        tier_name = "standardized_silences" if "standardized_silences" in self._grid else "silences"
+        tier_name = (
+            "standardized_silences"
+            if "standardized_silences" in self._grid
+            else "silences"
+        )
         for index, sound_period in enumerate(self._grid[tier_name]):
             if sound_period.text == "s":
                 yield index, sound_period.xmin, sound_period.xmax
@@ -26,7 +27,11 @@ class PraatAnnotation:
                 yield index, sound_period.text
 
     def reset_transcript_tier(self):
-        tier_name = "standardized_silences" if "standardized_silences" in self._grid else "silences"
+        tier_name = (
+            "standardized_silences"
+            if "standardized_silences" in self._grid
+            else "silences"
+        )
         self._grid["transcripts"] = deepcopy(self._grid[tier_name])
         for i in range(len(self._grid["transcripts"])):
             self._grid["transcripts"][i].text = ""
@@ -40,7 +45,9 @@ class PraatAnnotation:
         self._grid["transcripts"][index].text = text
 
     def set_labels(self, index: int, labels: List[str]):
-        self._grid["dialog_labels"][index].text = ",".join(map(lambda x: x.strip(), labels))
+        self._grid["dialog_labels"][index].text = ",".join(
+            map(lambda x: x.strip(), labels)
+        )
 
     def save(self, out_filepath: str):
         filename, file_extension = os.path.splitext(out_filepath)
@@ -48,7 +55,9 @@ class PraatAnnotation:
 
     def standardize_silences(self, silence_threshold: float):
         merged_silences = self._merge_silences(ref_tier=self._grid["silences"])
-        merged_sounds = self._merge_sounds(ref_tier=merged_silences, silence_threshold=silence_threshold)
+        merged_sounds = self._merge_sounds(
+            ref_tier=merged_silences, silence_threshold=silence_threshold
+        )
         self._grid["standardized_silences"] = merged_sounds
 
     @staticmethod
@@ -97,7 +106,10 @@ class PraatAnnotation:
                     intervals_to_merge.append(tier[j])
                     j += 1
 
-                if j == num_intervals or tier[j].xmin - interval.xmax > silence_threshold:
+                if (
+                    j == num_intervals
+                    or tier[j].xmin - interval.xmax > silence_threshold
+                ):
                     # No merge necessary
                     merged_sounds.extend(intervals_to_merge)
                 else:

@@ -1,6 +1,4 @@
 import os
-import sys
-import logging
 
 USER = os.getenv("USER")
 # os.makedirs(f"/space/{USER}/tomcat", exist_ok=True)

@@ -37,7 +37,9 @@ def duration_format(duration: float):
 
 def save_summary(experiments_dir: str, out_dir: str):
     with cd(experiments_dir):
-        directories_to_process = [directory for directory in os.listdir(".") if directory[:4] == "exp_"]
+        directories_to_process = [
+            directory for directory in os.listdir(".") if directory[:4] == "exp_"
+        ]
 
         entries = []
         for group_session in tqdm(sorted(directories_to_process), unit="directories"):
@@ -46,10 +48,22 @@ def save_summary(experiments_dir: str, out_dir: str):
             else:
                 entries.extend(process_directory_v2(group_session))
 
-        df = pd.DataFrame(data=entries, columns=["audio", "size", "duration (seconds)", "duration", "volume", "noise"])
+        df = pd.DataFrame(
+            data=entries,
+            columns=[
+                "audio",
+                "size",
+                "duration (seconds)",
+                "duration",
+                "volume",
+                "noise",
+            ],
+        )
         if USE_FILES:
             df.audio = df.audio.astype("category")
-            df.audio = df.audio.cat.set_categories(USE_FILES)  # Sort in the same order as the file list
+            df.audio = df.audio.cat.set_categories(
+                USE_FILES
+            )  # Sort in the same order as the file list
         df = df.sort_values(["audio"])
 
         os.makedirs(out_dir, exist_ok=True)
@@ -61,7 +75,7 @@ def process_directory_v1(group_session: str):
 
 
 def process_directory_v2(group_session: str):
-    return process_directory(group_session, lambda g, s:  f"{g}/{s}/audio/block_2")
+    return process_directory(group_session, lambda g, s: f"{g}/{s}/audio/block_2")
 
 
 def process_directory(group_session: str, audio_dir_fn: Callable):
@@ -69,7 +83,9 @@ def process_directory(group_session: str, audio_dir_fn: Callable):
     for station in ["lion", "tiger", "leopard"]:
         audio_dir = audio_dir_fn(group_session, station)
         if not os.path.exists(audio_dir):
-            print(f"Audio folder does not exist for station {station} in group session {group_session}.")
+            print(
+                f"Audio folder does not exist for station {station} in group session {group_session}."
+            )
             continue
 
         audio_files = glob(f"{audio_dir}/*.wav")
@@ -78,7 +94,7 @@ def process_directory(group_session: str, audio_dir_fn: Callable):
             if not USE_FILES or audio_filename in USE_FILES:
                 file_size_in_mb = os.path.getsize(audio_filepath) / (1024 * 1024)
 
-                with contextlib.closing(wave.open(audio_filepath, 'r')) as f:
+                with contextlib.closing(wave.open(audio_filepath, "r")) as f:
                     frames = f.getnframes()
                     rate = f.getframerate()
                     duration = frames / float(rate)
@@ -87,7 +103,9 @@ def process_directory(group_session: str, audio_dir_fn: Callable):
                 audible = not (data == 0).all()
 
                 noise_start = 0  # Adjust this to the start of the noise segment
-                noise_end = 5 * samplerate  # Adjust this to the end of the noise segment
+                noise_end = (
+                    5 * samplerate
+                )  # Adjust this to the end of the noise segment
                 noise_segment = data[noise_start:noise_end]
                 rms_noise = np.sqrt(np.mean(np.square(noise_segment)))
                 rms_audio = np.sqrt(np.mean(np.square(data)))
@@ -95,8 +113,16 @@ def process_directory(group_session: str, audio_dir_fn: Callable):
                 # Signal-to-noise ratio (SNR) in decibels (dB):
                 snr_db = 20 * np.log10(rms_audio / rms_noise)
 
-                entries.append([audio_filename, f"{file_size_in_mb:.1f}MB", duration, duration_format(duration),
-                                "Audible" if audible else "Inaudible", snr_db])
+                entries.append(
+                    [
+                        audio_filename,
+                        f"{file_size_in_mb:.1f}MB",
+                        duration,
+                        duration_format(duration),
+                        "Audible" if audible else "Inaudible",
+                        snr_db,
+                    ]
+                )
 
     return entries
 
@@ -104,13 +130,22 @@ def process_directory(group_session: str, audio_dir_fn: Callable):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Parses a collection of experiments, finds the audio files, and saves a series of info to a"
-                    " .csv file."
+        " .csv file."
     )
 
-    parser.add_argument("--experiments_dir", type=str, required=False, default=EXP_DIR,
-                        help="Directory containing experiment folders.")
-    parser.add_argument("--out_dir", type=str, required=True,
-                        help="Directory where summary must be saved.")
+    parser.add_argument(
+        "--experiments_dir",
+        type=str,
+        required=False,
+        default=EXP_DIR,
+        help="Directory containing experiment folders.",
+    )
+    parser.add_argument(
+        "--out_dir",
+        type=str,
+        required=True,
+        help="Directory where summary must be saved.",
+    )
 
     args = parser.parse_args()
 

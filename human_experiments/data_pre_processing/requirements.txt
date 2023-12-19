@@ -8,3 +8,7 @@ pydub==0.25.1
 praat-textgrids==1.4.0
 openai-whisper
 audiofile
+black
+flake8
+isort
+autoflake

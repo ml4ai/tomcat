@@ -7,6 +7,9 @@ from tqdm import tqdm
 
 from audio.entity.praat_annotation import PraatAnnotation
 from audio.entity.transcriber import Transcriber
+from data_pre_processing.common.constants import OPENSMILE_CONFIG_DIR
+
+error = logging.getLogger().error
 
 
 class PCMAudio:
@@ -22,7 +25,7 @@ class PCMAudio:
 
         file_size = os.path.getsize(self.filepath)
         chunksize = (
-            file_size - 8
+                file_size - 8
         )  # file size in bytes - 8 bytes of header (ChunkID and ChunkSize)
         chunksize = chunksize.to_bytes(4, "little")
 
@@ -30,7 +33,7 @@ class PCMAudio:
         subchunk2size_in_bytes = subchunk2size.to_bytes(4, "little")
 
         with open(self.filepath, "rb") as input_file, open(
-            out_filepath, "wb"
+                out_filepath, "wb"
         ) as output_file:
             input_data = input_file.read()
             output_file.write(input_data)
@@ -43,28 +46,37 @@ class PCMAudio:
             output_file.seek(40)
             output_file.write(subchunk2size_in_bytes)
 
-    def extract_vocalic_features(self, out_filepath: str):
+    def extract_vocalic_features(self, out_filepath: str) -> bool:
         """
-        We use shell execution to generate the vocalics. There is a Python wrapper but I could not make it produce
-        a csv file with the same columns so I opted for the CLI solution. Also, this does not change the OpenSmile
-        input and output in the config files.
+        We use shell execution to generate the vocalics. There is a Python wrapper but I could not
+        make it produce a csv file with the same columns so I opted for the CLI solution. Also,
+        this does not change the OpenSmile input and output in the config files.
         """
-        command = f"SMILExtract -C opensmile/is09-13/IS13_ComParE.conf -I {self.filepath} -D {out_filepath}"
+        command = (
+            f"SMILExtract -C {OPENSMILE_CONFIG_DIR}/is09-13/IS13_ComParE.conf -I "
+            f"{self.filepath} -D {out_filepath}"
+        )
 
-        logs = logging.getLoggerClass().root.handlers[0].baseFilename
-        with open(logs, "a") as log_file:
-            if (
-                subprocess.call(
-                    command, shell=True, stdout=log_file, stderr=subprocess.STDOUT
+        try:
+            # Log is written to a file
+            logs = logging.getLoggerClass().root.handlers[0].baseFilename
+            with open(logs, "a") as log_file:
+                success = (
+                        subprocess.call(
+                            command, shell=True, stdout=log_file, stderr=subprocess.STDOUT
+                        )
+                        == 0
                 )
-                != 0
-            ):
-                logging.error(
-                    f"Error extracting vocalic features from {self.filepath}."
-                )
+        except Exception:
+            success = subprocess.call(command, shell=True) == 0
+
+        if not success:
+            error(f"Error extracting vocalic features from {self.filepath}.")
+
+        return success
 
     def transcribe_annotated_utterances(
-        self, transcriber: Transcriber, annotation: PraatAnnotation
+            self, transcriber: Transcriber, annotation: PraatAnnotation
     ):
         annotation.reset_transcript_tier()
 

@@ -1,16 +1,16 @@
 from __future__ import annotations
 
-from typing import Any, Dict, Optional
-
-from datetime import datetime
-from dateutil.parser import parse
-from glob import glob
 import json
 import logging
-import pandas as pd
+from datetime import datetime
+from glob import glob
+from typing import Any, Dict, Optional
 
-from summary.entity.task_summary import TaskSummary
+import pandas as pd
+from dateutil.parser import parse
+
 from common.constants import MISSING_INFO
+from summary.entity.task_summary import TaskSummary
 
 logger = logging.getLogger()
 
@@ -55,7 +55,7 @@ class USARMissionSummary(TaskSummary):
     @classmethod
     def from_metadata_file(cls, metadata_filepath: str) -> USARMissionSummary:
         messages = []
-        with open(metadata_filepath, 'r') as f:
+        with open(metadata_filepath, "r") as f:
             for line in f:
                 try:
                     json_message = json.loads(line)
@@ -91,7 +91,9 @@ class USARMissionSummary(TaskSummary):
         return mission_summary
 
     @staticmethod
-    def _parse_trial_info(json_message: Any, mission_summary: USARMissionSummary) -> None:
+    def _parse_trial_info(
+        json_message: Any, mission_summary: USARMissionSummary
+    ) -> None:
         if json_message["msg"]["sub_type"] == "start":
             mission_summary.trial_start = parse(json_message["msg"]["timestamp"])
             mission_summary.trial_id = json_message["msg"]["trial_id"]
@@ -107,12 +109,16 @@ class USARMissionSummary(TaskSummary):
             else:
                 mission_summary.map_name = map_filename
 
-            mission_summary.intervention_agents = ",".join(json_message["data"]["intervention_agents"])
+            mission_summary.intervention_agents = ",".join(
+                json_message["data"]["intervention_agents"]
+            )
         else:
             mission_summary.trial_end = parse(json_message["msg"]["timestamp"])
 
     @staticmethod
-    def _parse_mission_state(json_message: Any, mission_summary: USARMissionSummary) -> None:
+    def _parse_mission_state(
+        json_message: Any, mission_summary: USARMissionSummary
+    ) -> None:
         state = json_message["data"]["mission_state"].lower()
         if state == "start":
             mission_summary.mission_start = parse(json_message["header"]["timestamp"])
@@ -151,7 +157,7 @@ class USARMissionSummary(TaskSummary):
             "Num Messages",
             "Num ASR Messages",
             "Num Dialog Messages",
-            "Intervention Agents"
+            "Intervention Agents",
         ]
 
         data = [
@@ -160,21 +166,22 @@ class USARMissionSummary(TaskSummary):
             MISSING_INFO if self.trial_start is None else self.trial_start.isoformat(),
             MISSING_INFO if self.trial_end is None else self.trial_end.isoformat(),
             self.trial_duration,
-            MISSING_INFO if self.mission_start is None else self.mission_start.isoformat(),
+            MISSING_INFO
+            if self.mission_start is None
+            else self.mission_start.isoformat(),
             MISSING_INFO if self.mission_end is None else self.mission_end.isoformat(),
             self.mission_duration,
             self.team_score,
             self.num_messages,
             self.num_asr_messages,
             self.num_dialog_messages,
-            self.intervention_agents
+            self.intervention_agents,
         ]
 
         return pd.DataFrame([data], columns=header)
 
 
 class USARSummary(TaskSummary):
-
     def __init__(self, mission_summaries_dict: Dict[str, USARMissionSummary]):
         super().__init__("USAR")
 
@@ -187,7 +194,7 @@ class USARSummary(TaskSummary):
         mission_summaries_dict = {
             "training": USARMissionSummary(),
             "main1": USARMissionSummary(),
-            "main2": USARMissionSummary()
+            "main2": USARMissionSummary(),
         }
         for metadata_filepath in metadata_filepaths:
             mission_summary = USARMissionSummary.from_metadata_file(metadata_filepath)
@@ -198,7 +205,10 @@ class USARSummary(TaskSummary):
             # that has been completed in the dictionary. In case there's none, we replace the default mission (set
             # in the creation of the dictionary), with any uncompleted real one.
             if mission_summary.is_training():
-                if not mission_summaries_dict["training"].has_completed() or mission_summary.has_completed():
+                if (
+                    not mission_summaries_dict["training"].has_completed()
+                    or mission_summary.has_completed()
+                ):
                     mission_summaries_dict["training"] = mission_summary
             elif mission_summary.is_saturn_a():
                 mission_summaries_dict["main1"] = mission_summary
@@ -209,9 +219,15 @@ class USARSummary(TaskSummary):
 
     def to_data_frame(self) -> pd.DataFrame:
         dfs = [
-            self.mission_summaries_dict["training"].to_data_frame().add_suffix(f" ({self.task_name} - Training)"),
-            self.mission_summaries_dict["main1"].to_data_frame().add_suffix(f" ({self.task_name} - Main 1)"),
-            self.mission_summaries_dict["main2"].to_data_frame().add_suffix(f" ({self.task_name} - Main 2)")
+            self.mission_summaries_dict["training"]
+            .to_data_frame()
+            .add_suffix(f" ({self.task_name} - Training)"),
+            self.mission_summaries_dict["main1"]
+            .to_data_frame()
+            .add_suffix(f" ({self.task_name} - Main 1)"),
+            self.mission_summaries_dict["main2"]
+            .to_data_frame()
+            .add_suffix(f" ({self.task_name} - Main 2)"),
         ]
 
         return pd.concat(dfs, axis=1)
