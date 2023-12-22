@@ -4,64 +4,48 @@
 
 The following folders contain several versions of derived data at various synchronization frequencies:
 \begin{itemize}
-  \item \texttt{fnirs\_20hz} contains synchronized fNIRS signals and task data at 20 Hz sampling rate.
-  \item \texttt{fnirs\_raw\_20hz} contains synchronized fNIRS raw signals and task data at 20 Hz sampling rate.
-  \item \texttt{eeg\_1000hz} contains synchronized EEG signals and task data at 1000 Hz sampling rate.
-  \item \texttt{eeg\_1200hz\_120hz} contains synchronized EEG signals with 1200 Hz sampling rate, then downsampled to 120 Hz sampling rate and synchronized and task data.
-  \item \texttt{fnirs\_eeg\_1000hz} contains synchronized fNIRS and EEG signals and task data at 1000 Hz sampling rate.
-  \item \texttt{fnirs\_raw\_eeg\_1000hz} contains synchronized fNIRS raw and EEG signals and task data at 1000 Hz sampling rate.
-  \item \texttt{fnirs\_eeg\_1200hz\_120hz} contains synchronized fNIRS and EEG signals with 1200 Hz sampling rate, then downsampled to 120 Hz sampling rate and synchronized and task data.
-  \item \texttt{fnirs\_raw\_eeg\_1200hz\_120hz} contains synchronized fNIRS raw and EEG signals with 1200 Hz sampling rate, then downsampled to 120 Hz sampling rate and synchronized and task data.
+  \item \texttt{fnirs\_10hz} contains synchronized fNIRS signals and task data at 10 Hz sampling rate.
+  \item \texttt{fnirs\_500hz} contains synchronized fNIRS signals and task data at 500 Hz sampling rate.
+  \item \texttt{eeg\_500hz} contains synchronized EEG signals and task data at 500 Hz sampling rate.
+  \item \texttt{ekg\_500hz} contains synchronized EKG signals and task data at 500 Hz sampling rate.
+  \item \texttt{gsr\_500hz} contains synchronized GSR signals and task data at 500 Hz sampling rate.
+  \item \texttt{fnirs\_eeg\_ekg\_gsr\_120hz} contains synchronized fNIRS, EEG, EKG, and GSR signals and task data at 120 Hz sampling rate.
+  \item \texttt{fnirs\_eeg\_ekg\_gsr\_1200hz} contains synchronized fNIRS, EEG, EKG, and GSR signals and task data at 1200 Hz sampling rate.
 \end{itemize}
 
-Each derived data folder contains synchronized fNIRS and/or EEG signals for each task and for the entire experiment for each experiment:
+Each derived data folder contains synchronized fNIRS, EEG, EKG, and/or GSR signals for each task and for the entire experiment for each experiment:
 \begin{verbatim}
 exp_*/
+    all.csv
     rest_state.csv
     finger_tapping.csv
-    lion_affective_individual.csv
-    tiger_affective_individual.csv
-    leopard_affective_individual.csv
+    affective_individual_lion.csv
+    affective_individual_tiger.csv
+    affective_individual_leopard.csv
     affective_team.csv
-    ping_pong_competitive_0.csv
-    ping_pong_competitive_1.csv
+    ping_pong_competitive_lion_tiger.csv
+    ping_pong_competitive_leopard_cheetah.csv
     ping_pong_cooperative.csv
-    hands_on_training.csv
-    saturn_a.csv
-    saturn_b.csv
-    pre_processed_lion_fnirs.csv
-    pre_processed_tiger_fnirs.csv
-    pre_processed_leopard_fnirs.csv
-    pre_processed_lion_eeg.csv
-    pre_processed_tiger_eeg.csv
-    pre_processed_leopard_eeg.csv
-    synchronized_signals.csv
-    log.txt
+    minecraft_saturn_a.csv
+    minecraft_saturn_b.csv
 \end{verbatim}
 
 Each experiment contains the following CSV files, with columns described in \ref{sec:derived_data_cols_desc}:
 %
 \begin{itemize}
+  \item \texttt{all.csv} contains the synchronized signal of all participants for the entire recording sessions, including signals and data in all tasks.
   \item \texttt{rest\_state.csv} contains the synchronized signal and rest state task data.
   \item \texttt{finger\_tapping.csv} contains the synchronized signal and finger tapping task data.
-  \item \texttt{lion\_affective\_individual.csv} contains the synchronized signal and individual affective task data for participant using the Lion computer in the lab.
-  \item \texttt{tiger\_affective\_individual.csv} contains the synchronized signal and individual affective task data for participant using the Leopard computer in the lab.
-  \item \texttt{leopard\_affective\_individual.csv} contains the synchronized signal and individual affective task data for participant using the Leopard computer in the lab.
+  \item \texttt{affective\_individual\_lion.csv} contains the synchronized signal and individual affective task data for participant using the Lion computer in the lab.
+  \item \texttt{affective\_individual\_tiger.csv} contains the synchronized signal and individual affective task data for participant using the Leopard computer in the lab.
+  \item \texttt{affective\_individual\_leopard.csv} contains the synchronized signal and individual affective task data for participant using the Leopard computer in the lab.
   \item \texttt{affective\_team.csv} contains the synchronized signal and team affective task data.
-  \item \texttt{ping\_pong\_competitive\_0.csv} contains the synchronized signal and ping pong competitive task data between two participants or one participant and one experimenter. The \texttt{0} indicates the match ID to distinguish between matches.
-  \item \texttt{ping\_pong\_competitive\_1.csv} contains the synchronized signal and ping pong competitive task data between two participants or one participant and one experimenter. The \texttt{1} indicates the match ID to distinguish between matches.
+  \item \texttt{ping\_pong\_competitive\_lion\_tiger.csv} contains the synchronized signal and ping pong competitive task data between participants sitting on Lion and Tiger stations.
+  \item \texttt{ping\_pong\_competitive\_leopard\_cheetah.csv} contains the synchronized signal and ping pong competitive task data between a participant sitting on Leopard station and an experimenter sitting on the Cheetah station.
   \item \texttt{ping\_pong\_cooperative.csv} contains the synchronized signal and ping pong cooperative task data between three participants against an artificial intelligent agent.
-  \item \texttt{hands\_on\_training.csv} contains the synchronized signal and Minecraft search-and-rescue hands-on training mission data.
-  \item \texttt{saturn\_a.csv} contains the synchronized signal and Minecraft search-and-rescue Saturn A mission data.
-  \item \texttt{saturn\_b.csv} contains the synchronized signal and Minecraft search-and-rescue Saturn B mission data.
-  \item \texttt{pre\_processed\_lion\_fnirs.csv}  contains the filtered fNIRS signals of the participant using the Lion computer.
-  \item \texttt{pre\_processed\_lion\_eeg.csv}  contains the filtered EEG signals of the participant using the Lion computer.
-  \item \texttt{pre\_processed\_tiger\_fnirs.csv}  contains the filtered fNIRS signals of the participant using the Tiger computer.
-  \item \texttt{pre\_processed\_tiger\_eeg.csv}  contains the filtered EEG signals of the participant using the Tiger computer.
-  \item \texttt{pre\_processed\_leopard\_fnirs.csv}  contains the filtered fNIRS signals of the participant using the Leopard computer.
-  \item \texttt{pre\_processed\_leopard\_eeg.csv}  contains the filtered EEG signals of the participant using the Leopard computer.
-  \item \texttt{synchronized\_signals.csv} contains the synchronized signal for the entire experiment session.
-  \item \texttt{log.txt} contains the messages logged by the processing program, which includes information about the filtering and the synchronization processes.
+  \item \texttt{minecraft\_hands\_on\_training.csv} contains the synchronized signal and Minecraft search-and-rescue hands-on training mission data.
+  \item \texttt{minecraft\_saturn\_a.csv} contains the synchronized signal and Minecraft search-and-rescue Saturn A mission data.
+  \item \texttt{minecraft\_saturn\_b.csv} contains the synchronized signal and Minecraft search-and-rescue Saturn B mission data.
 \end{itemize}
 
 Not all experiments may include the aforementioned CSV files, due to a couple
@@ -83,55 +67,61 @@ The columns in each aforementioned CSV file (e.g., \texttt{rest\_state.csv},
 \autoref{tab:ping_pong_competitive_task_columns},
 \autoref{tab:ping_pong_cooperative_task_columns},
 \autoref{tab:minecraft_task_columns}, \autoref{tab:EEG_signals},
-\autoref{tab:fNIRS_raw_signals}, and \autoref{tab:fNIRS_signals}. Note that the columns \texttt{lion\_id}, \texttt{tiger\_id}, and \texttt{leopard\_id} in each CSV file is currently a work-in-progress and need some improvements to reflect subject IDs in each experiment.
+\autoref{tab:fNIRS_raw_signals}, and \autoref{tab:fNIRS_signals}.
 
-\begin{table}[h]
+%---
+
+\begin{table}
+    \footnotesize
     \centering
     \begin{tabularx}{\textwidth}{lX}
         \toprule
         Time columns & Description \\
         \midrule
-        \texttt{index} (first column) & Row index counting from synchronized signals of the entire experiment in \texttt{synchronized\_signals.csv}. This is a reference column to identify the signals from the experiment synchronized signals with the task synchronized signals.\\
-        \texttt{unix\_time} & Unix time (in seconds, with 0.1 microsecond resolution) of when the fNIRS and EEG signals and the task data were recorded and synchronized.\\
-        \texttt{human\_readable\_time} & UTC time (in seconds, with 1.0 microsecond resolution) in the human readable format of when the fNIRS and EEG signals and the task data were recorded.\\
-        \texttt{seconds\_since\_start} & Time (in seconds, with 0.1 microsecond resolution) since the first entry of the task or the experiment.\\
+        \texttt{timestamp\_unix} & Unix time (in seconds, with 0.1 microsecond resolution) of when the signals and the task data were recorded and synchronized.\\
         \bottomrule
     \end{tabularx}
     \caption{Columns of time that are common in all CSV files of derived data.}
     \label{tab:shared_columns}
 \end{table}
 
-\begin{table}[h]
+%---
+
+\begin{table}
 \centering
 \begin{tabularx}{\textwidth}{lX}
     \toprule
 Channel & Description \\
 \midrule
-\texttt{event\_type} & Event labels for the rest state task. Event types include \texttt{start\_rest\_state} signifying the start of the task, and \texttt{end\_rest\_state} signifying the end of task.\\
+\texttt{event\_type} & Event labels for the rest state task. Event types include \texttt{start\_task} signifying the start of the task, and \texttt{end\_task} signifying the end of rest state task.\\
 \bottomrule
 \end{tabularx}
 \caption{Rest State Task columns information in the CSV file \texttt{rest\_state.csv} of the derived data.}
 \label{tab:rest_task_columns}
 \end{table}
 
-\begin{table}[h]
+%---
+
+\begin{table}
 \centering
 \begin{tabularx}{\textwidth}{lX}
     \toprule
 Channel & Description \\
 \midrule
-\texttt{event\_type} & Event labels for the finger tapping task. Event types include \texttt{start\_fingertapping\_task} signifying the start of the task and the practice period, \texttt{end\_fingertapping\_task} for the end of the task, \texttt{individual} for the period during which the participants must tap in rhythm by themselves, and \texttt{team} for the period during which the participants must tap in synchronized rhythm with other participants.\\
+\texttt{event\_type} & Event labels for the finger tapping task. Event types include \texttt{start\_fingertapping\_task} signifying the start of the task and the practice period, \texttt{individual} for the period during which the participants must tap in rhythm by themselves, and \texttt{team} for the period during which the participants must tap in synchronized rhythm with other participants.\\
 \texttt{countdown\_timer} & This is the timer displayed to the participants on the monitor signifying the remaining duration of the task's phase.\\
-\texttt{lion} & \texttt{0} for when the participant on the Lion computer is not pressing and holding down on the spacebar, and \texttt{1} for when the participant is pressing and holding down the space bar.\\
-\texttt{tiger} & \texttt{0} for when the participant on the Tiger computer is not pressing and holding down on the spacebar, and \texttt{1} for when the participant is pressing and holding down the space bar.\\
-\texttt{leopard} & \texttt{0} for when the participant on the Leopard computer is not pressing and holding down on the spacebar, and \texttt{1} for when the participant is pressing and holding down the space bar.\\
+\texttt{lion\_spacebar\_pressed} & \texttt{0} for when the participant on the Lion computer is not pressing and holding down on the spacebar, and \texttt{1} for when the participant is pressing and holding down the space bar.\\
+\texttt{tiger\_spacebar\_pressed} & \texttt{0} for when the participant on the Tiger computer is not pressing and holding down on the spacebar, and \texttt{1} for when the participant is pressing and holding down the space bar.\\
+\texttt{leopard\_spacebar\_pressed} & \texttt{0} for when the participant on the Leopard computer is not pressing and holding down on the spacebar, and \texttt{1} for when the participant is pressing and holding down the space bar.\\
 \bottomrule
 \end{tabularx}
 \caption{Finger Tapping Task columns information in the CSV file \texttt{finger\_tapping.csv} of the derived data.}
 \label{tab:finger_task_columns}
 \end{table}
 
-\begin{table}[h]
+%---
+
+\begin{table}
 \centering
 \begin{tabularx}{\textwidth}{lX}
     \toprule
@@ -142,11 +132,13 @@ Channel & Description \\
     \texttt{valence\_score} & The valence score selected by the participant during the \texttt{intermediate\_selection} and \texttt{final\_submission} events.\\
 \bottomrule
 \end{tabularx}
-\caption{Individual Affective Task columns information in the CSV files \texttt{lion\_affective\_individual.csv}, \texttt{tiger\_affective\_individual.csv}, and \texttt{leopard\_affective\_individual.csv} of the derived data.}
+\caption{Individual Affective Task columns information in the CSV files \texttt{affective\_individual\_lion.csv}, \texttt{affective\_individual\_tiger.csv}, and \texttt{affective\_individual\_leopard.csv} of the derived data.}
 \label{tab:individual_affective_task_columns}
 \end{table}
 
-\begin{table}[h]
+%---
+
+\begin{table}
 \centering
 \begin{tabularx}{\textwidth}{lX}
 \toprule
@@ -167,47 +159,54 @@ Channel & Description \\
 \label{tab:team_affective_task_columns}
 \end{table}
 
-\begin{table}[h]
+%---
+
+\begin{table}
 \centering
 \begin{tabularx}{\textwidth}{lX}
 \toprule
 Channel & Description \\
 \midrule
-\texttt{score\_left} & The current score for the player on the left side.\\
-\texttt{score\_right} & The current score for the player on the right side.\\
-\texttt{started} & \texttt{False} for when the task is in practice mode: the ball stayed fixed at the center of the screen, while the players were allowed to move the paddles along the vertical axis. \texttt{True} for when the task is not in practice mode: the ball moved and the players could score points against the other side.\\
-\texttt{ball\_x} & the x-axis coordinate of the ball's top left pixel, with the lower number located on the left side of the screen, and the higher number on the right side.\\
-\texttt{ball\_y} & the y-axis coordinate of the ball's top left pixel, with the lower number located toward the top  of the screen, and the higher number toward the bottom.\\
-\texttt{<subject>\_x} & the x-axis coordinate of the player's paddle's top left pixel, with the lower number located on the left side of the screen, and the higher number on the right side. The x-axis coordinate is fixed, and the lower number indicates that the player's paddle was on the left side and the higher number indicates that the player's paddle was on the right side.\\
-\texttt{<subject>\_y} & the y-axis coordinate of the player's paddle's top left pixel, with the lower number located toward the top of the screen, and the higher number toward the bottom.\\
-\texttt{exp\_x} & the x-axis coordinate of the experimenter's paddle's top left pixel, with the lower number located on the left side of the screen, and the higher number on the right side. The x-axis coordinate is fixed, and the lower number indicates that the experimenter's paddle was on the left side and the higher number indicates that the experimenter's paddle was on the right side.\\
-\texttt{exp\_y} & the y-axis coordinate of the experimenter's paddle's top left pixel, with the lower number located toward the top of the screen, and the higher number toward the bottom.\\
+\texttt{player\_\&\_station} & Player \&'s station (Lion, Tiger, Leopard, or Cheetah).\\
+\texttt{task\_started} & Value \texttt{0} for when the task is in practice mode: the ball stayed fixed at the center of the screen, while the players were allowed to move the paddles along the vertical axis. Value \texttt{1} for when the task is not in practice mode: the ball moved and the players could score points against the other side.\\
+\texttt{seconds} & The countdown match timer (seconds) displayed on the screen of each player.\\
+\texttt{ball\_position\_x} & The x-axis coordinate of the ball's top left pixel, with the lower number located on the left side of the screen, and the higher number on the right side.\\
+\texttt{ball\_position\_y} & The y-axis coordinate of the ball's top left pixel, with the lower number located toward the top  of the screen, and the higher number toward the bottom.\\
+\texttt{player\_\&\_paddle\_position\_x} & The x-axis coordinate of player \&'s paddle's top left pixel, with the lower number located on the left side of the screen, and the higher number on the right side. The x-axis coordinate is fixed, and the lower number indicates that player \&'s paddle was on the left side and the higher number indicates that player \&'s paddle was on the right side.\\
+\texttt{player\_\&\_paddle\_position\_y} & The y-axis coordinate of player \&'s paddle's top left pixel, with the lower number located toward the top of the screen, and the higher number toward the bottom.\\
+\texttt{player\_\&\_score} & The current score for the player \&.\\
 \bottomrule
 \end{tabularx}
-\caption{Ping Pong Competitive Task columns information in the CSV files \texttt{ping\_pong\_competitive\_0.csv} and \texttt{ping\_pong\_competitive\_1.csv} of the derived data.}
+\caption{Ping Pong Competitive Task columns information in the CSV files \texttt{ping\_pong\_competitive\_lion\_tiger.csv} and \texttt{ping\_pong\_competitive\_leopard\_cheetah.csv} of the derived data.}
 \label{tab:ping_pong_competitive_task_columns}
 \end{table}
 
-\begin{table}[h]
+%---
+
+\begin{table}
 \centering
 \begin{tabularx}{\textwidth}{lX}
 \toprule
 Channel & Description \\
 \midrule
-\texttt{score\_left} & The current score for the players on the left side.\\
-\texttt{score\_right} & The current score for the artificial intelligent agent on the right side.\\
-\texttt{started} & \texttt{False} for when the task is in practice mode: the ball stayed fixed at the center of the screen, while the players were allowed to move the paddles along the vertical axis. \texttt{True} for when the task is not in practice mode: the ball moved and the players could score points against the other side.\\
-\texttt{ball\_x} & the x-axis coordinate of the ball's top left pixel, with the lower number located on the left side of the screen, and the higher number on the right side.\\
-\texttt{ball\_y} & the y-axis coordinate of the ball's top left pixel, with the lower number located toward the top  of the screen, and the higher number toward the bottom.\\
-\texttt{<subject>\_x} & the x-axis coordinate of the player's paddle's top left pixel, with the lower number located on the left side of the screen, and the higher number on the right side. The x-axis coordinate is fixed, all players were on the left side.\\
-\texttt{<subject>\_y} & the y-axis coordinate of the player's paddle's top left pixel, with the lower number located toward the top of the screen, and the higher number toward the bottom.\\
-\texttt{ai\_x} & the x-axis coordinate of the artificial intelligent agent's paddle's top left pixel, with the lower number located on the left side of the screen, and the higher number on the right side. The x-axis coordinate is fixed, and the artificial intelligent agent was on the right side.\\
-\texttt{ai\_y} & the y-axis coordinate of the artificial intelligent agent's paddle's top left pixel, with the lower number located toward the top of the screen, and the higher number toward the bottom.\\
+\texttt{player\_\&\_station} & Player \&'s station (Lion, Tiger, or Leopard).\\
+\texttt{task\_started} & Value \texttt{0} for when the task is in practice mode: the ball stayed fixed at the center of the screen, while the players were allowed to move the paddles along the vertical axis. Value \texttt{1} for when the task is not in practice mode: the ball moved and the players could score points against the other side.\\
+\texttt{seconds} & The countdown match timer (seconds) displayed on the screen of each player.\\
+\texttt{ball\_position\_x} & The x-axis coordinate of the ball's top left pixel, with the lower number located on the left side of the screen, and the higher number on the right side.\\
+\texttt{ball\_position\_y} & The y-axis coordinate of the ball's top left pixel, with the lower number located toward the top  of the screen, and the higher number toward the bottom.\\
+\texttt{player\_\&\_paddle\_position\_x} & The x-axis coordinate of player \&'s paddle's top left pixel, with the lower number located on the left side of the screen, and the higher number on the right side. The x-axis coordinate is fixed, and the lower number indicates that player \&'s paddle was on the left side and the higher number indicates that player \&'s paddle was on the right side.\\
+\texttt{player\_\&\_paddle\_position\_y} & The y-axis coordinate of player \&'s paddle's top left pixel, with the lower number located toward the top of the screen, and the higher number toward the bottom.\\
+\texttt{ai\_paddle\_position\_x} & The x-axis coordinate of the artificial intelligent agent's paddle's top left pixel, with the lower number located on the left side of the screen, and the higher number on the right side. The x-axis coordinate is fixed, and the artificial intelligent agent was on the right side.\\
+\texttt{ai\_paddle\_position\_y} & the y-axis coordinate of the artificial intelligent agent's paddle's top left pixel, with the lower number located toward the top of the screen, and the higher number toward the bottom.\\
+\texttt{team\_score} & The current score of the team of participants.\\
+\texttt{ai\_score} & The current score of the artificial intelligence agent.\\
 \bottomrule
 \end{tabularx}
 \caption{Ping Pong Cooperative Task columns information in the CSV file \texttt{ping\_pong\_cooperative.csv} of the derived data.}
 \label{tab:ping_pong_cooperative_task_columns}
 \end{table}
+
+%---
 
 \begin{table}[h]
 \centering
@@ -215,12 +214,14 @@ Channel & Description \\
     \toprule
 Channel & Description \\
 \midrule
-\texttt{score} & The current score of the team. The team scored points for rescuing victims in a search-and-rescue mission in Minecraft.\\
+\texttt{points} & The current score of the team. The team scored points for rescuing victims in a search-and-rescue mission in Minecraft.\\
 \bottomrule
 \end{tabularx}
-\caption{Minecraft Hands-on Training \texttt{hands\_on\_training.csv}, Saturn A \texttt{saturn\_a.csv}, and Saturn B \texttt{saturn\_b.csv} columns information in the CSV files of the derived data.}
+\caption{Minecraft Hands-on Training \texttt{minecraft\_hands\_on\_training.csv}, Saturn A \texttt{minecraft\_saturn\_a.csv}, and Saturn B \texttt{minecraft\_saturn\_b.csv} columns information in the CSV files of the derived data.}
 \label{tab:minecraft_task_columns}
 \end{table}
+
+%---
 
 \begin{figure}
   \includegraphics[width=\linewidth]{images/combined_montage.pdf}
@@ -275,6 +276,7 @@ Channel & Description \\
 \end{table}
 
 \begin{table}
+  \footnotesize
   \centering
   \begin{tabularx}{\textwidth}{lX}
   \toprule
@@ -327,6 +329,7 @@ Channel & Description \\
   \end{table}
 
   \begin{table}
+      \footnotesize
     \centering
     \begin{tabularx}{\textwidth}{lX}
     \toprule

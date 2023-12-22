@@ -2,7 +2,6 @@ import pandas as pd
 
 
 class TaskSummary:
-
     def __init__(self, task_name: str):
         self.task_name = task_name
 

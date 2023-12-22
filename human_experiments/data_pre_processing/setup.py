@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
-setup(
-    name="data_pre_processing",
-    packages=find_packages(),
-    package_data={"": []}
-)
+setup(name="data_pre_processing", packages=find_packages(), package_data={"": []})

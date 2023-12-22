@@ -1,0 +1,62 @@
+#!/usr/bin/env python
+
+import logging
+import sys
+from logging import info
+
+from datasette_interface.database.entity.signal.eeg import EEGRaw
+from datasette_interface.database.entity.base.eeg_device import EEGDevice
+from datasette_interface.raw.common.process_raw_signals import create_indices
+from datasette_interface.raw.common.process_raw_signals import insert_raw_unlabeled_data
+from datasette_interface.raw.common.process_raw_signals import label_data
+from sqlalchemy.orm import Session
+from functools import partial
+from datasette_interface.database.config import get_db, engine
+from datasette_interface.common.config import LOG_DIR, settings
+
+logging.basicConfig(
+    level=logging.INFO,
+    handlers=(
+        logging.FileHandler(
+            filename=f"{LOG_DIR}/build_eeg_table.log", mode="w"
+        ),
+        logging.StreamHandler(stream=sys.stderr),
+    ),
+)
+
+
+def get_channel_names_from_xdf_stream(stream):
+    return ([channel["label"][0].lower() for channel in
+             stream["info"]["desc"][0]["channels"][0]["channel"]])
+
+
+def get_station_from_xdf_stream(group_session, stream, device_id_to_station_map):
+    device_id = stream["info"]["name"][0].split("-")[1].replace("_actiCHamp", "")
+    return device_id_to_station_map[group_session][device_id]
+
+
+def process_eeg_raw_data():
+    info("Processing EEGRaw data.")
+
+    device_id_to_station_map = {}
+    for eeg_device in db_session.query(EEGDevice).all():
+        if eeg_device.device_id:
+            if eeg_device.group_session_id not in device_id_to_station_map:
+                device_id_to_station_map[eeg_device.group_session_id] = {
+                    eeg_device.device_id: eeg_device.station_id}
+            else:
+                device_id_to_station_map[eeg_device.group_session_id][
+                    eeg_device.device_id] = eeg_device.station_id
+
+    insert_raw_unlabeled_data(settings.drop_table, EEGRaw, "eeg", "EEG",
+                              get_channel_names_from_xdf_stream,
+                              partial(get_station_from_xdf_stream,
+                                      device_id_to_station_map=device_id_to_station_map),
+                              lambda x: x * 1 - 6)  # From micro-volt to volt
+    create_indices(not settings.drop_table, EEGRaw, "eeg")
+    label_data(settings.drop_table, EEGRaw, "eeg")
+
+
+def recreate_eeg_raw_tables():
+    EEGRaw.__table__.drop(engine, checkfirst=True)
+    EEGRaw.__table__.create(engine, checkfirst=True)

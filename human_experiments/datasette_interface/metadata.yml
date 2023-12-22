@@ -19,6 +19,18 @@ databases:
                     arousal_score: The arousal score reported by the participant. Null if not applicable.
                     valence_score: The valence score reported by the participant. Null if not applicable.
 
+            audio_vocalics:
+              description: OpenSMILE vocalic features extracted from the audios during the Minecraft missions.
+              columns:
+                group_session: The group session the task is a part of.
+                station: Participant ID.
+                minecraft_mission_id: ID of the minecraft mission the audio was recorded.
+                id: sequential ID of the signal.
+                timestamp_unix: The Unix timestamp of the signal.
+                timestamp_iso8601: The ISO-8601 timestamp of the signal.
+                frame_time: The frame time in seconds.
+                features: A list of OpenSMILE features extracted from the audio.
+
             data_validity:
                 description: >
                     Table with information about which participants were
@@ -128,6 +140,7 @@ databases:
                 columns:
                     id: >
                         Group session ID. Format: `exp_YYYY_MM_DD_HH`.
+                    advisor: The advisor that intervene in the Minecraft missions.
 
             mission:
                 description: Metadata about the Minecraft missions.

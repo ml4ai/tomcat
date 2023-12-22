@@ -1,21 +1,30 @@
 from __future__ import annotations
+
+import os
 from typing import List
 
 import pandas as pd
-import os
 
-from summary.entity.competitive_ping_pong_summary import CompetitivePingPongSummary
-from summary.entity.cooperative_ping_pong_summary import CooperativePingPongSummary
-from summary.entity.redcap_summary import TeamREDCapSummary, ParticipantREDCapSummary
+from summary.entity.competitive_ping_pong_summary import \
+    CompetitivePingPongSummary
+from summary.entity.cooperative_ping_pong_summary import \
+    CooperativePingPongSummary
+from summary.entity.redcap_summary import (ParticipantREDCapSummary,
+                                           TeamREDCapSummary)
 from summary.entity.task_summary import TaskSummary
 from summary.entity.usar_summary import USARSummary
 
 
 class ExperimentSummary:
-
-    def __init__(self, experiment_id: str, team_summary: TeamREDCapSummary, lion_summary: ParticipantREDCapSummary,
-                 tiger_summary: ParticipantREDCapSummary, leopard_summary: ParticipantREDCapSummary,
-                 task_summaries: List[TaskSummary]):
+    def __init__(
+        self,
+        experiment_id: str,
+        team_summary: TeamREDCapSummary,
+        lion_summary: ParticipantREDCapSummary,
+        tiger_summary: ParticipantREDCapSummary,
+        leopard_summary: ParticipantREDCapSummary,
+        task_summaries: List[TaskSummary],
+    ):
         self.experiment_id = experiment_id
         self.team_summary = team_summary
         self.lion_summary = lion_summary
@@ -26,19 +35,29 @@ class ExperimentSummary:
     @classmethod
     def from_experiment_directory(cls, experiment_dir: str) -> ExperimentSummary:
         task_summaries = [
-            CompetitivePingPongSummary.from_experiment_directory(experiment_dir, team_id=1),
-            CompetitivePingPongSummary.from_experiment_directory(experiment_dir, team_id=2),
+            CompetitivePingPongSummary.from_experiment_directory(
+                experiment_dir, team_id=1
+            ),
+            CompetitivePingPongSummary.from_experiment_directory(
+                experiment_dir, team_id=2
+            ),
             CooperativePingPongSummary.from_experiment_directory(experiment_dir),
-            USARSummary.from_experiment_directory(experiment_dir)
+            USARSummary.from_experiment_directory(experiment_dir),
         ]
 
         return cls(
             experiment_id=os.path.basename(experiment_dir),
             team_summary=TeamREDCapSummary.from_experiment_directory(experiment_dir),
-            lion_summary=ParticipantREDCapSummary.from_experiment_directory(experiment_dir, "lion"),
-            tiger_summary=ParticipantREDCapSummary.from_experiment_directory(experiment_dir, "tiger"),
-            leopard_summary=ParticipantREDCapSummary.from_experiment_directory(experiment_dir, "leopard"),
-            task_summaries=task_summaries
+            lion_summary=ParticipantREDCapSummary.from_experiment_directory(
+                experiment_dir, "lion"
+            ),
+            tiger_summary=ParticipantREDCapSummary.from_experiment_directory(
+                experiment_dir, "tiger"
+            ),
+            leopard_summary=ParticipantREDCapSummary.from_experiment_directory(
+                experiment_dir, "leopard"
+            ),
+            task_summaries=task_summaries,
         )
 
     def to_data_frame(self) -> pd.DataFrame:
@@ -46,9 +65,7 @@ class ExperimentSummary:
             "Experiment ID",
         ]
 
-        data = [
-            self.experiment_id
-        ]
+        data = [self.experiment_id]
 
         experiment_df = pd.DataFrame([data], columns=header)
 
@@ -57,8 +74,10 @@ class ExperimentSummary:
             self.team_summary.to_data_frame(),
             self.lion_summary.to_data_frame(),
             self.tiger_summary.to_data_frame(),
-            self.leopard_summary.to_data_frame()
+            self.leopard_summary.to_data_frame(),
         ]
-        dfs.extend([task_summary.to_data_frame() for task_summary in self.task_summaries])
+        dfs.extend(
+            [task_summary.to_data_frame() for task_summary in self.task_summaries]
+        )
 
         return pd.concat(dfs, axis=1)

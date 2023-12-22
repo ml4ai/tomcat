@@ -1,0 +1,234 @@
+\documentclass[11pt,article,oneside]{memoir}
+
+\usepackage[dvipsnames]{xcolor}
+\usepackage[scale=0.85]{cascadia-code}
+\usepackage[
+    colorlinks,
+    linkcolor=Blue,
+    citecolor=Blue,
+    urlcolor=Blue
+]{hyperref}       % hyperlinks
+\def\sectionautorefname{\S}
+\def\subsectionautorefname{\S}
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage[tracking]{microtype}      % microtypography
+\usepackage[
+    natbib,
+    style=numeric-comp,
+    sorting=none,
+    doi=false,
+    isbn=false,
+    url=true,
+    eprint=false,
+    maxbibnames=10,
+    hyperref
+]{biblatex}
+\addbibresource{bibliography.bib}
+%\renewcommand\bibfont{\small}
+%\newbibmacro{string+doiurlisbn}[1]{%
+  %\iffieldundef{doi}{%
+    %\iffieldundef{url}{%
+      %\iffieldundef{isbn}{%
+        %\iffieldundef{issn}{%
+          %#1%
+        %}{%
+          %\href{http://books.google.com/books?vid=ISSN\thefield{issn}}{#1}%
+        %}%
+      %}{%
+        %\href{http://books.google.com/books?vid=ISBN\thefield{isbn}}{#1}%
+      %}%
+    %}{%
+      %\href{\thefield{url}}{#1}%
+    %}%
+  %}{%
+    %\href{http://dx.doi.org/\thefield{doi}}{#1}%
+  %}%
+%}
+
+%\DeclareFieldFormat[article,book,incollection,inproceedings,data]{title}%
+    %{\usebibmacro{string+doiurlisbn}{#1}}
+
+%\DeclareFieldFormat*{url}{}
+%\DeclareFieldFormat[online]{url}{\mkbibacro{URL}\addcolon\space\url{#1}}
+
+%\DeclareFieldFormat[misc]{title}{\usebibmacro{string+doiurlisbn}{\mkbibemph{#1}}}
+
+\usepackage{fontspec}
+% ==========================================================================
+% Fonts
+% ==========================================================================
+
+\setmainfont[%
+  Ligatures = {Common, TeX},
+  %ItalicFeatures={Style=Swash},
+  SmallCapsFeatures={Letters=SmallCaps,LetterSpace=6},
+  Numbers = {OldStyle, Proportional},
+]{Arno Pro}
+\setsansfont[%
+    Numbers = {OldStyle, Proportional},
+]{Myriad Pro}
+\setmonofont{Menlo}[Scale=MatchLowercase]
+
+
+% =============================================================================
+% Memoir package - layout and styling
+% =============================================================================
+% Here we set typeblock widths for the main body and the footnotes
+\setlxvchars[\normalfont] % about 66 characters per column
+\setxlvchars[\normalfont\footnotesize] % about 45 characters per column
+
+% Arno Pro 11pt
+% lxvchars: 3.9049805556 inches
+% xlvchars: 2.32066152778 inches
+\setlrmarginsandblock{1in}{1in}{}
+%\setlrmarginsandblock{1in}{3.6in}{}
+\setulmarginsandblock{1in}{1in}{*}
+
+% Arno Pro 12pt
+% lxvchars: 4.2349340277804 inches
+% xlvchars: 2.54297319445 inches
+%\setlrmarginsandblock{1in}{3.3in}{}
+%\setulmarginsandblock{1in}{1in}{*}
+
+
+\headstyles{bringhurst}
+
+\sidebarmargin{right}
+\setsidebars{*}{2in}{*}{*}{*}{*}
+\renewcommand*{\sidebarform}{\raggedright}
+
+% Remove preceding chapter number for section headings.
+\counterwithout{section}{chapter}
+
+% Set properties of margin notes, sidecaptioned floats, and footnotes in the
+% margin.
+
+% Set sidepar margin
+\sideparmargin{outer}
+
+% For Arno Pro 11 pt, change 2.1in to 2.4in
+% Set width of footnotes in margin
+\setmarginnotes{0.2in}{2.4in}{2\onelineskip}
+
+% Set width of \sidefootnote
+\setsidefeet{0.2in}{2.4in}{*}{*}{\tiny}{*}
+
+% Set width of sidecaptions
+\setsidecaps{0.2in}{2.4in}
+
+\footnotesinmargin
+\sidecapmargin{outer}
+\renewcommand*{\sidecapstyle}{\normalfont\footnotesize}
+\setsidecappos{t}
+
+% Set footnote style
+\renewcommand{\foottextfont}{\footnotesize}
+
+
+% Make marginfigures centered by default
+\setfloatadjustment{marginfigure}{\centering}
+
+% Number subsections
+\setsecnumdepth{subsection}
+
+% Add subsections to the table of contents
+\settocdepth{subsection}
+
+% Set caption style
+\captionstyle[\centering]{\footnotesize}
+\captionnamefont{\color{Maroon}\footnotesize}
+
+% Shading
+\definecolor{shadecolor}{gray}{0.95}
+
+\tightlists
+
+\checkandfixthelayout
+
+\begin{document}
+\chapter*{ToMCAT Summary for ASIST PCR}
+
+\section{Main successes}
+
+\paragraph{Real-time multi-party spoken dialog analysis system}
+
+We developed a system for real-time analysis (real-time transcription, event
+extraction, and labeling of sentiment/emotion) of multi-party spoken dialog in
+remote experiments. This system is included in the publicly-released ASIST
+Study 3 testbed. Our rule-based event extraction system outperforms a zero-shot
+neural classifier baseline, even in an oracle setting where the neural
+classifier knows how many events should be extracted from each
+utterance~\citep{nitschke-etal-2022-rule}. The system is designed to be
+extended to perform other speech analysis tasks, such as entrainment detection
+and dialog act classification---we have published novel approaches for the
+latter that use multimodal data~\citep{miah-etal-2023-hierarchical} and
+speaker-enriched utterance representations~\citep{qamar-etal-2023-speaking}.
+
+For the ASIST Study 4 testbed, we added a rule-based spellchecking system to
+meet the unique requirements of analyzing natural language in Study 4
+(reproducibility, real-time output, high precision, and the ability to deal
+with domain-specific terms and new types of errors arising from
+the informal nature of text chat) that were not met by existing systems.
+
+\paragraph{Rich, multimodal dataset for human-machine teaming} We used the
+ASIST Study 3 testbed to collect data from 40 teams of 3 humans each, while
+instrumenting participants with a large array of physiological sensors.
+Modalities include two kinds of brain scan data— functional near-infrared
+spectroscopy (fNIRS) and electroencephalography (EEG), as well as skin
+conductance, heart rate, eye tracking, face images, spoken dialog audio data
+with automatic speech recognition (ASR) transcriptions, screenshots, gameplay
+data, demographic data, and self-report questionnaires. In addition to the
+Study 3 USAR dataset also contains data from a set of novel behavioral baseline
+tasks.
+
+The dataset is publicly available~\citep{pyarelal2023the}. Notably, this is
+the \emph{largest} publicly available fNIRS dataset to date, approximately
+\textbf{13.5 times} the size of the next-largest one.
+
+%\section{Lessons learned}
+
+%Besides the inevitable lesson on how everything takes a lot longer than you
+%planned, we learned j
+
+\section{Products}
+
+\paragraph{Publications and Datasets} We have published papers at competitive
+venues on our public physio dataset~\citep{pyarelal2023the} and dialog act
+classification approaches~\citep{qamar-etal-2023-speaking,
+miah-etal-2023-hierarchical}.  Additionally, we have published book chapters on
+our procedural generation library for voxel maps~\citep{Pyarelal.ea:2022} and
+using features at multiple spatial and temporal resolutions to predict human
+behavior in real-time~\citep{Zhang.ea:2022c}. We have also disseminated some of
+our work through workshops and non-CS/ML/AI conferences---namely, our work on
+our ASIST Study 3 event extraction system~\citep{nitschke-etal-2022-rule},
+probabilistic modeling of human teams to infer false
+beliefs~\citep{Soares.ea:2021}, studying the effect of automated transcription
+on emotion, sarcasm, and personality detection from speech
+data~\citep{culnan-etal-2021-ire}, and our review on team plan
+recognition~\citep{Rieffer_Champlin_2023}.  We have published preprints that
+explore reinforcement learning with vector quantized
+encoding~\citep{Zhang.ea:2022a} and multi-timescale modeling of human
+behavior~\citep{Basavaraj.ea:2022}. Finally, we also have another multimodal
+dialog dataset~\citep{multicat} based on annotating ASIST Study 3 data in
+preparation that will be submitted for publication in early 2024.
+
+\paragraph{Registrations} We published public preregistrations and results
+registrations that detailed our approaches and results ASIST Studes
+1--3~\citep{study_1_preregistration_and_results, study_2_preregistration,
+    study_2_results, study_3_preregistration, study_3_results}.
+
+\paragraph{Software} Besides the main ToMCAT repository~\citep{tomcat_repo}
+that contains the code for our single-player `zombie attack` missions,
+procedural generation library and physio data collection, analysis, and
+dissemination, we also have public repositories that contain the code for our
+ASI~\citep{tomcat_asi}, plan recognition approaches~\citep{tomcat_planrec},
+event extraction~\citep{tomcat-text}, and speech
+analysis~\citep{tomcat_speech}. Additionally, our updated event extractor and
+spellchecker for Study 4 will become public when the Study 4 testbed becomes
+public.
+
+
+\newpage
+\printbibliography
+\end{document}

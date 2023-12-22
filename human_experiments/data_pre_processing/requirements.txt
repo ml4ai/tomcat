@@ -11,3 +11,7 @@ praat-textgrids==1.4.0
 openai-whisper
 audiofile
 sqlalchemy==2.0.22
+black
+flake8
+isort
+autoflake

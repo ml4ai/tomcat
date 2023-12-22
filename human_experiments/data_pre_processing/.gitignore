@@ -11,5 +11,9 @@
 inspect-data.json
 
 cache/
+<<<<<<< HEAD
 
 .ipynb_checkpoints/
+=======
+.tmp/
+>>>>>>> 06c94edcd4c7493d0520dd789cd55f78986ebae2
