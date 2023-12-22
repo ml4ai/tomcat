@@ -5,9 +5,9 @@ import subprocess
 from pydub import AudioSegment
 from tqdm import tqdm
 
-from audio.entity.praat_annotation import PraatAnnotation
-from audio.entity.transcriber import Transcriber
-from data_pre_processing.common.constants import OPENSMILE_CONFIG_DIR
+from datasette_interface.model.audio.praat_annotation import PraatAnnotation
+from datasette_interface.model.audio.transcriber import Transcriber
+from datasette_interface.common.constants import OPENSMILE_CONFIG_DIR
 
 error = logging.getLogger().error
 
@@ -52,15 +52,14 @@ class PCMAudio:
         make it produce a csv file with the same columns so I opted for the CLI solution. Also,
         this does not change the OpenSmile input and output in the config files.
         """
-        command = (
-            f"SMILExtract -C {OPENSMILE_CONFIG_DIR}/is09-13/IS13_ComParE.conf -I "
-            f"{self.filepath} -D {out_filepath}"
-        )
-
         try:
             # Log is written to a file
             logs = logging.getLoggerClass().root.handlers[0].baseFilename
             with open(logs, "a") as log_file:
+                command = (
+                    f"SMILExtract -C {OPENSMILE_CONFIG_DIR}/is09-13/IS13_ComParE.conf -I "
+                    f"{self.filepath} -D {out_filepath} --logfile {logs} --appendLogfile 1"
+                )
                 success = (
                         subprocess.call(
                             command, shell=True, stdout=log_file, stderr=subprocess.STDOUT
@@ -68,6 +67,10 @@ class PCMAudio:
                         == 0
                 )
         except Exception:
+            command = (
+                f"SMILExtract -C {OPENSMILE_CONFIG_DIR}/is09-13/IS13_ComParE.conf -I "
+                f"{self.filepath} -D"
+            )
             success = subprocess.call(command, shell=True) == 0
 
         if not success:

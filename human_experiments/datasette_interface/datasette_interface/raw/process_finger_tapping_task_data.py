@@ -9,19 +9,17 @@ from logging import info
 
 import pandas as pd
 import pyxdf
-from sqlalchemy.orm import Session
 from tqdm import tqdm
 
-from datasette_interface.common.config import USER
 from datasette_interface.database.entity.task.finger_tapping_task_observation import \
     FingerTappingTaskObservation
-from utils import (
+from datasette_interface.common.utils import (
     cd,
     should_ignore_directory,
     convert_unix_timestamp_to_iso8601,
     is_directory_with_unified_xdf_files,
 )
-from datasette_interface.database.config import get_db, engine
+from datasette_interface.database.config import get_db
 from datasette_interface.common.config import LOG_DIR
 
 logging.basicConfig(

@@ -8,20 +8,17 @@ from glob import glob
 from logging import info, error, debug
 
 import pyxdf
-from sqlalchemy.orm import Session
 from tqdm import tqdm
 
-from datasette_interface.common.config import USER
-from datasette_interface.database.entity.base.base import Base
 from datasette_interface.database.entity.task.minecraft_task import MinecraftMission, MinecraftTestbedMessage
-from utils import (
+from datasette_interface.common.utils import (
     cd,
     should_ignore_directory,
     convert_iso8601_timestamp_to_unix,
     convert_unix_timestamp_to_iso8601,
     is_directory_with_unified_xdf_files,
 )
-from datasette_interface.database.config import get_db, engine
+from datasette_interface.database.config import get_db
 from datasette_interface.common.config import LOG_DIR, settings
 
 logging.basicConfig(

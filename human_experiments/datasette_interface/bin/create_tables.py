@@ -20,9 +20,11 @@ from datasette_interface.database.entity.task.ping_pong_competitive_task_observa
 from datasette_interface.database.entity.task.ping_pong_cooperative_task_observation import \
     PingPongCooperativeTaskObservation
 from datasette_interface.database.entity.task.rest_state_task import RestStateTask
+from datasette_interface.database.entity.derived.audio_vocalics import AudioVocalics
 from datasette_interface.database.entity.base.base import Base
 from datasette_interface.database.config import engine
 from datasette_interface.common.config import settings
 from datasette_interface.raw.common.process_raw_signals import create_indices
+
 
 Base.metadata.create_all(engine, checkfirst=True)

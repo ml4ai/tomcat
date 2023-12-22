@@ -21,7 +21,8 @@ create_tables:
 	@PYTHONPATH="." ./bin/create_table_indices.py
 
 update_db:
-	@PYTHONPATH="." ./bin/populate_raw_tables.py
+	#@PYTHONPATH="." ./bin/populate_raw_tables.py
+	@PYTHONPATH="." ./bin/extract_vocalic_features.py
 
 update_screen_capture:
 	@PYTHONPATH="." ./bin/populate_raw_tables.py --include="screen_capture"

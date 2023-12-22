@@ -20,3 +20,7 @@ datasette~=0.64.3
 setuptools~=68.0.0
 pydantic~=2.5.3
 scipy~=1.11.2
+pydub~=0.25.1
+openai-whisper
+praat-textgrids==1.4.0
+torch~=2.1.2

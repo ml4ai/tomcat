@@ -6,12 +6,11 @@ from logging import info, error
 import pandas as pd
 import pyxdf
 from dateutil import parser
-from sqlalchemy.orm import Session
 from tqdm import tqdm
 
 from datasette_interface.database.entity.signal.screen_capture import ScreenCapture
 from datasette_interface.raw.common.process_raw_signals import get_signals
-from utils import (
+from datasette_interface.common.utils import (
     cd,
     should_ignore_directory,
     convert_iso8601_timestamp_to_unix,

@@ -5,19 +5,17 @@ from logging import info, error
 
 import pyxdf
 from sqlalchemy import Index
-from sqlalchemy.orm import Session
 from tqdm import tqdm
 
 from datasette_interface.database.entity.base.data_validity import DataValidity
 from datasette_interface.raw.common.label_data import delete_invalid_signals, label_signals
-from utils import (
+from datasette_interface.common.utils import (
     cd,
     should_ignore_directory,
     convert_unix_timestamp_to_iso8601,
     is_directory_with_unified_xdf_files,
 )
 from datasette_interface.database.config import get_db, engine
-from datasette_interface.common.config import LOG_DIR
 
 
 def insert_raw_unlabeled_data(override, signal_modality_class, modality_name,
