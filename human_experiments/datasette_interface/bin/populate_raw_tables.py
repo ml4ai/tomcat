@@ -48,7 +48,7 @@ logging.basicConfig(
     ),
 )
 
-TABLES = [
+TABLES = {
     "base",
     "rest_state",
     "affective",
@@ -60,7 +60,7 @@ TABLES = [
     "eeg",
     "gaze",
     "screen_capture"
-]
+}
 
 
 def recreate_tables(tables_to_recreate):
@@ -106,10 +106,13 @@ def recreate_tables(tables_to_recreate):
 
 
 def populate_tables(tables_to_process):
+    # The others will have foreign key to the base tables
+    if "base" in tables_to_process:
+        process_base_tables()
+    tables_to_process.remove("base")
+
     for table in tables_to_process:
-        if table == "base":
-            process_base_tables()
-        elif table == "rest_state":
+        if table == "rest_state":
             process_rest_state_task_data()
         elif table == "affective":
             process_affective_task_data()
@@ -140,60 +143,43 @@ if __name__ == "__main__":
             The script will not work if this is not true.           
         """
     )
-
-    parser.add_argument("--no_base", action='store_true', help="Do not recreate base tables.")
-    parser.add_argument("--no_rest_state", action='store_true', help="Do not recreate rest state "
-                                                                     "tables.")
-    parser.add_argument("--no_affective", action='store_true', help="Do not recreate affective "
-                                                                    "task tables.")
-    parser.add_argument("--no_finger_tapping", action='store_true', help="Do not recreate finger "
-                                                                         "tapping task tables.")
-    parser.add_argument("--no_ping_pong_comp", action='store_true',
-                        help="Do not recreate ping-pong competitive tables.")
-    parser.add_argument("--no_ping_pong_coop", action='store_true',
-                        help="Do not recreate ping-pong cooperative tables.")
-    parser.add_argument("--no_minecraft", action='store_true', help="Do not recreate minecraft "
-                                                                    "tables.")
-    parser.add_argument("--no_fnirs", action='store_true', help="Do not recreate fnirs tables.")
-    parser.add_argument("--no_eeg", action='store_true', help="Do not recreate eeg tables.")
-    parser.add_argument("--no_gaze", action='store_true', help="Do not recreate gaze tables.")
-    parser.add_argument("--no_screen_capture", action='store_true', help="Do not recreate screen "
-                                                                         "capture tables.")
+    parser.add_argument("--include", type=str, default="all",
+                        help=f"Comma-separated list of modalities to process among {TABLES}")
+    parser.add_argument("--exclude", type=str, default="",
+                        help=f"Comma-separated list of modalities to exclude among the ones in "
+                             f"--include")
 
     args = parser.parse_args()
 
-    tables = TABLES.copy()
-    if args.no_base:
-        tables.remove("base")
-    if args.no_rest_state:
-        tables.remove("rest_state")
-    if args.no_affective:
-        tables.remove("affective")
-    if args.no_finger_tapping:
-        tables.remove("finger_tapping")
-    if args.no_ping_pong_comp:
-        tables.remove("ping_pong_competitive")
-    if args.no_ping_pong_coop:
-        tables.remove("ping_pong_cooperative")
-    if args.no_minecraft:
-        tables.remove("minecraft")
-    if args.no_fnirs:
-        tables.remove("fnirs")
-    if args.no_eeg:
-        tables.remove("eeg")
-    if args.no_gaze:
-        tables.remove("gaze")
-    if args.no_screen_capture:
-        tables.remove("screen_capture")
+    if args.include.strip == "all":
+        tables = TABLES
+    else:
+        tables = []
+        for modality in args.include.split(","):
+            modality = modality.strip()
+            if modality not in TABLES:
+                raise ValueError(f"Modality ({modality}) is invalid.")
+
+            tables.append(modality)
+        tables = set(tables)
+
+    for modality in args.exclude.split(","):
+        modality = modality.strip()
+        if modality not in tables:
+            raise ValueError(f"Modality ({modality}) not in --include ({tables}).")
+
+        tables.remove(modality)
 
     if "base" in tables and len(tables) != len(TABLES):
         raise Exception(
             "It is not possible to recreate base tables without recreating all other tables "
             "altogether since all the content in the base tables will be erased and they are "
-            "foreign keys to other tables. If you want to recreate all the tables, you have to "
-            "explicitly not provide any no_* option.")
+            "foreign keys to other tables.")
 
-    if args.override:
-        recreate_tables(tables)
+    if settings.drop_table:
+        print(f"Recreate tables {tables}")
+        # recreate_tables(tables)
 
-    populate_tables(tables)
+    # populate_tables(tables)
+    print(f"Reprocess tables {tables}")
+    print(SQLALCHEMY_DATABASE_URI)
