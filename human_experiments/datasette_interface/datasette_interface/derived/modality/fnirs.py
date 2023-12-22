@@ -7,6 +7,9 @@ from data_pre_processing.signal.common.constants import FNIRS_LOW_FREQUENCY_THRE
     FNIRS_HIGH_FREQUENCY_THRESHOLD, FNIRS_BANDPASS_FILTER_METHOD
 from data_pre_processing.signal.entity.modality import Modality
 from data_pre_processing.signal.table.fnirs import FNIRSSyncUnfiltered, FNIRSSyncFiltered
+from sqlalchemy import select
+from datasette_interface.database.config import get_db
+from datasette_interface.database.entity.signal.fnirs import FNIRSRaw
 
 
 class FNIRS(Modality):
@@ -22,6 +25,12 @@ class FNIRS(Modality):
         self.low_frequency_threshold = low_frequency_threshold
         self.high_frequency_threshold = high_frequency_threshold
         self.bandpass_filter_method = bandpass_filter_method
+
+    def read_data(self, group_session: str) -> pd.DataFrame:
+        db_session = next(get_db())
+        return pd.read_sql(
+            select(FNIRSRaw).where(FNIRSRaw.group_session_id == group_session),
+            db_session)
 
     @property
     def channels(self) -> List[str]:

@@ -9,16 +9,7 @@ def create_modality(modality: str):
     if modality == "eeg":
         return EEG()
 
-    # if modality == "ekg":
-    #     return EKG()
-
-    # if modality == "gsr":
-    #     return GSR()
-
     if modality == "fnirs":
         return FNIRS()
-
-    # if modality == "gaze":
-    #     return Gaze()
 
     raise ValueError(f"Invalid modality ({modality}).")

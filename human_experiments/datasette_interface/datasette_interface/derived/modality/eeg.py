@@ -9,6 +9,9 @@ from data_pre_processing.signal.table.eeg import EEGSyncUnfiltered, EEGSyncFilte
 from data_pre_processing.signal.common.constants import (EEG_NOTCH_FILTER_FREQUENCY,
                                                          EEG_NOTCH_WIDTH,
                                                          EEG_TRANSISION_BANDWIDTH)
+from sqlalchemy import select
+from datasette_interface.database.config import get_db
+from datasette_interface.database.entity.signal.fnirs import FNIRSRaw
 
 
 class EEG(Modality):
@@ -25,6 +28,12 @@ class EEG(Modality):
         self.notch_filter_frequency = notch_filter_frequency
         self.notch_width = notch_width
         self.transition_bandwidth = transition_bandwidth
+
+    def read_data(self, group_session: str) -> pd.DataFrame:
+        db_session = next(get_db())
+        return pd.read_sql(
+            select(EEGRaw).where(EEGRaw.group_session_id == group_session),
+            db_session)
 
     @property
     def channels(self) -> List[str]:

@@ -19,68 +19,71 @@ from data_pre_processing.signal.entity.factory import create_modality
 from data_pre_processing.signal.entity.modality import Modality
 
 from multiprocessing import Pool
+from datasette_interface.database.entity.base.group_session import GroupSession
+from sqlalchemy import select
+from datasette_interface.database.config import get_db
+from datasette_interface.derived.main_clock import get_main_clock_scale
 
 
-def sync_raw_signals_in_parallel(data_reader: DataReader,
-                                 data_writer: DataWriter,
-                                 source_frequency: int,
-                                 upsampling_frequency: int,
-                                 final_frequency: int,
+def sync_raw_signals_in_parallel(clock_frequency: float,
+                                 signal_frequency: float,
+                                 up_sample_scale: float,
+                                 modality: str,
                                  num_jobs: int,
-                                 log_dir: str):
+                                 buffer: int):
     """
     Synchronizes data from one modality for different group sessions in parallel.
 
-    :param data_reader: object responsible for reading the data to be synchronized.
-    :param data_writer: object responsible for writing the synchronized data.
-    :param source_frequency: theoretical frequency of the original data.
-    :param upsampling_frequency: frequency to upsample signals for interpolation.
-    :param final_frequency: final frequency of the synchronized data.
+    :param clock_frequency: frequency of the main clock signals will be to be in-sync with.
+    :param signal_frequency: original frequency of the raw signal.
+    :param up_sample_scale: by how much to up-sample the raw signal before interpolating with the
+        main clock.
+    :param modality: modality of the signal.
     :param num_jobs: number of jobs for parallelization.
-    :param log_dir: directory where to create the log files.
+    :param buffer: a buffer in seconds to be sure we don't lose any signal data.
     """
-    os.makedirs(log_dir, exist_ok=True)
-
     job_fn = partial(sync_raw_signals_single_job,
-                     data_reader=data_reader,
-                     data_writer=data_writer,
-                     source_frequency=source_frequency,
-                     upsampling_frequency=upsampling_frequency,
-                     final_frequency=final_frequency,
-                     log_dir=log_dir)
+                     clock_frequency=clock_frequency,
+                     signal_frequency=signal_frequency,
+                     up_sample_scale=up_sample_scale,
+                     modality=modality,
+                     buffer=buffer)
 
-    group_sessions = data_reader.read_group_sessions()
-    group_session_batches = np.array_split(["exp_2022_10_04_09", "exp_2022_10_07_15"],
-                                    np.min(num_jobs, len(group_sessions)))
+    db_session = next(get_db())
+    group_sessions = db_session.scalars(select(GroupSession))
+
+    effective_num_jobs = np.min(num_jobs, len(group_sessions))
+    group_session_batches = np.array_split(group_sessions, effective_num_jobs)
+
     print(f"Synchronizing signals from {len(group_sessions)} group sessions.")
     with Pool(processes=num_jobs) as pool:
         list(tqdm(pool.imap(job_fn, group_session_batches), total=len(group_sessions)))
 
 
 def sync_raw_signals_single_job(group_sessions: List[str],
-                                data_reader: DataReader,
-                                data_writer: DataWriter,
-                                source_frequency: int,
-                                upsampling_frequency: int,
-                                final_frequency: int,
-                                log_dir: str):
+                                clock_frequency: float,
+                                signal_frequency: float,
+                                up_sample_scale: float,
+                                modality: str,
+                                buffer: int):
     """
     Synchronizes data from one modality for different group sessions in sequence.
 
     :param group_sessions: group sessions to process.
-    :param data_reader: object responsible for reading the data to be synchronized.
-    :param data_writer: object responsible for writing the synchronized data.
-    :param source_frequency: theoretical frequency of the original data.
-    :param upsampling_frequency: frequency to upsample signals for interpolation.
-    :param final_frequency: final frequency of the synchronized data.
-    :param log_dir: directory where to create the log files.
+    :param clock_frequency: frequency of the main clock signals will be to be in-sync with.
+    :param signal_frequency: original frequency of the raw signal.
+    :param up_sample_scale: by how much to up-sample the raw signal before interpolating with the
+        main clock.
+    :param modality: modality of the signal.
+    :param buffer: a buffer in seconds to be sure we don't lose any signal data.
     """
     for group_session in group_sessions:
         logging.basicConfig(
             level=logging.INFO,
             handlers=(
                 logging.FileHandler(
-                    filename=f"{log_dir}/{group_session}.log",
+                    filename=f"{LOG_DIR}/sync_raw_{modality}_{group_session}_"
+                             f"{clock_frequency}.log",
                     mode="w",
                 ),
             ),
@@ -88,13 +91,17 @@ def sync_raw_signals_single_job(group_sessions: List[str],
         logger = logging.getLogger()
 
         logger.info(f"Processing group session {group_session}.")
-        data = data_reader.read_raw(group_session)
 
-        common_start_time, common_end_time = get_overlapping_window_across_stations(data)
+        main_clock_scale = get_main_clock_scale(group_session=group_session,
+                                                clock_frequency=clock_frequency,
+                                                buffer=buffer)
+        modality_helper = create_modality(modality)
+        modality_helper.load_data(group_session)
+        modality_helper.filter()
+        modality_helper.up_sample(up_sample_scale)
+        modality_helper.sync_to_clock(clock_frequency, main_clock_scale)
+        modality_helper.save_synced_data()
 
-        # Round start and end time points to the closest second.
-        common_start_time = math.ceil(common_start_time)
-        common_end_time = math.floor(common_end_time)
 
         downsampling_factor = upsampling_frequency / final_frequency
 

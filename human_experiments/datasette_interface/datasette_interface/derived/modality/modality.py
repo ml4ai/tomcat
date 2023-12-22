@@ -220,3 +220,10 @@ class Modality(ABC):
         :return: list of channel names.
         """
         pass
+
+    @abstractmethod
+    def read_data(self, group_session: str) -> pd.DataFrame:
+        """
+        Reads data from a group session from the database.
+        """
+        pass
