@@ -254,20 +254,6 @@ def process_station_to_eeg_amp_mapping_workbook():
     db_session.close()
 
 
-def recreate_base_tables():
-    tables = [
-        GroupSession.__table__,
-        DataValidity.__table__,
-        Task.__table__,
-        Station.__table__,
-        Modality.__table__,
-        Participant.__table__
-    ]
-
-    Base.metadata.drop_all(engine, tables=tables, checkfirst=True)
-    Base.metadata.create_all(engine, tables=tables, checkfirst=True)
-
-
 def process_base_tables():
     populate_base_tables()
     process_data_validity_workbook()

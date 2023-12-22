@@ -220,7 +220,7 @@ def process_ping_pong_cooperative_task_data():
 
     info("Processing directories...")
 
-    with cd("/tomcat/data/raw/LangLab/experiments/study_3_pilot/group"):
+    with cd(settings.experiment_root_dir):
         directories_to_process = [
             directory
             for directory in os.listdir("../..")
@@ -234,7 +234,7 @@ def process_ping_pong_cooperative_task_data():
                   PingPongCooperativeTaskObservation.group_session_id).all()]))
 
         for group_session in tqdm(sorted(directories_to_process), unit="directories"):
-            if not settings.drop_table and group_session in processed_group_sessions:
+            if group_session in processed_group_sessions:
                 info(
                     f"Found saved ping-pong cooperative data for {group_session} in the database. "
                     f"Skipping group session.")
@@ -258,8 +258,3 @@ def process_ping_pong_cooperative_task_data():
                 db_session.add_all(ping_pong_observations)
                 db_session.commit()
         db_session.close()
-
-
-def recreate_ping_pong_cooperative_observation_tables():
-    PingPongCooperativeTaskObservation.__table__.drop(engine, checkfirst=True)
-    PingPongCooperativeTaskObservation.__table__.create(engine, checkfirst=True)

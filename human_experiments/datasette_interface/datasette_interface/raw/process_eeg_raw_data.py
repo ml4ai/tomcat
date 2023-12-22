@@ -48,15 +48,9 @@ def process_eeg_raw_data():
                 device_id_to_station_map[eeg_device.group_session_id][
                     eeg_device.device_id] = eeg_device.station_id
 
-    insert_raw_unlabeled_data(settings.drop_table, EEGRaw, "eeg", "EEG",
+    insert_raw_unlabeled_data(EEGRaw, "eeg", "EEG",
                               get_channel_names_from_xdf_stream,
                               partial(get_station_from_xdf_stream,
                                       device_id_to_station_map=device_id_to_station_map),
                               lambda x: x * 1 - 6)  # From micro-volt to volt
-    create_indices(not settings.drop_table, EEGRaw, "eeg")
-    label_data(settings.drop_table, EEGRaw, "eeg")
-
-
-def recreate_eeg_raw_tables():
-    EEGRaw.__table__.drop(engine, checkfirst=True)
-    EEGRaw.__table__.create(engine, checkfirst=True)
+    label_data(EEGRaw, "eeg")

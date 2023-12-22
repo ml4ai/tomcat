@@ -4,7 +4,7 @@ import logging
 import sys
 from logging import info
 
-from datasette_interface.database.entity.signal import GAZERaw
+from datasette_interface.database.entity.signal.gaze import GAZERaw
 from datasette_interface.raw.common.process_raw_signals import create_indices
 from datasette_interface.raw.common.process_raw_signals import insert_raw_unlabeled_data
 from datasette_interface.raw.common.process_raw_signals import label_data
@@ -36,10 +36,4 @@ def process_gaze_raw_data():
     insert_raw_unlabeled_data(settings.drop_table, GAZERaw, "Gaze", "Gaze",
                               get_channel_names_from_xdf_stream,
                               get_station_from_xdf_stream)
-    create_indices(not settings.drop_table, GAZERaw, "Gaze")
-    label_data(settings.drop_table, GAZERaw, "Gaze")
-
-
-def recreate_gaze_raw_tables():
-    GAZERaw.__table__.drop(engine, checkfirst=True)
-    GAZERaw.__table__.create(engine, checkfirst=True)
+    label_data(GAZERaw, "Gaze")

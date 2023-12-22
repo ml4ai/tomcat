@@ -2,13 +2,6 @@ import os
 from pydantic import field_validator
 from pydantic_settings import BaseSettings
 
-# USER = os.getenv("USER")
-#
-# os.makedirs(f"/space/{USER}/tomcat", exist_ok=True)
-# SQLITE_DB_PATH = f"/space/{USER}/tomcat/tomcat.db"
-#
-# IMAGE_URL_ROOT_DIR = "https://ivilab.cs.arizona.edu/data/tomcat/group"
-
 USER = os.getenv("USER")
 DEVELOPMENT = "development"
 PRODUCTION = "production"
@@ -23,7 +16,8 @@ class Settings(BaseSettings):
     db_name: str = "tomcat"
     working_env: str = DEVELOPMENT
     artifact_dir: str = f"/space/{USER}/tomcat"
-    drop_table: bool = False  # Whether to override tables' content or just update with new values.
+    image_url_root_dir: str = "https://ivilab.cs.arizona.edu/data/tomcat/group"
+    experiment_root_dir: str = "/tomcat/data/raw/LangLab/experiments/study_3_pilot/group"
 
     @classmethod
     @field_validator(

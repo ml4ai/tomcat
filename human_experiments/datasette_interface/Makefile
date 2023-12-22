@@ -13,11 +13,18 @@ launch_datasette:
 update_inspect_file:
 	./bin/update_inspect_file
 
+clear_db:
+	@PYTHONPATH="." ./bin/clear_database.py
+
+create_tables:
+	@PYTHONPATH="." ./bin/create_tables.py
+	@PYTHONPATH="." ./bin/create_table_indices.py
+
 update_db:
-	./bin/populate_raw_tables.py
+	@PYTHONPATH="." ./bin/populate_raw_tables.py
 
 update_screen_capture:
-	./bin/populate_raw_tables.py --include="screen_capture"
+	@PYTHONPATH="." ./bin/populate_raw_tables.py --include="screen_capture"
 
 lint:
 	black .

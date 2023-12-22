@@ -497,7 +497,7 @@ def process_directory_v2(group_session):
 def process_minecraft_data():
     info("Processing directories...")
 
-    with cd("/tomcat/data/raw/LangLab/experiments/study_3_pilot/group"):
+    with cd(settings.experiment_root_dir):
         directories_to_process = [
             directory
             for directory in os.listdir("../..")
@@ -510,7 +510,7 @@ def process_minecraft_data():
                 MinecraftMission.group_session_id).all()])
 
         for group_session in tqdm(sorted(directories_to_process), unit="directories"):
-            if not settings.drop_table and group_session in processed_group_sessions:
+            if group_session in processed_group_sessions:
                 info(f"Found saved Minecraft data for {group_session} in the database. Skipping group session.")
                 continue
 
@@ -527,13 +527,3 @@ def process_minecraft_data():
             db_session.add_all(messages)
             db_session.commit()
         db_session.close()
-
-
-def recreate_minecraft_tables():
-    tables = [
-        MinecraftMission.__table__,
-        MinecraftTestbedMessage.__table__
-    ]
-
-    Base.metadata.drop_all(engine, tables=tables, checkfirst=True)
-    Base.metadata.create_all(engine, tables=tables, checkfirst=True)

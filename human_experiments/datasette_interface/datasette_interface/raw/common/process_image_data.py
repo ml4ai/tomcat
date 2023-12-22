@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 from tqdm import tqdm
 
 from datasette_interface.database.entity.signal.screen_capture import ScreenCapture
-from process_raw_signals import get_signals
+from datasette_interface.raw.common.process_raw_signals import get_signals
 from utils import (
     cd,
     should_ignore_directory,
@@ -19,7 +19,7 @@ from utils import (
     is_directory_with_unified_xdf_files,
     is_directory_with_correct_image_creation_time
 )
-from datasette_interface.common.config import IMAGE_URL_ROOT_DIR
+from datasette_interface.common.config import settings
 
 
 def process_directory_v1(group_session, image_table_class, image_dir):
@@ -83,7 +83,8 @@ def process_directory_v1(group_session, image_table_class, image_dir):
                     timestamp_unix = convert_iso8601_timestamp_to_unix(timestamp_iso8601)
 
                 # Task and participant will be filled later in the labeling part.
-                url = f"{IMAGE_URL_ROOT_DIR}/{group_session}/{station}/{image_dir}/{filename}"
+                url = f"{settings.image_url_root_dir}/{group_session}/" \
+                      f"{station}/{image_dir}/{filename}"
                 image_record = image_table_class(
                     group_session_id=group_session,
                     id=unique_id,
@@ -145,7 +146,7 @@ def process_directory_v2(group_session, image_table_class, image_type, xdf_signa
     return records
 
 
-def insert_raw_unlabeled_data(override, image_table_class, image_type,
+def insert_raw_unlabeled_data(image_table_class, image_type,
                               xdf_signal_name, image_dir):
     info(f"Inserting unlabeled data.")
     with cd("/tomcat/data/raw/LangLab/experiments/study_3_pilot/group"):
@@ -162,7 +163,7 @@ def insert_raw_unlabeled_data(override, image_table_class, image_type,
                  ScreenCapture.group_session_id).all()])
 
         for group_session in tqdm(sorted(directories_to_process), unit="directories"):
-            if not override and group_session in processed_group_sessions:
+            if group_session in processed_group_sessions:
                 info(
                     f"Found saved {image_type} records for {group_session} in the database. "
                     f"Skipping group session.")

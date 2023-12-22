@@ -94,7 +94,7 @@ def process_rest_state_task_data():
 
     info("Processing directories...")
 
-    with cd("/tomcat/data/raw/LangLab/experiments/study_3_pilot/group"):
+    with cd(settings.experiment_root_dir):
         directories_to_process = [
             directory
             for directory in os.listdir("../..")
@@ -107,7 +107,7 @@ def process_rest_state_task_data():
                 RestStateTask.group_session_id).all()])
 
         for group_session in tqdm(sorted(directories_to_process), unit="directories"):
-            if not settings.drop_table and group_session in processed_group_sessions:
+            if group_session in processed_group_sessions:
                 info(f"Found saved rest state data for {group_session} in the database. "
                      f"Skipping group session.")
                 continue
@@ -122,8 +122,3 @@ def process_rest_state_task_data():
                 db_session.add(rest_state_entry)
                 db_session.commit()
         db_session.close()
-
-
-def recreate_rest_state_table():
-    RestStateTask.__table__.drop(engine, checkfirst=True)
-    RestStateTask.__table__.create(engine, checkfirst=True)

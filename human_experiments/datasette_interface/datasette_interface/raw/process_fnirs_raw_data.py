@@ -34,13 +34,7 @@ def get_station_from_xdf_stream(group_session, stream):
 
 def process_fnirs_raw_data():
     info("Processing FNIRSRaw data.")
-    insert_raw_unlabeled_data(settings.drop_table, FNIRSRaw, "fnirs", "NIRS",
+    insert_raw_unlabeled_data(FNIRSRaw, "fnirs", "NIRS",
                               get_channel_names_from_xdf_stream,
                               get_station_from_xdf_stream, lambda x: x[41:])
-    create_indices(not settings.drop_table, FNIRSRaw, "fnirs")
-    label_data(settings.drop_table, FNIRSRaw, "fnirs")
-
-
-def recreate_fnirs_raw_tables():
-    FNIRSRaw.__table__.drop(engine, checkfirst=True)
-    FNIRSRaw.__table__.create(engine, checkfirst=True)
+    label_data(FNIRSRaw, "fnirs")

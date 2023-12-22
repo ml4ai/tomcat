@@ -273,7 +273,7 @@ def process_affective_task_data():
 
     info("Processing directories...")
 
-    with cd("/tomcat/data/raw/LangLab/experiments/study_3_pilot/group"):
+    with cd(settings.experiment_root_dir):
         directories_to_process = [
             directory
             for directory in os.listdir("../..")
@@ -287,7 +287,7 @@ def process_affective_task_data():
                  AffectiveTaskEvent.group_session_id).all()])
 
         for group_session in tqdm(sorted(directories_to_process), unit="directories"):
-            if not settings.drop_table and group_session in processed_group_sessions:
+            if group_session in processed_group_sessions:
                 info(
                     f"Found saved affective data for {group_session} in the database. "
                     f"Skipping group session.")
@@ -312,8 +312,3 @@ def process_affective_task_data():
                 db_session.commit()
 
         db_session.close()
-
-
-def recreate_affective_task_event_tables():
-    AffectiveTaskEvent.__table__.drop(engine, checkfirst=True)
-    AffectiveTaskEvent.__table__.create(engine, checkfirst=True)

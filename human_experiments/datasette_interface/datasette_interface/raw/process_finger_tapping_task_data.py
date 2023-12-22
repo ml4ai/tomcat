@@ -155,7 +155,7 @@ def process_finger_tapping_task_data():
 
     info("Processing directories...")
 
-    with cd("/tomcat/data/raw/LangLab/experiments/study_3_pilot/group"):
+    with cd(settings.experiment_root_dir):
         directories_to_process = [
             directory
             for directory in os.listdir("../..")
@@ -171,7 +171,7 @@ def process_finger_tapping_task_data():
                  FingerTappingTaskObservation.group_session_id).all()])
 
         for group_session in tqdm(sorted(directories_to_process), unit="directories"):
-            if not settings.drop_table and group_session in processed_group_sessions:
+            if group_session in processed_group_sessions:
                 info(f"Found saved finger tapping for {group_session} in the database. "
                      f"Skipping group session.")
                 continue
@@ -185,8 +185,3 @@ def process_finger_tapping_task_data():
         db_session.add_all(finger_tapping_observations)
         db_session.commit()
         db_session.close()
-
-
-def recreate_finger_tapping_task_observation_tables():
-    FingerTappingTaskObservation.__table__.drop(engine, checkfirst=True)
-    FingerTappingTaskObservation.__table__.create(engine, checkfirst=True)

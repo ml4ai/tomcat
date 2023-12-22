@@ -9,8 +9,7 @@ from sqlalchemy.orm import Session
 from tqdm import tqdm
 
 from datasette_interface.database.entity.base.data_validity import DataValidity
-from label_data import delete_invalid_signals
-from label_data import label_signals
+from datasette_interface.raw.common.label_data import delete_invalid_signals, label_signals
 from utils import (
     cd,
     should_ignore_directory,
@@ -168,33 +167,20 @@ def process_directory_v2(group_session, signal_modality_class, modality_name, xd
     return signals
 
 
-def create_indices(check, signal_modality_class, modality_name):
+def create_indices(signal_modality_class, modality_name):
     """Create indices for efficient querying"""
     info(f"Creating database indices for {modality_name} table.")
 
     suffix = modality_name.lower()
 
-    idx_group_session_station = Index(f'idx_group_session_station_{modality_name}',
-                                      signal_modality_class.group_session_id,
-                                      signal_modality_class.station_id)
-    idx_group_session_station.create(bind=engine, checkfirst=check)
-
-    idx_timestamp_unix = Index(f'idx_timestamp_unix_{suffix}',
-                               signal_modality_class.timestamp_unix)
-    idx_timestamp_unix.create(bind=engine, checkfirst=check)
-
-    idx_participant = Index(f'idx_participant_{suffix}', signal_modality_class.participant_id)
-    idx_participant.create(bind=engine, checkfirst=check)
-
-    idx_group_session = Index(f'idx_group_session_{suffix}',
-                              signal_modality_class.group_session_id)
-    idx_group_session.create(bind=engine, checkfirst=check)
-
-    idx_task = Index(f'idx_task_{suffix}', signal_modality_class.group_session_id)
-    idx_task.create(bind=engine, checkfirst=check)
+    idx_task = Index(f'idx_task_{suffix}',
+                     signal_modality_class.group_session_id,
+                     signal_modality_class.station_id,
+                     signal_modality_class.task_id)
+    idx_task.create(bind=engine, checkfirst=True)
 
 
-def label_data(override, signal_modality_class, modality_name):
+def label_data(signal_modality_class, modality_name):
     info("Labeling data")
 
     db_session = next(get_db())
@@ -214,7 +200,7 @@ def label_data(override, signal_modality_class, modality_name):
     for row in tqdm(validity_rows):
         group_session, participant_id, station, task = row
 
-        if not override and group_session in processed_group_sessions:
+        if group_session in processed_group_sessions:
             info(
                 f"All {modality_name} entries for {group_session} are labeled in the database. Skipping group session.")
             continue

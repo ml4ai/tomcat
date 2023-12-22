@@ -41,8 +41,3 @@ def process_screen_capture_data():
     # validity table. We pass eeg but it could have been fnirs or gaze.
     label_data(settings.drop_table, ScreenCapture, "eeg")
     remove_unlabeled_data(ScreenCapture)
-
-
-def recreate_screen_capture_tables():
-    ScreenCapture.__table__.drop(engine, checkfirst=True)
-    ScreenCapture.__table__.create(engine, checkfirst=True)
