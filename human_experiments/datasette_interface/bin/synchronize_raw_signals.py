@@ -24,7 +24,7 @@ from logging import info
 from datasette_interface.common.config import settings, LOG_DIR
 from sqlalchemy import select
 from datetime import datetime
-from datasette_interface.derived.modality.factory import create_modality
+from datasette_interface.derived.helper.factory import create_modality
 
 
 def synchronize_raw_signals(experiment_dir: str, has_unified_xdf: bool, clock_frequency: float,

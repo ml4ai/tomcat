@@ -22,7 +22,7 @@ from multiprocessing import Pool
 from datasette_interface.database.entity.base.group_session import GroupSession
 from sqlalchemy import select
 from datasette_interface.database.config import get_db
-from datasette_interface.derived.main_clock import get_main_clock_scale
+from datasette_interface.derived.main_clock import get_main_clock_timestamps
 
 
 def sync_raw_signals_in_parallel(clock_frequency: float,
@@ -92,14 +92,14 @@ def sync_raw_signals_single_job(group_sessions: List[str],
 
         logger.info(f"Processing group session {group_session}.")
 
-        main_clock_scale = get_main_clock_scale(group_session=group_session,
-                                                clock_frequency=clock_frequency,
-                                                buffer=buffer)
+        clock_timestamps = get_main_clock_timestamps(group_session=group_session,
+                                                     clock_frequency=clock_frequency,
+                                                     buffer=buffer)
         modality_helper = create_modality(modality)
         modality_helper.load_data(group_session)
         modality_helper.filter()
         modality_helper.up_sample(up_sample_scale)
-        modality_helper.sync_to_clock(clock_frequency, main_clock_scale)
+        modality_helper.sync_to_clock(clock_frequency, clock_timestamps)
         modality_helper.save_synced_data()
 
 

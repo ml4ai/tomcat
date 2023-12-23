@@ -5,7 +5,7 @@ from datasette_interface.database.config import get_db
 from sqlalchemy import select, func
 
 
-def get_main_clock_scale(group_session: str, clock_frequency: int, buffer: int) -> np.ndarray:
+def get_main_clock_timestamps(group_session: str, clock_frequency: int, buffer: int) -> np.ndarray:
     """
     Gets a time scale for a main clock with a fixed frequency. The main clock will be shared among
     all data synced to it. Therefore, it must begin and end encompassing all relevant experiment
