@@ -10,6 +10,7 @@ import pandas as pd
 from scipy.interpolate import interp1d
 
 from data_pre_processing.signal.table.base import Base
+from datasette_interface.common.utils import convert_unix_timestamp_to_iso8601
 
 
 class ModalityHelper(ABC):
@@ -17,21 +18,23 @@ class ModalityHelper(ABC):
     This class represents an abstract signal modality.
     """
 
-    def __init__(self, original_frequency: int):
+    def __init__(self, original_frequency: int, group_session: str, station: str):
         """
-        Creates a modality.
+        Creates a modality helper.
 
         :param original_frequency: original frequency of the signal (hardware frequency).
+        :param group_session: group session.
+        :param station: station.
         """
         self.original_frequency = original_frequency
+        self.group_session = group_session
+        self.station = station
         self._data = None
 
     @abstractmethod
-    def load_data(self, group_session: str):
+    def load_data(self):
         """
-        Reads modality data to the memory for a specific group session.
-
-        :param group_session: group session.
+        Reads modality data to the memory for a specific group session and station.
         """
         pass
 
@@ -56,19 +59,20 @@ class ModalityHelper(ABC):
         if up_sample_factor == 1:
             return
 
-        up_sampled_data = mne_resample(x=self._data.drop(columns="timestamp_unix").values,
-                                       up=upsampling_factor,
-                                       npad="auto",
-                                       axis=0)
-        timestamps = ModalityHelper._resample_timestamps(
-            original_timestamps=data["timestamp_unix"].values,
+        up_sampled_data = mne_resample(
+            x=self._data.drop(columns="timestamp_unix").values,
+            up=upsampling_factor,
+            npad="auto",
+            axis=0)
+        new_timestamps = ModalityHelper._resample_timestamps(
+            original_timestamps=self._data["timestamp_unix"].values,
             resampled_size=len(upsampled_data)
         )
 
         # Copy data and timestamps to a Data frame
-        df = pd.DataFrame(data=up_sampled_data,
-                          columns=[c for c in data.columns if c != "timestamp_unix"])
-        df["timestamp_unix"] = timestamps
+        channel_columns = [c for c in data.columns if c != "timestamp_unix"]
+        df = pd.DataFrame(data=up_sampled_data, columns=channel_columns)
+        df["timestamp_unix"] = new_timestamps
 
         # Rearrange columns in the same order as the original data.
         self._data = df[self._data.columns]
@@ -98,7 +102,7 @@ class ModalityHelper(ABC):
         :param clock_timestamps: timestamps to use for interpolation.
         """
 
-        df = self._data.drop(columns=["timestamp_unix"]).apply(
+        df = self._data.drop(columns="timestamp_unix").apply(
             func=lambda col: np.interp(clock_timestamps, self._data["timestamp_unix"], col),
             axis=0
         )

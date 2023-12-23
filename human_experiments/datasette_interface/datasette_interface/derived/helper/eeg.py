@@ -18,24 +18,29 @@ from datasette_interface.common.constants import (EEG_FREQUENCY,
 
 class EEGHelper(ModalityHelper):
 
-    def __init__(self):
+    def __init__(self, group_session: str, station: str):
         """
-        Creates a EEG modality helper.
-        """
-        super().__init__(FNIRS_FREQUENCY)
-
-    def load_data(self, group_session: str):
-        """
-        Reads EEG data to the memory for a specific group session.
+        Creates an EEG modality helper.
 
         :param group_session: group session.
+        :param station: station.
         """
-        super().load_data(group_session)
+        super().__init__(EEG_FREQUENCY, group_session, station)
+
+    def load_data(self):
+        """
+        Reads EEG data to the memory for a specific group session and station.
+        """
+        super().load_data()
 
         db_session = next(get_db())
         self._data = pd.read_sql(
-            select(EEGRaw).where(EEGRaw.group_session_id == group_session),
+            select(EEGRaw).where(
+                EEGRaw.group_session_id == self.group_session,
+                EEGRaw.station_id == self.station),
             db_session)
+        # New IDs will be set later when the data is saved as the number of samples may change,
+        self._data = self._data.drop(columns=["id", "timestamp_iso8601"])
         db_session.close()
 
     def filter(self) -> pd.DataFrame:
@@ -45,7 +50,7 @@ class EEGHelper(ModalityHelper):
         super().filter()
 
         filtered_values = np.array(
-            notch_filter(self._data.drop(columns=["timestamp_unix"]).values.T,
+            notch_filter(self._data.drop(columns="timestamp_unix").values.T,
                          Fs=self.original_frequency,
                          freqs=EEG_NOTCH_FILTER_FREQUENCY,
                          notch_widths=EEG_NOTCH_WIDTH,
@@ -66,4 +71,4 @@ class EEGHelper(ModalityHelper):
         """
         super().save_synced_data()
 
-        # TODO: Implement this
+        # TODO: Implement this: save eeg, gsr and ekg in separate tables.

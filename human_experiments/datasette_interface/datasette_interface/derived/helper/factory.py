@@ -1,15 +1,20 @@
-from data_pre_processing.signal.entity.eeg import EEG
-from data_pre_processing.signal.entity.ekg import EKG
-from data_pre_processing.signal.entity.gsr import GSR
-from data_pre_processing.signal.entity.fnirs import FNIRS
-from data_pre_processing.signal.entity.gaze import Gaze
+from datasette_interface.derived.helper.modality import ModalityHelper
+from datasette_interface.derived.helper.eeg import EEGHelper
+from datasette_interface.derived.helper.fnirs import FNIRSHelper
 
 
-def create_modality(modality: str):
+def create_modality_helper(modality: str, group_session: str, station: str) -> ModalityHelper:
+    """
+    Creates a modality helper from a name.
+
+    modality: name of the modality. One of eeg or fnirs.
+    group_session: group session to process.
+    station: station to process.
+    """
     if modality == "eeg":
-        return EEG()
+        return EEGHelper(group_session=group_session, station=station)
 
     if modality == "fnirs":
-        return FNIRS()
+        return FNIRSHelper(group_session=group_session, station=station)
 
     raise ValueError(f"Invalid modality ({modality}).")

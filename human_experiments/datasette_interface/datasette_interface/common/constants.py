@@ -1,3 +1,5 @@
+STATIONS = ["lion", "tiger", "leopard"]
+
 OPENSMILE_CONFIG_DIR = "datasette_interface/asset/opensmile"
 
 EEG_FREQUENCY = 500
