@@ -3,8 +3,6 @@ from typing import List, Type, Union
 from mne.filter import filter_data as mne_filter_data
 import pandas as pd
 
-from data_pre_processing.signal.common.constants import FNIRS_LOW_FREQUENCY_THRESHOLD, \
-    FNIRS_HIGH_FREQUENCY_THRESHOLD, FNIRS_BANDPASS_FILTER_METHOD
 from datasette_interface.derived.helper.modality import ModalityHelper
 # from datasette_interface.signal.table.fnirs import FNIRSSyncUnfiltered, FNIRSSyncFiltered
 from sqlalchemy import select

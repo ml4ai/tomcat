@@ -3,17 +3,18 @@ from typing import List, Type, Union
 from mne.filter import filter_data as mne_filter_data
 import pandas as pd
 
-from data_pre_processing.signal.common.constants import FNIRS_LOW_FREQUENCY_THRESHOLD, \
-    FNIRS_HIGH_FREQUENCY_THRESHOLD, FNIRS_BANDPASS_FILTER_METHOD
 from datasette_interface.derived.helper.modality import ModalityHelper
 # from datasette_interface.signal.table.fnirs import FNIRSSyncUnfiltered, FNIRSSyncFiltered
 from sqlalchemy import select
-from datasette_interface.database.config import get_db
+from datasette_interface.database.config import engine, get_db
 from datasette_interface.database.entity.signal.fnirs import FNIRSRaw
+from datasette_interface.database.entity.derived.fnirs_sync import FNIRSSync
 from datasette_interface.common.constants import (FNIRS_FREQUENCY,
                                                   FNIRS_LOW_FREQUENCY_THRESHOLD,
                                                   FNIRS_HIGH_FREQUENCY_THRESHOLD,
                                                   FNIRS_BANDPASS_FILTER_METHOD)
+from datasette_interface.common.utils import convert_unix_timestamp_to_iso8601
+from logging import info
 
 
 class FNIRSHelper(ModalityHelper):
@@ -34,13 +35,54 @@ class FNIRSHelper(ModalityHelper):
         super().load_data()
 
         db_session = next(get_db())
-        self._data = pd.read_sql(
-            select(FNIRSRaw).where(
-                FNIRSRaw.group_session_id == self.group_session,
-                FNIRSRaw.station_id == self.station),
-            db_session)
-        # New IDs will be set later when the data is saved as the number of samples may change,
-        self._data = self._data.drop(columns=["id"])
+        query = select(
+            FNIRSRaw.timestamp_unix,
+            FNIRSRaw.s1_d1_hbo,
+            FNIRSRaw.s1_d2_hbo,
+            FNIRSRaw.s2_d1_hbo,
+            FNIRSRaw.s2_d3_hbo,
+            FNIRSRaw.s3_d1_hbo,
+            FNIRSRaw.s3_d3_hbo,
+            FNIRSRaw.s3_d4_hbo,
+            FNIRSRaw.s4_d2_hbo,
+            FNIRSRaw.s4_d4_hbo,
+            FNIRSRaw.s4_d5_hbo,
+            FNIRSRaw.s5_d3_hbo,
+            FNIRSRaw.s5_d4_hbo,
+            FNIRSRaw.s5_d6_hbo,
+            FNIRSRaw.s6_d4_hbo,
+            FNIRSRaw.s6_d6_hbo,
+            FNIRSRaw.s6_d7_hbo,
+            FNIRSRaw.s7_d5_hbo,
+            FNIRSRaw.s7_d7_hbo,
+            FNIRSRaw.s8_d6_hbo,
+            FNIRSRaw.s8_d7_hbo,
+            FNIRSRaw.s1_d1_hbr,
+            FNIRSRaw.s1_d2_hbr,
+            FNIRSRaw.s2_d1_hbr,
+            FNIRSRaw.s2_d3_hbr,
+            FNIRSRaw.s3_d1_hbr,
+            FNIRSRaw.s3_d3_hbr,
+            FNIRSRaw.s3_d4_hbr,
+            FNIRSRaw.s4_d2_hbr,
+            FNIRSRaw.s4_d4_hbr,
+            FNIRSRaw.s4_d5_hbr,
+            FNIRSRaw.s5_d3_hbr,
+            FNIRSRaw.s5_d4_hbr,
+            FNIRSRaw.s5_d6_hbr,
+            FNIRSRaw.s6_d4_hbr,
+            FNIRSRaw.s6_d6_hbr,
+            FNIRSRaw.s6_d7_hbr,
+            FNIRSRaw.s7_d5_hbr,
+            FNIRSRaw.s7_d7_hbr,
+            FNIRSRaw.s8_d6_hbr,
+            FNIRSRaw.s8_d7_hbr
+        ).where(
+            FNIRSRaw.group_session_id == self.group_session,
+            FNIRSRaw.station_id == self.station)
+        self._data = pd.read_sql_query(
+            query,
+            engine)
         db_session.close()
 
     def filter(self) -> pd.DataFrame:
@@ -57,7 +99,7 @@ class FNIRSHelper(ModalityHelper):
             method=FNIRS_BANDPASS_FILTER_METHOD).T
 
         # Copy data and timestamps to a Data frame
-        channel_columns = [c for c in data.columns if c != "timestamp_unix"]
+        channel_columns = [c for c in self._data.columns if c != "timestamp_unix"]
         df = pd.DataFrame(data=filtered_values,
                           columns=channel_columns)
         df["timestamp_unix"] = self._data["timestamp_unix"]
@@ -72,4 +114,18 @@ class FNIRSHelper(ModalityHelper):
         """
         super().save_synced_data()
 
-        # TODO: Implement this
+        df = self._data.reset_index().rename(columns={"index": "id"})
+        df["timestamp_iso8601"] = df["timestamp_unix"].apply(convert_unix_timestamp_to_iso8601)
+        df["group_session_id"] = self.group_session
+        df["station_id"] = self.station
+
+        info("Converting DataFrame to records.")
+        records = df.to_dict("records")
+        db_session = next(get_db())
+        fnirs_data = []
+        for record in records:
+            fnirs_data.append(FNIRSSync(**record))
+
+        info("Saving to the database.")
+        db_session.add_all(fnirs_data)
+        db_session.commit()

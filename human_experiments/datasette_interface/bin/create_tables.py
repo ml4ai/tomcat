@@ -21,10 +21,9 @@ from datasette_interface.database.entity.task.ping_pong_cooperative_task_observa
     PingPongCooperativeTaskObservation
 from datasette_interface.database.entity.task.rest_state_task import RestStateTask
 from datasette_interface.database.entity.derived.audio_vocalics import AudioVocalics
+from datasette_interface.database.entity.derived.fnirs_sync import FNIRSSync
 from datasette_interface.database.entity.base.base import Base
 from datasette_interface.database.config import engine
-from datasette_interface.common.config import settings
-from datasette_interface.raw.common.process_raw_signals import create_indices
 
 
 Base.metadata.create_all(engine, checkfirst=True)

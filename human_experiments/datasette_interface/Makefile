@@ -18,7 +18,7 @@ clear_db:
 
 create_tables:
 	@PYTHONPATH="." ./bin/create_tables.py
-	@PYTHONPATH="." ./bin/create_table_indices.py
+	@#PYTHONPATH="." ./bin/create_table_indices.py
 
 update_db:
 	#@PYTHONPATH="." ./bin/populate_raw_tables.py
@@ -32,3 +32,6 @@ lint:
 	isort .
 	autoflake -r . --in-place --remove-all-unused-imports
 	flake8 .
+
+sync_raw:
+	@PYTHONPATH="." ./bin/sync_raw_signals.py --modality="fnirs" --clock_frequency=120

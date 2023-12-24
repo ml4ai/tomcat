@@ -18,6 +18,7 @@ from datasette_interface.database.config import get_db
 from datasette_interface.derived.main_clock import get_main_clock_timestamps
 from datasette_interface.common.constants import STATIONS
 from datasette_interface.derived.helper.factory import create_modality_helper
+from datasette_interface.common.config import LOG_DIR
 
 
 def sync_raw_signals_in_parallel(modality: str,
@@ -42,14 +43,18 @@ def sync_raw_signals_in_parallel(modality: str,
                      buffer=buffer)
 
     db_session = next(get_db())
-    group_sessions = db_session.scalars(select(GroupSession))
+    group_sessions = db_session.scalars(select(GroupSession.id)).all()
+    db_session.close()
 
-    effective_num_jobs = np.min(num_jobs, len(group_sessions))
+    effective_num_jobs = min(num_jobs, len(group_sessions))
     group_session_batches = np.array_split(group_sessions, effective_num_jobs)
 
     print(f"Synchronizing signals from {len(group_sessions)} group sessions.")
-    with Pool(processes=num_jobs) as pool:
-        list(tqdm(pool.imap(job_fn, group_session_batches), total=len(group_sessions)))
+    if effective_num_jobs == 1:
+        job_fn(group_sessions)
+    else:
+        with Pool(processes=num_jobs) as pool:
+            list(tqdm(pool.imap(job_fn, group_session_batches), total=len(group_sessions)))
 
 
 def sync_raw_signals_single_job(group_sessions: List[str],

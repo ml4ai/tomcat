@@ -9,7 +9,6 @@ import numpy as np
 import pandas as pd
 from scipy.interpolate import interp1d
 
-from data_pre_processing.signal.table.base import Base
 from datasette_interface.common.utils import convert_unix_timestamp_to_iso8601
 
 
@@ -61,16 +60,16 @@ class ModalityHelper(ABC):
 
         up_sampled_data = mne_resample(
             x=self._data.drop(columns="timestamp_unix").values,
-            up=upsampling_factor,
+            up=up_sample_factor,
             npad="auto",
             axis=0)
         new_timestamps = ModalityHelper._resample_timestamps(
             original_timestamps=self._data["timestamp_unix"].values,
-            resampled_size=len(upsampled_data)
+            resampled_size=len(up_sampled_data)
         )
 
         # Copy data and timestamps to a Data frame
-        channel_columns = [c for c in data.columns if c != "timestamp_unix"]
+        channel_columns = [c for c in self._data.columns if c != "timestamp_unix"]
         df = pd.DataFrame(data=up_sampled_data, columns=channel_columns)
         df["timestamp_unix"] = new_timestamps
 
@@ -109,7 +108,7 @@ class ModalityHelper(ABC):
         df["frequency"] = clock_frequency
         df["timestamp_unix"] = clock_timestamps
 
-        self._data = df
+        self._data = df[["frequency"] + list(self._data.columns)]
 
     @abstractmethod
     def save_synced_data(self):

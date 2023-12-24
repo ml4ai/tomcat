@@ -3,6 +3,7 @@ from datasette_interface.database.entity.task.rest_state_task import RestStateTa
 from datasette_interface.database.entity.task.minecraft_task import MinecraftMission
 from datasette_interface.database.config import get_db
 from sqlalchemy import select, func
+import math
 
 
 def get_main_clock_timestamps(group_session: str, clock_frequency: int, buffer: int) -> np.ndarray:
@@ -17,17 +18,17 @@ def get_main_clock_timestamps(group_session: str, clock_frequency: int, buffer: 
     :param buffer: a buffer in seconds to be sure we don't lose any signal data.
     """
     db_session = next(get_db())
-
-    start_time = db_session.scalar(select(RestStateTask.start_timestamp_unix).where(
-        RestStateTask.group_session_id == group_session)) - buffer
-    end_time = db_session.scalar(
+    start_time = float(db_session.scalar(select(RestStateTask.start_timestamp_unix).where(
+        RestStateTask.group_session_id == group_session))) - buffer
+    end_time = float(db_session.scalar(
         select(func.max(MinecraftMission.trial_stop_timestamp_unix)).where(
-            MinecraftMission.group_session_id == group_session)) + buffer
+            MinecraftMission.group_session_id == group_session))) + buffer
+    db_session.close()
 
     # The arange function is not numerically stable with small float numbers. So we use the
     # number of points to create a sequence and scale the sequence by the inverse of the
     # frequency.
-    num_time_points = math.floor((end_time - start_time) * clock_frequency) + 1
+    num_time_points = math.ceil((end_time - start_time) * clock_frequency) + 1
     evenly_spaced_timestamps = start_time + np.arange(num_time_points) / clock_frequency
 
     return evenly_spaced_timestamps
