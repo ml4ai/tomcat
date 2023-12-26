@@ -5,7 +5,7 @@ import pandas as pd
 
 from datasette_interface.derived.helper.modality import ModalityHelper
 # from datasette_interface.signal.table.fnirs import FNIRSSyncUnfiltered, FNIRSSyncFiltered
-from sqlalchemy import select
+from sqlalchemy import select, func
 from datasette_interface.database.config import engine, get_db
 from datasette_interface.database.entity.signal.fnirs import FNIRSRaw
 from datasette_interface.database.entity.derived.fnirs_sync import FNIRSSync
@@ -15,6 +15,7 @@ from datasette_interface.common.constants import (FNIRS_FREQUENCY,
                                                   FNIRS_BANDPASS_FILTER_METHOD)
 from datasette_interface.common.utils import convert_unix_timestamp_to_iso8601
 from logging import info
+from datasette_interface.database.config import Base
 
 
 class FNIRSHelper(ModalityHelper):
@@ -28,13 +29,30 @@ class FNIRSHelper(ModalityHelper):
         """
         super().__init__(FNIRS_FREQUENCY, group_session, station)
 
+    def has_saved_sync_data(self, target_frequency: int) -> bool:
+        """
+        Checks whether there's already synchronized fNIRS saved for a group session, station and
+        target frequency.
+
+        :param target_frequency: frequency of the synchronized signals.
+        """
+        db = next(get_db())
+        num_records = db.scalar(
+            select(func.count(FNIRSSync.id)).where(
+                FNIRSSync.group_session_id == self.group_session,
+                FNIRSSync.frequency == target_frequency,
+                FNIRSSync.station_id == self.station))
+        db.close()
+
+        return num_records > 0
+
     def load_data(self):
         """
         Reads fNIRS data to the memory for a specific group session and station.
         """
         super().load_data()
 
-        db_session = next(get_db())
+        db = next(get_db())
         query = select(
             FNIRSRaw.timestamp_unix,
             FNIRSRaw.s1_d1_hbo,
@@ -83,7 +101,7 @@ class FNIRSHelper(ModalityHelper):
         self._data = pd.read_sql_query(
             query,
             engine)
-        db_session.close()
+        db.close()
 
     def filter(self) -> pd.DataFrame:
         """
@@ -120,12 +138,12 @@ class FNIRSHelper(ModalityHelper):
         df["station_id"] = self.station
 
         info("Converting DataFrame to records.")
-        records = df.to_dict("records")
-        db_session = next(get_db())
+        records = df.iloc[:1000, :].to_dict("records")
+        db = next(get_db())
         fnirs_data = []
         for record in records:
             fnirs_data.append(FNIRSSync(**record))
 
         info("Saving to the database.")
-        db_session.add_all(fnirs_data)
-        db_session.commit()
+        db.add_all(fnirs_data)
+        db.commit()

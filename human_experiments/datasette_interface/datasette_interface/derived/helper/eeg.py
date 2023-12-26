@@ -25,6 +25,22 @@ class EEGHelper(ModalityHelper):
         """
         super().__init__(EEG_FREQUENCY, group_session, station)
 
+    def has_saved_sync_data(self, target_frequency: int) -> bool:
+        """
+        Checks whether there's already synchronized EEG saved for a group session, station and
+        target frequency.
+
+        :param target_frequency: frequency of the synchronized signals.
+        """
+        db = next(get_db())
+        num_records = db.scalar(
+            select(func.count(EEGSync)).where(EEGSync.group_session_id == self.group_session,
+                                                EEGSync.frequency == target_frequency,
+                                                EEGSync.station_id == self.group_session))
+        db.close()
+
+        return num_records > 0
+
     def load_data(self):
         """
         Reads EEG data to the memory for a specific group session and station.

@@ -19,6 +19,7 @@ from datasette_interface.derived.main_clock import get_main_clock_timestamps
 from datasette_interface.common.constants import STATIONS
 from datasette_interface.derived.helper.factory import create_modality_helper
 from datasette_interface.common.config import LOG_DIR
+import mne
 
 
 def sync_raw_signals_in_parallel(modality: str,
@@ -42,19 +43,20 @@ def sync_raw_signals_in_parallel(modality: str,
                      up_sample_scale=up_sample_scale,
                      buffer=buffer)
 
-    db_session = next(get_db())
-    group_sessions = db_session.scalars(select(GroupSession.id)).all()
-    db_session.close()
+    db = next(get_db())
+    group_sessions = db.scalars(select(GroupSession.id)).all()[-2:]
+    db.close()
 
     effective_num_jobs = min(num_jobs, len(group_sessions))
     group_session_batches = np.array_split(group_sessions, effective_num_jobs)
 
     print(f"Synchronizing signals from {len(group_sessions)} group sessions.")
     if effective_num_jobs == 1:
-        job_fn(group_sessions)
+        for group_session in tqdm(group_sessions):
+            job_fn([group_session])
     else:
         with Pool(processes=num_jobs) as pool:
-            list(tqdm(pool.imap(job_fn, group_session_batches), total=len(group_sessions)))
+            list(tqdm(pool.imap(job_fn, group_session_batches), total=len(group_session_batches)))
 
 
 def sync_raw_signals_single_job(group_sessions: List[str],
@@ -73,18 +75,25 @@ def sync_raw_signals_single_job(group_sessions: List[str],
     :param buffer: a buffer in seconds to be sure we don't lose any signal data.
     """
     for group_session in group_sessions:
+        log_filepath = f"{LOG_DIR}/sync_raw_{modality}_{group_session}_{clock_frequency}.log"
+        mne_log_filepath = f"{LOG_DIR}/sync_raw_{modality}_{group_session}_{clock_frequency}_" \
+                           f"mne.log"
+        log_format = "%(asctime)s - %(levelname)s - %(message)s"
         logging.basicConfig(
             level=logging.INFO,
+            format=log_format,
             handlers=(
                 logging.FileHandler(
-                    filename=f"{LOG_DIR}/sync_raw_{modality}_{group_session}_"
-                             f"{clock_frequency}.log",
+                    filename=log_filepath,
                     mode="w",
                 ),
             ),
+            force=True
         )
         logger = logging.getLogger()
-
+        mne.set_log_file(mne_log_filepath,
+                         output_format=log_format,
+                         overwrite=False)
         logger.info(f"Processing group session {group_session}.")
 
         clock_timestamps = get_main_clock_timestamps(group_session=group_session,
@@ -94,6 +103,12 @@ def sync_raw_signals_single_job(group_sessions: List[str],
         for station in STATIONS:
             logger.info(f"Processing station {station}.")
             modality_helper = create_modality_helper(modality, group_session, station)
+
+            if modality_helper.has_saved_sync_data(clock_frequency):
+                logger.info(
+                    f"Found synchronized {modality} signals for {group_session}, {station} with "
+                    f"clock frequency {clock_frequency} in the database. Skipping.")
+                continue
 
             logger.info(f"Loading data.")
             modality_helper.load_data()

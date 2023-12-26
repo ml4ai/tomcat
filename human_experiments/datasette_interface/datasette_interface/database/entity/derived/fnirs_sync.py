@@ -9,17 +9,19 @@ from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import Session
 from sqlalchemy.orm import mapped_column
 
-from datasette_interface.database.entity.base.base import Base
+from datasette_interface.database.entity.base.group_session import GroupSession
+from datasette_interface.database.entity.base.station import Station
+from datasette_interface.database.config import Base
 
 
 class FNIRSSync(Base):
     __tablename__ = "fnirs_sync"
 
     group_session_id: Mapped[str] = mapped_column("group_session", Text,
-                                                  ForeignKey("group_session.id"),
+                                                  ForeignKey(GroupSession.id),
                                                   primary_key=True)
     frequency: Mapped[int] = mapped_column(Integer, primary_key=True)
-    station_id: Mapped[str] = mapped_column("station", Text, ForeignKey("station.id"),
+    station_id: Mapped[str] = mapped_column("station", Text, ForeignKey(Station.id),
                                             primary_key=True)
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     timestamp_unix: Mapped[str] = mapped_column(Text)

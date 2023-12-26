@@ -31,6 +31,16 @@ class ModalityHelper(ABC):
         self._data = None
 
     @abstractmethod
+    def has_saved_sync_data(self, target_frequency: int) -> bool:
+        """
+        Checks whether there's already synchronized signals saved for a group session, station and
+        target frequency.
+
+        :param target_frequency: frequency of the synchronized signals.
+        """
+        pass
+
+    @abstractmethod
     def load_data(self):
         """
         Reads modality data to the memory for a specific group session and station.
