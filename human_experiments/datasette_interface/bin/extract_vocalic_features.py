@@ -8,20 +8,20 @@ configuration files defined under data_pre_processing/audio/opensmile.
 import logging
 import os.path
 import sys
+from logging import info
 
 import pandas as pd
-
-from datasette_interface.model.audio.pcm_audio import PCMAudio
-from datasette_interface.common.experiments_crawler import ExperimentsCrawler
-from datasette_interface.common.utils import \
-    convert_unix_timestamp_to_iso8601, convert_iso8601_timestamp_to_unix
-from datasette_interface.database.entity.task.minecraft_task import MinecraftMission
-from datasette_interface.database.entity.derived.audio_vocalics import AudioVocalics
-from datasette_interface.database.config import get_db
-from logging import info
-from datasette_interface.common.config import settings, LOG_DIR
 from sqlalchemy import select
-from datetime import datetime
+
+from datasette_interface.common.config import LOG_DIR, settings
+from datasette_interface.common.experiments_crawler import ExperimentsCrawler
+from datasette_interface.common.utils import convert_unix_timestamp_to_iso8601
+from datasette_interface.database.config import get_db
+from datasette_interface.database.entity.derived.audio_vocalics import \
+    AudioVocalics
+from datasette_interface.database.entity.task.minecraft_task import \
+    MinecraftMission
+from datasette_interface.model.audio.pcm_audio import PCMAudio
 
 
 def extract_vocalic_features_callback(experiment_dir: str, has_unified_xdf: bool):
@@ -58,17 +58,24 @@ def extract_vocalic_features_callback(experiment_dir: str, has_unified_xdf: bool
                 continue
 
             minecraft_mission_id = audio_filename[
-                                   audio_filename.find("-") + 1: audio_filename.find("_Team")
-                                   ]
-            group_session = experiment_dir[experiment_dir.rfind("/") + 1:]
+                audio_filename.find("-") + 1 : audio_filename.find("_Team")
+            ]
+            group_session = experiment_dir[experiment_dir.rfind("/") + 1 :]
 
-            if db_session.scalar(select(AudioVocalics.timestamp_unix).where(
-                AudioVocalics.group_session_id == group_session,
-                AudioVocalics.station_id == station,
-                AudioVocalics.minecraft_mission_id == minecraft_mission_id)) is not None:
+            if (
+                db_session.scalar(
+                    select(AudioVocalics.timestamp_unix).where(
+                        AudioVocalics.group_session_id == group_session,
+                        AudioVocalics.station_id == station,
+                        AudioVocalics.minecraft_mission_id == minecraft_mission_id,
+                    )
+                )
+                is not None
+            ):
                 info(
                     f"Found saved audio vocalics for {group_session}, {station}, and "
-                    f"{minecraft_mission_id} in the database. Skipping parsing.")
+                    f"{minecraft_mission_id} in the database. Skipping parsing."
+                )
                 continue
 
             info(f"Extracting vocalics from {audio_filename}.")
@@ -76,8 +83,9 @@ def extract_vocalic_features_callback(experiment_dir: str, has_unified_xdf: bool
             first_timestamp_unix = db_session.scalar(
                 select(MinecraftMission.trial_start_timestamp_unix).where(
                     MinecraftMission.group_session_id == group_session,
-                    MinecraftMission.id == minecraft_mission_id
-                ))
+                    MinecraftMission.id == minecraft_mission_id,
+                )
+            )
 
             if first_timestamp_unix is None:
                 info(
@@ -128,15 +136,26 @@ def extract_vocalic_features_callback(experiment_dir: str, has_unified_xdf: bool
             # Place group_session, station, minecraft_mission_id, id, timestamp_unix,
             # timestamp_iso8601 in the beginning and transform vocalic features to lower case.
             df = df.reset_index().rename(columns={"index": "id"})
-            df = df[["group_session_id", "station_id", "minecraft_mission_id", "id",
-                     "timestamp_unix", "timestamp_iso8601"] + vocalics_columns]
+            df = df[
+                [
+                    "group_session_id",
+                    "station_id",
+                    "minecraft_mission_id",
+                    "id",
+                    "timestamp_unix",
+                    "timestamp_iso8601",
+                ]
+                + vocalics_columns
+            ]
 
             def format_column_name(column_name: str) -> str:
-                return column_name.lower().replace(
-                    "-", "_").replace(
-                    ".", "_").replace(
-                    "[", "").replace(
-                    "]", "")
+                return (
+                    column_name.lower()
+                    .replace("-", "_")
+                    .replace(".", "_")
+                    .replace("[", "")
+                    .replace("]", "")
+                )
 
             df.columns = map(format_column_name, df.columns)
 

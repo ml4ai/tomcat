@@ -5,9 +5,9 @@ import subprocess
 from pydub import AudioSegment
 from tqdm import tqdm
 
+from datasette_interface.common.constants import OPENSMILE_CONFIG_DIR
 from datasette_interface.model.audio.praat_annotation import PraatAnnotation
 from datasette_interface.model.audio.transcriber import Transcriber
-from datasette_interface.common.constants import OPENSMILE_CONFIG_DIR
 
 error = logging.getLogger().error
 
@@ -25,7 +25,7 @@ class PCMAudio:
 
         file_size = os.path.getsize(self.filepath)
         chunksize = (
-                file_size - 8
+            file_size - 8
         )  # file size in bytes - 8 bytes of header (ChunkID and ChunkSize)
         chunksize = chunksize.to_bytes(4, "little")
 
@@ -33,7 +33,7 @@ class PCMAudio:
         subchunk2size_in_bytes = subchunk2size.to_bytes(4, "little")
 
         with open(self.filepath, "rb") as input_file, open(
-                out_filepath, "wb"
+            out_filepath, "wb"
         ) as output_file:
             input_data = input_file.read()
             output_file.write(input_data)
@@ -61,10 +61,10 @@ class PCMAudio:
                     f"{self.filepath} -D {out_filepath} --logfile {logs} --appendLogfile 1"
                 )
                 success = (
-                        subprocess.call(
-                            command, shell=True, stdout=log_file, stderr=subprocess.STDOUT
-                        )
-                        == 0
+                    subprocess.call(
+                        command, shell=True, stdout=log_file, stderr=subprocess.STDOUT
+                    )
+                    == 0
                 )
         except Exception:
             command = (
@@ -79,7 +79,7 @@ class PCMAudio:
         return success
 
     def transcribe_annotated_utterances(
-            self, transcriber: Transcriber, annotation: PraatAnnotation
+        self, transcriber: Transcriber, annotation: PraatAnnotation
     ):
         annotation.reset_transcript_tier()
 
@@ -91,7 +91,8 @@ class PCMAudio:
             audio_segment = full_audio.get_sample_slice(lb, ub)
             result = transcriber.transcribe(audio_segment)
 
-            # Remove double quotes not to break the annotation, whitespaces in the extremities and capitalize the
+            # Remove double quotes not to break the annotation, whitespaces in the extremities and
+            # capitalize the
             # first letter.
             text = result["text"].replace('"', "").strip()
             if len(text) > 0:

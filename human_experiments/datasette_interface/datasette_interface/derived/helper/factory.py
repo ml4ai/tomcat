@@ -1,9 +1,11 @@
-from datasette_interface.derived.helper.modality import ModalityHelper
 from datasette_interface.derived.helper.eeg import EEGHelper
 from datasette_interface.derived.helper.fnirs import FNIRSHelper
+from datasette_interface.derived.helper.modality import ModalityHelper
 
 
-def create_modality_helper(modality: str, group_session: str, station: str) -> ModalityHelper:
+def create_modality_helper(
+    modality: str, group_session: str, station: str
+) -> ModalityHelper:
     """
     Creates a modality helper from a name.
 

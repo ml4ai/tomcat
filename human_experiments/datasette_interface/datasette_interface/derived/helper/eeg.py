@@ -1,21 +1,21 @@
-from typing import List, Type, Union
-
-from mne.filter import filter_data as mne_filter_data
 import pandas as pd
-
-from datasette_interface.derived.helper.modality import ModalityHelper
-# from datasette_interface.signal.table.fnirs import FNIRSSyncUnfiltered, FNIRSSyncFiltered
 from sqlalchemy import select
-from datasette_interface.database.config import get_db
-from datasette_interface.database.entity.signal.eeg import EEGRaw
+
 from datasette_interface.common.constants import (EEG_FREQUENCY,
                                                   EEG_NOTCH_FILTER_FREQUENCY,
                                                   EEG_NOTCH_WIDTH,
                                                   EEG_TRANSISION_BANDWIDTH)
+from datasette_interface.database.config import get_db
+from datasette_interface.database.entity.signal.eeg import EEGRaw
+from datasette_interface.derived.helper.modality import ModalityHelper
+from mne.filter import notch_filter
+import numpy as np
+from datasette_interface.database.entity.derived.eeg_sync import EEGSync
+from datasette_interface.database.entity.derived.gsr_sync import GSRSync
+from datasette_interface.database.entity.derived.ekg_sync import EKGSync
 
 
 class EEGHelper(ModalityHelper):
-
     def __init__(self, group_session: str, station: str):
         """
         Creates an EEG modality helper.
@@ -34,9 +34,12 @@ class EEGHelper(ModalityHelper):
         """
         db = next(get_db())
         num_records = db.scalar(
-            select(func.count(EEGSync)).where(EEGSync.group_session_id == self.group_session,
-                                                EEGSync.frequency == target_frequency,
-                                                EEGSync.station_id == self.group_session))
+            select(func.count(EEGSync)).where(
+                EEGSync.group_session_id == self.group_session,
+                EEGSync.frequency == target_frequency,
+                EEGSync.station_id == self.group_session,
+            )
+        )
         db.close()
 
         return num_records > 0
@@ -47,15 +50,38 @@ class EEGHelper(ModalityHelper):
         """
         super().load_data()
 
-        db_session = next(get_db())
-        self._data = pd.read_sql(
-            select(EEGRaw).where(
-                EEGRaw.group_session_id == self.group_session,
-                EEGRaw.station_id == self.station),
-            db_session)
-        # New IDs will be set later when the data is saved as the number of samples may change,
-        self._data = self._data.drop(columns=["id", "timestamp_iso8601"])
-        db_session.close()
+        db = next(get_db())
+        query = select(
+            EEGRaw.timestamp_unix,
+            EEGRaw.aff1h,
+            EEGRaw.f7,
+            EEGRaw.fc5,
+            EEGRaw.c3,
+            EEGRaw.t7,
+            EEGRaw.tp9,
+            EEGRaw.pz,
+            EEGRaw.p3,
+            EEGRaw.p7,
+            EEGRaw.o1,
+            EEGRaw.o2,
+            EEGRaw.p8,
+            EEGRaw.p4,
+            EEGRaw.tp10,
+            EEGRaw.cz,
+            EEGRaw.c4,
+            EEGRaw.t8,
+            EEGRaw.fc6,
+            EEGRaw.fcz,
+            EEGRaw.f8,
+            EEGRaw.aff2h,
+            EEGRaw.aux_ekg,
+            EEGRaw.aux_gsr
+        ).where(
+            EEGRaw.group_session_id == self.group_session,
+            EEGRaw.station_id == self.station,
+        )
+        self._data = pd.read_sql_query(query, engine)
+        db.close()
 
     def filter(self) -> pd.DataFrame:
         """
@@ -64,15 +90,18 @@ class EEGHelper(ModalityHelper):
         super().filter()
 
         filtered_values = np.array(
-            notch_filter(self._data.drop(columns="timestamp_unix").values.T,
-                         Fs=self.original_frequency,
-                         freqs=EEG_NOTCH_FILTER_FREQUENCY,
-                         notch_widths=EEG_NOTCH_WIDTH,
-                         trans_bandwidth=EEG_TRANSISION_BANDWIDTH)).T
+            notch_filter(
+                self._data.drop(columns="timestamp_unix").values.T,
+                Fs=self.original_frequency,
+                freqs=EEG_NOTCH_FILTER_FREQUENCY,
+                notch_widths=EEG_NOTCH_WIDTH,
+                trans_bandwidth=EEG_TRANSISION_BANDWIDTH,
+            )
+        ).T
 
         # Copy data and timestamps to a Data frame
-        df = pd.DataFrame(data=filtered_values,
-                          columns=[c for c in self._data.columns if c != "timestamp_unix"])
+        channel_columns = [c for c in self._data.columns if c != "timestamp_unix"]
+        df = pd.DataFrame(data=filtered_values, columns=channel_columns)
         df["timestamp_unix"] = self._data["timestamp_unix"]
 
         # Rearrange columns in the same order as the original data.
@@ -85,4 +114,44 @@ class EEGHelper(ModalityHelper):
         """
         super().save_synced_data()
 
-        # TODO: Implement this: save eeg, gsr and ekg in separate tables.
+        df = self._data.reset_index().rename(columns={"index": "id"})
+        df["timestamp_iso8601"] = df["timestamp_unix"].apply(
+            convert_unix_timestamp_to_iso8601
+        )
+        df["group_session_id"] = self.group_session
+        df["station_id"] = self.station
+
+        df_ekg = df[["group_session",
+                     "frequency",
+                     "station",
+                     "id",
+                     "timestamp_unix",
+                     "timestamp_iso8601",
+                     "aux_ekg"]]
+
+        df_gsr = df[["group_session",
+                     "frequency",
+                     "station",
+                     "id",
+                     "timestamp_unix",
+                     "timestamp_iso8601",
+                     "aux_gsr"]]
+        df_eeg = df.drop(columns=["aux_ekg", "aux_gsr"])
+
+        info("Converting DataFrame to records.")
+        eeg_records = df_eeg.iloc[:1000, :].to_dict("records")
+        ekg_records = df_ekg.iloc[:1000, :].to_dict("records")
+        gsr_records = df_gsr.iloc[:1000, :].to_dict("records")
+
+        db = next(get_db())
+        eeg_data = []
+        for record in eeg_records:
+            eeg_data.append(EEGSync(**record))
+        for record in ekg_records:
+            eeg_data.append(EKGSync(**record))
+        for record in gsr_records:
+            eeg_data.append(GSRSync(**record))
+
+        info("Saving to the database.")
+        db.add_all(eeg_data)
+        db.commit()

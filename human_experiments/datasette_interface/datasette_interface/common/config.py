@@ -1,4 +1,5 @@
 import os
+
 from pydantic import field_validator
 from pydantic_settings import BaseSettings
 
@@ -17,7 +18,9 @@ class Settings(BaseSettings):
     working_env: str = DEVELOPMENT
     artifact_dir: str = f"/space/{USER}/tomcat"
     image_url_root_dir: str = "https://ivilab.cs.arizona.edu/data/tomcat/group"
-    experiment_root_dir: str = "/tomcat/data/raw/LangLab/experiments/study_3_pilot/group"
+    experiment_root_dir: str = (
+        "/tomcat/data/raw/LangLab/experiments/study_3_pilot/group"
+    )
     tmp_dir: str = ".tmp"
 
     @classmethod

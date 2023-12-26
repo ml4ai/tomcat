@@ -11,17 +11,14 @@ import pandas as pd
 import pyxdf
 from tqdm import tqdm
 
+from datasette_interface.common.config import LOG_DIR, settings
+from datasette_interface.common.utils import (
+    cd, convert_unix_timestamp_to_iso8601, is_directory_with_unified_xdf_files,
+    should_ignore_directory)
+from datasette_interface.database.config import get_db
 from datasette_interface.database.entity.base.data_validity import DataValidity
 from datasette_interface.database.entity.task.ping_pong_competitive_task_observation import \
     PingPongCompetitiveTaskObservation
-from datasette_interface.common.utils import (
-    cd,
-    should_ignore_directory,
-    convert_unix_timestamp_to_iso8601,
-    is_directory_with_unified_xdf_files,
-)
-from datasette_interface.database.config import get_db
-from datasette_interface.common.config import LOG_DIR, settings
 
 logging.basicConfig(
     level=logging.INFO,
@@ -51,9 +48,7 @@ def process_competitive_csv_files(competitive_csv_files, group_session, particip
         player_1_id = participants[left_station]
         # Player 2 is an experimenter on cheetah, but we don't know
         # which experimenter.
-        player_2_id = (
-            participants[right_station] if right_station != "cheetah" else -3
-        )
+        player_2_id = participants[right_station] if right_station != "cheetah" else -3
 
         for i, row in df.iterrows():
             current_started_value = row["started"]
@@ -68,7 +63,7 @@ def process_competitive_csv_files(competitive_csv_files, group_session, particip
             if i != 0:
                 previous_started_value = df.loc[i - 1]["started"]
                 if (current_started_value != previous_started_value) and (
-                        seconds == 110
+                    seconds == 110
                 ):
                     seconds = 120
 
@@ -98,7 +93,7 @@ def process_competitive_csv_files(competitive_csv_files, group_session, particip
                 player_2_paddle_position_x=int(player_2_x),
                 player_2_paddle_position_y=int(player_2_y),
                 player_1_score=int(row["score_left"]),
-                player_2_score=int(row["score_right"])
+                player_2_score=int(row["score_right"]),
             )
             ping_pong_observations.append(ping_pong_observation)
 
@@ -109,7 +104,9 @@ def process_directory_v1(group_session, participants):
     with cd(f"{group_session}/baseline_tasks/ping_pong"):
         competitive_csv_files = glob("competitive*.csv")
         assert len(competitive_csv_files) == 2
-        return process_competitive_csv_files(competitive_csv_files, group_session, participants)
+        return process_competitive_csv_files(
+            competitive_csv_files, group_session, participants
+        )
 
 
 def process_directory_v2(group_session, participants):
@@ -131,22 +128,18 @@ def process_directory_v2(group_session, participants):
             stream_name = stream["info"]["name"][0]
 
             left_station, right_station = (
-                ["lion", "tiger"]
-                if "_0" in stream_name
-                else ["leopard", "cheetah"]
+                ["lion", "tiger"] if "_0" in stream_name else ["leopard", "cheetah"]
             )
 
             player_1_id = participants[left_station]
             # Player 2 is an experimenter on cheetah, but we don't know
             # which experimenter.
             player_2_id = (
-                participants[right_station]
-                if right_station != "cheetah"
-                else -3
+                participants[right_station] if right_station != "cheetah" else -3
             )
 
             for i, (timestamp, data) in enumerate(
-                    zip(stream["time_stamps"], stream["time_series"])
+                zip(stream["time_stamps"], stream["time_series"])
             ):
                 data = json.loads(data[0])
                 current_started_value = data["started"]
@@ -163,7 +156,7 @@ def process_directory_v2(group_session, participants):
                         stream["time_series"][i - 1][0]
                     )["started"]
                     if (current_started_value != previous_started_value) and (
-                            seconds == 110
+                        seconds == 110
                     ):
                         seconds = 120
                 (
@@ -192,7 +185,7 @@ def process_directory_v2(group_session, participants):
                     player_2_paddle_position_x=player_2_x,
                     player_2_paddle_position_y=player_2_y,
                     player_1_score=data["score_left"],
-                    player_2_score=data["score_right"]
+                    player_2_score=data["score_right"],
                 )
                 ping_pong_observations.append(ping_pong_observation)
 
@@ -222,15 +215,24 @@ def process_ping_pong_competitive_task_data():
 
         db_session = next(get_db())
         processed_group_sessions = set(
-            ([s[0] for s in
-              db_session.query(PingPongCompetitiveTaskObservation.group_session_id).distinct(
-                  PingPongCompetitiveTaskObservation.group_session_id).all()]))
+            (
+                [
+                    s[0]
+                    for s in db_session.query(
+                        PingPongCompetitiveTaskObservation.group_session_id
+                    )
+                    .distinct(PingPongCompetitiveTaskObservation.group_session_id)
+                    .all()
+                ]
+            )
+        )
 
         for group_session in tqdm(sorted(directories_to_process), unit="directories"):
             if group_session in processed_group_sessions:
                 info(
                     f"Found saved ping-pong competitive data for {group_session} in the database. "
-                    f"Skipping group session.")
+                    f"Skipping group session."
+                )
                 continue
 
             info(f"Processing directory {group_session}")
@@ -238,16 +240,25 @@ def process_ping_pong_competitive_task_data():
             # Get real participant IDs for the task
             participants = {}
             for station in ["lion", "tiger", "leopard"]:
-                participant = db_session.query(DataValidity.participant_id).filter_by(
-                    group_session_id=group_session,
-                    task_id="ping_pong_competitive",
-                    station_id=station).first()[0]
+                participant = (
+                    db_session.query(DataValidity.participant_id)
+                    .filter_by(
+                        group_session_id=group_session,
+                        task_id="ping_pong_competitive",
+                        station_id=station,
+                    )
+                    .first()[0]
+                )
                 participants[station] = participant
 
             if not is_directory_with_unified_xdf_files(group_session):
-                ping_pong_observations = process_directory_v1(group_session, participants)
+                ping_pong_observations = process_directory_v1(
+                    group_session, participants
+                )
             else:
-                ping_pong_observations = process_directory_v2(group_session, participants)
+                ping_pong_observations = process_directory_v2(
+                    group_session, participants
+                )
 
             if len(ping_pong_observations) > 0:
                 db_session.add_all(ping_pong_observations)

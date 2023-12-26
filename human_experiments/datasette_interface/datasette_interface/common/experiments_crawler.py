@@ -1,11 +1,11 @@
-import logging
 import os
 from typing import Callable
 
 from tqdm import tqdm
-from datasette_interface.common.utils import (should_ignore_directory,
-                                              is_directory_with_unified_xdf_files)
+
 from datasette_interface.common.config import settings
+from datasette_interface.common.utils import (
+    is_directory_with_unified_xdf_files, should_ignore_directory)
 
 
 class ExperimentsCrawler:
@@ -14,10 +14,7 @@ class ExperimentsCrawler:
     directory and invokes callbacks for treatment of the data in the experiment.
     """
 
-    def __init__(
-            self,
-            callback: Callable
-    ):
+    def __init__(self, callback: Callable):
         """
         Creates a crawler.
 

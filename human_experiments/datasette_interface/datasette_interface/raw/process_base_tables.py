@@ -6,10 +6,9 @@ import sys
 from logging import info
 
 import pandas as pd
-from sqlalchemy.orm import Session
 
-from datasette_interface.common.config import USER
-from datasette_interface.database.entity.base.base import Base
+from datasette_interface.common.config import LOG_DIR
+from datasette_interface.database.config import get_db
 from datasette_interface.database.entity.base.data_validity import DataValidity
 from datasette_interface.database.entity.base.eeg_device import EEGDevice
 from datasette_interface.database.entity.base.group_session import GroupSession
@@ -17,8 +16,6 @@ from datasette_interface.database.entity.base.modality import Modality
 from datasette_interface.database.entity.base.participant import Participant
 from datasette_interface.database.entity.base.station import Station
 from datasette_interface.database.entity.base.task import Task
-from datasette_interface.database.config import get_db, engine
-from datasette_interface.common.config import LOG_DIR
 
 logging.basicConfig(
     level=logging.INFO,
@@ -88,7 +85,7 @@ def populate_participant_table():
         # ID of -2 to represent the team (for affective task event data)
         Participant(id=-2),
         # ID of - 3 to represent an unknown experimenter(for the ping pong task data)
-        Participant(id=-3)
+        Participant(id=-3),
     ]
     db_session.add_all(participants)
     db_session.commit()
@@ -96,7 +93,7 @@ def populate_participant_table():
 
 
 def populate_base_tables():
-    info(f"Populating base tables.")
+    info("Populating base tables.")
 
     populate_task_table()
     populate_station_table()
@@ -105,11 +102,13 @@ def populate_base_tables():
 
 
 def process_data_validity_workbook():
-    info(f"Processing data validity workbook.")
+    info("Processing data validity workbook.")
 
     # TODO Integrate the 'mask_on' statuses.
 
-    csv_path = "/tomcat/data/raw/LangLab/experiments/study_3_pilot/data_validity_table.csv"
+    csv_path = (
+        "/tomcat/data/raw/LangLab/experiments/study_3_pilot/data_validity_table.csv"
+    )
 
     df = pd.read_csv(csv_path, index_col="experiment_id", dtype=str)
 
@@ -124,10 +123,14 @@ def process_data_validity_workbook():
         db_session = next(get_db())
         for prefix in ["lion", "tiger", "leopard"]:
             participant_id = series[f"{prefix}_subject_id"]
-            if not db_session.query(Participant.id).filter_by(id=participant_id).first():
-                # Only add participant if it does not exist in the table. SQLAlchemy does not have a DBMS-agnostic
-                # treatment for this (e.g. INSERT IGNORE) so the way to do it is to checking if the PK exists in the
-                # table before inserting the entry into it.
+            if (
+                not db_session.query(Participant.id)
+                .filter_by(id=participant_id)
+                .first()
+            ):
+                # Only add participant if it does not exist in the table. SQLAlchemy does not have
+                # a DBMS-agnostic treatment for this (e.g. INSERT IGNORE) so the way to do it is
+                # to check if the PK exists in the table before inserting the entry into it.
                 participants.append(Participant(id=participant_id))
 
         # For the group session on 2022-09-30, confederate with ID 99901
@@ -136,7 +139,11 @@ def process_data_validity_workbook():
         # experiment.
         if group_session_id == "exp_2022_09_30_10":
             participant_id = 99901
-            if not db_session.query(Participant.id).filter_by(id=participant_id).first():
+            if (
+                not db_session.query(Participant.id)
+                .filter_by(id=participant_id)
+                .first()
+            ):
                 participants.append(Participant(id=participant_id))
 
         # TODO: Deal with 'no_face_image' case for eeg data.
@@ -148,13 +155,13 @@ def process_data_validity_workbook():
                 modality_in_csv = modality.replace("gaze", "pupil")
                 for task in tasks_new:
                     if (
-                            (task == "ping_pong_competitive_1")
-                            and (station in {"lion", "tiger"})
+                        (task == "ping_pong_competitive_1")
+                        and (station in {"lion", "tiger"})
                     ) or (
-                            (task == "ping_pong_competitive_0")
-                            and (station == "leopard")
+                        (task == "ping_pong_competitive_0") and (station == "leopard")
                     ):
-                        info(f"""
+                        info(
+                            f"""
                             [ERROR]: Task = {task} and station = {station},
                             a combination that is not possible.
                             ping_pong_competitive_0 was performed on the
@@ -165,7 +172,8 @@ def process_data_validity_workbook():
                             did not record who the experimenter was).
                             We will skip entering this combination in the
                             data_validity table.
-                        """)
+                        """
+                        )
                         continue
 
                     task_in_csv = (
@@ -179,9 +187,7 @@ def process_data_validity_workbook():
                             "ping_pong_cooperative_0",
                         )
                     )
-                    participant_id = series[
-                        f"{station}_{task_in_csv}_participant_id"
-                    ]
+                    participant_id = series[f"{station}_{task_in_csv}_participant_id"]
 
                     if participant_id == "mission_not_run":
                         continue
@@ -191,22 +197,25 @@ def process_data_validity_workbook():
                     # the database.
                     task = task.replace("_0", "").replace("_1", "")
 
-                    is_valid = series[f"{station}_{modality_in_csv}_data_{task_in_csv}"] == "ok"
+                    is_valid = (
+                        series[f"{station}_{modality_in_csv}_data_{task_in_csv}"]
+                        == "ok"
+                    )
                     data_validity = DataValidity(
                         group_session_id=group_session_id,
                         participant_id=participant_id,
                         station_id=station,
                         task_id=task,
                         modality_id=modality,
-                        is_valid=is_valid
+                        is_valid=is_valid,
                     )
 
                     data_validity_entries.append(data_validity)
 
         db_session.add(GroupSession(id=group_session_id))
         db_session.add_all(participants)
-        # Flush to communicate changes to the database in a pending state such that we don't encounter
-        # foreign key errors when inserting data validity entries.
+        # Flush to communicate changes to the database in a pending state such that we don't
+        # encounter foreign key errors when inserting data validity entries.
         db_session.flush()
 
         db_session.add_all(data_validity_entries)
@@ -215,7 +224,7 @@ def process_data_validity_workbook():
 
 
 def process_station_to_eeg_amp_mapping_workbook():
-    info(f"Process station to eeg amp mapping workbook.")
+    info("Process station to eeg amp mapping workbook.")
 
     csv_path = "/tomcat/data/raw/LangLab/experiments/study_3_pilot/station_to_eeg_amp_mapping.csv"
 
@@ -229,21 +238,21 @@ def process_station_to_eeg_amp_mapping_workbook():
         lion_eeg_device = EEGDevice(
             group_session_id=group_session_id,
             station_id="lion",
-            device_id=None if math.isnan(device_id) else str(int(device_id))
+            device_id=None if math.isnan(device_id) else str(int(device_id)),
         )
 
         device_id = float(series["tiger_actiCHamp"])
         tiger_eeg_device = EEGDevice(
             group_session_id=group_session_id,
             station_id="tiger",
-            device_id=None if math.isnan(device_id) else str(int(device_id))
+            device_id=None if math.isnan(device_id) else str(int(device_id)),
         )
 
         device_id = float(series["leopard_actiCHamp"])
         leopard_eeg_device = EEGDevice(
             group_session_id=group_session_id,
             station_id="leopard",
-            device_id=None if math.isnan(device_id) else str(int(device_id))
+            device_id=None if math.isnan(device_id) else str(int(device_id)),
         )
 
         eeg_devices.extend([lion_eeg_device, tiger_eeg_device, leopard_eeg_device])

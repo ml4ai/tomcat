@@ -1,28 +1,30 @@
 #!/usr/bin/env python
 
 import argparse
-from sqlalchemy import create_engine
 import logging
-from logging import info, error
 import sys
-import subprocess
 
+from datasette_interface.common.config import LOG_DIR
+from datasette_interface.database.config import SQLALCHEMY_DATABASE_URI
+from datasette_interface.raw.process_affective_task_data import \
+    process_affective_task_data
 from datasette_interface.raw.process_base_tables import process_base_tables
-from datasette_interface.raw.process_rest_state_task_data import process_rest_state_task_data
-from datasette_interface.raw.process_affective_task_data import process_affective_task_data
+from datasette_interface.raw.process_eeg_raw_data import process_eeg_raw_data
 from datasette_interface.raw.process_finger_tapping_task_data import \
     process_finger_tapping_task_data
+from datasette_interface.raw.process_fnirs_raw_data import \
+    process_fnirs_raw_data
+from datasette_interface.raw.process_gaze_raw_data import process_gaze_raw_data
+from datasette_interface.raw.process_minecraft_data import \
+    process_minecraft_data
 from datasette_interface.raw.process_ping_pong_competitive_data import \
     process_ping_pong_competitive_task_data
 from datasette_interface.raw.process_ping_pong_cooperative_data import \
     process_ping_pong_cooperative_task_data
-from datasette_interface.raw.process_minecraft_data import process_minecraft_data
-from datasette_interface.raw.process_fnirs_raw_data import process_fnirs_raw_data
-from datasette_interface.raw.process_eeg_raw_data import process_eeg_raw_data
-from datasette_interface.raw.process_gaze_raw_data import process_gaze_raw_data
-from datasette_interface.raw.process_screen_capture_data import process_screen_capture_data
-from datasette_interface.database.config import get_db, engine, SQLALCHEMY_DATABASE_URI
-from datasette_interface.common.config import LOG_DIR, settings
+from datasette_interface.raw.process_rest_state_task_data import \
+    process_rest_state_task_data
+from datasette_interface.raw.process_screen_capture_data import \
+    process_screen_capture_data
 
 logging.basicConfig(
     level=logging.INFO,
@@ -46,7 +48,7 @@ TABLES = {
     "fnirs",
     "eeg",
     "gaze",
-    "screen_capture"
+    "screen_capture",
 }
 
 
@@ -88,11 +90,18 @@ if __name__ == "__main__":
             calling this script.           
         """
     )
-    parser.add_argument("--include", type=str, default="all",
-                        help=f"Comma-separated list of modalities to process among {TABLES}")
-    parser.add_argument("--exclude", type=str,
-                        help=f"Comma-separated list of modalities to exclude among the ones in "
-                             f"--include")
+    parser.add_argument(
+        "--include",
+        type=str,
+        default="all",
+        help=f"Comma-separated list of modalities to process among {TABLES}",
+    )
+    parser.add_argument(
+        "--exclude",
+        type=str,
+        help=f"Comma-separated list of modalities to exclude among the ones in "
+        f"--include",
+    )
 
     args = parser.parse_args()
 
@@ -118,9 +127,9 @@ if __name__ == "__main__":
 
     answer = input(
         f"This operation may add data to the tables ({tables}) in the database "
-        f"({SQLALCHEMY_DATABASE_URI}). Do you want to proceed? (y/n): ")
+        f"({SQLALCHEMY_DATABASE_URI}). Do you want to proceed? (y/n): "
+    )
     if answer.lower() in ["y", "yes"]:
         populate_tables(tables)
     else:
         print("Operation aborted.")
-

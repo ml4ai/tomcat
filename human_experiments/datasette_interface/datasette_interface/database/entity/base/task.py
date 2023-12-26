@@ -1,6 +1,5 @@
-from sqlalchemy.orm import Mapped
-from sqlalchemy.orm import mapped_column
 from sqlalchemy import Text
+from sqlalchemy.orm import Mapped, mapped_column
 
 from datasette_interface.database.config import Base
 

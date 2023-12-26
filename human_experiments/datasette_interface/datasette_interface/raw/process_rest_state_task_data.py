@@ -4,21 +4,19 @@ import logging
 import os
 import sys
 from glob import glob
-from logging import info, error
+from logging import error, info
 
 import pandas as pd
 import pyxdf
 from tqdm import tqdm
 
-from datasette_interface.database.entity.task.rest_state_task import RestStateTask
-from datasette_interface.common.utils import (
-    cd,
-    should_ignore_directory,
-    convert_unix_timestamp_to_iso8601,
-    is_directory_with_unified_xdf_files,
-)
-from datasette_interface.database.config import get_db
 from datasette_interface.common.config import LOG_DIR, settings
+from datasette_interface.common.utils import (
+    cd, convert_unix_timestamp_to_iso8601, is_directory_with_unified_xdf_files,
+    should_ignore_directory)
+from datasette_interface.database.config import get_db
+from datasette_interface.database.entity.task.rest_state_task import \
+    RestStateTask
 
 logging.basicConfig(
     level=logging.INFO,
@@ -54,9 +52,13 @@ def process_directory_v1(group_session):
         return RestStateTask(
             group_session_id=group_session,
             start_timestamp_unix=start_timestamp_unix,
-            start_timestamp_iso8601=convert_unix_timestamp_to_iso8601(start_timestamp_unix),
+            start_timestamp_iso8601=convert_unix_timestamp_to_iso8601(
+                start_timestamp_unix
+            ),
             stop_timestamp_unix=stop_timestamp_unix,
-            stop_timestamp_iso8601=convert_unix_timestamp_to_iso8601(stop_timestamp_unix)
+            stop_timestamp_iso8601=convert_unix_timestamp_to_iso8601(
+                stop_timestamp_unix
+            ),
         )
 
 
@@ -72,9 +74,13 @@ def process_directory_v2(group_session):
         return RestStateTask(
             group_session_id=group_session,
             start_timestamp_unix=start_timestamp_lsl,
-            start_timestamp_iso8601=convert_unix_timestamp_to_iso8601(start_timestamp_lsl),
+            start_timestamp_iso8601=convert_unix_timestamp_to_iso8601(
+                start_timestamp_lsl
+            ),
             stop_timestamp_unix=stop_timestamp_lsl,
-            stop_timestamp_iso8601=convert_unix_timestamp_to_iso8601(stop_timestamp_lsl)
+            stop_timestamp_iso8601=convert_unix_timestamp_to_iso8601(
+                stop_timestamp_lsl
+            ),
         )
 
 
@@ -101,13 +107,20 @@ def process_rest_state_task_data():
 
         db_session = next(get_db())
         processed_group_sessions = set(
-            [s[0] for s in db_session.query(RestStateTask.group_session_id).distinct(
-                RestStateTask.group_session_id).all()])
+            [
+                s[0]
+                for s in db_session.query(RestStateTask.group_session_id)
+                .distinct(RestStateTask.group_session_id)
+                .all()
+            ]
+        )
 
         for group_session in tqdm(sorted(directories_to_process), unit="directories"):
             if group_session in processed_group_sessions:
-                info(f"Found saved rest state data for {group_session} in the database. "
-                     f"Skipping group session.")
+                info(
+                    f"Found saved rest state data for {group_session} in the database. "
+                    f"Skipping group session."
+                )
                 continue
 
             info(f"Processing directory {group_session}")

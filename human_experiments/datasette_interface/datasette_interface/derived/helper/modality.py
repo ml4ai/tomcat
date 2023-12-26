@@ -1,15 +1,11 @@
 from __future__ import annotations
 
-import math
 from abc import ABC, abstractmethod
-from typing import List, Optional, Type
 
-from mne.filter import resample as mne_resample
 import numpy as np
 import pandas as pd
+from mne.filter import resample as mne_resample
 from scipy.interpolate import interp1d
-
-from datasette_interface.common.utils import convert_unix_timestamp_to_iso8601
 
 
 class ModalityHelper(ABC):
@@ -38,21 +34,18 @@ class ModalityHelper(ABC):
 
         :param target_frequency: frequency of the synchronized signals.
         """
-        pass
 
     @abstractmethod
     def load_data(self):
         """
         Reads modality data to the memory for a specific group session and station.
         """
-        pass
 
     @abstractmethod
     def filter(self) -> pd.DataFrame:
         """
         Filters data to remove unwanted artifacts.
         """
-        pass
 
     def up_sample(self, up_sample_factor: float):
         """
@@ -72,10 +65,11 @@ class ModalityHelper(ABC):
             x=self._data.drop(columns="timestamp_unix").values,
             up=up_sample_factor,
             npad="auto",
-            axis=0)
+            axis=0,
+        )
         new_timestamps = ModalityHelper._resample_timestamps(
             original_timestamps=self._data["timestamp_unix"].values,
-            resampled_size=len(up_sampled_data)
+            resampled_size=len(up_sampled_data),
         )
 
         # Copy data and timestamps to a Data frame
@@ -87,7 +81,9 @@ class ModalityHelper(ABC):
         self._data = df[self._data.columns]
 
     @staticmethod
-    def _resample_timestamps(original_timestamps: np.ndarray, resampled_size: int) -> np.ndarray:
+    def _resample_timestamps(
+        original_timestamps: np.ndarray, resampled_size: int
+    ) -> np.ndarray:
         """
         Performs linear interpolation on original timestamps to find a new list of time stamps on
         the resampled data.
@@ -99,7 +95,7 @@ class ModalityHelper(ABC):
         """
 
         seq = np.arange(len(original_timestamps))
-        interp_func = interp1d(seq, original_timestamps, kind='linear')
+        interp_func = interp1d(seq, original_timestamps, kind="linear")
         new_seq = np.linspace(0, seq[-1], resampled_size)
         return interp_func(new_seq)
 
@@ -112,8 +108,10 @@ class ModalityHelper(ABC):
         """
 
         df = self._data.drop(columns="timestamp_unix").apply(
-            func=lambda col: np.interp(clock_timestamps, self._data["timestamp_unix"], col),
-            axis=0
+            func=lambda col: np.interp(
+                clock_timestamps, self._data["timestamp_unix"], col
+            ),
+            axis=0,
         )
         df["frequency"] = clock_frequency
         df["timestamp_unix"] = clock_timestamps
@@ -126,4 +124,3 @@ class ModalityHelper(ABC):
         Saves synchronized data to the database. It assumes that the function sync_to_clock has
         been called previously.
         """
-        pass

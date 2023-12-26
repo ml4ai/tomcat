@@ -1,8 +1,9 @@
-import os
 import contextlib
-from logging import info
-from dateutil import parser
 import datetime
+import os
+from logging import info
+
+from dateutil import parser
 from pytz import timezone
 
 MST = timezone("US/Arizona")
@@ -42,9 +43,7 @@ def should_ignore_directory(session) -> bool:
         return True
 
     elif session in {"exp_2022_12_05_15", "exp_2023_04_26_10"}:
-        info(
-            f"Ignoring {session}, since it was cancelled (no participants showed up.)"
-        )
+        info(f"Ignoring {session}, since it was cancelled (no participants showed up.)")
         return True
     else:
         return False
@@ -61,9 +60,11 @@ def is_directory_with_white_noise_eeg_channels(session):
 
 
 def convert_unix_timestamp_to_iso8601(unix_timestamp):
-    iso8601_timestamp = datetime.datetime.fromtimestamp(
-        float(unix_timestamp), tz=MST
-    ).astimezone(tz=datetime.timezone.utc).isoformat(timespec='microseconds')
+    iso8601_timestamp = (
+        datetime.datetime.fromtimestamp(float(unix_timestamp), tz=MST)
+        .astimezone(tz=datetime.timezone.utc)
+        .isoformat(timespec="microseconds")
+    )
     return iso8601_timestamp
 
 

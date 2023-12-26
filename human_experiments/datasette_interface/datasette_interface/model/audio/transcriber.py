@@ -20,7 +20,8 @@ class Whisper(Transcriber):
 
         # We need to normalize the entries as it is done when we provide an audio file and let
         # Whisper load the audio.
-        # Ref: https://github.com/openai/whisper/blob/9f70a352f9f8630ab3aa0d06af5cb9532bd8c21d/whisper/audio.py#L49
+        # Ref: https://github.com/openai/whisper/blob/9f70a352f9f8630ab3aa0d06af5cb9532bd8c21d/
+        # whisper/audio.py#L49
         model_input = (
             torch.from_numpy(np.array(audio_segment.get_array_of_samples(), float))
             / 32768.0

@@ -1,3 +1,9 @@
+lint:
+	black .
+	isort .
+	autoflake -r . --in-place --remove-all-unused-imports
+	flake8 .
+
 screenshots_to_server:
 	./bin/copy_screenshots_to_server
 
@@ -26,12 +32,6 @@ update_db:
 
 update_screen_capture:
 	@PYTHONPATH="." ./bin/populate_raw_tables.py --include="screen_capture"
-
-lint:
-	black .
-	isort .
-	autoflake -r . --in-place --remove-all-unused-imports
-	flake8 .
 
 sync_raw:
 	@PYTHONPATH="." ./bin/sync_raw_signals.py --modality="fnirs" --clock_frequency=120

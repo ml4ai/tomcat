@@ -99,7 +99,8 @@ class PraatAnnotation:
             interval = tier[i]
 
             if interval.text == "s":
-                # Look ahead for the next "s" one. Merge if the duration between them is at most the threshold.
+                # Look ahead for the next "s" one. Merge if the duration between them is at most
+                # the threshold.
                 j = i + 1
                 intervals_to_merge = [interval]
                 while j < num_intervals and tier[j].text != "s":
@@ -113,7 +114,8 @@ class PraatAnnotation:
                     # No merge necessary
                     merged_sounds.extend(intervals_to_merge)
                 else:
-                    # Merge intervals by making the start time of the last interval be the start time of the first
+                    # Merge intervals by making the start time of the last interval be the start
+                    # time of the first
                     # interval to merge.
                     tier[j].xmin = interval.xmin
 

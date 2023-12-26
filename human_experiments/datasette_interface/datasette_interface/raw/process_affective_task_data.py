@@ -5,22 +5,20 @@ import logging
 import os
 import sys
 from glob import glob
-from logging import info, debug
+from logging import debug, info
 
 import pandas as pd
 import pyxdf
 from tqdm import tqdm
 
-from datasette_interface.database.entity.base.data_validity import DataValidity
-from datasette_interface.database.entity.task.affective_task_event import AffectiveTaskEvent
-from datasette_interface.common.utils import (
-    cd,
-    should_ignore_directory,
-    convert_unix_timestamp_to_iso8601,
-    is_directory_with_unified_xdf_files,
-)
-from datasette_interface.database.config import get_db
 from datasette_interface.common.config import LOG_DIR, settings
+from datasette_interface.common.utils import (
+    cd, convert_unix_timestamp_to_iso8601, is_directory_with_unified_xdf_files,
+    should_ignore_directory)
+from datasette_interface.database.config import get_db
+from datasette_interface.database.entity.base.data_validity import DataValidity
+from datasette_interface.database.entity.task.affective_task_event import \
+    AffectiveTaskEvent
 
 logging.basicConfig(
     level=logging.INFO,
@@ -81,9 +79,7 @@ def process_directory_v1(group_session, participants):
                 real_participant_id = (
                     nominal_participant_id
                     if nominal_participant_id in set(participants.values())
-                    else list(
-                        set(participants.values()) - nominal_participants
-                    )[0]
+                    else list(set(participants.values()) - nominal_participants)[0]
                 )
 
             df = pd.read_csv(
@@ -126,11 +122,13 @@ def process_directory_v1(group_session, participants):
                     participant_id=real_participant_id,
                     task_type="individual",
                     timestamp_unix=row["time"],
-                    timestamp_iso8601=convert_unix_timestamp_to_iso8601(df["time"].iloc[i]),
+                    timestamp_iso8601=convert_unix_timestamp_to_iso8601(
+                        df["time"].iloc[i]
+                    ),
                     event_type=row["event_type"],
                     image_path=image_path,
                     arousal_score=arousal,
-                    valence_score=valence
+                    valence_score=valence,
                 )
                 affective_task_events.append(affective_task_event)
 
@@ -162,9 +160,7 @@ def process_directory_v1(group_session, participants):
                     real_participant_id = (
                         int(row["subject_id"])
                         if int(row["subject_id"]) in set(participants.values())
-                        else list(
-                            set(participants.values()) - nominal_participants
-                        )[0]
+                        else list(set(participants.values()) - nominal_participants)[0]
                     )
 
                 if pd.isna(row["image_path"]):
@@ -187,11 +183,13 @@ def process_directory_v1(group_session, participants):
                     participant_id=real_participant_id,
                     task_type="team",
                     timestamp_unix=str(row["time"]),
-                    timestamp_iso8601=convert_unix_timestamp_to_iso8601(df["time"].iloc[i]),
+                    timestamp_iso8601=convert_unix_timestamp_to_iso8601(
+                        df["time"].iloc[i]
+                    ),
                     event_type=row["event_type"],
                     image_path=image_path,
                     arousal_score=arousal,
-                    valence_score=valence
+                    valence_score=valence,
                 )
                 affective_task_events.append(affective_task_event)
 
@@ -214,19 +212,14 @@ def process_directory_v2(group_session, participants):
 
             task_type = "individual" if i != 3 else "team"
 
-            for timestamp, data in zip(
-                    stream["time_stamps"], stream["time_series"]
-            ):
+            for timestamp, data in zip(stream["time_stamps"], stream["time_series"]):
                 data = json.loads(data[0])
 
                 nominal_participant_id = data["subject_id"]
 
                 if task_type == "individual":
                     real_participant_id = participants[stream_source]
-                    if (
-                            nominal_participant_id
-                            not in nominal_participant_to_stream_map
-                    ):
+                    if nominal_participant_id not in nominal_participant_to_stream_map:
                         nominal_participant_to_stream_map[
                             nominal_participant_id
                         ] = stream_source
@@ -236,9 +229,7 @@ def process_directory_v2(group_session, participants):
                         real_participant_id = -2
                     else:
                         real_participant_id = participants[
-                            nominal_participant_to_stream_map[
-                                nominal_participant_id
-                            ]
+                            nominal_participant_to_stream_map[nominal_participant_id]
                         ]
 
                 affective_task_event = AffectiveTaskEvent(
@@ -250,7 +241,7 @@ def process_directory_v2(group_session, participants):
                     event_type=data["event_type"],
                     image_path=data["image_path"],
                     arousal_score=data["arousal_score"],
-                    valence_score=data["valence_score"]
+                    valence_score=data["valence_score"],
                 )
                 affective_task_events.append(affective_task_event)
 
@@ -280,30 +271,44 @@ def process_affective_task_data():
 
         db_session = next(get_db())
         processed_group_sessions = set(
-            [s[0] for s in
-             db_session.query(AffectiveTaskEvent.group_session_id).distinct(
-                 AffectiveTaskEvent.group_session_id).all()])
+            [
+                s[0]
+                for s in db_session.query(AffectiveTaskEvent.group_session_id)
+                .distinct(AffectiveTaskEvent.group_session_id)
+                .all()
+            ]
+        )
 
         for group_session in tqdm(sorted(directories_to_process), unit="directories"):
             if group_session in processed_group_sessions:
                 info(
                     f"Found saved affective data for {group_session} in the database. "
-                    f"Skipping group session.")
+                    f"Skipping group session."
+                )
                 continue
 
             info(f"Processing directory {group_session}")
             # Get real participant IDs for the task
             participants = {}
             for station in ["lion", "tiger", "leopard"]:
-                participant = db_session.query(DataValidity.participant_id).filter(
-                    DataValidity.group_session_id == group_session,
-                    DataValidity.task_id.like("affective%"),
-                    DataValidity.station_id == station).first()[0]
+                participant = (
+                    db_session.query(DataValidity.participant_id)
+                    .filter(
+                        DataValidity.group_session_id == group_session,
+                        DataValidity.task_id.like("affective%"),
+                        DataValidity.station_id == station,
+                    )
+                    .first()[0]
+                )
                 participants[station] = participant
             if not is_directory_with_unified_xdf_files(group_session):
-                affective_task_events = process_directory_v1(group_session, participants)
+                affective_task_events = process_directory_v1(
+                    group_session, participants
+                )
             else:
-                affective_task_events = process_directory_v2(group_session, participants)
+                affective_task_events = process_directory_v2(
+                    group_session, participants
+                )
 
             if len(affective_task_events) > 0:
                 db_session.add_all(affective_task_events)
