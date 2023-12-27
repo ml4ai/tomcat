@@ -23,7 +23,7 @@ class EEGRaw(Base):
         "participant", Integer, ForeignKey(Participant.id), primary_key=True
     )
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    task_id: Mapped[Optional[str]] = mapped_column("task", Text, ForeignKey(Task.id), nullable=True)
+    task_id: Mapped[Optional[str]] = mapped_column("task", Text, ForeignKey(Task.id))
     timestamp_unix: Mapped[str] = mapped_column(Text)
     timestamp_iso8601: Mapped[str] = mapped_column(Text)
     aff1h: Mapped[float] = mapped_column(REAL)
