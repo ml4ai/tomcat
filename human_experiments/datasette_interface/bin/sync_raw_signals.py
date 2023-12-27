@@ -1,6 +1,7 @@
 import argparse
 import logging
 from functools import partial
+from logging import info
 from multiprocessing import Pool
 from typing import List
 
@@ -100,38 +101,38 @@ def sync_raw_signals_single_job(
             ),
             force=True,
         )
-        logger = logging.getLogger()
+
         mne.set_log_file(mne_log_filepath, output_format=log_format, overwrite=False)
-        logger.info(f"Processing group session {group_session}.")
+        info(f"Processing group session {group_session}.")
 
         clock_timestamps = get_main_clock_timestamps(
             group_session=group_session, clock_frequency=clock_frequency, buffer=buffer
         )
 
         for station in STATIONS:
-            logger.info(f"Processing station {station}.")
+            info(f"Processing station {station}.")
             modality_helper = create_modality_helper(modality, group_session, station)
 
             if modality_helper.has_saved_sync_data(clock_frequency):
-                logger.info(
+                info(
                     f"Found synchronized {modality} signals for {group_session}, {station} with "
                     f"clock frequency {clock_frequency} in the database. Skipping."
                 )
                 continue
 
-            logger.info("Loading data.")
+            info("Loading data.")
             modality_helper.load_data()
 
-            logger.info("Filtering.")
+            info("Filtering.")
             modality_helper.filter()
 
-            logger.info("Up-sampling.")
+            info("Up-sampling.")
             modality_helper.up_sample(up_sample_scale)
 
-            logger.info("Synchronizing with main clock.")
+            info("Synchronizing with main clock.")
             modality_helper.sync_to_clock(clock_frequency, clock_timestamps)
 
-            logger.info("Persisting synchronized data.")
+            info("Persisting synchronized data.")
             modality_helper.save_synced_data()
 
 

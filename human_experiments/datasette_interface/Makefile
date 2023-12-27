@@ -24,14 +24,14 @@ clear_db:
 
 create_tables:
 	@PYTHONPATH="." ./bin/create_tables.py
-	@#PYTHONPATH="." ./bin/create_table_indices.py
+	@PYTHONPATH="." ./bin/create_table_indices.py
 
-update_db:
-	#@PYTHONPATH="." ./bin/populate_raw_tables.py
+update_raw:
+	@PYTHONPATH="." ./bin/populate_raw_tables.py
+
+extract_vocalics:
 	@PYTHONPATH="." ./bin/extract_vocalic_features.py
 
-update_screen_capture:
-	@PYTHONPATH="." ./bin/populate_raw_tables.py --include="screen_capture"
-
 sync_raw:
-	@PYTHONPATH="." ./bin/sync_raw_signals.py --modality="fnirs" --clock_frequency=120
+	@PYTHONPATH="." ./bin/sync_raw_signals.py --modality="fnirs" --clock_frequency=200
+	@PYTHONPATH="." ./bin/sync_raw_signals.py --modality="eeg" --clock_frequency=200

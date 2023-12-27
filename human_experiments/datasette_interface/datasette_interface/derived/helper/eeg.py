@@ -37,7 +37,7 @@ class EEGHelper(ModalityHelper):
         """
         db = next(get_db())
         num_records = db.scalar(
-            select(func.count(EEGSync)).where(
+            select(func.count(EEGSync.id)).where(
                 EEGSync.group_session_id == self.group_session,
                 EEGSync.frequency == target_frequency,
                 EEGSync.station_id == self.group_session,
@@ -54,34 +54,38 @@ class EEGHelper(ModalityHelper):
         super().load_data()
 
         db = next(get_db())
-        query = select(
-            EEGRaw.timestamp_unix,
-            EEGRaw.aff1h,
-            EEGRaw.f7,
-            EEGRaw.fc5,
-            EEGRaw.c3,
-            EEGRaw.t7,
-            EEGRaw.tp9,
-            EEGRaw.pz,
-            EEGRaw.p3,
-            EEGRaw.p7,
-            EEGRaw.o1,
-            EEGRaw.o2,
-            EEGRaw.p8,
-            EEGRaw.p4,
-            EEGRaw.tp10,
-            EEGRaw.cz,
-            EEGRaw.c4,
-            EEGRaw.t8,
-            EEGRaw.fc6,
-            EEGRaw.fcz,
-            EEGRaw.f8,
-            EEGRaw.aff2h,
-            EEGRaw.aux_ekg,
-            EEGRaw.aux_gsr,
-        ).where(
-            EEGRaw.group_session_id == self.group_session,
-            EEGRaw.station_id == self.station,
+        query = (
+            select(
+                EEGRaw.timestamp_unix,
+                EEGRaw.aff1h,
+                EEGRaw.f7,
+                EEGRaw.fc5,
+                EEGRaw.c3,
+                EEGRaw.t7,
+                EEGRaw.tp9,
+                EEGRaw.pz,
+                EEGRaw.p3,
+                EEGRaw.p7,
+                EEGRaw.o1,
+                EEGRaw.o2,
+                EEGRaw.p8,
+                EEGRaw.p4,
+                EEGRaw.tp10,
+                EEGRaw.cz,
+                EEGRaw.c4,
+                EEGRaw.t8,
+                EEGRaw.fc6,
+                EEGRaw.fcz,
+                EEGRaw.f8,
+                EEGRaw.aff2h,
+                EEGRaw.aux_ekg,
+                EEGRaw.aux_gsr,
+            )
+            .where(
+                EEGRaw.group_session_id == self.group_session,
+                EEGRaw.station_id == self.station,
+            )
+            .order_by(EEGRaw.timestamp_unix)
         )
         self._data = pd.read_sql_query(query, engine)
         db.close()
@@ -126,9 +130,9 @@ class EEGHelper(ModalityHelper):
 
         df_ekg = df[
             [
-                "group_session",
+                "group_session_id",
                 "frequency",
-                "station",
+                "station_id",
                 "id",
                 "timestamp_unix",
                 "timestamp_iso8601",
@@ -138,9 +142,9 @@ class EEGHelper(ModalityHelper):
 
         df_gsr = df[
             [
-                "group_session",
+                "group_session_id",
                 "frequency",
-                "station",
+                "station_id",
                 "id",
                 "timestamp_unix",
                 "timestamp_iso8601",
