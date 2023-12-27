@@ -1,10 +1,3 @@
-#!/usr/bin/env python
-
-"""
-This script is responsible for estimating and persisting to the ToMCAT database vocalic features
-extracted from audio files in the experiments directories. We use OpenSmile to do so, with
-configuration files defined under data_pre_processing/audio/opensmile.
-"""
 import logging
 import os.path
 import sys
@@ -34,7 +27,7 @@ def extract_vocalic_features_callback(experiment_dir: str, has_unified_xdf: bool
     """
     info(f"Extracting vocalic features from {experiment_dir}.")
 
-    db_session = next(get_db())
+    db = next(get_db())
     for station in ["lion", "tiger", "leopard"]:
         info(f"Extracting vocalics from {station}.")
 
@@ -64,7 +57,7 @@ def extract_vocalic_features_callback(experiment_dir: str, has_unified_xdf: bool
             group_session = experiment_dir[lb_idx:]
 
             if (
-                db_session.scalar(
+                db.scalar(
                     select(AudioVocalics.timestamp_unix).where(
                         AudioVocalics.group_session_id == group_session,
                         AudioVocalics.station_id == station,
@@ -81,7 +74,7 @@ def extract_vocalic_features_callback(experiment_dir: str, has_unified_xdf: bool
 
             info(f"Extracting vocalics from {audio_filename}.")
 
-            first_timestamp_unix = db_session.scalar(
+            first_timestamp_unix = db.scalar(
                 select(MinecraftMission.trial_start_timestamp_unix).where(
                     MinecraftMission.group_session_id == group_session,
                     MinecraftMission.id == minecraft_mission_id,
@@ -167,25 +160,26 @@ def extract_vocalic_features_callback(experiment_dir: str, has_unified_xdf: bool
                 vocalics_data.append(AudioVocalics(**record))
 
             info("Saving to the database.")
-            db_session.add_all(vocalics_data)
-            db_session.commit()
+            db.add_all(vocalics_data)
+            db.commit()
 
             info("Removing temporary files")
             os.remove(fixed_audio_filepath)
             os.remove(vocalics_filepath)
-    db_session.close()
+    db.close()
 
 
-logging.basicConfig(
-    level=logging.INFO,
-    handlers=(
-        logging.FileHandler(
-            filename=f"{LOG_DIR}/extract_vocalic_features.log",
-            mode="w",
+def process_vocalics():
+    logging.basicConfig(
+        level=logging.INFO,
+        handlers=(
+            logging.FileHandler(
+                filename=f"{LOG_DIR}/extract_vocalic_features.log",
+                mode="w",
+            ),
+            logging.StreamHandler(stream=sys.stderr),
         ),
-        logging.StreamHandler(stream=sys.stderr),
-    ),
-)
+    )
 
-crawler = ExperimentsCrawler(callback=extract_vocalic_features_callback)
-crawler.crawl()
+    crawler = ExperimentsCrawler(callback=extract_vocalic_features_callback)
+    crawler.crawl()

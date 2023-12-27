@@ -22,6 +22,7 @@ from datasette_interface.raw.process_rest_state_task_data import \
     process_rest_state_task_data
 from datasette_interface.raw.process_screen_capture_data import \
     process_screen_capture_data
+from datasette_interface.raw.process_vocalics import process_vocalics
 
 TABLES = {
     "base",
@@ -35,6 +36,7 @@ TABLES = {
     "eeg",
     "gaze",
     "screen_capture",
+    "vocalics",
 }
 
 
@@ -57,6 +59,8 @@ def populate_tables(tables_to_process):
         process_minecraft_data()
     if "screen_capture" in tables_to_process:
         process_screen_capture_data()
+    if "vocalics" in tables_to_process:
+        process_vocalics()
     if "fnirs" in tables_to_process:
         process_fnirs_raw_data()
     if "gaze" in tables_to_process:
@@ -76,7 +80,7 @@ if __name__ == "__main__":
         "--include",
         type=str,
         default="all",
-        help="Comma-separated list of modalities to process among {TABLES}",
+        help=f"Comma-separated list of modalities to process among {TABLES}",
     )
     parser.add_argument(
         "--exclude",

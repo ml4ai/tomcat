@@ -46,7 +46,7 @@ def sync_raw_signals_in_parallel(
     )
 
     db = next(get_db())
-    group_sessions = db.scalars(select(GroupSession.id)).all()[-2:]
+    group_sessions = db.scalars(select(GroupSession.id)).all()
     db.close()
 
     effective_num_jobs = min(num_jobs, len(group_sessions))
