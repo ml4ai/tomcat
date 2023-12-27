@@ -74,12 +74,12 @@ def extract_vocalic_features_callback(experiment_dir: str, has_unified_xdf: bool
 
             info(f"Extracting vocalics from {audio_filename}.")
 
-            first_timestamp_unix = db.scalar(
+            first_timestamp_unix = float(db.scalar(
                 select(MinecraftMission.trial_start_timestamp_unix).where(
                     MinecraftMission.group_session_id == group_session,
                     MinecraftMission.id == minecraft_mission_id,
                 )
-            )
+            ))
 
             if first_timestamp_unix is None:
                 info(
