@@ -82,7 +82,7 @@ def populate_modality_table():
     db = next(get_db())
     saved_modalities = set(db.scalars(select(Modality.id)).all())
     modalities = [
-        Modality(id=modality) for modality in MODALITIES not in saved_modalities
+        Modality(id=modality) for modality in MODALITIES if modality not in saved_modalities
     ]
     if len(modalities) > 0:
         db.add_all(modalities)
