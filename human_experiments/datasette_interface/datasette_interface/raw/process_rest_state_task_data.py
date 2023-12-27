@@ -101,7 +101,7 @@ def process_rest_state_task_data():
     with cd(settings.experiment_root_dir):
         directories_to_process = [
             directory
-            for directory in os.listdir("../..")
+            for directory in os.listdir(".")
             if not should_ignore_directory(directory)
         ]
 
