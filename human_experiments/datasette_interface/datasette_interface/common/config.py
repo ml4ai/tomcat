@@ -21,7 +21,6 @@ class Settings(BaseSettings):
     experiment_root_dir: str = (
         "/tomcat/data/raw/LangLab/experiments/study_3_pilot/group"
     )
-    tmp_dir: str = ".tmp"
     data_validity_workbook_path: str = (
         "/tomcat/data/raw/LangLab/experiments/study_3_pilot/data_validity_table.csv"
     )
@@ -65,5 +64,7 @@ else:
     RUN_DIR = settings.artifact_dir
 
 LOG_DIR = f"{RUN_DIR}/log"
+TMP_DIR = f"{RUN_DIR}/tmp"
 
 os.makedirs(LOG_DIR, exist_ok=True)
+os.makedirs(TMP_DIR, exist_ok=True)

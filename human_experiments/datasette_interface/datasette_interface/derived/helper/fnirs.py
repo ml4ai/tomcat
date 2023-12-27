@@ -2,7 +2,6 @@ from logging import info
 
 import pandas as pd
 from mne.filter import filter_data as mne_filter_data
-# from datasette_interface.signal.table.fnirs import FNIRSSyncUnfiltered, FNIRSSyncFiltered
 from sqlalchemy import func, select
 
 from datasette_interface.common.constants import (

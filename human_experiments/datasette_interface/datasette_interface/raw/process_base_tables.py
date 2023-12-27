@@ -100,7 +100,9 @@ def populate_participant_table():
     # ID of -1 to represent 'unknown participant'
     # ID of -2 to represent the team (for affective task event data)
     # ID of - 3 to represent an unknown experimenter(for the ping pong task data)
-    participants = [Participant(id=p) for p in [-1, -2, -3] if p not in saved_participants]
+    participants = [
+        Participant(id=p) for p in [-1, -2, -3] if p not in saved_participants
+    ]
     if len(participants) > 0:
         db.add_all(participants)
         db.commit()

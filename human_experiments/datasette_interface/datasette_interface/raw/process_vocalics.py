@@ -6,7 +6,7 @@ from logging import info
 import pandas as pd
 from sqlalchemy import select
 
-from datasette_interface.common.config import LOG_DIR, settings
+from datasette_interface.common.config import LOG_DIR, TMP_DIR
 from datasette_interface.common.experiments_crawler import ExperimentsCrawler
 from datasette_interface.common.utils import convert_unix_timestamp_to_iso8601
 from datasette_interface.database.config import get_db
@@ -94,7 +94,7 @@ def extract_vocalic_features_callback(experiment_dir: str, has_unified_xdf: bool
             # folder and we extract vocalic from this fixed version of the audio.
             audio = PCMAudio(audio_filepath)
 
-            fixed_audio_filepath = f"{settings.tmp_dir}/{audio_filename}"
+            fixed_audio_filepath = f"{TMP_DIR}/{audio_filename}"
             audio.fix_header(fixed_audio_filepath)
             audio = PCMAudio(fixed_audio_filepath)
 
@@ -104,7 +104,7 @@ def extract_vocalic_features_callback(experiment_dir: str, has_unified_xdf: bool
             # python version. It also allows anyone to use our opensmile config files to extract
             # vocalics from their audios without having to write a python script for it.
             audio_filename_no_extension = audio_filename[: audio_filename.rfind(".")]
-            vocalics_filepath = f"{settings.tmp_dir}/{audio_filename_no_extension}.csv"
+            vocalics_filepath = f"{TMP_DIR}/{audio_filename_no_extension}.csv"
             if not audio.extract_vocalic_features(vocalics_filepath):
                 continue
 
