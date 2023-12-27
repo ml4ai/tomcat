@@ -119,31 +119,29 @@ def sync_raw_signals_single_job(
                 )
                 continue
 
-            logger.info(f"Loading data.")
+            logger.info("Loading data.")
             modality_helper.load_data()
 
-            logger.info(f"Filtering.")
+            logger.info("Filtering.")
             modality_helper.filter()
 
-            logger.info(f"Up-sampling.")
+            logger.info("Up-sampling.")
             modality_helper.up_sample(up_sample_scale)
 
-            logger.info(f"Synchronizing with main clock.")
+            logger.info("Synchronizing with main clock.")
             modality_helper.sync_to_clock(clock_frequency, clock_timestamps)
 
-            logger.info(f"Persisting synchronized data.")
+            logger.info("Persisting synchronized data.")
             modality_helper.save_synced_data()
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="""
-                Filters and synchronizes raw signals with a main clock. The main clock has an 
-                associated frequency, start and end timestamps. The frequency is determined at 
-                execution time. The start timestamp is defined by 1 minute before the start of the 
-                rest state task (first task in the experimental procedure) and end timestamp defined
-                by 1 minute after the end of the last Minecraft trial.       
-            """
+        description="Filters and synchronizes raw signals with a main clock. The main clock has "
+        "an associated frequency, start and end timestamps. The frequency is determined at "
+        "execution time. The start timestamp is defined by 1 minute before the start of the "
+        "rest state task (first task in the experimental procedure) and end timestamp "
+        "defined by 1 minute after the end of the last Minecraft trial."
     )
 
     parser.add_argument(

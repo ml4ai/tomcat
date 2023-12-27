@@ -1,18 +1,21 @@
+from logging import info
+
+import numpy as np
 import pandas as pd
-from sqlalchemy import select
+from mne.filter import notch_filter
+from sqlalchemy import func, select
 
 from datasette_interface.common.constants import (EEG_FREQUENCY,
                                                   EEG_NOTCH_FILTER_FREQUENCY,
                                                   EEG_NOTCH_WIDTH,
                                                   EEG_TRANSISION_BANDWIDTH)
-from datasette_interface.database.config import get_db
+from datasette_interface.common.utils import convert_unix_timestamp_to_iso8601
+from datasette_interface.database.config import engine, get_db
+from datasette_interface.database.entity.derived.eeg_sync import EEGSync
+from datasette_interface.database.entity.derived.ekg_sync import EKGSync
+from datasette_interface.database.entity.derived.gsr_sync import GSRSync
 from datasette_interface.database.entity.signal.eeg import EEGRaw
 from datasette_interface.derived.helper.modality import ModalityHelper
-from mne.filter import notch_filter
-import numpy as np
-from datasette_interface.database.entity.derived.eeg_sync import EEGSync
-from datasette_interface.database.entity.derived.gsr_sync import GSRSync
-from datasette_interface.database.entity.derived.ekg_sync import EKGSync
 
 
 class EEGHelper(ModalityHelper):
@@ -75,7 +78,7 @@ class EEGHelper(ModalityHelper):
             EEGRaw.f8,
             EEGRaw.aff2h,
             EEGRaw.aux_ekg,
-            EEGRaw.aux_gsr
+            EEGRaw.aux_gsr,
         ).where(
             EEGRaw.group_session_id == self.group_session,
             EEGRaw.station_id == self.station,
@@ -121,21 +124,29 @@ class EEGHelper(ModalityHelper):
         df["group_session_id"] = self.group_session
         df["station_id"] = self.station
 
-        df_ekg = df[["group_session",
-                     "frequency",
-                     "station",
-                     "id",
-                     "timestamp_unix",
-                     "timestamp_iso8601",
-                     "aux_ekg"]]
+        df_ekg = df[
+            [
+                "group_session",
+                "frequency",
+                "station",
+                "id",
+                "timestamp_unix",
+                "timestamp_iso8601",
+                "aux_ekg",
+            ]
+        ]
 
-        df_gsr = df[["group_session",
-                     "frequency",
-                     "station",
-                     "id",
-                     "timestamp_unix",
-                     "timestamp_iso8601",
-                     "aux_gsr"]]
+        df_gsr = df[
+            [
+                "group_session",
+                "frequency",
+                "station",
+                "id",
+                "timestamp_unix",
+                "timestamp_iso8601",
+                "aux_gsr",
+            ]
+        ]
         df_eeg = df.drop(columns=["aux_ekg", "aux_gsr"])
 
         info("Converting DataFrame to records.")

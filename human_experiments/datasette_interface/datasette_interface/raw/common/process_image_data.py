@@ -28,7 +28,7 @@ def process_directory_v1(group_session, image_table_class, image_dir):
             # have their creation date saved. In this case we use their last modified date as
             # timestamp, which we can retrieve from the file's metadata.
             if is_directory_with_correct_image_creation_time(
-                    group_session
+                group_session
             ) and os.path.exists("outFile.csv"):
                 # Sometimes outFile.csv exists but the image filenames are still the original ones.
                 # When this is the case, we map the image filename to the timestamps in this file.
@@ -48,7 +48,8 @@ def process_directory_v1(group_session, image_table_class, image_dir):
             unique_id = 0
             sorted_filenames = sorted(os.listdir("../../.."))
             for filename in sorted_filenames:
-                if filename[filename.rfind(".") + 1:] != "png":
+                lb_idx = filename.rfind(".") + 1
+                if filename[lb_idx:] != "png":
                     # Skip files that are not images.
                     continue
 
@@ -120,7 +121,7 @@ def process_directory_v1(group_session, image_table_class, image_dir):
 
 
 def process_directory_v2(
-        group_session, image_table_class, image_type, xdf_signal_name, image_dir
+    group_session, image_table_class, image_type, xdf_signal_name, image_dir
 ):
     """Process directory assuming unified XDF files."""
 
@@ -175,7 +176,7 @@ def process_directory_v2(
 
 
 def insert_raw_unlabeled_data(
-        image_table_class, image_type, xdf_signal_name, image_dir
+    image_table_class, image_type, xdf_signal_name, image_dir
 ):
     info("Inserting unlabeled data.")
     with cd(settings.experiment_root_dir):
@@ -190,8 +191,8 @@ def insert_raw_unlabeled_data(
             [
                 s[0]
                 for s in db.query(ScreenCapture.group_session_id)
-            .distinct(ScreenCapture.group_session_id)
-            .all()
+                .distinct(ScreenCapture.group_session_id)
+                .all()
             ]
         )
 

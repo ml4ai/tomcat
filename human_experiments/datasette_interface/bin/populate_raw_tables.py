@@ -83,24 +83,22 @@ def populate_tables(tables_to_process):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="""
-            Populates the ToMCAT database with raw data. This script is incremental. No data is 
-            deleted from the database but added. It skips parsing data already inserted in 
-            the database. If one wants to override those, data must be deleted manually before 
-            calling this script.           
-        """
+        description="Populates the ToMCAT database with raw data. This script is incremental. No "
+        "data is deleted from the database but added. It skips parsing data already "
+        "inserted in the database. If one wants to override those, data must be "
+        "deleted manually before calling this script."
     )
     parser.add_argument(
         "--include",
         type=str,
         default="all",
-        help=f"Comma-separated list of modalities to process among {TABLES}",
+        help="Comma-separated list of modalities to process among {TABLES}",
     )
     parser.add_argument(
         "--exclude",
         type=str,
-        help=f"Comma-separated list of modalities to exclude among the ones in "
-        f"--include",
+        help="Comma-separated list of modalities to exclude among the ones in "
+        "--include",
     )
 
     args = parser.parse_args()

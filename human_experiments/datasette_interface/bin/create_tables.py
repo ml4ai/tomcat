@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from datasette_interface.database.config import engine
-from datasette_interface.database.config import Base
+from datasette_interface.database.config import Base, engine
 
 Base.metadata.create_all(engine, checkfirst=True)

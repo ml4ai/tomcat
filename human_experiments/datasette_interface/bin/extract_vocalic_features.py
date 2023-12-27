@@ -57,10 +57,11 @@ def extract_vocalic_features_callback(experiment_dir: str, has_unified_xdf: bool
             if not os.path.isfile(audio_filepath) or audio_filename[-4:] != ".wav":
                 continue
 
-            minecraft_mission_id = audio_filename[
-                audio_filename.find("-") + 1 : audio_filename.find("_Team")
-            ]
-            group_session = experiment_dir[experiment_dir.rfind("/") + 1 :]
+            lb_idx = audio_filename.find("-") + 1
+            ub_idx = audio_filename.find("_Team")
+            minecraft_mission_id = audio_filename[lb_idx:ub_idx]
+            lb_idx = experiment_dir.rfind("/") + 1
+            group_session = experiment_dir[lb_idx:]
 
             if (
                 db_session.scalar(
