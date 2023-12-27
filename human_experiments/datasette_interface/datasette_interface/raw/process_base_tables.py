@@ -129,9 +129,14 @@ def process_data_validity_workbook():
         if "canceled" in series["lion_subject_id"]:
             continue
 
+        db = next(get_db())
+        if db.scalar(
+                select(GroupSession.id).where(GroupSession.id == group_session_id)) is not None:
+            info(f"Found group session {group_session_id} in the database. Skipping.")
+            continue
+
         participants = []
 
-        db = next(get_db())
         for prefix in ["lion", "tiger", "leopard"]:
             participant_id = series[f"{prefix}_subject_id"]
             if not db.query(Participant.id).filter_by(id=participant_id).first():
@@ -158,10 +163,10 @@ def process_data_validity_workbook():
                 modality_in_csv = modality.replace("gaze", "pupil")
                 for task in tasks_new:
                     if (
-                        (task == "ping_pong_competitive_1")
-                        and (station in {"lion", "tiger"})
+                            (task == "ping_pong_competitive_1")
+                            and (station in {"lion", "tiger"})
                     ) or (
-                        (task == "ping_pong_competitive_0") and (station == "leopard")
+                            (task == "ping_pong_competitive_0") and (station == "leopard")
                     ):
                         info(
                             f"""
@@ -201,8 +206,8 @@ def process_data_validity_workbook():
                     task = task.replace("_0", "").replace("_1", "")
 
                     is_valid = (
-                        series[f"{station}_{modality_in_csv}_data_{task_in_csv}"]
-                        == "ok"
+                            series[f"{station}_{modality_in_csv}_data_{task_in_csv}"]
+                            == "ok"
                     )
                     data_validity = DataValidity(
                         group_session_id=group_session_id,
