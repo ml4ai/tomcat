@@ -132,7 +132,7 @@ def process_data_validity_workbook():
         db = next(get_db())
         if db.scalar(
                 select(GroupSession.id).where(GroupSession.id == group_session_id)) is not None:
-            info(f"Found group session {group_session_id} in the database. Skipping.")
+            info(f"Found group session {group_session_id} in the group_session table. Skipping.")
             continue
 
         participants = []
@@ -238,9 +238,16 @@ def process_station_to_eeg_amp_mapping_workbook():
         settings.station_to_eeg_workbook_path, index_col="experiment_id", dtype=str
     )
 
+    db = next(get_db())
     eeg_devices = []
     for group_session_id, series in df.iterrows():
         group_session_id = str(group_session_id)
+
+        if db.scalar(
+                select(EEGDevice.group_session_id).where(
+                    EEGDevice.group_session_id == group_session_id)) is not None:
+            info(f"Found group session {group_session_id} in the eeg_device table. Skipping.")
+            continue
 
         device_id = float(series["lion_actiCHamp"])
         lion_eeg_device = EEGDevice(
@@ -265,7 +272,6 @@ def process_station_to_eeg_amp_mapping_workbook():
 
         eeg_devices.extend([lion_eeg_device, tiger_eeg_device, leopard_eeg_device])
 
-    db = next(get_db())
     db.add_all(eeg_devices)
     db.commit()
     db.close()
