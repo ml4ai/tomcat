@@ -125,13 +125,13 @@ def process_data_validity_workbook():
         settings.data_validity_workbook_path, index_col="experiment_id", dtype=str
     )
 
+    db = next(get_db())
     for group_session_id, series in df.iterrows():
         group_session_id = str(group_session_id)
 
         if "canceled" in series["lion_subject_id"]:
             continue
 
-        db = next(get_db())
         if (
             db.scalar(
                 select(GroupSession.id).where(GroupSession.id == group_session_id)
