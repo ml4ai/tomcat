@@ -44,7 +44,7 @@ def insert_raw_unlabeled_data(
         )
 
         for group_session in tqdm(sorted(directories_to_process), unit="directories"):
-            if not override and group_session in processed_group_sessions:
+            if group_session in processed_group_sessions:
                 info(
                     f"Found saved {modality_name} data for {group_session} in the database. "
                     f"Skipping group session."
