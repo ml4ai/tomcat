@@ -154,9 +154,9 @@ class EEGHelper(ModalityHelper):
         df_eeg = df.drop(columns=["aux_ekg", "aux_gsr"])
 
         info("Converting DataFrame to records.")
-        eeg_records = df_eeg.iloc[:1000, :].to_dict("records")
-        ekg_records = df_ekg.iloc[:1000, :].to_dict("records")
-        gsr_records = df_gsr.iloc[:1000, :].to_dict("records")
+        eeg_records = df_eeg.to_dict("records")
+        ekg_records = df_ekg.to_dict("records")
+        gsr_records = df_gsr.to_dict("records")
 
         db = next(get_db())
         eeg_data = []

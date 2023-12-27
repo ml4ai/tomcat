@@ -141,7 +141,7 @@ class FNIRSHelper(ModalityHelper):
         df["station_id"] = self.station
 
         info("Converting DataFrame to records.")
-        records = df.iloc[:1000, :].to_dict("records")
+        records = df.to_dict("records")
         db = next(get_db())
         fnirs_data = []
         for record in records:
