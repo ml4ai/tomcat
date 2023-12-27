@@ -55,14 +55,14 @@ def populate_tables(tables_to_process):
         process_ping_pong_cooperative_task_data()
     if "minecraft" in tables_to_process:
         process_minecraft_data()
-    if "fnirs" in tables_to_process:
-        process_fnirs_raw_data()
-    if "eeg" in tables_to_process:
-        process_eeg_raw_data()
-    if "gaze" in tables_to_process:
-        process_gaze_raw_data()
     if "screen_capture" in tables_to_process:
         process_screen_capture_data()
+    if "fnirs" in tables_to_process:
+        process_fnirs_raw_data()
+    if "gaze" in tables_to_process:
+        process_gaze_raw_data()
+    if "eeg" in tables_to_process:
+        process_eeg_raw_data()
 
 
 if __name__ == "__main__":
