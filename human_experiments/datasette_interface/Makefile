@@ -33,5 +33,11 @@ extract_vocalics:
 	@PYTHONPATH="." ./bin/extract_vocalic_features.py
 
 sync_raw:
-	@PYTHONPATH="." ./bin/sync_raw_signals.py --modality="fnirs" --clock_frequency=200
-	@PYTHONPATH="." ./bin/sync_raw_signals.py --modality="eeg" --clock_frequency=200
+	# We up-sample such that the number of samples is 10x the frequency of the clock. For fNIRS
+	# (10Hz hardware frequency), we up-sample 200 times such that we have samples at 2000Hz to
+	# interpolate with the main clock with frequency 200Hz. EEG is originally sampled at 500Hz, so
+	# we only need to up-sample it by 4 times to reach 2000Hz.
+	@PYTHONPATH="." ./bin/sync_raw_signals.py --modality="fnirs" --clock_frequency=200 \
+		--up_sample_scale=200
+	@PYTHONPATH="." ./bin/sync_raw_signals.py --modality="eeg" --clock_frequency=200 \
+		--up_sample_scale=4
