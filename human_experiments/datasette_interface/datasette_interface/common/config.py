@@ -10,7 +10,7 @@ VALID_ENVIRONMENTS = [DEVELOPMENT, PRODUCTION]
 
 
 class Settings(BaseSettings):
-    db_pass: str
+    db_pass: str = ""
     db_host: str = "localhost"
     db_user: str = os.getenv("USER")
     db_port: int = 5433
