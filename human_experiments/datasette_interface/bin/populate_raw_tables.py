@@ -53,32 +53,30 @@ TABLES = {
 
 
 def populate_tables(tables_to_process):
-    # The others will have foreign key to the base tables
+    # The order is important such that the signals have valid foreign keys to the base tables and
+    # task tables.
     if "base" in tables_to_process:
         process_base_tables()
-    tables_to_process.remove("base")
-
-    for table in tables_to_process:
-        if table == "rest_state":
-            process_rest_state_task_data()
-        elif table == "affective":
-            process_affective_task_data()
-        elif table == "finger_tapping":
-            process_finger_tapping_task_data()
-        elif table == "ping_pong_competitive":
-            process_ping_pong_competitive_task_data()
-        elif table == "ping_pong_cooperative":
-            process_ping_pong_cooperative_task_data()
-        elif table == "minecraft":
-            process_minecraft_data()
-        elif table == "fnirs":
-            process_fnirs_raw_data()
-        elif table == "eeg":
-            process_eeg_raw_data()
-        elif table == "gaze":
-            process_gaze_raw_data()
-        elif table == "screen_capture":
-            process_screen_capture_data()
+    if "rest_state" in tables_to_process:
+        process_rest_state_task_data()
+    if "affective" in tables_to_process:
+        process_affective_task_data()
+    if "finger_tapping" in tables_to_process:
+        process_finger_tapping_task_data()
+    if "ping_pong_competitive" in tables_to_process:
+        process_ping_pong_competitive_task_data()
+    if "ping_pong_cooperative" in tables_to_process:
+        process_ping_pong_cooperative_task_data()
+    if "minecraft" in tables_to_process:
+        process_minecraft_data()
+    if "fnirs" in tables_to_process:
+        process_fnirs_raw_data()
+    if "eeg" in tables_to_process:
+        process_eeg_raw_data()
+    if "gaze" in tables_to_process:
+        process_gaze_raw_data()
+    if "screen_capture" in tables_to_process:
+        process_screen_capture_data()
 
 
 if __name__ == "__main__":
