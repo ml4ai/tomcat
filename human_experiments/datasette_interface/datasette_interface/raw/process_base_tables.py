@@ -123,9 +123,8 @@ def process_data_validity_workbook():
         settings.data_validity_workbook_path, index_col="experiment_id", dtype=str
     )
 
-    for group_session_id, advisor, series in df.iterrows():
+    for group_session_id, series in df.iterrows():
         group_session_id = str(group_session_id)
-        advisor = str(advisor)
 
         if "canceled" in series["lion_subject_id"]:
             continue
@@ -216,7 +215,7 @@ def process_data_validity_workbook():
 
                     data_validity_entries.append(data_validity)
 
-        db.add(GroupSession(id=group_session_id, advisor=advisor))
+        db.add(GroupSession(id=group_session_id, advisor=series["advisor"]))
         db.add_all(participants)
         # Flush to communicate changes to the database in a pending state such that we don't
         # encounter foreign key errors when inserting data validity entries.
