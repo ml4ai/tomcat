@@ -27,8 +27,6 @@ from datasette_interface.database.entity.derived.gsr_sync import \
 from datasette_interface.database.entity.signal.eeg import EEGRaw  # noqa f401
 from datasette_interface.database.entity.signal.fnirs import \
     FNIRSRaw  # noqa f401
-from datasette_interface.database.entity.signal.gaze import \
-    GAZERaw  # noqa f401
 from datasette_interface.database.entity.signal.gaze import (  # noqa f401
     GazeEye0Raw, GazeEye1Raw)
 from datasette_interface.database.entity.signal.screen_capture import \
