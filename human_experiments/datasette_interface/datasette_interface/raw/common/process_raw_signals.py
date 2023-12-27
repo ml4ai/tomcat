@@ -18,7 +18,6 @@ from datasette_interface.raw.common.label_data import (delete_invalid_signals,
 
 
 def insert_raw_unlabeled_data(
-    override,
     signal_modality_class,
     modality_name,
     xdf_signal_type,
@@ -231,11 +230,11 @@ def create_indices(signal_modality_class, modality_name):
 def label_data(signal_modality_class, modality_name):
     info("Labeling data")
 
-    db_session = next(get_db())
+    db = next(get_db())
     processed_group_sessions = set(
         [
             s[0]
-            for s in db_session.query(signal_modality_class.group_session_id)
+            for s in db.query(signal_modality_class.group_session_id)
             .distinct(signal_modality_class.group_session_id)
             .filter(signal_modality_class.task_id.is_not(None))
             .all()
@@ -243,7 +242,7 @@ def label_data(signal_modality_class, modality_name):
     )
 
     validity_rows = (
-        db_session.query(
+        db.query(
             DataValidity.group_session_id,
             DataValidity.participant_id,
             DataValidity.station_id,
@@ -269,7 +268,7 @@ def label_data(signal_modality_class, modality_name):
             last_group_session_labeled = group_session
             if last_group_session_labeled:
                 # Commit per group session
-                db_session.commit()
+                db.commit()
 
         label_signals(
             signal_modality_class=signal_modality_class,
@@ -277,19 +276,19 @@ def label_data(signal_modality_class, modality_name):
             task=task,
             station=station,
             participant_id=participant_id,
-            database_session=db_session,
+            database_session=db,
         )
 
-    db_session.commit()
-    db_session.close()
+    db.commit()
+    db.close()
 
 
 def remove_invalid_data(signal_modality_class, modality_name):
     info("Removing invalid data")
 
-    db_session = next(get_db())
+    db = next(get_db())
     invalid_rows = (
-        db_session.query(
+        db.query(
             DataValidity.group_session_id,
             DataValidity.station_id,
             DataValidity.participant_id,
@@ -309,11 +308,11 @@ def remove_invalid_data(signal_modality_class, modality_name):
         )
 
         delete_invalid_signals(
-            signal_modality_class, group_session, station, task, db_session
+            signal_modality_class, group_session, station, task, db
         )
 
-    db_session.commit()
-    db_session.close()
+    db.commit()
+    db.close()
 
 
 def remove_unlabeled_data(signal_modality_class):

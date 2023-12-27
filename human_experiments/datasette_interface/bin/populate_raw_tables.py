@@ -1,10 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
-import logging
-import sys
 
-from datasette_interface.common.config import LOG_DIR
 from datasette_interface.database.config import SQLALCHEMY_DATABASE_URI
 from datasette_interface.raw.process_affective_task_data import \
     process_affective_task_data
@@ -25,17 +22,6 @@ from datasette_interface.raw.process_rest_state_task_data import \
     process_rest_state_task_data
 from datasette_interface.raw.process_screen_capture_data import \
     process_screen_capture_data
-
-logging.basicConfig(
-    level=logging.INFO,
-    handlers=(
-        logging.FileHandler(
-            filename=f"{LOG_DIR}/recreate_database.log",
-            mode="w",
-        ),
-        logging.StreamHandler(stream=sys.stderr),
-    ),
-)
 
 TABLES = {
     "base",
