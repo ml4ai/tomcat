@@ -1,60 +1,69 @@
-from typing import Optional
 
-from sqlalchemy import REAL, ForeignKey, Integer, Text, func
-from sqlalchemy.orm import Mapped, Session, mapped_column
+from sqlalchemy import REAL, ForeignKey, Integer, Text
+from sqlalchemy.orm import (Mapped, declarative_mixin, declared_attr, mapped_column)
 
 from datasette_interface.database.config import Base
-from datasette_interface.database.entity.base.group_session import GroupSession
 from datasette_interface.database.entity.base.participant import Participant
-from datasette_interface.database.entity.base.station import Station
 from datasette_interface.database.entity.base.task import Task
 
 
-class GAZERaw(Base):
-    __tablename__ = "gaze_raw"
+@declarative_mixin
+class GazeMixin:
+    @declared_attr
+    def group_session_id(cls) -> Mapped[str]:
+        return mapped_column(
+            "group_session",
+            Text,
+            ForeignKey("group_session.id"),
+            primary_key=True,
+            sort_order=0,
+        )
 
-    group_session_id: Mapped[str] = mapped_column(
-        "group_session", Text, ForeignKey(GroupSession.id), primary_key=True
-    )
-    station_id: Mapped[str] = mapped_column(
-        "station", Text, ForeignKey(Station.id), primary_key=True
-    )
-    participant_id: Mapped[int] = mapped_column(
-        "participant", Integer, ForeignKey(Participant.id), primary_key=True
-    )
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    task_id: Mapped[Optional[str]] = mapped_column("task", Text, ForeignKey(Task.id))
-    timestamp_unix: Mapped[str] = mapped_column(Text)
-    timestamp_iso8601: Mapped[str] = mapped_column(Text)
-    confidence: Mapped[float] = mapped_column(REAL)
-    norm_pos_x: Mapped[float] = mapped_column(REAL)
-    norm_pos_y: Mapped[float] = mapped_column(REAL)
-    gaze_point_3d_x: Mapped[float] = mapped_column(REAL)
-    gaze_point_3d_y: Mapped[float] = mapped_column(REAL)
-    gaze_point_3d_z: Mapped[float] = mapped_column(REAL)
-    eye_center0_3d_x: Mapped[float] = mapped_column(REAL)
-    eye_center0_3d_y: Mapped[float] = mapped_column(REAL)
-    eye_center0_3d_z: Mapped[float] = mapped_column(REAL)
-    eye_center1_3d_x: Mapped[float] = mapped_column(REAL)
-    eye_center1_3d_y: Mapped[float] = mapped_column(REAL)
-    eye_center1_3d_z: Mapped[float] = mapped_column(REAL)
-    gaze_normal0_x: Mapped[float] = mapped_column(REAL)
-    gaze_normal0_y: Mapped[float] = mapped_column(REAL)
-    gaze_normal0_z: Mapped[float] = mapped_column(REAL)
-    gaze_normal1_x: Mapped[float] = mapped_column(REAL)
-    gaze_normal1_y: Mapped[float] = mapped_column(REAL)
-    gaze_normal1_z: Mapped[float] = mapped_column(REAL)
-    diameter0_2d: Mapped[float] = mapped_column(REAL)
-    diameter1_2d: Mapped[float] = mapped_column(REAL)
-    diameter0_3d: Mapped[float] = mapped_column(REAL)
-    diameter1_3d: Mapped[float] = mapped_column(REAL)
+    @declared_attr
+    def station_id(cls) -> Mapped[str]:
+        return mapped_column(
+            "station", Text, ForeignKey("station.id"), primary_key=True, sort_order=2
+        )
 
-    @staticmethod
-    def get_next_id(database_engine, group_session_id, station_id):
-        with Session(database_engine) as session:
-            max_id = (
-                session.query(func.max(GAZERaw.id))
-                .filter_by(group_session_id=group_session_id, station_id=station_id)
-                .scalar()
-            )
-            return max_id + 1 if max_id is not None else 1
+    @declared_attr
+    def participant_id(cls) -> Mapped[int]:
+        return mapped_column(
+            "participant",
+            Integer,
+            ForeignKey(Participant.id),
+            primary_key=True,
+            sort_order=3,
+        )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, sort_order=4)
+
+    @declared_attr
+    def task_id(cls) -> Mapped[int]:
+        return mapped_column(
+            "task", Text, ForeignKey(Task.id), nullable=True, sort_order=5
+        )
+
+    timestamp_unix: Mapped[str] = mapped_column(Text, sort_order=6)
+    timestamp_iso8601: Mapped[str] = mapped_column(Text, sort_order=7)
+    confidence: Mapped[float] = mapped_column(REAL, sort_order=8)
+    norm_pos_x: Mapped[float] = mapped_column(REAL, sort_order=8)
+    norm_pos_y: Mapped[float] = mapped_column(REAL, sort_order=8)
+    gaze_point_3d_x: Mapped[float] = mapped_column(REAL, sort_order=8)
+    gaze_point_3d_y: Mapped[float] = mapped_column(REAL, sort_order=8)
+    gaze_point_3d_z: Mapped[float] = mapped_column(REAL, sort_order=8)
+    eye_center_3d_x: Mapped[float] = mapped_column(REAL, sort_order=8)
+    eye_center_3d_y: Mapped[float] = mapped_column(REAL, sort_order=8)
+    eye_center_3d_z: Mapped[float] = mapped_column(REAL, sort_order=8)
+    gaze_normal_x: Mapped[float] = mapped_column(REAL, sort_order=8)
+    gaze_normal_y: Mapped[float] = mapped_column(REAL, sort_order=8)
+    gaze_normal_z: Mapped[float] = mapped_column(REAL, sort_order=8)
+    diameter_2d: Mapped[float] = mapped_column(REAL, sort_order=8)
+    diameter_3d: Mapped[float] = mapped_column(REAL, sort_order=8)
+
+
+class GazeEye0Raw(GazeMixin, Base):
+    __tablename__ = "gaze_eye0_raw"
+
+
+class GazeEye1Raw(GazeMixin, Base):
+    __tablename__ = "gaze_eye1_raw"

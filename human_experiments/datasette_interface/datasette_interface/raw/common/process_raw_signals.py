@@ -307,9 +307,7 @@ def remove_invalid_data(signal_modality_class, modality_name):
             " is not valid. We will delete this data from the table."
         )
 
-        delete_invalid_signals(
-            signal_modality_class, group_session, station, task, db
-        )
+        delete_invalid_signals(signal_modality_class, group_session, station, task, db)
 
     db.commit()
     db.close()
