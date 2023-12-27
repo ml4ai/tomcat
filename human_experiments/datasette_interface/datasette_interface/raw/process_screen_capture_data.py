@@ -4,13 +4,13 @@ import logging
 import sys
 from logging import info
 
-from datasette_interface.common.config import LOG_DIR, settings
+from datasette_interface.common.config import LOG_DIR
 from datasette_interface.database.entity.signal.screen_capture import \
     ScreenCapture
 from datasette_interface.raw.common.process_image_data import \
     insert_raw_unlabeled_data
 from datasette_interface.raw.common.process_raw_signals import (
-    create_indices, label_data, remove_unlabeled_data)
+    label_data, remove_unlabeled_data)
 
 logging.basicConfig(
     level=logging.INFO,
@@ -35,11 +35,8 @@ def process_screen_capture_data():
 
     info("Processing directories...")
 
-    insert_raw_unlabeled_data(
-        settings.drop_table, ScreenCapture, "screen capture", "Screen", "screenshots"
-    )
-    create_indices(not settings.drop_table, ScreenCapture, "screen_capture")
+    insert_raw_unlabeled_data(ScreenCapture, "screen capture", "Screen", "screenshots")
     # Here we can pass any physio modality. This is used just to retrieve distinct rows of the data
     # validity table. We pass eeg but it could have been fnirs or gaze.
-    label_data(settings.drop_table, ScreenCapture, "eeg")
+    label_data(ScreenCapture, "eeg")
     remove_unlabeled_data(ScreenCapture)

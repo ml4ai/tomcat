@@ -23,8 +23,9 @@ class ScreenCapture(Base):
         "participant", Integer, ForeignKey(Participant.id), primary_key=True
     )
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    task_id: Mapped[Optional[str]] = mapped_column("task", Text, ForeignKey(Task.id),
-                                                   nullable=True)
+    task_id: Mapped[Optional[str]] = mapped_column(
+        "task", Text, ForeignKey(Task.id), nullable=True
+    )
     timestamp_unix: Mapped[str] = mapped_column(Text, primary_key=True)
     timestamp_iso8601: Mapped[str] = mapped_column(Text)
     filename: Mapped[str] = mapped_column(Text)
