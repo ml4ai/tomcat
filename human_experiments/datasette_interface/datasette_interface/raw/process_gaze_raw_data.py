@@ -4,7 +4,7 @@ import logging
 import sys
 from logging import info
 
-from datasette_interface.common.config import LOG_DIR, settings
+from datasette_interface.common.config import LOG_DIR
 from datasette_interface.database.entity.signal.gaze import GAZERaw
 from datasette_interface.raw.common.process_raw_signals import (
     insert_raw_unlabeled_data, label_data)
@@ -32,7 +32,6 @@ def get_station_from_xdf_stream(group_session, stream):
 def process_gaze_raw_data():
     info("Processing GazeRaw data.")
     insert_raw_unlabeled_data(
-        settings.drop_table,
         GAZERaw,
         "Gaze",
         "Gaze",
