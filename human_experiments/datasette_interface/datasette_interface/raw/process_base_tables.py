@@ -6,8 +6,9 @@ import sys
 from logging import info
 
 import pandas as pd
+from sqlalchemy import select
 
-from datasette_interface.common.config import LOG_DIR
+from datasette_interface.common.config import LOG_DIR, settings
 from datasette_interface.database.config import get_db
 from datasette_interface.database.entity.base.data_validity import DataValidity
 from datasette_interface.database.entity.base.eeg_device import EEGDevice
@@ -54,42 +55,54 @@ STATIONS = [
 
 
 def populate_task_table():
-    db_session = next(get_db())
-    modalities = [Task(id=task) for task in TASKS]
-    db_session.add_all(modalities)
-    db_session.commit()
-    db_session.close()
+    db = next(get_db())
+    saved_tasks = set(db.scalars(select(Task.id)).all())
+    tasks = [Task(id=task) for task in TASKS if task not in saved_tasks]
+    if len(tasks) > 0:
+        db.add_all(tasks)
+        db.commit()
+    db.close()
 
 
 def populate_station_table():
-    db_session = next(get_db())
-    stations = [Station(id=station) for station in STATIONS + ["cheetah"]]
-    db_session.add_all(stations)
-    db_session.commit()
-    db_session.close()
+    db = next(get_db())
+    saved_stations = set(db.scalars(select(Station.id)).all())
+    stations = [
+        Station(id=station)
+        for station in STATIONS + ["cheetah"]
+        if station not in saved_stations
+    ]
+    if len(stations) > 0:
+        db.add_all(stations)
+        db.commit()
+    db.close()
 
 
 def populate_modality_table():
-    db_session = next(get_db())
-    modalities = [Modality(id=modality) for modality in MODALITIES]
-    db_session.add_all(modalities)
-    db_session.commit()
-    db_session.close()
+    db = next(get_db())
+    saved_modalities = set(db.scalars(select(Modality.id)).all())
+    modalities = [
+        Modality(id=modality) for modality in MODALITIES not in saved_modalities
+    ]
+    if len(modalities) > 0:
+        db.add_all(modalities)
+        db.commit()
+    db.close()
 
 
 def populate_participant_table():
-    db_session = next(get_db())
-    participants = [
-        # ID of -1 to represent 'unknown participant'
-        Participant(id=-1),
-        # ID of -2 to represent the team (for affective task event data)
-        Participant(id=-2),
-        # ID of - 3 to represent an unknown experimenter(for the ping pong task data)
-        Participant(id=-3),
-    ]
-    db_session.add_all(participants)
-    db_session.commit()
-    db_session.close()
+    db = next(get_db())
+    saved_participants = set(
+        db.scalars(select(Participant.id).where(Participant.id < 0)).all()
+    )
+    # ID of -1 to represent 'unknown participant'
+    # ID of -2 to represent the team (for affective task event data)
+    # ID of - 3 to represent an unknown experimenter(for the ping pong task data)
+    participants = [p for p in [-1, -2, -3] if p not in saved_participants]
+    if len(participants) > 0:
+        db.add_all(participants)
+        db.commit()
+    db.close()
 
 
 def populate_base_tables():
@@ -106,28 +119,23 @@ def process_data_validity_workbook():
 
     # TODO Integrate the 'mask_on' statuses.
 
-    csv_path = (
-        "/tomcat/data/raw/LangLab/experiments/study_3_pilot/data_validity_table.csv"
+    df = pd.read_csv(
+        settings.data_validity_workbook_path, index_col="experiment_id", dtype=str
     )
 
-    df = pd.read_csv(csv_path, index_col="experiment_id", dtype=str)
-
-    for group_session_id, series in df.iterrows():
+    for group_session_id, advisor, series in df.iterrows():
         group_session_id = str(group_session_id)
+        advisor = str(advisor)
 
         if "canceled" in series["lion_subject_id"]:
             continue
 
         participants = []
 
-        db_session = next(get_db())
+        db = next(get_db())
         for prefix in ["lion", "tiger", "leopard"]:
             participant_id = series[f"{prefix}_subject_id"]
-            if (
-                not db_session.query(Participant.id)
-                .filter_by(id=participant_id)
-                .first()
-            ):
+            if not db.query(Participant.id).filter_by(id=participant_id).first():
                 # Only add participant if it does not exist in the table. SQLAlchemy does not have
                 # a DBMS-agnostic treatment for this (e.g. INSERT IGNORE) so the way to do it is
                 # to check if the PK exists in the table before inserting the entry into it.
@@ -139,11 +147,7 @@ def process_data_validity_workbook():
         # experiment.
         if group_session_id == "exp_2022_09_30_10":
             participant_id = 99901
-            if (
-                not db_session.query(Participant.id)
-                .filter_by(id=participant_id)
-                .first()
-            ):
+            if not db.query(Participant.id).filter_by(id=participant_id).first():
                 participants.append(Participant(id=participant_id))
 
         # TODO: Deal with 'no_face_image' case for eeg data.
@@ -212,23 +216,23 @@ def process_data_validity_workbook():
 
                     data_validity_entries.append(data_validity)
 
-        db_session.add(GroupSession(id=group_session_id))
-        db_session.add_all(participants)
+        db.add(GroupSession(id=group_session_id, advisor=advisor))
+        db.add_all(participants)
         # Flush to communicate changes to the database in a pending state such that we don't
         # encounter foreign key errors when inserting data validity entries.
-        db_session.flush()
+        db.flush()
 
-        db_session.add_all(data_validity_entries)
-        db_session.commit()
-        db_session.close()
+        db.add_all(data_validity_entries)
+        db.commit()
+        db.close()
 
 
 def process_station_to_eeg_amp_mapping_workbook():
     info("Process station to eeg amp mapping workbook.")
 
-    csv_path = "/tomcat/data/raw/LangLab/experiments/study_3_pilot/station_to_eeg_amp_mapping.csv"
-
-    df = pd.read_csv(csv_path, index_col="experiment_id", dtype=str)
+    df = pd.read_csv(
+        settings.station_to_eeg_workbook_path, index_col="experiment_id", dtype=str
+    )
 
     eeg_devices = []
     for group_session_id, series in df.iterrows():
@@ -257,10 +261,10 @@ def process_station_to_eeg_amp_mapping_workbook():
 
         eeg_devices.extend([lion_eeg_device, tiger_eeg_device, leopard_eeg_device])
 
-    db_session = next(get_db())
-    db_session.add_all(eeg_devices)
-    db_session.commit()
-    db_session.close()
+    db = next(get_db())
+    db.add_all(eeg_devices)
+    db.commit()
+    db.close()
 
 
 def process_base_tables():

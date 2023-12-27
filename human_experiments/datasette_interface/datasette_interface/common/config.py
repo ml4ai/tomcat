@@ -22,6 +22,13 @@ class Settings(BaseSettings):
         "/tomcat/data/raw/LangLab/experiments/study_3_pilot/group"
     )
     tmp_dir: str = ".tmp"
+    data_validity_workbook_path = (
+        "/tomcat/data/raw/LangLab/experiments/study_3_pilot/data_validity_table.csv"
+    )
+    station_to_eeg_workbook_path = (
+        "/tomcat/data/raw/LangLab/experiments/study_3_pilot/"
+        "station_to_eeg_amp_mapping.csv"
+    )
 
     @classmethod
     @field_validator(
