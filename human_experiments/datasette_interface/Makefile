@@ -41,3 +41,6 @@ sync_raw:
 		--up_sample_scale=200
 	@PYTHONPATH="." ./bin/sync_raw_signals.py --modality="eeg" --clock_frequency=200 \
 		--up_sample_scale=4
+
+to_sqlite:
+	@PYTHONPATH="." working_env=production ./bin/to_sqlite.py

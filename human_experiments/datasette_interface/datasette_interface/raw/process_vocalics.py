@@ -10,7 +10,7 @@ from datasette_interface.common.config import LOG_DIR, TMP_DIR
 from datasette_interface.common.experiments_crawler import ExperimentsCrawler
 from datasette_interface.common.utils import convert_unix_timestamp_to_iso8601
 from datasette_interface.database.config import get_db
-from datasette_interface.database.entity.derived.audio_vocalics import \
+from datasette_interface.database.entity.signal.audio_vocalics import \
     AudioVocalics
 from datasette_interface.database.entity.task.minecraft_task import \
     MinecraftMission
