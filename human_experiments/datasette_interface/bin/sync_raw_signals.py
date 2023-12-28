@@ -2,6 +2,7 @@
 
 import argparse
 import logging
+import os
 from functools import partial
 from logging import info
 from multiprocessing import Pool
@@ -52,7 +53,9 @@ def sync_raw_signals_in_parallel(
     effective_num_jobs = min(num_jobs, len(group_sessions))
     group_session_batches = np.array_split(group_sessions, effective_num_jobs)
 
-    print(f"Synchronizing {modality} signals from {len(group_sessions)} group sessions.")
+    print(
+        f"Synchronizing {modality} signals from {len(group_sessions)} group sessions."
+    )
     if effective_num_jobs == 1:
         for group_session in tqdm(group_sessions):
             job_fn([group_session])
@@ -166,7 +169,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--num_jobs",
         type=int,
-        default=1,
+        default=os.getenv("N_JOBS", 1),
         help="Number of jobs for parallel processing.",
     )
     parser.add_argument(
