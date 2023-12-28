@@ -52,7 +52,7 @@ def sync_raw_signals_in_parallel(
     effective_num_jobs = min(num_jobs, len(group_sessions))
     group_session_batches = np.array_split(group_sessions, effective_num_jobs)
 
-    print(f"Synchronizing signals from {len(group_sessions)} group sessions.")
+    print(f"Synchronizing {modality} signals from {len(group_sessions)} group sessions.")
     if effective_num_jobs == 1:
         for group_session in tqdm(group_sessions):
             job_fn([group_session])
