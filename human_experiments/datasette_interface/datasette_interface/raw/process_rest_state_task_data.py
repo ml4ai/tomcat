@@ -4,13 +4,14 @@ import logging
 import os
 import sys
 from glob import glob
-from logging import error, info
+from logging import info
 
 import pandas as pd
 import pyxdf
 from tqdm import tqdm
 
 from datasette_interface.common.config import LOG_DIR, settings
+from datasette_interface.common.constants import REST_STATE_DURATION_IN_SECONDS
 from datasette_interface.common.utils import (
     cd, convert_unix_timestamp_to_iso8601, is_directory_with_unified_xdf_files,
     should_ignore_directory)
@@ -37,14 +38,18 @@ def process_directory_v1(group_session):
         assert len(csv_files) == 1
 
         if os.stat(csv_files[0]).st_size == 0:
-            error(
+            info(
                 f"[MISSING DATA]: The size of the CSV file {csv_files[0]} that"
-                " should have contained the rest state task timestamps is"
-                " zero, so we cannot process it."
+                "should have contained the rest state task timestamps is "
+                "zero, so we cannot process it. We will, instead, use the file modification "
+                "time as the beginning of the rest state task and the end will be that plus 5 "
+                "minutes."
             )
-            return
-
-        df = pd.read_csv(csv_files[0], delimiter=";")
+            start_time_unix = os.path.getmtime(csv_files[0])
+            end_time_unix = start_time_unix + REST_STATE_DURATION_IN_SECONDS
+            df = pd.DataFrame({"time": [start_time_unix, end_time_unix]})
+        else:
+            df = pd.read_csv(csv_files[0], delimiter=";")
 
         start_timestamp_unix = df["time"].iloc[0]
         stop_timestamp_unix = df["time"].iloc[-1]
