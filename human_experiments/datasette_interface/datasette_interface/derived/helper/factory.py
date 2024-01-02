@@ -6,7 +6,7 @@ from datasette_interface.derived.helper.modality import ModalityHelper
 
 
 def create_modality_helper(
-        modality: str, group_session: str, station: str, db_engine: Engine
+    modality: str, group_session: str, station: str, db_engine: Engine
 ) -> ModalityHelper:
     """
     Creates a modality helper from a name.
@@ -17,9 +17,13 @@ def create_modality_helper(
     :param db_engine: database engine.
     """
     if modality == "eeg":
-        return EEGHelper(group_session=group_session, station=station, db_engine=db_engine)
+        return EEGHelper(
+            group_session=group_session, station=station, db_engine=db_engine
+        )
 
     if modality == "fnirs":
-        return FNIRSHelper(group_session=group_session, station=station, db_engine=db_engine)
+        return FNIRSHelper(
+            group_session=group_session, station=station, db_engine=db_engine
+        )
 
     raise ValueError(f"Invalid modality ({modality}).")

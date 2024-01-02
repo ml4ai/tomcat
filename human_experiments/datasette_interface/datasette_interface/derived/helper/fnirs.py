@@ -1,4 +1,5 @@
 from logging import info
+from typing import List
 
 import pandas as pd
 from mne.filter import filter_data as mne_filter_data

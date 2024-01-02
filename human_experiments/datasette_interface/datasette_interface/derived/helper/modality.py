@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from typing import List
 
 import numpy as np
 import pandas as pd
@@ -58,7 +59,6 @@ class ModalityHelper(ABC):
         @param clock_frequency: clock frequency.
         @return: list of processed group sessions.
         """
-        pass
 
     @abstractmethod
     def has_saved_sync_data(self, target_frequency: int) -> bool:
