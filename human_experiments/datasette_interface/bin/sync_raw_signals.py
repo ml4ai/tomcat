@@ -24,11 +24,11 @@ from datasette_interface.derived.main_clock import get_main_clock_timestamps
 
 
 def sync_raw_signals_in_parallel(
-    modality: str,
-    clock_frequency: float,
-    up_sample_scale: float,
-    num_jobs: int,
-    buffer: int = 60,
+        modality: str,
+        clock_frequency: float,
+        up_sample_scale: float,
+        num_jobs: int,
+        buffer: int = 60,
 ):
     """
     Synchronizes data from one modality for different group sessions in parallel.
@@ -83,12 +83,12 @@ def sync_raw_signals_in_parallel(
 
 
 def sync_raw_signals_single_job(
-    group_sessions: List[str],
-    modality: str,
-    clock_frequency: float,
-    up_sample_scale: float,
-    buffer: int,
-    use_global_db_connection: bool,
+        group_sessions: List[str],
+        modality: str,
+        clock_frequency: float,
+        up_sample_scale: float,
+        buffer: int,
+        use_global_db_connection: bool,
 ):
     """
     Synchronizes data from one modality for different group sessions in sequence.
@@ -140,6 +140,10 @@ def sync_raw_signals_single_job(
             db=db,
         )
 
+        if clock_timestamps is NOne:
+            error(f"Could not determine clock timestamps for the group session ({group_session}).")
+            continue
+
         for station in STATIONS:
             info(f"Processing station {station}.")
             modality_helper = create_modality_helper(
@@ -180,10 +184,10 @@ def sync_raw_signals_single_job(
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Filters and synchronizes raw signals with a main clock. The main clock has "
-        "an associated frequency, start and end timestamps. The frequency is determined at "
-        "execution time. The start timestamp is defined by 1 minute before the start of the "
-        "rest state task (first task in the experimental procedure) and end timestamp "
-        "defined by 1 minute after the end of the last Minecraft trial."
+                    "an associated frequency, start and end timestamps. The frequency is determined at "
+                    "execution time. The start timestamp is defined by 1 minute before the start of the "
+                    "rest state task (first task in the experimental procedure) and end timestamp "
+                    "defined by 1 minute after the end of the last Minecraft trial."
     )
 
     parser.add_argument(
@@ -200,7 +204,7 @@ if __name__ == "__main__":
         type=int,
         default=10,
         help="By how much to up-sample the signal before interpolating with the "
-        "main clock time scale.",
+             "main clock time scale.",
     )
     parser.add_argument(
         "--num_jobs",
@@ -213,10 +217,10 @@ if __name__ == "__main__":
         type=int,
         default=60,
         help="Buffer (in seconds) to include in the extremes of the main clock. "
-        "For instance, a buffer of 60 will synchronize data to a clock that "
-        "starts 1 minute (buffer) before the beginning of the rest state task "
-        "and finishes 1 minute (buffer) after the end of the last minecraft "
-        "trial.",
+             "For instance, a buffer of 60 will synchronize data to a clock that "
+             "starts 1 minute (buffer) before the beginning of the rest state task "
+             "and finishes 1 minute (buffer) after the end of the last minecraft "
+             "trial.",
     )
     args = parser.parse_args()
 

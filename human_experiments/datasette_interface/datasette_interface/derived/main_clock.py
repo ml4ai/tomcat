@@ -8,10 +8,12 @@ from datasette_interface.database.entity.task.minecraft_task import \
     MinecraftMission
 from datasette_interface.database.entity.task.rest_state_task import \
     RestStateTask
+from datasette_interface.database.entity.task.ping_pong_cooperative_task_observation import \
+    PingPongCooperativeTaskObservation
 
 
 def get_main_clock_timestamps(
-    group_session: str, clock_frequency: int, buffer: int, db: Session
+        group_session: str, clock_frequency: int, buffer: int, db: Session
 ) -> np.ndarray:
     """
     Gets a time scale for a main clock with a fixed frequency. The main clock will be shared among
@@ -25,26 +27,33 @@ def get_main_clock_timestamps(
     :param buffer: a buffer in seconds to be sure we don't lose any signal data.
     :db: active database session.
     """
-    start_time = (
-        float(
-            db.scalar(
-                select(RestStateTask.start_timestamp_unix).where(
-                    RestStateTask.group_session_id == group_session
-                )
+
+    start_time = db.scalar(
+        select(RestStateTask.start_timestamp_unix).where(
+            RestStateTask.group_session_id == group_session
+        )
+    )
+
+    end_time = db.scalar(
+        select(func.max(MinecraftMission.trial_stop_timestamp_unix)).where(
+            MinecraftMission.group_session_id == group_session
+        )
+    )
+
+    if end_time is None:
+        # There was no time to run the Minecraft task. Get last timestamp from the ping-pong
+        # cooperative task.
+        end_time = db.scalar(
+            select(func.max(PingPongCooperativeTaskObservation.timestamp_unix)).where(
+                PingPongCooperativeTaskObservation.group_session_id == group_session
             )
         )
-        - buffer
-    )
-    end_time = (
-        float(
-            db.scalar(
-                select(func.max(MinecraftMission.trial_stop_timestamp_unix)).where(
-                    MinecraftMission.group_session_id == group_session
-                )
-            )
-        )
-        + buffer
-    )
+
+    if start_time is None or end_time is None:
+        return None
+
+    start_time = float(start_time) - buffer
+    end_time = float(end_time) - buffer
 
     # The arange function is not numerically stable with small float numbers. So we use the
     # number of points to create a sequence and scale the sequence by the inverse of the
