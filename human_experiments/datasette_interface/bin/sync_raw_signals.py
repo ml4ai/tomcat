@@ -140,7 +140,7 @@ def sync_raw_signals_single_job(
             db=db,
         )
 
-        if clock_timestamps is NOne:
+        if clock_timestamps is None:
             error(f"Could not determine clock timestamps for the group session ({group_session}).")
             continue
 

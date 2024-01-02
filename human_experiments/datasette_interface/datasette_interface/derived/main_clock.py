@@ -53,7 +53,7 @@ def get_main_clock_timestamps(
         return None
 
     start_time = float(start_time) - buffer
-    end_time = float(end_time) - buffer
+    end_time = float(end_time) + buffer
 
     # The arange function is not numerically stable with small float numbers. So we use the
     # number of points to create a sequence and scale the sequence by the inverse of the
