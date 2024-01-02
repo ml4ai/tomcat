@@ -26,6 +26,18 @@ class ModalityHelper(ABC):
         self.station = station
         self._data = None
 
+    def is_data_empty(self) -> bool:
+        """
+        Checks there's any content in the loaded data variable.
+
+        @return: True if empty.
+        """
+
+        if self._data is None or len(self._data) == 0:
+            return True
+
+        return False
+
     @abstractmethod
     def has_saved_sync_data(self, target_frequency: int) -> bool:
         """
