@@ -29,6 +29,20 @@ class EEGHelper(ModalityHelper):
         """
         super().__init__(EEG_FREQUENCY, group_session, station, db_engine)
 
+    def get_processed_group_sessions(self, clock_frequency: int) -> List[str]:
+        """
+        Gets a list of processed group sessions for a specific clock frequency. Processed group
+        sessions are those for which there are saved synchronized signals.
+
+        @param clock_frequency: clock frequency.
+        @return: list of processed group sessions.
+        """
+        db = Session(self.db_engine)
+        group_sessions = db.scalars(select(EEGSync.group_session_id).distinct()).all()
+        db.close()
+
+        return group_sessions
+
     def has_saved_sync_data(self, target_frequency: int) -> bool:
         """
         Checks whether there's already synchronized EEG saved for a group session, station and

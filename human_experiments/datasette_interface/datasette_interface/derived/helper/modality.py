@@ -49,6 +49,18 @@ class ModalityHelper(ABC):
         return False
 
     @abstractmethod
+    def get_processed_group_sessions(self, clock_frequency: int) -> List[str]:
+        """
+        Gets a list of processed group sessions for a specific clock frequency. Processed group
+        sessions are those for which there are saved synchronized signals for the 3 stations in
+        the experiments.
+
+        @param clock_frequency: clock frequency.
+        @return: list of processed group sessions.
+        """
+        pass
+
+    @abstractmethod
     def has_saved_sync_data(self, target_frequency: int) -> bool:
         """
         Checks whether there's already synchronized signals saved for a group session, station and
