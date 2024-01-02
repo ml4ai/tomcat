@@ -2,6 +2,7 @@
 
 import argparse
 import os
+import subprocess
 
 from datasette_interface.common.config import TMP_DIR, settings
 from datasette_interface.database.config import SQLALCHEMY_DATABASE_URI
@@ -64,7 +65,7 @@ if __name__ == "__main__":
                 raise ValueError(f"Modality ({table}) is invalid.")
 
     print("Exporting database to SQLite.")
-    filepath = f"{settings.artifact_dir}/tomcat.db"
+    sqlite_filepath = f"{settings.artifact_dir}/tomcat.db"
 
     skip = None
     if args.include == "all":
@@ -79,23 +80,25 @@ if __name__ == "__main__":
         skip = None
 
     if skip:
-        command = (
-            f"db-to-sqlite -p {tables} {skip} {SQLALCHEMY_DATABASE_URI} {filepath}"
-        )
+        command = f"db-to-sqlite -p {tables} {skip} {SQLALCHEMY_DATABASE_URI} {sqlite_filepath}"
     else:
-        command = f"db-to-sqlite -p {tables} {SQLALCHEMY_DATABASE_URI} {filepath}"
+        command = (
+            f"db-to-sqlite -p {tables} {SQLALCHEMY_DATABASE_URI} {sqlite_filepath}"
+        )
 
     answer = input(
-        "The following command will be executed. Do you want to proceed? (y/n): "
+        f"The command ({command}) will be executed. Do you want to proceed? (y/n): "
     )
     if answer.lower() in ["y", "yes"]:
         # The final step calls the VACUUM operation which creates a copy of the sqlite database
         # in a temporary directory. We use the environment SQLITE_TMPDIR to choose the location
         # to guarantee there's enough space for it.
         os.environ["SQLITE_TMPDIR"] = TMP_DIR
-        if subprocess.call(command, shell=True) == 0:
-            print(f"Database to successfully exported to SQLite. Saved in {SQLITE_DB_PATH}")
-        else:
-            print("Could not export database to SQLite.")
+        # if subprocess.call(command, shell=True) == 0:
+        #     print(
+        #         f"Database to successfully exported to SQLite. Saved in {sqlite_filepath}"
+        #     )
+        # else:
+        #     print("Could not export database to SQLite.")
     else:
         print("Operation aborted.")

@@ -2,27 +2,28 @@ from logging import info
 
 import pandas as pd
 from mne.filter import filter_data as mne_filter_data
-from sqlalchemy import func, select
+from sqlalchemy import Engine, func, select
+from sqlalchemy.orm import Session
 
 from datasette_interface.common.constants import (
     FNIRS_BANDPASS_FILTER_METHOD, FNIRS_FREQUENCY,
     FNIRS_HIGH_FREQUENCY_THRESHOLD, FNIRS_LOW_FREQUENCY_THRESHOLD)
 from datasette_interface.common.utils import convert_unix_timestamp_to_iso8601
-from datasette_interface.database.config import engine, get_db
 from datasette_interface.database.entity.derived.fnirs_sync import FNIRSSync
 from datasette_interface.database.entity.signal.fnirs import FNIRSRaw
 from datasette_interface.derived.helper.modality import ModalityHelper
 
 
 class FNIRSHelper(ModalityHelper):
-    def __init__(self, group_session: str, station: str):
+    def __init__(self, group_session: str, station: str, db_engine: Engine):
         """
         Creates an fNIRS modality helper.
 
         :param group_session: group session.
         :param station: station.
+        :param db_engine: database engine.
         """
-        super().__init__(FNIRS_FREQUENCY, group_session, station)
+        super().__init__(FNIRS_FREQUENCY, group_session, station, db_engine)
 
     def has_saved_sync_data(self, target_frequency: int) -> bool:
         """
@@ -31,7 +32,7 @@ class FNIRSHelper(ModalityHelper):
 
         :param target_frequency: frequency of the synchronized signals.
         """
-        db = next(get_db())
+        db = Session(self.db_engine)
         num_records = db.scalar(
             select(func.count(FNIRSSync.id)).where(
                 FNIRSSync.group_session_id == self.group_session,
@@ -49,7 +50,6 @@ class FNIRSHelper(ModalityHelper):
         """
         super().load_data()
 
-        db = next(get_db())
         query = (
             select(
                 FNIRSRaw.timestamp_unix,
@@ -100,8 +100,7 @@ class FNIRSHelper(ModalityHelper):
             )
             .order_by(FNIRSRaw.timestamp_unix)
         )
-        self._data = pd.read_sql_query(query, engine)
-        db.close()
+        self._data = pd.read_sql_query(query, self.db_engine)
 
     def filter(self) -> pd.DataFrame:
         """
@@ -141,7 +140,8 @@ class FNIRSHelper(ModalityHelper):
 
         info("Converting DataFrame to records.")
         records = df.to_dict("records")
-        db = next(get_db())
+
+        db = Session(self.db_engine)
         fnirs_data = []
         for record in records:
             fnirs_data.append(FNIRSSync(**record))
@@ -149,3 +149,4 @@ class FNIRSHelper(ModalityHelper):
         info("Saving to the database.")
         db.add_all(fnirs_data)
         db.commit()
+        db.close()

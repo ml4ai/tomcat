@@ -10,23 +10,25 @@ from typing import List
 
 import mne
 import numpy as np
-from sqlalchemy import select
+from sqlalchemy import create_engine, select
+from sqlalchemy.orm import Session
 from tqdm import tqdm
 
 from datasette_interface.common.config import LOG_DIR
 from datasette_interface.common.constants import STATIONS
-from datasette_interface.database.config import get_db
+from datasette_interface.database.config import (SQLALCHEMY_DATABASE_URI,
+                                                 engine, get_db)
 from datasette_interface.database.entity.base.group_session import GroupSession
 from datasette_interface.derived.helper.factory import create_modality_helper
 from datasette_interface.derived.main_clock import get_main_clock_timestamps
 
 
 def sync_raw_signals_in_parallel(
-        modality: str,
-        clock_frequency: float,
-        up_sample_scale: float,
-        num_jobs: int,
-        buffer: int = 60,
+    modality: str,
+    clock_frequency: float,
+    up_sample_scale: float,
+    num_jobs: int,
+    buffer: int = 60,
 ):
     """
     Synchronizes data from one modality for different group sessions in parallel.
@@ -38,20 +40,24 @@ def sync_raw_signals_in_parallel(
     :param num_jobs: number of jobs for parallelization.
     :param buffer: a buffer in seconds to be sure we don't lose any signal data.
     """
-    job_fn = partial(
-        sync_raw_signals_single_job,
-        modality=modality,
-        clock_frequency=clock_frequency,
-        up_sample_scale=up_sample_scale,
-        buffer=buffer,
-    )
-
     db = next(get_db())
     group_sessions = db.scalars(select(GroupSession.id)).all()
     db.close()
 
     effective_num_jobs = min(num_jobs, len(group_sessions))
     group_session_batches = np.array_split(group_sessions, effective_num_jobs)
+
+    job_fn = partial(
+        sync_raw_signals_single_job,
+        modality=modality,
+        clock_frequency=clock_frequency,
+        up_sample_scale=up_sample_scale,
+        buffer=buffer,
+        # For parallel execution, each single job must have their own connection to the DB to
+        # avoid putting the server-side session into a state that the client no longer knows how
+        # to interpret
+        use_global_db_connection=(effective_num_jobs == 1),
+    )
 
     print(
         f"Synchronizing {modality} signals from {len(group_sessions)} group sessions."
@@ -70,11 +76,12 @@ def sync_raw_signals_in_parallel(
 
 
 def sync_raw_signals_single_job(
-        group_sessions: List[str],
-        modality: str,
-        clock_frequency: float,
-        up_sample_scale: float,
-        buffer: int,
+    group_sessions: List[str],
+    modality: str,
+    clock_frequency: float,
+    up_sample_scale: float,
+    buffer: int,
+    use_global_db_connection: bool,
 ):
     """
     Synchronizes data from one modality for different group sessions in sequence.
@@ -85,7 +92,15 @@ def sync_raw_signals_single_job(
     :param up_sample_scale: by how much to up-sample the raw signal before interpolating with the
         main clock.
     :param buffer: a buffer in seconds to be sure we don't lose any signal data.
+    :param use_global_db_connection: whether ti use a global engine or a specific one for the job.
     """
+    if use_global_db_connection:
+        db_engine = engine
+        db = next(get_db())
+    else:
+        db_engine = create_engine(SQLALCHEMY_DATABASE_URI)
+        db = Session(db_engine)
+
     for group_session in group_sessions:
         log_filepath = (
             f"{LOG_DIR}/sync_raw_{modality}_{group_session}_{clock_frequency}.log"
@@ -111,12 +126,17 @@ def sync_raw_signals_single_job(
         info(f"Processing group session {group_session}.")
 
         clock_timestamps = get_main_clock_timestamps(
-            group_session=group_session, clock_frequency=clock_frequency, buffer=buffer
+            group_session=group_session,
+            clock_frequency=clock_frequency,
+            buffer=buffer,
+            db=db,
         )
 
         for station in STATIONS:
             info(f"Processing station {station}.")
-            modality_helper = create_modality_helper(modality, group_session, station)
+            modality_helper = create_modality_helper(
+                modality, group_session, station, db_engine
+            )
 
             if modality_helper.has_saved_sync_data(clock_frequency):
                 info(
@@ -129,7 +149,9 @@ def sync_raw_signals_single_job(
             modality_helper.load_data()
 
             if modality_helper.is_data_empty():
-                info(f"No raw {modality} signals found for {group_session}, {station}. Skipping.")
+                info(
+                    f"No raw {modality} signals found for {group_session}, {station}. Skipping."
+                )
                 continue
 
             info("Filtering.")
@@ -144,14 +166,16 @@ def sync_raw_signals_single_job(
             info("Persisting synchronized data.")
             modality_helper.save_synced_data()
 
+    db.close()
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Filters and synchronizes raw signals with a main clock. The main clock has "
-                    "an associated frequency, start and end timestamps. The frequency is determined at "
-                    "execution time. The start timestamp is defined by 1 minute before the start of the "
-                    "rest state task (first task in the experimental procedure) and end timestamp "
-                    "defined by 1 minute after the end of the last Minecraft trial."
+        "an associated frequency, start and end timestamps. The frequency is determined at "
+        "execution time. The start timestamp is defined by 1 minute before the start of the "
+        "rest state task (first task in the experimental procedure) and end timestamp "
+        "defined by 1 minute after the end of the last Minecraft trial."
     )
 
     parser.add_argument(
@@ -168,7 +192,7 @@ if __name__ == "__main__":
         type=int,
         default=10,
         help="By how much to up-sample the signal before interpolating with the "
-             "main clock time scale.",
+        "main clock time scale.",
     )
     parser.add_argument(
         "--num_jobs",
@@ -181,10 +205,10 @@ if __name__ == "__main__":
         type=int,
         default=60,
         help="Buffer (in seconds) to include in the extremes of the main clock. "
-             "For instance, a buffer of 60 will synchronize data to a clock that "
-             "starts 1 minute (buffer) before the beginning of the rest state task "
-             "and finishes 1 minute (buffer) after the end of the last minecraft "
-             "trial.",
+        "For instance, a buffer of 60 will synchronize data to a clock that "
+        "starts 1 minute (buffer) before the beginning of the rest state task "
+        "and finishes 1 minute (buffer) after the end of the last minecraft "
+        "trial.",
     )
     args = parser.parse_args()
 

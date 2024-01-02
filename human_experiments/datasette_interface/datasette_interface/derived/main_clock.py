@@ -2,8 +2,8 @@ import math
 
 import numpy as np
 from sqlalchemy import func, select
+from sqlalchemy.orm import Session
 
-from datasette_interface.database.config import get_db
 from datasette_interface.database.entity.task.minecraft_task import \
     MinecraftMission
 from datasette_interface.database.entity.task.rest_state_task import \
@@ -11,7 +11,7 @@ from datasette_interface.database.entity.task.rest_state_task import \
 
 
 def get_main_clock_timestamps(
-    group_session: str, clock_frequency: int, buffer: int
+    group_session: str, clock_frequency: int, buffer: int, db: Session
 ) -> np.ndarray:
     """
     Gets a time scale for a main clock with a fixed frequency. The main clock will be shared among
@@ -23,11 +23,11 @@ def get_main_clock_timestamps(
     :param group_session: group session of the main clock.
     :param clock_frequency: frequency of the main clock.
     :param buffer: a buffer in seconds to be sure we don't lose any signal data.
+    :db: active database session.
     """
-    db_session = next(get_db())
     start_time = (
         float(
-            db_session.scalar(
+            db.scalar(
                 select(RestStateTask.start_timestamp_unix).where(
                     RestStateTask.group_session_id == group_session
                 )
@@ -37,7 +37,7 @@ def get_main_clock_timestamps(
     )
     end_time = (
         float(
-            db_session.scalar(
+            db.scalar(
                 select(func.max(MinecraftMission.trial_stop_timestamp_unix)).where(
                     MinecraftMission.group_session_id == group_session
                 )
@@ -45,7 +45,6 @@ def get_main_clock_timestamps(
         )
         + buffer
     )
-    db_session.close()
 
     # The arange function is not numerically stable with small float numbers. So we use the
     # number of points to create a sequence and scale the sequence by the inverse of the

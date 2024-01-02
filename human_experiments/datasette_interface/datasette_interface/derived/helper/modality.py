@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 from mne.filter import resample as mne_resample
 from scipy.interpolate import interp1d
+from sqlalchemy import Engine
 
 
 class ModalityHelper(ABC):
@@ -13,24 +14,33 @@ class ModalityHelper(ABC):
     This class represents an abstract signal modality.
     """
 
-    def __init__(self, original_frequency: int, group_session: str, station: str):
+    def __init__(
+        self,
+        original_frequency: int,
+        group_session: str,
+        station: str,
+        db_engine: Engine,
+    ):
         """
         Creates a modality helper.
 
         :param original_frequency: original frequency of the signal (hardware frequency).
         :param group_session: group session.
         :param station: station.
+        :param db_engine: database engine.
+
         """
         self.original_frequency = original_frequency
         self.group_session = group_session
         self.station = station
+        self.db_engine = db_engine
         self._data = None
 
     def is_data_empty(self) -> bool:
         """
         Checks there's any content in the loaded data variable.
 
-        @return: True if empty.
+        :return: True if empty.
         """
 
         if self._data is None or len(self._data) == 0:

@@ -3,14 +3,14 @@ from logging import info
 import numpy as np
 import pandas as pd
 from mne.filter import notch_filter
-from sqlalchemy import func, select
+from sqlalchemy import Engine, func, select
+from sqlalchemy.orm import Session
 
 from datasette_interface.common.constants import (EEG_FREQUENCY,
                                                   EEG_NOTCH_FILTER_FREQUENCY,
                                                   EEG_NOTCH_WIDTH,
                                                   EEG_TRANSISION_BANDWIDTH)
 from datasette_interface.common.utils import convert_unix_timestamp_to_iso8601
-from datasette_interface.database.config import engine, get_db
 from datasette_interface.database.entity.derived.eeg_sync import EEGSync
 from datasette_interface.database.entity.derived.ekg_sync import EKGSync
 from datasette_interface.database.entity.derived.gsr_sync import GSRSync
@@ -19,14 +19,15 @@ from datasette_interface.derived.helper.modality import ModalityHelper
 
 
 class EEGHelper(ModalityHelper):
-    def __init__(self, group_session: str, station: str):
+    def __init__(self, group_session: str, station: str, db_engine: Engine):
         """
         Creates an EEG modality helper.
 
         :param group_session: group session.
         :param station: station.
+        :param db_engine: database engine.
         """
-        super().__init__(EEG_FREQUENCY, group_session, station)
+        super().__init__(EEG_FREQUENCY, group_session, station, db_engine)
 
     def has_saved_sync_data(self, target_frequency: int) -> bool:
         """
@@ -35,7 +36,7 @@ class EEGHelper(ModalityHelper):
 
         :param target_frequency: frequency of the synchronized signals.
         """
-        db = next(get_db())
+        db = Session(self.db_engine)
         num_records = db.scalar(
             select(func.count(EEGSync.id)).where(
                 EEGSync.group_session_id == self.group_session,
@@ -53,7 +54,6 @@ class EEGHelper(ModalityHelper):
         """
         super().load_data()
 
-        db = next(get_db())
         query = (
             select(
                 EEGRaw.timestamp_unix,
@@ -87,8 +87,7 @@ class EEGHelper(ModalityHelper):
             )
             .order_by(EEGRaw.timestamp_unix)
         )
-        self._data = pd.read_sql_query(query, engine)
-        db.close()
+        self._data = pd.read_sql_query(query, self.db_engine)
 
     def filter(self) -> pd.DataFrame:
         """
@@ -158,7 +157,7 @@ class EEGHelper(ModalityHelper):
         ekg_records = df_ekg.to_dict("records")
         gsr_records = df_gsr.to_dict("records")
 
-        db = next(get_db())
+        db = Session(self.db_engine)
         eeg_data = []
         for record in eeg_records:
             eeg_data.append(EEGSync(**record))
@@ -170,3 +169,4 @@ class EEGHelper(ModalityHelper):
         info("Saving to the database.")
         db.add_all(eeg_data)
         db.commit()
+        db.close()
