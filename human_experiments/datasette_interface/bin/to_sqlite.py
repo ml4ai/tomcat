@@ -93,11 +93,11 @@ if __name__ == "__main__":
         # in a temporary directory. We use the environment SQLITE_TMPDIR to choose the location
         # to guarantee there's enough space for it.
         os.environ["SQLITE_TMPDIR"] = TMP_DIR
-        # if subprocess.call(command, shell=True) == 0:
-        #     print(
-        #         f"Database to successfully exported to SQLite. Saved in {sqlite_filepath}"
-        #     )
-        # else:
-        #     print("Could not export database to SQLite.")
+        if subprocess.call(command, shell=True) == 0:
+            print(
+                f"Database to successfully exported to SQLite. Saved in {sqlite_filepath}"
+            )
+        else:
+            print("Could not export database to SQLite.")
     else:
         print("Operation aborted.")
