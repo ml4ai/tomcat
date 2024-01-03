@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
+import os
 
 from datasette_interface.database.config import SQLALCHEMY_DATABASE_URI
 from datasette_interface.raw.process_affective_task_data import \
@@ -79,7 +80,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--include",
         type=str,
-        default="all",
+        default=os.getenv("TBS", "all"),
         help=f"Comma-separated list of modalities to process among {TABLES}",
     )
     parser.add_argument(

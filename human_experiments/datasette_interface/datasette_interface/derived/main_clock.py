@@ -25,7 +25,7 @@ def get_main_clock_timestamps(
     :param group_session: group session of the main clock.
     :param clock_frequency: frequency of the main clock.
     :param buffer: a buffer in seconds to be sure we don't lose any signal data.
-    :db: active database session.
+    :param db: active database session.
     """
 
     start_time = db.scalar(
