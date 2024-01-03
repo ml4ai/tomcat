@@ -116,6 +116,7 @@ class FNIRSHelper(ModalityHelper):
             .order_by(FNIRSRaw.timestamp_unix)
         )
         self._data = pd.read_sql_query(query, self.db_engine)
+        info(f"{len(self._data)} rows of data loaded.")
 
     def filter(self) -> pd.DataFrame:
         """
@@ -153,7 +154,7 @@ class FNIRSHelper(ModalityHelper):
         df["group_session_id"] = self.group_session
         df["station_id"] = self.station
 
-        info("Converting DataFrame to records.")
+        info(f"Converting DataFrame of size {len(df)} rows to records.")
         records = df.to_dict("records")
 
         db = Session(self.db_engine)

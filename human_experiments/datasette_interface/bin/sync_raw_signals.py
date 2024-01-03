@@ -144,6 +144,8 @@ def sync_raw_signals_single_job(
             error(f"Could not determine clock timestamps for the group session ({group_session}).")
             continue
 
+        info(f"There are {len(clock_timestamps)} ticks in the main clock.")
+
         for station in STATIONS:
             info(f"Processing station {station}.")
             modality_helper = create_modality_helper(
