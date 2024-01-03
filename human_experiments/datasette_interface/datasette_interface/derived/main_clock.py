@@ -6,14 +6,14 @@ from sqlalchemy.orm import Session
 
 from datasette_interface.database.entity.task.minecraft_task import \
     MinecraftMission
-from datasette_interface.database.entity.task.rest_state_task import \
-    RestStateTask
 from datasette_interface.database.entity.task.ping_pong_cooperative_task_observation import \
     PingPongCooperativeTaskObservation
+from datasette_interface.database.entity.task.rest_state_task import \
+    RestStateTask
 
 
 def get_main_clock_timestamps(
-        group_session: str, clock_frequency: int, buffer: int, db: Session
+    group_session: str, clock_frequency: int, buffer: int, db: Session
 ) -> np.ndarray:
     """
     Gets a time scale for a main clock with a fixed frequency. The main clock will be shared among

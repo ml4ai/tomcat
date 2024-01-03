@@ -79,7 +79,7 @@ def update_key_messages_dict(message, key_messages):
         else:
             pass
     elif (
-            topic == "observations/state" and not key_messages["approximate_mission_start"]
+        topic == "observations/state" and not key_messages["approximate_mission_start"]
     ):
         mission_timer = str(message["data"]["mission_timer"])
         if "not initialized" not in mission_timer.lower():
@@ -165,9 +165,12 @@ def collect_files_to_process(metadata_files):
                 " script being run. But we do *not* skip this file, we will simply"
                 " use the most recent trial start message"
             )
-            key_messages["trial_start"] = [sorted(
-                key_messages["trial_start"],
-                key=lambda message: message["header"]["timestamp"])[-1]]
+            key_messages["trial_start"] = [
+                sorted(
+                    key_messages["trial_start"],
+                    key=lambda message: message["header"]["timestamp"],
+                )[-1]
+            ]
 
         if len(key_messages["trial_stop"]) > 1:
             error(
@@ -177,9 +180,12 @@ def collect_files_to_process(metadata_files):
                 " script being run. But we do *not* skip this file, we will simply"
                 " use the most recent trial stop message"
             )
-            key_messages["trial_stop"] = [sorted(
-                key_messages["trial_stop"],
-                key=lambda message: message["header"]["timestamp"])[-1]]
+            key_messages["trial_stop"] = [
+                sorted(
+                    key_messages["trial_stop"],
+                    key=lambda message: message["header"]["timestamp"],
+                )[-1]
+            ]
 
         if len(key_messages["mission_stop"]) != 1:
             error(
@@ -537,8 +543,8 @@ def process_minecraft_data():
             [
                 s[0]
                 for s in db_session.query(MinecraftMission.group_session_id)
-            .distinct(MinecraftMission.group_session_id)
-            .all()
+                .distinct(MinecraftMission.group_session_id)
+                .all()
             ]
         )
 

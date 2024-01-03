@@ -2,6 +2,7 @@
 
 import argparse
 import os
+import subprocess
 
 from datasette_interface.common.config import TMP_DIR, settings
 from datasette_interface.database.config import SQLALCHEMY_DATABASE_URI
