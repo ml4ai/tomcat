@@ -144,7 +144,8 @@ def sync_raw_signals_single_job(
             error(f"Could not determine clock timestamps for the group session ({group_session}).")
             continue
 
-        info(f"There are {len(clock_timestamps)} ticks in the main clock.")
+        info(f"There are {len(clock_timestamps)} ticks in the main clock from timestamp "
+             f"{clock_timestamps[0]} to {clock_timestamps[-1]}.")
 
         for station in STATIONS:
             info(f"Processing station {station}.")
