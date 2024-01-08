@@ -34,7 +34,7 @@ is \verb|study_3_pilot|.  This study name is a bit misleading, but makes senses
 as this study gradually morphed from an initial pilot study to a real one as we
 developed the system, but most data is informative.
 
-\verb|<raw_data>| has a few \verb|.csv| files containing structured experimental notes we use to determine data validity (e.g., equipment not working during a specific task), internal mappings and conventions (see \autoref{subsec:exp_notes}). In addition, it contains two subdirectories, ``presession'' and ``group'', containing data
+\verb|<raw_data>| has two subdirectories, ``presession'' and ``group'', containing data
 from the presession experiments and main experiments separately. In both cases, we put the
 data from one experimental instance into a directory named
 \verb|exp_<yyyy>_<mm>_<dd>_<hh>|. Since we only run one main session at a time, and
@@ -79,11 +79,18 @@ needed presession data included.
 
 Each of the three participants are associated by the name of the iMac device
 they use during the experiment.
-The iMac devices are named as \verb|lion|, \verb|tiger|,
-\verb|leopard|, and \verb|cheetah|. The participants use the first three, with
-\verb|cheetah| used only by experimenters during the competitive ping-pong
-task.
-We define \verb|<cat>| $\in \{\text{\texttt{leopard, lion, tiger}}\}$.
+The iMac devices are named as lion, tiger, and
+leopard. We define
+<cat> $\in \{leopard, lion, tiger\}$
+and <Cat> $\in \{Leopard, Lion, Tiger\}$,
+and use <cat> or <Cat> to represent the three instances.
+
+%\kobus{Some of this is from a very old document. And the rest is from me quickly looking
+%at both early and recent data directories. Please check and update!! And include
+%details!!!}
+
+\kobus{Also, I understand we changed formats mid stream. We need to specify
+these differences here.}
 
 Prior to April 2023, we recorded physio data for each station to a separate
 XDF file, and the rest of the data (baseline task observations, Minecraft data,
@@ -107,94 +114,152 @@ In the directory structure shown below, we denote which directories are only
 present in v1 or v2 data using comments starting with an octothorpe (\verb|#|).
 
 Underneath each experiment (\verb|<raw_data>|) directory (i.e.,\\
-\verb|<root>/<study>/group/exp_<yyyy>_<mm>_<dd>_<hh>|), we have the following
-file/directory structure:
+\verb|<root>/<study>/group/exp_<yyyy>_<mm>_<dd>_<hh>|),\\
+we have the following file/directory structure:\\\\
 %
-\begin{verbatim}
-redcap_data/
-    team_data.csv
-
-baseline_tasks/
-    affective/
-        individual_<cat>_<participantID>_<timestamp>.csv
-        individual_<cat>_<participantID>_<timestamp>_metadata.json
-        team_<timestamp>.csv
-        team_<timestamp>_metadata.json
-    finger_tapping/
-        <timestamp>.csv
-        <timestamp>_metadata.json
-    ping_pong/
-         competitive_0_<timestamp>.csv
-         competitive_0_<timestamp>_metadata.json
-         competitive_1_<timestamp>.csv
-         competitive_1_<timestamp>_metadata.json
-         cooperative_0_<timestamp>.csv
-         cooperative_0_<timestamp>_metadata.json
-    rest_state/
-        <timestamp>.csv
-
-lsl/ # Only for experiments starting April 2023
-    block_1.xdf
-    block_2.xdf
-
-minecraft/
-    MinecraftData_Trial-T00073_ID-<fancy_string>.metadata
-    MinecraftData_Trial-Training_ID-<fancy_string>.metadata
-
-<cat>/
-    eeg_fnirs_pupil/ # Only for experiments before April 2023
-        <cat>_eeg_fnirs_pupil.xdf
-    audio/ # Only for sessions on or after 2022-10-07
-        ... 3 to 4 .wav files # Prior to 2023-04-17
-        block_2/ # On or after 2023-04-17
-            ... 3 to 4 .wav files
-    face_images/
-        ffmpeg.log
-        ... a large number of .png files
-    presession/
-        participant_<ID>.wav
-        participant_<ID>Task2.wav
-    pupil_recorder/
-        000/
-            blinks.pldata
-            blinks_timestamps.npy
-            eye0.intrinsics
-            eye0.mp4
-            eye0_timestamps.npy
-            eye1.intrinsics
-            eye1.mp4
-            eye1_timestamps.npy
-            fixations.pldata
-            fixations_timestamps.npy
-            gaze.pldata
-            gaze_timestamps.npy
-            info.player.json
-            notify.pldata
-            notify_timestamps.npy
-            pupil.pldata
-            pupil_timestamps.npy
-            user_info.csv
-            world.intrinsics
-            world.mp4
-            world_timestamps.npy
-    redcap_data/
-        <cat>_post_game_survey_data.csv
-        <cat>_self_report_data.csv
-    screen_shots/
-        ffmpeg.log
-        ... a large number of .png files
-
-testbed_logs/ # On or after 2022-10-27
-    asist_logs_<yyyy>_<mm>_<dd>_<hh>_<mm>_<ss>/
-
-tmp/
-
-data_inventory.log # For sessions starting 2023-04-17
-data_inventory.run # For sessions starting 2023-04-17
-time_difference.txt # For sessions starting 2023-04-17
-
-trial_info.json
-\end{verbatim}
+\verb|redcap_data/|\\
+\verb|    |\hyperref[team_data.csv]{team\_data.csv}\\\\
+\verb|baseline_tasks/|\\
+\verb|    affective/|\\
+\verb|        |\hyperref[individual_<participantID>_<timestamp>.csv]{individual\_<participantID>\_<timestamp>.csv}\\
+\verb|        |\hyperref[individual_<participantID>_<timestamp>_metadata.json]{individual\_<participantID>\_<timestamp>\_metadata.json}\\
+\verb|        |\hyperref[team_<timestamp>.csv]{team\_<timestamp>.csv}\\
+\verb|        |\hyperref[team_<timestamp>_metadata.json]{team\_<timestamp>\_metadata.json}\\
+\verb|    finger_tapping/|\\
+\verb|        |\hyperref[finger_tapping/<timestamp>.csv]{<timestamp>.csv}\\
+\verb|        |\hyperref[finger_tapping/<timestamp>_metadata.json]{<timestamp>\_metadata.json}\\
+\verb|    ping_pong/|\\
+\verb|        |\hyperref[competitive_<team>_<timestamp>.csv]{competitive\_<team>\_<timestamp>.csv}\\
+\verb|        |\hyperref[competitive_<team>_<timestamp>_metadata.json]{competitive\_<team>\_<timestamp>\_metadata.json}\\
+\verb|        |\hyperref[cooperative_0_<timestamp>.csv]{cooperative\_0\_<timestamp>.csv}\\
+\verb|        |\hyperref[cooperative_0_<timestamp>_metadata.json]{cooperative\_0\_<timestamp>\_metadata.json}\\
+\verb|    rest_state/|\\
+\verb|        |\hyperref[rest_state/<timestamp>.csv]{<timestamp>.csv}\\\\
+\verb|lsl/ # Only for experiments starting April 2023|\\
+\verb|    |\hyperref[block_1.xdf]{block\_1.xdf}\\
+\verb|    |\hyperref[block_2.xdf]{block\_2.xdf}\\\\
+\verb|minecraft/|\\
+\verb|    |\hyperref[MinecraftData_Trial-<trial_num>_ID-<fancy_string>.metadata]{MinecraftData\_Trial-<trial\_num>\_ID-<fancy\_string>.metadata}\\\\
+\verb|<cat>/|\\
+\verb|    eeg_fnirs_pupil/  # Only for experiments before April 2023|\\
+\verb|        |\hyperref[<cat>_eeg_fnirs_pupil.xdf]{<cat>\_eeg\_fnirs\_pupil.xdf}\\\\
+\verb|    audio/ # Only for sessions on or after 2022-10-07|\\
+\verb|          ... 3 to 4 .wav files # Prior to 2023-04-17|\\
+\verb|            |\hyperref[Trial-<trial_id>_Team-<team_num>_Member-<player_num>.wav]{Trial-<trial\_id>\_Team-<team\_num>\_Member-<player\_num>.wav}\\
+\verb|        block_2/ # On or after 2023-04-17|\\
+\verb|            |\hyperref[Trial-<trial_id>_Team-<team_num>_Member-<participant_id>.wav]{Trial-<trial\_id>\_Team-<team\_num>\_Member-<participant\_id>.wav}\\
+\verb|    face_images/|\\
+\verb|        ffmpeg.log|\\
+\verb|        ... a large number of .png files|\\
+\verb|        |\hyperref[face_images/<yyyy-mm-dd>T<hh_mm_ss.sssssssss>Z.png]{<yyyy-mm-dd>T<hh\_mm\_ss.sssssssss>Z.png}\\
+\verb|    presession/|\\
+\verb|        |\hyperref[participant_<participant_ID>.wav]{participant\_<participant\_ID>.wav}\\
+\verb|        |\hyperref[participant_<participant_ID>Task2.wav]{participant\_<participant\_ID>Task2.wav}\\
+\verb|    pupil_recorder/000/ and 001/|\\
+\verb|        |\hyperref[blinks.pldata]{blinks.pldata}\\
+\verb|        |\hyperref[blinks_timestamps.npy]{blinks\_timestamps.npy}\\
+\verb|        |\hyperref[eye0.intrinsics]{eye0.intrinsics}\\
+\verb|        |\hyperref[eye0.mp4]{eye0.mp4}\\
+\verb|        |\hyperref[eye0_timestamps.npy]{eye0\_timestamps.npy}\\
+\verb|        |\hyperref[eye1.intrinsics]{eye1.intrinsics}\\
+\verb|        |\hyperref[eye1.mp4]{eye1.mp4}\\
+\verb|        |\hyperref[eye1_timestamps.npy]{eye1\_timestamps.npy}\\
+\verb|        |\hyperref[fixations.pldata]{fixations.pldata}\\
+\verb|        |\hyperref[fixations_timestamps.npy]{fixations\_timestamps.npy}\\
+\verb|        |\hyperref[gaze.pldata]{gaze.pldata}\\
+\verb|        |\hyperref[gaze_timestamps.npy]{gaze\_timestamps.npy}\\
+\verb|        |\hyperref[info.player.json]{info.player.json}\\
+\verb|        |\hyperref[notify.pldata]{notify.pldata}\\
+\verb|        |\hyperref[notify_timestamps.npy]{notify\_timestamps.npy}\\
+\verb|        |\hyperref[pupil.pldata]{pupil.pldata}\\
+\verb|        |\hyperref[pupil_timestamps.npy]{pupil\_timestamps.npy}\\
+\verb|        |\hyperref[user_info.csv]{user\_info.csv}\\
+\verb|        |\hyperref[world.intrinsics]{world.intrinsics}\\
+\verb|        |\hyperref[world.mp4]{world.mp4}\\
+\verb|        |\hyperref[world_timestamps.npy]{world\_timestamps.npy}\\
+\verb|    redcap_data/|\\
+\verb|        |\hyperref[<cat>_post_game_survey_data.csv]{<cat>\_post\_game\_survey\_data.csv}\\
+\verb|        |\hyperref[<cat>_self_report_data.csv]{<cat>\_self\_report\_data.csv}\\
+\verb|    screenshots/|\\
+\verb|        ffmpeg.log|\\
+\verb|        ... a large number of .png files|\\
+\verb|        |\hyperref[screenshots/<yyyy-mm-dd>T<hh_mm_ss.sssssssss>Z.png]{<yyyy-mm-dd>T<hh\_mm\_ss.sssssssss>Z.png}\\\\
+\verb|  testbed_logs/ # On or after 2022-10-27|\\
+\verb|      asist_logs_<yyyy>_<mm>_<dd>_<hh>_<mm>_<ss>/|\\
+\verb|          ASR_Agent/logs/|\\
+\verb|              |\hyperref[ASR Agent logs]{<yyyy>-<mm>-<dd>\_<hh>-<mm>-<ss>.0.log}\\
+\verb|          dozzle_logs/|\\
+\verb|              |\hyperref[ac_aptima_ta3_measures.log]{ac\_aptima\_ta3\_measures.log}\\
+\verb|              |\hyperref[AC_CMUFMS_TA2_Cognitive.log]{AC\_CMUFMS\_TA2\_Cognitive.log}\\
+\verb|              |\hyperref[ac_cmu_ta1_pygl_fov_agent.log]{ac\_cmu\_ta1\_pygl\_fov\_agent.log}\\
+\verb|              |\hyperref[ac_cmu_ta2_beard.log]{ac\_cmu\_ta2\_beard.log}\\
+\verb|              |\hyperref[ac_cmu_ta2_ted.log]{ac\_cmu\_ta2\_ted.log}\\
+\verb|              |\hyperref[ac_gallup_ta2_gelp.log]{ac\_gallup\_ta2\_gelp.log}\\
+\verb|              |\hyperref[ac_gallup_ta2_gold.log]{ac\_gallup\_ta2\_gold.log}\\
+\verb|              |\hyperref[ac_ihmc_ta2_dyad-reporting.log]{ac\_ihmc\_ta2\_dyad-reporting.log}\\
+\verb|              |\hyperref[ac_ihmc_ta2_joint-activity-interdependence.log]{ac\_ihmc\_ta2\_joint-activity-interdependence.log}\\
+\verb|              |\hyperref[ac_ihmc_ta2_location-monitor.log]{ac\_ihmc\_ta2\_location-monitor.log}\\
+\verb|              |\hyperref[ac_ihmc_ta2_player-proximity.log]{ac\_ihmc\_ta2\_player-proximity.log}\\
+\verb|              |\hyperref[AC_UAZ_TA1_ASR_Agent-heartbeat.log]{AC\_UAZ\_TA1\_ASR\_Agent-heartbeat.log}\\
+\verb|              |\hyperref[AC_UAZ_TA1_ASR_Agent.log]{AC\_UAZ\_TA1\_ASR\_Agent.log}\\
+\verb|              |\hyperref[AC_UAZ_TA1_ASR_Agent-Mosquitto.log]{AC\_UAZ\_TA1\_ASR\_Agent-Mosquitto.log}\\
+\verb|              |\hyperref[ac_uaz_ta1_speechanalyzer_adminer_1.log]{ac\_uaz\_ta1\_speechanalyzer\_adminer\_1.log}\\
+\verb|              |\hyperref[AC_UAZ_TA1_SpeechAnalyzer-db.log]{AC\_UAZ\_TA1\_SpeechAnalyzer-db.log}\\
+\verb|              |\hyperref[AC_UAZ_TA1_SpeechAnalyzer-heartbeat.log]{AC\_UAZ\_TA1\_SpeechAnalyzer-heartbeat.log}\\
+\verb|              |\hyperref[AC_UAZ_TA1_SpeechAnalyzer.log]{AC\_UAZ\_TA1\_SpeechAnalyzer.log}\\
+\verb|              |\hyperref[AC_UAZ_TA1_SpeechAnalyzer-mmc.log]{AC\_UAZ\_TA1\_SpeechAnalyzer-mmc.log}\\
+\verb|              |\hyperref[ac_ucf_ta2_playerprofiler_container.log]{ac\_ucf\_ta2\_playerprofiler\_container.log}\\
+\verb|              |\hyperref[asistdataingester.log]{asistdataingester.log}\\
+\verb|              |\hyperref[clientmap.log]{clientmap.log}\\
+\verb|              |\hyperref[cmuta2-ted-ac.log]{cmuta2-ted-ac.log}\\
+\verb|              |\hyperref[cra_psicoach_agent.log]{cra\_psicoach\_agent.log}\\
+\verb|              |\hyperref[crazy_ritchie.log]{crazy\_ritchie.log}\\
+\verb|              |\hyperref[dozzle.log]{dozzle.log}\\
+\verb|              |\hyperref[elasticsearch.log]{elasticsearch.log}\\
+\verb|              |\hyperref[filebeat.log]{filebeat.log}\\
+\verb|              |\hyperref[heartbeat-speech_analyzer_agent.log]{heartbeat-speech\_analyzer\_agent.log}\\
+\verb|              |\hyperref[heartbeat-uaz_tmm_agent.log]{heartbeat-uaz\_tmm\_agent.log}\\
+\verb|              |\hyperref[kibana.log]{kibana.log}\\
+\verb|              |\hyperref[logstash.log]{logstash.log}\\
+\verb|              |\hyperref[malmocontrol_Local.log]{malmocontrol\_Local.log}\\
+\verb|              |\hyperref[Measures_Agent_Container.log]{Measures\_Agent\_Container.log}\\
+\verb|              |\hyperref[metadata-docker_metadata-app_1.log]{metadata-docker\_metadata-app\_1.log}\\
+\verb|              |\hyperref[metadata-docker_pgadmin_1.log]{metadata-docker\_pgadmin\_1.log}\\
+\verb|              |\hyperref[metadata-docker_postgres_1.log]{metadata-docker\_postgres\_1.log}\\
+\verb|              |\hyperref[metadata-web_metadata-web_1.log]{metadata-web\_metadata-web\_1.log}\\
+\verb|              |\hyperref[minecraft-server0.log]{minecraft-server0.log}\\
+\verb|              |\hyperref[mmc.log]{mmc.log}\\
+\verb|              |\hyperref[mosquitto.log]{mosquitto.log}\\
+\verb|              |\hyperref[mqttvalidationservice.log]{mqttvalidationservice.log}\\
+\verb|              |\hyperref[nginx.log]{nginx.log}\\
+\verb|              |\hyperref[Rutgers_Agent_Container.log]{Rutgers\_Agent\_Container.log}\\
+\verb|              |\hyperref[speech_analyzer_agent.log]{speech\_analyzer\_agent.log}\\
+\verb|              |\hyperref[speechanalyzer_db_1.log]{speechanalyzer\_db\_1.log}\\
+\verb|              |\hyperref[uaz_dialog_agent.log]{uaz\_dialog\_agent.log}\\
+\verb|              |\hyperref[uaz_tmm_agent.log]{uaz\_tmm\_agent.log}\\
+\verb|              |\hyperref[vosk.log]{vosk.log}\\\\
+\verb|tmp/|\\
+\verb|  |\textit{(This is a sub-directory were temporary files are stored by experiment processes during the experiment.)}\\
+\verb|  |Examples of files stored in this directory:\\
+\verb|    |audio\_streamer\_<cat>.log\\
+\verb|    |audio\_streamer\_<cat>.pid\\
+\verb|    |baseline\_tasks\_cheetah\_competitive\_ping\_pong.log\\
+\verb|    |baseline\_tasks\_cheetah\_cooperative\_ping\_pong.log\\
+\verb|    |baseline\_tasks\_<cat>.log\\
+\verb|    |<cat>\_port\_forwarding.log\\
+\verb|    |<cat>\_port\_forwarding.pid\\
+\verb|    |minecraft\_<cat>.log\\
+\verb|    |minecraft\_<cat>.pid\\
+\verb|    |minecraft\_server.log\\
+\verb|    |minecraft\_server.pid\\
+\verb|    |testbed\_down.log\\
+\verb|    |testbed\_up.log\\
+\verb|    |trial\_id\_watcher.log\\
+\verb|    |trial\_id\_watcher.pid\\\\
+\hyperref[data_inventory.log]{data\_inventory.log} \textit{(Only for sessions starting 2023-04-17)}\\\\
+\hyperref[data_inventory.run]{data\_inventory.run} \textit{(Only for sessions starting 2023-04-17)}\\\\
+\hyperref[time_difference.txt]{time\_difference.txt} \textit{(Only for sessions starting 2023-04-17)}\\\\
+\hyperref[trial_info.json]{trial\_info.json}\\\\
 
 \subsubsection{Description of the files.}
 
@@ -204,503 +269,2098 @@ the data for each file listed above is detailed as follows: \\
 
 
 \begin{description}
-    \item\textbf{REDCap Files:}
-\medskip
-    \item\verb|redcap_data/team_data.csv|\\
-    (comma delimited, 1st row is a header, complex strings double-quoted)\\
-    This CSV file is the Team Data record for the experiment exported from the
-    REDCap database. The Team Data is info and notes created by the
-    experimenters regarding the experiment. The data is inputted into REDCap
-    after the experiment has been completed. This file contains the following
-    data: Team ID, Session Date/Time, Participant's IDs, Absent
-    Participants, Experimenters that subbed-in, Problems/Issues with
-    Participants, Problems/Issues with Equipment, and Additional Notes
-    regarding the Session. The descriptions of the columns are as follows:
-\begin{itemize}
-    \item \verb|record_id -|\\
-		REDCap Team Data Record ID.
-    \item \verb|redcap_survey_identifier - (can be blank)|\\
-        Survey ID that identifies the REDCap Survey Form used to input the Team Data.
-    \item \verb|team_data_timestamp - (can be blank)|\\
-		Timestamp of when the Team Data Record was created.
-    \item \verb|team_id - [##]|\\
-		Team ID assigned to the Experiment.
-    \item \verb|testing_session_date - [yyyy-mm-dd hh:nn] (hh in 24 hour)|\\
-		Experiment Session Date and Time.
-    \item \verb|subject_id - [#####, #####, #####]|\\
-        IDs of the Participants that participated in the Experiment. Lion's ID,
-        Tiger's ID, Leopard's ID. (If an experimenter sat-in, the ID will be
-        entered as 99999 for that position).
-    \item \verb|real_participant_attend - [No/Yes] (can be blank)|\\
-		Did any of the actual participants with assigned subject IDs not attend?
-    \item \verb|real_participant_absent - (can be blank)|\\
-        If \verb|real_participant_attend|=Yes, a list of the subject ID(s) that
-        was scheduled to attend but did not attend.
-    \item \verb|research_team_participation - [No/Yes] (can be blank)|\\
-		Did a research team member play as a mock participant during the testing session?
-    \item \verb|participants_issues - [No/Yes] (can be blank)|\\
-		Were there any problems/issues with the participants during the testing session?
-    \item \verb|participants_issues_details - (can be blank)|\\
-        If \verb|participants_issues|=Yes, bulleted list of participant-related
-        issues during the testing session.
-    \item \verb|equipment_issues - [No/Yes] (can be blank)|\\
-		Were there any problems/issues with the equipment during the testing session?
-    \item \verb|equipment_issues_details - (can be blank)|\\
-        If \verb|equipment_issues|=Yes, bulleted list of equipment-related
-        issues related during the testing session.
-    \item \verb|additional_notes - (can be blank)|\\
-        Any additional notes regarding the testing session.
-    \item \verb|team_data_complete - [Incomplete/Unverified/Complete]|\\
-        Status of this Team Data Record.
-\end{itemize}
+\item\textbf{redcap\_data/ ...}
 
-\bigskip\item\textbf{Baseline Affective Task Files:}
-\medskip
-\item\verb|baseline_tasks/affective/individual_<participantID>_<timestamp>.csv|\\
-    (semicolon delimited, 1st row is a header)\\
-    This CSV file is the Baseline Individual Affective Task Data/Statistics for
-    each Participant. The Participant ID is in the of the file name. There will
-    be three of these files in the directory. One for each Participant, Lion,
-    Tiger, and Leopard. A summary of data contained in this file is: Record
-    Timestamp (in Global, Monotonic, and Human formats), Name of Image being
-    shown to the Participant, Subject ID (Participant ID), The Participant's
-    Arousal Score, The Participant's Valence Score, and the Event Type
-    (\verb|start_affective_task|, \verb|show_blank_screen|,
-    \verb|show_cross_screen|, \verb|show_image|, \verb|show_rating_screen|,
-    \verb|intermediate_selection|, \verb|final_submission|). The columns are
-    described below.
-    \begin{itemize}
-        \item \verb|time - [##########.######] (in seconds)|\\
-            Unix Time \url{https://www.unixtimestamp.com/}.
-        \item \verb|monotonic_time - [#######.#########] (in seconds)|\\
-            How long since the computer that hosts the task was booted up.
-        \item \verb|human_readable_time - [yyyy-mm-ddThh:nn:ss.######Z] (hh in 24 hour)|\\
-            UTC-0 time in human-readable format.
-        \item \verb|image_path -|\\
-            Name of image being shown to the Participant. You can see these images in the code of baseline task.
-        \item \verb|subject_id - [#####]|\\
-            Participant ID. (If an experimenter sat-in, the ID will be entered as 99999 for that Participant)
-        \item \verb|arousal_score - [-2 to +2]|\\
-            Arousal measure of emotion (calm vs. intense).
-        \item \verb|valence_score - [-2 to +2]|\\
-            Valence measure of emotion (unpleasant vs. pleasant).
-        \item \verb|event_type -|\\
-            What event and when.
+    \begin{addmargin}[0em]{0em} % Start of "team_data.csv"
+        \phantomsection\label{team_data.csv}
+        \textbf{team\_data.csv}\\(comma delimited, 1st row is a header, complex strings double-quoted)\\
+        This CSV file is the Team Data record for the experiment exported from the REDCap database.
+        The Team Data is info and notes created by the experimenters regarding the experiment.
+        The data is inputted into REDCap after the experiment has been completed.
+        A summary of data contained in this file is: Team ID, Session Date/Time, Participant's IDs, Absent Participants,
+        Experimenters that subbed-in, Problems/Issues with Participants, Problems/Issues with Equipment, and Additional Notes regarding the Session.\\\\
+        Team Data Fields:
+        \begin{itemize}
+            \item \verb|record_id -|\\REDCap Team Data Record ID.
+            \item \verb|redcap_survey_identifier - (can be blank)|\\Survey ID that identifies the REDCap Survey Form used to input the Team Data.
+            \item \verb|team_data_timestamp - (can be blank)|\\Timestamp of when the Team Data Record was created.
+            \item \verb|team_id - [##]|\\Team ID assigned to the Experiment.
+            \item \verb|testing_session_date - [yyyy-mm-dd hh:nn] (hh in 24 hour)|\\Experiment Session Date and Time.
+            \item \verb|subject_id - [#####, #####, #####]|\\IDs of the Participants that participated in the Experiment. Lion's ID, Tiger's ID, Leopard's ID. (If an experimenter sat-in, the ID will be entered as 99999 for that position).
+            \item \verb|real_participant_attend - [No/Yes] (can be blank)|\\Did any of the actual participants with assigned subject IDs not attend?
+            \item \verb|real_participant_absent - (can be blank)|\\If \verb|real_participant_attend|=Yes, a list of the subject ID(s) that was scheduled to attend but did not attend.
+            \item \verb|research_team_participation - [No/Yes] (can be blank)|\\Did a research team member play as a mock participant during the testing session?
+            \item \verb|participants_issues - [No/Yes] (can be blank)|\\Were there any problems/issues with the participants during the testing session?
+            \item \verb|participants_issues_details - (can be blank)|\\If \verb|participants_issues|=Yes, bulleted list of participant-related issues during the testing session.
+            \item \verb|equipment_issues - [No/Yes] (can be blank)|\\Were there any problems/issues with the equipment during the testing session?
+            \item \verb|equipment_issues_details - (can be blank)|\\If \verb|equipment_issues|=Yes, bulleted list of equipment-related issues related during the testing session.
+            \item \verb|additional_notes - (can be blank)|\\Any additional notes regarding the testing session.
+            \item \verb|team_data_complete - [Incomplete/Unverified/Complete]|\\Status of this Team Data Record.
+        \end{itemize}
+    \end{addmargin} % End of "team_data.csv"
+
+
+
+\textbf{\\\\\\}
+\item\textbf{baseline\_tasks/ ...}
+    \begin{addmargin}[0em]{0em} % Start of "baseline_tasks/affective/"
+        \textbf{affective/ ...}
+
+        \begin{addmargin}[1em]{0em} % Start of "individual_<participantID>_<timestamp>.csv"
+            \phantomsection\label{individual_<participantID>_<timestamp>.csv}
+            \textbf{individual\_<participantID>\_<timestamp>.csv}\\(semicolon delimited text file, 1st row is a header)\\
+            This CSV file is the Baseline Individual Affective Task Data/Statistics for
+            each Participant. The Participant ID is in the of the file name. There will be
+            three of these files in the directory. One for each Participant, Lion, Tiger,
+            and Leopard. A summary of data contained in this file is: Record Timestamp (in
+            Global, Monotonic, and Human formats), Name of Image being shown to the
+            Participant, Subject ID (Participant ID), The Participant's Arousal Score, The
+            Participant's Valence Score, and the Event Type (\verb|start_affective_task|,
+            \verb|show_blank_screen|, \verb|show_cross_screen|, \verb|show_image|,
+            \verb|show_rating_screen|, \verb|intermediate_selection|,\\
+            \verb|final_submission|).\\\\
+            Baseline Individual Affective Task Fields:
+            \begin{itemize}
+                \item \verb|time - [##########.######] (in seconds)|\\Unix Time \href{https://www.unixtimestamp.com/}{https://www.unixtimestamp.com/}.
+                \item \verb|monotonic_time - [#######.#########] (in seconds)|\\How long since the computer that hosts the task was booted up.
+                \item \verb|human_readable_time - [yyyy-mm-ddThh:nn:ss.######Z] (hh in 24 hour)|\\ UTC-0 time in human-readable format.
+                \item \verb|image_path -|\\Name of image being shown to the Participant. You can see these images in the code of baseline task.
+                \item \verb|subject_id - [#####]|\\Participant ID. (If an experimenter sat-in, the ID will be entered as 99999 for that Participant)
+                \item \verb|arousal_score - [-2 to +2]|\\Arousal measure of emotion (calm vs. intense).
+                \item \verb|valence_score - [-2 to +2]|\\Valence measure of emotion (unpleasant vs. pleasant).
+                \item \verb|event_type -|\\What event and when.
+                    (\verb|start_affective_task|, \verb|show_blank_screen|,
+                    \verb|show_cross_screen|, \verb|show_image|, \verb|show_rating_screen|,
+                    \verb|intermediate_selection|, \verb|final_submission|).
+            \end{itemize}
+        \end{addmargin} % End of "individual_<participantID>_<timestamp>.csv"
+
+
+        \textbf{\\\\}
+        \begin{addmargin}[1em]{0em} % Start of "individual_<participantID>_<timestamp>_metadata.json"
+            \phantomsection\label{individual_<participantID>_<timestamp>_metadata.json}
+            \textbf{individual\_<participantID>\_<timestamp>\_metadata.json}\\(JSON data format)\\
+            Baseline Individual Affective Task Participant configuration information.
+            This is the sequence that the computer shows for each image: blank screen, cross screen, blank screen, image, rating screen.
+            The timing for each screen is specified in this JSON file as shown below.\\\\
+            Participant Configuration Information JSON File:
+            \begin{verbatim}
+                {
+                    "participant_ids":
+                        ["#####"] ("99999" for subbing-in experimenter),
+                    "blank_screen_milliseconds": [####],
+                    "cross_screen_milliseconds": [####],
+                    "individual_image_timer": [##.#] (in seconds),
+                    "individual_rating_timer": [##.#] (in seconds),
+                    "team_image_timer": [##.#] (in seconds),
+                    "team_discussion_timer": [##.#] (in seconds),
+                    "team_rating_timer": [##.#] (in seconds)
+                }
+            \end{verbatim}
+        \end{addmargin} % End of "individual_<participantID>_<timestamp>_metadata.json"
+
+
+        \textbf{\\\\}
+        \begin{addmargin}[1em]{0em} % Start of "team_<timestamp>.csv"
+            \phantomsection\label{team_<timestamp>.csv}
+            \textbf{team\_<timestamp>.csv}\\(semicolon delimited text file, 1st row is a header)\\
+            This CSV file is the Baseline Team Affective Task Data/Statistics. A summary of data contained in this file is: Record Timestamps (in Global, Monotonic, and Human formats), Name of Image being shown to the Participants, Subject ID (Participant ID), The Participant's Arousal Score (blank if this participant was not selected to score this image), The Participant's Valence Score (blank if this participant was not selected to score this image), and the Event Type
             (\verb|start_affective_task|, \verb|show_blank_screen|,
             \verb|show_cross_screen|, \verb|show_image|, \verb|show_rating_screen|,
-            \verb|intermediate_selection|, \verb|final_submission|).
-    \end{itemize}
+            \verb|intermediate_selection|, \verb|final_submission|).\\\\
+            Baseline Team Affective Task Fields:
+            \begin{itemize}
+                \item \verb|time| - [\#\#\#\#\#\#\#\#\#\#.\#\#\#\#\#\#] (in seconds)\\Unix Time \href{https://www.unixtimestamp.com/}{https://www.unixtimestamp.com/}.
+                \item \verb|monotonic_time| - [\#\#\#\#\#\#\#.\#\#\#\#\#\#\#\#\#] (in seconds)\\How long since the computer that hosts the task was booted up.
+                \item \verb|human_readable_time| - [yyyy-mm-ddThh:nn:ss.\#\#\#\#\#\#Z] (hh in 24 hour)\\ UTC-0 time in human-readable format.
+                \item \verb|image_path| - [Team\#\#\#.jpg]\\Name of image being shown to the participants. You can see these images in the code of baseline task.
+                \item \verb|subject_id| - [\#\#\#\#\#]\\Participant ID. (If an experimenter sat-in, the ID will be entered as 99999 for that Participant)
+                \item \verb|arousal_score| - [-2 to +2]\\Arousal measure of emotion (calm vs. intense, will be blank if this participant was not selected to score this image).
+                \item \verb|valence_score| - [-2 to +2]\\Valence measure of emotion (unpleasant vs. pleasant, will be blank if this participant was not selected to score this image).
+                \item \verb|event_type| -\\What event and when.
+                    (\verb|start_affective_task|, \verb|show_blank_screen|,
+                    \verb|show_cross_screen|, \verb|show_image|, \verb|show_rating_screen|,
+                    \verb|intermediate_selection|, \verb|final_submission|).
+            \end{itemize}
+        \end{addmargin} % End of "team_<timestamp>.csv"
 
 
-\medskip
-\item\verb|baseline_tasks/affective/\\individual_<participantID>_<timestamp>_metadata.json|\\
-    (JSON data format)
-    Baseline Individual Affective Task Participant configuration information. This
-    is the sequence that the computer shows for each image: blank screen, cross
-    screen, blank screen, image, rating screen. The timing for each screen is
-    specified in this JSON file as shown below.
+        \textbf{\\\\}
+        \begin{addmargin}[1em]{0em} % Start of "team\_<timestamp>\_metadata.json"
+            \phantomsection\label{team_<timestamp>_metadata.json}
+            \textbf{team\_<timestamp>\_metadata.json}\\(JSON data format)\\
+            Baseline Team Affective Task Participant configuration information.
+            This is the sequence that the computer shows for each image: blank screen, cross screen, blank screen, image, rating screen.
+            The timing for each screen is specified in this JSON file as shown below.\\\\
+            Team Configuration Information JSON File:
+            \begin{verbatim}
+                {
+                    "participants_ids": [
+                        ("#####","#####","#####"; "99999" for experimenter)
+                        "<lion_participant_id>",
+                        "<tiger_participant_id>",
+                        "<leopard_participant_id>"
+                    ],
+                    "blank_screen_milliseconds": [####],
+                    "cross_screen_milliseconds": [####],
+                    "individual_image_timer": [##.#] (in seconds),
+                    "individual_rating_timer": [##.#] (in seconds),
+                    "team_image_timer": [##.#] (in seconds),
+                    "team_discussion_timer": [##.#] (in seconds),
+                    "team_rating_timer": [##.#] (in seconds)
+                }
+            \end{verbatim}
+        \end{addmargin} % End of "team\_<timestamp>\_metadata.json"
 
-Participant Configuration Information JSON File:
-\begin{verbatim}
-    {
-        "participant_ids": ["#####"] ("99999" for subbing-in experimenter),
-        "blank_screen_milliseconds": [####],
-        "cross_screen_milliseconds": [####],
-        "individual_image_timer": [##.#] (in seconds),
-        "individual_rating_timer": [##.#] (in seconds),
-        "team_image_timer": [##.#] (in seconds),
-        "team_discussion_timer": [##.#] (in seconds),
-        "team_rating_timer": [##.#] (in seconds)
-    }
-\end{verbatim}
-
-
-\medskip
-\item\verb|baseline_tasks/affective/team_<timestamp>.csv| \\
-    (semicolon delimited, 1st row is a header) \\
-    This CSV file is the Baseline Team Affective Task Data/Statistics. A
-    summary of data contained in this file is: Record Timestamps (in Global,
-    Monotonic, and Human formats), Name of Image being shown to the
-    Participants, Subject ID (Participant ID), The Participant's Arousal Score
-    (blank if this participant was not selected to score this image), The
-    Participant's Valence Score (blank if this participant was not selected to
-    score this image), and the Event Type (\verb|start_affective_task|,
-    \verb|show_blank_screen|, \verb|show_cross_screen|, \verb|show_image|,
-    \verb|show_rating_screen|, \verb|intermediate_selection|,
-    \verb|final_submission|). The columns of the CSV file are described below.
-    \begin{itemize}
-        \item \verb|time| - [\#\#\#\#\#\#\#\#\#\#.\#\#\#\#\#\#] (in seconds)\\
-            Unix Time \url{https://www.unixtimestamp.com/}.
-        \item \verb|monotonic_time| - [\#\#\#\#\#\#\#.\#\#\#\#\#\#\#\#\#] (in seconds)\\
-            How long since the computer that hosts the task was booted up.
-        \item \verb|human_readable_time| - [yyyy-mm-ddThh:nn:ss.\#\#\#\#\#\#Z] (hh in 24 hour)\\
-            UTC-0 time in human-readable format.
-        \item \verb|image_path| - [Team\#\#\#.jpg]\\
-            Name of image being shown to the participants. You can see these images in the code of baseline task.
-        \item \verb|subject_id| - [\#\#\#\#\#]\\
-            Participant ID. (If an experimenter sat-in, the ID will be entered as 99999 for that Participant)
-        \item \verb|arousal_score| - [-2 to +2]\\
-            Arousal measure of emotion (calm vs. intense, will be blank if this
-            participant was not selected to score this image).
-        \item \verb|valence_score| - [-2 to +2]\\
-            Valence measure of emotion (unpleasant vs. pleasant, will be blank
-            if this participant was not selected to score this image).
-        \item \verb|event_type| -\\
-            What event and when.
-            (\verb|start_affective_task|, \verb|show_blank_screen|,
-            \verb|show_cross_screen|, \verb|show_image|, \verb|show_rating_screen|,
-            \verb|intermediate_selection|, \verb|final_submission|).
-    \end{itemize}
+    \end{addmargin} % End of "baseline_tasks/affective/" 
 
 
-\medskip
-\item\verb|baseline_tasks/affective/team_<timestamp>_metadata.json|\\
-    (JSON data format) Baseline Team Affective Task Participant configuration
-    information. This is the sequence that the computer shows for each image:
-    blank screen, cross screen, blank screen, image, rating screen. The timing
-    for each screen is specified in this JSON file as shown below.  The Team
-    Configuration Information JSON File as the following format:
-    \begin{verbatim}
-        {
-            "participants_ids": [
-                ("#####","#####","#####"; "99999" for experimenter)
-                "<lion_participant_id>",
-                "<tiger_participant_id>",
-                "<leopard_participant_id>"
-            ],
-            "blank_screen_milliseconds": [####],
-            "cross_screen_milliseconds": [####],
-            "individual_image_timer": [##.#] (in seconds),
-            "individual_rating_timer": [##.#] (in seconds),
-            "team_image_timer": [##.#] (in seconds),
-            "team_discussion_timer": [##.#] (in seconds),
-            "team_rating_timer": [##.#] (in seconds)
-        }
-    \end{verbatim}
+    \textbf{\\\\}
+    \begin{addmargin}[0em]{0em} % Start of "baseline_tasks/finger_tapping/"
+        \textbf{finger\_tapping/ ...}
+
+        \begin{addmargin}[1em]{0em} % Start of "<timestamp>.csv"
+            \phantomsection\label{finger_tapping/<timestamp>.csv}
+            \textbf{<timestamp>.csv}\\(semicolon delimited text file, 1st row is a header)\\
+            This CSV file is the Baseline Finger Tapping Task Data/Statistics.
+            A summary of data contained in this file is: Record Timestamp (Unix Time, Monotonic, and Human-readable formats),
+            Row Data Event (team, individual), Countdown Timer (integer - 10 to 0), Was a Tap on Keyboard recorded for each participant (0 = no-tap, 1 = tap).
+            The last three column (Fields) names for the Tap Data are the IDs of the Participants (\verb|<lion_participant_id>|, \verb|<tiger_participant_id>|,
+            \verb|<leopard_participant_id>|, If an experimenter sat-in, the column name will be "99999" for that Participant).\\\\
+            Baseline Individual Affective Task Fields:
+            \begin{itemize}
+                \item \verb|time| - [\#\#\#\#\#\#\#\#\#\#.\#\#\#\#\#\#] (in seconds)\\Unix Time \href{https://www.unixtimestamp.com/}{https://www.unixtimestamp.com/}.
+                \item \verb|monotonic_time| - [\#\#\#\#\#\#\#.\#\#\#\#\#\#\#\#\#] (in seconds)\\How long since the computer that hosts the task was booted up.
+                \item \verb|human_readable_time| - [yyyy-mm-ddThh:nn:ss.\#\#\#\#\#\#Z] (hh in 24 hour)\\ UTC-0 time in human-readable format.
+                \item \verb|event_type| -\\What event and when. (team, individual).
+                \item \verb|countdown_timer| - [\#\#] (intiger - 10 to 0)\\Countdown Timer.
+                \item \verb|<lion_participant_id>| - [0 or 1]\\Tap on keyboard from Lion (0 = no-tap, 1 = tap).
+                \item \verb|<tiger_participant_id>| - [0 or 1]\\Tap on keyboard from Tiger (0 = no-tap, 1 = tap).
+                \item \verb|<leopard_participant_id>| - [0 or 1]\\Tap on keyboard from Leopard (0 = no-tap, 1 = tap).
+            \end{itemize}
+        \end{addmargin} % End of "<timestamp>.csv"
+
+
+        \textbf{\\\\}
+        \begin{addmargin}[1em]{0em} % Start of "<timestamp>_metadata.json"
+            \phantomsection\label{finger_tapping/<timestamp>_metadata.json}
+            \textbf{<timestamp>\_metadata.json}\\(JSON data format)\\
+            Baseline Finger Tapping Task configuration information. The configuration
+            information in this file: \verb|participants_ids| \verb|session|
+            \verb|seconds_per_session| \verb|seconds_count_down| \verb|square_width| and
+            \verb|count_down_message|.\\\\
+            Finger Tapping Configuration Information JSON File:
+            \begin{verbatim}
+                {
+                    "participants_ids": [
+                        ("#####","#####","#####"; "99999" for experimenter)
+                        "<lion_participant_id>",
+                        "<tiger_participant_id>",
+                        "<leopard_participant_id>"
+                    ],
+                    "session": [ (typical: "0,1,0,1")
+                        (0 or 1),
+                        (0 or 1),
+                        (0 or 1),
+                        (0 or 1)
+                    ],
+                    "seconds_per_session": [ (typical: "10.0" for all)
+                        ##.#,
+                        ##.#,
+                        ##.#,
+                        ##.#
+                    ],
+                    "seconds_count_down": [##.#] (typical: "10.0"),
+                    "square_width": [###] (typical: "200")
+                    "count_down_message": ["string"]
+                    (example: "Practice session:
+                     Press SPACEBAR and observe the squares")
+                }
+            \end{verbatim}
+        \end{addmargin} % End of "<timestamp>_metadata.json"
+
+    \end{addmargin} % End of "baseline_tasks/finger_tapping/" 
+
+
+    \textbf{\\\\}
+    \begin{addmargin}[0em]{0em} % Start of "baseline_tasks/ping_pong/"
+        \textbf{ping\_pong/ ...}
+
+        \begin{addmargin}[1em]{0em} % Start of "competitive_<team>_<timestamp>.csv"
+            \phantomsection\label{competitive_<team>_<timestamp>.csv}
+            \textbf{competitive\_<team>\_<timestamp>.csv}\\(semicolon delimited text file, 1st row is a header)\\
+            This CSV file is for the Baseline Competitive Ping-Pong Task Data/Statistics.
+            The <team> in the file name is "0" for Lion vs Tiger and "1" for Leopard vs Cheetah.
+            (If an experimenter sat-in, the column name will be "99999" for that Participant).
+            (For <team> = "1" in the file name, the participant2 ID will always be "exp").
+            A summary of data contained in this file is: Record Timestamp (Unix Time, Monotonic, and Human-readable formats),
+            Score on Left, Score on Right (For <team> = "1" in the file name, right score will be for experimenter on "Cheetah"), Game Started (False = countdown for game to start, True = game has started),
+            Ball's X Coordinates, Ball's Y Coordinates, Participant 1 Paddle X Coordinates, Participant 1 Paddle Y Coordinates,
+            Participant 2 Paddle X Coordinates , Participant 2 Paddle Y Coordinates, Seconds Timer on Screen (If game has not started, \verb|started = False|,
+            the \verb|seconds| will count down from 10 to 0. If game has started, \verb|started = True|, the \verb|seconds| will count down from 120 to 0.)\\\\
+            Baseline Competitive Ping-Pong Task Fields:
+            \begin{itemize}
+                \item \verb|time - [##########.######] (in seconds)|\\Unix Time \href{https://www.unixtimestamp.com/}{https://www.unixtimestamp.com/}.
+                \item \verb|monotonic_time - [#######.#########] (in seconds)|\\How long since the computer that hosts the task was booted up.
+                \item \verb|human_readable_time - [yyyy-mm-ddThh:nn:ss.######Z] (hh in 24h)|\\ UTC-0 time in human-readable format.
+                \item \verb|score_left - [##]|\\ Current score for left team participant.
+                \item \verb|score_right - [##]|\\ Current score for right team participant (For <team> = "1" in the file name, right score will be for experimenter on "Cheetah").
+                \item \verb|started - [False or True]|\\Has the Ping-Pong game started.
+                \item \verb|ball_x - [####]| - \\The ball's X coordinate on the screen.
+                \item \verb|ball_y - [####]| - \\The ball's Y coordinate on the screen.
+                \item \verb|<participant1_id>_x - [####]| -\\Participant1's (left team) paddle's X coordinate on the screen.
+                \item \verb|<participant1_id>_y - [####]| -\\Participant1's (left team) paddle's Y coordinate on the screen.
+                \item \verb|<participant2_id>_x - [####]| -\\Participant2's (right team) paddle's X coordinate on the screen (For <team> = "1" in the file name, the participant2 ID will always be "exp").
+                \item \verb|<participant2_id>_y - [####]| -\\Participant2's (right team) paddle's Y coordinate on the screen (For <team> = "1" in the file name, the participant2 ID will always be "exp").
+                \item \verb|seconds - [###]|\\Seconds left in game (120 counts down to 0).
+            \end{itemize}
+        \end{addmargin} % End of "competitive_<team>_<timestamp>.csv"
+
+
+        \textbf{\\\\}
+        \begin{addmargin}[1em]{0em} % Start of "competitive_<team>_<timestamp>_metadata.json"
+            \phantomsection\label{competitive_<team>_<timestamp>_metadata.json}
+            \textbf{competitive\_<team>\_<timestamp>\_metadata.json}\\(JSON data format)\\
+            Baseline Competitive Ping-Pong Configuration Information.
+            (For <team> = "1" in the file name, the participant2 ID will always be "exp").
+            The configuration information in this file: \verb|left_team participant ID|, \verb|right_team participant ID|,
+            \verb|client_window_height|, \verb|client_window_width|, \verb|session_time_seconds|,
+            \verb|seconds_count_down|, \verb|count_down_message|,\\
+            \verb|paddle_width|, \verb|paddle_height|, \verb|ai_paddle_max_speed|, \verb|paddle_speed_scaling|,\\
+            \verb|paddle_max_speed|, \verb|ball_x_speed|, \verb|ball_bounce_on_paddle_scale|.\\\\
+            Baseline Competitive Ping-Pong Configuration Information JSON File:
+            \begin{verbatim}
+                {
+                    "left_team": [
+                        "#####" (left team participant ID, "99999" for experimenter)
+                    ],
+                    "right_team": [
+                        "#####" (right team participant ID, "99999" for experimenter,
+                        "exp" for <team> = "1" in file name.)
+                    ],
+                    "client_window_height": [####] (typical: 1440),
+                    "client_window_width": [####] (typical: 2560),
+                    "session_time_seconds": [###.#] (typical: 120.0),
+                    "seconds_count_down": [##.#] (typical: 10.0),
+                    "count_down_message": ["string"]
+                    (typical:"Move the mouse to move the blue paddle"),
+                    "paddle_width": [##] (typical: 20),
+                    "paddle_height": [###] (typical: 120),
+                    "ai_paddle_max_speed": [##] (typical: 13),
+                    "paddle_speed_scaling": [#.#] (typical: 0.6),
+                    "paddle_max_speed": [###.#] (typical: null),
+                    "ball_x_speed": [##] (typical: 9),
+                    "ball_bounce_on_paddle_scale": [#.##] (typical: 0.25)
+                }
+            \end{verbatim}
+        \end{addmargin} % End of "competitive_<team>_<timestamp>_metadata.json"
+
+
+        \textbf{\\\\}
+        \begin{addmargin}[1em]{0em} % Start of "cooperative_0_<timestamp>.csv"
+            \phantomsection\label{cooperative_0_<timestamp>.csv}
+            \textbf{cooperative\_0\_<timestamp>.csv}\\(semicolon delimited text file, 1st row is a header)\\
+            This CSV file is for the Baseline Cooperative Ping-Pong Task Data/Statistics.
+            For the Cooperative Ping-Pong Task, the participants on Lion, Tiger and Leopard play together as a team and play against the AI machine.
+            (If an experimenter sat-in, the column name will be "99999" for that Participant).
+            A summary of data contained in this file is: Record Timestamp (Unix Time, Monotonic, and Human-readable formats),
+            Score on Left, Score on Right, Game Started (False = countdown for game to start, True = game has started),
+            Ball's X Coordinates, Ball's Y Coordinates, Participant 1 Paddle X Coordinates, Participant 1 Paddle Y Coordinates,
+            Participant 2 Paddle X Coordinates, Participant 2 Paddle Y Coordinates, Seconds Timer on Screen (If game has not started, \verb|started = False|,
+            the \verb|seconds| will count down from 10 to 0. If game has started, \verb|started = True|, the \verb|seconds| will count down from 120 to 0.)\\\\
+            Baseline Cooperative Ping-Pong Task Fields:
+            \begin{itemize}
+                \item \verb|time - [##########.######] (in seconds)|\\Unix Time \href{https://www.unixtimestamp.com/}{https://www.unixtimestamp.com/}.
+                \item \verb|monotonic_time - [#######.#########] (in seconds)|\\How long since the computer that hosts the task was booted up.
+                \item \verb|human_readable_time - [yyyy-mm-ddThh:nn:ss.######Z] (hh in 24h)|\\UTC-0 time in human-readable format.
+                \item \verb|score_left - [##]|\\Current score for left team.
+                \item \verb|score_right - [##]|\\Current score for "AI" team.
+                \item \verb|started - [False or True]|\\Has the Ping-Pong game started.
+                \item \verb|ball_x - [####]|\\The ball's X coordinate on the screen.
+                \item \verb|ball_y - [####]| - \\The ball's Y coordinate on the screen.
+                \item \verb|<left_team_participant1_id>_x - [####]| -\\Participant1's (left team) paddle's X coordinate on the screen.
+                \item \verb|<left_team_participant1_id>_y - [####]| -\\Participant1's (left team) paddle's Y coordinate on the screen.
+                \item \verb|<left_team_participant2_id>_x - [####]| -\\Participant2's (left team) paddle's X coordinate on the screen.
+                \item \verb|<left_team_participant2_id>_y - [####]| -\\Participant2's (left team) paddle's Y coordinate on the screen.
+                \item \verb|<left_team_participant3_id>_x - [####]| -\\Participant3's (left team) paddle's X coordinate on the screen.
+                \item \verb|<left_team_participant3_id>_y - [####]| -\\Participant3's (left team) paddle's Y coordinate on the screen.
+                \item \verb|ai_x - [####]| -\\AI's (right team) paddle's X coordinate on the screen.
+                \item \verb|ai_y - [####]| -\\AI's (right team) paddle's Y coordinate on the screen.
+                \item \verb|seconds - [###]|\\Seconds left in game (120 counts down to 0).
+            \end{itemize}
+        \end{addmargin} % End of "cooperative_0_<timestamp>.csv"
+
+
+        \textbf{\\\\}
+        \begin{addmargin}[1em]{0em} % Start of "cooperative_0_<timestamp>_metadata.json"
+            \phantomsection\label{cooperative_0_<timestamp>_metadata.json}
+            \textbf{cooperative\_0\_<timestamp>\_metadata.json}\\(JSON data format)\\
+            Baseline Cooperative Ping-Pong Configuration Information. The configuration
+            information in this file: \verb|left_team (participant IDs for Lion, Tiger, and Leopard)|, \verb|right_team ("ai")|,
+            \verb|client_window_height|, \verb|client_window_width|, \verb|session_time_seconds|,
+            \verb|seconds_count_down|, \verb|count_down_message|, \verb|paddle_width|, \verb|paddle_height|,
+            \verb|ai_paddle_max_speed|, \verb|paddle_speed_scaling|, \verb|paddle_max_speed|, \verb|ball_x_speed|,
+            \verb|ball_bounce_on_paddle_scale|.\\\\
+            Baseline Cooperative Ping-Pong Configuration Information JSON File:
+            \begin{verbatim}
+                {
+                    "left_team": [
+                        "#####", (left team member 1 ID, "99999" for experimenter)
+                        "#####", (left team member 2 ID, "99999" for experimenter)
+                        "#####"  (left team member 3 ID, "99999" for experimenter)
+                    ],
+                    "right_team": [
+                        "ai"
+                    ],
+                    "client_window_height": [####] (typical: 1440),
+                    "client_window_width": [####] (typical: 2560),
+                    "session_time_seconds": [###.#] (typical: 120.0),
+                    "seconds_count_down": [##.#] (typical: 10.0),
+                    "count_down_message": ["string"]
+                    (typical:"Move the mouse to move the blue paddle"),
+                    "paddle_width": [##] (typical: 20),
+                    "paddle_height": [###] (typical: 90),
+                    "ai_paddle_max_speed": [##] (typical: 20),
+                    "paddle_speed_scaling": [#.#] (typical: 0.6),
+                    "paddle_max_speed": [###.#] (typical: null),
+                    "ball_x_speed": [##] (typical: 12),
+                    "ball_bounce_on_paddle_scale": [#.##] (typical: 0.4)
+                }
+            \end{verbatim}
+        \end{addmargin} % End of "cooperative_0_<timestamp>_metadata.json"
+
+    \end{addmargin} % End of "baseline_tasks/ping_pong/" 
+
+
+    \textbf{\\\\}
+    \begin{addmargin}[0em]{0em} % Start of "baseline_tasks/rest_state/"
+        \textbf{rest\_state/ ...}
+
+        \begin{addmargin}[1em]{0em} % Start of "<timestamp>.csv"
+            \phantomsection\label{rest_state/<timestamp>.csv}
+            \textbf{<timestamp>.csv}\\(semicolon delimited text file, 1st row is a header)\\
+            This CSV file records the Start Time and End Time for the Baseline Rest State.
+            A summary of data contained in this file is: Record Timestamp (Unix Time, Monotonic, and Human-readable formats),
+            and Event Type (\verb|"start_rest_state" or "end_rest_state"|).\\\\
+            Baseline Rest State Timestamp CSV Fields:
+            \begin{itemize}
+                \item \verb|time - [##########.######] (in seconds)|\\Unix Time \href{https://www.unixtimestamp.com/}{https://www.unixtimestamp.com/}.
+                \item \verb|monotonic_time - [#######.#########] (in seconds)|\\How long since the computer that hosts the task was booted up.
+                \item \verb|human_readable_time - [yyyy-mm-ddThh:nn:ss.######Z] (hh in 24h)|\\UTC-0 time in human-readable format.
+                \item \verb|event_type - [string]|\\Start or End of Rest State (\verb|"start_rest_state" or "end_rest_state"|).
+            \end{itemize}
+        \end{addmargin} % End of "<timestamp>.csv"
+
+    \end{addmargin} % End of "baseline_tasks/rest_state/"
+    
+% End of "baseline_tasks/"
 
 
 
-\bigskip\item\textbf{Baseline Finger Tapping Task Files:}
-\medskip
-\item\verb|baseline_tasks/finger_tapping/<timestamp>.csv|\\
-    (semicolon delimited, 1st row is a header)\\
-    This CSV file is the Baseline Finger Tapping Task Data/Statistics. A
-    summary of data contained in this file is: Record Timestamp (Unix Time,
-    Monotonic, and Human-readable formats), Row Data Event (team, individual),
-    Countdown Timer (integer - 10 to 0), Was a Tap on Keyboard recorded for
-    each participant (0 = no-tap, 1 = tap). The last three column (Fields)
-    names for the Tap Data are the IDs of the Participants
-    (\verb|<lion_participant_id>|, \verb|<tiger_participant_id>|,
-    \verb|<leopard_participant_id>|, If an experimenter sat-in, the column name
-    will be "99999" for that Participant).
-
-\noindent Baseline Individual Affective Task Fields:
-
-\begin{itemize}
-    \item \verb|time| - [\#\#\#\#\#\#\#\#\#\#.\#\#\#\#\#\#] (in seconds)\\
-		Unix Time \url{https://www.unixtimestamp.com/}.
-    \item \verb|monotonic_time| - [\#\#\#\#\#\#\#.\#\#\#\#\#\#\#\#\#] (in seconds)\\
-		How long since the computer that hosts the task was booted up.
-    \item \verb|human_readable_time| - [yyyy-mm-ddThh:nn:ss.\#\#\#\#\#\#Z] (hh in 24 hour)\\
-		 UTC-0 time in human-readable format.
-    \item \verb|event_type| -\\
-		What event and when. (team, individual).
-    \item \verb|countdown_timer| - [\#\#] (integer - 10 to 0)\\
-		Countdown Timer.
-    \item \verb|<lion_participant_id>| - [0 or 1]\\
-		Tap on keyboard from Lion (0 = no-tap, 1 = tap).
-    \item \verb|<tiger_participant_id>| - [0 or 1]\\
-		Tap on keyboard from Tiger (0 = no-tap, 1 = tap).
-    \item \verb|<leopard_participant_id>| - [0 or 1]\\
-		Tap on keyboard from Leopard (0 = no-tap, 1 = tap).
-\end{itemize}
-
-
-\medskip
-\item\verb|baseline_tasks/finger_tapping/<timestamp>_metadata.json|\\
-    (JSON data format) Baseline Finger Tapping Task configuration information.
-    The configuration information in this file: \verb|participants_ids|
-    \verb|session| \verb|seconds_per_session| \verb|seconds_count_down|
-    \verb|square_width| and \verb|count_down_message|.
-
-\noindent Finger Tapping Configuration Information JSON File:
-
-\begin{verbatim}
-    {
-        "participants_ids": [
-            ("#####","#####","#####"; "99999" for experimenter)
-            "<lion_participant_id>",
-            "<tiger_participant_id>",
-            "<leopard_participant_id>"
-        ],
-        "session": [ (typical: "0,1,0,1")
-            (0 or 1),
-            (0 or 1),
-            (0 or 1),
-            (0 or 1)
-        ],
-        "seconds_per_session": [ (typical: "10.0" for all)
-            ##.#,
-            ##.#,
-            ##.#,
-            ##.#
-        ],
-        "seconds_count_down": [##.#] (typical: "10.0"),
-        "square_width": [###] (typical: "200")
-        "count_down_message": ["string"]
-        (example: "Practice session: Press SPACEBAR and observe the squares")
-    }
-\end{verbatim}
-
-
-
-\bigskip\item\textbf{Baseline Ping-Pong Task Files:}
-\medskip
-\item\verb|baseline_tasks/ping_pong/competitive_<team>_<timestamp>.csv|\\
-    (semicolon delimited, 1st row is a header)\\
-    This CSV file is for the Baseline Competitive Ping-Pong Task
-    Data/Statistics. The <team> in the file name is "0" for Lion vs Tiger and
-    "1" for Leopard vs Cheetah. (If an experimenter sat-in, the column name
-    will be "99999" for that Participant). A summary of data contained in this
-    file is: Record Timestamp (Unix Time, Monotonic, and Human-readable
-    formats), Score on Left, Score on Right, Game Started (False = countdown
-    for game to start, True = game has started), Ball's X Coordinates, Ball's Y
-    Coordinates, Participant 1 Paddle X Coordinates, Participant 1 Paddle Y
-    Coordinates, Participant 2 Paddle X Coordinates, Participant 2 Paddle Y
-    Coordinates, Seconds Timer on Screen (If game has not started,
-    \verb|started = False|, the \verb|seconds| will count down from 10 to 0. If
-    game has started, \verb|started = True|, the \verb|seconds| will count down
-    from 120 to 0.)
-
-Baseline Competitive Ping-Pong Task Fields:
-\begin{itemize}
-    \item \verb|time - [##########.######] (in seconds)|\\
-        Unix Time \href{https://www.unixtimestamp.com/}{https://www.unixtimestamp.com/}.
-    \item \verb|monotonic_time - [#######.#########] (in seconds)|\\
-        How long since the computer that hosts the task was booted up.
-    \item \verb|human_readable_time - [yyyy-mm-ddThh:nn:ss.######Z] (hh in 24h)|\\
-        UTC-0 time in human-readable format.
-    \item \verb|score_left - [##]|\\.
-    \item \verb|score_right - [##]|\\.
-    \item \verb|started| - \\.
-    \item \verb|ball_x| - \\.
-    \item \verb|ball_y| - \\.
-    \item \verb|<participant1_id>_x| -\\.
-    \item \verb|<participant1_id>_y>| -\\.
-    \item \verb|<participant2_id>_x| -\\.
-    \item \verb|<participant2_id>_y>| -\\.
-    \item \verb|seconds| - [\#\#\#]\\
-        Seconds left in game (120 counts down to 0).
-\end{itemize}
-
-
-\bigskip\bigskip\bigskip
-\item\textbf{XDF Files:}
+\textbf{\\\\\\}
+\item\textbf{lsl/ ... \textit{(Only for experiments starting April 2023)}}
 \begin{addmargin}[0em]{0em}
-    \item\textbf{Only for experiments before April 2023 (<cat>/<cat>\_eeg\_fnirs\_pupil.xdf)}\\
-    \item\verb|<cat>/<cat>_eeg_fnirs_pupil.xdf|\\
-        (Extensible Data Format XDF, binary file format)\\
-        The \verb|<cat>_eeg_fnirs_pupil.xdf| contains <cat> data files and data
-        streams for the Experiment. You must use a XDF viewer program to view
-        or extract the data contained in this file. Some common software
-        packages used to view or extract data from this XDF file are:
-        MNE-Python, Matplotlib, and Qtgraph. A summary of data recorded in this
-        XDF file is: fNIRS LSL Streams, EEG LSL Streams, and Pupil Data.
-
-    Data files and streams contained in the \verb|<cat>_eeg_fnirs_pupil.xdf|:
-
+    \phantomsection\label{block_1.xdf}
+    \textbf{block\_1.xdf}\\(Extensible Data Format XDF, binary file format)\\
+    The \verb|block_1.xdf| contains data files and data streams for the Baseline Tasks portion of the Experiment.
+    You must use a XDF viewer program to view or extract the data contained in this file.
+    Some common software packages used to view or extract data from this XDF file are: MNE-Python, Matplotlib, and Qtgraph.
+    A summary of data recorded in this XDF file is: fNIRS LSL Streams, EEG LSL Streams, Baseline Data,
+    Filenames of the Face and Screen Images, and Pupil Data.\\
+    \textit{* Due to "Lion's" EEG Amplifier being in shop for repair, the EEG Data for "Lion" is missing in this}\\
+    \verb| |\textit{file for the following experiments: }\verb|exp_2023_04_17_13|\textit{, }\verb| exp_2023_04_18_14|\textit{, }\verb| exp_2023_04_21_10|\\
+    \verb| exp_2023_04_24_13|\textit{, and }\verb| exp_2023_04_27_14|\textit{.}\\\\
+    Data files and streams contained in the \verb|block_1.xdf|:
     \begin{itemize}
-        \item \verb|fNIRS LSL Streams| -\\
-        fNIRS LSL Streams being transmitted from the "NIRx - Aurora" software
-        programs running on the "fNIRS Server Computer" during the Experiment
-        for participants on Lion, Tiger, and Leopard.
-        \item \verb|EEG LSL Streams| -\\
-        EEG LSL Streams being transmitted from the "Brain Vision -
-        LSL-actiChamp" software programs running on the "EEG Server Computer"
-        during the Experiment for participants on Lion, Tiger, and Leopard.
-        \item \verb|Pupil Data| -\\
-        Pupil Data files recorded from the "Pupil Labs - Pupil Capture"
-        software programs running on the participant's iMacs, Lion, Tiger, and
-        Leopard during the Experiment.
+        \item \verb|fNIRS LSL Streams| -\\fNIRS LSL Streams being transmitted from the "NIRx - Aurora" software programs running on the "fNIRS Server Computer" during the Baseline Tasks portion of the Experiment for participants on Lion, Tiger, and Leopard.
+        \item \verb|EEG LSL Streams| -\\EEG LSL Streams being transmitted from the "Brain Vision - LSL-actiChamp" software programs running on the "EEG Server Computer" during the Baseline Tasks portion of the Experiment for participants on Lion, Tiger, and Leopard.
+        \item \verb|Baseline Data for all Tasks| -\\All records that are outputted to the Baseline Tasks CSV files are also recorded in this XDF file for all Baseline Tasks.
+        \item \verb|Filenames of the Face Images| -\\The Filenames of all Face Images created during the Baseline Tasks portion of the Experiment for participants on Lion, Tiger, and Leopard.
+        \item \verb|Filenames of the Screen Images| -\\The Filenames of all Face Images created during the Baseline Tasks portion of the Experiment for participants on Lion, Tiger, and Leopard.
+        \item \verb|Pupil Data| -\\Pupil Data files recorded from the "Pupil Labs - Pupil Capture" software programs running on the participant's iMacs, Lion, Tiger, and Leopard during the Baseline Tasks portion of the Experiment.
     \end{itemize}
 
-\end{addmargin}
-
-\bigskip
-\begin{addmargin}[0em]{0em}
-    \item\textbf{Only for experiments starting April 2023 (block\_1.xdf and block\_2.xdf)\\}
-    \item\verb|lsl/block_1.xdf|\\
-        (Extensible Data Format XDF, binary file format)\\
-        The \verb|block_1.xdf| contains data files and data streams for the
-        Baseline Tasks portion of the Experiment. You must use a XDF viewer
-        program to view or extract the data contained in this file. Some common
-        software packages used to view or extract data from this XDF file are:
-        MNE-Python, Matplotlib, and Qtgraph. A summary of data recorded in this
-        XDF file is: fNIRS LSL Streams, EEG LSL Streams, Baseline Data,
-        Filenames of the Face and Screen Images, and Pupil Data.
-
-        \noindent Data files and streams contained in the \verb|block_1.xdf|:
-
-    \begin{itemize}
-        \item \verb|fNIRS LSL Streams| -\\
-        fNIRS LSL Streams being transmitted from the "NIRx - Aurora" software
-        programs running on the "fNIRS Server Computer" during the Baseline
-        Tasks portion of the Experiment for participants on Lion, Tiger, and
-        Leopard.
-        \item \verb|EEG LSL Streams| -\\
-        EEG LSL Streams being transmitted from the "Brain Vision -
-        LSL-actiChamp" software programs running on the "EEG Server Computer"
-        during the Baseline Tasks portion of the Experiment for participants on
-        Lion, Tiger, and Leopard.
-        \item \verb|Baseline Data for all Tasks| -\\
-        All records that are outputted to the Baseline Tasks CSV files are also
-        recorded in this XDF file for all Baseline Tasks.
-        \item \verb|Filenames of the Face Images| -\\
-        The filenames of all Face Images created during the Baseline Tasks
-        portion of the Experiment for participants on Lion, Tiger, and Leopard.
-        \item \verb|Filenames of the Screen Images| -\\
-        The filenames of all Face Images created during the Baseline Tasks
-        portion of the Experiment for participants on Lion, Tiger, and Leopard.
-        \item \verb|Pupil Data| -\\
-        Pupil Data files recorded from the "Pupil Labs - Pupil Capture"
-        software programs running on the participant's iMacs, Lion, Tiger, and
-        Leopard during the Baseline Tasks portion of the Experiment.
-    \end{itemize}
-
-
-    \medskip
-    \item\verb|lsl/block_2.xdf|\\(Extensible Data Format XDF, binary file format)\\
-    The \verb|block_2.xdf| contains data files and data streams for the Minecraft portion of the Experiment. You must use a XDF viewer program to view or extract the data contained in this file. Some common software packages used to view or extract data from this XDF file are: MNE-Python, Matplotlib, and Qtgraph. A summary of data recorded in this XDF file is: fNIRS LSL Streams, EEG LSL Streams, Individual and Central Audio, Filenames of the Face and Screen Images, and Pupil Data.
-
+    \textbf{\\\\}
+    \phantomsection\label{block_2.xdf}
+    \textbf{block\_2.xdf}\\(Extensible Data Format XDF, binary file format)\\
+    The \verb|block_2.xdf| contains data files and data streams for the Minecraft portion of the Experiment.
+    You must use a XDF viewer program to view or extract the data contained in this file.
+    Some common software packages used to view or extract data from this XDF file are: MNE-Python, Matplotlib, and Qtgraph.
+    A summary of data recorded in this XDF file is: fNIRS LSL Streams, EEG LSL Streams, Individual and Central Audio,
+    Filenames of the Face and Screen Images, and Pupil Data.\\
+    \textit{* Due to "Lion's" EEG Amplifier being in shop for repair and a configuration problem,}\\
+    \verb| |\textit{the EEG Data for "Lion" is missing in this file for the following experiments: }\\
+    \verb| exp_2023_04_17_13|\textit{, }\verb| exp_2023_04_18_14|\textit{, }\verb| exp_2023_04_21_10|\textit{, }\verb| exp_2023_04_24_13|\\
+    \verb| exp_2023_04_27_14|\textit{, }\verb| exp_2023_05_01_13|\textit{, and }\verb| exp_2023_05_02_14|\textit{.}\\\\
     Data files and streams contained in the \verb|block_2.xdf|:
     \begin{itemize}
-        \item \verb|fNIRS LSL Streams| -\\
-        fNIRS LSL Streams being transmitted from the "NIRx - Aurora" software
-        programs running on the "fNIRS Server Computer" during the Minecraft
-        portion of the Experiment for participants on Lion, Tiger, and Leopard.
-        \item \verb|EEG LSL Streams| -\\
-        EEG LSL Streams being transmitted from the "Brain Vision -
-        LSL-actiChamp" software programs running on the "EEG Server Computer"
-        during the Minecraft portion of the Experiment for participants on
-        Lion, Tiger, and Leopard.
-        \item \verb|Minecraft Messages| -\\
-        A series of JSON strings recording the messages sent to and from
-        participants during the three Minecraft missions, Training, Saturn A,
-        and Saturn B.
-        \item \verb|Individual Audio| -\\
-        Audio Signals captured during the Minecraft portion of the Experiment
-        from each participant's microphone, Lion, Tiger, and Leopard.
-        \item \verb|Central Audio| -\\
-        This is Audio File from the central array microphone located in the
-        center of the experiment room that picks up all audio in the room
-        during the experiment.
-        \item \verb|Filenames of the Face Images| -\\
-        The filenames of all Face Images created during the Minecraft portion
-        of the Experiment for participants on Lion, Tiger, and Leopard.
-        \item \verb|Filenames of the Screen Images| -\\
-        The filenames of all Face Images created during the Minecraft portion
-        of the Experiment for participants on Lion, Tiger, and Leopard.
-        \item \verb|Pupil Data| -\\
-        Pupil Data files recorded from the "Pupil Labs - Pupil Capture"
-        software programs running on the participant's iMacs, Lion, Tiger, and
-        Leopard during the Minecraft portion of the Experiment.
+        \item \verb|fNIRS LSL Streams| -\\fNIRS LSL Streams being transmitted from the "NIRx - Aurora" software programs running on the "fNIRS Server Computer" during the Minecraft portion of the Experiment for participants on Lion, Tiger, and Leopard.
+        \item \verb|EEG LSL Streams| -\\EEG LSL Streams being transmitted from the "Brain Vision - LSL-actiChamp" software programs running on the "EEG Server Computer" during the Minecraft portion of the Experiment for participants on Lion, Tiger, and Leopard.
+        \item \verb|Minecraft Messages| -\\A series of JSON strings recording the messages sent to and from participants during the three Minecraft missions, Training, Saturn A, and Saturn B.
+        \item \verb|Individual Audio| -\\Audio Signals captured during the Minecraft portion of the Experiment from each participant's microphone, Lion, Tiger, and Leopard.
+        \item \verb|Central Audio| -\\This is Audio File from the central array microphone located in the center of the experiment room that picks up all audio in the room during the experiment.
+        \item \verb|Filenames of the Face Images| -\\The Filenames of all Face Images created during the Minecraft portion of the Experiment for participants on Lion, Tiger, and Leopard.
+        \item \verb|Filenames of the Screen Images| -\\The Filenames of all Face Images created during the Minecraft portion of the Experiment for participants on Lion, Tiger, and Leopard.
+        \item \verb|Pupil Data| -\\Pupil Data files recorded from the "Pupil Labs - Pupil Capture" software programs running on the participant's iMacs, Lion, Tiger, and Leopard during the Minecraft portion of the Experiment.
     \end{itemize}
 
 \end{addmargin}
+
+\item\textbf{minecraft/ ...}  % Start of Experiment Directory "minecraft/"
+\begin{addmargin}[0em]{0em} % Start of File "MinecraftData_Trial-<trial_num>_ID-<fancy_string>.metadata"
+    \phantomsection\label{MinecraftData_Trial-<trial_num>_ID-<fancy_string>.metadata}
+    \textbf{MinecraftData\_Trial-<trial\_num>\_ID-<fancy\_string>.metadata}\\(Minecraft Metadata format)\\
+    This file stores the Minecraft metadata for each experiment trial (mission).\\
+    \textit{<trial\_num>} is the trial number assigned to each mission.\\
+    \verb|      |For "Saturn A" and "B" missions, its format is typically "T\#\#\#\#\#".\\
+    \verb|      |For "Hands on Training" mission, it will be "Training".\\
+    \textit{<fancy\_string>} is the unique ID for the trial mission.\\
+    \verb|      |Example: "126bc586-8838-4691-8745-7d5737bb1bec".\\
+    Example of the data and structure stored in this file:
+    \begin{verbatim}
+    {
+        "@timestamp": "2023-05-03T19:06:19.351Z",
+        "@version": "1", "host": "f08722420ace",
+        "header":
+            {
+                "version": "0.6",
+                "message_type": "agent",
+                "timestamp": "2023-05-03T19:06:19.350127Z"
+            },
+        "msg":
+            {
+                "experiment_id": "acc43931-4f24-494f-b570-e3c52d9481b5",
+                "timestamp": "2023-05-03T19:06:19.350127Z",
+                "version": "0.1", "source": "AC_CMUFMS_TA2_Cognitive",
+                "trial_id": "126bc586-8838-4691-8745-7d5737bb1bec",
+                "sub_type": "rollcall:response"
+            },
+        "data":
+            {
+                "version": "0.0.3",
+                "status": "up",
+                "uptime": 6233.19814,
+                "rollcall_id": "3e2027ea-5a52-4d7a-94df-81fddb03c43d"
+            },
+        "topic": "agent/control/rollcall/response"
+    }
+    \end{verbatim}
+    % Filenames of the Face and Screen Images, and Pupil Data.\\
+    % \textit{* Due to "Lion's" EEG Amplifier being in shop for repair, the EEG Data for "Lion" is missing in this}\\
+    % \verb| |\textit{file for the following experiments: }\verb|exp_2023_04_17_13|\textit{, }\verb| exp_2023_04_18_14|\textit{, }\verb| exp_2023_04_21_10|\\
+    % \verb| exp_2023_04_24_13|\textit{, and }\verb| exp_2023_04_27_14|\textit{.}\\\\
+    % Data files and streams contained in the \verb|block_1.xdf|:
+    % \begin{itemize}
+    %     \item \verb|fNIRS LSL Streams| -\\fNIRS LSL Streams being transmitted from the "NIRx - Aurora" software programs running on the "fNIRS Server Computer" during the Baseline Tasks portion of the Experiment for participants on Lion, Tiger, and Leopard.
+    %     \item \verb|EEG LSL Streams| -\\EEG LSL Streams being transmitted from the "Brain Vision - LSL-actiChamp" software programs running on the "EEG Server Computer" during the Baseline Tasks portion of the Experiment for participants on Lion, Tiger, and Leopard.
+    %     \item \verb|Baseline Data for all Tasks| -\\All records that are outputted to the Baseline Tasks CSV files are also recorded in this XDF file for all Baseline Tasks.
+    %     \item \verb|Filenames of the Face Images| -\\The Filenames of all Face Images created during the Baseline Tasks portion of the Experiment for participants on Lion, Tiger, and Leopard.
+    %     \item \verb|Filenames of the Screen Images| -\\The Filenames of all Face Images created during the Baseline Tasks portion of the Experiment for participants on Lion, Tiger, and Leopard.
+    %     \item \verb|Pupil Data| -\\Pupil Data files recorded from the "Pupil Labs - Pupil Capture" software programs running on the participant's iMacs, Lion, Tiger, and Leopard during the Baseline Tasks portion of the Experiment.
+    % \end{itemize}
+\end{addmargin} % End of File "MinecraftData_Trial-<trial_num>_ID-<fancy_string>.metadata"
+% End of Sub Directory "minecraft/"
+
+\textbf{\\\\\\}
+\item\textbf{<cat>/ ...} % Start of Experiment Directory "<cat>/"
+
+\begin{addmargin}[0em]{0em} % Start of Sub Directory "eeg_fnirs_pupil/" 
+    \textbf{eeg\_fnirs\_pupil/ ... \textit{(Only for experiments before April 2023)}}
+
+    \begin{addmargin}[1em]{0em} % Start of File "<cat>_eeg_fnirs_pupil.xdf"
+        \phantomsection\label{<cat>_eeg_fnirs_pupil.xdf}
+        \textbf{<cat>\_eeg\_fnirs\_pupil.xdf}\\
+        (Extensible Data Format XDF, binary file format)\\
+        The \verb|<cat>_eeg_fnirs_pupil.xdf| contains <cat> data files and data streams for the Experiment.
+        You must use a XDF viewer program to view or extract the data contained in this file.
+        Some common software packages used to view or extract data from this XDF file are: MNE-Python, Matplotlib, and Qtgraph.
+        A summary of data recorded in this XDF file is: fNIRS LSL Streams, EEG LSL Streams, and Pupil Data.\\\\
+        Data files and streams contained in the \verb|<cat>_eeg_fnirs_pupil.xdf|:
+        \begin{itemize}
+            \item \verb|fNIRS LSL Streams| -\\fNIRS LSL Streams being transmitted from the "NIRx - Aurora" software programs running on the "fNIRS Server Computer" during the Experiment for participants on Lion, Tiger, and Leopard.
+            \item \verb|EEG LSL Streams| -\\EEG LSL Streams being transmitted from the "Brain Vision - LSL-actiChamp" software programs running on the "EEG Server Computer" during the Experiment for participants on Lion, Tiger, and Leopard.
+            \item \verb|Pupil Data| -\\Pupil Data files recorded from the "Pupil Labs - Pupil Capture" software programs running on the participant's iMacs, Lion, Tiger, and Leopard during the Experiment.
+        \end{itemize}
+    \end{addmargin} % End of File "<cat>_eeg_fnirs_pupil.xdf"
+
+\end{addmargin} % End of Sub Directory "eeg_fnirs_pupil/"
+
+\textbf{\\\\\\}
+\begin{addmargin}[0em]{0em} % Start of Sub Directory "audio/" 
+    \phantomsection\label{Trial-<trial_id>_Team-<team_num>_Member-<player_num>.wav}
+    \textbf{audio/ ... }\\
+    \textit{(Only for sessions on or after 2022-10-07 and prior to 2023-04-17, 3 to 4 .wav files.)}\\ 
+    \begin{addmargin}[1em]{0em} % Start of File "Trial-<trial_id>_Team-<team_num>_Member-<player_num>.wav"
+        \textbf{Trial-<trial\_id>\_Team-<team\_num>\_Member-<player\_num>.wav}\\
+        (WAV - Waveform Audio File Format, RIFF "little-endian" data, mono 48000 Hz)\\
+        This file is the audio recording from the participant's microphone during the Minecraft Trials (Missions).
+        Example of file name:\\
+        \verb|Trial-0720f53b-df85-42a8-ba44-0508094653b4_Team-4_Member-Player877.wav|
+    \end{addmargin} % End of File "Trial-<trial_id>_Team-<team_num>_Member-<player_num>.wav"
+\end{addmargin} % End of Sub Directory "audio/"
+
+\textbf{\\\\\\}
+\begin{addmargin}[0em]{0em} % Start of Sub Directory "audio/block_2/" 
+    \phantomsection\label{Trial-<trial_id>_Team-<team_num>_Member-<participant_id>.wav}
+    \textbf{audio/block\_2/ ... }\\
+    \textit{(Only for sessions on or after 2023-04-17, 3 to 4 .wav files.)}\\ 
+    \begin{addmargin}[1em]{0em} % Start of File "Trial-<trial_id>_Team-<team_num>_Member-<participant_id>.wav"
+        \textbf{Trial-<trial\_id>\_Team-<team\_num>\_Member-<participant\_id>.wav}\\
+        (WAV - Waveform Audio File Format, RIFF "little-endian" data, mono 48000 Hz)\\
+        This file is the audio recording from the participant's microphone during the Minecraft Trials (Missions).
+        Example of file name:\\
+        \verb|Trial-f4f65fe1-e105-4e67-8682-f9b3dc4eedb1_Team-34_Member-00131.wav|
+    \end{addmargin} % End of File "Trial-<trial_id>_Team-<team_num>_Member-<participant_id>.wav"
+\end{addmargin} % End of Sub Directory "audio/block_2"
+
+% *** On gauss, using the "file" or "identify -verbose", the face and screenshot images come up as "1280 x 720, 8-bit/color RGB, non-interlaced".
+% *** But, when I rsync any of these images from gauss to some other computer,
+% *** "file" or "identify -verbose" says they are "1920 x 1080, 8-bit/color RGB, non-interlaced" or "2560 x 1440, 8-bit/color RGB, non-interlaced".
+% *** I will need to research this. 
+\textbf{\\\\\\}
+\begin{addmargin}[0em]{0em} % Start of Sub Directory "face_images/" 
+    \phantomsection\label{face_images/<yyyy-mm-dd>T<hh_mm_ss.sssssssss>Z.png}
+    \textbf{face\_images/ ... \textit{(Only for experiments before April 2023)}}
+    \begin{addmargin}[1em]{0em} % Start of File "Face Image Files <yyyy-mm-ddThh_mm_ss.#########Z>.png"
+        % 2023-02-21T22_50_04.976190450Z.png
+        % \phantomsection\label{Face Image Files <yyyy-mm-dd>T<hh_mm_ss.sssssssss>Z.png}
+        \textbf{Face Image Files <yyyy-mm-dd>T<hh\_mm\_ss.sssssssss>Z.png}\\
+        (PNG - Portable Network Graphic, raster image file)\\
+        Participant Face Image files recorded from the built-in "web camera" on the Lion, Tiger, and Leopard iMacs.
+        The files are recorded at a frequency of 10Hz and have a resolution of 1280 x 720, 8-bit/color RGB, non-interlaced.
+        Typically, there will be over 50,000 files per <cat> for the experiment. 
+    \end{addmargin} % End of File "Face Image Files <yyyy-mm-ddThh_mm_ss.#########Z>.png"
+\end{addmargin} % End of Sub Directory "face_images/"
+
+
+\textbf{\\\\\\}
+\begin{addmargin}[0em]{0em} % Start of Sub Directory "screenshots/" 
+    \phantomsection\label{screenshots/<yyyy-mm-dd>T<hh_mm_ss.sssssssss>Z.png}
+    \textbf{screenshots/ ... \textit{(Only for experiments before April 2023)}}
+    \begin{addmargin}[1em]{0em} % Start of File "Screenshot Image Files <yyyy-mm-ddThh_mm_ss.#########Z>.png"
+        % 2023-02-21T22_50_04.976190450Z.png
+        % \phantomsection\label{Screenshot Image Files <yyyy-mm-dd>T<hh_mm_ss.sssssssss>Z.png}
+        \textbf{Screenshot Image Files <yyyy-mm-dd>T<hh\_mm\_ss.sssssssss>Z.png}\\
+        (PNG - Portable Network Graphic, raster image file)\\
+        Screenshot Image files recorded from the participant's iMac (Lion, Tiger, or Leopard).
+        The files are recorded at a frequency of 10Hz and have a resolution of 1280 x 720, 8-bit/color RGB, non-interlaced.
+        Typically, there will be over 50,000 files per <cat> for the experiment. 
+    \end{addmargin} % End of File "Screenshot Image Files <yyyy-mm-ddThh_mm_ss.#########Z>.png"
+\end{addmargin} % End of Sub Directory "screenshots/"
+
+
+\textbf{\\\\\\}
+\begin{addmargin}[0em]{0em} % Start of Sub Directory "face_images/block_1/" 
+    \textbf{face\_images/block\_1/ ... \textit{(Only for experiments starting April 2023)}}
+
+    \begin{addmargin}[1em]{0em} % Start of Files "Face Image Files, block_1, <seq ######>_<yyyy-mm-dd>_<hh_mm_ss.sss.AM/PM>~<ms from last image ###>.png"
+        % 017627_2023-04-28_18-44-18.089.PM~113.png
+        % \phantomsection\label{Face Image Files (block_1):<seq ######>_<yyyy-mm-dd>_<hh_mm_ss.sss.AM/PM>~<ms last image ###>.png}
+        \textbf{Face Image Files (block\_1):\\<seq \#\#\#\#\#\#>\_<yyyy-mm-dd>\_<hh\_mm\_ss.sss.AM/PM>~<ms last image \#\#\#>.png}\\
+        (PNG - Portable Network Graphic, raster image file)\\
+        Participant Face Image files (block\_1) recorded from the built-in "web camera" on the Lion, Tiger,
+        and Leopard iMacs during the Baseline Tasks portion of the Experiment.
+        The files are recorded at a frequency of 10Hz and have a resolution of 1280 x 720, 8-bit/color RGB, non-interlaced.
+        Typically, there will be over 15,000 files in this directory per <cat> for the experiment. 
+    \end{addmargin} % End of Files "Face Image Files, block_1, <seq ######>_<yyyy-mm-dd>_<hh_mm_ss.sss.AM/PM>~<ms from last image ###>.png"
+
+\end{addmargin} % End of Sub Directory "face_images/block_1/"
+
+
+\textbf{\\\\\\}
+\begin{addmargin}[0em]{0em} % Start of Sub Directory "face_images/block_2/" 
+    \textbf{face\_images/block\_2/ ... \textit{(Only for experiments starting April 2023)}}
+
+    \begin{addmargin}[1em]{0em} % Start of Files "Face Image Files, block_2, <seq ######>_<yyyy-mm-dd>_<hh_mm_ss.sss.AM/PM>~<ms from last image ###>.png"
+        % 017627_2023-04-28_18-44-18.089.PM~113.png
+        % \phantomsection\label{Face Image Files (block_2):<seq ######>_<yyyy-mm-dd>_<hh_mm_ss.sss.AM/PM>~<ms last image ###>.png}
+        \textbf{Face Image Files (block\_2):\\<seq \#\#\#\#\#\#>\_<yyyy-mm-dd>\_<hh\_mm\_ss.sss.AM/PM>~<ms last image \#\#\#>.png}\\
+        (PNG - Portable Network Graphic, raster image file)\\
+        Participant Face Image files (block\_2) recorded from the built-in "web camera" on the Lion, Tiger,
+        and Leopard iMacs during the Minecraft portion of the Experiment.
+        The files are recorded at a frequency of 10Hz and have a resolution of 1280 x 720, 8-bit/color RGB, non-interlaced.
+        Typically, there will be over 30,000 files in this directory per <cat> for the experiment. 
+    \end{addmargin} % End of Files "Face Image Files, block_2, <seq ######>_<yyyy-mm-dd>_<hh_mm_ss.sss.AM/PM>~<ms from last image ###>.png"
+
+\end{addmargin} % End of Sub Directory "face_images/block_2/"
+
+
+\textbf{\\\\\\}
+\begin{addmargin}[0em]{0em} % Start of Sub Directory "screenshots/block_1/" 
+    \textbf{screenshots/block\_1/ ... \textit{(Only for experiments starting April 2023)}}
+
+    \begin{addmargin}[1em]{0em} % Start of Files "Face Image Files, block_1, <seq ######>_<yyyy-mm-dd>_<hh_mm_ss.sss.AM/PM>~<ms from last image ###>.png"
+        % 017627_2023-04-28_18-44-18.089.PM~113.png
+        % \phantomsection\label{Screenshot Image Files (block_1):<seq ######>_<yyyy-mm-dd>_<hh_mm_ss.sss.AM/PM>~<ms last image ###>.png}
+        \textbf{Screenshot Image Files (block\_1):\\<seq \#\#\#\#\#\#>\_<yyyy-mm-dd>\_<hh\_mm\_ss.sss.AM/PM>~<ms last image \#\#\#>.png}\\
+        (PNG - Portable Network Graphic, raster image file)\\
+        Screenshot Image files (block\_1) recorded from the participant's iMac (Lion, Tiger, or Leopard)
+        during the Baseline Tasks portion of the Experiment.
+        The files are recorded at a frequency of 5Hz and have a resolution of 1280 x 720, 8-bit/color RGB, non-interlaced.
+        Typically, there will be over 8,000 files in this directory per <cat> for the experiment. 
+    \end{addmargin} % End of Files "Screenshot Image Files, block_1, <seq ######>_<yyyy-mm-dd>_<hh_mm_ss.sss.AM/PM>~<ms from last image ###>.png"
+
+\end{addmargin} % End of Sub Directory "screenshots/block_1/"
+
+
+\textbf{\\\\\\}
+\begin{addmargin}[0em]{0em} % Start of Sub Directory "screenshots/block_2/" 
+    \textbf{screenshots/block\_2/ ... \textit{(Only for experiments starting April 2023)}}
+
+    \begin{addmargin}[1em]{0em} % Start of Files "Face Image Files, block_2, <seq ######>_<yyyy-mm-dd>_<hh_mm_ss.sss.AM/PM>~<ms from last image ###>.png"
+        % 017627_2023-04-28_18-44-18.089.PM~113.png
+        % \phantomsection\label{Screenshot Image Files (block_2):<seq ######>_<yyyy-mm-dd>_<hh_mm_ss.sss.AM/PM>~<ms last image ###>.png}
+        \textbf{Screenshot Image Files (block\_2):\\<seq \#\#\#\#\#\#>\_<yyyy-mm-dd>\_<hh\_mm\_ss.sss.AM/PM>~<ms last image \#\#\#>.png}\\
+        (PNG - Portable Network Graphic, raster image file)\\
+        Screenshot Image files (block\_2) recorded from the participant's iMac (Lion, Tiger, or Leopard)
+        during the Minecraft Tasks portion of the Experiment.
+        The files are recorded at a frequency of 5Hz and have a resolution of 1280 x 720, 8-bit/color RGB, non-interlaced.
+        Typically, there will be over 14,000 files in this directory per <cat> for the experiment. 
+    \end{addmargin} % End of Files "Screenshot Image Files, block_2, <seq ######>_<yyyy-mm-dd>_<hh_mm_ss.sss.AM/PM>~<ms from last image ###>.png"
+
+\end{addmargin} % End of Sub Directory "screenshots/block_2/"
+
+
+\textbf{\\\\\\}
+\begin{addmargin}[0em]{0em} % Start of Sub Directory "presession/" 
+    \textbf{presession/ ... }
+
+    \begin{addmargin}[1em]{0em} % Start of Symbolic Link "participant_<participant_ID>.wav"
+        % participant_00053.wav
+        \phantomsection\label{participant_<participant_ID>.wav}
+        \textbf{participant\_<participant\_ID>.wav}\\
+        (Symbolic Link to a file in the "presession" directory,
+        WAV - Waveform Audio File Format, RIFF "little-endian" data, WAVE audio, mono 48000 Hz)\\
+        This is a Symbolic Link to file "participant\_<participant\_ID>.wav" in the presession's directory
+        that has the presession files for this <cat>'s participant.\\
+        The "participant\_<participant\_ID>.wav" was created in the participant's presession and is the audio recording
+        of the participant speaking the first task:\\
+        The first task is where the participant sees a map with two locations, start and end, marked.
+        The participant is given written instructions to explain to their "friend" how to get from start to end
+        with as much detail as possible. Once the participant understand the instructions, their voice for this task will be recoded.\\ 
+        Example of the Symbolic Link mapping:
+        \begin{verbatim}
+        participant_<participant_ID>.wav ->
+            <presession directory>/participant_<participant_ID>.wav
+            \end{verbatim}  
+        \end{addmargin} % End of Symbolic Link "participant_<participant_ID>.wav"
+
+    \textbf{\\\\}
+    \begin{addmargin}[1em]{0em} % Start of Symbolic Link "participant_<participant_ID>Task2.wav"
+        % participant_00053Task2.wav
+        \phantomsection\label{participant_<participant_ID>Task2.wav}
+        \textbf{participant\_<participant\_ID>Task2.wav}\\
+        (Symbolic Link to a file in the "presession" directory,
+        WAV - Waveform Audio File Format, RIFF "little-endian" data, WAVE audio, mono 48000 Hz)\\
+        This is a Symbolic Link to file "participant\_<participant\_ID>Task2.wav" in the presession's directory
+        that has the presession files for this <cat>'s participant.\\
+        The "participant\_<participant\_ID>Task2.wav" was created in the participant's presession and is the audio recording
+        of the participant speaking the second task:\\
+        The second task is where the participant is asked to read aloud a passage that contains words we would expect them
+        to use during the experiment. An example of the passage is "Minecraft is a multiplayer online game where players
+        take roles such as medic, engineer, and transporter...".\\ 
+        Example of the Symbolic Link mapping:
+        \begin{verbatim}
+        participant_<participant_ID>Task2.wav ->
+            <presession directory>/participant_<participant_ID>Task2.wav
+        \end{verbatim}  
+    \end{addmargin} % End of Symbolic Link "participant_<participant_ID>Task2.wav"
+\end{addmargin} % End of Sub Directory "presession/"
+
+
+\textbf{\\\\\\}
+\begin{addmargin}[0em]{0em} % Start of Sub Directory "pupil_recorder/ 000/ and 001/" 
+    \textbf{pupil\_recorder/ 000/ and 001/... }
+
+    \begin{addmargin}[1em]{0em} % Start of File "blinks.pldata"
+        \phantomsection\label{blinks.pldata}
+        \textbf{blinks.pldata}\\(proprietary binary file used by the Pupil Player.)\\
+        This file contains a sequence of independently msgpack-encoded messages for recorded Eye Blinks.
+        Pupil Core's Blink Detector leverages the fact that 2D pupil confidence drops rapidly in both eyes
+        during a blink as the pupil becomes obscured by the eyelid, followed by a rapid rise in confidence as the pupil becomes visible again.
+        The Blink Detector processes 2D pupil confidence values by convolving them with a filter.
+        The filter response – called 'activity' – spikes the sharper the confidence drop is and vice versa for confidence increases.
+        Blinks are subsequently detected based on onset and offset confidence thresholds and a filter length in seconds.
+        The "Pupil Lab - Pupil Player" application uses this file to play back Eye Blink data during playback.
+        More information about the data contained in this file can be found at:\\
+        \href{https://docs.pupil-labs.com/neon/basic-concepts/data-streams/#blinks}
+        {{Pupil Labs - Basic Concepts - Blinks}\\\nolinkurl{https://docs.pupil-labs.com/neon/basic-concepts/data-streams/\#blinks}}
+    \end{addmargin} % End of File "blinks.pldata"
+
+    \textbf{\\\\}
+    \begin{addmargin}[1em]{0em} % Start of File "blinks_timestamps.npy"
+        \phantomsection\label{blinks_timestamps.npy}
+        \textbf{blinks\_timestamps.npy}\\
+        (NPY binary format:\\
+        \textit{A simple format for saving}
+        \href{https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format}{\textit{numpy}}
+        \textit{arrays to disk with the full information about them.}\\
+        The .npy format is the standard binary file format in 
+        \href{https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format}{NumPy}
+        for persisting a single arbitrary
+        \href{https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format}{NumPy}
+        array on disk. The format stores all of the shape and dtype information necessary to
+        reconstruct the array correctly even on another machine with a different architecture.
+        The format is designed to be as simple as possible while achieving its limited goals.
+        You can use numpy.load() to access the timestamps in Python.)\\
+        Eye Blink timestamps for the Pupil Capture glasses and system.
+        Blinks are subsequently detected based on onset and offset confidence thresholds and a filter length in seconds.
+        The "Pupil Lab - Pupil Player" application uses this file to play back Eye Blink data during playback.
+    \end{addmargin} % End of File "blinks_timestamps.npy"
+
+    \textbf{\\\\}
+    \begin{addmargin}[1em]{0em} % Start of File "eye0.intrinsics"
+        \phantomsection\label{eye0.intrinsics}
+        \textbf{eye0.intrinsics}\\(proprietary binary file used by the Pupil Player.)\\
+        This file stores camera intrinsics persistencies for the right eye.\\
+        More information about the data contained in this file can be found at:\\
+        \href{https://docs.pupil-labs.com/core/software/pupil-capture/#camera-intrinsics-persistency}
+        {{Pupil Labs - User Guide - Camera Intrinsics Persistency}\\\nolinkurl{https://docs.pupil-labs.com/core/software/pupil-capture/}}
+    \end{addmargin} % End of File "eye0.intrinsics"
+
+    \textbf{\\\\}
+    \begin{addmargin}[1em]{0em} % Start of File "eye0.mp4"
+        \phantomsection\label{eye0.mp4}
+        \textbf{eye0.mp4}\\
+        (MP4 file: \textit{formally ISO/IEC 14496-14:2003}\\
+        is a digital multimedia container format most commonly used to store video and audio.)\\
+        This file contains video of the participant's right eye and pupil recorded from the
+        pupil capture sensor mounted on the right side of the "Pupil Capture Glasses".
+        The sensors, right and left eyes, record IR video at 200 Hz with a resolution of 192x192px.
+        The two sensors are synced in hardware, such that they record images at the exact same
+        time. The resulting images a concatenated in a single video stream of 384x192px resolution.    
+    \end{addmargin} % End of File "eye0.mp4"
+
+    \textbf{\\\\}
+    \begin{addmargin}[1em]{0em} % Start of File "eye0_timestamps.npy"
+        \phantomsection\label{eye0_timestamps.npy}
+        \textbf{eye0\_timestamps.npy}\\
+        (NPY binary format:\\
+        \textit{A simple format for saving}
+        \href{https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format}{\textit{numpy}}
+        \textit{arrays to disk with the full information about them.}\\
+        The .npy format is the standard binary file format in 
+        \href{https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format}{NumPy}
+        for persisting a single arbitrary
+        \href{https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format}{NumPy}
+        array on disk. The format stores all of the shape and dtype information necessary to
+        reconstruct the array correctly even on another machine with a different architecture.
+        The format is designed to be as simple as possible while achieving its limited goals.
+        You can use numpy.load() to access the timestamps in Python.)\\
+        This file contains timestamps that relate to the video captured in "eye0.mp4" (right eye). 
+    \end{addmargin} % End of File "eye0_timestamps.npy"
+
+    \textbf{\\\\}
+    \begin{addmargin}[1em]{0em} % Start of File "eye1.intrinsics"
+        \phantomsection\label{eye1.intrinsics}
+        \textbf{eye1.intrinsics}\\(proprietary binary file used by the Pupil Player.)\\
+        This file stores camera intrinsics persistencies for the left eye.\\
+        More information about the data contained in this file can be found at:\\
+        \href{https://docs.pupil-labs.com/core/software/pupil-capture/#camera-intrinsics-persistency}
+        {{Pupil Labs - User Guide - Camera Intrinsics Persistency}\\\nolinkurl{https://docs.pupil-labs.com/core/software/pupil-capture/}}
+    \end{addmargin} % End of File "eye1.intrinsics"
+
+    \textbf{\\\\}
+    \begin{addmargin}[1em]{0em} % Start of File "eye1.mp4"
+        \phantomsection\label{eye1.mp4}
+        \textbf{eye1.mp4}\\
+        (MP4 file \textit{formally ISO/IEC 14496-14:2003}\\
+        is a digital multimedia container format most commonly used to store video and audio.)\\
+        This file contains video of the participant's left eye and pupil recorded from the
+        pupil capture sensor mounted on the left side of the "Pupil Capture Glasses".
+        The sensors, right and left eyes, record IR video at 200 Hz with a resolution of 192x192px.
+        The two sensors are synced in hardware, such that they record images at the exact same
+        time. The resulting images a concatenated in a single video stream of 384x192px resolution.    
+    \end{addmargin} % End of File "eye1.mp4"
+
+    \textbf{\\\\}
+    \begin{addmargin}[1em]{0em} % Start of File "eye1_timestamps.npy"
+        \phantomsection\label{eye1_timestamps.npy}
+        \textbf{eye1\_timestamps.npy}\\
+        (NPY binary format:\\
+        \textit{A simple format for saving}
+        \href{https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format}{\textit{numpy}}
+        \textit{arrays to disk with the full information about them.}\\
+        The .npy format is the standard binary file format in 
+        \href{https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format}{NumPy}
+        for persisting a single arbitrary
+        \href{https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format}{NumPy}
+        array on disk. The format stores all of the shape and dtype information necessary to
+        reconstruct the array correctly even on another machine with a different architecture.
+        The format is designed to be as simple as possible while achieving its limited goals.
+        You can use numpy.load() to access the timestamps in Python.)\\
+        This file contains timestamps that relate to the video captured in "eye1.mp4" (left eye). 
+    \end{addmargin} % End of File "eye1_timestamps.npy"
+
+    \textbf{\\\\}
+    \begin{addmargin}[1em]{0em} % Start of File "fixations.pldata"
+        \phantomsection\label{fixations.pldata}
+        \textbf{fixations.pldata}\\(proprietary binary file used by the Pupil Player.)\\
+        This file stores fixation data to be used by the Pupil Player.
+        The two primary types of eye movements exhibited by the visual system are fixations and saccades.
+        During fixations, the eyes are directed at a specific point in the environment.
+        A saccade is a very quick movement where the eyes jump from one fixation to the next.
+        Properties like the fixation duration are of significant importance for studying gaze behaviour.\\
+        More information about the data contained in this file can be found at:\\
+        \href{https://docs.pupil-labs.com/neon/basic-concepts/data-streams/#fixations}
+        {{Pupil Labs - Basic Concepts - Fixations}\\\nolinkurl{https://docs.pupil-labs.com/neon/basic-concepts/data-streams/\#fixations}}
+    \end{addmargin} % End of File "fixations.pldata"
+
+    \textbf{\\\\}
+    \begin{addmargin}[1em]{0em} % Start of File "fixations_timestamps.npy"
+        \phantomsection\label{fixations_timestamps.npy}
+        \textbf{fixations\_timestamps.npy}\\
+        (NPY binary format:\\
+        \textit{A simple format for saving}
+        \href{https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format}{\textit{numpy}}
+        \textit{arrays to disk with the full information about them.}\\
+        The .npy format is the standard binary file format in 
+        \href{https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format}{NumPy}
+        for persisting a single arbitrary
+        \href{https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format}{NumPy}
+        array on disk. The format stores all of the shape and dtype information necessary to
+        reconstruct the array correctly even on another machine with a different architecture.
+        The format is designed to be as simple as possible while achieving its limited goals.
+        You can use numpy.load() to access the timestamps in Python.)\\
+        This file contains timestamps that relate to the fixations captured in "fixations.pldata". 
+    \end{addmargin} % End of File "fixations_timestamps.npy"
+
+    \textbf{\\\\}
+    \begin{addmargin}[1em]{0em} % Start of File "gaze.pldata"
+        \phantomsection\label{gaze.pldata}
+        \textbf{gaze.pldata}\\(proprietary binary file used by the Pupil Player.)\\
+        This file stores gaze data to be used by the Pupil Player.
+        The Neon Companion app can provide gaze data in real-time.
+        When using a OnePlus 8 Companion device, the available framerate is +120 Hz
+        (the achieved framerate varies from ~200Hz in the first minute of a recording to ~120Hz for longer recordings).
+        More information about the data contained in this file can be found at:\\
+        \href{https://docs.pupil-labs.com/neon/basic-concepts/data-streams/#gaze}
+        {{Pupil Labs - Basic Concepts - Gaze}\\\nolinkurl{https://docs.pupil-labs.com/neon/basic-concepts/data-streams/\#gaze}}
+    \end{addmargin} % End of File "gaze.pldata"
+
+    \textbf{\\\\}
+    \begin{addmargin}[1em]{0em} % Start of File "gaze_timestamps.npy"
+        \phantomsection\label{gaze_timestamps.npy}
+        \textbf{gaze\_timestamps.npy}\\
+        (NPY binary format:\\
+        \textit{A simple format for saving}
+        \href{https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format}{\textit{numpy}}
+        \textit{arrays to disk with the full information about them.}\\
+        The .npy format is the standard binary file format in 
+        \href{https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format}{NumPy}
+        for persisting a single arbitrary
+        \href{https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format}{NumPy}
+        array on disk. The format stores all of the shape and dtype information necessary to
+        reconstruct the array correctly even on another machine with a different architecture.
+        The format is designed to be as simple as possible while achieving its limited goals.
+        You can use numpy.load() to access the timestamps in Python.)\\
+        This file contains timestamps that relate to the gaze data captured in "gaze.pldata". 
+    \end{addmargin} % End of File "gaze_timestamps.npy"
+
+    \textbf{\\\\}
+    \begin{addmargin}[1em]{0em} % Start of File "info.player.json"
+        \phantomsection\label{info.player.json}
+        \textbf{info.player.json}\\(JSON data format)\\
+        Pupil Capture application's metadata about this participant.\\
+        Information contained in this file:
+        \begin{addmargin}[1em]{0em}
+            \textbf{\textit{duration\_s}} (capture duration in seconds),\\
+            \textbf{\textit{meta\_version}} (metadata version),\\
+            \textbf{\textit{min\_player\_version}} (min player version),\\
+            \textbf{\textit{recording\_name}} (recording name),\\
+            \textbf{\textit{recording\_software\_name}} ("recording software name),\\
+            \textbf{\textit{recording\_software\_version}} (recording software version),\\
+            \textbf{\textit{recording\_uuid}} (recording UUID),\\
+            \textbf{\textit{start\_time\_synced\_s}} (synced start time in second),\\
+            \textbf{\textit{start\_time\_system\_s}} (system start time in second),\\
+            \textbf{\textit{system\_info}} (system info metadata).
+        \end{addmargin}
+        Pupil Capture Application Participant Information JSON File:
+        \begin{verbatim}
+            {
+                "duration_s": [####.########, (Example: 2107.33979455)],
+                "meta_version": [string, (Example:"2.3")],
+                "min_player_version": [string, (Example: "2.0")],
+                "recording_name": [string, (Example: "2023_05_01")],
+                "recording_software_name": [string, (Example: "Pupil Capture")],
+                "recording_software_version": [string, (Example: "3.5.7")],
+                "recording_uuid":
+                    [string, (Example: "7078d724-c0f9-478f-bdb8-d81495bbc9f7")],
+                "start_time_synced_s":
+                    [####.############, (Example: 5604.700757881999)],
+                "start_time_system_s":
+                    [####.############, (Example: 1682975254.133834)],
+                "system_info":
+                    [string, (Example: "User: LabWorker, Platform: Darwin,
+                     Machine: tiger, Release: 20.6.0,
+                     Version: Darwin Kernel Version 20.6.0:
+                     Wed Jan 12 22:22:42 PST 2022;
+                     root:xnu-7195.141.19~2/RELEASE_X86_64")]
+            }
+        \end{verbatim}
+    \end{addmargin} % End of File "info.player.json"
+
+    \textbf{\\\\}
+    \begin{addmargin}[1em]{0em} % Start of File "notify.pldata"
+        \phantomsection\label{notify.pldata}
+        \textbf{notify.pldata}\\(proprietary binary file used by the Pupil Player.)\\
+        This file stores "Notification Messages" to be used by the Pupil Player.
+        Pupil uses special messages called notifications to coordinate all activities.
+        Notifications are key-value mappings with the required field subject.
+        Subjects are grouped by categories \textit{category.command\_or\_statement}.
+        Example: \textit{recording.should\_stop}\\
+        More information about the data contained in this file can be found at:\\
+        \href{https://docs.pupil-labs.com/developer/core/network-api/#notification-message}
+        {{Pupil Labs - IPC Backbone Message Format}\\\nolinkurl{https://docs.pupil-labs.com/developer/core/network-api/\#notification-message}}
+    \end{addmargin} % End of File "notify.pldata"
+
+    \textbf{\\\\}
+    \begin{addmargin}[1em]{0em} % Start of File "notify_timestamps.npy"
+        \phantomsection\label{notify_timestamps.npy}
+        \textbf{notify\_timestamps.npy}\\
+        (NPY binary format:\\
+        \textit{A simple format for saving}
+        \href{https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format}{\textit{numpy}}
+        \textit{arrays to disk with the full information about them.}\\
+        The .npy format is the standard binary file format in 
+        \href{https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format}{NumPy}
+        for persisting a single arbitrary
+        \href{https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format}{NumPy}
+        array on disk. The format stores all of the shape and dtype information necessary to
+        reconstruct the array correctly even on another machine with a different architecture.
+        The format is designed to be as simple as possible while achieving its limited goals.
+        You can use numpy.load() to access the timestamps in Python.)\\
+        This file contains timestamps that relate to the "Notification Messages" data captured in "notify.pldata". 
+    \end{addmargin} % End of File "notify_timestamps.npy"
+
+    \textbf{\\\\}
+    \begin{addmargin}[1em]{0em} % Start of File "pupil.pldata"
+        \phantomsection\label{pupil.pldata}
+        \textbf{pupil.pldata}\\(proprietary binary file used by the Pupil Player.)\\
+        This file stores "Pupil Capture" data to be used by the Pupil Player.
+        More information about the data contained in this file can be found at:\\
+        \href{https://docs.pupil-labs.com/developer/core/recording-format/#recording-format}
+        {{Pupil Labs - Developer - Core - Recording Format - pldata Files}\\\nolinkurl{https://docs.pupil-labs.com/developer/core/recording-format/\#recording-format}}
+    \end{addmargin} % End of File "pupil.pldata"
+
+    \textbf{\\\\}
+    \begin{addmargin}[1em]{0em} % Start of File "pupil_timestamps.npy"
+        \phantomsection\label{pupil_timestamps.npy}
+        \textbf{pupil\_timestamps.npy}\\
+        (NPY binary format:\\
+        \textit{A simple format for saving}
+        \href{https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format}{\textit{numpy}}
+        \textit{arrays to disk with the full information about them.}\\
+        The .npy format is the standard binary file format in 
+        \href{https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format}{NumPy}
+        for persisting a single arbitrary
+        \href{https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format}{NumPy}
+        array on disk. The format stores all of the shape and dtype information necessary to
+        reconstruct the array correctly even on another machine with a different architecture.
+        The format is designed to be as simple as possible while achieving its limited goals.
+        You can use numpy.load() to access the timestamps in Python.)\\
+        This file contains timestamps that relate to the "Pupil Capture" data captured in "pupil.pldata". 
+    \end{addmargin} % End of File "pupil_timestamps.npy"
+
+    \textbf{\\\\}
+    \begin{addmargin}[1em]{0em} % Start of File "user_info.csv"
+        \phantomsection\label{user_info.csv}
+        \textbf{user\_info.csv}\\(semicolon delimited text file, 1st row is a header)\\
+        The Pupil Capture optionally stores information about the User in this file.
+        In the ToMCAT Experiment, this option is not enabled. Therefor, the file only contains the header.
+        user\_info.csv Fields:
+        \begin{itemize}
+            \item \verb|key - [text]|
+            \item \verb|value - [text]|
+            \item \verb|name - [text]|
+            \item \verb|additional_field - [text]|
+            \item \verb|change_me - [text]|
+        \end{itemize}
+    \end{addmargin} % End of File "user_info.csv"
+
+    \textbf{\\\\}
+    \begin{addmargin}[1em]{0em} % Start of File "world.intrinsics"
+        \phantomsection\label{world.intrinsics}
+        \textbf{world.intrinsics}\\(proprietary binary file used by the Pupil Player.)\\
+        This file stores camera intrinsics persistencies for the World camera.\\
+        More information about the data contained in this file can be found at:\\
+        \href{https://docs.pupil-labs.com/core/terminology/#world}
+        {{Pupil Labs - Core - Terminology - World}\\\nolinkurl{https://docs.pupil-labs.com/core/terminology/\#world}}\\
+        And at:\\
+        \href{https://docs.pupil-labs.com/core/terminology/#camera-intrinsics}
+        {{Pupil Labs - Core - Terminology - Camera Intrinsics}\\\nolinkurl{https://docs.pupil-labs.com/core/terminology/\#camera-intrinsics}}
+    \end{addmargin} % End of File "world.intrinsics"
+
+    \textbf{\\\\}
+    \begin{addmargin}[1em]{0em} % Start of File "world.mp4"
+        \phantomsection\label{world.mp4}
+        \textbf{world.mp4}\\
+        (MP4 file \textit{formally ISO/IEC 14496-14:2003}\\
+        is a digital multimedia container format most commonly used to store video and audio.)\\
+        This file contains video of the participant's physical scene field of view.
+        The World Camera is mounted on top center of the "Pupil Capture Glasses".
+        More information about the video contained in this file can be found at:\\
+        \href{https://docs.pupil-labs.com/core/terminology/#world}
+        {{Pupil Labs - Core - Terminology - World}\\\nolinkurl{https://docs.pupil-labs.com/core/terminology/\#world}}\\
+    \end{addmargin} % End of File "world.mp4"
+
+    \textbf{\\\\}
+    \begin{addmargin}[1em]{0em} % Start of File "world_timestamps.npy"
+        \phantomsection\label{world_timestamps.npy}
+        \textbf{world\_timestamps.npy}\\
+        (NPY binary format:\\
+        \textit{A simple format for saving}
+        \href{https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format}{\textit{numpy}}
+        \textit{arrays to disk with the full information about them.}\\
+        The .npy format is the standard binary file format in 
+        \href{https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format}{NumPy}
+        for persisting a single arbitrary
+        \href{https://numpy.org/doc/stable/reference/generated/numpy.lib.format.html#module-numpy.lib.format}{NumPy}
+        array on disk. The format stores all of the shape and dtype information necessary to
+        reconstruct the array correctly even on another machine with a different architecture.
+        The format is designed to be as simple as possible while achieving its limited goals.
+        You can use numpy.load() to access the timestamps in Python.)\\
+        This file contains timestamps that relate to the "World Video" captured in "world.mp4". 
+    \end{addmargin} % End of File "world_timestamps.npy"
+                        
+\end{addmargin} % End of Sub Directory "pupil_recorder/ 000/ and 001/"
+
+
+
+\textbf{\\\\\\}
+\begin{addmargin}[0em]{0em} % Start of Sub Directory "redcap_data/" 
+    \textbf{redcap\_data/ ... }
+
+    \begin{addmargin}[1em]{0em} % Start of File "<cat>_self_report_data.csv"
+        \phantomsection\label{<cat>_self_report_data.csv}
+        \textbf{<cat>\_self\_report\_data.csv}\\(semicolon delimited text file, 1st row is a header)\\
+        This file has information and answers for the following categories: "Subject Information Sheet",
+        "Informed Consent Form - Multiple Subject-Two Sessions", "COVID-19 Screening", "Demographics Survey",
+        "Big Five Inventory - 2 Short Form (BFI-2-SF)", "Attachment Style Questionnaire",
+        "Pre-Session Notes For Research Team ONLY", "Session 1 Notes For Research Team ONLY",
+        and "Informed Consent Form - Multiple Subject-Four Sessions".\\\\ 
+        <cat>\_self\_report\_data.csv Fields:
+        \begin{itemize}
+            \item \verb|record_id - [text]|\\Record ID created by REDCap system.
+            \item \verb|redcap_event_name - [text]("Pre-Session")|\\Event when this information was collected.
+            \item \verb|redcap_survey_identifier - [text]|(can be blank)\\Survey Identifier.
+            \item \verb|subject_information_sheet_timestamp - [text](can be blank)|\\Sheet Timestamp.
+            \item \verb|subject_id - [#####](Required)|\\Subject ID assigned to participant.
+            \item \verb|head_size - [text]|\\Participant's Head Size (cm).
+            \item \verb|presession_date - [text](yyyy-mm-dd hh:mm:ss)|\\Pre-Session Date.
+            \item \verb|presession_exp_initials - [text]|\\Pre-Session Experimenter(s) (Initials only).
+            \item \verb|session1_date - [text](yyyy-mm-dd hh:mm:ss)|\\Session 1 Date.
+            \item \verb|team_id - [text]|\\Team ID that has been assigned to this participant.
+            \item \verb|session1_exp_initials - [text]|\\Session 1 Experimenter(s) (Initials only).
+            \item \verb|session2_date - [text](yyyy-mm-dd hh:mm:ss)|\\Session 2 Date.
+            \item \verb|session2_exp_initials - [text]|\\Session 2 Experimenter(s) (Initials only).
+            \item \verb|subject_information_sheet_complete - [0=Incomplete, 1=Unverified, 2=Complete]|\\Subject Information Sheet Complete.
+            \item \verb|informed_consent_form_timestamp - [text](yyyy-mm-dd hh:mm:ss)|\\Informed Consent Form Timestamp.
+            \item \verb|consent_date - [text](yyyy-mm-dd)|\\Consent Form date.
+            \item \verb|informed_consent_form_complete - [0 = Incomplete; 1 = Unverified; 2 = Complete]|\\Informed Consent Form Complete.
+            \item \verb|informed_consent_form_multiple_subjecttwo_sessions_timestamp -|\\\verb|[text](yyyy-mm-dd hh:mm:ss)|\\Informed Consent Form Multiple Subject Two Sessions Timestamp.
+            \item \verb|consent_date_2 - [text](yyyy-mm-dd)|\\Consent Form 2 date.
+            \item \verb|informed_consent_form_multiple_subjecttwo_sessions_complete -|\\\verb|[0 = Incomplete; 1 = Unverified; 2 = Complete]|\\Informed Consent Form Multiple Subject Two Sessions Complete.\\
+
+            \item \verb|covid19_screening_timestamp - [text](yyyy-mm-dd hh:mm:ss)|\\COVID-19 Screening Timestamp.
+            \item \verb|covid_symptoms___1 - [checkbox]|\\Fever or chills.
+            \item \verb|covid_symptoms___2 - [checkbox]|\\Cough.
+            \item \verb|covid_symptoms___3 - [checkbox]|\\Shortness of breath or difficulty breathing.
+            \item \verb|covid_symptoms___4 - [checkbox]|\\Fatigue.
+            \item \verb|covid_symptoms___5 - [checkbox]|\\Muscle or body aches.
+            \item \verb|covid_symptoms___6 - [checkbox]|\\Headache.
+            \item \verb|covid_symptoms___7 - [checkbox]|\\New loss of taste or smell.
+            \item \verb|covid_symptoms___8 - [checkbox]|\\Sore throat.
+            \item \verb|covid_symptoms___9 - [checkbox]|\\Congestion or runny nose.
+            \item \verb|covid_symptoms___10 - [checkbox]|\\Nausea or vomiting.
+            \item \verb|covid_symptoms___11 - [checkbox]|\\Diarrhea.
+            \item \verb|covid_symptoms___12 - [checkbox]|\\No Symptoms now or in the past 72 hours.
+            \item \verb|covid_symptoms___13 - [checkbox]|\\Not applicable, I recovered from COVID-19 in the last 90 days.
+            \item \verb|covid_symptoms___14 - [checkbox]|\\Yes, I have symptoms or was diagnosed with COVID-19 in the past 10 days.
+            \item \verb|covid_close_contact - [1 = No; 2 = Yes I was in contact]|\\During the past 14 days, have you been in close contact (within 6 feet for 15 minutes or more) with a confirmed case or someone with symptoms of COVID-19?.
+            \item \verb|covid19_screening_complete - [0 = Incomplete; 1 = Unverified; 2=Complete]|\\COVID-19 Screening Complete.\\
+
+            \item \verb|demographics_survey_timestamp - [text](yyyy-mm-dd hh:mm:ss)|\\Demographics Survey Timestamp.
+            \item \verb|age - (Required)[text]|\\Your age in years.
+            \item \verb|sex - (Required)[1 = Male; 2 = Female; 3 = Other; 4 = Prefer not to say]|\\What is your sex?
+            \item \verb|hisp - (Required)[0 = No; 1 = Yes]|\\Are you of Cuban, Mexican, Puerto Rican, South or Central American, or other Spanish culture of origin (Hispanic)?.
+            \item \verb|race - (Required)|\\\verb|[0 = European American; 1 = African American; 2 = Asian American;|\\\verb| 3 = Native Hawaiian or Pacific Islander; 4 = Non-Hispanic White; 5 = Other]|\\Which best describes your racial background?.
+            \item \verb|income - (Required)|\\\verb|[0 = $0 - $25,000; 1 = $25,000 - $ 50,000; 2 = $50,000 - $75,000;|\\\verb| 3 = $75,000 - $ 100,000; 4 = $100,000 - $150,000; 5 = Greater than $150,000]|\\What is your typical yearly household income before taxes?
+            \item \verb|edu - (Required)|\\\verb|[0 = Less than high-school; 1 = High-school; 2 = Professional program;|\\\verb| 3 = Some college; 4 = Undergraduate degree; 5 = Graduate degree]|\\What is the highest level of education you have completed?
+            \item \verb|exp - (Required)|\\\verb|[0 = Never played them; 1 = Have played them occasionally;|\\\verb| 2 = Have played them fairly often; 3 = Have played them regularly for years]|\\How much experience do you have playing video games?
+            \item \verb|exp_mc - (Required)|\\\verb|[0 = Never played it; 1 = Have played it occasionally;|\\\verb| 2 = Have played it fairly often; 3 = Have played it regularly for years]|\\How much experience do you have playing Minecraft?
+            \item \verb|handedness - (Required)|\\\verb|[0 = Right-handed; 1 = Left-handed; 2 = Ambidextrous]|\\Which is your dominant hand?
+            \item \verb|trackpad_preference - (Required)|\\\verb|[0 = Trackpad; 1 = Mouse; 2 = Doesn't matter]|\\Do you prefer using a trackpad or mouse when working on the computer?
+            \item \verb|sph_label - ("SPEECH/HEARING & LANGUAGE")[text]|\\Label for the speech/hearing or language impairments.
+            \item \verb|shl_impairements - (Required)[0 = No; 1 = Yes]|\\Do you have any speech/hearing or language impairments?
+            \item \verb|shl_impairment_specify - [text]|\\Please specify the speech/hearing or language impairment?
+            \item \verb|shl_impairment_agediagnosis - [text]|\\When was the first time you got diagnosed with the speech/hearing or language impairment?
+            \item \verb|shl_impairment_therapy - [text]|\\Do you currently see a speech therapist or other healthcare professional for the impairment?
+            \item \verb|first_language - [text]|\\What would you say is your first language(s)?
+            \item \verb|languages_spoken - [text]|\\What languages do you speak on a daily/weekly/monthly basis?
+            \item \verb|language_age_learned - [text]|\\At what age did you learn the language? (For example, if you learned Spanish when you were 5 years-old, then enter the name of the language and in parentheses the age; so Spanish (5-years-old).).
+            \item \verb|countries_live_one_year - [text]|\\What countries did you live in for more than one year?
+            \item \verb|major_schooling_country - [text]|\\Where did you complete the majority of your schooling?
+            \item \verb|health_label - ("HEALTH")[text]|\\Label for the health questions.
+            \item \verb|health_concussion - (Required)[0 = No; 1 = Yes]|\\Have you ever been diagnosed with or experienced concussions?
+            \item \verb|health_seizure - (Required)[0 = No; 1 = Yes]|\\Have you ever been diagnosed with or experienced seizures?
+            \item \verb|health_trauma - (Required)[0 = No; 1 = Yes]|\\Have you ever been diagnosed with or experienced other neurological trauma (e.g., traumatic brain injury)?
+            \item \verb|health_other_trauma_specify - [text]|\\Other neurological trauma.
+            \item \verb|health_medications - (Required)[0 = No; 1 = Yes]|\\Are you currently taking any psychoactive medication (e.g., anti-depressants, ADHD medication, etc.)?
+            \item \verb|health_vision - (Required)[0 = No; 1 = Yes]|\\Do you have any visual impairments other than wearing glasses/contacts, such as partial or full colorblindness?
+            \item \verb|health_vision_specify - [text]|\\Visual impairments.
+            \item \verb|demographics_survey_complete - [0 = Incomplete; 1 = Unverified; 2=Complete]|\\Demographics survey complete.\\
+
+            \item \verb|big_five_inventory_2_short_form_bfi2s_timestamp - [text](yyyy-mm-dd hh:mm:ss)|\\Big five inventory 2 short form timestamp.
+            \item \verb|bfi2_q1 - |I am someone who: Tends to be quiet.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q2 - |I am someone who: Is compassionate, has a soft heart.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q3 - |I am someone who: Tends to be disorganized.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q4 - |I am someone who: Worries a lot.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q5 - |I am someone who: Is fascinated by art, music, or literature.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q6 - |I am someone who: Is dominant, acts as a leader.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q7 - |I am someone who: Is sometimes rude to others.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q8 - |I am someone who: Has difficulty getting started on tasks.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q9 - |I am someone who: Tends to feel depressed, blue.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q10 - |I am someone who: Has little interest in abstract ideas.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q11 - |I am someone who: Is full of energy.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q12 - |I am someone who: Assumes the best about people.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q13 - |I am someone who: Is reliable, can always be counted on.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q14 - |I am someone who: Is emotionally stable, not easily upset.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q15 - |I am someone who: Is original, comes up with new ideas.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q16 - |I am someone who: Is outgoing, sociable.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q17 - |I am someone who: Can be cold and uncaring.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q18 - |I am someone who: Keeps things neat and tidy.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q19 - |I am someone who: Is relaxed, handles stress well.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q20 - |I am someone who: Has few artistic interests.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q21 - |I am someone who: Prefers to have others take charge.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q22 - |I am someone who: Is respectful, treats others with respect.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q23 - |I am someone who: Is persistent, works until the task is finished.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q24 - |I am someone who: Feels secure, comfortable with self.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q25 - |I am someone who: Is complex, a deep thinker.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q26 - |I am someone who: Is less active than other people.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q27 - |I am someone who: Tends to find fault with others.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q28 - |I am someone who: Can be somewhat careless.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q29 - |I am someone who: Is temperamental, gets emotional easily.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|bfi2_q30 - |I am someone who: Has little creativity.\\\verb|[1=Disagree strongly; 2=Disagree a little; 3=Neutral; 4=Agree a little; 5=Agree strongly]|
+            \item \verb|big_five_inventory_2_short_form_bfi2s_complete - |\\Big five inventory 2 short form complete.\\\verb|[0 = Incomplete; 1 = Unverified; 2=Complete]|\\
+
+            \item \verb|attachment_style_questionnaire_timestamp - [text](yyyy-mm-dd hh:mm:ss)|\\Attachment style questionnaire timestamp.
+            \item \verb|attach_q1 - |I find it relatively easy to get close to other people.\\\verb|[1 (totally disagree) to 6 (totally agree)]|
+            \item \verb|attach_q2 - |I feel confident that other people will be there for me when I need them.\\\verb|[1 (totally disagree) to 6 (totally agree)]|
+            \item \verb|attach_q3 - |I feel confident about relating to others.\\\verb|[1 (totally disagree) to 6 (totally agree)]|
+            \item \verb|attach_q4 - |I am confident that other people will like and respect me.\\\verb|[1 (totally disagree) to 6 (totally agree)]|
+            \item \verb|attach_q5 - |I find that others are reluctant to get as close as I would like.\\\verb|[1 (totally disagree) to 6 (totally agree)]|
+            \item \verb|attach_q6 - |I worry that others won't care about me as much as I care about them.\\\verb|[1 (totally disagree) to 6 (totally agree)]|
+            \item \verb|attach_q7 - |I worry a lot about my relationships.\\\verb|[1 (totally disagree) to 6 (totally agree)]|
+            \item \verb|attach_q8 - |I often feel left out or alone.\\\verb|[1 (totally disagree) to 6 (totally agree)]|
+            \item \verb|attach_q9 - |I prefer to keep to myself.\\\verb|[1 (totally disagree) to 6 (totally agree)]|
+            \item \verb|attach_q10 - |I find it hard to trust other people.\\\verb|[1 (totally disagree) to 6 (totally agree)]|
+            \item \verb|attach_q11 - |I have mixed feelings about being close to others.\\\verb|[1 (totally disagree) to 6 (totally agree)]|
+            \item \verb|attach_q12 - |While I want to get close to others, I feel uneasy about it.\\\verb|[1 (totally disagree) to 6 (totally agree)]|
+            \item \verb|attachment_style_questionnaire_complete - |\\Attachment style questionnaire complete.\\\verb|[0 = Incomplete; 1 = Unverified; 2=Complete]|\\
+
+            \item \verb|presession_notes_for_research_team_only_timestamp - [text](yyyy-mm-dd hh:mm:ss)|\\Presession notes for research team only timestamp.
+            \item \verb|notes_presession_date - [text](yyyy-mm-dd hh:mm:ss)|\\Notes Presession Date.
+            \item \verb|notes_presession_exp___1 - [checkbox]|\\Paloma Bernardo.
+            \item \verb|notes_presession_exp___2 - [checkbox]|\\Savannah Boyd.
+            \item \verb|notes_presession_exp___3 - [checkbox]|\\Valeria Pfeifer.
+            \item \verb|notes_presession_exp___4 - [checkbox]|\\Eric Andrews.
+            \item \verb|notes_presession_exp___5 - [checkbox]|\\Diheng Zhang.
+            \item \verb|notes_presession_exp___6 - [checkbox]|\\Ashley Minks.
+            \item \verb|notes_presession_exp___7 - [checkbox]|\\Daria Letson.
+            \item \verb|notes_presession_consentedby___1 - [checkbox]|\\Paloma Bernardo.
+            \item \verb|notes_presession_consentedby___2 - [checkbox]|\\Savannah Boyd.
+            \item \verb|notes_presession_consentedby___3 - [checkbox]|\\Valeria Pfeifer.
+            \item \verb|notes_presession_consentedby___4 - [checkbox]|\\Payal Khosla.
+            \item \verb|notes_presession_consentedby___5 - [checkbox]|\\Eric Andrews.
+            \item \verb|notes_presession_consentedby___6 - [checkbox]|\\Diheng Zhang.
+            \item \verb|notes_credit_type___1 - [checkbox]|\\SONA.
+            \item \verb|notes_credit_type___2 - [checkbox]|\\Amazon gift card.
+            \item \verb|notes_credit_granted___1 - [checkbox]|\\Yes.
+            \item \verb|notes_credit_granted___2 - [checkbox]|\\In process.
+            \item \verb|notes_speech_baseline - [text]|\\Speech Baseline Notes.
+            \item \verb|notes_other - [text]|\\Other Notes.
+            \item \verb|presession_notes_for_research_team_only_complete - |\\Presession notes for research team only complete.\\\verb|[0 = Incomplete; 1 = Unverified; 2=Complete]|\\
+            
+            \item \verb|session_1_notes_for_research_team_only_timestamp - [text](yyyy-mm-dd hh:mm:ss)|\\Session 1 notes for research team only timestamp.
+            \item \verb|session1notes_session_date - [text](yyyy-mm-dd hh:mm:ss)|\\Session 1 Notes Session Date.
+            \item \verb|notes_session_exp_v2___1 - [checkbox]|\\Paloma Bernardo.
+            \item \verb|notes_session_exp_v2___2 - [checkbox]|\\Savannah Boyd.
+            \item \verb|notes_session_exp_v2___3 - [checkbox]|\\Valeria Pfeifer.
+            \item \verb|notes_credit_type_v2___1 - [checkbox]|\\SONA.
+            \item \verb|notes_credit_type_v2___2 - [checkbox]|\\Amazon gift card.
+            \item \verb|notes_credit_granted_v2___1 - [checkbox]|\\Yes.
+            \item \verb|notes_credit_granted_v2___2 - [checkbox]|\\In process.
+            \item \verb|notes_other_v2 - [text]|\\Other Notes.
+            \item \verb|note_session_observations_v2 - [text]|\\Testing Session \#1 Observations (upload the hardcopy).
+            \item \verb|session_1_notes_for_research_team_only_complete - |\\Session 1 notes for research team only complete.\\\verb|[0 = Incomplete; 1 = Unverified; 2=Complete]|
+        \end{itemize}
+    \end{addmargin} % End of File "<cat>_self_report_data.csv"
+
+
+    \textbf{\\\\}
+    \begin{addmargin}[1em]{0em} % Start of File "<cat>_post_game_survey_data.csv"
+        \phantomsection\label{<cat>_post_game_survey_data.csv}
+        \textbf{<cat>\_post\_game\_survey\_data.csv}\\(semicolon delimited text file, 1st row is a header)\\
+        This file is the participant's answers to the REDCap's "Post Game Survey".
+        The survey is presented to the participant at the end of the experiment.\\ 
+        <cat>\_post\_game\_survey\_data.csv Fields:
+        \begin{itemize}
+            \item \verb|record_id - [text]|\\Record ID created by REDCap system.
+            \item \verb|redcap_survey_identifier - [text]|\\Survey Identifier.
+            \item \verb|subject_information_sheet_timestamp - [text](yyyy-mm-dd hh:mm:ss)|\\Sheet Timestamp.
+            \item \verb|subject_id - [#####](Required)|\\Subject ID assigned to participant.
+            \item \verb|session1_date - [text](yyyy-mm-dd hh:mm:ss)|\\Session 1 Date.
+            \item \verb|session1_exp_initials - [text]|\\Session 1 Experimenter(s) (Initials only).
+            \item \verb|session1_comp_name - |Computer Name.\\\verb|[1=Cheetah; 2=Lion; 3=Tiger; 4=Leopard]|
+            \item \verb|session1_player_name - [text]|\\Minecraft Player Name.
+            \item \verb|session1_game_crash - |Did the game crash between missions?\\\verb|[1=Yes; 0=No]|
+            \item \verb|session1_updated_player_name - [text]|\\Updated Player Name.
+            \item \verb|subject_information_sheet_complete - |\\Subject information sheet complete.\\\verb|[0 = Incomplete; 1 = Unverified; 2=Complete]|
+            \item \verb|postgame_survey_timestamp - [text](yyyy-mm-dd hh:mm:ss)|\\Postgame survey timestamp.
+            \item \verb|post_game_survey_subject_id - [#####](Required)|\\Postgame survey Subject ID assigned to participant.
+            \item \verb|survey_date - [text](yyyy-mm-dd hh:mm:ss)|\\Survey Date.\\
+        \end{itemize}
+        \begin{addmargin}[1em]{0em}
+            \textit{Please indicate how much you felt the emotions DUE TO THE AGENT\\(not due to how the game went):}
+        \end{addmargin}
+        \begin{itemize}
+            \item \verb|agent_calm - |calm or relaxed.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|agent_anxious - |anxious or stressed.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|agent_excited - |excited or energized.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|agent_sad - |sad or depresse.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|agent_guilty - |guilty or ashamed.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|agent_angry - |frustrated or angry.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|agent_happy - |happy or content.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|agent_lonely - |lonely or ignored.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|agent_proud - |confident or proud.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|agent_friendly - |friendly or amused.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+        \end{itemize}
+        \begin{addmargin}[1em]{0em}
+            \textit{Please indicate how much you felt the emotions during the game\\DUE TO HOW THE ENTIRE GAME WENT (not due to how the game went):}
+        \end{addmargin}
+        \begin{itemize}
+            \item \verb|game_calm - |calm or relaxed.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|game_anxious - |anxious or stressed.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|game_excited - |excited or energized.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|game_sad - |sad or depressed.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|game_guilty - |guilty or ashamed.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|game_angry - |frustrated or angry.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|game_happy - |happy or content.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|game_lonely - |lonely or ignored.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|game_proud - |confident or proud.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|game_friendly - |friendly or amused.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+        \end{itemize}
+        \begin{addmargin}[1em]{0em}
+            \textit{Please indicate your impression of the AGENT by dragging the sliding bar between the pairs of adjectives below. The closer the bar is to the adjective, the more certain you are of your evaluation:}
+        \end{addmargin}
+        \begin{itemize}
+            \item \verb|agent_intell - (Slider)| "Intelligent" \verb|(0) <-> (100)| "Unintelligent".
+            \item \verb|agent_care - (Slider)| "Cares about me" \verb|(0) <-> (100)| "Doesn't care about me".
+            \item \verb|agent_honest - (Slider)| "Honest" \verb|(0) <-> (100)| "Dishonest".
+            \item \verb|agent_expert - (Slider)| "Inexpert" \verb|(0) <-> (100)| "Expert".
+            \item \verb|agent_concern -(Slider)|"Concerned about me"\verb|(0) <-> (100)|"Unconcerned about me".
+            \item \verb|agent_trust - (Slider)| "Untrustworthy" \verb|(0) <-> (100)| "Trustworthy".
+            \item \verb|agent_comp - (Slider)| "Incompetent" \verb|(0) <-> (100)| "Competent".
+            \item \verb|agent_insens - (Slider)| "Insensitive" \verb|(0) <-> (100)| "Sensitive".
+            \item \verb|agent_honor - (Slider)| "Honorable" \verb|(0) <-> (100)| "Dishonorable".
+            \item \verb|agent_bright - (Slider)| "Bright" \verb|(0) <-> (100)| "Stupid".
+            \item \verb|agent_understand - (Slider)| "Not understanding" \verb|(0) <-> (100)| "Understanding".
+            \item \verb|agent_phoney - (Slider)| "Phoney" \verb|(0) <-> (100)| "Genuine".
+        \end{itemize}
+        \begin{addmargin}[1em]{0em}
+            \textit{Overall, how much do you agree or disagree with the following statements:}
+        \end{addmargin}
+        \begin{itemize}
+            \item \verb|agent_well - |I got along with the agent pretty well.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|agent_smooth - |The interaction with the agent was smooth.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|agent_acc - |I felt accepted and respected by the agent.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|agent_like - |I think the agent is likeable.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|agent_enjoy - |I enjoyed the interaction.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|agent_awk - |The interaction with the agent was forced, awkward and strained.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|agent_place - |The agent said things that were out of place.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|agent_play - |If I were to play the video game again, I would want to have the agent there.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|agent_perform - |I think having the agent there helped me to perform better in the game.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+        \end{itemize}
+        \begin{addmargin}[1em]{0em}
+            \textit{How much did you feel the following emotions during the game DUE TO THE OTHER TEAM MEMBER(S) (e.g., not due to due to the agent or how the game went):}
+        \end{addmargin}
+        \begin{itemize}
+            \item \verb|team_calm - |calm or relaxed.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|team_anxious - |anxious or stressed.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|team_excited - |excited or energized.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|team_sad - |sad or depressed.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|team_guilt - |guilty or ashamed.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|team_angry - |frustrated or angry.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|team_happy - |happy or content.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|team_lonely - |lonely or ignored.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|team_proud - |confident or proud.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+            \item \verb|team_friendly - |friendly or amused.\\\verb|[0=not at all; 1=small amount; 2=moderate amount; 3=large amount; 4=very large amount]|
+        \end{itemize}
+        \begin{addmargin}[1em]{0em}
+            \textit{Please indicate your impression of THE OTHER TEAM MEMBER(S) by sliding the bar between the pairs of adjectives below. The closer the bar is to the adjective, the more certain you are of your evaluation:}
+        \end{addmargin}
+        \begin{itemize}
+            \item \verb|team_intel - (Slider)| "Intelligent" \verb|(0) <-> (100)| "Unintelligent".
+            \item \verb|team_care - (Slider)| "Cares about me," \verb|(0) <-> (100)| "Doesn't care about me".
+            \item \verb|team_honest - (Slider)| "Honest" \verb|(0) <-> (100)| "Dishonest".
+            \item \verb|team_expert - (Slider)| "Inexpert" \verb|(0) <-> (100)| "Expert".
+            \item \verb|team_concern - (Slider)|"Concerned about me"\verb|(0) <-> (100)|"Unconcerned about me".
+            \item \verb|team_trust - (Slider)| "Untrustworthy" \verb|(0) <-> (100)| "Trustworthy".
+            \item \verb|team_comp - (Slider)| "Incompetent" \verb|(0) <-> (100)| "Competent".
+            \item \verb|team_insens - (Slider)| "Insensitive" \verb|(0) <-> (100)| "Sensitive".
+            \item \verb|team_honor - (Slider)| "Honorable" \verb|(0) <-> (100)| "Dishonorable".
+            \item \verb|team_bright - (Slider)| "Bright" \verb|(0) <-> (100)| "Stupid".
+            \item \verb|team_understand - (Slider)| "Not understanding" \verb|(0) <-> (100)| "Understanding".
+            \item \verb|team_phoney - (Slider)| "Phoney" \verb|(0) <-> (100)| "Genuine".
+        \end{itemize}
+        \begin{addmargin}[1em]{0em}
+            \textit{Please answer the following questions about THE OTHER TEAM MEMBER(S):}
+        \end{addmargin}
+        \begin{itemize}
+            \item \verb|team_wrong - |It seemed like my emotional reaction was wrong or incorrect because of my team member's responses.\\\verb|[5=Strongly Agree; 4=Agree; 3=Neither Agree nor Disagree; 2=Disagree; 1=Strongly Disagree]|
+            \item \verb|team_forget - |I felt like I should forget about my feelings and move on because of my team member's responses.\\\verb|[5=Strongly Agree; 4=Agree; 3=Neither Agree nor Disagree; 2=Disagree; 1=Strongly Disagree]|
+            \item \verb|team_minimize - |It seemed like my feelings were minimized because of my team member's responses.\\\verb|[5=Strongly Agree; 4=Agree; 3=Neither Agree nor Disagree; 2=Disagree; 1=Strongly Disagree]|
+            \item \verb|team_insult - |I felt insulted when I shared my feelings.\\\verb|[5=Strongly Agree; 4=Agree; 3=Neither Agree nor Disagree; 2=Disagree; 1=Strongly Disagree]|
+            \item \verb|team_irrat - |I felt like my feelings were irrational because of my team member's responses.\\\verb|[5=Strongly Agree; 4=Agree; 3=Neither Agree nor Disagree; 2=Disagree; 1=Strongly Disagree]|
+            \item \verb|team_crit - |I felt my team members were being critical of my feelings.\\\verb|[5=Strongly Agree; 4=Agree; 3=Neither Agree nor Disagree; 2=Disagree; 1=Strongly Disagree]|
+            \item \verb|team_fault - |I felt like my feelings were my fault because of my team member's response.\\\verb|[5=Strongly Agree; 4=Agree; 3=Neither Agree nor Disagree; 2=Disagree; 1=Strongly Disagree]|
+            \item \verb|team_ignore - |I felt ignored when I shared my feelings.\\\verb|[5=Strongly Agree; 4=Agree; 3=Neither Agree nor Disagree; 2=Disagree; 1=Strongly Disagree]|
+            \item \verb|team_impt - |I felt like my feelings were unimportant because of my team member's response.\\\verb|[5=Strongly Agree; 4=Agree; 3=Neither Agree nor Disagree; 2=Disagree; 1=Strongly Disagree]|
+            \item \verb|team_weak - |I felt weak because of my team member's response to my emotional reactions.\\\verb|[5=Strongly Agree; 4=Agree; 3=Neither Agree nor Disagree; 2=Disagree; 1=Strongly Disagree]|
+        \end{itemize}
+        \begin{addmargin}[1em]{0em}
+            \textit{Overall, how much do you agree or disagree with the following statements:}
+        \end{addmargin}
+        \begin{itemize}
+            \item \verb|team_along - |I got along with my team members pretty well.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_smooth - |The interaction with my team members was smooth.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_accept - |I felt accepted and respected by my team members.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_like - |I think my team members are likable.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_enjoy - |I enjoyed the interaction.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_awk - |The interaction with my team members was forced, awkward and strained.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_place - |My team members said things that were out of place.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_likeme - |I believe other group members liked me.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_genuine - |I felt that I was a genuine member of the group.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_part - |During the game, I got to participate whenever I wanted to.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_listen - |Other members of the group really listened to what I had to say.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_ilike - |I liked the group I was in.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_interact - |I enjoyed interacting with this group very much.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_itrust - |I trusted group members.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_fit - |The group was composed of people who fit together.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_cohesion - |There was a feeling of unity and cohesion in the group.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_work - |Compared to other groups I have been a part of in life, this group worked well together.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_knit - |We were a closely knit group.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_like_mem - |I like the members of the group.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_work_well - |Our group worked well together.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_decisision - |This group used effective decision making techniques.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_express - |This group provided for comfortable expression for members.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_organize - |I believe we approached the game in an organized manner.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_accomplish - |The group accomplished what it set out to do.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_approp - |I believe our group's decisions were appropriate.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_alt - |I believe we selected the right alternatives.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_influ - |I believe I had a lot of influence on group decisions.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+            \item \verb|team_contrib - |I contributed important information during the decision process.\\\verb|[-2=Strongly Disagree; -1=Disagree Slightly; 1=Agree Slightly; 2=Agree Strongly]|
+        \end{itemize}
+        \begin{addmargin}[1em]{0em}
+            \textit{Please answer the following questions about how the agent made you feel:}
+        \end{addmargin}
+        \begin{itemize}
+            \item \verb|agent_emot1 - |It seemed like my emotional reaction was wrong or incorrect because of the agent's response.\\\verb|[5=Strongly Agree; 4=Agree; 3=Neither Agree nor Disagree; 2=Disagree; 1=Strongly Disagree]|
+            \item \verb|agent_emot2 - |I felt like I should forget about my feelings and move on because of the agent's response.\\\verb|[5=Strongly Agree; 4=Agree; 3=Neither Agree nor Disagree; 2=Disagree; 1=Strongly Disagree]|
+            \item \verb|agent_emot3 - |It seemed like my feelings were minimized because of the agent's reaction.\\\verb|[5=Strongly Agree; 4=Agree; 3=Neither Agree nor Disagree; 2=Disagree; 1=Strongly Disagree]|
+            \item \verb|agent_emot4 - |I felt insulted when I shared my feelings.\\\verb|[5=Strongly Agree; 4=Agree; 3=Neither Agree nor Disagree; 2=Disagree; 1=Strongly Disagree]|
+            \item \verb|agent_emot5 - |I felt like my feelings were irrational because of the agent's response.\\\verb|[5=Strongly Agree; 4=Agree; 3=Neither Agree nor Disagree; 2=Disagree; 1=Strongly Disagree]|
+            \item \verb|agent_emot6 - |I felt the agent was being critical of my feelings.\\\verb|[5=Strongly Agree; 4=Agree; 3=Neither Agree nor Disagree; 2=Disagree; 1=Strongly Disagree]|
+            \item \verb|agent_emot7 - |I felt like my feelings were my fault because of the agent's response.\\\verb|[5=Strongly Agree; 4=Agree; 3=Neither Agree nor Disagree; 2=Disagree; 1=Strongly Disagree]|
+            \item \verb|agent_emot8 - |I felt ignored when I shared my feelings.\\\verb|[5=Strongly Agree; 4=Agree; 3=Neither Agree nor Disagree; 2=Disagree; 1=Strongly Disagree]|
+            \item \verb|agent_emot9 - |I felt like my feelings were unimportant because of the agent's response.\\\verb|[5=Strongly Agree; 4=Agree; 3=Neither Agree nor Disagree; 2=Disagree; 1=Strongly Disagree]|
+            \item \verb|agent_emot10 - |I felt weak because of the agent's response to my emotional reactions.\\\verb|[5=Strongly Agree; 4=Agree; 3=Neither Agree nor Disagree; 2=Disagree; 1=Strongly Disagree]|
+            \item \verb|know_team_members - |Did you know any of the other team members?\\\verb|[1 = Yes; 0 = No]|
+            \item \verb|know_person_at_cheetah - [text]|\\Did you know the team member on Computer 1: Cheetah? If so, then to what extent have you known this team member?
+            \item \verb|know_person_at_lion - [text]|\\Did you know the team member on Computer 2: Lion?If so, then to what extent have you known this team member?
+            \item \verb|know_person_at_tiger - [text]|\\Did you know the team member on Computer 3: Tiger?If so, then to what extent have you known this team member?
+            \item \verb|know_person_at_leopard - [text]|\\Did you know the team member on Computer 4: Leopard?If so, then to what extent have you known this team member?
+            \item \verb|postgame_survey_complete - |\\Postgame survey complete.\\\verb|[0 = Incomplete; 1 = Unverified; 2=Complete]|
+        \end{itemize}
+    \end{addmargin} % End of File "<cat>_post_game_survey_data.csv"
+\end{addmargin} % End of Sub Directory "redcap_data/"
+
+
+
+% End of Experiment Directory "<cat>/"
+
+
+
+\textbf{\\\\\\}
+\item\textbf{testbed\_logs/ ...} \textit{(On or after 2022-10-17)} % Start of Experiment Directory "testbed_logs/"
+
+\phantomsection\label{ASR Agent logs}
+\begin{addmargin}[0em]{0em} % Start of Sub Directory "asist_logs_<teamid>_<yyyy>_<mm>_<dd>_<hh>_<mm>_<ss>/ASR_Agent/logs/"
+    \textbf{asist\_logs\_<teamid>\_<yyyy>\_<mm>\_<dd>\_<hh>\_<mm>\_<ss>/ASR\_Agent/logs/ ...}\\
+    \textit{(Only for experiments on or after 2022-10-17)}
+    % Example: asist_logs_43_2023_05_03_12_48_02/ASR_Agent/logs/
+    % \label{ASR Agent logs}
+    % \begin{addmargin}[1em]{0em} % Start of File "<yyyy>-<mm>-<dd>_<hh>-<mm>-<ss>.0.log"
+        % \section*{}\label{ASR Agent logs}
+        \phantomsection\label{ASR Agent logs <yyyy>-<mm>-<dd>_<hh>-<mm>-<ss>.0.log}
+        \textbf{<yyyy>-<mm>-<dd>\_<hh>-<mm>-<ss>.0.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "ASR Agent" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>: <info> <message>"}
+        \end{addmargin}
+    % \end{addmargin} % End of File "<yyyy>-<mm>-<dd>_<hh>-<mm>-<ss>.0.log"
+\end{addmargin} % End of Sub Directory "asist_logs_<teamid>_<yyyy>_<mm>_<dd>_<hh>_<mm>_<ss>/ASR_Agent/logs/"
+\textbf{\\}
+% Sub Dirs: ASR_Agent  dozzle_logs  ihmc-logs.tar  speech_analyzer_agent  ToMCAT
+\begin{addmargin}[0em]{0em} % Start of Sub Directory "asist_logs_<teamid>_<yyyy>_<mm>_<dd>_<hh>_<mm>_<ss>/dozzle_logs/" 
+    \textbf{asist\_logs\_<teamid>\_<yyyy>\_<mm>\_<dd>\_<hh>\_<mm>\_<ss>/dozzle\_logs/ ...}\\
+    \textit{(Only for experiments on or after 2022-10-17)}
+    % Example: asist_logs_43_2023_05_03_12_48_02/dozzle_logs/
+
+    \phantomsection\label{ac_aptima_ta3_measures.log}
+    \begin{addmargin}[1em]{0em} % Start of File "ac_aptima_ta3_measures.log"
+        \textbf{ac\_aptima\_ta\_measures.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "AC Aptima TA3 Measures" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "ac_aptima_ta3_measures.log"
+    \textbf{\\}
+
+    \phantomsection\label{AC_CMUFMS_TA2_Cognitive.log}
+    \begin{addmargin}[1em]{0em} % Start of File "AC_CMUFMS_TA2_Cognitive.log"
+        \textbf{AC\_CMUFMS\_TA2\_Cognitive.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "AC CMUFMS TA2 Cognitive" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "AC_CMUFMS_TA2_Cognitive.log"
+    \textbf{\\}
+
+    \phantomsection\label{ac_cmu_ta1_pygl_fov_agent.log}
+    \begin{addmargin}[1em]{0em} % Start of File "ac_cmu_ta1_pygl_fov_agent.log"
+        \textbf{ac\_cmu\_ta1\_pygl\_fov\_agent.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "AC CMU TA1 PYGL FOV Agent" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "ac_cmu_ta1_pygl_fov_agent.log"
+    \textbf{\\}
+
+    \phantomsection\label{ac_cmu_ta2_beard.log}
+    \begin{addmargin}[1em]{0em} % Start of File "ac_cmu_ta2_beard.log"
+        \textbf{ac\_cmu\_ta2\_beard.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "AC CMU TA2 Beard" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "ac_cmu_ta2_beard.log"
+    \textbf{\\}
+
+    \phantomsection\label{ac_cmu_ta2_ted.log}
+    \begin{addmargin}[1em]{0em} % Start of File "ac_cmu_ta2_ted.log"
+        \textbf{ac\_cmu\_ta2\_ted.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "AC CMU TA2 Ted" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "ac_cmu_ta2_ted.log"
+    \textbf{\\}
+
+    \phantomsection\label{AC_CORNELL_TA2_TEAMTRUST.log}
+    \begin{addmargin}[1em]{0em} % Start of File "AC_CORNELL_TA2_TEAMTRUST.log"
+        \textbf{AC\_CORNELL\_TA2\_TEAMTRUST.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "AC CORNELL TA2 TEAMTRUST" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "AC_CORNELL_TA2_TEAMTRUST.log"
+    \textbf{\\}
+
+    \phantomsection\label{ac_gallup_ta2_gelp.log}
+    \begin{addmargin}[1em]{0em} % Start of File "ac_gallup_ta2_gelp.log"
+        \textbf{ac\_gallup\_ta2\_gelp.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "AC GALLUP TA2 GELP" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "ac_gallup_ta2_gelp.log"
+    \textbf{\\}
+
+    \phantomsection\label{ac_gallup_ta2_gold.log}
+    \begin{addmargin}[1em]{0em} % Start of File "ac_gallup_ta2_gold.log"
+        \textbf{ac\_gallup\_ta2\_gold.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "AC GALLUP TA2 GOLD" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "ac_gallup_ta2_gold.log"
+    \textbf{\\}
+
+    \phantomsection\label{ac_ihmc_ta2_dyad-reporting.log}
+    \begin{addmargin}[1em]{0em} % Start of File "ac_ihmc_ta2_dyad-reporting.log"
+        \textbf{ac\_ihmc\_ta2\_dyad-reporting.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "AC IHMC TA2 DYAD-REPORTING" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "ac_ihmc_ta2_dyad-reporting.log"
+    \textbf{\\}
+
+    \phantomsection\label{ac_ihmc_ta2_joint-activity-interdependence.log}
+    \begin{addmargin}[1em]{0em} % Start of File "ac_gallup_ta2_gold.log"
+        \textbf{ac\_ihmc\_ta2\_joint-activity-interdependence.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "AC IHMC TA2 joint-activity-interdependence" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "ac_ihmc_ta2_joint-activity-interdependence.log"
+    \textbf{\\}
+
+    \phantomsection\label{ac_ihmc_ta2_location-monitor.log}
+    \begin{addmargin}[1em]{0em} % Start of File "ac_ihmc_ta2_location-monitor.log"
+        \textbf{ac\_ihmc\_ta2\_location-monitor.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "AC IHMC TA2 location-monitor" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "ac_ihmc_ta2_location-monitor.log"
+    \textbf{\\}
+
+    \phantomsection\label{ac_ihmc_ta2_player-proximity.log}
+    \begin{addmargin}[1em]{0em} % Start of File "ac_ihmc_ta2_player-proximity.log"
+        \textbf{ac\_ihmc\_ta2\_player-proximity.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "AC IHMC TA2 player-proximity" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "ac_ihmc_ta2_player-proximity.log"
+    \textbf{\\}
+
+    \phantomsection\label{AC_UAZ_TA1_ASR_Agent-heartbeat.log}
+    \begin{addmargin}[1em]{0em} % Start of File "AC_UAZ_TA1_ASR_Agent-heartbeat.log"
+        \textbf{AC\_UAZ\_TA1\_ASR\_Agent-heartbeat.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "AC UAZ TA1 ASR Agent-heartbeat" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "AC_UAZ_TA1_ASR_Agent-heartbeat.log"
+    \textbf{\\}
+
+    \phantomsection\label{AC_UAZ_TA1_ASR_Agent.log}
+    \begin{addmargin}[1em]{0em} % Start of File "AC_UAZ_TA1_ASR_Agent.log"
+        \textbf{AC\_UAZ\_TA1\_ASR\_Agent.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "AC UAZ TA1 ASR Agent" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "AC_UAZ_TA1_ASR_Agent.log"
+    \textbf{\\}
+
+    \phantomsection\label{AC_UAZ_TA1_ASR_Agent-Mosquitto.log}
+    \begin{addmargin}[1em]{0em} % Start of File "AC_UAZ_TA1_ASR_Agent-Mosquitto.log"
+        \textbf{AC\_UAZ\_TA1\_ASR\_Agent-Mosquitto.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "AC UAZ TA1 ASR Agent-Mosquitto" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "AC_UAZ_TA1_ASR_Agent-Mosquitto.log"
+    \textbf{\\}
+
+    \phantomsection\label{ac_uaz_ta1_speechanalyzer_adminer_1.log}
+    \begin{addmargin}[1em]{0em} % Start of File "ac_uaz_ta1_speechanalyzer_adminer_1.log"
+        \textbf{ac\_uaz\_ta1\_speechanalyzer\_adminer\_1.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "AC UAZ TA1 Speechanalyzer Adminer 1" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "ac_uaz_ta1_speechanalyzer_adminer_1.log"
+    \textbf{\\}
+
+    \phantomsection\label{AC_UAZ_TA1_SpeechAnalyzer-db.log}
+    \begin{addmargin}[1em]{0em} % Start of File "AC_UAZ_TA1_SpeechAnalyzer-db.log"
+        \textbf{AC\_UAZ\_TA1\_SpeechAnalyzer-db.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "AC UAZ TA1 SpeechAnalyzer-db" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "AC_UAZ_TA1_SpeechAnalyzer-db.log"
+    \textbf{\\}
+
+    \phantomsection\label{AC_UAZ_TA1_SpeechAnalyzer-heartbeat.log}
+    \begin{addmargin}[1em]{0em} % Start of File "AC_UAZ_TA1_SpeechAnalyzer-heartbeat.log"
+        \textbf{AC\_UAZ\_TA1\_SpeechAnalyzer-heartbeat.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "AC UAZ TA1 SpeechAnalyzer-heartbeat" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "AC_UAZ_TA1_SpeechAnalyzer-heartbeat.log"
+    \textbf{\\}
+
+    \phantomsection\label{AC_UAZ_TA1_SpeechAnalyzer.log}
+    \begin{addmargin}[1em]{0em} % Start of File "AC_UAZ_TA1_SpeechAnalyzer.log"
+        \textbf{AC\_UAZ\_TA1\_SpeechAnalyzer.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "AC UAZ TA1 SpeechAnalyzer" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "AC_UAZ_TA1_SpeechAnalyzer.log"
+    \textbf{\\}
+
+    \phantomsection\label{AC_UAZ_TA1_SpeechAnalyzer-mmc.log}
+    \begin{addmargin}[1em]{0em} % Start of File "AC_UAZ_TA1_SpeechAnalyzer-mmc.log"
+        \textbf{AC\_UAZ\_TA1\_SpeechAnalyzer-mmc.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "AC UAZ TA1 SpeechAnalyzer-mmc" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "AC_UAZ_TA1_SpeechAnalyzer-mmc.log"
+    \textbf{\\}
+
+    \phantomsection\label{ac_ucf_ta2_playerprofiler_container.log}
+    \begin{addmargin}[1em]{0em} % Start of File "ac_ucf_ta2_playerprofiler_container.log"
+        \textbf{ac\_ucf\_ta2\_playerprofiler\_container.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "AC UCF TA2 Playerprofiler Container" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "ac_ucf_ta2_playerprofiler_container.log"
+    \textbf{\\}
+
+    \phantomsection\label{asistdataingester.log}
+    \begin{addmargin}[1em]{0em} % Start of File "asistdataingester.log"
+        \textbf{asistdataingester.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "Asist Data Ingester" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "asistdataingester.log"
+    \textbf{\\}
+
+    \phantomsection\label{clientmap.log}
+    \begin{addmargin}[1em]{0em} % Start of File "clientmap.log"
+        \textbf{clientmap.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "Client Map" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "clientmap.log"
+    \textbf{\\}
+
+    \phantomsection\label{cmuta2-ted-ac.log}
+    \begin{addmargin}[1em]{0em} % Start of File "cmuta2-ted-ac.log"
+        \textbf{cmuta2-ted-ac.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "CMUTA2-TED-AC" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "cmuta2-ted-ac.log"
+    \textbf{\\}
+
+    \phantomsection\label{cra_psicoach_agent.log}
+    \begin{addmargin}[1em]{0em} % Start of File "cra_psicoach_agent.log"
+        \textbf{cra\_psicoach\_agent.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "CRA PSICOACH Agent" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "cra_psicoach_agent.log"
+    \textbf{\\}
+
+    \phantomsection\label{crazy_ritchie.log}
+    \begin{addmargin}[1em]{0em} % Start of File "crazy_ritchie.log"
+        \textbf{crazy\_ritchie.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "Crazy Ritchie" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "crazy_ritchie.log"
+    \textbf{\\}
+
+    \phantomsection\label{dozzle.log}
+    \begin{addmargin}[1em]{0em} % Start of File "dozzle.log"
+        \textbf{dozzle.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "Dozzle" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "dozzle.log"
+    \textbf{\\}
+
+    \phantomsection\label{elasticsearch.log}
+    \begin{addmargin}[1em]{0em} % Start of File "elasticsearch.log"
+        \textbf{elasticsearch.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "Elastic Search" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "elasticsearch.log"
+    \textbf{\\}
+
+    \phantomsection\label{filebeat.log}
+    \begin{addmargin}[1em]{0em} % Start of File "filebeat.log"
+        \textbf{filebeat.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "Filebeat" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "filebeat.log"
+    \textbf{\\}
+
+    \phantomsection\label{heartbeat-speech_analyzer_agent.log}
+    \begin{addmargin}[1em]{0em} % Start of File "heartbeat-speech_analyzer_agent.log"
+        \textbf{heartbeat-speech\_analyzer\_agent.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "Heartbeat-Speech Analyzer Agent" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "heartbeat-speech_analyzer_agent.log"
+    \textbf{\\}
+
+    \phantomsection\label{heartbeat-uaz_tmm_agent.log}
+    \begin{addmargin}[1em]{0em} % Start of File "heartbeat-uaz_tmm_agent.log"
+        \textbf{heartbeat-uaz\_tmm\_agent.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "Heartbeat-UAZ TMM Agent" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "heartbeat-uaz_tmm_agent.log"
+    \textbf{\\}
+
+    \phantomsection\label{kibana.log}
+    \begin{addmargin}[1em]{0em} % Start of File "kibana.log"
+        \textbf{kibana.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "Kibana" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "kibana.log"
+    \textbf{\\}
+
+    \phantomsection\label{logstash.log}
+    \begin{addmargin}[1em]{0em} % Start of File "logstash.log"
+        \textbf{logstash.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "Logstash" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "logstash.log"
+    \textbf{\\}
+
+    \phantomsection\label{malmocontrol_Local.log}
+    \begin{addmargin}[1em]{0em} % Start of File "malmocontrol_Local.log"
+        \textbf{malmocontrol\_Local.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "Malmo Control Local" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "malmocontrol_Local.log"
+    \textbf{\\}
+
+    \phantomsection\label{Measures_Agent_Container.log}
+    \begin{addmargin}[1em]{0em} % Start of File "Measures_Agent_Container.log"
+        \textbf{Measures\_Agent\_Container.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "Measures Agent Container" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "Measures_Agent_Container.log"
+    \textbf{\\}
+
+    \phantomsection\label{metadata-docker_metadata-app_1.log}
+    \begin{addmargin}[1em]{0em} % Start of File "metadata-docker_metadata-app_1.log"
+        \textbf{metadata-docker\_metadata-app\_1.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "Metadata-Docker Metadata-App 1" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "metadata-docker_metadata-app_1.log"
+    \textbf{\\}
+
+    \phantomsection\label{metadata-docker_pgadmin_1.log}
+    \begin{addmargin}[1em]{0em} % Start of File "metadata-docker_pgadmin_1.log"
+        \textbf{metadata-docker\_pgadmin\_1.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "Metadata-Docker Page Admin 1" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "metadata-docker_pgadmin_1.log"
+    \textbf{\\}
+
+    \phantomsection\label{metadata-docker_postgres_1.log}
+    \begin{addmargin}[1em]{0em} % Start of File "metadata-docker_postgres_1.log"
+        \textbf{metadata-docker\_postgres\_1.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "Metadata-Docker Post Gres 1" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "metadata-docker_postgres_1.log"
+    \textbf{\\}
+
+    \phantomsection\label{metadata-web_metadata-web_1.log}
+    \begin{addmargin}[1em]{0em} % Start of File "metadata-web_metadata-web_1.log"
+        \textbf{metadata-web\_metadata-web\_1.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "Metadata-Web 1" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "metadata-web_metadata-web_1.log"
+    \textbf{\\}
+
+    \phantomsection\label{minecraft-server0.log}
+    \begin{addmargin}[1em]{0em} % Start of File "minecraft-server0.log"
+        \textbf{minecraft-server0.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "Minecraft-Server0" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "minecraft-server0.log"
+    \textbf{\\}
+
+    \phantomsection\label{mmc.log}
+    \begin{addmargin}[1em]{0em} % Start of File "mmc.log"
+        \textbf{mmc.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "MMC" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "mmc.log"
+    \textbf{\\}
+
+    \phantomsection\label{mosquitto.log}
+    \begin{addmargin}[1em]{0em} % Start of File "mosquitto.log"
+        \textbf{mosquitto.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "Mosquitto" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "mosquitto.log"
+    \textbf{\\}
+
+    \phantomsection\label{mqttvalidationservice.log}
+    \begin{addmargin}[1em]{0em} % Start of File "mqttvalidationservice.log"
+        \textbf{mqttvalidationservice.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "Mosquitto Validation Service" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "mqttvalidationservice.log"
+    \textbf{\\}
+
+    \phantomsection\label{nginx.log}
+    \begin{addmargin}[1em]{0em} % Start of File "nginx.log"
+        \textbf{nginx.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "Nginx" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "nginx.log"
+    \textbf{\\}
+
+    \phantomsection\label{Rutgers_Agent_Container.log}
+    \begin{addmargin}[1em]{0em} % Start of File "Rutgers_Agent_Container.log"
+        \textbf{Rutgers\_Agent\_Container.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "Rutgers Agent Container" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "Rutgers_Agent_Container.log"
+    \textbf{\\}
+
+    \phantomsection\label{speech_analyzer_agent.log}
+    \begin{addmargin}[1em]{0em} % Start of File "speech_analyzer_agent.log"
+        \textbf{speech\_analyzer\_agent.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "Speech Analyzer Agent" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "speech_analyzer_agent.log"
+    \textbf{\\}
+
+    \phantomsection\label{speechanalyzer_db_1.log}
+    \begin{addmargin}[1em]{0em} % Start of File "speechanalyzer_db_1.log"
+        \textbf{speechanalyzer\_db\_1.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "Speech Analyzer DB 1" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "speechanalyzer_db_1.log"
+    \textbf{\\}
+
+    \phantomsection\label{uaz_dialog_agent.log}
+    \begin{addmargin}[1em]{0em} % Start of File "uaz_dialog_agent.log"
+        \textbf{uaz\_dialog\_agent.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "UAZ Dialog Agent" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<info> | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "uaz_dialog_agent.log"
+    \textbf{\\}
+
+    \phantomsection\label{uaz_tmm_agent.log}
+    \begin{addmargin}[1em]{0em} % Start of File "uaz_tmm_agent.log"
+        \textbf{uaz\_tmm\_agent.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "UAZ TCPdump utility - Traffic Management Microkernel (TMM) Agent"
+        regarding the connections to "Mosquitto" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"<message line>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "uaz_tmm_agent.log"
+    \textbf{\\}
+
+    \phantomsection\label{vosk.log}
+    \begin{addmargin}[1em]{0em} % Start of File "vosk.log"
+        \textbf{vosk.log}\\
+        (Text File Format)\\
+        This file contains log entries for the "Vosk Speech Recognition Toolkit and API" in the format:
+        \begin{addmargin}[1em]{0em}
+            \textbf{"LOG (<API Function Call>) | <message>"}
+        \end{addmargin}
+    \end{addmargin} % End of File "vosk.log"
+    \textbf{\\}
+
+\end{addmargin} % End of Sub Directory "asist_logs_<teamid>_<yyyy>_<mm>_<dd>_<hh>_<mm>_<ss>/dozzle_logs/"
+
+% End of Sub Directory "testbed_logs/"
+
+\textbf{\\\\}
+% Start of File "data_inventory.log"
+\item
+\phantomsection\label{data_inventory.log}
+\textbf{data\_inventory.log} \textit{(Only for sessions starting 2023-04-17)}\\
+(Bar "|" Delimeted Text File Format)\\
+This file contains the result of a "Data Inventory Process" for this Experiment Directory and Sub-directories.
+The file is created by the "data\_inventory.sh" Bash Script application file that is located in the GitHub "tomcat" repository:\\
+\textit{\textbf{tomcat/human\_experiments/lab\_software/data\_inventory/data\_inventory.sh}}\\
+The "data\_inventory.sh" application will scan the Experiment Directory/Sub-directories and based on the
+specifications specified in the "data\_inventory.tbl" file,
+will report in this "data\_inventory.log" if expected Experiment files are found or missing,
+the file(s) is within the correct size range, and the file count is within range for that directory.\\
+The top line of this file will indicate the path/experiment this data inventory log is for.\\
+Example: \textit{"Experiment Directory: /<directory\_path>/<exp\_yyyy\_mm\_dd\_hh>/"}\\
+This file "data\_inventory.log" has the following columns:      
+\begin{itemize}
+    \item \verb|Status| Status of the file(s) being sought.
+    \item \verb|Description| Description of the file(s) being sought.\\
+    \textit{(The wildcard character "*" can be used in Directory and File Names)}
+    \item \verb|Directory| The specified Directory/Sub-directory that contains the sought file(s).
+    \item \verb|File(s)| The File Name or Files Group Name being sought.\\
+    \textit{(Large numbers are truncated: "K" = thousand, "M" = million, "G" = giga)}
+    \item \verb|Min_Size| Specified Minimum Size of File(s).
+    \item \verb|Max_Size| Specified Maximum Size of File(s).
+    \item \verb|Min_Count| Specified Minimum File Count.
+    \item \verb|Max_Count| Specified Maximum File Count.
+    \item \verb|File_Size| Actual File Size.
+    \item \verb|File_Count| Actual Directory File Count.
+\end{itemize}
+% End of File "data_inventory.log"
+
+\textbf{\\}
+% Start of File "data_inventory.run"
+\item
+\phantomsection\label{data_inventory.run}
+\textbf{data\_inventory.run} \textit{(Only for sessions starting 2023-04-17)}\\
+(Bash Script File)\\
+This file is a Bash Script, created by the "Data Inventory Process" at the same time as
+the "data\_inventory.log" file, described above, and can be run in a Linux, MAC or WLS terminals by exeucuting: 
+\textit{\textbf{./data\_inventory.run}}.\\
+The script will display the same "Data Inventory" data for the Experiment that is in the "data\_inventory.log" file,
+but in a easier to read color format with data grouping page breaks.
+% End of File "data_inventory.run"
+
+
+\textbf{\\\\}
+% Start of File "time_difference.txt"
+\item
+\phantomsection\label{time_difference.txt}
+\textbf{time\_difference.txt} \textit{(Only for sessions starting 2023-04-17)}\\
+(Text file format)\\
+This file has a single line that shows the time difference, in seconds,
+between server CAT's internal time clock and the internet's global time server.\\
+Example of the data stored in this file:
+\begin{addmargin}[1em]{0em}
+    \textbf{"CAT: 0.001064300537109375 seconds"}
+\end{addmargin}
+% End of File "time_difference.txt"
+
+
+\textbf{\\\\}
+% Start of File "trial_info.json"
+\item
+\phantomsection\label{trial_info.json}
+\textbf{trial\_info.json}\\(JSON data format)\\
+This file is trial information for the 3 Minecraft Missions (Hands on Training, Saturn A, Saturn B).\\
+Information contained in this file:
+\begin{addmargin}[1em]{0em}
+    \textbf{\textit{ids}} (Minecraft Trial ID's),\\
+    \textbf{\textit{numbers}} (Minecraft Trial Numbers),\\
+\end{addmargin}
+Minecraft Trial Information JSON File:
+\begin{verbatim}
+    {
+        "id": [string, string, string]
+            (Example:
+                ["30ea9972-bf9f-4aa9-b7c3-09ab451ed6fb",
+                 "82d31fa8-62f0-4411-9190-da2ce83e30c3",
+                 "293a7003-5f12-4d55-92d0-2224ef2151cf"]
+            ),
+        "number": [string, string, string]
+            (Example:
+                ["Training", "T00081", "T00082"]
+    }
+\end{verbatim}
+% End of File "trial_info.json"
+
+
 \end{description}
-
-\subsubsection{XDF timestamps}
-
-The time stamps in the XDF files are generated by LSL using
-\href{https://en.cppreference.com/w/cpp/chrono/steady_clock}{\texttt{std::chrono::steady\_clock}},
-which is monotonic.  The implementation of \verb|steady_clock| may differ based
-on the compiler and operating system used to compile LSL. On Cat (running
-Linux), we use \href{https://gcc.gnu.org}{libstdc++}, which uses the
-Unix epoch as a reference, while on macOS,
-the equivalent is \href{https://libcxx.llvm.org}{libc++} (or rather, an
-Apple version of it), which uses the time of the system's last reboot as a
-reference point.
-
-Libraries such as \verb|pyxdf| perform some processing on the timestamps when
-loading XDF files, using the monotonic timestamps and
-clock offsets for synchronization. For a detailed understanding of LSL clock
-functioning and timestamp allocation in XDF, please refer to
-this \href{https://github.com/labstreaminglayer/App-LabRecorder/issues/101}{\texttt{
-GitHub discussion}} and the LSL
-\href{https://labstreaminglayer.readthedocs.io/info/time_synchronization.html}{time
-synchronization documentation}.
-
-\subsection{Experimental notes}
-\label{subsec:exp_notes}
-
-Underneath \verb|<root>/<study>| directory, we have the following
-files containing relevant experimental notes:
-%
-\begin{itemize}
-\item\verb|experimenter_ids.csv|\\
-    (colon delimited, 1st row is a header)\\
-    This CSV file contains a mapping between experimenters and assigned IDs. Experimenters receive unique 5-digit IDs starting at 99901 used whenever they participate as a third person in the experiment. 
-    
-File Fields:
-\begin{itemize}
-    \item \verb|Experimenter_ID|\\.        
-    \item \verb|First_Name|\\.
-    \item \verb|Last_Name|\\.
-    \item \verb|Initials|\\.
-    \item \verb|Position (e.g. PhD Student)|\\.
-\end{itemize}
-\end{itemize}
-
-\begin{itemize}
-\item\verb|data_validity_table.csv|\\
-    (colon delimited, 1st row is a header)\\
-    This CSV file contains participant IDs and data signals broken down per station and task. Typically a participant will not change stations during an experiment. However, it may be the case we need to move participants around in the middle of an experiment due to equipment malfunctioning or motion sickness. The information in this file helps us to keep track of who was seating on which station and which equipments were not functioning for each task in the experiment.
-    
-File Fields:
-\begin{itemize}
-    \item \verb|experiment_id|\\.
-    \item \verb|<station>_subject_id|\\
-    Original ID attributed to participant in \verb|<station>|. 
-    \item \verb|<station>_<task>_participant_id|\\
-	ID of the participant in \verb|<station>| during \verb|<task>|.
-	\item \verb|<station>_mask_status|\\
-    Whether the participant in \verb|<station>| is wearing a mask (e.g. mask\_on).
-    \item \verb|<station>_eeg_data_<task>|\\
-	Status of EEG signals during \verb|<task>| (e.g. ok).
-	\item \verb|<station>_fnirs_data_<task>|\\
-	Status of fNIRS signals during \verb|<task>|.
-	\item \verb|<station>_pupil_data_<task>|\\
-	Status of eye-tracking signals during \verb|<task>|.
-\end{itemize}
-
-\bigskip
-Tasks:
-\begin{itemize}
-    \item \verb|rest_state|\\.
-    \item \verb|finger_tapping|\\.
-    \item \verb|affective_task_individual|\\.	
-	\item \verb|affective_task_team|\\.
-    \item \verb|ping_pong_competitive_0|\\.
-    \item \verb|ping_pong_competitive_1|\\.
-	\item \verb|ping_pong_cooperative_0|\\.
-	\item \verb|hands_on_training|\\.
-	\item \verb|saturn_a|\\.
-	\item \verb|saturn_b|\\.	
-\end{itemize}
-\end{itemize}
-
-\begin{itemize}
-\item\verb|station_to_eeg_amp_mapping.csv|\\
-    (colon delimited, 1st row is a header)\\
-    This CSV file contains a mapping between the ID of the device used to record EEG and station. Typically the devices will not change  stations, but we may have to do so if they are malfunctioning. Knowing the device ID used in each station is specially important for \emph{v2} because all EEG signals will be recorded in a single, differentiated only by the device ID. A mapping between the device ID and station is necessary to correctly assign EEG signals to a station and consequently to a participant.
-    
-File Fields:
-\begin{itemize}
-    \item \verb|experiment_id|\\.        
-    \item \verb|<station>_actiCHamp|\\
-	ID of the EEG device in \verb|<station>|.
-\end{itemize}
-\end{itemize}
-
-
-
