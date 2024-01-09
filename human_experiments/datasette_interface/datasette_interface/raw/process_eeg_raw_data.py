@@ -43,8 +43,6 @@ def swap_channels_fn(signal):
             "lion", "tiger"])
 
     if swap_aux_channels:
-        info("GSR and EKG were swapped in the experiment. We fix this by swapping aux_gsr with "
-             "aux_ekg.")
         tmp = signal["aux_ekg"]
         signal["aux_ekg"] = signal["aux_gsr"]
         signal["aux_gsr"] = tmp
