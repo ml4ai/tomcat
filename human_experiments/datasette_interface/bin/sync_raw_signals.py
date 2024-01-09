@@ -21,6 +21,7 @@ from datasette_interface.database.config import (SQLALCHEMY_DATABASE_URI,
 from datasette_interface.database.entity.base.group_session import GroupSession
 from datasette_interface.derived.helper.factory import create_modality_helper
 from datasette_interface.derived.main_clock import get_main_clock_timestamps
+from datasette_interface.derived.helper.factory import MODALITIES
 
 
 def sync_raw_signals_in_parallel(
@@ -200,7 +201,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--modality",
         type=str,
-        choices=["eeg", "fnirs"],
+        choices=MODALITIES,
         help="The modality of the signal.",
     )
     parser.add_argument(

@@ -19,4 +19,4 @@ class GSRSync(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     timestamp_unix: Mapped[str] = mapped_column(Text)
     timestamp_iso8601: Mapped[str] = mapped_column(Text)
-    aux_gsr: Mapped[float] = mapped_column(REAL)
+    gsr: Mapped[float] = mapped_column(REAL)

@@ -19,4 +19,5 @@ class EKGSync(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     timestamp_unix: Mapped[str] = mapped_column(Text)
     timestamp_iso8601: Mapped[str] = mapped_column(Text)
-    aux_ekg: Mapped[float] = mapped_column(REAL)
+    ekg: Mapped[float] = mapped_column(REAL)
+    heart_rate: Mapped[float] = mapped_column(REAL)
