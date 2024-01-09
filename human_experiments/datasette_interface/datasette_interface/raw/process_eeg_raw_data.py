@@ -77,5 +77,6 @@ def process_eeg_raw_data():
             device_id_to_station_map=device_id_to_station_map,
         ),
         lambda x: x * 1 - 6,
+        swap_channels_fn
     )  # From micro-volt to volt
     label_data(EEGRaw, "eeg")
