@@ -41,8 +41,8 @@ sync_raw:
 #		--up_sample_scale=200
 #	@PYTHONPATH="." ./bin/sync_raw_signals.py --modality="eeg" --clock_frequency=200 \
 #		--up_sample_scale=4
-	@PYTHONPATH="." ./bin/sync_raw_signals.py --modality="gsr" --clock_frequency=200 \
-		--up_sample_scale=4
+#	@PYTHONPATH="." ./bin/sync_raw_signals.py --modality="gsr" --clock_frequency=200 \
+#		--up_sample_scale=4
 	@PYTHONPATH="." ./bin/sync_raw_signals.py --modality="ekg" --clock_frequency=200 \
 		--up_sample_scale=4
 

@@ -175,7 +175,12 @@ def sync_raw_signals_single_job(
                 continue
 
             info("Filtering.")
-            modality_helper.filter()
+            try:
+                modality_helper.filter()
+            except Exception as ex:
+                error(f"Error while filtering the signals ({ex}).")
+                info(f"Skipping.")
+                continue
 
             info("Up-sampling.")
             modality_helper.up_sample(up_sample_scale)
