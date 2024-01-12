@@ -26,7 +26,7 @@ def get_channel_names_from_xdf_stream(stream):
     ]
     raw_channels = [
         channel["custom_name"][0].lower().replace("-", "_")
-        + channel["type"][0][-4:].lower() + str(int_float(channel["wavelength"][0]))
+        + channel["type"][0][-4:].lower() + str(int(float(channel["wavelength"][0])))
         for channel in stream["info"]["desc"][0]["channels"][0]["channel"][1:41]
     ]
     return hb_channels + raw_channels
