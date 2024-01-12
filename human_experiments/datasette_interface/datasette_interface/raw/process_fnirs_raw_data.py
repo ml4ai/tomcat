@@ -29,7 +29,7 @@ def get_channel_names_from_xdf_stream(stream):
         + channel["type"][0][-4:].lower() + str(int(float(channel["wavelength"][0])))
         for channel in stream["info"]["desc"][0]["channels"][0]["channel"][1:41]
     ]
-    return hb_channels + raw_channels
+    return raw_channels + hb_channels
 
 
 def get_station_from_xdf_stream(group_session, stream):
@@ -44,6 +44,6 @@ def process_fnirs_raw_data():
         "NIRS",
         get_channel_names_from_xdf_stream,
         get_station_from_xdf_stream,
-        lambda x: x[41:],
+        lambda x: x[1:],
     )
     label_data(FNIRSRaw, "fnirs")
