@@ -6,5 +6,5 @@ from datasette_interface.database.entity.signal.gaze import GAZERaw
 from datasette_interface.raw.common.process_raw_signals import create_indices
 
 create_indices(EEGRaw, "eeg")
-create_indices(FNIRSRaw, "fnirs")
+create_indices(FNIRSRaw, "fnirs_tmp")
 create_indices(GAZERaw, "gaze")
