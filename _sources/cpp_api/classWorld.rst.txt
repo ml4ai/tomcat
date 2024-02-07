@@ -11,6 +11,7 @@ Class Documentation
 
 
 .. doxygenclass:: World
+   :project: ToMCAT
    :members:
    :protected-members:
    :undoc-members:

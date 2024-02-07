@@ -20,6 +20,7 @@ Class Documentation
 
 
 .. doxygenclass:: Block
+   :project: ToMCAT
    :members:
    :protected-members:
    :undoc-members:
