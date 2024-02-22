@@ -235,6 +235,11 @@ pre {
   font-family: monospace;
 }
 
+.code {
+    border: 1px;
+    background-color: #F0F0F0;
+}
+
 a.not-underlined {
     text-decoration: none;
 }

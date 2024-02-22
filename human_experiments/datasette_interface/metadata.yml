@@ -80,7 +80,7 @@ databases:
 
             eeg_sync:
               description: >
-                Table with EEG data synchronized to a main clock with fixed frequency. The start 
+                Table with EEG data synchronized to a main clock with fixed frequency. The start
                 and end timestamps of the main clock spans across all the tasks in the experiment.
               columns:
                 group_session: Group session ID
@@ -91,7 +91,7 @@ databases:
 
             ekg_sync:
               description: >
-                Table with EKG data synchronized to a main clock with fixed frequency. The start 
+                Table with EKG data synchronized to a main clock with fixed frequency. The start
                 and end timestamps of the main clock spans across all the tasks in the experiment.
               columns:
                 group_session: Group session ID
@@ -120,7 +120,7 @@ databases:
 
             fnirs_sync:
               description: >
-                Table with fNIRS data synchronized to a main clock with fixed frequency. The start 
+                Table with fNIRS data synchronized to a main clock with fixed frequency. The start
                 and end timestamps of the main clock spans across all the tasks in the experiment.
               columns:
                 group_session: Group session ID
@@ -178,7 +178,7 @@ databases:
 
             gsr_sync:
               description: >
-                Table with GSR data synchronized to a main clock with fixed frequency. The start 
+                Table with GSR data synchronized to a main clock with fixed frequency. The start
                 and end timestamps of the main clock spans across all the tasks in the experiment.
               columns:
                 group_session: Group session ID
@@ -312,9 +312,9 @@ databases:
                 timestamp_unix: The Unix timestamp of the event.
                 timestamp_iso8601: The ISO-8601 timestamp of the event.
                 filename: Name of the screenshot file.
-                timestamp_origin: > 
-                  The source of the timestamp. The priority is precision-driven. LSL time are 
-                  used if available, otherwise, creation time is used if available. Modification 
+                timestamp_origin: >
+                  The source of the timestamp. The priority is precision-driven. LSL time are
+                  used if available, otherwise, creation time is used if available. Modification
                   time is used as last resort.
 
             task:
