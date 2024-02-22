@@ -11,15 +11,41 @@
 
 ### 1.1 Synchronized physio data tables
 
-Added new tables (`fnirs_sync`, `gsr_sync`, `eeg_sync`, and `ekg_sync`)
-to store preprocessed signals synchronized to a main clock for four modalities
-(fNIRS, GSR, EEG, and EKG) across experiments, with filtering for artifact
-removal. For each experiment, a main clock was defined with start time at 5
-seconds before the beginning of the first task (rest state), end time at 5
+Added new tables (`fnirs_sync`, `gsr_sync`, `eeg_sync`, and `ekg_sync`) to the
+database to store preprocessed signals synchronized to a main clock for four
+modalities (fNIRS, GSR, EEG, and EKG) across experiments, with filtering for
+artifact removal. For each experiment, a main clock was defined with start time
+at 5 seconds before the beginning of the first task (rest state), end time at 5
 seconds after the end of last task (Minecraft), and frequency at 200 Hz.
 
 The changes are introduced in this PR:
 https://github.com/ml4ai/tomcat/pull/558.
+
+The pipeline for synchronization that produces the data in the `*_sync` tables
+differs from the pipeline described in our [NeurIPS 2023
+paper](https://openreview.net/forum?id=ZJWQfgXQb6) (that produced the [derived
+data products from
+2023-08-28](https://tomcat.ivilab.org/derived-data-products)) in the following
+ways:
+
+- In the 2023-08-28 version of the derived data products, we used the same
+functions for filtering the GSR and EKG signals as we did for the EEG data.
+However, this was an error on our part. We now use the proper GSR and EKG
+filtering functions from the [neurokit](https://neuropsychology.github.io/NeuroKit/)
+library.
+- In the 2023-08-28 version of the derived data products, we used the earliest
+timestamp for the modality among the participants as the starting point.
+However, this creates a different start time for each modality, which makes it
+challenging if a user wants to work with multiple modalities. So instead, we
+defined a shared main clock for each group session which starts 30 seconds
+before the first task and ends ends 30 seconds after the final task. All
+modalities are now mapped to the ticks in this clock (in the `*_sync` tables in
+the database).
+- In the 2023-08-28 version of the derived data products, synchronized signals
+were generated for 100 Hz, 500 Hz, and 1000 Hz. However, the new `*_sync`
+tables in the database only contain synchronized signals at 200 Hz, based on
+recent discussions with experts on brain data processing (100 Hz may lose
+important information, and 500/1000 Hz is excessive computationally expensive).
 
 ### 1.2 Vocalic features table
 
