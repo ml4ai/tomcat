@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block body_class %}index{% endblock %}
+
+{% block content %}
+{{ render_markdown(
+"""
+# 2024-02-22 update
+
+## 1. New data
+
+### 1.1 Synchronized physio data tables
+
+Added new tables (`fnirs_sync`, `gsr_sync`, `eeg_sync`, and `ekg_sync`)
+to store preprocessed signals synchronized to a main clock for four modalities
+(fNIRS, GSR, EEG, and EKG) across experiments, with filtering for artifact
+removal. For each experiment, a main clock was defined with start time at 5
+seconds before the beginning of the first task (rest state), end time at 5
+seconds after the end of last task (Minecraft), and frequency at 200 Hz.
+
+The changes are introduced in this PR:
+https://github.com/ml4ai/tomcat/pull/558.
+
+### 1.2 Vocalic features table
+
+Added a table called `audio_vocalics` that contains vocalic features extracted
+using [OpenSMILE](https://github.com/audeering/opensmile/releases/tag/v3.0.0).
+
+### 1.3 Updated `fnirs_raw` table
+
+Expanded fNIRS data by adding raw signals for 760 nm and 850 nm wavelengths to
+the `fnirs_raw` table, in case users wish to transform those into HbO and HbR
+themselves.
+
+### 1.4 Added advisor information
+
+Added a column to the `group_session` table containing information about which
+advisor was present during the trials.
+
+## 2. Timestamp corrections
+
+### 2.1 Timestamp corrections for exp_2023_01_31_14
+
+**Summary**: Corrected Minecraft start/end timestamps for exp_2023_01_31_14
+which had inconsistent dates in the future.
+
+**Explanation**: `exp_2023_01_31_14` had dates for trial start/stop and mission
+stop (same as trial stop due to the absence of a mission stop message in the
+corresponding `.metadata` file) in the past due to inconsistency.  We noticed
+that the code was not taking the most recent trial dates into consideration in
+case of multiple trial start/stop.  We fixed the data processing code and
+updated the dates manually.  The wrong dates were causing the main clock not to
+have any ticks because rest state (with correct timestamp) had timestamp after
+the Minecraft task which is used to compute the final timestamp of the main
+clock when synchronizing signals.
+
+### 2.2 Timestamps for rest state task in exp_2022_12_05_12.
+
+**Summary**: Added start and end timestamps for the rest state task in
+`exp_2022_12_05_12`.
+
+**Explanation**: If there are no start and end timestamps saved in the raw data
+file for the rest state task (prior to 2023-04, the timestamps for the rest
+state task were being saved in a CSV file), we use the file modification date
+as an approximation to the start timestamp when it started and add 300 seconds
+to the start timestamp to obtain the end timestamp. The file is created when
+the task start so the offset should be minimal. So far, only experiment
+`exp_2022_12_05_12` has this issue. We use the start time of the rest state
+when defining the main clock, so having that information is important for us
+not to lose any data.
+
+## 3. Fixed swapped signals for EKG and GSR for some experiments.
+
+Addressed an issue where EKG and GSR signals were swapped in specific
+experiments:
+
+- `exp_2022_09_30_10`
+- `exp_2022_10_04_09` for the `lion` station
+- `exp_2022_10_04_09` for the `tiger` station) by updating the raw EEG data
+processing processing to swap the signals for these specific instances.
+
+## Other updates
+
+- Updated funding acknowledgment section on the landing page to include new
+grant from ARO.
+- Updated entity-relationship diagram.
+
+""")
+}}
+{% endblock %}
