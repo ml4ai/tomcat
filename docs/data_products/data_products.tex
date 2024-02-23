@@ -117,6 +117,8 @@
 \def\sectionautorefname{\S}
 \def\subsectionautorefname{\S}
 
+\renewcommand\cftappendixname{\appendixname~}
+
 
 %%% % Most of this preamble stuff is copied from the IVILAB preambles
 %%%
@@ -166,6 +168,12 @@ collected as a part of the ASIST ToMCAT project (\url{https://ml4ai.github.io}).
 \input{sections/physio_data_extraction}
 \input{sections/derived_data_description}
 \input{sections/derived_data}
+
+
+\newpage
+\appendix
+\input{appendix/archive_2024_02_22}
+
 
 \bibliographystyle{ieeetr}
 \bibliography{references}
