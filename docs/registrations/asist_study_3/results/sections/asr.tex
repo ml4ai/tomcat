@@ -1,0 +1,29 @@
+\chapter{ASR Agent}
+\label{ch:asr}
+\textbf{Adarsh Pyarelal, Vincent Raymond}
+
+\bigskip
+
+The ASR agent enables the publishing of real-time transcriptions of the
+participants' conversations to the message bus. The inputs to the ASR agent are
+audio chunks streamed via websockets, with one stream per participant. The
+chunks are then sent to the Google Cloud Speech service, which then returns
+real-time transcriptions.
+
+The ASR agent then passes along the audio chunks and the transcriptions to the
+SpeechAnalyzer via an internal message bus for further downstream processing
+(see \autoref{ch:sentiment_analysis}).
+
+While the transcriptions produced by the ASR agent are not perfect, they have
+improved significantly compared to the initial release. The improvement can be
+attributed to two factors:
+
+\begin{enumerate}
+    \item We switched to the premium `video' model offered by Google, which is
+        able to handle noisy audio data much better. This change is responsible
+        for most of the improvement.
+    \item Further improvement was achieved by providing the service with a
+        domain-specific list of phrases as hints.
+\end{enumerate}
+
+The list of domain-specific phrases we used is given in \autoref{ch:vocab}.
