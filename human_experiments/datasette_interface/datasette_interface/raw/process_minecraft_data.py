@@ -6,7 +6,6 @@ import os
 import sys
 from glob import glob
 from logging import debug, error, info
-from pprint import pprint
 
 import pyxdf
 from tqdm import tqdm
@@ -24,10 +23,9 @@ from datasette_interface.database.entity.task.minecraft_task import (
     MinecraftMission,
     MinecraftTestbedMessage,
 )
-from datasette_interface.database.entity.base.data_validity import DataValidity
 from datasette_interface.database.entity.base.group_session import GroupSession
 from sqlalchemy import select
-from sqlalchemy.exc import NoResultFound, MultipleResultsFound
+from sqlalchemy.exc import NoResultFound
 
 
 logging.basicConfig(
@@ -70,7 +68,7 @@ def populate_station_to_playername_mapping(
             setattr(
                 gs, f"{station}_minecraft_playername", client["playername"]
             )
-        except NoResultFound as e:
+        except NoResultFound:
             error(
                 f"No row in the group_session table found with {group_session=}"
             )

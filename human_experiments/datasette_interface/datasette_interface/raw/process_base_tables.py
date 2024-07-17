@@ -6,7 +6,7 @@ import sys
 from logging import info
 
 import pandas as pd
-from sqlalchemy import insert, select
+from sqlalchemy import select
 from sqlalchemy.exc import NoResultFound
 from tqdm import tqdm
 
@@ -415,7 +415,7 @@ def process_demographic_data():
 
 
 def process_post_game_survey():
-    info(f"Processing post game survey data...")
+    info("Processing post game survey data...")
     data_dictionary_df = pd.read_csv(
         settings.post_game_survey_data_dictionary_path, index_col=0
     )
@@ -564,14 +564,14 @@ def process_post_game_survey():
 
         try:
             participant_id = int(row["subject_id"])
-        except:
+        except ValueError:
             continue
 
         try:
-            participant = db.scalars(
+            _ = db.scalars(
                 select(Participant).where(Participant.id == participant_id)
             ).one()
-        except:
+        except NoResultFound:
             continue
 
         for label in row.index:
