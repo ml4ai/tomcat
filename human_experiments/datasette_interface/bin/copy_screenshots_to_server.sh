@@ -1,15 +1,16 @@
 #!/usr/bin/env bash
-
 # Script to copy screenshots to the ivilab webserver. This is meant to be run
 # on an IVILab machine on which /data is mounted.
 
 time rsync \
-    -adrPm \ # archive mode, show progress, prune empty directories
+    -adrPm \
     --no-inc-recursive \
-    --copy-links \ # Copy files and not just symlinks
+    --copy-links \
     --info=progress2 \
     --include="*/" \
     --include="*/*/Screenshots/*.png" \
-    --include="*/*/screenshots/*.png" \ # Include lowercased variant
+    --include="*/*/screenshots/*.png" \
+    --include="*/*/screenshots/block_*/*.png" \
     --exclude="*" \
-    /data/tomcat/raw/LangLab/experiments/study_3_pilot/group ivilab:/var/www/data/tomcat/
+    /data/tomcat/raw/LangLab/experiments/study_3_pilot/group ivilab:/tomcat/data
+

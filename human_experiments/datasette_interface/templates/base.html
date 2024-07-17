@@ -2,7 +2,6 @@
 <html>
 <head>
     <title>{% block title %}{% endblock %}</title>
-    <!--<link rel="stylesheet" href="{{ urls.static('app.css') }}?{{ app_css_hash }}">-->
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 {% for url in extra_css_urls %}
     <link rel="stylesheet" href="{{ url.url }}"{% if url.get("sri") %} integrity="{{ url.sri }}" crossorigin="anonymous"{% endif %}>
@@ -50,6 +49,7 @@
 
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <li><a class="dropdown-item" href="/updates">All updates</a></li>
+                            <li><a class="dropdown-item" href="/updates/2024-02-22">2024-02-22</a></li>
                             <li><a class="dropdown-item" href="/updates/2023-07-19">2023-07-19</a></li>
                             <li><a class="dropdown-item" href="/updates/2023-07-17">2023-07-17</a></li>
                         </ul>

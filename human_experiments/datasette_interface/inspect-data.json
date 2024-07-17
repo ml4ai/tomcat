@@ -1,0 +1,78 @@
+{
+  "tomcat": {
+    "hash": "e658dd324b33f88e17a02a77b45a7e16f0807b719ddeba440b552968efb54eae",
+    "size": 460870664192,
+    "file": "/space/paulosoares/tomcat/tomcat.db",
+    "tables": {
+      "task": {
+        "count": 9
+      },
+      "modality": {
+        "count": 3
+      },
+      "group_session": {
+        "count": 40
+      },
+      "participant": {
+        "count": 114
+      },
+      "station": {
+        "count": 4
+      },
+      "rest_state_task": {
+        "count": 40
+      },
+      "ping_pong_competitive_task_observation": {
+        "count": 647242
+      },
+      "eeg_device": {
+        "count": 120
+      },
+      "affective_task_event": {
+        "count": 14586
+      },
+      "eeg_raw": {
+        "count": 320700934
+      },
+      "ping_pong_cooperative_task_observation": {
+        "count": 323806
+      },
+      "finger_tapping_task_observation": {
+        "count": 99875
+      },
+      "data_validity": {
+        "count": 3060
+      },
+      "gaze_raw": {
+        "count": 129554477
+      },
+      "minecraft_mission": {
+        "count": 100
+      },
+      "minecraft_testbed_message": {
+        "count": 6370941
+      },
+      "screen_capture": {
+        "count": 4100470
+      },
+      "audio_vocalics": {
+        "count": 33049497
+      },
+      "eeg_sync": {
+        "count": 124351398
+      },
+      "fnirs_raw": {
+        "count": 6849295
+      },
+      "fnirs_sync": {
+        "count": 125359661
+      },
+      "gsr_sync": {
+        "count": 124351398
+      },
+      "ekg_sync": {
+        "count": 97446792
+      }
+    }
+  }
+}

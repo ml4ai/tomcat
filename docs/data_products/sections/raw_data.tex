@@ -1,3 +1,4 @@
+\nocite{*}
 \section{Raw data}
 
 In what follows, strings enclosed by a pair of angle brackets (\verb|<>|) indicate
@@ -1705,10 +1706,12 @@ the data for each file listed above is detailed as follows: \\
         % \section*{}\label{ASR Agent logs}
         \phantomsection\label{ASR Agent logs <yyyy>-<mm>-<dd>_<hh>-<mm>-<ss>.0.log}
         \textbf{<yyyy>-<mm>-<dd>\_<hh>-<mm>-<ss>.0.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "ASR Agent" in the format:
+        This file contains log entries for the "ASR Agent".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>: <info> <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>: <info> <message>"}
+            \end{addmargin}
         \end{addmargin}
     % \end{addmargin} % End of File "<yyyy>-<mm>-<dd>_<hh>-<mm>-<ss>.0.log"
 \end{addmargin} % End of Sub Directory "asist_logs_<teamid>_<yyyy>_<mm>_<dd>_<hh>_<mm>_<ss>/ASR_Agent/logs/"
@@ -1722,10 +1725,19 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{ac_aptima_ta3_measures.log}
     \begin{addmargin}[1em]{0em} % Start of File "ac_aptima_ta3_measures.log"
         \textbf{ac\_aptima\_ta\_measures.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "AC Aptima TA3 Measures" in the format:
+        This file contains log entries for the "Analytic Component - Aptima - TA3 - Measures".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <agent> | <info>"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+                \begin{addmargin}[1em]{0em}\textit{"2023-04-17 20:07:43,273 | MeasuresAgent | INFO — Starting Agent Loop."\\
+                 "2023-04-17 20:07:43,273 | asistagenthelper.ASISTAgentHelper | INFO — Starting ASIST."\\
+                 "2023-04-17 20:07:43,273 | MeasuresAgent | INFO — Agent is now running..."}
+             \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "ac_aptima_ta3_measures.log"
     \textbf{\\}
@@ -1733,10 +1745,23 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{AC_CMUFMS_TA2_Cognitive.log}
     \begin{addmargin}[1em]{0em} % Start of File "AC_CMUFMS_TA2_Cognitive.log"
         \textbf{AC\_CMUFMS\_TA2\_Cognitive.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "AC CMUFMS TA2 Cognitive" in the format:
+        This file contains log entries for the "Analytic Component - Carnegie Mellon University - Functional Modeling Systems - TA2 - Cognitive".
+        This agent, written in Python, computes the current cognitive load for the overall team, as well as arelated probability of forgetting by the overall team.
+        These are computed solely with respect tointeractions with victims, not marker blocks.\\\\
+        It publishes on only a coarse grained schedule, publishing a message to the bus only when therehas been an interaction that can be expected to make
+        a substantial change to the cognitive load,and does not continuously reflect the fine-grained changes reflecting decay of memories over shortperiods of time.
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <agent> | <info>"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+                \begin{addmargin}[1em]{0em}\textit{"2023-04-17 20:07:49,122 | AC\_CMUFMS\_TA2\_Cognitive | INFO — Starting Agent..."\\
+                    "2023-04-17 20:07:49,122 | asistagenthelper.ASISTAgentHelper | INFO — Starting ASIST..."\\
+                    "2023-04-17 20:07:49,122 | asistagenthelper.ASISTAgentHelper | INFO — Starting MQTT..."}
+                \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "AC_CMUFMS_TA2_Cognitive.log"
     \textbf{\\}
@@ -1744,10 +1769,19 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{ac_cmu_ta1_pygl_fov_agent.log}
     \begin{addmargin}[1em]{0em} % Start of File "ac_cmu_ta1_pygl_fov_agent.log"
         \textbf{ac\_cmu\_ta1\_pygl\_fov\_agent.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "AC CMU TA1 PYGL FOV Agent" in the format:
+        This file contains log entries for the "Analytic Component - Carnegie Mellon University - TA1 - PYGL FOV Agent".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"<info> : <message>"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"INFO:FoVWorker:[FoVWorker]:  Creating a new participant: 00133"\\
+                "INFO:FoVWorker:[FoVWorker]:  Participant Block ID: 1"\\
+                "INFO:FoVWorker:[FoVWorker]:  Participant Block Color: (0, 0, 2)"}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "ac_cmu_ta1_pygl_fov_agent.log"
     \textbf{\\}
@@ -1755,10 +1789,19 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{ac_cmu_ta2_beard.log}
     \begin{addmargin}[1em]{0em} % Start of File "ac_cmu_ta2_beard.log"
         \textbf{ac\_cmu\_ta2\_beard.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "AC CMU TA2 Beard" in the format:
+        This file contains log entries for the "Analytic Component - Carnegie Mellon University - TA2 - Beard".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <agent> | <info>"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"2023-04-17 22:06:40,236 | ac\_cmu\_ta2\_beard | INFO — Trial Event: start"\\
+                "2023-04-17 22:06:40,237 | ac\_cmu\_ta2\_beard | INFO — Resetting full state!"\\
+                "2023-04-17 22:08:09,793 | ac\_cmu\_ta2\_beard | INFO — - Mission Event: Start"}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "ac_cmu_ta2_beard.log"
     \textbf{\\}
@@ -1766,10 +1809,19 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{ac_cmu_ta2_ted.log}
     \begin{addmargin}[1em]{0em} % Start of File "ac_cmu_ta2_ted.log"
         \textbf{ac\_cmu\_ta2\_ted.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "AC CMU TA2 Ted" in the format:
+        This file contains log entries for the "Analytic Component - Carnegie Mellon University - TA2 - Ted".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <agent> | <info>"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"2023-04-17 20:08:07,721 | ac\_cmu\_ta2\_ted | INFO — Starting Agent Loop separate thread."\\
+                "2023-04-17 20:08:07,721 | ac\_cmu\_ta2\_ted | INFO — Agent is now running..."\\
+                "2023-04-17 22:08:09,793 | ac\_cmu\_ta2\_ted | INFO —  - Mission Event: Start"}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "ac_cmu_ta2_ted.log"
     \textbf{\\}
@@ -1777,10 +1829,19 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{AC_CORNELL_TA2_TEAMTRUST.log}
     \begin{addmargin}[1em]{0em} % Start of File "AC_CORNELL_TA2_TEAMTRUST.log"
         \textbf{AC\_CORNELL\_TA2\_TEAMTRUST.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "AC CORNELL TA2 TEAMTRUST" in the format:
+        This file contains log entries for the "Analytic Component - Cornell University - TA2 - TEAMTRUST".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <agent> | <info>"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"2023-04-17 22:46:14,842 | AC\_CORNELL\_TA2\_TEAM\_TRUST | INFO — Published goal alignment. Time: 925937"\\
+                "2023-04-17 22:46:18,716 | AC\_CORNELL\_TA2\_TEAM\_TRUST | INFO — Published Compliance message. Time: 929814"\\
+                "2023-04-17 22:46:36,181 | AC\_CORNELL\_TA2\_TEAM\_TRUST |  INFO — Goal update event: observations/events/player/rubble\_destroyed"}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "AC_CORNELL_TA2_TEAMTRUST.log"
     \textbf{\\}
@@ -1788,10 +1849,19 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{ac_gallup_ta2_gelp.log}
     \begin{addmargin}[1em]{0em} % Start of File "ac_gallup_ta2_gelp.log"
         \textbf{ac\_gallup\_ta2\_gelp.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "AC GALLUP TA2 GELP" in the format:
+        This file contains log entries for the "Analytic Component - University of New Mexico-Gallup Campus - TA2 - GELP".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <agent> | <info>"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"2023-04-17 22:27:03,110 | Gallup\_Agent\_GELP | INFO — (1) curr\_data\_obj: <currently silenced>"\\
+                "2023-04-17 22:27:03,110 | Gallup\_Agent\_GELP | INFO — Variable type for curr\_data\_obj['message']: <class 'dict'>"\\
+                "2023-04-17 22:27:03,110 | Gallup\_Agent\_GELP | INFO — (2) Completed type check."}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "ac_gallup_ta2_gelp.log"
     \textbf{\\}
@@ -1799,10 +1869,19 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{ac_gallup_ta2_gold.log}
     \begin{addmargin}[1em]{0em} % Start of File "ac_gallup_ta2_gold.log"
         \textbf{ac\_gallup\_ta2\_gold.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "AC GALLUP TA2 GOLD" in the format:
+        This file contains log entries for the "Analytic Component - University of New Mexico-Gallup Campus - TA2 - GOLD".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"<info>"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"ImportError: cannot import name 'AutoModelForSequenceClassification' from 'nltk.tokenize'
+                (/usr/local/lib/python3.8/site-packages/nltk/tokenize/\_\_init\_\_.py)"\\
+                "Agent gallup\_agent\_gold.py crashed with exit code 1. Restarting.."}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "ac_gallup_ta2_gold.log"
     \textbf{\\}
@@ -1810,10 +1889,19 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{ac_ihmc_ta2_dyad-reporting.log}
     \begin{addmargin}[1em]{0em} % Start of File "ac_ihmc_ta2_dyad-reporting.log"
         \textbf{ac\_ihmc\_ta2\_dyad-reporting.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "AC IHMC TA2 DYAD-REPORTING" in the format:
+        This file contains log entries for the "Analytic Component - Institute for Human \& Machine Cognition - TA2 DYAD-REPORTING".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <agent> | <info>"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"2023-04-17 20:07:46,592 | IHMCProximityAC | INFO — Starting IHMC's Dyad AC Agent"\\
+                "2023-04-17 20:07:46,592 | IHMCProximityAC | INFO — Dyad Ranges: [[0.0, 13.0, 1.0], [13.0, 20.0, 0.5]]"\\
+                "2023-04-17 20:07:46,592 | IHMCProximityAC | INFO — Starting Agent Loop on a separate thread."}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "ac_ihmc_ta2_dyad-reporting.log"
     \textbf{\\}
@@ -1821,10 +1909,19 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{ac_ihmc_ta2_joint-activity-interdependence.log}
     \begin{addmargin}[1em]{0em} % Start of File "ac_gallup_ta2_gold.log"
         \textbf{ac\_ihmc\_ta2\_joint-activity-interdependence.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "AC IHMC TA2 joint-activity-interdependence" in the format:
+        This file contains log entries for the "Analytic Component - Institute for Human \& Machine Cognition - TA2 joint-activity-interdependence".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <agent> | <info>"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"2023-04-17 20:07:47,932 | asistagenthelper.ASISTAgentHelper | INFO — Starting ASIST Agent Loop: ac\_ihmc\_ta2\_joint-activity-interdependence"\\
+                "2023-04-17 20:07:47,932 | asistagenthelper.ASISTAgentHelper | INFO — Starting the MQTT Bus pub/sub system..."\\
+                "2023-04-17 20:07:47,935 | asistagenthelper.ASISTAgentHelper | INFO — - Connected to the Message Bus."}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "ac_ihmc_ta2_joint-activity-interdependence.log"
     \textbf{\\}
@@ -1832,10 +1929,19 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{ac_ihmc_ta2_location-monitor.log}
     \begin{addmargin}[1em]{0em} % Start of File "ac_ihmc_ta2_location-monitor.log"
         \textbf{ac\_ihmc\_ta2\_location-monitor.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "AC IHMC TA2 location-monitor" in the format:
+        This file contains log entries for the "Analytic Component - Institute for Human \& Machine Cognition - TA2 location-monitor".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <agent> | <info>"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"2023-04-17 20:07:45,234 | LocationMonitor | INFO — Starting Agent Loop on a separate thread."\\
+                "2023-04-17 20:07:45,235 | LocationMonitor | INFO — Agent is now running..."\\
+                "2023-04-17 22:06:40,236 | LocationMonitor | INFO — New Trial\_id: f4f65fe1-e105-4e67-8682-f9b3dc4eedb1 using map: Saturn\_2.9\_3D\_Training"}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "ac_ihmc_ta2_location-monitor.log"
     \textbf{\\}
@@ -1843,10 +1949,20 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{ac_ihmc_ta2_player-proximity.log}
     \begin{addmargin}[1em]{0em} % Start of File "ac_ihmc_ta2_player-proximity.log"
         \textbf{ac\_ihmc\_ta2\_player-proximity.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "AC IHMC TA2 player-proximity" in the format:
+        This file contains log entries for the "Analytic Component - Institute for Human \& Machine Cognition - TA2 player-proximity".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <agent> | <info>"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"2023-04-17 20:07:46,193 | IHMCProximityAC | INFO — Starting IHMC's Proximity AC Agent"\\
+                "2023-04-17 20:07:54,289 | IHMCProximityAC | INFO — Pre populating Distance Matrices..."\\
+                "2023-04-17 22:08:10,356 | IHMCProximityAC | INFO — 'elapsed\_milliseconds': 555, 'participants': ['callsign': 'red',
+                'participant\_id': '00131', 'role': 'Medical\_Specialist', 'current\_location': 'sga', 'distance\_to\_participants': ['id': 'blue', 'distance': 6.0,..."}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "ac_ihmc_ta2_player-proximity.log"
     \textbf{\\}
@@ -1854,10 +1970,21 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{AC_UAZ_TA1_ASR_Agent-heartbeat.log}
     \begin{addmargin}[1em]{0em} % Start of File "AC_UAZ_TA1_ASR_Agent-heartbeat.log"
         \textbf{AC\_UAZ\_TA1\_ASR\_Agent-heartbeat.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "AC UAZ TA1 ASR Agent-heartbeat" in the format:
+        This file contains log entries for the "Analytic Component - University of Arizona - TA1 ASR Agent-heartbeat".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"PING asr\_agent (<ip>) <statistics info>..."}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"PING asr\_agent (<ip>) 56(84) bytes of data.\\
+                64 bytes from AC\_UAZ\_TA1\_ASR\_Agent.asist\_net(<ip>): icmp\_seq=1 ttl=64 time=0.249ms\\
+                --- asr\_agent ping statistics ---\\
+                1 packets transmitted, 1 received, 0\% packet loss, time 0ms\\
+                rtt min/avg/max/mdev = 0.249/0.249/0.249/0.000 ms"}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "AC_UAZ_TA1_ASR_Agent-heartbeat.log"
     \textbf{\\}
@@ -1865,10 +1992,19 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{AC_UAZ_TA1_ASR_Agent.log}
     \begin{addmargin}[1em]{0em} % Start of File "AC_UAZ_TA1_ASR_Agent.log"
         \textbf{AC\_UAZ\_TA1\_ASR\_Agent.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "AC UAZ TA1 ASR Agent" in the format:
+        This file contains log entries for the "Analytic Component - University of Arizona - TA1 ASR Agent".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>: <info>"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"2023-04-17 20:07:52: <info> Connection to Mosquitto broker established!"\\
+                "2023-04-17 20:07:52: <info> Starting speechAnalyzer in websocket mode"\\
+                "2023-04-17 22:06:40: <info> Accepted connection: participant\_id = 1 sample\_rate = 48000"}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "AC_UAZ_TA1_ASR_Agent.log"
     \textbf{\\}
@@ -1876,10 +2012,20 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{AC_UAZ_TA1_ASR_Agent-Mosquitto.log}
     \begin{addmargin}[1em]{0em} % Start of File "AC_UAZ_TA1_ASR_Agent-Mosquitto.log"
         \textbf{AC\_UAZ\_TA1\_ASR\_Agent-Mosquitto.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "AC UAZ TA1 ASR Agent-Mosquitto" in the format:
+        This file contains log entries for the "Analytic Component - University of Arizona - TA1 ASR Agent-Mosquitto".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"<timestamp in seconds>: <info>"\\
+                (<timestamp> = number of seconds elapsed since Jan 1, 1970 (midnight UTC/GMT))}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"1681762071: mosquitto version 2.0.14 starting"\\
+                "1681762071: Config loaded from /mosquitto/config/mosquitto.conf."\\
+                "1681762071: Opening ipv4 listen socket on port 1883."}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "AC_UAZ_TA1_ASR_Agent-Mosquitto.log"
     \textbf{\\}
@@ -1887,10 +2033,17 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{ac_uaz_ta1_speechanalyzer_adminer_1.log}
     \begin{addmargin}[1em]{0em} % Start of File "ac_uaz_ta1_speechanalyzer_adminer_1.log"
         \textbf{ac\_uaz\_ta1\_speechanalyzer\_adminer\_1.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "AC UAZ TA1 Speechanalyzer Adminer 1" in the format:
+        This file contains log entries for the "Analytic Component - University of Arizona - TA1 Speechanalyzer Adminer 1".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"[<date\_time\_stamp] <info>"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"[Mon Apr 17 20:07:55 2023] PHP 7.4.32 Development Server (http://[::]:8080) started"}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "ac_uaz_ta1_speechanalyzer_adminer_1.log"
     \textbf{\\}
@@ -1898,10 +2051,19 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{AC_UAZ_TA1_SpeechAnalyzer-db.log}
     \begin{addmargin}[1em]{0em} % Start of File "AC_UAZ_TA1_SpeechAnalyzer-db.log"
         \textbf{AC\_UAZ\_TA1\_SpeechAnalyzer-db.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "AC UAZ TA1 SpeechAnalyzer-db" in the format:
+        This file contains log entries for the "Analytic Component - University of Arizona - TA1 SpeechAnalyzer-db".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"<agent messages>...\\<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>.<SSS> UTC <info>"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"PostgreSQL init process complete; ready for start up."\\
+                "2023-04-17 20:07:57.213 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432"\\
+                "2023-04-17 20:07:57.213 UTC [1] LOG:  listening on IPv6 address "::", port 5432"}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "AC_UAZ_TA1_SpeechAnalyzer-db.log"
     \textbf{\\}
@@ -1909,10 +2071,20 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{AC_UAZ_TA1_SpeechAnalyzer-heartbeat.log}
     \begin{addmargin}[1em]{0em} % Start of File "AC_UAZ_TA1_SpeechAnalyzer-heartbeat.log"
         \textbf{AC\_UAZ\_TA1\_SpeechAnalyzer-heartbeat.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "AC UAZ TA1 SpeechAnalyzer-heartbeat" in the format:
+        This file contains log entries for the "Analytic Component - University of Arizona - TA1 SpeechAnalyzer-heartbeat".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{""PING speech\_analyzer (<ip>) <statistics info>...""}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"PING speech\_analyzer (<ip>) 56(84) bytes of data.\\
+                --- speech\_analyzer ping statistics ---\\
+                1 packets transmitted, 1 received, 0\% packet loss, time 0ms\\
+                rtt min/avg/max/mdev = 0.227/0.227/0.227/0.000 ms"}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "AC_UAZ_TA1_SpeechAnalyzer-heartbeat.log"
     \textbf{\\}
@@ -1920,10 +2092,19 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{AC_UAZ_TA1_SpeechAnalyzer.log}
     \begin{addmargin}[1em]{0em} % Start of File "AC_UAZ_TA1_SpeechAnalyzer.log"
         \textbf{AC\_UAZ\_TA1\_SpeechAnalyzer.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "AC UAZ TA1 SpeechAnalyzer" in the format:
+        This file contains log entries for the "Analytic Component - University of Arizona - TA1 SpeechAnalyzer".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>: <info>"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"2023-04-17 20:08:01: <info> SpeechAnalyzer version: 4.1.6"\\
+                "2023-04-17 20:08:02: <info> Connection to Mosquitto broker established!"\\
+                "2023-04-17 22:06:49: <info> data:"sentiment":"emotions":"anger":0.05,"disgust":0.02..."}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "AC_UAZ_TA1_SpeechAnalyzer.log"
     \textbf{\\}
@@ -1931,10 +2112,19 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{AC_UAZ_TA1_SpeechAnalyzer-mmc.log}
     \begin{addmargin}[1em]{0em} % Start of File "AC_UAZ_TA1_SpeechAnalyzer-mmc.log"
         \textbf{AC\_UAZ\_TA1\_SpeechAnalyzer-mmc.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "AC UAZ TA1 SpeechAnalyzer-mmc" in the format:
+        This file contains log entries for the "Analytic Component - University of Arizona - TA1 SpeechAnalyzer-mmc".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"INFO: <info>"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"INFO: Started server process [1]"\\
+                "INFO: Application startup complete."\\
+                "INFO: Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)"}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "AC_UAZ_TA1_SpeechAnalyzer-mmc.log"
     \textbf{\\}
@@ -1942,10 +2132,20 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{ac_ucf_ta2_playerprofiler_container.log}
     \begin{addmargin}[1em]{0em} % Start of File "ac_ucf_ta2_playerprofiler_container.log"
         \textbf{ac\_ucf\_ta2\_playerprofiler\_container.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "AC UCF TA2 Playerprofiler Container" in the format:
+        This file contains log entries for the "Analytic Component - UCF TA2 Playerprofiler Container".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <agent> | <info>"\\
+                "<message bus messages>..."}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"2023-04-17 20:08:15,705 | asistagenthelper.ASISTAgentHelper | INFO — Starting MQTT Bus system..."\\
+                "2023-04-17 20:08:15,711 | asistagenthelper.ASISTAgentHelper | INFO — - Connected to the Message Bus."\\
+                "subscribe observations/events/player/rubble\_destroyed qos = 2"}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "ac_ucf_ta2_playerprofiler_container.log"
     \textbf{\\}
@@ -1953,10 +2153,20 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{asistdataingester.log}
     \begin{addmargin}[1em]{0em} % Start of File "asistdataingester.log"
         \textbf{asistdataingester.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "Asist Data Ingester" in the format:
+        This file contains log entries for the "Asist Data Ingester".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"info: <info>"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"info: AsistDataIngester.Startup[0]"\\
+                "info: AsistDataIngester.Services.MQTTService[0]\\
+                MQTTService: MQTT Client Initializing\\
+                MQTT STARTING UP"}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "asistdataingester.log"
     \textbf{\\}
@@ -1964,10 +2174,19 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{clientmap.log}
     \begin{addmargin}[1em]{0em} % Start of File "clientmap.log"
         \textbf{clientmap.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "Client Map" in the format:
+        This file contains log entries for the "Client Map".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"<messages>", "<json text>"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"> server2@1.0.0 start /Server2"\\
+                "> node server.js"\\
+                "\{\\}\verb|  |\textit{showGlobalPositions: false,\\}\verb|  |\textit{Saturn\_A\_Text: \{\\}\verb|    |\textit{Medic: \{..."}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "clientmap.log"
     \textbf{\\}
@@ -1975,10 +2194,19 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{cmuta2-ted-ac.log}
     \begin{addmargin}[1em]{0em} % Start of File "cmuta2-ted-ac.log"
         \textbf{cmuta2-ted-ac.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "CMUTA2-TED-AC" in the format:
+        This file contains log entries for the "CMUTA2-TED-AC".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"2022-03-25 23:52:31,684 | cmuta2-ted-ac | INFO — Starting Agent Loop on a separate thread."\\
+                "2022-03-25 23:52:31,684 | asistagenthelper.ASISTAgentHelper | INFO — Starting ASIST Agent Loop: cmuta2-ted-ac"\\
+                "2022-03-25 23:52:31,684 | asistagenthelper.ASISTAgentHelper | INFO — Starting the MQTT Bus pub/sub system..."}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "cmuta2-ted-ac.log"
     \textbf{\\}
@@ -1986,10 +2214,19 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{cra_psicoach_agent.log}
     \begin{addmargin}[1em]{0em} % Start of File "cra_psicoach_agent.log"
         \textbf{cra\_psicoach\_agent.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "CRA PSICOACH Agent" in the format:
+        This file contains log entries for the "CRA PSICOACH Agent".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss> INFO <info>"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"2022-03-25 23:52:24 INFO  CoachController\$:146 - Loading Map: Saturn"\\
+                "2022-03-25 23:52:25 INFO MqttConnectionHandler:145 - Listening for messages"\\
+                "2022-03-25 23:52:25 INFO DefaultAgentEventSource:48 - StatusEvent[State(ok),\\Status(SequenceNumber(0))]"}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "cra_psicoach_agent.log"
     \textbf{\\}
@@ -1997,10 +2234,18 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{crazy_ritchie.log}
     \begin{addmargin}[1em]{0em} % Start of File "crazy_ritchie.log"
         \textbf{crazy\_ritchie.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "Crazy Ritchie" in the format:
+        This file contains log entries for the "Docker Container System - Crazy Ritchie".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"<messages from Docker>"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"Hello from Docker!"\\
+                "This message shows that your installation appears to be working correctly."}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "crazy_ritchie.log"
     \textbf{\\}
@@ -2008,10 +2253,20 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{dozzle.log}
     \begin{addmargin}[1em]{0em} % Start of File "dozzle.log"
         \textbf{dozzle.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "Dozzle" in the format:
+        This file contains log entries for the "Dozzle".
+        Dozzle is a simple and responsive application that provides you with a web based interface to monitor your Docker container logs live.
+        It doesn't store log information, it is for live monitoring of your container logs only.
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"<messages from Dozzle>"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"level=info msg="Dozzle version v3.10.2""\\
+                "level=info msg="Accepting connections on :8080""}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "dozzle.log"
     \textbf{\\}
@@ -2019,10 +2274,24 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{elasticsearch.log}
     \begin{addmargin}[1em]{0em} % Start of File "elasticsearch.log"
         \textbf{elasticsearch.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "Elastic Search" in the format:
+        This file contains log entries for the "Elasticsearch Application".
+        The Elasticsearch’s application is used to log and monitor your cluster and diagnose issues.
+        If you run Elasticsearch as a service, the default location of the logs varies based on your platform and installation.
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"<messages from Elasticsearch> (JSON format)"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"\{"type": "server", "timestamp": "2023-04-17T20:07:41,218Z", "level": "INFO",\\
+                "component": "o.e.n.Node", "cluster.name": "docker-cluster", "node.name": "<node>",\\
+                "message": "version[7.16.2], pid[7],\\
+                build[default/docker/<docker\_id>/2021-12-18T19:42:46.604893745Z],\\
+                OS[Linux/5.15.0-58-generic/amd64],\\
+                JVM[Eclipse Adoptium/OpenJDK 64-Bit Server VM/17.0.1/17.0.1+12]" \}"}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "elasticsearch.log"
     \textbf{\\}
@@ -2030,43 +2299,66 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{filebeat.log}
     \begin{addmargin}[1em]{0em} % Start of File "filebeat.log"
         \textbf{filebeat.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "Filebeat" in the format:
+        This file contains log entries for the "Filebeat".
+        Filebeat is a lightweight shipper for forwarding and centralizing log data. Installed as an agent on your servers,
+        Filebeat monitors the log files or locations that you specify, collects log events,
+        and forwards them either to Elasticsearch or Logstash for indexing.
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"<messages from Filebeat>"}
+            \end{addmargin}
         \end{addmargin}
+        % File is empty, no examples of data found.
     \end{addmargin} % End of File "filebeat.log"
     \textbf{\\}
 
     \phantomsection\label{heartbeat-speech_analyzer_agent.log}
     \begin{addmargin}[1em]{0em} % Start of File "heartbeat-speech_analyzer_agent.log"
         \textbf{heartbeat-speech\_analyzer\_agent.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "Heartbeat-Speech Analyzer Agent" in the format:
+        This file contains log entries for the "Heartbeat-Speech Analyzer Agent".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"<Heartbeat messages from the Speech Analyzer Agent>"}
+            \end{addmargin}
         \end{addmargin}
+        % File is empty, no examples of data found.
     \end{addmargin} % End of File "heartbeat-speech_analyzer_agent.log"
     \textbf{\\}
 
     \phantomsection\label{heartbeat-uaz_tmm_agent.log}
     \begin{addmargin}[1em]{0em} % Start of File "heartbeat-uaz_tmm_agent.log"
         \textbf{heartbeat-uaz\_tmm\_agent.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "Heartbeat-UAZ TMM Agent" in the format:
+        This file contains log entries for the "Heartbeat-UAZ TMM Agent".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"Heartbeat messages from the UAZ TMM Agent"}
+            \end{addmargin}
         \end{addmargin}
+        % File is empty, no examples of data found.
     \end{addmargin} % End of File "heartbeat-uaz_tmm_agent.log"
     \textbf{\\}
 
     \phantomsection\label{kibana.log}
     \begin{addmargin}[1em]{0em} % Start of File "kibana.log"
         \textbf{kibana.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "Kibana" in the format:
+        This file contains log entries for the "Kibana Tool".
+        Kibana is a data visualization and exploration tool used for log and time-series analytics, application monitoring,
+        and operational intelligence use cases. It offers powerful and easy-to-use features such as histograms,
+        line graphs, pie charts, heat maps, and built-in geospatial support.
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"<messages from Kibana> (JSON format)"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"\{"type":"log","@timestamp":"2023-02-21T20:50:07+00:00",\\
+                "tags":["info","plugins-service"],"pid":7,"message":"Plugin "metricsEntities" is disabled."\}"}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "kibana.log"
     \textbf{\\}
@@ -2074,10 +2366,22 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{logstash.log}
     \begin{addmargin}[1em]{0em} % Start of File "logstash.log"
         \textbf{logstash.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "Logstash" in the format:
+        This file contains log entries for the "Logstash".
+        Logstash is an open server-side data processing pipeline that ingests data from a multitude of sources,
+        transforms it, and then sends it to your favorite "stash."
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"<messages from Logstash>"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"[2023-02-21T20:50:06,152][INFO ][org.reflections.Reflections]
+                Reflections took 36 ms to scan 1 urls, producing 20 keys and 40 values"\\
+                "[2023-02-21T20:50:07,345][WARN ][logstash.outputs.elasticsearch][main]\\
+                Restored connection to ES instance \{:url=>"http://elasticsearch:9200/"\}"}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "logstash.log"
     \textbf{\\}
@@ -2085,10 +2389,21 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{malmocontrol_Local.log}
     \begin{addmargin}[1em]{0em} % Start of File "malmocontrol_Local.log"
         \textbf{malmocontrol\_Local.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "Malmo Control Local" in the format:
+        This file contains log entries for the "Malmo Control Local".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"<message\_type>: <message>"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"info: Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager[0]\\
+                User profile is available. Using '/root/.aspnet/DataProtection-Keys' as key repository; keys will not be encrypted at rest."\\
+                "info: Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager[58]\\
+                Creating key \{<key>\} with creation date <date>,\\
+                activation date <date>, and expiration date <date>."}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "malmocontrol_Local.log"
     \textbf{\\}
@@ -2096,10 +2411,19 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{Measures_Agent_Container.log}
     \begin{addmargin}[1em]{0em} % Start of File "Measures_Agent_Container.log"
         \textbf{Measures\_Agent\_Container.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "Measures Agent Container" in the format:
+        This file contains log entries for the "Measures Agent Container".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <agent> | <info>"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"2022-03-25 23:52:15,812 | MeasuresAgent | INFO — Starting Agent Loop on a separate thread."\\
+                "2022-03-25 23:52:15,812 | asistagenthelper.ASISTAgentHelper | INFO — Starting ASIST Agent Loop: AC\_Aptima\_TA3\_measures"\\
+                "2022-03-25 23:52:15,812 | MeasuresAgent | INFO — Agent is now running..."}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "Measures_Agent_Container.log"
     \textbf{\\}
@@ -2107,10 +2431,19 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{metadata-docker_metadata-app_1.log}
     \begin{addmargin}[1em]{0em} % Start of File "metadata-docker_metadata-app_1.log"
         \textbf{metadata-docker\_metadata-app\_1.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "Metadata-Docker Metadata-App 1" in the format:
+        This file contains log entries for the "Metadata-Docker Metadata-App 1".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"<<hh>:<mm>:<ss>.<SSS> [<source>] <info>"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"20:50:00.354 [main] INFO  io.micronaut.runtime.Micronaut - Startup completed in 2561ms. Server Running: http://<id>:8080"\\
+                "21:24:33.731 [MQTT Call:<id>] INFO  m.a.service.DefaultExperimentService - 1 row(s) affected."\\
+                "21:24:33.745 [MQTT Call:<id>] INFO  m.a.service.DefaultExperimentService - id returned: 79."}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "metadata-docker_metadata-app_1.log"
     \textbf{\\}
@@ -2118,10 +2451,19 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{metadata-docker_pgadmin_1.log}
     \begin{addmargin}[1em]{0em} % Start of File "metadata-docker_pgadmin_1.log"
         \textbf{metadata-docker\_pgadmin\_1.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "Metadata-Docker Page Admin 1" in the format:
+        This file contains log entries for the "Metadata-Docker Page Admin 1".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"[<yyyy>-<mm>-<dd> <hh>:<mm>:<ss> <offset>] [<num>] [INFO] <info>"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"[2023-02-21 20:50:14 +0000] [1] [INFO] Starting gunicorn 20.1.0"\\
+                "[2023-02-21 20:50:14 +0000] [1] [INFO] Listening at: http://[::]:80 (1)"\\
+                "[2023-02-21 20:50:14 +0000] [1] [INFO] Using worker: gthread"}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "metadata-docker_pgadmin_1.log"
     \textbf{\\}
@@ -2129,10 +2471,19 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{metadata-docker_postgres_1.log}
     \begin{addmargin}[1em]{0em} % Start of File "metadata-docker_postgres_1.log"
         \textbf{metadata-docker\_postgres\_1.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "Metadata-Docker Post Gres 1" in the format:
+        This file contains log entries for the "Metadata-Docker Post Gres 1".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> UTC [<num>] LOG: <info>"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"2023-02-21 20:49:56.254 UTC [1] LOG:  starting PostgreSQL 13.4 on x86\_64-pc-linux-musl, compiled by gcc (Alpine 10.3.1\_git20210424) 10.3.1 20210424, 64-bit"\\
+                "2023-02-21 20:49:56.254 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432"\\
+                "2023-02-21 20:49:56.254 UTC [1] LOG:  listening on IPv6 address "::", port 5432"}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "metadata-docker_postgres_1.log"
     \textbf{\\}
@@ -2140,21 +2491,32 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{metadata-web_metadata-web_1.log}
     \begin{addmargin}[1em]{0em} % Start of File "metadata-web_metadata-web_1.log"
         \textbf{metadata-web\_metadata-web\_1.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "Metadata-Web 1" in the format:
+        This file contains log entries for the "Metadata-Web 1".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> UTC [<num>] LOG: <info>"}
+            \end{addmargin}
         \end{addmargin}
+        % File is empty, no examples of data found.
     \end{addmargin} % End of File "metadata-web_metadata-web_1.log"
     \textbf{\\}
 
     \phantomsection\label{minecraft-server0.log}
     \begin{addmargin}[1em]{0em} % Start of File "minecraft-server0.log"
         \textbf{minecraft-server0.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "Minecraft-Server0" in the format:
+        This file contains log entries for the "Minecraft-Server0".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"[init] <info>" , "[<hh>:<mm>:<ss>] [source] [process]: <info>" , "<message>"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"[init] Running as uid=1000 gid=1000 with /data\\ as 'drwxrwsrwx 15 1000 701 4096 Feb 21 20:50 /data'"\\
+                "[20:50:38] [main/INFO] [LaunchWrapper]:\\ Using primary tweak class name net.minecraftforge.fml.common.launcher.FMLServerTweaker"}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "minecraft-server0.log"
     \textbf{\\}
@@ -2162,10 +2524,19 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{mmc.log}
     \begin{addmargin}[1em]{0em} % Start of File "mmc.log"
         \textbf{mmc.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "MMC" in the format:
+        This file contains log entries for the "MMC".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"INFO: <info>"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"INFO: Started server process [1]"\\
+                "INFO: Application startup complete."\\
+                "INFO: Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)"}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "mmc.log"
     \textbf{\\}
@@ -2173,10 +2544,20 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{mosquitto.log}
     \begin{addmargin}[1em]{0em} % Start of File "mosquitto.log"
         \textbf{mosquitto.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "Mosquitto" in the format:
+        This file contains log entries for the "Mosquitto".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"<timestamp in seconds>: <info>"\\
+                (<timestamp> = number of seconds elapsed since Jan 1, 1970 (midnight UTC/GMT))}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"1677012585: mosquitto version 1.6.9 starting"\\
+                "1677012585: Config loaded from /mosquitto/config/mosquitto.conf."\\
+                "1677012585: Opening ipv4 listen socket on port 1883."}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "mosquitto.log"
     \textbf{\\}
@@ -2184,10 +2565,20 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{mqttvalidationservice.log}
     \begin{addmargin}[1em]{0em} % Start of File "mqttvalidationservice.log"
         \textbf{mqttvalidationservice.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "Mosquitto Validation Service" in the format:
+        This file contains log entries for the "Mosquitto Validation Service".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"<message\_type>: <message>"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"info: MQTTValidationService.Startup[0]}\\
+                \verb|     |\textit{MQTTValidationService starting up"}\\
+                \textit{"warn: ValidationServices.Services.Validator[0]}\\
+                \verb|       |\textit{Loading Topic: agent/control/rollcall/request"}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "mqttvalidationservice.log"
     \textbf{\\}
@@ -2195,10 +2586,19 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{nginx.log}
     \begin{addmargin}[1em]{0em} % Start of File "nginx.log"
         \textbf{nginx.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "Nginx" in the format:
+        This file contains log entries for the "Nginx".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"<init\_info>" "<ip> - - [<dd>/<mmm>/<yyyy>:<hh>:<mm>:<ss> <offset>] <info>"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"/docker-entrypoint.sh: Configuration complete; ready for start up"\\
+                "192.168.0.19 - - [21/Feb/2023:21:01:46 +0000] "GET /ClientMap/map HTTP/1.1" 302 66 "-"\\
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10\_15\_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36""}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "nginx.log"
     \textbf{\\}
@@ -2206,10 +2606,19 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{Rutgers_Agent_Container.log}
     \begin{addmargin}[1em]{0em} % Start of File "Rutgers_Agent_Container.log"
         \textbf{Rutgers\_Agent\_Container.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "Rutgers Agent Container" in the format:
+        This file contains log entries for the "Rutgers Agent Container".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <agent> | <num> | <info>"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"2023-02-21 20:50:26,877 | RutgersAgentHelper | 499 | INFO — Published threat room communication"\\
+                "2023-02-21 20:50:26,878 | RutgersAgent | 34 | INFO — Starting Agent Heartbeat Loop on a separate thread."\\
+                "2023-02-21 20:50:26,878 | asistagenthelper.ASISTAgentHelper | 283 | INFO — Starting the MQTT Bus pub/sub system..."}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "Rutgers_Agent_Container.log"
     \textbf{\\}
@@ -2217,10 +2626,17 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{speech_analyzer_agent.log}
     \begin{addmargin}[1em]{0em} % Start of File "speech_analyzer_agent.log"
         \textbf{speech\_analyzer\_agent.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "Speech Analyzer Agent" in the format:
+        This file contains log entries for the "Speech Analyzer Agent".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"<message>"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"Starting speechAnalyzer in websocket mode"}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "speech_analyzer_agent.log"
     \textbf{\\}
@@ -2228,10 +2644,19 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{speechanalyzer_db_1.log}
     \begin{addmargin}[1em]{0em} % Start of File "speechanalyzer_db_1.log"
         \textbf{speechanalyzer\_db\_1.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "Speech Analyzer DB 1" in the format:
+        This file contains log entries for the "Speech Analyzer DB 1".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> | <info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"<init\_messages>" , "<yyyy>-<mm>-<dd> <hh>:<mm>:<ss>,<SSS> UTC [<num>] LOG: <info>"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"Success. You can now start the database server using:"\\
+                "2022-03-25 23:52:22.559 UTC [35] LOG:  listening on Unix socket\\"/var/run/postgresql/.s.PGSQL.5432""\\
+                "2022-03-25 23:52:22.570 UTC [36] LOG:  database system was shut down\\at 2022-03-25 23:52:21 UTC"}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "speechanalyzer_db_1.log"
     \textbf{\\}
@@ -2239,10 +2664,19 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{uaz_dialog_agent.log}
     \begin{addmargin}[1em]{0em} % Start of File "uaz_dialog_agent.log"
         \textbf{uaz\_dialog\_agent.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "UAZ Dialog Agent" in the format:
+        This file contains log entries for the "UAZ Dialog Agent".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<info> | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"[<info\_type>] <info>" , "<hh>:<mm>:<ss>.<SSS> [<process>] INFO <info>"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"[info] Loading settings from plugins.sbt ..."\\
+                "[warn]  * org.codehaus.plexus:plexus-utils:3.0.17 is selected over {2.1, 1.5.5}"\\
+                "20:51:08.026 [run-main-0] INFO  o.c.a.extraction.TomcatRuleEngine\$ - masterRulesPath: /org/clulab/asist/grammars/master.yml"}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "uaz_dialog_agent.log"
     \textbf{\\}
@@ -2250,11 +2684,20 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{uaz_tmm_agent.log}
     \begin{addmargin}[1em]{0em} % Start of File "uaz_tmm_agent.log"
         \textbf{uaz\_tmm\_agent.log}\\
-        (Text File Format)\\
         This file contains log entries for the "UAZ TCPdump utility - Traffic Management Microkernel (TMM) Agent"
-        regarding the connections to "Mosquitto" in the format:
+        regarding the connections to "Mosquitto".
         \begin{addmargin}[1em]{0em}
-            \textbf{"<message line>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"<message line>"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"Trying to connect to mosquitto:1883..."\\
+                "Connection established!"\\
+                "Waiting for mission to start..."}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "uaz_tmm_agent.log"
     \textbf{\\}
@@ -2262,14 +2705,23 @@ the data for each file listed above is detailed as follows: \\
     \phantomsection\label{vosk.log}
     \begin{addmargin}[1em]{0em} % Start of File "vosk.log"
         \textbf{vosk.log}\\
-        (Text File Format)\\
-        This file contains log entries for the "Vosk Speech Recognition Toolkit and API" in the format:
+        This file contains log entries for the "Vosk Speech Recognition Toolkit and API".
         \begin{addmargin}[1em]{0em}
-            \textbf{"LOG (<API Function Call>) | <message>"}
+            \textbf{Format:} (Text File)
+            \begin{addmargin}[1em]{0em}
+                \textit{"LOG (<API Function Call>) <info>"}
+            \end{addmargin}
+        \end{addmargin}
+        \begin{addmargin}[1em]{0em}
+            \textbf{Examples of data in this file:}
+            \begin{addmargin}[1em]{0em}\textit{"LOG (VoskAPI:ReadDataFiles():model.cc:213) Decoding params beam=13 max-active=7000 lattice-beam=6"\\
+                "LOG (VoskAPI:ReadDataFiles():model.cc:216) Silence phones 1:2:3:4:5:11:12:13:14:15"\\
+                "LOG (VoskAPI:RemoveOrphanNodes():nnet-nnet.cc:948) Removed 0 orphan nodes."}
+            \end{addmargin}
         \end{addmargin}
     \end{addmargin} % End of File "vosk.log"
     \textbf{\\}
-
+ 
 \end{addmargin} % End of Sub Directory "asist_logs_<teamid>_<yyyy>_<mm>_<dd>_<hh>_<mm>_<ss>/dozzle_logs/"
 
 % End of Sub Directory "testbed_logs/"

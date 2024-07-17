@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Script to extract all logs from study3 data
+# Usage: ./extract_logs
+
+echo "Decompressing and unarchiving the .tar.gz files in parallel..."
+
+ls /media/mule/projects/tomcat/protected/study-3_2022/HSR*.tar.gz \
+    | parallel --plus --bar 'mkdir {/..} ; tar -xzf {} -C {/..}'
+
+#echo "Amending the features.sql files to replace 'CREATE TABLE' with 'CREATE TABLE IF NOT EXISTS'"
+
+#ls */*/features.sql | parallel --bar sed -i 's/CREATE TABLE/CREATE TABLE IF NOT EXISTS'

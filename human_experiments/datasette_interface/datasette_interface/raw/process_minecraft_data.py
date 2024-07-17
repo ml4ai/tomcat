@@ -351,7 +351,6 @@ def process_metadata_file(
     trial_stop_timestamp = key_messages["trial_stop"][0]["header"]["timestamp"]
 
     mission_name = key_messages["mission_start"][0]["data"]["mission"]
-
     testbed_version = key_messages["trial_start"][-1]["data"]["testbed_version"]
 
     if len(scores) == 0:
@@ -614,7 +613,6 @@ def process_minecraft_data():
             info(f"Processing directory {group_session}")
 
             if not is_directory_with_unified_xdf_files(group_session):
-                pass
                 missions, messages = process_directory_v1(group_session, db_session)
             else:
                 missions, messages = process_directory_v2(group_session, db_session)
