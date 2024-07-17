@@ -11,6 +11,8 @@ from datasette_interface.database.entity.base.modality import \
     Modality  # noqa f401
 from datasette_interface.database.entity.base.participant import \
     Participant  # noqa f401
+from datasette_interface.database.entity.base.post_game_survey import \
+    PostGameSurvey  # noqa f401
 from datasette_interface.database.entity.base.station import \
     Station  # noqa f401
 from datasette_interface.database.entity.base.task import Task  # noqa f401
