@@ -10,12 +10,15 @@ from tqdm import tqdm
 
 from datasette_interface.common.config import settings
 from datasette_interface.common.utils import (
-    cd, convert_iso8601_timestamp_to_unix, convert_unix_timestamp_to_iso8601,
+    cd,
+    convert_iso8601_timestamp_to_unix,
+    convert_unix_timestamp_to_iso8601,
     is_directory_with_correct_image_creation_time,
-    is_directory_with_unified_xdf_files, should_ignore_directory)
+    is_directory_with_unified_xdf_files,
+    should_ignore_directory,
+)
 from datasette_interface.database.config import get_db
-from datasette_interface.database.entity.signal.screen_capture import \
-    ScreenCapture
+from datasette_interface.database.entity.signal.screen_capture import ScreenCapture
 from datasette_interface.raw.common.process_raw_signals import get_signals
 
 

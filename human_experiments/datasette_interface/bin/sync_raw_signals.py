@@ -16,8 +16,7 @@ from tqdm import tqdm
 
 from datasette_interface.common.config import LOG_DIR
 from datasette_interface.common.constants import STATIONS
-from datasette_interface.database.config import (SQLALCHEMY_DATABASE_URI,
-                                                 engine, get_db)
+from datasette_interface.database.config import SQLALCHEMY_DATABASE_URI, engine, get_db
 from datasette_interface.database.entity.base.group_session import GroupSession
 from datasette_interface.derived.helper.factory import create_modality_helper
 from datasette_interface.derived.main_clock import get_main_clock_timestamps

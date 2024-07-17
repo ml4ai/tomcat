@@ -1,16 +1,17 @@
 #!/usr/bin/env python
 """Script to process screen capture data"""
+
 import logging
 import sys
 from logging import info
 
 from datasette_interface.common.config import LOG_DIR
-from datasette_interface.database.entity.signal.screen_capture import \
-    ScreenCapture
-from datasette_interface.raw.common.process_image_data import \
-    insert_raw_unlabeled_data
+from datasette_interface.database.entity.signal.screen_capture import ScreenCapture
+from datasette_interface.raw.common.process_image_data import insert_raw_unlabeled_data
 from datasette_interface.raw.common.process_raw_signals import (
-    label_data, remove_unlabeled_data)
+    label_data,
+    remove_unlabeled_data,
+)
 
 logging.basicConfig(
     level=logging.INFO,

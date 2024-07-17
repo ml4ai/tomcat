@@ -8,8 +8,10 @@ from typing import Callable
 from tqdm import tqdm
 
 from datasette_interface.model.audio.praat_annotation import PraatAnnotation
-from datasette_interface.model.audio.sentence_labeler import SentenceLabeler, \
-    ToMCATDialogAgent
+from datasette_interface.model.audio.sentence_labeler import (
+    SentenceLabeler,
+    ToMCATDialogAgent,
+)
 from datasette_interface.common.config import settings, LOG_DIR
 from datasette_interface.common.utils import is_directory_with_unified_xdf_files
 
@@ -35,7 +37,7 @@ def label_transcriptions(out_dir: str, labeler: SentenceLabeler, override: bool)
 
 
 def process_directory_v1(
-        experiment_dir: str, out_dir: str, labeler: SentenceLabeler, override: bool
+    experiment_dir: str, out_dir: str, labeler: SentenceLabeler, override: bool
 ):
     return process_directory(
         experiment_dir, out_dir, lambda g, s: f"{g}/{s}/audio", labeler, override
@@ -43,7 +45,7 @@ def process_directory_v1(
 
 
 def process_directory_v2(
-        experiment_dir: str, out_dir: str, labeler: SentenceLabeler, override: bool
+    experiment_dir: str, out_dir: str, labeler: SentenceLabeler, override: bool
 ):
     return process_directory(
         experiment_dir,
@@ -55,11 +57,11 @@ def process_directory_v2(
 
 
 def process_directory(
-        experiment_dir: str,
-        out_dir: str,
-        audio_dir_fn: Callable,
-        labeler: SentenceLabeler,
-        override: bool,
+    experiment_dir: str,
+    out_dir: str,
+    audio_dir_fn: Callable,
+    labeler: SentenceLabeler,
+    override: bool,
 ):
     for station in ["lion", "tiger", "leopard"]:
         audio_dir = audio_dir_fn(experiment_dir, station)
@@ -72,10 +74,10 @@ def process_directory(
             continue
 
         for annotation_file in os.listdir(transcriptions_annotation_dir):
-            if annotation_file[annotation_file.rfind("."):].lower() != ".textgrid":
+            if annotation_file[annotation_file.rfind(".") :].lower() != ".textgrid":
                 continue
 
-            sub_dir = audio_dir[audio_dir.find("exp_"):] + "/dialog_labels"
+            sub_dir = audio_dir[audio_dir.find("exp_") :] + "/dialog_labels"
             labels_filepath = f"{out_dir}/{sub_dir}/{annotation_file}"
 
             if os.path.exists(labels_filepath) and not override:
@@ -98,7 +100,7 @@ def process_directory(
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Parses a collection of experiments, finds audio and the annotation files, "
-                    "extracts transcriptions for the annotated utterances."
+        "extracts transcriptions for the annotated utterances."
     )
 
     parser.add_argument(
@@ -106,7 +108,7 @@ if __name__ == "__main__":
         type=str,
         required=False,
         help="Directory where experiment folder structure containing semantic labels must be "
-             "saved.",
+        "saved.",
     )
     parser.add_argument(
         "--api_host",

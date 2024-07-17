@@ -143,9 +143,7 @@ def process_data_validity_workbook():
 
         if (
             db.scalar(
-                select(GroupSession.id).where(
-                    GroupSession.id == group_session_id
-                )
+                select(GroupSession.id).where(GroupSession.id == group_session_id)
             )
             is not None
         ):
@@ -158,11 +156,7 @@ def process_data_validity_workbook():
 
         for prefix in ["lion", "tiger", "leopard"]:
             participant_id = series[f"{prefix}_subject_id"]
-            if (
-                not db.query(Participant.id)
-                .filter_by(id=participant_id)
-                .first()
-            ):
+            if not db.query(Participant.id).filter_by(id=participant_id).first():
                 # Only add participant if it does not exist in the table. SQLAlchemy does not have
                 # a DBMS-agnostic treatment for this (e.g. INSERT IGNORE) so the way to do it is
                 # to check if the PK exists in the table before inserting the entry into it.
@@ -174,11 +168,7 @@ def process_data_validity_workbook():
         # experiment.
         if group_session_id == "exp_2022_09_30_10":
             participant_id = 99901
-            if (
-                not db.query(Participant.id)
-                .filter_by(id=participant_id)
-                .first()
-            ):
+            if not db.query(Participant.id).filter_by(id=participant_id).first():
                 participants.append(Participant(id=participant_id))
 
         # TODO: Deal with 'no_face_image' case for eeg data.
@@ -187,9 +177,7 @@ def process_data_validity_workbook():
             "ping_pong_competitive_0",
             "ping_pong_competitive_1",
         ]
-        tasks_new = [
-            task for task in tasks_new if task != "ping_pong_competitive"
-        ]
+        tasks_new = [task for task in tasks_new if task != "ping_pong_competitive"]
         for station in STATIONS:
             for modality in MODALITIES:
                 modality_in_csv = modality.replace("gaze", "pupil")
@@ -198,8 +186,7 @@ def process_data_validity_workbook():
                         (task == "ping_pong_competitive_1")
                         and (station in {"lion", "tiger"})
                     ) or (
-                        (task == "ping_pong_competitive_0")
-                        and (station == "leopard")
+                        (task == "ping_pong_competitive_0") and (station == "leopard")
                     ):
                         info(
                             f"""
@@ -228,9 +215,7 @@ def process_data_validity_workbook():
                             "ping_pong_cooperative_0",
                         )
                     )
-                    participant_id = series[
-                        f"{station}_{task_in_csv}_participant_id"
-                    ]
+                    participant_id = series[f"{station}_{task_in_csv}_participant_id"]
 
                     if participant_id == "mission_not_run":
                         continue
@@ -241,9 +226,7 @@ def process_data_validity_workbook():
                     task = task.replace("_0", "").replace("_1", "")
 
                     is_valid = (
-                        series[
-                            f"{station}_{modality_in_csv}_data_{task_in_csv}"
-                        ]
+                        series[f"{station}_{modality_in_csv}_data_{task_in_csv}"]
                         == "ok"
                     )
                     data_validity = DataValidity(
@@ -316,9 +299,7 @@ def process_station_to_eeg_amp_mapping_workbook():
             device_id=None if math.isnan(device_id) else str(int(device_id)),
         )
 
-        eeg_devices.extend(
-            [lion_eeg_device, tiger_eeg_device, leopard_eeg_device]
-        )
+        eeg_devices.extend([lion_eeg_device, tiger_eeg_device, leopard_eeg_device])
 
     db.add_all(eeg_devices)
     db.commit()
@@ -363,19 +344,14 @@ def process_demographic_data():
     df = pd.read_table(
         settings.self_report_data_path,
         usecols=["subject_id"]
-        + [
-            k.replace("impairments", "impairements")
-            for k in demographics_fields
-        ],
+        + [k.replace("impairments", "impairements") for k in demographics_fields],
     )
 
     for i, row in df.iterrows():
         # Check if subject ID is in table
         try:
             participant = db.scalars(
-                select(Participant).where(
-                    Participant.id == f"{row['subject_id']}"
-                )
+                select(Participant).where(Participant.id == f"{row['subject_id']}")
             ).one()
             for label in row.index:
                 field = data_dictionary_df.loc[label]
@@ -386,14 +362,11 @@ def process_demographic_data():
 
                 if entry is not None:
                     if field_type == "radio":
-                        choices = field[
-                            "Choices, Calculations, OR Slider Labels"
-                        ]
+                        choices = field["Choices, Calculations, OR Slider Labels"]
                         choices = {
                             int(k): v
                             for k, v in [
-                                x.strip().split(", ")
-                                for x in choices.split("|")
+                                x.strip().split(", ") for x in choices.split("|")
                             ]
                         }
                         row.loc[label] = choices[row.loc[label]]
@@ -556,9 +529,8 @@ def process_post_game_survey():
         participant_id = None
         # Subject ID 63 did not finish the post-game survey in the first
         # attempt, so we ignore the first attempt.
-        if (
-            row.postgame_survey_timestamp == "[not completed]"
-            or pd.isna(row.postgame_survey_timestamp)
+        if row.postgame_survey_timestamp == "[not completed]" or pd.isna(
+            row.postgame_survey_timestamp
         ):
             continue
 
@@ -584,14 +556,11 @@ def process_post_game_survey():
 
                 if entry is not None:
                     if field_type == "radio":
-                        choices = field[
-                            "Choices, Calculations, OR Slider Labels"
-                        ]
+                        choices = field["Choices, Calculations, OR Slider Labels"]
                         choices = {
                             int(k): v
                             for k, v in [
-                                x.strip().split(", ")
-                                for x in choices.split("|")
+                                x.strip().split(", ") for x in choices.split("|")
                             ]
                         }
                         row.loc[label] = choices[row.loc[label]]

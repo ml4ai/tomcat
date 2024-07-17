@@ -22,9 +22,7 @@ class Participant(Base):
     sph_label: Mapped[Optional[str]] = mapped_column(Text)
     shl_impairments: Mapped[Optional[str]] = mapped_column(Text)
     shl_impairments_specify: Mapped[Optional[str]] = mapped_column(Text)
-    shl_impairments_agediagnosis: Mapped[Optional[str]] = mapped_column(
-        Text
-    )
+    shl_impairments_agediagnosis: Mapped[Optional[str]] = mapped_column(Text)
     shl_impairments_therapy: Mapped[Optional[str]] = mapped_column(Text)
     first_language: Mapped[Optional[str]] = mapped_column(Text)
     languages_spoken: Mapped[Optional[str]] = mapped_column(Text)
@@ -35,9 +33,7 @@ class Participant(Base):
     health_concussion: Mapped[Optional[str]] = mapped_column(Text)
     health_seizure: Mapped[Optional[str]] = mapped_column(Text)
     health_trauma: Mapped[Optional[str]] = mapped_column(Text)
-    health_other_trauma_specify: Mapped[Optional[str]] = mapped_column(
-        Text
-    )
+    health_other_trauma_specify: Mapped[Optional[str]] = mapped_column(Text)
     health_medications: Mapped[Optional[str]] = mapped_column(Text)
     health_vision: Mapped[Optional[str]] = mapped_column(Text)
     health_vision_specify: Mapped[Optional[str]] = mapped_column(Text)
