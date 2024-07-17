@@ -7,7 +7,9 @@ from logging import info
 from datasette_interface.common.config import LOG_DIR
 from datasette_interface.database.entity.signal.gaze import GAZERaw
 from datasette_interface.raw.common.process_raw_signals import (
-    insert_raw_unlabeled_data, label_data)
+    insert_raw_unlabeled_data,
+    label_data,
+)
 
 logging.basicConfig(
     level=logging.INFO,

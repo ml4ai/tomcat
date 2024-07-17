@@ -4,12 +4,11 @@ import numpy as np
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from datasette_interface.database.entity.task.minecraft_task import \
-    MinecraftMission
-from datasette_interface.database.entity.task.ping_pong_cooperative_task_observation import \
-    PingPongCooperativeTaskObservation
-from datasette_interface.database.entity.task.rest_state_task import \
-    RestStateTask
+from datasette_interface.database.entity.task.minecraft_task import MinecraftMission
+from datasette_interface.database.entity.task.ping_pong_cooperative_task_observation import (
+    PingPongCooperativeTaskObservation,
+)
+from datasette_interface.database.entity.task.rest_state_task import RestStateTask
 
 
 def get_main_clock_timestamps(

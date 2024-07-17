@@ -10,7 +10,9 @@ from datasette_interface.database.config import get_db
 from datasette_interface.database.entity.base.eeg_device import EEGDevice
 from datasette_interface.database.entity.signal.eeg import EEGRaw
 from datasette_interface.raw.common.process_raw_signals import (
-    insert_raw_unlabeled_data, label_data)
+    insert_raw_unlabeled_data,
+    label_data,
+)
 
 logging.basicConfig(
     level=logging.INFO,
@@ -36,11 +38,13 @@ def get_station_from_xdf_stream(group_session, stream, device_id_to_station_map)
 def swap_channels_fn(signal):
     # There were some swaps between GSR and EKG channels in some experiments and stations. Here we
     # swap the channels so the signals are saved in the correct columns.
-    swap_aux_channels = (signal["group_session_id"] == "exp_2022_09_30_10" and signal[
-        "station_id"] == "lion")
-    swap_aux_channels |= (
-                signal["group_session_id"] == "exp_2022_10_04_09" and signal["station_id"] in [
-            "lion", "tiger"])
+    swap_aux_channels = (
+        signal["group_session_id"] == "exp_2022_09_30_10"
+        and signal["station_id"] == "lion"
+    )
+    swap_aux_channels |= signal["group_session_id"] == "exp_2022_10_04_09" and signal[
+        "station_id"
+    ] in ["lion", "tiger"]
 
     if swap_aux_channels:
         tmp = signal["aux_ekg"]
@@ -75,6 +79,6 @@ def process_eeg_raw_data():
             device_id_to_station_map=device_id_to_station_map,
         ),
         lambda x: x * 1 - 6,
-        swap_channels_fn
+        swap_channels_fn,
     )  # From micro-volt to volt
     label_data(EEGRaw, "eeg")
