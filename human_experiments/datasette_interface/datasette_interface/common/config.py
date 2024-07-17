@@ -28,6 +28,28 @@ class Settings(BaseSettings):
         "/tomcat/data/raw/LangLab/experiments/study_3_pilot/"
         "station_to_eeg_amp_mapping.csv"
     )
+    station_to_minecraft_playername_mapping_path: str = (
+        "/tomcat/data/raw/LangLab/experiments/study_3_pilot/"
+        "station_to_minecraft_playername_mapping.csv"
+    )
+
+    self_report_data_path: str = (
+        "/tomcat/data/raw/LangLab/experiments/study_3_pilot/"
+        "ToMCATSelfReport_DATA_2023-06-11_2358.tsv"
+    )
+    self_report_data_dictionary_path: str = (
+        "/tomcat/data/raw/LangLab/experiments/study_3_pilot/"
+        "ToMCATSelfReport_DataDictionary_2023-08-08.tsv"
+    )
+
+    post_game_survey_data_path: str = (
+        "/tomcat/data/raw/LangLab/experiments/study_3_pilot/"
+        "ToMCATPostGameSurvey_DATA_2024-07-16_2050.csv"
+    )
+    post_game_survey_data_dictionary_path: str = (
+        "/tomcat/data/raw/LangLab/experiments/study_3_pilot/"
+        "ToMCATPostGameSurvey_DataDictionary_2024-07-17.csv"
+    )
 
     @classmethod
     @field_validator(

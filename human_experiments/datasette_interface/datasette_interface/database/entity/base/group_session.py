@@ -9,3 +9,6 @@ class GroupSession(Base):
 
     id: Mapped[str] = mapped_column(Text, primary_key=True)
     advisor: Mapped[str] = mapped_column(Text)
+    lion_minecraft_playername: Mapped[str] = mapped_column(Text, nullable=True)
+    tiger_minecraft_playername: Mapped[str] = mapped_column(Text, nullable=True)
+    leopard_minecraft_playername: Mapped[str] = mapped_column(Text, nullable=True)

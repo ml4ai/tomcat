@@ -24,6 +24,10 @@ from datasette_interface.database.entity.task.minecraft_task import (
     MinecraftMission,
     MinecraftTestbedMessage,
 )
+from datasette_interface.database.entity.base.group_session import GroupSession
+from sqlalchemy import select
+from sqlalchemy.exc import NoResultFound
+
 
 logging.basicConfig(
     level=logging.INFO,
@@ -44,6 +48,27 @@ INVALID_MISSIONS = [
     # exp_2023_02_10_10 Hands-On Training with small duration
     "9cde1985-1179-4aac-8b67-1fc60ed65243",
 ]
+
+CALLSIGN_TO_STATION_MAPPING = {
+    "Red": "lion",
+    "Blue": "tiger",
+    "Green": "leopard",
+}
+
+
+def populate_station_to_playername_mapping(
+    client_info: dict, db_session, group_session
+):
+    assert len(client_info) == 3
+    for client in client_info:
+        try:
+            gs = db_session.execute(
+                select(GroupSession).filter_by(id=group_session)
+            ).scalar_one()
+            station = CALLSIGN_TO_STATION_MAPPING[client["callsign"]]
+            setattr(gs, f"{station}_minecraft_playername", client["playername"])
+        except NoResultFound:
+            error(f"No row in the group_session table found with {group_session=}")
 
 
 def update_key_messages_dict(message, key_messages):
@@ -247,7 +272,7 @@ def collect_files_to_process(metadata_files):
     return file_to_key_messages_mapping
 
 
-def process_directory_v1(group_session):
+def process_directory_v1(group_session, db_session):
     """Process directory assuming it is from before we had the unified XDF files."""
 
     minecraft_missions = []
@@ -259,7 +284,10 @@ def process_directory_v1(group_session):
             for metadata_file in file_to_key_messages_mapping:
                 info(f"\tProcessing {metadata_file}")
                 mission, messages = process_metadata_file(
-                    metadata_file, group_session, file_to_key_messages_mapping
+                    metadata_file,
+                    group_session,
+                    file_to_key_messages_mapping,
+                    db_session,
                 )
                 if mission and messages:
                     minecraft_missions.append(mission)
@@ -273,9 +301,20 @@ def process_directory_v1(group_session):
     return minecraft_missions, testbed_messages
 
 
-def process_metadata_file(filepath, group_session, file_to_key_messages_mapping):
+def process_metadata_file(
+    filepath, group_session, file_to_key_messages_mapping, db_session
+):
     scores = []
     key_messages = file_to_key_messages_mapping[filepath]
+
+    trial_id = key_messages["mission_start"][0]["msg"]["trial_id"]
+
+    if trial_id in INVALID_MISSIONS:
+        error(
+            f"[ANOMALY] Skipping {trial_id} as it is a duplicate not removed by the deduplicate "
+            f"logic."
+        )
+        return None, None
 
     messages_to_insert_into_db = []
     with open(filepath) as f:
@@ -323,15 +362,6 @@ def process_metadata_file(filepath, group_session, file_to_key_messages_mapping)
     else:
         final_team_score = scores[-1]
 
-    trial_id = key_messages["mission_start"][0]["msg"]["trial_id"]
-
-    if trial_id in INVALID_MISSIONS:
-        error(
-            f"[ANOMALY] Skipping {trial_id} as it is a duplicate not removed by the deduplicate "
-            f"logic."
-        )
-        return None, None
-
     minecraft_mission = MinecraftMission(
         group_session_id=group_session,
         id=trial_id,
@@ -370,10 +400,17 @@ def process_metadata_file(filepath, group_session, file_to_key_messages_mapping)
         for i, message in enumerate(messages_to_insert_into_db)
     ]
 
+    # Here, we try to map Minecraft 'Playernames' to stations, in order to
+    # compute things like individual participant scores in a mission.
+    trial_start_message = key_messages["trial_start"][0]
+    client_info = trial_start_message["data"]["client_info"]
+
+    populate_station_to_playername_mapping(client_info, db_session, group_session)
+
     return minecraft_mission, minecraft_testbed_messages
 
 
-def process_directory_v2(group_session):
+def process_directory_v2(group_session: str, db_session):
     """Process directory assuming it contains unified XDF files."""
 
     minecraft_missions = []
@@ -386,7 +423,11 @@ def process_directory_v2(group_session):
         info(f"Processing block_2.xdf for {group_session}.")
 
         messages = {"Hands-on Training": [], "Saturn_A": [], "Saturn_B": []}
-        trial_timestamps = {"Hands-on Training": [], "Saturn_A": [], "Saturn_B": []}
+        trial_timestamps = {
+            "Hands-on Training": [],
+            "Saturn_A": [],
+            "Saturn_B": [],
+        }
 
         current_mission = None
         trial_mission = None  # For trial labeling
@@ -399,7 +440,7 @@ def process_directory_v2(group_session):
             except json.decoder.JSONDecodeError:
                 topic = text.split()[0][1:-1]
                 error_message = (
-                    f"Unable to parse message number {i + 1} (topic: {topic} as JSON!"
+                    f"Unable to parse message number {i + 1} (topic: {topic}) as JSON!"
                 )
                 if topic in {
                     "agent/ac/belief_diff",
@@ -438,6 +479,12 @@ def process_directory_v2(group_session):
                     pass
             elif topic == "trial":
                 if message["msg"]["sub_type"] == "start":
+                    # Get station-to-playername mapping
+                    client_info = message["data"]["client_info"]
+                    populate_station_to_playername_mapping(
+                        client_info, db_session, group_session
+                    )
+
                     trial_start_index = i
 
                     if testbed_version is None:
@@ -566,9 +613,9 @@ def process_minecraft_data():
             info(f"Processing directory {group_session}")
 
             if not is_directory_with_unified_xdf_files(group_session):
-                missions, messages = process_directory_v1(group_session)
+                missions, messages = process_directory_v1(group_session, db_session)
             else:
-                missions, messages = process_directory_v2(group_session)
+                missions, messages = process_directory_v2(group_session, db_session)
 
             db_session.add_all(missions)
             # Flush to avoid foreign key error in the messages related to the mission.

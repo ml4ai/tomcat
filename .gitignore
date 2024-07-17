@@ -109,3 +109,5 @@ HSR*
 
 # Texpad
 *.texpadtmp/
+
+*.egg-info

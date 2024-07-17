@@ -6,6 +6,7 @@ from datasette_interface.database.entity.base.eeg_device import EEGDevice  # noq
 from datasette_interface.database.entity.base.group_session import GroupSession  # noqa f401
 from datasette_interface.database.entity.base.modality import Modality  # noqa f401
 from datasette_interface.database.entity.base.participant import Participant  # noqa f401
+from datasette_interface.database.entity.base.post_game_survey import PostGameSurvey  # noqa f401
 from datasette_interface.database.entity.base.station import Station  # noqa f401
 from datasette_interface.database.entity.base.task import Task  # noqa f401
 from datasette_interface.database.entity.derived.eeg_sync import EEGSync  # noqa f401
