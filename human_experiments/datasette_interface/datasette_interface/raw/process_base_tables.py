@@ -553,7 +553,6 @@ def process_post_game_survey():
 
     db = next(get_db())
     for i, row in tqdm(df.iterrows(), total=len(df)):
-        info(f"Processing row {i + 1}")
         participant_id = None
         # Subject ID 63 did not finish the post-game survey in the first
         # attempt, so we ignore the first attempt.
@@ -565,7 +564,6 @@ def process_post_game_survey():
 
         try:
             participant_id = int(row["subject_id"])
-            print(f"{participant_id=}")
         except:
             continue
 
