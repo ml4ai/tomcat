@@ -320,6 +320,7 @@ def process_station_to_eeg_amp_mapping_workbook():
     db.commit()
     db.close()
 
+
 def insert_demographic_data():
     db = next(get_db())
     data_dictionary_df = pd.read_table(
@@ -368,7 +369,9 @@ def insert_demographic_data():
         # Check if subject ID is in table
         try:
             participant = db.scalars(
-                select(Participant).where(Participant.id == f"{row['subject_id']}")
+                select(Participant).where(
+                    Participant.id == f"{row['subject_id']}"
+                )
             ).one()
             for label in row.index:
                 field = data_dictionary_df.loc[label]
@@ -379,11 +382,14 @@ def insert_demographic_data():
 
                 if entry is not None:
                     if field_type == "radio":
-                        choices = field["Choices, Calculations, OR Slider Labels"]
+                        choices = field[
+                            "Choices, Calculations, OR Slider Labels"
+                        ]
                         choices = {
                             int(k): v
                             for k, v in [
-                                x.strip().split(", ") for x in choices.split("|")
+                                x.strip().split(", ")
+                                for x in choices.split("|")
                             ]
                         }
                         row.loc[label] = choices[row.loc[label]]
