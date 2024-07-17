@@ -6,17 +6,29 @@ import os
 import sys
 from glob import glob
 from logging import debug, error, info
+from pprint import pprint
 
 import pyxdf
 from tqdm import tqdm
 
 from datasette_interface.common.config import LOG_DIR, settings
 from datasette_interface.common.utils import (
-    cd, convert_iso8601_timestamp_to_unix, convert_unix_timestamp_to_iso8601,
-    is_directory_with_unified_xdf_files, should_ignore_directory)
+    cd,
+    convert_iso8601_timestamp_to_unix,
+    convert_unix_timestamp_to_iso8601,
+    is_directory_with_unified_xdf_files,
+    should_ignore_directory,
+)
 from datasette_interface.database.config import get_db
 from datasette_interface.database.entity.task.minecraft_task import (
-    MinecraftMission, MinecraftTestbedMessage)
+    MinecraftMission,
+    MinecraftTestbedMessage,
+)
+from datasette_interface.database.entity.base.data_validity import DataValidity
+from datasette_interface.database.entity.base.group_session import GroupSession
+from sqlalchemy import select
+from sqlalchemy.exc import NoResultFound, MultipleResultsFound
+
 
 logging.basicConfig(
     level=logging.INFO,
@@ -79,7 +91,8 @@ def update_key_messages_dict(message, key_messages):
         else:
             pass
     elif (
-        topic == "observations/state" and not key_messages["approximate_mission_start"]
+        topic == "observations/state"
+        and not key_messages["approximate_mission_start"]
     ):
         mission_timer = str(message["data"]["mission_timer"])
         if "not initialized" not in mission_timer.lower():
@@ -141,9 +154,9 @@ def collect_files_to_process(metadata_files):
                     "Using the timestamp of the first observations/state message as the mission "
                     "start."
                 )
-                approximate_timestamp = key_messages["approximate_mission_start"][
-                    "header"
-                ]["timestamp"]
+                approximate_timestamp = key_messages[
+                    "approximate_mission_start"
+                ]["header"]["timestamp"]
 
                 # Create a fake mission start message with the approximate timestamp
                 key_messages["mission_start"].append(
@@ -205,7 +218,9 @@ def collect_files_to_process(metadata_files):
     for mission, files in missions.items():
         files_to_ignore = []
         if len(files) > 1:
-            info(f"More than one .metadata file matches the {mission} mission.")
+            info(
+                f"More than one .metadata file matches the {mission} mission."
+            )
             for file, key_messages in sorted(files.items()):
                 info(
                     f"{key_messages['mission_start'][0]['header']['timestamp']}\t{file}"
@@ -215,13 +230,17 @@ def collect_files_to_process(metadata_files):
                 file
                 for (file, key_messages) in sorted(
                     files.items(),
-                    key=lambda x: x[1]["mission_start"][0]["header"]["timestamp"],
+                    key=lambda x: x[1]["mission_start"][0]["header"][
+                        "timestamp"
+                    ],
                     reverse=True,
                 )
             ]
 
             most_recent_file = files_sorted_by_timestamp_in_descending_order[0]
-            files_to_ignore.extend(files_sorted_by_timestamp_in_descending_order[1:])
+            files_to_ignore.extend(
+                files_sorted_by_timestamp_in_descending_order[1:]
+            )
 
             info(
                 "We will select the most recent one by inspecting the .header.timestamp"
@@ -240,7 +259,7 @@ def collect_files_to_process(metadata_files):
     return file_to_key_messages_mapping
 
 
-def process_directory_v1(group_session):
+def process_directory_v1(group_session, db_session):
     """Process directory assuming it is from before we had the unified XDF files."""
 
     minecraft_missions = []
@@ -248,11 +267,16 @@ def process_directory_v1(group_session):
     try:
         with cd(f"{group_session}/minecraft"):
             metadata_files = sorted(glob("*.metadata"))
-            file_to_key_messages_mapping = collect_files_to_process(metadata_files)
+            file_to_key_messages_mapping = collect_files_to_process(
+                metadata_files
+            )
             for metadata_file in file_to_key_messages_mapping:
                 info(f"\tProcessing {metadata_file}")
                 mission, messages = process_metadata_file(
-                    metadata_file, group_session, file_to_key_messages_mapping
+                    metadata_file,
+                    group_session,
+                    file_to_key_messages_mapping,
+                    db_session,
                 )
                 if mission and messages:
                     minecraft_missions.append(mission)
@@ -266,9 +290,20 @@ def process_directory_v1(group_session):
     return minecraft_missions, testbed_messages
 
 
-def process_metadata_file(filepath, group_session, file_to_key_messages_mapping):
+def process_metadata_file(
+    filepath, group_session, file_to_key_messages_mapping, db_session
+):
     scores = []
     key_messages = file_to_key_messages_mapping[filepath]
+
+    trial_id = key_messages["mission_start"][0]["msg"]["trial_id"]
+
+    if trial_id in INVALID_MISSIONS:
+        error(
+            f"[ANOMALY] Skipping {trial_id} as it is a duplicate not removed by the deduplicate "
+            f"logic."
+        )
+        return None, None
 
     messages_to_insert_into_db = []
     with open(filepath) as f:
@@ -292,7 +327,9 @@ def process_metadata_file(filepath, group_session, file_to_key_messages_mapping)
             if mission_in_progress:
                 messages_to_insert_into_db.append(message)
 
-    mission_start_timestamp = key_messages["mission_start"][0]["header"]["timestamp"]
+    mission_start_timestamp = key_messages["mission_start"][0]["header"][
+        "timestamp"
+    ]
 
     mission_stop_timestamp = (
         key_messages["mission_stop"][0]["header"]["timestamp"]
@@ -301,11 +338,17 @@ def process_metadata_file(filepath, group_session, file_to_key_messages_mapping)
     )
 
     # Important to align audio with data
-    trial_start_timestamp = key_messages["trial_start"][0]["header"]["timestamp"]
+    trial_start_timestamp = key_messages["trial_start"][0]["header"][
+        "timestamp"
+    ]
     trial_stop_timestamp = key_messages["trial_stop"][0]["header"]["timestamp"]
 
     mission_name = key_messages["mission_start"][0]["data"]["mission"]
-    testbed_version = key_messages["trial_start"][-1]["data"]["testbed_version"]
+
+
+    testbed_version = key_messages["trial_start"][-1]["data"][
+        "testbed_version"
+    ]
 
     if len(scores) == 0:
         error(
@@ -316,14 +359,6 @@ def process_metadata_file(filepath, group_session, file_to_key_messages_mapping)
     else:
         final_team_score = scores[-1]
 
-    trial_id = key_messages["mission_start"][0]["msg"]["trial_id"]
-
-    if trial_id in INVALID_MISSIONS:
-        error(
-            f"[ANOMALY] Skipping {trial_id} as it is a duplicate not removed by the deduplicate "
-            f"logic."
-        )
-        return None, None
 
     minecraft_mission = MinecraftMission(
         group_session_id=group_session,
@@ -363,10 +398,37 @@ def process_metadata_file(filepath, group_session, file_to_key_messages_mapping)
         for i, message in enumerate(messages_to_insert_into_db)
     ]
 
+    # Here, we try to map Minecraft 'Playernames' to stations, in order to
+    # compute things like individual participant scores in a mission.
+    if "Saturn" in mission_name:
+        trial_start_message = key_messages["trial_start"][0]
+        client_info = trial_start_message["data"]["client_info"]
+        assert len(client_info) == 3
+        # original_playername_participant_id_mapping = {
+            # client["playername"]: client["participant_id"]
+            # for client in client_info
+        # }
+        callsign_to_station_mapping = {
+                "Red": "lion",
+                "Blue": "tiger",
+                "Green": "leopard"
+        }
+
+        for client in client_info:
+            try:
+                gs = db_session.execute(
+                    select(GroupSession).filter_by(id=group_session)
+                ).scalar_one()
+                station = callsign_to_station_mapping[client["callsign"]]
+                setattr(gs, f"{station}_minecraft_playername", client["playername"])
+            except NoResultFound as e:
+                error(f"No row in the group_session table found with {group_session=}")
+
+
     return minecraft_mission, minecraft_testbed_messages
 
 
-def process_directory_v2(group_session):
+def process_directory_v2(group_session: str, db_session):
     """Process directory assuming it contains unified XDF files."""
 
     minecraft_missions = []
@@ -379,7 +441,11 @@ def process_directory_v2(group_session):
         info(f"Processing block_2.xdf for {group_session}.")
 
         messages = {"Hands-on Training": [], "Saturn_A": [], "Saturn_B": []}
-        trial_timestamps = {"Hands-on Training": [], "Saturn_A": [], "Saturn_B": []}
+        trial_timestamps = {
+            "Hands-on Training": [],
+            "Saturn_A": [],
+            "Saturn_B": [],
+        }
 
         current_mission = None
         trial_mission = None  # For trial labeling
@@ -391,9 +457,7 @@ def process_directory_v2(group_session):
 
             except json.decoder.JSONDecodeError:
                 topic = text.split()[0][1:-1]
-                error_message = (
-                    f"Unable to parse message number {i + 1} (topic: {topic} as JSON!"
-                )
+                error_message = f"Unable to parse message number {i + 1} (topic: {topic} as JSON!"
                 if topic in {
                     "agent/ac/belief_diff",
                     "agent/ac/threat_room_coordination",
@@ -464,14 +528,18 @@ def process_directory_v2(group_session):
                 final_team_score = None
 
                 if scoreboard_messages:
-                    final_team_score = scoreboard_messages[-1]["data"]["scoreboard"][
-                        "TeamScore"
-                    ]
+                    final_team_score = scoreboard_messages[-1]["data"][
+                        "scoreboard"
+                    ]["TeamScore"]
                 else:
                     error("[MISSING DATA]: No scoreboard messages found!")
 
-                mission_start_timestamp_lsl = stream["time_stamps"][messages[0][0]]
-                mission_stop_timestamp_lsl = stream["time_stamps"][messages[-1][0]]
+                mission_start_timestamp_lsl = stream["time_stamps"][
+                    messages[0][0]
+                ]
+                mission_stop_timestamp_lsl = stream["time_stamps"][
+                    messages[-1][0]
+                ]
 
                 trial_start_timestamp_lsl = stream["time_stamps"][
                     trial_timestamps[mission][0]
@@ -548,7 +616,9 @@ def process_minecraft_data():
             ]
         )
 
-        for group_session in tqdm(sorted(directories_to_process), unit="directories"):
+        for group_session in tqdm(
+            sorted(directories_to_process), unit="directories"
+        ):
             if group_session in processed_group_sessions:
                 info(
                     f"Found saved Minecraft data for {group_session} in the database. Skipping "
@@ -559,9 +629,13 @@ def process_minecraft_data():
             info(f"Processing directory {group_session}")
 
             if not is_directory_with_unified_xdf_files(group_session):
-                missions, messages = process_directory_v1(group_session)
+                missions, messages = process_directory_v1(
+                    group_session, db_session
+                )
             else:
-                missions, messages = process_directory_v2(group_session)
+                missions, messages = process_directory_v2(
+                    group_session, db_session
+                )
 
             db_session.add_all(missions)
             # Flush to avoid foreign key error in the messages related to the mission.

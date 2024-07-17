@@ -28,6 +28,10 @@ class Settings(BaseSettings):
         "/tomcat/data/raw/LangLab/experiments/study_3_pilot/"
         "station_to_eeg_amp_mapping.csv"
     )
+    station_to_minecraft_playername_mapping_path: str = (
+        "/tomcat/data/raw/LangLab/experiments/study_3_pilot/"
+        "station_to_minecraft_playername_mapping.csv"
+    )
 
     @classmethod
     @field_validator(
