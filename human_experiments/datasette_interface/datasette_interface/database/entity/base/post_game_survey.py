@@ -35,7 +35,7 @@ class PostGameSurvey(Base):
     game_proud: Mapped[Optional[str]] = mapped_column(Text)
     game_friendly: Mapped[Optional[str]] = mapped_column(Text)
 
-    agent_intell: Mapped[Optional[str]] = mapped_column(Text)
+    agent_intel: Mapped[Optional[str]] = mapped_column(Text)
     agent_care: Mapped[Optional[str]] = mapped_column(Text)
     agent_honest: Mapped[Optional[str]] = mapped_column(Text)
     agent_expert: Mapped[Optional[str]] = mapped_column(Text)
@@ -69,7 +69,7 @@ class PostGameSurvey(Base):
     team_proud: Mapped[Optional[str]] = mapped_column(Text)
     team_friendly: Mapped[Optional[str]] = mapped_column(Text)
 
-    team_intel: Mapped[Optional[str]] = mapped_column(Text)  # typo..
+    team_intel: Mapped[Optional[str]] = mapped_column(Text)
     team_care: Mapped[Optional[str]] = mapped_column(Text)
     team_honest: Mapped[Optional[str]] = mapped_column(Text)
     team_expert: Mapped[Optional[str]] = mapped_column(Text)
@@ -113,7 +113,7 @@ class PostGameSurvey(Base):
     team_knit: Mapped[Optional[str]] = mapped_column(Text)
     team_like_mem: Mapped[Optional[str]] = mapped_column(Text)
     team_work_well: Mapped[Optional[str]] = mapped_column(Text)
-    team_decisision: Mapped[Optional[str]] = mapped_column(Text)
+    team_decision: Mapped[Optional[str]] = mapped_column(Text)
     team_express: Mapped[Optional[str]] = mapped_column(Text)
     team_organize: Mapped[Optional[str]] = mapped_column(Text)
     team_accomplish: Mapped[Optional[str]] = mapped_column(Text)
