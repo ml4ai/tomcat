@@ -32,9 +32,13 @@ class Settings(BaseSettings):
         "/tomcat/data/raw/LangLab/experiments/study_3_pilot/"
         "station_to_minecraft_playername_mapping.csv"
     )
-    self_report_data: str = (
+    self_report_data_path: str = (
         "/tomcat/data/raw/LangLab/experiments/study_3_pilot/"
         "ToMCATSelfReport_DATA_2023-06-11_2358.tsv"
+    )
+    self_report_data_dictionary_path: str = (
+        "/tomcat/data/raw/LangLab/experiments/study_3_pilot/"
+        "ToMCATSelfReport_DataDictionary_2023-08-08.tsv"
     )
 
     @classmethod

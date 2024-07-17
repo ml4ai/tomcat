@@ -7,6 +7,7 @@ from logging import info
 
 import pandas as pd
 from sqlalchemy import select
+from sqlalchemy.exc import NoResultFound
 
 from datasette_interface.common.config import LOG_DIR, settings
 from datasette_interface.database.config import get_db
@@ -99,7 +100,7 @@ def populate_participant_table():
     )
     # ID of -1 to represent 'unknown participant'
     # ID of -2 to represent the team (for affective task event data)
-    # ID of - 3 to represent an unknown experimenter(for the ping pong task data)
+    # ID of -3 to represent an unknown experimenter (for the ping pong task data)
     participants = [
         Participant(id=p) for p in [-1, -2, -3] if p not in saved_participants
     ]
@@ -124,7 +125,9 @@ def process_data_validity_workbook():
     # TODO Integrate the 'mask_on' statuses.
 
     df = pd.read_csv(
-        settings.data_validity_workbook_path, index_col="experiment_id", dtype=str
+        settings.data_validity_workbook_path,
+        index_col="experiment_id",
+        dtype=str,
     )
 
     db = next(get_db())
@@ -136,7 +139,9 @@ def process_data_validity_workbook():
 
         if (
             db.scalar(
-                select(GroupSession.id).where(GroupSession.id == group_session_id)
+                select(GroupSession.id).where(
+                    GroupSession.id == group_session_id
+                )
             )
             is not None
         ):
@@ -149,7 +154,11 @@ def process_data_validity_workbook():
 
         for prefix in ["lion", "tiger", "leopard"]:
             participant_id = series[f"{prefix}_subject_id"]
-            if not db.query(Participant.id).filter_by(id=participant_id).first():
+            if (
+                not db.query(Participant.id)
+                .filter_by(id=participant_id)
+                .first()
+            ):
                 # Only add participant if it does not exist in the table. SQLAlchemy does not have
                 # a DBMS-agnostic treatment for this (e.g. INSERT IGNORE) so the way to do it is
                 # to check if the PK exists in the table before inserting the entry into it.
@@ -161,13 +170,22 @@ def process_data_validity_workbook():
         # experiment.
         if group_session_id == "exp_2022_09_30_10":
             participant_id = 99901
-            if not db.query(Participant.id).filter_by(id=participant_id).first():
+            if (
+                not db.query(Participant.id)
+                .filter_by(id=participant_id)
+                .first()
+            ):
                 participants.append(Participant(id=participant_id))
 
         # TODO: Deal with 'no_face_image' case for eeg data.
         data_validity_entries = []
-        tasks_new = TASKS + ["ping_pong_competitive_0", "ping_pong_competitive_1"]
-        tasks_new = [task for task in tasks_new if task != "ping_pong_competitive"]
+        tasks_new = TASKS + [
+            "ping_pong_competitive_0",
+            "ping_pong_competitive_1",
+        ]
+        tasks_new = [
+            task for task in tasks_new if task != "ping_pong_competitive"
+        ]
         for station in STATIONS:
             for modality in MODALITIES:
                 modality_in_csv = modality.replace("gaze", "pupil")
@@ -176,7 +194,8 @@ def process_data_validity_workbook():
                         (task == "ping_pong_competitive_1")
                         and (station in {"lion", "tiger"})
                     ) or (
-                        (task == "ping_pong_competitive_0") and (station == "leopard")
+                        (task == "ping_pong_competitive_0")
+                        and (station == "leopard")
                     ):
                         info(
                             f"""
@@ -205,7 +224,9 @@ def process_data_validity_workbook():
                             "ping_pong_cooperative_0",
                         )
                     )
-                    participant_id = series[f"{station}_{task_in_csv}_participant_id"]
+                    participant_id = series[
+                        f"{station}_{task_in_csv}_participant_id"
+                    ]
 
                     if participant_id == "mission_not_run":
                         continue
@@ -216,7 +237,9 @@ def process_data_validity_workbook():
                     task = task.replace("_0", "").replace("_1", "")
 
                     is_valid = (
-                        series[f"{station}_{modality_in_csv}_data_{task_in_csv}"]
+                        series[
+                            f"{station}_{modality_in_csv}_data_{task_in_csv}"
+                        ]
                         == "ok"
                     )
                     data_validity = DataValidity(
@@ -245,7 +268,9 @@ def process_station_to_eeg_amp_mapping_workbook():
     info("Process station to eeg amp mapping workbook.")
 
     df = pd.read_csv(
-        settings.station_to_eeg_workbook_path, index_col="experiment_id", dtype=str
+        settings.station_to_eeg_workbook_path,
+        index_col="experiment_id",
+        dtype=str,
     )
 
     db = next(get_db())
@@ -287,14 +312,98 @@ def process_station_to_eeg_amp_mapping_workbook():
             device_id=None if math.isnan(device_id) else str(int(device_id)),
         )
 
-        eeg_devices.extend([lion_eeg_device, tiger_eeg_device, leopard_eeg_device])
+        eeg_devices.extend(
+            [lion_eeg_device, tiger_eeg_device, leopard_eeg_device]
+        )
 
     db.add_all(eeg_devices)
     db.commit()
     db.close()
+
+def insert_demographic_data():
+    db = next(get_db())
+    data_dictionary_df = pd.read_table(
+        settings.self_report_data_dictionary_path, index_col=0
+    )
+
+    DEMOGRAPHICS_FIELDS = [
+        "age",
+        "sex",
+        "hisp",
+        "race",
+        "income",
+        "edu",
+        "exp",
+        "exp_mc",
+        "handedness",
+        "trackpad_preference",
+        "shl_impairments",
+        "shl_impairment_specify",
+        "shl_impairment_agediagnosis",
+        "shl_impairment_therapy",
+        "first_language",
+        "languages_spoken",
+        "language_age_learned",
+        "countries_live_one_year",
+        "major_schooling_country",
+        "health_concussion",
+        "health_seizure",
+        "health_trauma",
+        "health_other_trauma_specify",
+        "health_medications",
+        "health_vision",
+        "health_vision_specify",
+    ]
+
+    df = pd.read_table(
+        settings.self_report_data_path,
+        usecols=["subject_id"]
+        + [
+            k.replace("impairments", "impairements")
+            for k in DEMOGRAPHICS_FIELDS
+        ],
+    )
+
+    for i, row in df.iterrows():
+        # Check if subject ID is in table
+        try:
+            participant = db.scalars(
+                select(Participant).where(Participant.id == f"{row['subject_id']}")
+            ).one()
+            for label in row.index:
+                field = data_dictionary_df.loc[label]
+                field_type = field["Field Type"]
+                entry = row.loc[label]
+                if pd.isna(entry):
+                    entry = None
+
+                if entry is not None:
+                    if field_type == "radio":
+                        choices = field["Choices, Calculations, OR Slider Labels"]
+                        choices = {
+                            int(k): v
+                            for k, v in [
+                                x.strip().split(", ") for x in choices.split("|")
+                            ]
+                        }
+                        row.loc[label] = choices[row.loc[label]]
+
+            # Participant 14 entered their age as 18` instead of 18.
+            if row.loc["age"] == "18`":
+                row.loc["age"] = 18
+
+            for attr in row.index:
+                value = row.loc[attr]
+                if pd.isna(value):
+                    value = None
+                setattr(participant, attr, value)
+            db.commit()
+        except NoResultFound:
+            pass
 
 
 def process_base_tables():
     populate_base_tables()
     process_data_validity_workbook()
     process_station_to_eeg_amp_mapping_workbook()
+    insert_demographic_data()
