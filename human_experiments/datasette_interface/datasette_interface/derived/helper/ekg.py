@@ -8,7 +8,6 @@ from sqlalchemy.orm import Session
 
 from datasette_interface.common.constants import EEG_FREQUENCY
 from datasette_interface.common.utils import convert_unix_timestamp_to_iso8601
-from datasette_interface.database.entity.derived.eeg_sync import EEGSync
 from datasette_interface.database.entity.derived.ekg_sync import EKGSync
 from datasette_interface.database.entity.signal.eeg import EEGRaw
 from datasette_interface.derived.helper.modality import ModalityHelper
