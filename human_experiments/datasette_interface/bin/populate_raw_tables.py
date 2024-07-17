@@ -4,25 +4,29 @@ import argparse
 import os
 
 from datasette_interface.database.config import SQLALCHEMY_DATABASE_URI
-from datasette_interface.raw.process_affective_task_data import \
-    process_affective_task_data
+from datasette_interface.raw.process_affective_task_data import (
+    process_affective_task_data,
+)
 from datasette_interface.raw.process_base_tables import process_base_tables
 from datasette_interface.raw.process_eeg_raw_data import process_eeg_raw_data
-from datasette_interface.raw.process_finger_tapping_task_data import \
-    process_finger_tapping_task_data
-from datasette_interface.raw.process_fnirs_raw_data import \
-    process_fnirs_raw_data
+from datasette_interface.raw.process_finger_tapping_task_data import (
+    process_finger_tapping_task_data,
+)
+from datasette_interface.raw.process_fnirs_raw_data import process_fnirs_raw_data
 from datasette_interface.raw.process_gaze_raw_data import process_gaze_raw_data
-from datasette_interface.raw.process_minecraft_data import \
-    process_minecraft_data
-from datasette_interface.raw.process_ping_pong_competitive_data import \
-    process_ping_pong_competitive_task_data
-from datasette_interface.raw.process_ping_pong_cooperative_data import \
-    process_ping_pong_cooperative_task_data
-from datasette_interface.raw.process_rest_state_task_data import \
-    process_rest_state_task_data
-from datasette_interface.raw.process_screen_capture_data import \
-    process_screen_capture_data
+from datasette_interface.raw.process_minecraft_data import process_minecraft_data
+from datasette_interface.raw.process_ping_pong_competitive_data import (
+    process_ping_pong_competitive_task_data,
+)
+from datasette_interface.raw.process_ping_pong_cooperative_data import (
+    process_ping_pong_cooperative_task_data,
+)
+from datasette_interface.raw.process_rest_state_task_data import (
+    process_rest_state_task_data,
+)
+from datasette_interface.raw.process_screen_capture_data import (
+    process_screen_capture_data,
+)
 from datasette_interface.raw.process_vocalics import process_vocalics
 
 TABLES = {

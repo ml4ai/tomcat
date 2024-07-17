@@ -5,7 +5,9 @@ from tqdm import tqdm
 
 from datasette_interface.common.config import settings
 from datasette_interface.common.utils import (
-    is_directory_with_unified_xdf_files, should_ignore_directory)
+    is_directory_with_unified_xdf_files,
+    should_ignore_directory,
+)
 
 
 class ExperimentsCrawler:

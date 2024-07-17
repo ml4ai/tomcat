@@ -83,9 +83,11 @@ class GSRHelper(ModalityHelper):
         """
         super().filter()
 
-        pre_processed_df = pd.DataFrame(nk.eda_process(
-            self._data["gsr"].values, sampling_rate=self.original_frequency
-        )[0])
+        pre_processed_df = pd.DataFrame(
+            nk.eda_process(
+                self._data["gsr"].values, sampling_rate=self.original_frequency
+            )[0]
+        )
 
         # Copy data and timestamps to a Data frame
         df = pd.DataFrame(

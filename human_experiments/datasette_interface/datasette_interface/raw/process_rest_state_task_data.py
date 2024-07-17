@@ -13,11 +13,13 @@ from tqdm import tqdm
 from datasette_interface.common.config import LOG_DIR, settings
 from datasette_interface.common.constants import REST_STATE_DURATION_IN_SECONDS
 from datasette_interface.common.utils import (
-    cd, convert_unix_timestamp_to_iso8601, is_directory_with_unified_xdf_files,
-    should_ignore_directory)
+    cd,
+    convert_unix_timestamp_to_iso8601,
+    is_directory_with_unified_xdf_files,
+    should_ignore_directory,
+)
 from datasette_interface.database.config import get_db
-from datasette_interface.database.entity.task.rest_state_task import \
-    RestStateTask
+from datasette_interface.database.entity.task.rest_state_task import RestStateTask
 
 logging.basicConfig(
     level=logging.INFO,

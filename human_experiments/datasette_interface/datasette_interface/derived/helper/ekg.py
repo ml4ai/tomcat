@@ -84,9 +84,11 @@ class EKGHelper(ModalityHelper):
         """
         super().filter()
 
-        pre_processed_df = pd.DataFrame(nk.ecg_process(
+        pre_processed_df = pd.DataFrame(
+            nk.ecg_process(
                 self._data["ekg"].values, sampling_rate=self.original_frequency
-            )[0])
+            )[0]
+        )
 
         # Copy data and timestamps to a Data frame
         df = pd.DataFrame(

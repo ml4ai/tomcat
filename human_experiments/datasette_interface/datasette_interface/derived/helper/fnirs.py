@@ -7,8 +7,11 @@ from sqlalchemy import Engine, func, select
 from sqlalchemy.orm import Session
 
 from datasette_interface.common.constants import (
-    FNIRS_BANDPASS_FILTER_METHOD, FNIRS_FREQUENCY,
-    FNIRS_HIGH_FREQUENCY_THRESHOLD, FNIRS_LOW_FREQUENCY_THRESHOLD)
+    FNIRS_BANDPASS_FILTER_METHOD,
+    FNIRS_FREQUENCY,
+    FNIRS_HIGH_FREQUENCY_THRESHOLD,
+    FNIRS_LOW_FREQUENCY_THRESHOLD,
+)
 from datasette_interface.common.utils import convert_unix_timestamp_to_iso8601
 from datasette_interface.database.entity.derived.fnirs_sync import FNIRSSync
 from datasette_interface.database.entity.signal.fnirs import FNIRSRaw

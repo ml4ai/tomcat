@@ -13,12 +13,16 @@ from tqdm import tqdm
 
 from datasette_interface.common.config import LOG_DIR, settings
 from datasette_interface.common.utils import (
-    cd, convert_unix_timestamp_to_iso8601, is_directory_with_unified_xdf_files,
-    should_ignore_directory)
+    cd,
+    convert_unix_timestamp_to_iso8601,
+    is_directory_with_unified_xdf_files,
+    should_ignore_directory,
+)
 from datasette_interface.database.config import get_db
 from datasette_interface.database.entity.base.data_validity import DataValidity
-from datasette_interface.database.entity.task.affective_task_event import \
-    AffectiveTaskEvent
+from datasette_interface.database.entity.task.affective_task_event import (
+    AffectiveTaskEvent,
+)
 
 logging.basicConfig(
     level=logging.INFO,
@@ -220,9 +224,9 @@ def process_directory_v2(group_session, participants):
                 if task_type == "individual":
                     real_participant_id = participants[stream_source]
                     if nominal_participant_id not in nominal_participant_to_stream_map:
-                        nominal_participant_to_stream_map[
-                            nominal_participant_id
-                        ] = stream_source
+                        nominal_participant_to_stream_map[nominal_participant_id] = (
+                            stream_source
+                        )
 
                 elif task_type == "team":
                     if nominal_participant_id is None:
