@@ -50,6 +50,31 @@ INVALID_MISSIONS = [
     "9cde1985-1179-4aac-8b67-1fc60ed65243",
 ]
 
+CALLSIGN_TO_STATION_MAPPING = {
+    "Red": "lion",
+    "Blue": "tiger",
+    "Green": "leopard",
+}
+
+
+def populate_station_to_playername_mapping(
+    client_info: dict, db_session, group_session
+):
+    assert len(client_info) == 3
+    for client in client_info:
+        try:
+            gs = db_session.execute(
+                select(GroupSession).filter_by(id=group_session)
+            ).scalar_one()
+            station = CALLSIGN_TO_STATION_MAPPING[client["callsign"]]
+            setattr(
+                gs, f"{station}_minecraft_playername", client["playername"]
+            )
+        except NoResultFound as e:
+            error(
+                f"No row in the group_session table found with {group_session=}"
+            )
+
 
 def update_key_messages_dict(message, key_messages):
     """Populate key messages dictionary."""
@@ -345,7 +370,6 @@ def process_metadata_file(
 
     mission_name = key_messages["mission_start"][0]["data"]["mission"]
 
-
     testbed_version = key_messages["trial_start"][-1]["data"][
         "testbed_version"
     ]
@@ -358,7 +382,6 @@ def process_metadata_file(
         final_team_score = None
     else:
         final_team_score = scores[-1]
-
 
     minecraft_mission = MinecraftMission(
         group_session_id=group_session,
@@ -400,30 +423,12 @@ def process_metadata_file(
 
     # Here, we try to map Minecraft 'Playernames' to stations, in order to
     # compute things like individual participant scores in a mission.
-    if "Saturn" in mission_name:
-        trial_start_message = key_messages["trial_start"][0]
-        client_info = trial_start_message["data"]["client_info"]
-        assert len(client_info) == 3
-        # original_playername_participant_id_mapping = {
-            # client["playername"]: client["participant_id"]
-            # for client in client_info
-        # }
-        callsign_to_station_mapping = {
-                "Red": "lion",
-                "Blue": "tiger",
-                "Green": "leopard"
-        }
+    trial_start_message = key_messages["trial_start"][0]
+    client_info = trial_start_message["data"]["client_info"]
 
-        for client in client_info:
-            try:
-                gs = db_session.execute(
-                    select(GroupSession).filter_by(id=group_session)
-                ).scalar_one()
-                station = callsign_to_station_mapping[client["callsign"]]
-                setattr(gs, f"{station}_minecraft_playername", client["playername"])
-            except NoResultFound as e:
-                error(f"No row in the group_session table found with {group_session=}")
-
+    populate_station_to_playername_mapping(
+        client_info, db_session, group_session
+    )
 
     return minecraft_mission, minecraft_testbed_messages
 
@@ -457,7 +462,7 @@ def process_directory_v2(group_session: str, db_session):
 
             except json.decoder.JSONDecodeError:
                 topic = text.split()[0][1:-1]
-                error_message = f"Unable to parse message number {i + 1} (topic: {topic} as JSON!"
+                error_message = f"Unable to parse message number {i + 1} (topic: {topic}) as JSON!"
                 if topic in {
                     "agent/ac/belief_diff",
                     "agent/ac/threat_room_coordination",
@@ -495,6 +500,13 @@ def process_directory_v2(group_session: str, db_session):
                     pass
             elif topic == "trial":
                 if message["msg"]["sub_type"] == "start":
+
+                    # Get station-to-playername mapping
+                    client_info = message["data"]["client_info"]
+                    populate_station_to_playername_mapping(
+                        client_info, db_session, group_session
+                    )
+
                     trial_start_index = i
 
                     if testbed_version is None:
@@ -629,6 +641,7 @@ def process_minecraft_data():
             info(f"Processing directory {group_session}")
 
             if not is_directory_with_unified_xdf_files(group_session):
+                pass
                 missions, messages = process_directory_v1(
                     group_session, db_session
                 )
