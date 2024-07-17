@@ -32,6 +32,10 @@ class Settings(BaseSettings):
         "/tomcat/data/raw/LangLab/experiments/study_3_pilot/"
         "station_to_minecraft_playername_mapping.csv"
     )
+    self_report_data: str = (
+        "/tomcat/data/raw/LangLab/experiments/study_3_pilot/"
+        "ToMCATSelfReport_DATA_2023-06-11_2358.tsv"
+    )
 
     @classmethod
     @field_validator(
