@@ -11,7 +11,7 @@ from datasette_interface.database.entity.base.task import Task
 
 
 class FNIRSRaw(Base):
-    __tablename__ = "fnirs_raw_tmp"
+    __tablename__ = "fnirs_raw"
 
     group_session_id: Mapped[str] = mapped_column(
         "group_session", Text, ForeignKey(GroupSession.id), primary_key=True
