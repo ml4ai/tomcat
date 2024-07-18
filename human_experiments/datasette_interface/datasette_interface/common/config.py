@@ -13,8 +13,8 @@ class Settings(BaseSettings):
     db_pass: str = ""
     db_host: str = "localhost"
     db_user: str = os.getenv("USER")
-    db_port: int = 5433
-    db_name: str = "tomcat"
+    db_port: int = os.getenv("POSTGRES_PORT", 5433)
+    db_name: str = os.getenv("TOMCAT_DB_NAME", "tomcat")
     working_env: str = DEVELOPMENT
     artifact_dir: str = f"/space/{USER}/tomcat"
     image_url_root_dir: str = "https://ivilab.cs.arizona.edu/data/tomcat/group"

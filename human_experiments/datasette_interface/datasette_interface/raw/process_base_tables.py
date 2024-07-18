@@ -348,41 +348,48 @@ def process_demographic_data():
     )
 
     for i, row in df.iterrows():
+        # Check if subject ID can be converted to an integer:
+        try:
+            participant_id = int(row["subject_id"])
+        except ValueError:
+            continue
+
         # Check if subject ID is in table
         try:
             participant = db.scalars(
-                select(Participant).where(Participant.id == f"{row['subject_id']}")
+                select(Participant).where(Participant.id == participant_id)
             ).one()
-            for label in row.index:
-                field = data_dictionary_df.loc[label]
-                field_type = field["Field Type"]
-                entry = row.loc[label]
-                if pd.isna(entry):
-                    entry = None
-
-                if entry is not None:
-                    if field_type == "radio":
-                        choices = field["Choices, Calculations, OR Slider Labels"]
-                        choices = {
-                            int(k): v
-                            for k, v in [
-                                x.strip().split(", ") for x in choices.split("|")
-                            ]
-                        }
-                        row.loc[label] = choices[row.loc[label]]
-
-            # Participant 14 entered their age as 18` instead of 18.
-            if row.loc["age"] == "18`":
-                row.loc["age"] = 18
-
-            for attr in row.index:
-                value = row.loc[attr]
-                if pd.isna(value):
-                    value = None
-                setattr(participant, attr, value)
-            db.commit()
         except NoResultFound:
-            pass
+            continue
+
+        for label in row.index:
+            field = data_dictionary_df.loc[label]
+            field_type = field["Field Type"]
+            entry = row.loc[label]
+            if pd.isna(entry):
+                entry = None
+
+            if entry is not None:
+                if field_type == "radio":
+                    choices = field["Choices, Calculations, OR Slider Labels"]
+                    choices = {
+                        int(k): v
+                        for k, v in [
+                            x.strip().split(", ") for x in choices.split("|")
+                        ]
+                    }
+                    row.loc[label] = choices[row.loc[label]]
+
+        # Participant 14 entered their age as 18` instead of 18.
+        if row.loc["age"] == "18`":
+            row.loc["age"] = 18
+
+        for attr in row.index:
+            value = row.loc[attr]
+            if pd.isna(value):
+                value = None
+            setattr(participant, attr, value)
+        db.commit()
 
     db.close()
 
@@ -527,8 +534,6 @@ def process_post_game_survey():
     db = next(get_db())
     for i, row in tqdm(df.iterrows(), total=len(df)):
         participant_id = None
-        # Subject ID 63 did not finish the post-game survey in the first
-        # attempt, so we ignore the first attempt.
         if row.postgame_survey_timestamp == "[not completed]" or pd.isna(
             row.postgame_survey_timestamp
         ):
