@@ -1,6 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy_utils import database_exists, create_database
 
 from datasette_interface.common.config import DEVELOPMENT, RUN_DIR, settings
 
@@ -19,6 +20,11 @@ else:
 
 Base = declarative_base()
 engine = create_engine(SQLALCHEMY_DATABASE_URI)
+
+# Create the database in Postgres if it doesn't already exist.
+if not database_exists(engine.url):
+    create_database(engine.url)
+
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
