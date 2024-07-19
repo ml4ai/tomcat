@@ -13,8 +13,8 @@ class Settings(BaseSettings):
     db_pass: str = ""
     db_host: str = "localhost"
     db_user: str = os.getenv("USER")
-    db_port: int = 5433
-    db_name: str = "tomcat"
+    db_port: int = os.getenv("POSTGRES_PORT", 5433)
+    db_name: str = os.getenv("TOMCAT_DB_NAME", "tomcat")
     working_env: str = DEVELOPMENT
     artifact_dir: str = f"/space/{USER}/tomcat"
     image_url_root_dir: str = "https://ivilab.cs.arizona.edu/data/tomcat/group"
@@ -27,6 +27,28 @@ class Settings(BaseSettings):
     station_to_eeg_workbook_path: str = (
         "/tomcat/data/raw/LangLab/experiments/study_3_pilot/"
         "station_to_eeg_amp_mapping.csv"
+    )
+    station_to_minecraft_playername_mapping_path: str = (
+        "/tomcat/data/raw/LangLab/experiments/study_3_pilot/"
+        "station_to_minecraft_playername_mapping.csv"
+    )
+
+    self_report_data_path: str = (
+        "/tomcat/data/raw/LangLab/experiments/study_3_pilot/"
+        "ToMCATSelfReport_DATA_2023-06-11_2358.tsv"
+    )
+    self_report_data_dictionary_path: str = (
+        "/tomcat/data/raw/LangLab/experiments/study_3_pilot/"
+        "ToMCATSelfReport_DataDictionary_2023-08-08.tsv"
+    )
+
+    post_game_survey_data_path: str = (
+        "/tomcat/data/raw/LangLab/experiments/study_3_pilot/"
+        "ToMCATPostGameSurvey_DATA_2024-07-16_2050.csv"
+    )
+    post_game_survey_data_dictionary_path: str = (
+        "/tomcat/data/raw/LangLab/experiments/study_3_pilot/"
+        "ToMCATPostGameSurvey_DataDictionary_2024-07-17.csv"
     )
 
     @classmethod

@@ -2,18 +2,20 @@ from logging import error
 
 from sqlalchemy import delete, func, update
 
-from datasette_interface.database.entity.task.affective_task_event import \
-    AffectiveTaskEvent
-from datasette_interface.database.entity.task.finger_tapping_task_observation import \
-    FingerTappingTaskObservation
-from datasette_interface.database.entity.task.minecraft_task import \
-    MinecraftMission
-from datasette_interface.database.entity.task.ping_pong_competitive_task_observation import \
-    PingPongCompetitiveTaskObservation
-from datasette_interface.database.entity.task.ping_pong_cooperative_task_observation import \
-    PingPongCooperativeTaskObservation
-from datasette_interface.database.entity.task.rest_state_task import \
-    RestStateTask
+from datasette_interface.database.entity.task.affective_task_event import (
+    AffectiveTaskEvent,
+)
+from datasette_interface.database.entity.task.finger_tapping_task_observation import (
+    FingerTappingTaskObservation,
+)
+from datasette_interface.database.entity.task.minecraft_task import MinecraftMission
+from datasette_interface.database.entity.task.ping_pong_competitive_task_observation import (
+    PingPongCompetitiveTaskObservation,
+)
+from datasette_interface.database.entity.task.ping_pong_cooperative_task_observation import (
+    PingPongCooperativeTaskObservation,
+)
+from datasette_interface.database.entity.task.rest_state_task import RestStateTask
 
 
 def label_signals_with_task(

@@ -6,12 +6,7 @@ from datasette_interface.derived.helper.gsr import GSRHelper
 from datasette_interface.derived.helper.ekg import EKGHelper
 from datasette_interface.derived.helper.modality import ModalityHelper
 
-MODALITIES = [
-    "eeg",
-    "fnirs",
-    "gsr",
-    "ekg"
-]
+MODALITIES = ["eeg", "fnirs", "gsr", "ekg"]
 
 
 def create_modality_helper(

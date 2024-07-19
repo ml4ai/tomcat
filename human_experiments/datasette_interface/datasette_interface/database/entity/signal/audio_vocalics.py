@@ -4,8 +4,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from datasette_interface.database.config import Base
 from datasette_interface.database.entity.base.group_session import GroupSession
 from datasette_interface.database.entity.base.station import Station
-from datasette_interface.database.entity.task.minecraft_task import \
-    MinecraftMission
+from datasette_interface.database.entity.task.minecraft_task import MinecraftMission
 
 
 class AudioVocalics(Base):

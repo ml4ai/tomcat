@@ -14,18 +14,18 @@ The following `make` commands can be used to perform different operations on the
 
 # Populating the ToMCAT database
 
-The tomcat dataset is in a Postgres cluster that lives in `/space/paulosoares/postgres`. A series of `make` commands can be used to perform different operations on this dataset. The commands run by default in `development` mode, which uses an sqlite database created under `/space/USER/tomcat/.dev`. To modify the Postgres database, the commands need to be executed in `production` mode, which can be done by adding the following before each command:
+The tomcat dataset is in a Postgres cluster that lives in `/space/paulosoares/postgres`. A series of `make` commands can be used to perform different operations on this dataset. The commands run by default in `development` mode, which uses an sqlite database created under `/space/$USER/tomcat/.dev`. To modify the Postgres database, the commands need to be executed in `production` mode, which can be done by adding the following before each command:
 ```
 working_env=production db_pass=<user_postgres_pass>
 ```
-Your user must have permission to modify the Postgres database in production mode. 
+Your user must have permission to modify the Postgres database in production mode.
 
 ## Commands
 1. **clear_db**: [WARNING] drops the tables in the ToMCAT database. It must only be called if one really wants a fresh copy.
 2. **create_tables**: creates new tables and indices. If a table already exists, it won't be changed.
 3. **update_raw**: Adds new raw data to the relevant tables. This can be called to update the database with new experiment data. It will skip experiments already processed.
 4. **sync_raw**: Filters and synchronizes fNIRS and EEG signals with a main clock with frequency 200Hz that starts 1 minute before the rest_state task and ends 1 minute after end of the last minecraft trial. Synchronized signals are saved to the `fnirs_sync` and `eeg_sync` tables.
-5. **to_sqlite**: Copies the Postgres database to an SQLite database for publication in the datasette interface. It runs in production mode automatically to make sure to read from the Postgres database. IThe environment variable `TBS` can be used in conjunction with this command to specify a subset of tables one wants to copy, otherwise, all tables will be copied. Be patient and run this in a tmux session as this process can take several days depending on the size of the tables. 
+5. **to_sqlite**: Copies the Postgres database to an SQLite database for publication in the datasette interface. It runs in production mode automatically to make sure to read from the Postgres database. The environment variable `TBS` can be used in conjunction with this command to specify a subset of tables one wants to copy, otherwise, all tables will be copied. Be patient and run this in a tmux session as this process can take several days depending on the size of the tables.
 
 # Miscellaneous
 The following `make` commands can be used to perform different operations.

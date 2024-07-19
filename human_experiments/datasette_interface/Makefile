@@ -1,8 +1,6 @@
 lint:
-	black .
-	isort .
-	autoflake -r . --in-place --remove-all-unused-imports
-	flake8 .
+	ruff check --fix .
+	ruff format .
 
 # Datasette
 create_datasette:
