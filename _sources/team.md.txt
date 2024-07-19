@@ -56,6 +56,7 @@ Current
 
 - [Aditya Banerjee](https://github.com/Adi-UA)
 - Aditya Jadhav
+- Minglai Yang
 - Vatsav Setupathi
 - Shambhavi Singh
 
@@ -69,10 +70,3 @@ Undergraduates:
 - Runnan Zhou
 - Matsuura
 - [Shreeya Jain](https://www.linkedin.com/in/shreeya-jain-0b4438122)
-
-Work with us
-------------
-
-We are looking for talented undergraduates, graduate students, postdocs and
-research programmers to join our team. Please email `adarsh[at]arizona[dot]edu`
-for more information.
