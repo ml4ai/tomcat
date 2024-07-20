@@ -100,12 +100,12 @@ if __name__ == "__main__":
         "--include",
         type=str,
         default=os.getenv("TBS", "all"),
-        help=f"Comma-separated list of modalities to process among {DATA_ENTITIES}",
+        help=f"Comma-separated list of entities to process among {DATA_ENTITIES}",
     )
     parser.add_argument(
         "--exclude",
         type=str,
-        help="Comma-separated list of modalities to exclude among the ones in "
+        help="Comma-separated list of entities to exclude among the ones in "
              "--include",
     )
 
