@@ -23,7 +23,7 @@ Your user must have permission to modify the Postgres database in production mod
 ## Commands
 1. **clear_db**: [WARNING] drops the tables in the ToMCAT database. It must only be called if one really wants a fresh copy.
 2. **create_tables**: creates new tables and indices. If a table already exists, it won't be changed.
-3. **update_raw**: Adds new raw data to the relevant tables. This can be called to update the database with new experiment data. It will skip experiments already processed.
+3. **update_raw**: Adds new raw data to the relevant tables. This can be called to update the database with new experiment data. It will skip experiments already processed. The environment variable `TBS` can be used in conjunction with this command to specify a subset of tables one wants to update.
 4. **sync_raw**: Filters and synchronizes fNIRS and EEG signals with a main clock with frequency 200Hz that starts 1 minute before the rest_state task and ends 1 minute after end of the last minecraft trial. Synchronized signals are saved to the `fnirs_sync` and `eeg_sync` tables.
 5. **to_sqlite**: Copies the Postgres database to an SQLite database for publication in the datasette interface. It runs in production mode automatically to make sure to read from the Postgres database. The environment variable `TBS` can be used in conjunction with this command to specify a subset of tables one wants to copy, otherwise, all tables will be copied. Be patient and run this in a tmux session as this process can take several days depending on the size of the tables.
 
