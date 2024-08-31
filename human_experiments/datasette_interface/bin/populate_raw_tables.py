@@ -92,9 +92,9 @@ def populate_tables(tables_to_process):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Populates the ToMCAT database with raw data. This script is incremental. No "
-                    "data is deleted from the database but added. It skips parsing data already "
-                    "inserted in the database. If one wants to override those, data must be "
-                    "deleted manually before calling this script."
+        "data is deleted from the database but added. It skips parsing data already "
+        "inserted in the database. If one wants to override those, data must be "
+        "deleted manually before calling this script."
     )
     parser.add_argument(
         "--include",
@@ -106,7 +106,7 @@ if __name__ == "__main__":
         "--exclude",
         type=str,
         help="Comma-separated list of entities to exclude among the ones in "
-             "--include",
+        "--include",
     )
 
     args = parser.parse_args()
@@ -127,11 +127,14 @@ if __name__ == "__main__":
             data_entity = data_entity.strip()
             if len(data_entity) > 0 and data_entity not in data_entities:
                 raise ValueError(
-                    f"Data entity ({data_entity}) not in --include ({data_entities}).")
+                    f"Data entity ({data_entity}) not in --include ({data_entities})."
+                )
 
             data_entities.remove(data_entity)
 
-    all_tables = ", ".join([DATA_ENTITY_TO_TABLES[data_entity] for data_entity in data_entities])
+    all_tables = ", ".join(
+        [DATA_ENTITY_TO_TABLES[data_entity] for data_entity in data_entities]
+    )
     answer = input(
         f"This operation may add data to the tables ({all_tables}) in the database "
         f"({SQLALCHEMY_DATABASE_URI}). Do you want to proceed? (y/n): "

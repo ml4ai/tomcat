@@ -20,9 +20,6 @@ screenshots_to_server:
 	./bin/copy_screenshots_to_server
 
 # Database operations
-clear_db:
-	@PYTHONPATH="." ./bin/clear_database.py
-
 create_tables:
 	@PYTHONPATH="." ./bin/create_tables.py
 	@PYTHONPATH="." ./bin/create_table_indices.py
