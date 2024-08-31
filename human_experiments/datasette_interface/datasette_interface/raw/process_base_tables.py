@@ -374,9 +374,7 @@ def process_demographic_data():
                     choices = field["Choices, Calculations, OR Slider Labels"]
                     choices = {
                         int(k): v
-                        for k, v in [
-                            x.strip().split(", ") for x in choices.split("|")
-                        ]
+                        for k, v in [x.strip().split(", ") for x in choices.split("|")]
                     }
                     row.loc[label] = choices[row.loc[label]]
 
