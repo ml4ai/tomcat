@@ -1,0 +1,20 @@
+WITH GroupedData AS (
+  SELECT 
+    group_session, 
+    station, 
+    MIN(id) AS min_id, 
+    MAX(id) AS max_id
+  FROM screen_capture
+  WHERE group_session IN ("exp_2023_04_17_13", "exp_2023_04_18_14", 
+    "exp_2023_04_20_14", "exp_2023_04_21_10", "exp_2023_04_24_13", 
+    "exp_2023_04_27_14", "exp_2023_04_28_10", "exp_2023_05_01_13", 
+    "exp_2023_05_02_14", "exp_2023_05_03_10")
+  GROUP BY group_session, station
+)
+SELECT sc.group_session, sc.station, sc.participant, sc.id, sc.task, sc.timestamp_unix, sc.timestamp_iso8601, sc.filename, sc.url, sc.timestamp_origin
+FROM screen_capture sc
+JOIN GroupedData gd
+  ON (sc.id = gd.min_id OR sc.id = gd.max_id)
+  AND sc.group_session = gd.group_session
+  AND sc.station = gd.station
+ORDER BY sc.group_session, sc.station, sc.id;
