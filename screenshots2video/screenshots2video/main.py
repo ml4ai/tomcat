@@ -29,11 +29,10 @@ def create_video_fixed_duration(image_folder, video_name, frame_duration=0.1):
 
     height, width, layers = frame.shape
 
-    # Define the codec and create a VideoWriter object
-    fourcc = cv2.VideoWriter_fourcc(*'H264')
+    fourcc = cv2.VideoWriter_fourcc(*'avc1')
     video = cv2.VideoWriter(video_name, fourcc, frame_rate, (width, height))
 
-    # Loop through images and add each one to the video
+    # loop through images and add each one to the video
     for image_file in image_files:
         image_path = os.path.join(image_folder, image_file)
         try:

@@ -25,7 +25,7 @@ def create_video_fixed_duration(image_files, video_name, frame_duration):
 
     height, width, layers = frame.shape
 
-    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+    fourcc = cv2.VideoWriter_fourcc(*'avc1')
     video = cv2.VideoWriter(video_name, fourcc, frame_rate, (width, height))
 
     for image_file in image_files:
