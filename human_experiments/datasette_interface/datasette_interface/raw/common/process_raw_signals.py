@@ -23,13 +23,13 @@ from datasette_interface.raw.common.label_data import (
 
 
 def insert_raw_unlabeled_data(
-    signal_modality_class,
-    modality_name,
-    xdf_signal_type,
-    channel_from_xdf_parsing_fn,
-    station_from_xdf_v2_parsing_fn,
-    slice_series_fn=lambda x: x,
-    swap_channels_fn=None,
+        signal_modality_class,
+        modality_name,
+        xdf_signal_type,
+        channel_from_xdf_parsing_fn,
+        station_from_xdf_v2_parsing_fn,
+        slice_series_fn=lambda x: x,
+        swap_channels_fn=None,
 ):
     info("Inserting unlabeled data.")
     with cd(settings.experiment_root_dir):
@@ -44,8 +44,8 @@ def insert_raw_unlabeled_data(
             [
                 s[0]
                 for s in db.query(signal_modality_class.group_session_id)
-                .distinct(signal_modality_class.group_session_id)
-                .all()
+            .distinct(signal_modality_class.group_session_id)
+            .all()
             ]
         )
 
@@ -87,13 +87,13 @@ def insert_raw_unlabeled_data(
 
 
 def get_signals(
-    stream,
-    group_session,
-    station,
-    initial_id,
-    channel_from_xdf_parsing_fn,
-    slice_series_fn,
-    swap_channels_fn,
+        stream,
+        group_session,
+        station,
+        initial_id,
+        channel_from_xdf_parsing_fn,
+        slice_series_fn,
+        swap_channels_fn=None,
 ):
     # We insert a participant ID of -1 since we don't actually know for sure
     # who the participant is - we will need to consult the data validity table
@@ -134,13 +134,13 @@ def get_signals(
 
 
 def process_directory_v1(
-    group_session,
-    signal_modality_class,
-    modality_name,
-    xdf_signal_type,
-    channel_from_xdf_parsing_fn,
-    slice_series_fn,
-    swap_channels_fn,
+        group_session,
+        signal_modality_class,
+        modality_name,
+        xdf_signal_type,
+        channel_from_xdf_parsing_fn,
+        slice_series_fn,
+        swap_channels_fn,
 ):
     signals = []
     with cd(f"{group_session}"):
@@ -177,14 +177,14 @@ def process_directory_v1(
 
 
 def process_directory_v2(
-    group_session,
-    signal_modality_class,
-    modality_name,
-    xdf_signal_type,
-    channel_from_xdf_parsing_fn,
-    station_from_xdf_v2_parsing_fn,
-    slice_series_fn,
-    swap_channels_fn,
+        group_session,
+        signal_modality_class,
+        modality_name,
+        xdf_signal_type,
+        channel_from_xdf_parsing_fn,
+        station_from_xdf_v2_parsing_fn,
+        slice_series_fn,
+        swap_channels_fn,
 ):
     """Process directory assuming unified XDF files."""
     signals = []
@@ -251,9 +251,9 @@ def label_data(signal_modality_class, modality_name):
         [
             s[0]
             for s in db.query(signal_modality_class.group_session_id)
-            .distinct(signal_modality_class.group_session_id)
-            .filter(signal_modality_class.task_id.is_not(None))
-            .all()
+        .distinct(signal_modality_class.group_session_id)
+        .filter(signal_modality_class.task_id.is_not(None))
+        .all()
         ]
     )
 

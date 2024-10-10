@@ -158,7 +158,7 @@ def process_directory_v2(
                     station,
                     next_id,
                     lambda x: ["filename"],
-                    slice_series_fn=lambda x: x,
+                    slice_series_fn=lambda x: x
                 )
                 tmp = []
                 for signal_dict in signals:
