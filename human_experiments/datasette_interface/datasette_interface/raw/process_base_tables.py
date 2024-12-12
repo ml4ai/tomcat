@@ -547,6 +547,9 @@ def process_post_game_survey():
                 select(Participant).where(Participant.id == participant_id)
             ).one()
         except NoResultFound:
+            info(f"Inserting into post game survey data for Participant ID: {participant_id}")
+        else:
+            info(f"Participant ID: {participant_id} already found in post game survey, skipping...")
             continue
 
         for label in row.index:
