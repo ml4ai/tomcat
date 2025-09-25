@@ -3,15 +3,21 @@
 set -u
 
 if [[ -z ${1+x} ]]; then
+  VIDEO_FILE="video.mp4"
+  PADDING=""
+elif [[ -z ${2+x} ]]; then
+  VIDEO_FILE=$1
   PADDING=""
 else
-  PADDING=$1
+  VIDEO_FILE=$1
+  PADDING=$2
 fi
 
 __play_on_client() {
   local client_name=$1
   local client_address=$2
-  local padding=$3
+  local video_file=$3
+  local padding=$4
 
   if [[ $ALL -ne 1 ]]; then
     yes_no_question "${padding}Do you want to play the video on ${EMPH}$client_name${NC}?"
@@ -19,11 +25,11 @@ __play_on_client() {
     padding="$padding "
   fi
   if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
-    echo -e "${padding}Playing the ${EMPH}video${NC} on ${EMPH}$client_name${NC}..."
+    echo -e "${padding}Playing the ${EMPH}$video_file${NC} on ${EMPH}$client_name${NC}..."
 
     # If the location of the video in the client machine changes, make sure to
     # update the applescript below.
-    local command="open \$HOME/resources/tomcat/video.mp4"
+    local command="open \$HOME/resources/tomcat/$video_file"
     # shellcheck disable=SC2029
     if ssh "$EXPERIMENT_USER@$client_address" "$command" >/dev/null; then
       echo -e "${padding} ${EMPH}Video${GREEN} opened successfully.${NC}"
@@ -34,13 +40,14 @@ __play_on_client() {
 }
 
 __play_videos() {
-  local padding=$1
+  local video_file=$1
+  local padding=$2
 
-  echo -e "${padding}Playing the ${EMPH}videos${NC}..."
+  echo -e "${padding}Playing the ${EMPH}$video_file${NC}..."
 
-  __play_on_client "lion" "lion.local" "$PADDING "
-  __play_on_client "tiger" "tiger.local" "$PADDING "
-  __play_on_client "leopard" "leopard.local" "$PADDING "
+  __play_on_client "lion" "lion.local" "$video_file" "$PADDING "
+  __play_on_client "tiger" "tiger.local" "$video_file" "$PADDING "
+  __play_on_client "leopard" "leopard.local" "$video_file" "$PADDING "
 }
 
-__play_videos "$PADDING"
+__play_videos "$VIDEO_FILE" "$PADDING"
