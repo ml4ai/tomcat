@@ -1,0 +1,81 @@
+{
+  "tomcat": {
+    "hash": "9cc272a4aa4afff536b0d7af00c4c65ed6fc724462635806a34e3a60d7ba2cd6",
+    "size": 382053871616,
+    "file": "tomcat.db",
+    "tables": {
+      "group_session": {
+        "count": 40
+      },
+      "modality": {
+        "count": 3
+      },
+      "participant": {
+        "count": 114
+      },
+      "station": {
+        "count": 4
+      },
+      "task": {
+        "count": 9
+      },
+      "affective_task_event": {
+        "count": 14586
+      },
+      "audio_vocalics": {
+        "count": 33049497
+      },
+      "data_validity": {
+        "count": 3060
+      },
+      "eeg_device": {
+        "count": 120
+      },
+      "eeg_raw": {
+        "count": 320700934
+      },
+      "eeg_sync": {
+        "count": 124351398
+      },
+      "ekg_sync": {
+        "count": 105547478
+      },
+      "finger_tapping_task_observation": {
+        "count": 99875
+      },
+      "fnirs_raw": {
+        "count": 6849295
+      },
+      "fnirs_sync": {
+        "count": 127715027
+      },
+      "gaze_raw": {
+        "count": 129684338
+      },
+      "gsr_sync": {
+        "count": 124351398
+      },
+      "minecraft_mission": {
+        "count": 100
+      },
+      "minecraft_testbed_message": {
+        "count": 6370941
+      },
+      "ping_pong_competitive_task_observation": {
+        "count": 647242
+      },
+      "ping_pong_cooperative_task_observation": {
+        "count": 323806
+      },
+      "post_game_survey": {
+        "count": 96
+      },
+      "rest_state_task": {
+        "count": 40
+      },
+      "screen_capture": {
+        "count": 347093
+      }
+    }
+  }
+}

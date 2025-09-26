@@ -1,0 +1,504 @@
+#!/bin/csh -f
+
+##############################################################################
+#
+# Identification:
+#     A script to 
+#
+# Description:
+#     This script 
+#
+# Option arguments: 
+#
+# |    (The bar stops next line from joining) 
+#         Indented
+#
+# Examples (more to come):
+#     blah blah blah
+#
+# Bugs/deficiencies
+#
+# Author:
+#     Kobus Barnard 
+#
+##############################################################################
+
+# Orginally we used svn externals for both transfering to and from a git repo,
+# and this script was simpler, as the difference between 'to' and 'from' was
+# only a reversal of the arguments which was handled by the calling script.
+# However, using externals does not seem robust on the transfer to the external
+# repository, and we now favor doing the 'to' using a git push on the git
+# shadow. In fact, we may end up doing something similar for the 'from', but
+# this would involve writing filters to translate git result output to svn
+# commit commands as we already do in the svn case. Because of this change in
+# strategy the handling of the two cases in one file is awkward. 
+
+setenv KJB_VERBOSE
+setenv KJB_VERBOSE_2
+
+# We had the idea that changes would be sent to git via an ivilab branch, and
+# "git push" would become a pull request. This has yet to be tested, and might
+# not even be finished. It might not make sense, as all git pushes can already
+# be via pull requests, and only Kobus uses svn. 
+#
+# This choice needs to be consistent with that in repo_sync_create!
+#
+set support_change_branches = 0
+
+if (${support_change_branches}) then 
+    set ivilab_branch = "ivilab_svn"
+endif 
+
+set to = "$1"
+set source_dir = "$2"
+
+# Previously, we used the file to_using_git_push to select whether we commit via
+# svn external (original way), or directly via git. The original way run into
+# issues. So ths should be forced by default and not rely on this file, and we
+# choose it here using the environment variable to_using_git_push instead.  
+#
+# if ((${to}) && (-e /home/svn/src/hooks/to_using_git_push)) then
+setenv to_using_git_push 
+if ((${to}) && ($?to_using_git_push)) then
+    set to_using_git_push = 1
+else 
+    set to_using_git_push = 0
+endif 
+
+if (${to_using_git_push}) then
+    set target_dir = "$4"
+    set shadow_dir = "$3"
+else 
+    set target_dir = "$3"
+    set shadow_dir = "$4"
+endif 
+
+set user = "$5"
+
+if ("${user}" != "") then
+    set user = "--username ${user}"
+endif 
+
+if (! $?REPO_SYNC_RECURSION_PREFIX) then 
+    ${P_STDERR} "REPO_SYNC_RECURSION_PREFIX was not set entering repo_sync_external_dir"
+    setenv REPO_SYNC_RECURSION_PREFIX ""
+    setenv IVI_OUTPUT_PREFIX "${REPO_SYNC_RECURSION_PREFIX}"
+endif 
+
+echo " "
+echo "${REPO_SYNC_RECURSION_PREFIX}PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP"
+echo "${REPO_SYNC_RECURSION_PREFIX}Executing repo_sync_external_dir"
+${VERBOSE_ECHO} "to: ${to}"
+${VERBOSE_ECHO} "source_dir: ${source_dir}"
+${VERBOSE_ECHO} "target_dir: ${target_dir}"
+${VERBOSE_ECHO} "shadow_dir: ${shadow_dir}"
+${VERBOSE_ECHO} "user: ${user}"
+${VERBOSE_ECHO} "${REPO_SYNC_RECURSION_PREFIX}to_using_git_push is ${to_using_git_push}"
+${VERBOSE_ECHO} "${REPO_SYNC_RECURSION_PREFIX}KJB_SRC_PATH is: ${KJB_SRC_PATH}"
+${VERBOSE_ECHO} "${REPO_SYNC_RECURSION_PREFIX}MAKE_SCRIPT_PATH is: ${MAKE_SCRIPT_PATH}"
+${VERBOSE_ECHO} "${REPO_SYNC_RECURSION_PREFIX}P_STDERR is ${P_STDERR}"
+echo " "
+
+set dollar = '$'
+
+# Hack a bit for better result archiving. 
+set sub_dir = `echo ${source_dir} | sed 's#.*/##'`
+set result_archive_dir = "${REPO_SYNC_ARCHIVE_DIR}/${sub_dir}"
+${KJB_MKDIR} "${result_archive_dir}"
+if (${status}) then
+    ${P_STDERR} "${REPO_SYNC_RECURSION_PREFIX}Command failed in `pwd`"
+    ${P_STDERR} "${REPO_SYNC_RECURSION_PREFIX}    ${KJB_MKDIR} ${result_archive_dir}"
+    exit 1
+endif 
+
+pushd "${source_dir}" > /dev/null
+    set source_path = `pwd`
+
+    svn info > /dev/null
+    if (${status}) then
+        ${P_STDERR} "${REPO_SYNC_RECURSION_PREFIX}Svn info failed in `pwd`"
+        exit 1
+    endif 
+
+    set cur_revision = `svn info |& grep '^Revision: ' | sed 's/Revision:  *//'`
+    @ next_revision = ${cur_revision} + 1
+
+    # We set the depth in the next svn command simply because in testing we
+    # might have done a shallow checkout. We "force" because sometimes the repo
+    # is in an inconsistent state, although this does not clobber obstructors
+    # which would be ideal, but treats them as changes. But the obstructor is
+    # likely identical, which means that we can hope that the automatic merging
+    # works? 
+    #
+    svn up --set-depth=infinity > svn_up.res
+    set svn_status = ${status}
+
+    if ($?KJB_VERBOSE_2) then
+        echo "${REPO_SYNC_RECURSION_PREFIX}++++++++++++++++++++++++++++++++++++++"
+        echo "${REPO_SYNC_RECURSION_PREFIX}Status of 'svn up --set-depth=infinity' in `pwd` is ${svn_status}."
+        echo "${REPO_SYNC_RECURSION_PREFIX}Standard output follows."
+        cat_stdin_with_prefix < svn_up.res
+        echo "${REPO_SYNC_RECURSION_PREFIX}++++++++++++++++++++++++++++++++++++++"
+    endif 
+
+    if (${svn_status}) then
+        ${P_STDERR} "${REPO_SYNC_RECURSION_PREFIX}Svn update failed in `pwd`"
+        exit 1
+    endif 
+
+    set revision = `grep < svn_up.res 'Updated to revision' | sed 's/Updated to revision \([0-9]*\).*/\1/'`
+    if ("${revision}" == "") then
+        echo "${REPO_SYNC_RECURSION_PREFIX}No updates, so exiting sync. " 
+        exit 0
+    else 
+        ${VERBOSE_ECHO} "${REPO_SYNC_RECURSION_PREFIX}New revision is ${revision}"
+    endif 
+
+    if (${next_revision} > ${revision}) then
+        ${P_STDERR} "${REPO_SYNC_RECURSION_PREFIX}Next revision is greater than current, so making them the same."
+        ${P_STDERR} "${REPO_SYNC_RECURSION_PREFIX}This might be evidence of a bug, but carrying on."
+        set next_revision = ${revision}
+    endif 
+
+    echo "${REPO_SYNC_RECURSION_PREFIX}svn log -r ${next_revision}:${revision}" 
+    # We may even want the dashes, but strip them for now. 
+    svn log -r ${next_revision}:${revision} > svn_log.msg
+
+    if (${status}) then
+        ${P_STDERR} "${REPO_SYNC_RECURSION_PREFIX}Command failed in `pwd`"
+        ${P_STDERR} "${REPO_SYNC_RECURSION_PREFIX}    svn log -r ${next_revision}:${revision} "
+        exit 1
+    endif 
+
+    grep < svn_log.msg -v '^\-\-\-\-\-\-' > repo_commit.msg
+    set grep_status = ${status}
+
+    if (${grep_status} > 1) then
+        ${P_STDERR} "${REPO_SYNC_RECURSION_PREFIX}Command failed with status ${grep_status} in `pwd`"
+        exit 1
+    endif 
+
+    echo " " >> repo_commit.msg
+    echo "Recorded result of commands processed by svn in `pwd`:" >> repo_commit.msg
+    cat svn_up.res >> repo_commit.msg
+
+    if ($?KJB_VERBOSE_2) then
+        echo "${REPO_SYNC_RECURSION_PREFIX}++++++++++++++++++++++++++++++++++++++"
+        echo "${REPO_SYNC_RECURSION_PREFIX}Constructed SVN message in `pwd`:"
+        cat_stdin_with_prefix < repo_commit.msg
+        echo "${REPO_SYNC_RECURSION_PREFIX}++++++++++++++++++++++++++++++++++++++"
+    endif 
+popd > /dev/null
+
+${KJB_CP} ${source_dir}/svn_up.res svn_up_0.res
+grep < svn_up_0.res '^[AUDG]U* ' > svn_up_1.res
+
+if (${to_using_git_push}) then
+    sed < svn_up_1.res "s#^A  *\(.*\)#copy_sub_path ${source_path} \1; git add \1; if (${dollar}status) exit 1#" > svn_up_2.res
+    sed < svn_up_2.res "s#^[GU]U*  *\(.*\)#copy_sub_path ${source_path} \1; if (${dollar}status) exit 1#" > svn_up_3.res 
+    sed < svn_up_3.res "s#^D  *\(.*\)#git rm -r \1 ; if (${dollar}status) exit 1#" > svn_up_4.res
+else 
+    sed < svn_up_1.res "s#^A  *\(.*\)#copy_sub_path ${source_path} \1; svn add --parents \1; if (${dollar}status) exit 1#" > svn_up_2.res
+    sed < svn_up_2.res "s#^[GU]U*  *\(.*\)#copy_sub_path ${source_path} \1; if (${dollar}status) exit 1#" > svn_up_3.res 
+    sed < svn_up_3.res "s#^D  *\(.*\)#svn rm \1 ; if (${dollar}status) exit 1#" > svn_up_4.res
+
+endif 
+
+${KJB_CP} svn_up_4.res ${target_dir}/repo_modify.cmd
+if (${status}) then
+    ${P_STDERR} "Command failed in `pwd`"
+    ${P_STDERR} "${KJB_CP} svn_up_4.res ${target_dir}/repo_modify.cmd"
+    exit 1 
+endif
+
+${KJB_MV} svn_*.res ${result_archive_dir}
+if (${status}) then
+    ${P_STDERR} "Command failed in `pwd`"
+    ${P_STDERR} "${KJB_MV} svn_*.res ${result_archive_dir}"
+    # Exiting would be a bit extreme. 
+endif
+
+${KJB_MV} ${source_dir}/repo_commit.msg  ${target_dir}/repo_commit.msg
+if (${status}) then
+    ${P_STDERR} "Command failed in `pwd`"
+    ${P_STDERR} "${KJB_MV} ${source_dir}/repo_commit.msg ${target_dir}/repo_commit.msg"
+    exit 1 
+endif
+
+${KJB_MV} ${source_dir}/svn_log.msg "${result_archive_dir}"
+if (${status}) then
+    ${P_STDERR} "Command failed in `pwd`"
+    ${P_STDERR} "${KJB_MV} ${source_dir}/svn_log.msg ${result_archive_dir}"
+    # Exiting would be a bit extreme. 
+endif
+
+pushd "${target_dir}" > /dev/null
+    # This may well be wrong! But it might be right? Try using it for a bit. 
+
+     # We do an update here in case there might be a conflict with the incomming
+     # changes. Since the incomming changes are being committed now, we want to
+     # clobber them, rather than risk conflicts. 
+     #
+     # We set the depth in the next svn command simply because in testing we
+     # might have done a shallow checkout. 
+     svn up --set-depth=infinity > svn_pre_commit_up.res 
+     set svn_status = ${status}
+ 
+     if (! -z "svn_pre_commit_up.res") then
+         if ($?KJB_VERBOSE) then
+             echo ""
+             echo "svn_pre_commit_up.res"
+             cat_stdin_with_prefix < svn_pre_commit_up.res
+             echo "--------------------"
+             echo ""
+         endif 
+     endif 
+ 
+     if (${svn_status}) then
+         ${P_STDERR} "${REPO_SYNC_RECURSION_PREFIX}Command failed in `pwd`"
+         ${P_STDERR} "${REPO_SYNC_RECURSION_PREFIX}    svn up --set-depth=infinity"
+         exit 1
+     endif 
+
+    # If we copy files, they may get commited, which updates their SVN ID tags,
+    # which renders other copies out of date. This could lead to an infinite loop,
+    # although, since we do not continue, we simply get repositories that differ
+    # due to different SNV ID tags.
+    setenv COPY_ONLY_IF_DIFFERENT
+
+    if ($?KJB_VERBOSE_2) then  
+        echo "${REPO_SYNC_RECURSION_PREFIX}+++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+        echo "${REPO_SYNC_RECURSION_PREFIX}Sourcing repo_modify.cmd with COPY_ONLY_IF_DIFFERENT set." 
+        echo "${REPO_SYNC_RECURSION_PREFIX}Commands follow:" 
+        cat_stdin_with_prefix < repo_modify.cmd
+        echo "${REPO_SYNC_RECURSION_PREFIX}+++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+    endif 
+
+    source repo_modify.cmd
+    if (${status}) then
+        ${P_STDERR} "${REPO_SYNC_RECURSION_PREFIX}Command failed in `pwd`"
+        ${P_STDERR} "${REPO_SYNC_RECURSION_PREFIX}    source repo_modify.cmd"
+        exit 1
+    endif 
+
+    # We are about to commit, but this should not lead to blindly running a
+    # post-commit script because we are already in a post-commit script, even
+    # if we did not get here via "commit", as might be the case if we got here
+    # because of an external post-commit call. In particular, we need to ignore
+    # locks that we are running under. To pull this off is not that easy. The
+    # current strategy is to disable the automated post-commit by hiding the
+    # post-commit file. (I tried changing the execute permission first, but
+    # that lead to a warning message. 
+    #
+    # Note that we are momentarily vulnerable to skipping the running of the
+    # post-commit script due to a different process commiting, but this is not
+    # very likely, nor a big problem. In theory (!) the updates will get
+    # transfered eventually. 
+
+    if (-e /home/svn/src/hooks/post-commit) then
+        ${KJB_MV} /home/svn/src/hooks/post-commit /home/svn/src/hooks/post-commit.HIDE
+        if (${status}) then
+            ${P_STDERR} "${REPO_SYNC_RECURSION_PREFIX}Command failed in `pwd`"
+            ${P_STDERR} "${REPO_SYNC_RECURSION_PREFIX}    ${KJB_MV} /home/svn/src/hooks/post-commit /home/svn/src/hooks/post-commit.HIDE"
+            exit 1
+        endif 
+    endif 
+
+    # We cannot exit until we reinsate post-commit
+
+    if ($?KJB_VERBOSE_2) then  
+        echo "${REPO_SYNC_RECURSION_PREFIX}---------------------------------------"
+        echo "${REPO_SYNC_RECURSION_PREFIX}Setting up to commiting in `pwd`"
+        echo "${REPO_SYNC_RECURSION_PREFIX}SVN revision: ${revision}"
+        echo ""
+        echo "${REPO_SYNC_RECURSION_PREFIX}repo_commit.msg"
+        cat_stdin_with_prefix < repo_commit.msg
+        echo "${REPO_SYNC_RECURSION_PREFIX}---------------------------------------"
+        echo ""
+    endif 
+
+    if ($?REPO_SYNC_INITIAL) then 
+        echo 'Initial commit' > repo_commit.msg
+    endif 
+
+    if (${to_using_git_push}) then
+        # Changes here must be consitent with repo_sync_create!
+        if (${support_change_branches}) then 
+            # We should already be on this branch, but to be sure?
+            set cmd = "git checkout -b ${ivilab_branch}"
+        else
+            set cmd = "git checkout"
+        endif 
+
+        ${VERBOSE_ECHO} "Executing comamand: ${cmd}"
+        if (${status}) then
+            ${P_STDERR} "Script repo_sync_external_dir command failed in `pwd`"
+            ${P_STDERR} "    ${cmd}"
+            exit 1 
+        endif
+
+        set commit_cmd = "git commit -a --file=repo_commit.msg"
+    else
+        set commit_cmd = "svn commit --file repo_commit.msg ${user}"
+    endif 
+
+    ${commit_cmd} > repo_commit.res 
+    set commit_status = ${status}
+
+    # We currently do NOT call recursively. Rath/er we wait until this is all
+    # done, and then, and only if we are doing a "from" do we call
+    # post-commit-src-3. The following does work but is too heavy and leads to
+    # harder to understand log files. But we might need it later, if only as an
+    # example. Hence keeping it, but commented out. 
+
+    ###    # Now run the meat of the post-commit script without locks, which means we
+    ###    # should probably wait for it to finish. 
+    ###    #
+    ###    # But there should not be any further
+    ###    # locks as we have created an inner entry point. 
+    ###    # setenv KJB_DONT_LOCK
+    ###
+    ###    setenv REPO_SYNC_SKIP_VERIFY
+    ###    setenv REPO_SYNC_SKIP_MAIL
+    ###
+    ###
+    ###    # Using post-commit-src-3, which uses repo_sync_kjb_to_all_externals, is the
+    ###    # heaviest hammer. We could refine things by considering which directory we
+    ###    # have changes in, and whether we were initiated by a "to" or a "from".
+    ###
+    ###    post-commit-src-3 
+    ###    set post_commit_status = ${status} 
+    ###
+    ###    unsetenv REPO_SYNC_SKIP_MAIL
+    ###    unsetenv REPO_SYNC_SKIP_VERIFY
+    ###
+    ###    # unsetenv KJB_DONT_LOCK
+
+    if ($?KJB_VERBOSE) then
+        echo "${REPO_SYNC_RECURSION_PREFIX}+++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+        echo "${REPO_SYNC_RECURSION_PREFIX}Standard output of commit in `pwd` (status ${commit_status})"
+        cat_stdin_with_prefix < repo_commit.res
+        echo "${REPO_SYNC_RECURSION_PREFIX}+++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+    endif 
+
+    if ((! ${commit_status}) && (${to_using_git_push})) then
+        # Credentials should be stored.
+        
+        # Changes here must be consitent with repo_sync_create!
+        if (${support_change_branches}) then 
+            set cmd = "git push --set-upstream origin ${ivilab_branch}"
+        else 
+            set cmd = "git push"
+        endif 
+        
+        ${VERBOSE_ECHO} "Executing command: $cmd"
+        ${cmd} > git_push.res 
+        set commit_status = ${status}
+
+        if (($?KJB_VERBOSE) || (${commit_status})) then
+            echo "${REPO_SYNC_RECURSION_PREFIX}+++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+            echo "${REPO_SYNC_RECURSION_PREFIX}Output of ${cmd} in `pwd` (status ${commit_status})"
+            cat_stdin_with_prefix < git_push.res
+            echo "${REPO_SYNC_RECURSION_PREFIX}+++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+        endif 
+
+        if (${commit_status}) then
+            ${P_STDERR} "${REPO_SYNC_RECURSION_PREFIX}Git push failed in `pwd`"
+            # We cannot exit until we reinsate post-commit
+        endif 
+    endif 
+
+    # This only gets executed for from, which implies that commits are via svn.
+
+    if ((! ${commit_status}) && (! ${to})) then
+        # For C/C++ code, the library uses a post commit hook that automatically
+        # inserts an SVN ID string. This immediately renders the push from git out
+        # of date. So, we have addtional logic to update in this case. 
+        #
+        grep < repo_commit.res 'Sending ' | sed 's/Sending  *//' | find_updated_files_in_sister_dir ${source_path} | sed "s#\(.*\)#/bin/cp \1 ${source_path}/\1; if (${dollar}status) exit 1#" > propogate_magic_updates.cmd  
+        
+        if (! -z "propogate_magic_updates.cmd") then
+            if ($?KJB_VERBOSE) then
+                echo "${REPO_SYNC_RECURSION_PREFIX}+++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+                echo "${REPO_SYNC_RECURSION_PREFIX}Commands to propogate magically updated files."
+                cat_stdin_with_prefix < propogate_magic_updates.cmd
+                echo "${REPO_SYNC_RECURSION_PREFIX}+++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+            endif 
+            
+            source propogate_magic_updates.cmd
+            if (${status}) then
+                set commit_status = 1
+                # We cannot exit until we reinsate post-commit
+            else 
+                ${VERBOSE_ECHO} "Script repo_sync_external dir executing command in `pwd`"
+                ${VERBOSE_ECHO} "    svn commit ${source_path} -m 'Committing magically updated files due to commit process.' ${user}"
+                svn commit ${source_path} -m 'Committing magically updated files due to commit process.' ${user}
+                set commit_status = ${status}
+            endif 
+        endif 
+
+        ${KJB_MV} propogate_magic_updates.cmd ${result_archive_dir}
+    endif 
+
+    if (-e /home/svn/src/hooks/post-commit.HIDE) then
+        ${KJB_MV} /home/svn/src/hooks/post-commit.HIDE /home/svn/src/hooks/post-commit
+        if (${status}) then
+            ${P_STDERR} "${REPO_SYNC_RECURSION_PREFIX}Command failed in `pwd`"
+            ${P_STDERR} "${REPO_SYNC_RECURSION_PREFIX}    ${KJB_MV} /home/svn/src/hooks/post-commit.HIDE /home/svn/src/hooks/post-commit"
+            exit 1
+        endif 
+    endif 
+
+    # Skip error handling on this 'mv' because we are more interested in the
+    # other errors if there are any. 
+    ${KJB_MV} repo_commit.* ${result_archive_dir}
+
+    if (${commit_status}) then
+        ${P_STDERR} "${REPO_SYNC_RECURSION_PREFIX}Commit failed in `pwd`"
+        exit 1
+    ###    else if (${post_commit_status}) then
+    ###        ${P_STDERR} "${REPO_SYNC_RECURSION_PREFIX}Script post-commit-src-2 failed in `pwd`"
+    ###        exit 1
+    else 
+        # We are assuming that we have changes because there were
+        # changes to the source_dir. 
+        ${KJB_TOUCH} repo_changed.flag
+    endif 
+popd > /dev/null
+
+pushd "${shadow_dir}" > /dev/null
+    if ($?KJB_VERBOSE) then
+        echo "${REPO_SYNC_RECURSION_PREFIX}++++++++++++++++++++++++++++++++++++++"
+        echo "${REPO_SYNC_RECURSION_PREFIX}Updating shadow dir `pwd`"
+        echo " "
+    endif 
+
+    # If we pushed with git, we update the external shadow with svn, and if we
+    # updated via svn (or committed---as in the previous version) we need to
+    # ensure the git shadow is up to date as well. 
+    
+    if (${to_using_git_push}) then
+        set cmd = "svn up"
+        ${VERBOSE_ECHO} "Updating the svn external  in `pwd` due to the git commit."
+        ${VERBOSE_ECHO} "Executing command: ${cmd}" 
+        ${cmd}
+        if (${status}) then
+            ${P_STDERR} "${REPO_SYNC_RECURSION_PREFIX}Command ${cmd} failed in `pwd`"
+            exit 1
+        endif 
+    else 
+        # We are only here if we are updating svn from the master as we only do
+        # "from" due to pushes onto the master. Thus we need to get the git
+        # mirror, which is playing a shadow role, up to date with the master. 
+        set cmd = 'git pull origin master'
+        ${VERBOSE_ECHO} "Updating our branch from the master in `pwd`"
+        ${VERBOSE_ECHO} "Executing command: ${cmd}" 
+        ${cmd}
+        if (${status}) then
+            ${P_STDERR} "${REPO_SYNC_RECURSION_PREFIX}Command ${cmd} failed in `pwd`"
+            exit 1
+        endif 
+    endif 
+popd > /dev/null
+
+

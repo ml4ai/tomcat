@@ -1,0 +1,22 @@
+#!/bin/tcsh
+
+# Only works if the stream has no blank lines. 
+
+set sister_dir = "$1"
+
+set file_name = "$<"
+
+while ("${file_name}" != "")
+    if (-e "${sister_dir}/${file_name}") then
+        diff "${file_name}" "${sister_dir}/${file_name}" >& /dev/null 
+        
+        if (${status}) then
+            if (`test_older_than "${sister_dir}/${file_name}" "${file_name}"`) then
+                echo ${file_name}
+            endif 
+        endif 
+    endif 
+
+    set file_name="$<"
+end 
+

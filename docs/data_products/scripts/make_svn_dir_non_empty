@@ -1,0 +1,47 @@
+#!/bin/tcsh -f
+
+@ num_args = ${#argv}
+
+if (${num_args} != 1) then
+    ${P_STDERR} "Script make_svn_dir_non_empty needs exactly 1 parameter."
+    exit 1
+endif 
+
+set dir = "$1"
+
+if (! -d "${dir}") then
+    ${P_STDERR} "Script make_svn_dir_non_empty parameter must be a directory."
+    exit 1
+endif 
+
+svn info ${dir} >& /dev/null
+if (${status}) then 
+    $VERBOSE_ECHO "Script make_svn_dir_non_empty ignoring ${dir} in `pwd` because it is not under snv control."
+    exit 0
+endif 
+
+if (-e ${dir}/.gitkeep) then
+    exit 0
+endif 
+
+${VERBOSE_ECHO} "Adding .gitkeep to directory ${dir}."
+
+${KJB_TOUCH} ${dir}/.gitkeep
+if (${status}) then
+    echo "Touch of ${dir}/.gitkeep failed in make_svn_dir_non_empty in `pwd`"
+    exit 1
+endif 
+
+svn add  ${dir}/.gitkeep
+if (${status}) then
+    echo "Add of ${dir}/.gitkeep failed in make_svn_dir_non_empty in `pwd`"
+    exit 1
+endif 
+
+svn commit ${dir}/.gitkeep -m "Adding `pwd`/${dir}/.gitkeep because git cannot handle empty dirs."
+if (${status}) then
+    echo "Commit of ${dir}/.gitkeep failed in make_svn_dir_non_empty in `pwd`"
+    exit 1
+endif 
+
+

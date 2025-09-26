@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block body_class %}index{% endblock %}
+
+{% block content %}
+{{ render_markdown(
+"""
+# Errata
+
+- The [2023-07-17 update](/updates/2023-07-17) fixes some labeling errors
+related to participant IDs, and also removes some invalid rows from the
+`fnirs_raw` table. See [here](/updates/2023-07-17) for more details.
+""")
+}}
+{% endblock %}

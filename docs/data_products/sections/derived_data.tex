@@ -1,0 +1,37 @@
+\section{Derived data}
+
+\subsection{Synchronization of EEG, EKG, GSR, and fNIRS Signals}
+
+In multimodal neuroimaging studies, synchronizing signals from multiple modalities is a crucial step to conducting comprehensive studies on all these modalities together. The discrepancy between EEG and fNIRS signals' time series is an issue that researchers encounter frequently due to the limitations of recording hardware or the necessity to remove invalid signals. Additionally, these two modalities have distinct recording rates, further complicating their alignment. To facilitate comprehensive evaluation of EEG and fNIRS signals, it is essential to synchronize these two signals.
+
+We plotted histograms of the EEG and fNIRS signals to check they were sampled at the expected hardware frequency (10Hz for fNIRS and 500Hz for EEG). This is important because the filtering step assumes samples are equally spaced. Having confirmed that, the synchronization process is a two-step approach involving the noise artifacts removal from the signals, followed by resampling and synchronization of the interpolated signals at the desired sampling rate.
+
+\subsubsection{Removing Noise in EEG Signals with Notch Filter}
+
+EEG signals often exhibit susceptibility to artifacts, an interference that can be attributed to several sources. For instance, physiological factors such as eye movements or blinks can induce such artifacts \cite{10.3389/fnhum.2012.00278}, as can environmental elements like fluorescent lighting or grounding complications \cite{Kaya21}.
+
+Upon thorough examination and visualization of the raw EEG data, we identified a consistent 60 Hz electrical disturbance within the signal, along with corresponding harmonics. An anomalous peak was also noted around the 5 Hz mark, potentially attributable to a grounding irregularity or an other environmental factors.
+
+With the aid of MNE-Python \cite{GramfortEtAl2013a}, we efficiently mitigated these intrusive noises by deploying a notch filter. The filter was configured with a frequency of 60 Hz, a transition bandwidth of 9 Hz, and notch widths of 2 Hz.
+
+\subsubsection{Mitigating Artifacts in fNIRS Signals Utilizing Bandpass Filter}
+
+fNIRS signals are often susceptible to motion artifacts (MA) stemming from physiological activities, including cardiac and respiratory disturbances. These artifacts become particularly noticeable in the measurement of oxyhemoglobin (HbO) and deoxyhemoglobin (HbR) concentrations within the signal channels.
+
+To address these challenges, we employed a bandpass filter as an effective noise reduction strategy. The filter was calibrated in line with the recommendations provided by \cite{Koenraadt2014}. With a low cutoff bandwidth of 0.01 Hz and a high cutoff bandwidth of 0.2 Hz for the 4th order Butterworth method, the filter was tailored to selectively allow signal components within this frequency range while attenuating components outside the range.
+
+\subsubsection{Pre-processing EKG and GSR Signals}
+
+To remove noise and improve peak-detection accuracy for EKG signals, we employed a finite impulse response (FIR) filter with 0.67 Hz low cutoff frequency, 45 Hz high cutoff frequency, and order of $1.5 \times \text{sampling rate}$ (where sampling rate is 500 Hz) implemented by NeuroKit2 \cite{Makowski2021neurokit}.
+
+We removed noise and smoothed the GSR signals using a low-pass filter with a 3 Hz cutoff frequency and a $4^\text{th}$ order Butterworth filter, both implemented by Neurokit2.
+
+\subsubsection{Synchronization of EEG, EKG, GSR, and fNIRS Signals}
+
+After the EEG, EKG, GSR, and fNIRS signals are pre-processed to remove noise, the signals are upsampled to 2000Hz using the FFT-based resampling method \texttt{mne.filter.resample} available in the Python MNE library \cite{GramfortEtAl2013a}. 
+
+For each experiment, we define a common clock with initial time starting 2 minutes before the beginning of the first task (rest state) and end time set to 2 minutes after the final task (typically Minecraft). We create equally spaced ticks in this clock at the frequency of 200Hz. Then, the signals are downsampled to this clock's scale via linear interpolation. 
+
+\subsubsection{Mapping to the Task Data}
+
+Mapping between signals and data will depend on the task being performed. For instance, one can choose to map a signal to the closest data observation or a collection of them. Therefore, we opted for providing the timestamp as a column in the synchronized signals tables so that they can be used for alignment with the task observations.

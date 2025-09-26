@@ -1,0 +1,13 @@
+#
+# This file tells repo_sync_create what directories to sync, and any mapping
+# between the locations in the repo trees. Something like this example is given
+# as an argument to repo_sync_create when we bind an svn and git repo. 
+#
+# The first column is svn directories, the second is git equivalents.
+#
+Make               Make
+include_after      include_after
+include_before     include_before 
+lib                lib 
+projects/ties      compties
+
