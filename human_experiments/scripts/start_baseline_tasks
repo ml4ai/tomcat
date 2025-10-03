@@ -63,7 +63,7 @@ __start_on_client() {
     echo -e "${padding}Starting client on ${EMPH}$client_name${NC}..."
 
     # We set the volume to 0 so participants don't hear the Minecraft background song that is playing.
-    ssh "$EXPERIMENT_USER@$client_address" "osascript -e 'set Volume 0'"
+    ssh "$EXPERIMENT_USER@$client_address" "osascript -e 'set Volume 5'"
 
     local command="cd \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/lab_software/tomcat-baseline-tasks "
     command+="&& $PYTHON run_client.py -n $participant_id -i $client_name  &> \$HOME$log_path &"
