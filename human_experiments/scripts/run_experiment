@@ -45,40 +45,42 @@ __help() {
   echo "[2]:  Check the NFS status"
   echo "[3]:  Report time difference between TOM and CAT"
   echo "[4]:  Launch Say Announcement Menu"
-  echo "[5]:  Start the Testbed"
-  echo "[6]:  Start Minecraft"
-  echo "[7]:  Open the Client Map"
-  echo "[8]:  Open the Eye-tracker program"
-  echo "[9]:  Open the Instructive Video"
-  echo "[10]: Open the CLC Training Video"
-  echo "[11]: Start the Lab Recorder"
-  echo "[12]: Start recording from the Eye-tracker"
-  echo "[13]: Start Face and Screen recordings"
-  echo " [13.1]: Face"
-  echo " [13.2]: Screen"
-  echo "[14]: Start the Baseline Tasks"
-  echo "[15]: End Block 1"
-  echo " [15.1]: Stop Face recordings"
-  echo " [15.2]: Stop Screen recordings"
-  echo " [15.3]: Stop Eye-tracker recordings"
-  echo " [15.4]: Stop LabRecorder"
+  echo "[5]:  Launch Data Inventory"
+  echo "[6]:  Launch Visualizer"
+  echo "[7]:  Start the Testbed"
+  echo "[8]:  Start Minecraft"
+  echo "[9]:  Open the Client Map"
+  echo "[10]: Open the Eye-tracker program"
+  echo "[11]: Open the Instructive Video"
+  echo "[12]: Open the CLC Training Video"
+  echo "[13]: Start the Lab Recorder"
+  echo "[14]: Start recording from the Eye-tracker"
+  echo "[15]: Start Face and Screen recordings"
+  echo " [15.1]: Face"
+  echo " [15.2]: Screen"
+  echo "[16]: Start the Baseline Tasks"
+  echo "[17]: End Block 1"
+  echo " [17.1]: Stop Face recordings"
+  echo " [17.2]: Stop Screen recordings"
+  echo " [17.3]: Stop Eye-tracker recordings"
+  echo " [17.4]: Stop LabRecorder"
   echo -e "${BLACK}${ON_YELLOW}Block 2                                  ${NC}"
-  echo "[16]: Start the Lab Recorder"
-  echo "[17]: Start Minecraft Watcher"
-  echo " [17.1]: Start Data Watcher"
-  echo " [17.2]: Start Trial ID Watcher"
-  echo "[18]: Start the Audio, Face and Screen recordings"
-  echo " [18.1]: Audio"
-  echo " [18.2]: Face"
-  echo " [18.3]: Screen"
-  echo "[19]: Start Eye-tracker recordings"
-  echo "[20]: Stop Eye-tracker recordings"
-  echo "[21]: Open the Final Survey"
-  echo "[22]: Stop Audio, Face and Screen recordings"
-  echo "[23]: Stop the Lab Recorder"
-  echo "[24]: Exports Minecraft data"
-  echo "[25]: Extracts Testbed Logs"
-  echo "[26]: End the experiment (close remaining applications)"
+  echo "[18]: Start the Lab Recorder"
+  echo "[19]: Start Minecraft Watcher"
+  echo " [19.1]: Start Data Watcher"
+  echo " [19.2]: Start Trial ID Watcher"
+  echo "[20]: Start the Audio, Face and Screen recordings"
+  echo " [20.1]: Audio"
+  echo " [20.2]: Face"
+  echo " [20.3]: Screen"
+  echo "[21]: Start Eye-tracker recordings"
+  echo "[22]: Stop Eye-tracker recordings"
+  echo "[23]: Open the Final Survey"
+  echo "[24]: Stop Audio, Face and Screen recordings"
+  echo "[25]: Stop the Lab Recorder"
+  echo "[26]: Exports Minecraft data"
+  echo "[27]: Extracts Testbed Logs"
+  echo "[28]: End the experiment (close remaining applications)"
   echo
   echo "Syntax: run_experiment [-h|a]"
   echo "options:"
@@ -205,42 +207,56 @@ fi
 
 if [[ $GOTO -le 5 ]]; then
   echo " "
-  if yes_no_question "[5] Do you want to start the ${EMPH}Testbed${NC}?"; then
-    source start_testbed " "
+  if yes_no_question "[5] Do you want to launch ${EMPH}Data Inventory${NC}?"; then
+    ssh cat@cat -X "gnome-terminal --geometry=186x36 -- bash -c 'cd ~/rchamplin/data_inventory && ./data_inventory.sh; exec bash' &"
   fi
 fi
 
 if [[ $GOTO -le 6 ]]; then
   echo " "
-  if yes_no_question "[6] Do you want to start ${EMPH}Minecraft${NC}?"; then
-    source start_minecraft " "
+  if yes_no_question "[6] Do you want to launch ${EMPH}Visualizer${NC}?"; then
+    ssh cat@cat -X "gnome-terminal --geometry=106x27 -- bash -c 'cd ~/rchamplin/visualizer && ./visualizer.sh; exec bash' &"
   fi
 fi
 
 if [[ $GOTO -le 7 ]]; then
   echo " "
-  if yes_no_question "[7] Do you want to open the ${EMPH}Client Map${NC}?"; then
-    source open_client_map " "
+  if yes_no_question "[7] Do you want to start the ${EMPH}Testbed${NC}?"; then
+    source start_testbed " "
   fi
 fi
 
 if [[ $GOTO -le 8 ]]; then
   echo " "
-  if yes_no_question "[8] Do you want to open the ${EMPH}Eye-tracker${NC} program?"; then
-    source pupil_recording "open" " "
+  if yes_no_question "[8] Do you want to start ${EMPH}Minecraft${NC}?"; then
+    source start_minecraft " "
   fi
 fi
 
 if [[ $GOTO -le 9 ]]; then
   echo " "
-  if yes_no_question "[9] Do you want to play the ${EMPH}Instructive Video${NC}?"; then
-    source play_instructive_video "minecraft_instruction_video.mp4" " "
+  if yes_no_question "[9] Do you want to open the ${EMPH}Client Map${NC}?"; then
+    source open_client_map " "
   fi
 fi
 
 if [[ $GOTO -le 10 ]]; then
   echo " "
-  if yes_no_question "[10] Do you want to play the ${EMPH}CLC Training Video${NC}?"; then
+  if yes_no_question "[10] Do you want to open the ${EMPH}Eye-tracker${NC} program?"; then
+    source pupil_recording "open" " "
+  fi
+fi
+
+if [[ $GOTO -le 11 ]]; then
+  echo " "
+  if yes_no_question "[11] Do you want to play the ${EMPH}Instructive Video${NC}?"; then
+    source play_instructive_video "minecraft_instruction_video.mp4" " "
+  fi
+fi
+
+if [[ $GOTO -le 12 ]]; then
+  echo " "
+  if yes_no_question "[12] Do you want to play the ${EMPH}CLC Training Video${NC}?"; then
     source play_instructive_video "clc_training_video.mp4" " "
   fi
 fi
@@ -248,9 +264,9 @@ fi
 echo ""
 echo -e "${BLACK}${ON_CYAN}Wait for Okay from the Social Science team.${NC}"
 
-if [[ $GOTO -le 11 ]]; then
+if [[ $GOTO -le 13 ]]; then
   echo " "
-  if yes_no_question "[11] Do you want to start ${EMPH}Lab Recorder${NC}?"; then
+  if yes_no_question "[13] Do you want to start ${EMPH}Lab Recorder${NC}?"; then
     source start_lab_recorder " "
   fi
 fi
@@ -258,47 +274,47 @@ fi
 echo ""
 echo -e "${BLACK}${ON_CYAN}Make sure to press the OK button on Lab Recorder to record anyway before proceeding.${NC}"
 
-if [[ $GOTO -le 12 ]]; then
-  echo " "
-  if yes_no_question "[12] Do you want to start recording from the ${EMPH}Eye-tracker${NC} program?"; then
-    source pupil_recording "start" " "
-  fi
-fi
-
-if [[ $GOTO -le 13 ]]; then
-  echo " "
-  if yes_no_question "[13] Do you want to start ${EMPH}Face and Screen${NC} recordings?"; then
-    source image_monitoring "start" "  "
-    if yes_no_question " [13.1] Do you want to start ${EMPH}Face${NC} recordings?"; then
-      source video_recording "webcam" "start" "  "
-    fi
-    if yes_no_question " [13.2] Do you want to start ${EMPH}Screen${NC} recordings?"; then
-      source video_recording "screen" "start" "  "
-    fi
-  fi
-fi
-
 if [[ $GOTO -le 14 ]]; then
   echo " "
-  if yes_no_question "[14] Do you want to start the ${EMPH}Baseline Tasks${NC}?"; then
-    source start_baseline_tasks " "
+  if yes_no_question "[14] Do you want to start recording from the ${EMPH}Eye-tracker${NC} program?"; then
+    source pupil_recording "start" " "
   fi
 fi
 
 if [[ $GOTO -le 15 ]]; then
   echo " "
-  if yes_no_question "[15] Do you want to finish ${EMPH}Block 1${NC}?"; then
-    if yes_no_question " [15.1] Do you want to stop ${EMPH}Face${NC} recordings?"; then
+  if yes_no_question "[15] Do you want to start ${EMPH}Face and Screen${NC} recordings?"; then
+    source image_monitoring "start" "  "
+    if yes_no_question " [15.1] Do you want to start ${EMPH}Face${NC} recordings?"; then
+      source video_recording "webcam" "start" "  "
+    fi
+    if yes_no_question " [15.2] Do you want to start ${EMPH}Screen${NC} recordings?"; then
+      source video_recording "screen" "start" "  "
+    fi
+  fi
+fi
+
+if [[ $GOTO -le 16 ]]; then
+  echo " "
+  if yes_no_question "[16] Do you want to start the ${EMPH}Baseline Tasks${NC}?"; then
+    source start_baseline_tasks " "
+  fi
+fi
+
+if [[ $GOTO -le 17 ]]; then
+  echo " "
+  if yes_no_question "[17] Do you want to finish ${EMPH}Block 1${NC}?"; then
+    if yes_no_question " [17.1] Do you want to stop ${EMPH}Face${NC} recordings?"; then
       source video_recording "webcam" "stop" " "
     fi
-    if yes_no_question " [15.2] Do you want to stop ${EMPH}Screen${NC} recordings?"; then
+    if yes_no_question " [17.2] Do you want to stop ${EMPH}Screen${NC} recordings?"; then
       source video_recording "screen" "stop" "  "
     fi
     source image_monitoring "stop" "  "
-    if yes_no_question " [15.3] Do you want to stop recording from the ${EMPH}Eye-tracker${NC} program?"; then
+    if yes_no_question " [17.3] Do you want to stop recording from the ${EMPH}Eye-tracker${NC} program?"; then
       source pupil_recording "stop" "  "
     fi
-    if yes_no_question " [15.4] Do you want to stop ${EMPH}LabRecorder${NC} and kill its instances on CAT?"; then
+    if yes_no_question " [17.4] Do you want to stop ${EMPH}LabRecorder${NC} and kill its instances on CAT?"; then
       source stop_lab_recorder
     fi
   fi
@@ -310,9 +326,9 @@ export EXPERIMENT_BLOCK=2
 echo ""
 echo -e "${BLACK}${ON_YELLOW}Block 2                                    ${NC}"
 
-if [[ $GOTO -le 16 ]]; then
+if [[ $GOTO -le 18 ]]; then
   echo " "
-  if yes_no_question "[16] Do you want to start ${EMPH}Lab Recorder${NC}?"; then
+  if yes_no_question "[18] Do you want to start ${EMPH}Lab Recorder${NC}?"; then
     source start_lab_recorder " "
   fi
 fi
@@ -320,38 +336,38 @@ fi
 echo ""
 echo -e "${BLACK}${ON_CYAN}Make sure to press the OK button on Lab Recorder to record anyway before proceeding.${NC}"
 
-if [[ $GOTO -le 17 ]]; then
+if [[ $GOTO -le 19 ]]; then
   echo " "
-  if yes_no_question "[17] Do you want to start the ${EMPH}Minecraft Watcher${NC}?"; then
+  if yes_no_question "[19] Do you want to start the ${EMPH}Minecraft Watcher${NC}?"; then
     echo -e "${YELLOW} Watchers will be closed if the Uber Script is interrupted. Make sure to start them again if needed.${NC}"
-    if yes_no_question " [17.1] Do you want to start the ${EMPH}Data Watcher${NC}?"; then
+    if yes_no_question " [19.1] Do you want to start the ${EMPH}Data Watcher${NC}?"; then
       source minecraft_data_watcher "start" "  "
     fi
-    if yes_no_question " [17.2] Do you want to start the ${EMPH}Trial ID Watcher${NC}?"; then
+    if yes_no_question " [19.2] Do you want to start the ${EMPH}Trial ID Watcher${NC}?"; then
       source minecraft_trial_watcher "start" "  "
     fi
   fi
 fi
 
-if [[ $GOTO -le 18 ]]; then
+if [[ $GOTO -le 20 ]]; then
   echo " "
-  if yes_no_question "[18] Do you want to start ${EMPH}Audio, Face and Screen${NC} recordings?"; then
+  if yes_no_question "[20] Do you want to start ${EMPH}Audio, Face and Screen${NC} recordings?"; then
     source image_monitoring "start" "  "
-    if yes_no_question " [18.1] Do you want to start ${EMPH}Audio${NC} recordings?"; then
+    if yes_no_question " [20.1] Do you want to start ${EMPH}Audio${NC} recordings?"; then
       source audio_recording "start" "  "
     fi
-    if yes_no_question " [18.2] Do you want to start ${EMPH}Face${NC} recordings?"; then
+    if yes_no_question " [20.2] Do you want to start ${EMPH}Face${NC} recordings?"; then
       source video_recording "webcam" "start" "  "
     fi
-    if yes_no_question " [18.3] Do you want to start ${EMPH}Screen${NC} recordings?"; then
+    if yes_no_question " [20.3] Do you want to start ${EMPH}Screen${NC} recordings?"; then
       source video_recording "screen" "start" "  "
     fi
   fi
 fi
 
-if [[ $GOTO -le 19 ]]; then
+if [[ $GOTO -le 21 ]]; then
   echo " "
-  if yes_no_question "[19] Do you want to start recording from the ${EMPH}Eye-tracker${NC} program?"; then
+  if yes_no_question "[21] Do you want to start recording from the ${EMPH}Eye-tracker${NC} program?"; then
     source pupil_recording "start" " "
   fi
 fi
@@ -359,54 +375,54 @@ fi
 echo ""
 echo -e "${BLACK}${ON_CYAN}Wait for the end of the Minecraft missions.${NC}"
 
-if [[ $GOTO -le 20 ]]; then
+if [[ $GOTO -le 22 ]]; then
   echo " "
-  if yes_no_question "[20] Do you want to stop recording and close the ${EMPH}Eye-tracker${NC} program?"; then
+  if yes_no_question "[22] Do you want to stop recording and close the ${EMPH}Eye-tracker${NC} program?"; then
     source pupil_recording "stop" " "
     source pupil_recording "close" " "
   fi
 fi
 
-if [[ $GOTO -le 21 ]]; then
+if [[ $GOTO -le 23 ]]; then
   echo " "
-  if yes_no_question "[21] Do you want to open the ${EMPH}Final Survey${NC}?"; then
+  if yes_no_question "[23] Do you want to open the ${EMPH}Final Survey${NC}?"; then
     source open_final_survey " "
   fi
 fi
 
-if [[ $GOTO -le 22 ]]; then
+if [[ $GOTO -le 24 ]]; then
   echo " "
-  if yes_no_question "[22] Do you want to stop ${EMPH}Audio, Face and Screen${NC} recordings?"; then
-    if yes_no_question " [22.1] Do you want to stop ${EMPH}Audio${NC} recordings?"; then
+  if yes_no_question "[24] Do you want to stop ${EMPH}Audio, Face and Screen${NC} recordings?"; then
+    if yes_no_question " [24.1] Do you want to stop ${EMPH}Audio${NC} recordings?"; then
       source audio_recording "stop" "  "
     fi
-    if yes_no_question " [22.2] Do you want to stop ${EMPH}Face${NC} recordings?"; then
+    if yes_no_question " [24.2] Do you want to stop ${EMPH}Face${NC} recordings?"; then
       source video_recording "webcam" "stop" "  "
     fi
-    if yes_no_question " [22.3] Do you want to stop ${EMPH}Screen${NC} recordings?"; then
+    if yes_no_question " [24.3] Do you want to stop ${EMPH}Screen${NC} recordings?"; then
       source video_recording "screen" "stop" "  "
     fi
     source image_monitoring "stop" "  "
   fi
 fi
 
-if [[ $GOTO -le 23 ]]; then
+if [[ $GOTO -le 25 ]]; then
   echo " "
-  if yes_no_question "[23] Do you want to stop ${EMPH}LabRecorder${NC} and kill its instances on CAT?"; then
+  if yes_no_question "[25] Do you want to stop ${EMPH}LabRecorder${NC} and kill its instances on CAT?"; then
     source stop_lab_recorder
   fi
 fi
 
-if [[ $GOTO -le 24 ]]; then
+if [[ $GOTO -le 26 ]]; then
   echo " "
-  if yes_no_question "[24] Do you want to export ${EMPH}Minecraft data${NC} for all trials in the experiment?"; then
+  if yes_no_question "[26] Do you want to export ${EMPH}Minecraft data${NC} for all trials in the experiment?"; then
     source export_minecraft_data " "
   fi
 fi
 
-if [[ $GOTO -le 25 ]]; then
+if [[ $GOTO -le 27 ]]; then
   echo " "
-  if yes_no_question "[25] Do you want to extract ${EMPH}Testbed logs${NC}?"; then
+  if yes_no_question "[27] Do you want to extract ${EMPH}Testbed logs${NC}?"; then
     source extract_testbed_logs " "
   fi
 fi
@@ -414,9 +430,9 @@ fi
 echo ""
 echo -e "${BLACK}${ON_CYAN}Wait for the participants to fill up the surveys.${NC}"
 
-if [[ $GOTO -le 26 ]]; then
+if [[ $GOTO -le 28 ]]; then
   echo " "
-  text="[26] Type [${EMPH}quit${NC}] to end the experiment and close remaining applications and processes: "
+  text="[28] Type [${EMPH}quit${NC}] to end the experiment and close remaining applications and processes: "
   wait_for_key "$text" "quit"
   source end_experiment " "
 
