@@ -199,7 +199,7 @@ fi
 if [[ $GOTO -le 4 ]]; then
   echo " "
   if yes_no_question "[4] Do you want to launch ${EMPH}Say Announcement Menu${NC}?"; then
-    source ../lab_software/say_announcements/say_announcement_menu " "
+    gnome-terminal --geometry=92x40 -- bash -c "source $HOME/$SYSTEMS_DIR/tomcat/human_experiments/lab_software/say_announcements/say_announcement_menu ' '"
   fi
 fi
 
