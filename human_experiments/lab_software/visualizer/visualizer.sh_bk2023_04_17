@@ -1,0 +1,715 @@
+#!/bin/bash
+
+# Application: Visualizer
+# Decription: Visualize Face & Screen Images for ToMCAT Experiment.
+#             Two main programs run, Bash Sript "visualizer.sh" (Image Files Server)
+#             and "visualizer.html" (Browser Images Viewer Page. Must run in Chrome).
+# By: Rick Champlin
+# Last Updated: 4/12/2023
+# Start: Run Bash Script "visualizer.sh".
+#        From its menu will be an option to launch "Google-Chrome" browser
+#        with "visualizer.html" loaded.
+
+source "visualizer.vars"
+
+# Set for if this app is running at Rick's Office or LangLab:
+# run_at="home";
+run_at="lab";
+
+# Dev Settings:
+show_brow_comm=false;
+show_sync_vars=false;
+show_sync_prep=false;
+show_sync_work=false;
+show_sync_results=false;
+
+
+if [[ "${run_at}" == "home" ]]; then
+  # FOR HOME:
+  wsl_dir="/mnt/c"; # This is to add to begining of bash paths for my wsl mount at home.
+  app_dir="${wsl_dir}/Users/rcham/Documents/ToMCAT/Lab/Visualizer/"
+  exp_dir="${wsl_dir}/Users/rcham/Documents/ToMCAT/Lab/data/cat/LangLab/dry_runs/group/exp_2023_04_03_13/";
+  browser_exp_dir="/Users/rcham/Documents/ToMCAT/Lab/data/cat/LangLab/dry_runs/group/exp_2023_04_03_13/";
+  dry_dir_pre="/Users/rcham/Documents/ToMCAT/Lab/data/cat/LangLab/dry_runs/group/exp_2023_";
+  plt_dir_pre="/Users/rcham/Documents/ToMCAT/Lab/data/cat/LangLab/experiments/study_3_pilot/group/exp_2023_";
+  lion_dir="lion/face_images/block_1/";
+  tiger_dir="tiger/face_images/block_1/";
+  leopard_dir="leopard/face_images/block_1/";
+  lion_sdir="lion/screenshots/block_1/";
+  tiger_sdir="tiger/screenshots/block_1/";
+  leopard_sdir="leopard/screenshots/block_1/";
+  block_num="1";
+  browser_command_dir="${wsl_dir}/Users/rcham/Downloads/";
+  browser_command_fil="vis_command.txt";
+  browser_command_del="vis_command*.txt";
+  # "C:\Program Files\Google\Chrome\Application\chrome.exe"
+  browser_launch="/mnt/c/'Program Files'/Google/Chrome/Application/chrome.exe file:///C:/Users/rcham/Documents/ToMCAT/Lab/Visualizer/visualizer.html";
+  sync_strip_off_seq_num=false;
+fi
+
+if [[ "${run_at}" == "lab" ]]; then
+  # FOR LAB:
+  wsl_dir=""; # This is to add to begining of bash paths, "" if running on Linux Server.
+  app_dir="/rchamplin/visualizer/"
+  exp_dir="/data/cat/LangLab/dry_runs/group/exp_2023_04_14_11/";
+  browser_exp_dir="${exp_dir}";
+  dry_dir_pre="/data/cat/LangLab/dry_runs/group/exp_2023_";
+  plt_dir_pre="/data/cat/LangLab/experiments/study_3_pilot/group/exp_2023_";
+  lion_dir="lion/face_images/block_1/";
+  tiger_dir="tiger/face_images/block_1/";
+  leopard_dir="leopard/face_images/block_1/";
+  lion_sdir="lion/screenshots/block_1/";
+  tiger_sdir="tiger/screenshots/block_1/";
+  leopard_sdir="leopard/screenshots/block_1/";
+  block_num="1";
+  browser_command_dir="$HOME/Downloads/";
+  browser_command_fil="vis_command.txt"
+  browser_command_del="vis_command*.txt";
+  browser_launch="google-chrome file:///home/cat/rchamplin/visualizer/visualizer.html";
+  sync_strip_off_seq_num=true;
+fi
+
+lion_face_dir="${exp_dir}${lion_dir}";
+tiger_face_dir="${exp_dir}${tiger_dir}";
+leopard_face_dir="${exp_dir}${leopard_dir}";
+
+lion_screen_dir="${exp_dir}${lion_sdir}";
+tiger_screen_dir="${exp_dir}${tiger_sdir}";
+leopard_screen_dir="${exp_dir}${leopard_sdir}";
+
+data_file_name="vis_data.html";
+visualizer_file_name="visualizer.html";
+
+pic_types="|.jpg|.JPG|.png|.PNG|"
+filter_types="\.jpg$|\.JPG$|\.png|\.PNG$"
+
+browser_playing="no";
+browser_playing_pre="";
+browser_mode="live";
+browser_mode_pre="";
+
+lion_last_file="";
+tiger_last_file="";
+leopard_last_file="";
+lion_last_sfile="";
+tiger_last_sfile="";
+leopard_last_sfile="";
+lion_i=0;
+tiger_i=0;
+leopard_i=0;
+lion_s=0;
+tiger_s=0;
+leopard_s=0;
+lion_i_cnt=0;
+tiger_i_cnt=0;
+leopard_i_cnt=0;
+lion_s_cnt=0;
+tiger_s_cnt=0;
+leopard_s_cnt=0;
+
+sync_images=0;                  # Enables Sync Images process during while Replay (0: disabled, 1: enabled).
+sync_intv_sec=3;                # Interval to resync images in seconds (integer).
+sync_next_sec="00";             # Seconds that next resync will happen (string 2 char).
+sync_span_cnt=500;              # Number of steps backward and forward that my sync algorithm will take to attempt to sync images.
+sync_file_nam="lion_file_name"; # Image File Name to sync other images too.
+sync_file_dtt="";               # Stores DateTime part of file name (yyyy-mm-dd_hh-mm-ss) Set by get_sync_vars() "${fn%.*.*.*};"
+sync_file_dti=0;                # Stores DateTime part of file name as a integer (yyyymmddhhmmss) Set by get_sync_vars() "${fn%.*.*.*};"
+sync_file_tim="";               # Stores Time part of file name (hh-mm-ss) Set by get_sync_vars() "${sync_file_dt##*_};"
+sync_file_sec="";               # Stores Seconds Integer of file name (ss) Set by get_sync_vars() "${sync_file_tm: -2};""
+
+tiger_i_synced=" ";
+leopard_i_synced=" ";
+lion_s_synced=" ";
+tiger_s_synced=" ";
+leopard_s_synced=" ";
+
+serve_delay=0.2;
+mess=""
+i=0;
+no_menu="";
+data_file_str="";
+
+
+
+show_menu(){
+  if [[ "${no_no_menu}" == "y" ]]; then exit; fi
+    browser_playing_pre="";
+    browser_mode_pre="";
+    i=0;
+
+    clear;
+
+    printf "\n${menu}********************************************${Red}Face Image Server${menu}********************************************${NC}\n";
+    printf "${menu}**${Green} Exp Dir: ${BPurple}${exp_dir}${NC}\n";
+    printf "${menu}**${Green}    Lion: ${BPurple}${lion_dir}${NC}     screen: ${BPurple}${lion_sdir}${NC}\n";
+    printf "${menu}**${Green}   Tiger: ${BPurple}${tiger_dir}${NC}    screen: ${BPurple}${tiger_sdir}${NC}\n";
+    printf "${menu}**${Green} Leopard: ${BPurple}${leopard_dir}${NC}  screen: ${BPurple}${leopard_sdir}${NC}\n";
+    printf "${menu}**${Green} Serve Delay: ${BPurple}${serve_delay} seconds${NC}\n";
+    printf "${menu}**\n";
+    printf "${menu}**${number} e) ${BBlue}Set Experiment Directories.${NC}\n";
+    printf "${menu}**${number} l) ${BBlue}Set Browser Log Directory.${NC}\n";
+    printf "${menu}**${number} 1) ${BBlue}Change to Block 1 (block_1/).${NC}\n";
+    printf "${menu}**${number} 2) ${BBlue}Change to Block 2 (block_2/).${NC}\n";
+    printf "${menu}**${number} d) ${BBlue}Set Image File Serve Delay.${NC}\n";
+    printf "${menu}**${number} r) ${BBlue}Restart Replay Position.${NC}\n";
+    printf "${menu}**${number} b) ${BBlue}Launch Browser Window.${NC}\n";
+    printf "${menu}**${number} s) ${BBlue}Start Serving Files Names and Data.${NC}\n";
+    printf "${menu}**${number} x) ${BBlue}Exit the program.${NC}\n";
+    printf "${menu}*********************************************************************************************************${NC}\n";
+
+    printf "Please enter a menu option and enter ${Red}(x to exit program): ${NC}";
+    read opt;
+}
+
+
+switch_blocks(){
+  if [[ "${block_num}" != "${block_new}" ]]; then
+    lion_dir=${lion_dir/block_"${block_num}"/block_"${block_new}"};
+    tiger_dir=${tiger_dir/block_${block_num}/block_${block_new}};
+    leopard_dir=${leopard_dir/block_${block_num}/block_${block_new}};
+
+    lion_sdir=${lion_sdir/block_"${block_num}"/block_"${block_new}"};
+    tiger_sdir=${tiger_sdir/block_${block_num}/block_${block_new}};
+    leopard_sdir=${leopard_sdir/block_${block_num}/block_${block_new}};
+
+    block_num="${block_new}";
+
+    lion_face_dir="${exp_dir}${lion_dir}";
+    tiger_face_dir="${exp_dir}${tiger_dir}";
+    leopard_face_dir="${exp_dir}${leopard_dir}";
+
+    lion_screen_dir="${exp_dir}${lion_sdir}";
+    tiger_screen_dir="${exp_dir}${tiger_sdir}";
+    leopard_screen_dir="${exp_dir}${leopard_sdir}";
+
+    # load_image_file_names;
+    # send_browser_dirs
+  fi
+}
+
+
+launch_browser(){
+  # eval "${browser_launch}";
+  xdg-open "${browser_launch}";
+}
+
+
+set_serve_delay(){
+  printf "\n${Red}Enter the Serve File Delay: ${Yellow}(In Seconds)${NC}\n";
+  read -e -i "${serve_delay}" serve_delay;
+}
+
+
+get_exp_dir(){
+  clear;
+  printf "\n";
+  ans="";
+  while [[ "$ans" != "d" ]] && [[ "$ans" != "p" ]] && [[ "$ans" != "x" ]];
+  do
+    printf "${Red}Is this for a Dry-Run or Pilot?\n${Yellow}(Enter '${BItalic}${BYellow}d${NC}${Yellow}' for '${BYellow}Dry-Run${Yellow}', '${BItalic}${BYellow}p${NC}${Yellow}' for '${BYellow}Pilot${Yellow}', '${BItalic}${BRed}x${NC}${Yellow}' ${BRed}return to menu${Yellow}):${NC} ";
+    read ans
+  done
+  if [[ "$ans" == "x" ]]; then return 1; fi
+  if [[ "$ans" == "d" ]]; then new_dir=${dry_dir_pre}; else new_dir=${plt_dir_pre}; fi
+
+  printf "\n${Red}Enter Experiment Directory: ${Yellow}(Must end with a slash '${NC}/${Yellow}')${NC}\n";
+  read -e -i "${new_dir}" new_dir;
+  if [[ "${new_dir: -1}" != "/" ]]; then new_dir="${new_dir}/"; fi
+  tst_dir="${new_dir: -14: 10}";
+  filter_date=${tst_dir//[_]/-};
+
+  if [[ "${new_dir: -19: 5}" != "/exp_" ]]; then
+    printf "\n${Yellow}The Experiment Directory that you entered does not start with '/exp_':${NC} (${BYellow}${Italic}/exp_${BGreen}yyyy_mm_dd_hh/${NC})\n";
+    yes_no_question "${Red}Do you want to re-enter the Experiment Directory?${NC}";
+    if [[ $? -eq 0 ]]; then
+      get_exp_dir;
+    fi
+  fi
+  if ! [[ "$filter_date" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] || ! date -d $filter_date >/dev/null 2>&1; then
+    printf "\n${Yellow}The Date part of the Experiment Directory that you entered is Invalid:${NC} (${BGreen}/exp_${BYellow}${Italic}yyyy_mm_dd${NC}${BGreen}_hh/${NC})\n";
+    yes_no_question "${Red}Do you want to re-enter the Experiment Directory?${NC}";
+    if [[ $? -eq 0 ]]; then
+      get_exp_dir;
+    fi
+  fi
+  if ! [[ "${new_dir: -3: 2}" =~ ^[0-9]{2}$ ]] || [[ "${new_dir: -3: 2}" -gt 24 ]] || [[ "${new_dir: -3: 2}" -lt 1 ]]; then
+    printf "\n${Yellow}The hour part of the Experiment Directory that you entered is Invalid:${NC} (${BGreen}/exp_yyyy_mm_dd_${BYellow}${Italic}hh${BGreen}/${NC})\n";
+    yes_no_question "${Red}Do you want to re-enter the Experiment Directory?${NC}";
+    if [[ $? -eq 0 ]]; then
+      get_exp_dir;
+    fi
+  fi
+
+  yes_no_question "\n${Red}Do you want set Experiment Directory to what you just entered?${NC}\n(${BYellow}${Italic}${wsl_dir}${new_dir}${NC})";
+  if [[ $? -eq 0 ]]; then
+    exp_dir="${wsl_dir}${new_dir}";
+    browser_exp_dir="${new_dir}";
+  fi
+}
+
+
+write_browser_data() {
+  str="data_file_str=\"
+<script>
+  localStorage.setItem(\x22exp_dir\x22,\x22${browser_exp_dir}\x22);
+
+  localStorage.setItem(\x22lion_dir\x22,\x22${lion_dir}\x22);
+  localStorage.setItem(\x22lion_file_name\x22,\x22${lion_file_name}\x22);
+  localStorage.setItem(\x22lion_file_count\x22,\x22${lion_i_cnt}\x22);
+  localStorage.setItem(\x22lion_file_pos\x22,\x22${lion_i}\x22);
+  localStorage.setItem(\x22lion_sync_status\x22,\x22${lion_i_synced}\x22);
+
+  localStorage.setItem(\x22tiger_dir\x22,\x22${tiger_dir}\x22);
+  localStorage.setItem(\x22tiger_file_name\x22,\x22${tiger_file_name}\x22);
+  localStorage.setItem(\x22tiger_file_count\x22,\x22${tiger_i_cnt}\x22);
+  localStorage.setItem(\x22tiger_file_pos\x22,\x22${tiger_i}\x22);
+  localStorage.setItem(\x22tiger_sync_status\x22,\x22${tiger_i_synced}\x22);
+
+  localStorage.setItem(\x22leopard_dir\x22,\x22${leopard_dir}\x22);
+  localStorage.setItem(\x22leopard_file_name\x22,\x22${leopard_file_name}\x22);
+  localStorage.setItem(\x22leopard_file_count\x22,\x22${leopard_i_cnt}\x22);
+  localStorage.setItem(\x22leopard_file_pos\x22,\x22${leopard_i}\x22);
+  localStorage.setItem(\x22leopard_sync_status\x22,\x22${leopard_i_synced}\x22);
+
+  localStorage.setItem(\x22lion_sdir\x22,\x22${lion_sdir}\x22);
+  localStorage.setItem(\x22lion_sfile_name\x22,\x22${lion_sfile_name}\x22);
+  localStorage.setItem(\x22lion_sfile_count\x22,\x22${lion_s_cnt}\x22);
+  localStorage.setItem(\x22lion_sfile_pos\x22,\x22${lion_s}\x22);
+  localStorage.setItem(\x22lion_ssync_status\x22,\x22${lion_s_synced}\x22);
+
+  localStorage.setItem(\x22tiger_sdir\x22,\x22${tiger_sdir}\x22);
+  localStorage.setItem(\x22tiger_sfile_name\x22,\x22${tiger_sfile_name}\x22);
+  localStorage.setItem(\x22tiger_sfile_count\x22,\x22${tiger_s_cnt}\x22);
+  localStorage.setItem(\x22tiger_sfile_pos\x22,\x22${tiger_s}\x22);
+  localStorage.setItem(\x22tiger_ssync_status\x22,\x22${tiger_s_synced}\x22);
+
+  localStorage.setItem(\x22leopard_sdir\x22,\x22${leopard_sdir}\x22);
+  localStorage.setItem(\x22leopard_sfile_name\x22,\x22${leopard_sfile_name}\x22);
+  localStorage.setItem(\x22leopard_sfile_count\x22,\x22${leopard_s_cnt}\x22);
+  localStorage.setItem(\x22leopard_sfile_pos\x22,\x22${leopard_s}\x22);
+  localStorage.setItem(\x22leopard_ssync_status\x22,\x22${leopard_s_synced}\x22);
+</script>\n\"";
+
+  eval "${str}";
+  printf "${data_file_str}" > vis_data.html;
+}
+
+
+send_browser_dirs() {
+  write_browser_data;
+}
+
+
+load_image_file_names() {
+  i=0
+  lion_i=0;
+  tiger_i=0;
+  leopard_i=0;
+  lion_s=0;
+  tiger_s=0;
+  leopard_s=0;
+
+ # SORT BY MODIFY DATE:
+  # readarray -t lion_files <<< $(eval ls -Art ${lion_face_dir} | egrep ${filter_types});
+  # readarray -t tiger_files <<< $(eval ls -Art ${tiger_face_dir} | egrep ${filter_types});
+  # readarray -t leopard_files <<< $(eval ls -Art ${leopard_face_dir} | egrep ${filter_types});
+
+  # SORT BY NAME:
+  readarray -t lion_files <<< $(eval ls ${lion_face_dir} | egrep ${filter_types});
+  readarray -t tiger_files <<< $(eval ls ${tiger_face_dir} | egrep ${filter_types});
+  readarray -t leopard_files <<< $(eval ls ${leopard_face_dir} | egrep ${filter_types});
+
+  readarray -t lion_sfiles <<< $(eval ls ${lion_screen_dir} | egrep ${filter_types});
+  readarray -t tiger_sfiles <<< $(eval ls ${tiger_screen_dir} | egrep ${filter_types});
+  readarray -t leopard_sfiles <<< $(eval ls ${leopard_screen_dir} | egrep ${filter_types});
+
+  lion_i_cnt=${#lion_files[@]};
+  tiger_i_cnt=${#tiger_files[@]};
+  leopard_i_cnt=${#leopard_files[@]};
+  lion_s_cnt=${#lion_sfiles[@]};
+  tiger_s_cnt=${#tiger_sfiles[@]};
+  leopard_s_cnt=${#leopard_sfiles[@]};
+
+   mess="\n${Green}Loaded Image File Names ${BPurple}(Block_${block_num})${Green}...${NC}\n
+       Lion Face Count: ${BYellow}${lion_i_cnt}${NC}, First File: ${BYellow}${lion_files[0]}${NC}
+      Tiger Face Count: ${BYellow}${tiger_i_cnt}${NC}, First File: ${BYellow}${tiger_files[0]}${NC}
+    Leopard Face Count: ${BYellow}${leopard_i_cnt}${NC}, First File: ${BYellow}${leopard_files[0]}${NC}\n
+     Lion Screen Count: ${BYellow}${lion_s_cnt}${NC}, First File: ${BYellow}${lion_sfiles[0]}${NC}
+    Tiger Screen Count: ${BYellow}${tiger_s_cnt}${NC}, First File: ${BYellow}${tiger_sfiles[0]}${NC}
+  Leopard Screen Count: ${BYellow}${leopard_s_cnt}${NC}, First File: ${BYellow}${leopard_sfiles[0]}${NC}\n";
+}
+
+
+sync_toggle(){
+  if [[ ${sync_images} = 0 ]]; then
+    printf "${Green}Syncing Images...${NC}\n";
+    sync_images=1;
+    lion_i_synced="(master)";
+    sync_file_nam="lion_file_name"
+    get_sync_vars;
+    set_sync_next;
+  else
+    printf "${Red}Stopped Syncing Images...${NC}\n";
+    sync_images=0;
+    lion_i_synced=" ";
+  fi
+  tiger_i_synced=" ";
+  leopard_i_synced=" ";
+  lion_s_synced=" ";
+  tiger_s_synced=" ";
+  leopard_s_synced=" ";
+}
+
+
+block_toggle(){
+  if [[ "${block_num}" == "1" ]]; then
+    block_new="2";
+  else
+    block_new="1";
+  fi
+  switch_blocks;
+  load_image_file_names;
+  write_browser_data;
+}
+
+
+get_sync_vars() {
+  fn="${!sync_file_nam}";
+  sync_file_dtt=${fn%.*.*.*};         # Return DateTime part of file name (yyyy-mm-dd_hh-mm-ss)
+  if ( ${sync_strip_off_seq_num} ); then sync_file_dtt=${sync_file_dtt: 7}; fi;   # Strip off sequence number if flag set
+  sync_file_tim=${sync_file_dtt##*_}; # Return just Time part of file name (hh-mm-ss)
+  sync_file_sec=${sync_file_tim: -2}; # Return just Seconds Integer of file name (ss)
+  sync_file_dti="${sync_file_dtt//-}";
+  sync_file_dti="${sync_file_dti//_}";
+  sync_file_dti=${sync_file_dti#0};
+  if ( ${show_sync_vars} ); then
+    printf "\n";
+    printf "${Red}File Name: ${BGreen}${fn}${NC}\n";
+    printf "${Red}Date_Time Str: ${BPurple}${sync_file_dtt}${NC}   ${Red}Time Str: ${BPurple}${sync_file_tim}${NC}   ${Red}Seconds Str: ${BPurple}${sync_file_sec}${NC}   ${Red}Date_Time Int: ${BPurple}${sync_file_dti}${NC}\n";
+  fi
+}
+
+
+set_sync_next() {
+  ni=$((${sync_file_sec#0} + ${sync_intv_sec#0}));
+  if (( ${ni#0} > 59 )); then ni=$((10#${ni} - 60)); fi;
+  if (( ${ni#0} < 0 || ${ni#0} > 59 )); then ni=30; fi;
+  ns="00${ni#0}";
+  next_sync_sec="${ns: -2}";
+}
+
+
+sync_images_pos() {
+    pos_si="${!1}";
+    cnt_si="${!2}";
+    if [[ ${pos_si#0} -gt ${sync_span_cnt#0} ]]; then start_si=$((${pos_si#0} - ${sync_span_cnt#0})); else start_si=0; fi;
+    end_si=$((${pos_si#0} + ${sync_span_cnt#0}));
+    if [[ ${end_si#0} -gt ${cnt_si#0} ]]; then end_si=$((${cnt_si#0} - 1)); fi;
+    si=${start_si#};
+    sync_file_nam="nam_si";
+    n_si="$3[${si}]";
+    nam_si="${!n_si}";
+    get_sync_vars;
+
+    if ( ${show_sync_work} ); then
+      printf "\n${Yellow}Syncing: ${BPurple}$3   ${Yellow}Current Pos: ${BPurple}${pos_si}   ${Yellow}Images Cnt: ${BPurple}${cnt_si}${NC}\n";
+      printf "${Yellow}start_si: ${BPurple}${start_si}   ${Yellow}end_si: ${BPurple}${end_si}   ${Yellow}si: ${BPurple}${si}   ${Yellow}sync_file_nam: ${BPurple}${sync_file_nam}${NC}\n";
+      printf "${Yellow}n_si: ${BPurple}${n_si}   ${Yellow}nam_si: ${BPurple}${nam_si}   ${Yellow}tim_si: ${BPurple}${tim_si}   ${Yellow}sync_file_dti: ${BPurple}${sync_file_dti#0}${NC}\n\n";
+    fi
+
+    if (( ${dti_si#0} < ${sync_file_dti#0} )); then eval $4="\"(waiting - images came later)\""; eval $1=0; return 1; fi;
+
+    for (( si=${start_si} ; si<=${end_si} ; si++ ))
+    do
+      n_si="$3[${si}]";
+      nam_si="${!n_si}";
+      get_sync_vars;
+      if [[ "${sync_file_tim}" == "${tim_si}" ]]; then
+          eval $1=${si};
+          eval $4="\"(synced)\"";
+          return 1;
+      fi
+    done
+    eval $4="\"(not synced)\"";
+}
+
+
+do_sync_images(){
+  sync_file_nam="lion_file_name";
+  get_sync_vars;
+  if [[ "${sync_file_sec}" == "${next_sync_sec}" ]]; then
+    # Time to Sync
+    set_sync_next;
+    tim_si="${sync_file_tim}";
+    dti_si=${sync_file_dti#0};
+
+    if ( ${show_sync_prep} ); then
+      printf "\n";
+      printf "${Cyan}Lion File: ${BGreen}${lion_file_name}${NC}   ${Cyan}Last Sync: ${BGreen}${sync_file_sec}${NC}  ${Cyan}Next Sync: ${BGreen}${next_sync_sec}${NC}\n";
+      printf " ${Cyan}Lion dti: ${BPurple}${dti_si}${NC}   ${Cyan}Start si: ${BPurple}${start_si}${NC}   ${Cyan}End si: ${BPurple}${end_si}${NC}   ${Cyan}Max si: ${BPurple}$((${lion_i_cnt} - 1))${NC}   ${Cyan}Search si: ${BPurple}${tim_si}${NC}\n";
+    fi
+
+    lion_i_synced="(master)";
+    tiger_i_synced=" ";
+    leopard_i_synced=" ";
+    lion_s_synced=" ";
+    tiger_s_synced=" ";
+    leopard_s_synced=" ";
+
+    sync_images_pos "tiger_i" "tiger_i_cnt" "tiger_files" "tiger_i_synced";
+    sync_images_pos "leopard_i" "leopard_i_cnt" "leopard_files" "leopard_i_synced";
+    sync_images_pos "lion_s" "lion_s_cnt" "lion_sfiles" "lion_s_synced";
+    sync_images_pos "tiger_s" "tiger_s_cnt" "tiger_sfiles" "tiger_s_synced";
+    sync_images_pos "leopard_s" "leopard_s_cnt" "leopard_sfiles" "leopard_s_synced";
+
+    if ( ${show_sync_results} ); then
+      printf "\n";
+      printf "    ${Green}Lion Face Synced: ${BBlue}${lion_i_synced}${NC}\n";
+      printf "   ${Green}Tiger Face Synced: ${BBlue}${tiger_i_synced}${NC}\n";
+      printf " ${Green}Leopard Face Synced: ${BBlue}${leopard_i_synced}${NC}\n";
+      printf "   ${Green}Lion Sreen Synced: ${BBlue}${lion_s_synced}${NC}\n";
+      printf "  ${Green}Tiger Sreen Synced: ${BBlue}${tiger_s_synced}${NC}\n";
+      printf "${Green}Leopard Sreen Synced: ${BBlue}${leopard_s_synced}${NC}\n\n";
+    fi
+
+  fi
+}
+
+
+get_browser_command(){
+  # browser_command_dir="/mnt/c/Users/rcham/Download/";
+  # browser_command_file="vis_command.txt"
+
+  bfil="${browser_command_dir}${browser_command_fil}";
+  dfil="${browser_command_dir}${browser_command_del}";
+  comm="";
+  if ( ${show_brow_comm} ); then printf "\n${Yellow}Looking for Browser Command File: ${BYellow}${bfil}${NC}\n"; fi;
+  # if [[ -f ~/Downloads/vis_command.txt ]]; then
+  if [[ -f "${bfil}" ]]; then
+
+    # comm=$(<~/Downloads/vis_command.txt);
+    comm=$(<${bfil});
+
+    # rm ~/Downloads/vis_command*.txt;
+    rm ${dfil};
+    if [[ "${comm}" == "mode:live" ]]; then browser_mode="live"; fi
+    if [[ "${comm}" == "mode:replay" ]]; then browser_mode="replay"; fi
+    if [[ "${comm}" == "playing:no" ]]; then browser_playing="no"; fi
+    if [[ "${comm}" == "playing:yes" ]]; then browser_playing="yes"; fi
+    if [[ "${comm}" == "block:toggle" ]]; then block_toggle; fi
+    if [[ "${comm}" == "sync:toggle" ]]; then sync_toggle; fi
+
+    if ( ${show_brow_comm} ); then printf "\n${Green}Command File Found,  Command: ${BPurple}${comm}${NC}\n\n"; sleep 2.0; fi;
+
+    comm="";
+  fi
+}
+
+
+set_last_files(){
+    # SORT BY NAME:
+    lion_last_file=$(ls ${lion_face_dir} | egrep ${filter_types} | tail -n 1);
+    tiger_last_file=$(ls ${tiger_face_dir} | egrep ${filter_types} | tail -n 1);
+    leopard_last_file=$(ls ${leopard_face_dir} | egrep ${filter_types} | tail -n 1);
+    lion_last_sfile=$(ls ${lion_screen_dir} | egrep ${filter_types} | tail -n 1);
+    tiger_last_sfile=$(ls ${tiger_screen_dir} | egrep ${filter_types} | tail -n 1);
+    leopard_last_sfile=$(ls ${leopard_screen_dir} | egrep ${filter_types} | tail -n 1);
+
+    # lion_i_cnt=$(ls ${lion_face_dir} | egrep ${filter_types} | wc -l);
+    # tiger_i_cnt=$(ls ${tiger_face_dir} | egrep ${filter_types} | wc -l);
+    # leopard_i_cnt=$(ls ${leopard_face_dir} | egrep ${filter_types} | wc -l);
+    # lion_s_cnt=$(ls ${lion_screen_dir} | egrep ${filter_types} | wc -l);
+    # tiger_s_cnt=$(ls ${tiger_screen_dir} | egrep ${filter_types} | wc -l);
+    # leopard_s_cnt=$(ls ${leopard_screen_dir} | egrep ${filter_types} | wc -l);
+
+    # clear;
+    # printf "     Lion Face: ${lion_last_file}   Count: ${lion_i_cnt}\n";
+    # printf "    Tiger Face: ${tiger_last_file}   Count: ${tiger_i_cnt}\n";
+    # printf "  Leopard Face: ${leopard_last_file}   Count: ${leopard_i_cnt}\n\n";
+    # printf "   Lion Screen: ${lion_last_sfile}   Count: ${lion_s_cnt}\n";
+    # printf "  Tiger Screen: ${tiger_last_sfile}   Count: ${tiger_s_cnt}\n";
+    # printf "Leopard Screen: ${leopard_last_sfile}   Count: ${leopard_s_cnt}\n";
+    # sleep 4.0;
+
+    # ls | wc -l
+
+    # SORT BY MODIFY DATE:
+    # lion_last_now=$(ls -Art ${lion_face_dir} | egrep ${filter_types} | tail -n 1);
+    # tiger_last_now=$(ls -Art ${tiger_face_dir} | egrep ${filter_types} | tail -n 1);
+    # leopard_last_now=$(ls -Art ${leopard_face_dir} | egrep ${filter_types} | tail -n 1);
+
+    #printf "${tiger_last_now}\n"
+    lion_i_synced="(live)";
+    tiger_i_synced="(live)";
+    leopard_i_synced="(live)";
+    lion_s_synced="(live)";
+    tiger_s_synced="(live)";
+    leopard_s_synced="(live)";
+
+    ub=0;
+    if [[ "${lion_last_file}" != "${lion_file_name}" ]]; then
+      lion_file_name="${lion_last_file}";
+      lion_i_cnt=$(ls ${lion_face_dir} | egrep ${filter_types} | wc -l);
+      ub=1;
+    fi
+    if [[ "${tiger_last_file}" != "${tiger_file_name}" ]]; then
+      tiger_file_name="${tiger_last_file}";
+      tiger_i_cnt=$(ls ${tiger_face_dir} | egrep ${filter_types} | wc -l);
+      ub=1;
+    fi
+    if [[ "${leopard_last_file}" != "${leopard_file_name}" ]]; then
+      leopard_file_name="${leopard_last_file}";
+      leopard_i_cnt=$(ls ${leopard_face_dir} | egrep ${filter_types} | wc -l);
+      ub=1;
+    fi
+
+    if [[ "${lion_last_sfile}" != "${lion_sfile_name}" ]]; then
+      lion_sfile_name="${lion_last_sfile}";
+      lion_s_cnt=$(ls ${lion_screen_dir} | egrep ${filter_types} | wc -l);
+      ub=1;
+    fi
+    if [[ "${tiger_last_sfile}" != "${tiger_sfile_name}" ]]; then
+      tiger_sfile_name="${tiger_last_sfile}";
+      tiger_s_cnt=$(ls ${tiger_screen_dir} | egrep ${filter_types} | wc -l);
+      ub=1;
+    fi
+    if [[ "${leopard_last_sfile}" != "${leopard_sfile_name}" ]]; then
+      leopard_sfile_name="${leopard_last_sfile}";
+      leopard_s_cnt=$(ls ${leopard_screen_dir} | egrep ${filter_types} | wc -l);
+      ub=1;
+    fi
+    if [[ ${ub} = 1 ]]; then write_browser_data; fi
+}
+
+
+set_next_files(){
+  if [[ "${pic_types}" =~ "|${lion_files[${lion_i}]: -4: 4}|" ]]; then
+    lion_file_name="${lion_files[${lion_i}]}";
+    if [[ ${sync_images} = 1 && ${lion_i} = 4 ]]; then sync_file_nam="lion_file_name"; get_sync_vars; set_sync_next; fi;
+    if [[ ${sync_images} = 1 ]]; then do_sync_images; fi;
+    if [[ ${sync_images} = 1 && "${lion_i_synced}" == "(waiting - images came later)" ]]; then lion_i=0; else (( lion_i++ )); fi;
+  fi
+  if [[ "${pic_types}" =~ "|${tiger_files[${tiger_i}]: -4: 4}|" ]]; then
+    tiger_file_name="${tiger_files[${tiger_i}]}";
+    if [[ ${sync_images} = 1 && "${tiger_i_synced}" == "(waiting - images came later)" ]]; then tiger_i=0; else (( tiger_i++ )); fi;
+  fi
+  if [[ "${pic_types}" =~ "|${leopard_files[${leopard_i}]: -4: 4}|" ]]; then
+    leopard_file_name="${leopard_files[${leopard_i}]}";
+    if [[ ${sync_images} = 1 && "${leopard_i_synced}" == "(waiting - images came later)" ]]; then leopard_i=0; else (( leopard_i++ )); fi;
+  fi
+
+  if [[ "${pic_types}" =~ "|${lion_sfiles[${lion_s}]: -4: 4}|" ]]; then
+    lion_sfile_name="${lion_sfiles[${lion_s}]}";
+    if [[ ${sync_images} = 1 && "${lion_s_synced}" == "(waiting - images came later)" ]]; then lion_s=0; else (( lion_s++ )); fi;
+  fi
+  if [[ "${pic_types}" =~ "|${tiger_sfiles[${tiger_s}]: -4: 4}|" ]]; then
+    tiger_sfile_name="${tiger_sfiles[${tiger_s}]}";
+    if [[ ${sync_images} = 1 && "${tiger_s_synced}" == "(waiting - images came later)" ]]; then tiger_s=0; else (( tiger_s++ )); fi;
+  fi
+  if [[ "${pic_types}" =~ "|${leopard_sfiles[${leopard_s}]: -4: 4}|" ]]; then
+    leopard_sfile_name="${leopard_sfiles[${leopard_s}]}";
+    if [[ ${sync_images} = 1 && "${leopard_s_synced}" == "(waiting - images came later)" ]]; then leopard_s=0; else (( leopard_s++ )); fi;
+  fi
+
+  write_browser_data;
+  (( i++ ));
+}
+
+
+restart_replay() {
+  load_image_file_names;
+  send_browser_dirs;
+}
+
+
+serve_files() {
+    load_image_file_names;
+    send_browser_dirs;
+
+    trap 'break_loop="y";' SIGINT RETURN
+    break_loop="";
+
+#    browser_mode="replay";
+#    browser_playing="yes";
+
+
+    for (( ; ; ))
+    do
+        get_browser_command;
+        # browser_playing="yes";
+        # browser_mode="replay";
+        if [[ "${browser_mode_pre}" != "${browser_mode}"  ||  "${browser_playing_pre}" != "${browser_playing}" || "${mess}" != "" ]]; then
+            browser_mode_pre="${browser_mode}";
+            browser_playing_pre="${browser_playing}";
+            if [[ "${browser_playing}" == "yes" ]]; then
+                pc="${BGreen}";
+            else
+                pc="${BRed}";
+            fi
+            clear;
+            printf "\n${Red}Press ${BYellow}<Cntl+c>${Red} to Stop File Name Server and return to menu!${NC}\n";
+            printf "\nBrowser Mode: ${BBlue}${browser_mode^^}${NC}";
+            printf "\n\nBrowser Playing: ${pc}${browser_playing^^}${NC}\n\n";
+            if [[ "${mess}" != "" ]]; then
+                printf "${mess}";
+                mess=""
+            fi
+        fi
+        if [[ "${browser_playing}" == "yes" ]]; then
+            if [[ "${browser_mode}" == "live" ]]; then set_last_files; fi
+            if [[ "${browser_mode}" == "replay" ]]; then set_next_files; fi
+            sleep ${serve_delay};
+        fi;
+
+        if [[ ${i} -gt 100000 || "${break_loop}" == "y" ]]; then break; fi
+    done
+}
+
+
+
+
+show_menu;
+
+while [ "$opt" != '' ]
+  do
+  case $opt in
+    e) get_exp_dir;
+       show_menu;
+    ;;
+    l) get_exp_dir;
+       show_menu;
+    ;;
+    1) block_new="1";
+       switch_blocks;
+       show_menu;
+    ;;
+    2) block_new="2";
+       switch_blocks;
+       show_menu;
+    ;;
+    d) set_serve_delay;
+       show_menu;
+    ;;
+    r) restart_replay;
+       show_menu;
+    ;;
+    b) launch_browser;
+       show_menu;
+    ;;
+    s) serve_files;
+       show_menu;
+    ;;
+    x)exit;
+    ;;
+    \n)exit;
+    ;;
+    *) printf "\n${Red}*** Not a valid option ***${NC}\n";
+      sleep 3;
+      show_menu;
+    ;;
+  esac
+done
+
+
+exit;
+
