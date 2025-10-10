@@ -1,0 +1,501 @@
+#!/bin/bash
+
+# Application: Data Inventory
+# Decription: Checks and catalogs all data files and directories for an Experiment (/path/exp_yyyy_mm_dd_hh/).
+#             It checks the existents of the sub directory, file count is between min & max, file exist, and file size is between min & max.
+#             Algorithm is driven by "data_inventory.tbl" and outputs to "data_inventory.log" in Experiment Dir (/path/exp_yyyy_mm_dd_hh/data_inventory.log).
+# By: Rick Champlin
+# Last Updated: 4/26/2023
+# Start: Run Bash Script "data_inventory.sh".
+#        "data_inventory.tbl" defines directories and files to check.
+#        "data_inventory.vars" color variables definition used by "data_inventory.sh".
+
+source "data_inventory.vars"
+
+# Set for if this app is running at Rick's Office or LangLab:
+# run_at="home";
+run_at="lab";
+
+# Dev Settings:
+# show_brow_comm=false;
+# show_sync_vars=false;
+# show_sync_prep=false;
+# show_sync_work=false;
+# show_sync_results=false;
+# show_jump_work=false;
+
+
+if [[ "${run_at}" == "home" ]]; then
+  # FOR HOME:
+  wsl_dir="/mnt/c"; # This is to add to begining of bash paths for my wsl mount at home.
+  app_dir="${wsl_dir}/Users/rcham/Documents/ToMCAT/Lab/data_inventory/"
+  exp_dir="${wsl_dir}/Users/rcham/Documents/ToMCAT/Lab/data/cat/LangLab/dry_runs/group/exp_2023_04_03_13/";
+  dry_dir_pre="/Users/rcham/Documents/ToMCAT/Lab/data/cat/LangLab/dry_runs/group/exp_2023_";
+  plt_dir_pre="/Users/rcham/Documents/ToMCAT/Lab/data/cat/LangLab/experiments/study_3_pilot/group/exp_2023_";
+  def_file="data_inventory.tbl"; # Definition file with table of what directories and files to check for a normal ToMCAT experiment.
+  nar_dspl=false;
+  blk_dely=3; # Set how long in seconds to hold a results block on screen.
+  res_fnam="data_inventory.log"; # Name of Inventory Results File (Created in the root of the Experiment Directory)
+fi
+
+if [[ "${run_at}" == "lab" ]]; then
+  # FOR LAB:
+  wsl_dir=""; # This is to add to begining of bash paths, "" if running on Linux Server.
+  app_dir="/rchamplin/data_inventory/"
+  exp_dir="/data/cat/LangLab/experiments/study_3_pilot/group/exp_2023_05_03_10/";
+  dry_dir_pre="/data/cat/LangLab/dry_runs/group/exp_2023_";
+  plt_dir_pre="/data/cat/LangLab/experiments/study_3_pilot/group/exp_2023_";
+  def_file="data_inventory.tbl"; # Definition file with table of what directories and files to check for a normal ToMCAT experiment.
+  nar_dspl=false;
+  blk_dely=4; # Set how long in seconds to hold a results block on screen.
+  res_fnam="data_inventory.log"; # Name of Inventory Results File (Created in the root of the Experiment Directory)
+fi
+
+di_i=0;
+no_menu="";
+
+
+
+show_menu(){
+  if [[ "${no_no_menu}" == "y" ]]; then exit; fi;
+
+  if ( ${nar_dspl} ); then dsp_mode="NARROW"; else dsp_mode="WIDE"; fi;
+
+  clear;
+
+  printf "\n${menu}****************************${Red}Experiment Data Inventory${menu}****************************${NC}\n";
+  printf "${menu}**${Green} Exp Dir: ${BPurple}${exp_dir}${NC}\n";
+  printf "${menu}**\n";
+  printf "${menu}**${number} e) ${BBlue}Set Experiment Directory.${NC}\n";
+  printf "${menu}**${number} n) ${BBlue}Toggle Screen Results Width [Currently set to: ${BCyan}${dsp_mode}${BBlue}].${NC}\n";
+  printf "${menu}**${number} c) ${BBlue}Check Data Inventory and Only Print Results on Screen.${NC}\n";
+  printf "${menu}**${number} l) ${BBlue}Check Data Inventory and Create Log File in Experiment Directory.${NC}\n";
+  printf "${menu}**${number} x) ${BBlue}Exit the program.${NC}\n";
+  printf "${menu}*********************************************************************************${NC}\n";
+
+  printf "Please enter a menu option and enter ${Red}(x to exit program): ${NC}";
+  read opt;
+}
+
+
+get_exp_dir(){
+  clear;
+  printf "\n";
+  ans="";
+  while [[ "$ans" != "d" ]] && [[ "$ans" != "p" ]] && [[ "$ans" != "x" ]];
+  do
+    printf "${Red}Is this for a Dry-Run or Pilot?\n${Yellow}(Enter '${BItalic}${BYellow}d${NC}${Yellow}' for '${BYellow}Dry-Run${Yellow}', '${BItalic}${BYellow}p${NC}${Yellow}' for '${BYellow}Pilot${Yellow}', '${BItalic}${BRed}x${NC}${Yellow}' ${BRed}return to menu${Yellow}):${NC} ";
+    read ans
+  done
+  if [[ "$ans" == "x" ]]; then return 1; fi
+  if [[ "$ans" == "d" ]]; then new_dir=${dry_dir_pre}; else new_dir=${plt_dir_pre}; fi
+
+  printf "\n${Red}Enter Experiment Directory: ${Yellow}(Must end with a slash '${NC}/${Yellow}')${NC}\n";
+  read -e -i "${new_dir}" new_dir;
+  if [[ "${new_dir: -1}" != "/" ]]; then new_dir="${new_dir}/"; fi
+  tst_dir="${new_dir: -14: 10}";
+  filter_date=${tst_dir//[_]/-};
+
+  if [[ "${new_dir: -19: 5}" != "/exp_" ]]; then
+    printf "\n${Yellow}The Experiment Directory that you entered does not start with '/exp_':${NC} (${BYellow}${Italic}/exp_${BGreen}yyyy_mm_dd_hh/${NC})\n";
+    yes_no_question "${Red}Do you want to re-enter the Experiment Directory?${NC}";
+    if [[ $? -eq 0 ]]; then
+      get_exp_dir;
+    fi
+  fi
+  if ! [[ "$filter_date" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] || ! date -d $filter_date >/dev/null 2>&1; then
+    printf "\n${Yellow}The Date part of the Experiment Directory that you entered is Invalid:${NC} (${BGreen}/exp_${BYellow}${Italic}yyyy_mm_dd${NC}${BGreen}_hh/${NC})\n";
+    yes_no_question "${Red}Do you want to re-enter the Experiment Directory?${NC}";
+    if [[ $? -eq 0 ]]; then
+      get_exp_dir;
+    fi
+  fi
+  if ! [[ "${new_dir: -3: 2}" =~ ^[0-9]{2}$ ]] || [[ "${new_dir: -3: 2}" -gt 24 ]] || [[ "${new_dir: -3: 2}" -lt 1 ]]; then
+    printf "\n${Yellow}The hour part of the Experiment Directory that you entered is Invalid:${NC} (${BGreen}/exp_yyyy_mm_dd_${BYellow}${Italic}hh${BGreen}/${NC})\n";
+    yes_no_question "${Red}Do you want to re-enter the Experiment Directory?${NC}";
+    if [[ $? -eq 0 ]]; then
+      get_exp_dir;
+    fi
+  fi
+
+  yes_no_question "\n${Red}Do you want set Experiment Directory to what you just entered?${NC}\n(${BYellow}${Italic}${wsl_dir}${new_dir}${NC})";
+  if [[ $? -eq 0 ]]; then
+    exp_dir="${wsl_dir}${new_dir}";
+  fi
+}
+
+
+toggle_narrow_display() {
+  if ( ${nar_dspl} ); then
+    nar_dspl=false;
+    printf "\n${BCyan}[Display Mode: WIDE]${NC}\n";
+  else
+    nar_dspl=true;
+    printf "\n${BCyan}[Display Mode: NARROW]${NC}\n";
+  fi
+  sleep 2; 
+}
+
+
+load_def_file() {
+  # data_inventory.tbl
+  di_i=0
+  declare -a di_results
+  readarray di_lines < ${def_file}
+}
+
+
+print_header() {
+  clear;
+  if ( ${nar_dspl} ); then
+    printf "${BBlue}Experiment Directory: ${BPurple}${di_results[0]: -27}${di_results[2]%|*|*|*|*|*|*|*|*|*}${Blue}|${NC}\n${di_results[3]%|*|*|*|*|*|*|*|*|*}${Blue}|${NC}\n";
+  else
+    printf "\n${di_results[0]}${di_results[1]}${di_results[2]}${di_results[3]}";
+  fi
+}
+
+
+create_results_file() {
+  check_exp_data_file;
+  printf "%s\n" "${di_results[@]}" > "${exp_dir}${res_fnam}";
+  # printf ${di_results[@]} > "${exp_dir}${res_fnam}";
+  printf "\n${BCyan}[Created Results File: ${BPurple}(Experiment Directory)/${BGreen}${res_fnam}${BCyan}]${NC}\n";
+  sleep 10;
+}
+
+
+print_results() {
+  di_x=0;
+  for (( di_x=1; di_x<=1000000; di_x++ ))
+  do
+    check_exp_data_screen;
+    print_header;
+    di_r=0;
+    for (( di_r=4; di_r<=${#di_results[@]}; di_r++ ))
+    do
+      di_lstr="${di_results[${di_r}]}";
+      if [[ "${di_lstr: -10: 1}" == "-" ]]; then
+        if ( ! ${nar_dspl} ); then printf "\n"; fi;
+        printf "${Blink_Green}PLAYING...${NC} ${BWhite}(${BBlue}${Italic}<space bar>${NC}${BWhite}=${BBlue}NEXT${BWhite}, ${Yellow}${Italic}<p>${NC}${BWhite}=${Yellow}PAUSE${BWhite}, ${BCyan}${Italic}<n>${NC}${BWhite}=${BCyan}WIDTH${BWhite},${NC} ${Red}${Italic}<x>${NC}${BWhite}=${Red}MENU${BWhite})${NC}";
+        read -s -N 1 -t ${blk_dely} di_input
+        if [[ "${di_input}" == "x" ]]; then return 1; fi;
+        if [[ "${di_input}" == "n" ]]; then toggle_narrow_display; fi;
+        if [[ "${di_input}" == "p" ]]; then
+          printf "\r                                                               ";
+          printf "\r${Blink_Yellow}PAUSING...${NC} ${BWhite}(${Green}${Italic}<space bar>${NC}${BWhite}=${Green}CONTINUE${BWhite}, ${BCyan}${Italic}<n>${NC}${BWhite}=${BCyan}WIDTH${BWhite},${NC} ${Red}${Italic}<x>${NC}${BWhite}=${Red}MENU${BWhite})${NC}";
+          read -s -N 1 di_input
+          if [[ "${di_input}" == "x" ]]; then return 1; fi;
+          if [[ "${di_input}" == "n" ]]; then toggle_narrow_display; fi;
+        fi
+
+        # if [[ $(( ${di_r} + 2 )) != ${#di_results[@]} ]]; then printf "new header di_r: $(( ${di_r} + 2 )),   a_count: ${#di_results[@]}\n"; sleep 2; print_header; fi;
+        if [[ $(( ${di_r} + 2 )) != ${#di_results[@]} ]]; then print_header; fi;
+        continue;
+      fi
+      if ( ${nar_dspl} ) && [[ "${di_lstr: -10: 1}" != ":" ]]; then di_lstr="${di_lstr%|*|*|*|*|*|*|*|*|*}${Blue}|${NC}\n"; fi;
+      printf "${di_lstr}";
+    done
+  done
+}
+
+
+load_vars() {
+  #Status            |Description                                 |Directory                       |File(s)                   |Min_Size|Max_Size|Min_Count|Max_Count|File_Size|File_Count|
+  #------------------|--------------------------------------------|--------------------------------|--------------------------|--------|--------|---------|---------|---------|----------|
+  #1     <18>        19                 <44>                      64             <32>              97          <26>           124 <8>  133 <8>  142  <9>  152  <9>  162  <9>  172  <10>  183 
+
+  di_stat="${di_line: 0: 18}";
+  di_desc="${di_line: 19: 44}";
+  di_dire="${di_line: 64: 32}";
+  di_fils="${di_line: 97: 26}";
+  di_mins="${di_line: 124: 8}";
+  di_maxs="${di_line: 133: 8}";
+  di_minc="${di_line: 142: 9}";
+  di_maxc="${di_line: 152: 9}";
+  di_rfls="${di_line: 162: 9}";
+  di_rflc="${di_line: 172: 10}";
+
+  di_mins_k=${di_mins/"K"/"000"};
+  di_mins_m=${di_mins_k/"M"/"000000"};
+  di_mins_i=${di_mins_m/"G"/"000000000"};
+  di_maxs_k=${di_maxs/"K"/"000"};
+  di_maxs_m=${di_maxs_k/"M"/"000000"};
+  di_maxs_i=${di_maxs_m/"G"/"000000000"};
+
+  di_minc_k=${di_minc/"K"/"000"};
+  di_minc_m=${di_minc_k/"M"/"000000"};
+  di_minc_i=${di_minc_m/"G"/"000000000"};
+  di_maxc_k=${di_maxc/"K"/"000"};
+  di_maxc_m=${di_maxc_k/"M"/"000000"};
+  di_maxc_i=${di_maxc_m/"G"/"000000000"};
+
+  di_rfls_k=${di_rfls/"K"/"000"};
+  di_rfls_m=${di_rfls_k/"M"/"000000"};
+  di_rfls_i=${di_rfls_m/"G"/"000000000"};
+  di_rflc_k=${di_rflc/"K"/"000"};
+  di_rflc_m=${di_rflc_k/"M"/"000000"};
+  di_rflc_i=${di_rflc_m/"G"/"000000000"};
+  
+  di_rpth="${exp_dir}${di_dire}";             # Add experiment directory to sub directory. 
+  di_rpth="${di_rpth//" "/""}/";              # Trim off any trailing spaces after slash ("/").
+  di_path=$(ls -d ${di_rpth} 2> /dev/null);   # Resolve with wildcards in path. ("testbed_logs/*/ASR_Agent/logs").
+  
+  di_rfil="${di_path}${di_fils}";             # Add full path to file name.
+  di_rfil="${di_rfil//" "/""}";               # Trim off any trailing spaces after slash ("/").
+  if [[ "${di_fils: 0: 1}" == "*" ]]; then
+    di_pfil="${di_rfil}";
+  else
+    di_pfil=$(ls -f ${di_rfil} 2> /dev/null); # Resolve with wildcards in file name. ("leopard_self*data.csv").
+  fi
+  
+  di_fflt="${di_pfil##*/}";                   # Return everything after last "/".
+  di_fflt="${di_fflt//" "/""}";               # Trim off any trailing spaces.
+  di_fflt="${di_fflt//"*"/""}";               # Remove any "*"s.
+
+  
+
+
+#  printf "\n${BBlue}di_stat: ${BGreen}${di_stat}    ${BBlue}di_desc: ${BGreen}${di_desc}${NC}\n";
+#  printf "${BBlue}di_dire: ${BGreen}${di_dire}    ${BBlue}di_fils: ${BGreen}${di_fils}${NC}\n";
+#  printf "${BBlue}di_mins: ${BGreen}${di_mins}    ${BBlue}di_maxs: ${BGreen}${di_maxs}${NC}\n";
+#  printf "${BBlue}di_minc: ${BGreen}${di_minc}    ${BBlue}di_maxc: ${BGreen}${di_maxc}${NC}\n";
+#  printf "${BBlue}di_rfls: ${BGreen}${di_rfls}    ${BBlue}di_rflc: ${BGreen}${di_rflc}${NC}\n\n";
+
+#  printf "${BBlue}di_mins_i: ${BGreen}${di_mins_i}    ${BBlue}di_maxs_i: ${BGreen}${di_maxs_i}${NC}\n";
+#  printf "${BBlue}di_minc_i: ${BGreen}${di_minc_i}    ${BBlue}di_maxc_i: ${BGreen}${di_maxc_i}${NC}\n";
+#  printf "${BBlue}di_rfls_i: ${BGreen}${di_rfls_i}    ${BBlue}di_rflc_i: ${BGreen}${di_rflc_i}${NC}\n\n";
+
+#  sleep 20;
+}
+
+
+build_result_line() {
+  # build_result_line $1="status mark" $2="status text" $3="desc color" $4="dir color"
+  #                   $5="file color" $6="min size color" $7="max size color" $8="min count color"
+  #                   $9="max count color" $10="file size color" $11="file count color"
+  d="${Blue}|${BYellow}";
+  p="${NC}${BBlue}\u25B6${BYellow}";
+  di_rlin="${1}${2}${p}${3}${di_desc}${d}${4}${di_dire}${d}${5}${di_fils}${d}${6}${di_mins}${d}${7}${di_maxs}${d}${8}${di_minc}${d}${9}${di_maxc}${d}${10}${di_hfls}${d}${11}${di_rflc}${d}${NC}\n";
+  di_results[${#di_results[@]}]="${di_rlin}";
+}
+
+
+build_result_line_file() {
+  # build_result_line $1="status mark" $2="status text" $3="desc color" $4="dir color"
+  #                   $5="file color" $6="min size color" $7="max size color" $8="min count color"
+  #                   $9="max count color" $10="file size color" $11="file count color"
+  d="|";
+  p="|";
+  di_rlin="${1}${2}${p}${3}${di_desc}${d}${4}${di_dire}${d}${5}${di_fils}${d}${6}${di_mins}${d}${7}${di_maxs}${d}${8}${di_minc}${d}${9}${di_maxc}${d}${10}${di_hfls}${d}${11}${di_rflc}${d}";
+  di_results[${#di_results[@]}]="${di_rlin}";
+}
+
+
+get_dir_file_count() {
+  di_fcnt=$(ls "${di_path}" | grep "${di_fflt}" | wc -l); # Get Count of Files in Directory based on File Type.
+  di_rflc="${di_fcnt}          ";                         # Add Trailing Spaces.
+  di_rflc="${di_rflc: 0: 10}";                            # Trim for Result Column Characters Size.
+}
+
+
+get_avg_file_size() {
+  #di_pthn="${di_path%/*}";  
+  #di_tfls=$(find ${di_path} -maxdepth 1 -exec du -shk {} \;| awk 'NR >1'| awk 'BEGIN{sum=1}{sum=sum+$1}END{print sum}');
+  #di_avgs=$((${di_tfls} / ${di_fcnt}));
+  #di_havs=$(numfmt --to=iec --format="%.1f" ${di_avgs}); # Convert file size to human format (###.#B, ###.#K, ###.#M, ###.#G)
+  #di_hfvs="${di_havs} avg      ";                        # Add Trailing Spaces.
+  #di_hfvs="${di_hfvs: 0: 9}";                            # Trim for Result Column Characters Size.
+  di_hfvs="(no avg) ";
+}
+
+
+get_last_file_size() {
+  di_lfnm=$(ls ${di_path} | egrep "${di_fflt}" | tail -n 1);
+  di_lfbt=$(stat --format=%s "${di_path}${di_lfnm}");
+  
+  di_hlfi=$(numfmt --to=iec --format="%.3f" ${di_lfbt}); # Convert file size to human format (###.#B, ###.#K, ###.#M, ###.#G)
+  di_hlfs="${di_hlfi}           ";                       # Add Trailing Spaces.
+  di_hlfs="${di_hlfs: 0: 9}";                            # Trim for Result Column Characters Size.
+
+  #printf "di_path: ${di_path}\n";
+  #printf "di_fflt: ${di_fflt}\n";
+  #printf "di_lfnm: ${di_lfnm}\n";
+  #printf "di_lfbt: ${di_lfbt}\n\n";
+  #printf "di_hlfs: ${di_hlfs}\n\n";
+  #sleep 2; 
+}
+
+
+get_file_size() {
+  di_fsiz=$(wc -c < "${di_pfil}");                       # Get File Size in Bytes.
+  di_rfls="${di_fsiz}         ";                         # Add Trailing Spaces.
+  di_rfls="${di_rfls: 0: 9}";                            # Trim for Result Column Characters Size.
+
+  di_hsiz=$(numfmt --to=iec --format="%.3f" ${di_fsiz}); # Convert file size to human format (###.###B, ###.###K, ###.###M, ###.###G) 
+  di_hfls="${di_hsiz}         ";                         # Add Trailing Spaces.
+  di_hfls="${di_hfls: 0: 9}";                            # Trim for Result Column Characters Size.
+}
+
+
+check_exp_data_file() {
+  load_def_file;
+  di_results=();
+  di_results[${#di_results[@]}]="Experiment Directory: ${exp_dir}";
+  di_results[${#di_results[@]}]="${di_lines[1]}";
+  #di_ilin="${di_lines[2]%|*}|";
+  #di_nlin="${di_ilin%|*}|";
+  di_results[${#di_results[@]}]="${di_lines[2]%|*}|";
+  di_results[${#di_results[@]}]="${di_lines[3]%|*}|";
+
+  for (( di_i=4; di_i<="${#di_lines[@]}"; di_i++ ))
+  do
+    di_line="${di_lines[di_i]}";
+
+    if [[ "${di_line: 18: 1}" == "|" ]]; then
+      # This is NOT a Block Title Line...
+      load_vars;
+      if [ -d "${di_path}" ]; then
+        # Directory Exist...
+        if [[ "${di_fils: 0: 1}" == "*" ]]; then
+          # This is a Files in Directory Check...
+          get_dir_file_count;
+          if [[ "${di_fcnt}" == "0" ]]; then build_result_line_file "X " "Dir Has No Files" "" "" "" "" "" "" "" "" "" ""; continue; fi;
+          get_last_file_size;
+          di_hfls="${di_hlfs}";
+          if [[ ${di_fcnt} -lt ${di_minc_i} ]]; then build_result_line_file "∆ " "File Count < Min" "" "" "" "" "" "" "" "" ""; continue; fi;
+          if [[ ${di_fcnt} -gt ${di_maxc_i} ]]; then build_result_line_file "∆ " "File Count > Max" "" "" "" "" "" "" "" "" ""; continue; fi;
+          if [[ "${di_lfbt}" == "0" ]]; then build_result_line_file "X " "Ls-Fl Has 0 Byts" "" "" "" "" "" "" "" "" ""; continue; fi;
+          if [[ ${di_lfbt} -lt ${di_mins_i} ]]; then build_result_line_file "∆ " "Ls-Fl Size < Min" "" "" "" "" "" "" "" "" ""; continue; fi;
+          if [[ ${di_lfbt} -gt ${di_maxs_i} ]]; then build_result_line_file "∆ " "Ls-Fl Size > Max" "" "" "" "" "" "" "" "" ""; continue; fi;
+          build_result_line_file "√ " "Dir Files Are OK" "" "" "" "" "" "" "" "" ""; continue; 
+
+        else
+          # This is a Individual File Check...
+          if test -f "${di_pfil}" ; then
+            # File Exist...
+            get_dir_file_count;
+            get_file_size;
+            if [[ "${di_fsiz}" == "0" ]]; then build_result_line_file "X " "File Has 0 Bytes" "" "" "" "" "" "" "" "" "" ; continue; fi;
+            if [[ ${di_fsiz} -lt ${di_mins_i} ]]; then build_result_line_file "∆ " "File Size < Min " "" "" "" "" "" "" "" "" ""; continue; fi;
+            if [[ ${di_fsiz} -gt ${di_maxs_i} ]]; then build_result_line_file "∆ " "File Size > Max " "" "" "" "" "" "" "" "" ""; continue; fi;
+            build_result_line_file "√ " "File Is OK      " "" "" "" "" "" "" "" "" ""; continue;
+
+          else
+            # File does NOT Exist...
+            di_rfls="(no file)";
+            di_rflc="(no file) ";
+            build_result_line_file "X " "File Not Exist  " "" "" "" "" "" "" "" "" ""; continue;
+          fi
+        fi
+
+      else
+        # Directory does NOT Exist...
+        di_hfls="(no dir) ";
+        di_rflc="(no dir)  ";
+        build_result_line_file "X " "Dir Not Exist   " "" "" "" "" "" "" "" "" ""; continue;
+      fi
+
+    else
+      # This is a Block Title Line...
+      di_results[${#di_results[@]}]="${di_line%:*}:";
+    fi
+  done
+}
+
+
+check_exp_data_screen() {
+  load_def_file;
+  di_results=();
+  di_results[${#di_results[@]}]="${BBlue}Experiment Directory: ${BPurple}${exp_dir}${NC}\n";
+  di_results[${#di_results[@]}]="${Blue}${di_lines[1]}${NC}";
+  di_results[${#di_results[@]}]="${Blue}${di_lines[2]}${NC}";
+  di_results[${#di_results[@]}]="${Blue}${di_lines[3]}${NC}";
+
+  for (( di_i=4; di_i<="${#di_lines[@]}"; di_i++ ))
+  do
+    di_line="${di_lines[di_i]}";
+
+    if [[ "${di_line: 18: 1}" == "|" ]]; then
+      # This is NOT a Block Title Line...
+      load_vars;
+      if [ -d "${di_path}" ]; then
+        # Directory Exist...
+        if [[ "${di_fils: 0: 1}" == "*" ]]; then
+          # This is a Files in Directory Check...
+          get_dir_file_count;
+          if [[ "${di_fcnt}" == "0" ]]; then di_hfls="(0 files)"; build_result_line "${Red_x} " "${Black}${On_Red}Dir Has No Files" "${Red}" "${Red}" "" "" "" "${BRed}" "" "${BRed}" "${BRed}"; continue; fi;
+          get_last_file_size;
+          di_hfls="${di_hlfs}";
+          if [[ ${di_fcnt} -lt ${di_minc_i} ]]; then build_result_line "${Yellow_Warn} " "${Black}${On_Yellow}File Count < Min" "${Yellow}" "" "" "" "" "${BRed}" "" "" "${BRed}"; continue; fi;
+          if [[ ${di_fcnt} -gt ${di_maxc_i} ]]; then build_result_line "${Yellow_Warn} " "${Black}${On_Yellow}File Count > Max" "${Yellow}" "" "" "" "" "" "${BRed}" "" "${BRed}"; continue; fi;
+          if [[ "${di_lfbt}" == "0" ]]; then build_result_line "${Red_x} " "${Black}${On_Red}Ls-Fl Has 0 Byts" "${Red}" "${BGreen}" "" "${BRed}" "${BRed}" "${BGreen}" "${BGreen}" "${BRed}" "${BGreen}" ; continue; fi;
+          if [[ ${di_lfbt} -lt ${di_mins_i} ]]; then build_result_line "${Yellow_Warn} " "${Black}${On_Yellow}Ls-Fl Size < Min" "${Yellow}" "${BGreen}" "${BGreen}" "${BRed}" "" "${BGreen}" "${BGreen}" "${BRed}" "${BGreen}"; continue; fi;
+          if [[ ${di_lfbt} -gt ${di_maxs_i} ]]; then build_result_line "${Yellow_Warn} " "${Black}${On_Yellow}Ls-Fl Size > Max" "${Yellow}" "${BGreen}" "${BGreen}" "" "${BRed}" "${BGreen}" "${BGreen}" "${BRed}" "${BGreen}"; continue; fi;
+          build_result_line "${Green_Check} " "${Black}${On_Green}Dir Files Are OK" "${Green}" "${BGreen}" "${BGreen}" "${BGreen}" "${BGreen}" "${BGreen}" "${BGreen}" "${BGreen}" "${BGreen}"; continue; 
+
+        else
+          # This is a Individual File Check...
+          if test -f "${di_pfil}" ; then
+            # File Exist...
+            get_dir_file_count;
+            get_file_size;
+            if [[ "${di_fsiz}" == "0" ]]; then build_result_line "${Red_x} " "${Black}${On_Red}File Has 0 Bytes" "${Red}" "${BGreen}" "" "${BRed}" "${BRed}" "${BGreen}" "${BGreen}" "${BRed}" "${BGreen}" ; continue; fi;
+            if [[ ${di_fsiz} -lt ${di_mins_i} ]]; then build_result_line "${Yellow_Warn} " "${Black}${On_Yellow}File Size < Min " "${Yellow}" "${BGreen}" "${BGreen}" "${BRed}" "" "${BGreen}" "${BGreen}" "${BRed}" "${BGreen}"; continue; fi;
+            if [[ ${di_fsiz} -gt ${di_maxs_i} ]]; then build_result_line "${Yellow_Warn} " "${Black}${On_Yellow}File Size > Max " "${Yellow}" "${BGreen}" "${BGreen}" "" "${BRed}" "${BGreen}" "${BGreen}" "${BRed}" "${BGreen}"; continue; fi;
+            build_result_line "${Green_Check} " "${Black}${On_Green}File Is OK      " "${Green}" "${BGreen}" "${BGreen}" "${BGreen}" "${BGreen}" "${BGreen}" "${BGreen}" "${BGreen}" "${BGreen}"; continue;
+
+          else
+            # File does NOT Exist...
+            di_rfls="(no file)";
+            di_rflc="(no file) ";
+            build_result_line "${Red_x} " "${Black}${On_Red}File Not Exist  " "${Red}" "${BGreen}" "${BRed}" "" "" "${BRed}" "${BRed}" "${BRed}" "${BRed}"; continue;
+          fi
+        fi
+
+      else
+        # Directory does NOT Exist...
+        di_hfls="(no dir) ";
+        di_rflc="(no dir)  ";
+        build_result_line "${Red_x} " "${Black}${On_Red}Dir Not Exist   " "${Red}" "${BRed}" "" "" "" "" "" "${BRed}" "${BRed}"; continue;
+      fi
+
+    else
+      # This is a Block Title Line...
+      di_results[${#di_results[@]}]="${BBlue}${di_line}${NC}";
+    fi
+  done
+}
+
+
+
+
+show_menu;
+
+while [ "$opt" != '' ]
+  do
+  case $opt in
+    e) get_exp_dir;
+       show_menu;
+    ;;
+    n) toggle_narrow_display;
+       show_menu;
+    ;;
+    c) print_results;
+      show_menu;
+    ;;
+    l) create_results_file;
+       show_menu;
+    ;;
+    x)exit;
+    ;;
+    \n)exit;
+    ;;
+    *) printf "\n${Red}*** Not a valid option ***${NC}\n";
+      sleep 3;
+      show_menu;
+    ;;
+  esac
+done
+
+
+exit;
