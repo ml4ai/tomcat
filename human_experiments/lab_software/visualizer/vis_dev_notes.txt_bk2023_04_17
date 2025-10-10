@@ -1,0 +1,170 @@
+# DEGIGN NOTES AND OUTTAKES:
+
+
+
+// const width = document.body.offsetWidth;
+// const height = document.body.offsetHeight;
+
+// document.body.addEventListener('mousemove', function(e){
+// const relativeWidth = e.clientX / width * 100;
+// const relativeHeight = e.clientY / height * 100;
+// document.body.style.setProperty('--mouse-x', relativeWidth);
+// document.body.style.setProperty('--mouse-y', relativeHeight);
+
+// number.dataset.number = parseInt(relativeWidth) + '%';
+// })
+// window.onload = getExif();
+
+
+
+
+# get_browser_data(){
+#     browser_last_log=$(eval ls ${browser_log_dir} | egrep \.log$ | sort -V | tail -n 1);
+#     if [[ ${browser_current_log_file} != ${browser_last_log} ]]; then
+#         browser_current_log_file="${browser_last_log}";
+#     fi
+#     eval cp ${browser_log_dir}${browser_current_log_file} ${browser_log_file};    
+
+#     str=$(eval strings  "${browser_log_file}" | grep -a "face_play" | tail -1);
+#     # printf "${str}\n";
+#     # browser_last_log=$(eval ls ${browser_log_dir} | egrep \.log$ | sort -V | tail -n 1);
+#     # str=$(eval strings  "${browser_log_dir}${browser_last_log}" | grep -a "face_play" | tail -1);
+#     if [[ "${str}" == "face_play=yes" ]]; then
+#         browser_playing="yes";
+#     fi
+#     if [[ "${str}" == "face_play=no" ]]; then
+#         browser_playing="no";
+#     fi
+#     str=$(eval strings  "${browser_log_file}" | grep -a "play_for" | tail -1);
+#     # printf "${str}\n";
+#     # str=$(eval strings  "${browser_log_dir}${browser_last_log}" | grep -a "play_for" | tail -1);
+#     if [[ "${str}" == "play_for=live" ]]; then
+#         browser_mode="live";
+#     fi
+#     if [[ "${str}" == "play_for=replay" ]]; then
+#         browser_mode="replay";
+#     fi
+# }
+
+# SORT BY MODIFY DATE:
+# lion_last_now=$(ls -Art ${lion_face_dir} | egrep ${filter_types} | tail -n 1);
+# tiger_last_now=$(ls -Art ${tiger_face_dir} | egrep ${filter_types} | tail -n 1);
+# leopard_last_now=$(ls -Art ${leopard_face_dir} | egrep ${filter_types} | tail -n 1);
+
+# printf "${tiger_last_now}\n"
+# if [[ "${lion_last_now}" != "${lion_file_name}" ]]; then
+#     lion_file_name="${lion_last_now}";
+#     str="-i 's#\"lion_file_name\",.*#\"lion_file_name\",\"${lion_file_name}\");#' ${data_file_name}";
+#     eval sed ${str};
+# fi
+# if [[ "${tiger_last_now}" != "${tiger_file_name}" ]]; then
+#     tiger_file_name="${tiger_last_now}";
+#     str="-i 's#\"tiger_file_name\",.*#\"tiger_file_name\",\"${tiger_file_name}\");#' ${data_file_name}";
+#     eval sed ${str};
+# fi
+# if [[ "${leopard_last_now}" != "${leopard_file_name}" ]]; then
+#     leopard_file_name="${leopard_last_now}";
+#     str="-i 's#\"leopard_file_name\",.*#\"leopard_file_name\",\"${leopard_file_name}\");#' ${data_file_name}";
+#     eval sed ${str};
+# fi
+
+# set_next_files(){
+#     if [[ "${pic_types}" =~ "|${lion_files[${lion_i}]: -4: 4}|" ]]; then
+#         lion_file_name="${lion_files[${lion_i}]}";
+#         # str="-i 's#\"lion_file_name\",.*#\"lion_file_name\",\"${lion_file_name}\");#' ${data_file_name}";
+#         str="-i'' -e 's#\"lion_file_name\",.*#\"lion_file_name\",\"${lion_file_name}\");#' ${data_file_name}  2>/dev/null";
+#         eval sed ${str};
+#         str="-i 's#\"lion_file_pos\",.*#\"lion_file_pos\",\"$((lion_i + 1))\");#' ${data_file_name}";
+#         # eval sed ${str};
+#         # chmod 777 ${data_file_name};
+#         (( lion_i++ ));
+#     fi
+#     if [[ "${pic_types}" =~ "|${tiger_files[${tiger_i}]: -4: 4}|" ]]; then
+#         tiger_file_name="${tiger_files[${tiger_i}]}";
+#         str="-i 's#\"tiger_file_name\",.*#\"tiger_file_name\",\"${tiger_file_name}\");#' ${data_file_name}";
+#         # eval sed ${str};
+#         str="-i 's#\"tiger_file_pos\",.*#\"tiger_file_pos\",\"$((tiger_i + 1))\");#' ${data_file_name}";
+#         # eval sed ${str};
+#         (( tiger_i++ ));
+#     fi
+#     if [[ "${pic_types}" =~ "|${leopard_files[${leopard_i}]: -4: 4}|" ]]; then
+#         leopard_file_name="${leopard_files[${leopard_i}]}";
+#         str="-i 's#\"leopard_file_name\",.*#\"leopard_file_name\",\"${leopard_file_name}\");#' ${data_file_name}";
+#         # eval sed ${str};
+#         str="-i 's#\"leopard_file_pos\",.*#\"leopard_file_pos\",\"$((leopard_i + 1))\");#' ${data_file_name}";
+#         # eval sed ${str};
+#         (( leopard_i++ ));
+#     fi
+#     (( i++ ));
+# }
+
+
+# lion_last_now=$(ls ${lion_face_dir} | egrep ${filter_types} | sort -V | tail -n 1);
+
+# lion_last_file=${lion_last_now};
+# str="-i 's#\"lion_live_file_name\",.*#\"lion_live_file_name\",\"${lion_last_file}\");#' ${data_file_name}";
+
+# grep -Fxq "face_play" "/mnt/c/Users/rcham/AppData/Local/Google/Chrome/User Data/Default/Local Storage/leveldb/003381.log"
+# grep -Fx "face_play" "/mnt/c/Users/rcham/AppData/Local/Google/Chrome/User Data/Default/Local Storage/leveldb/003381.log" >/dev/null; echo $?
+# grep "face_play" "/mnt/c/Users/rcham/AppData/Local/Google/Chrome/User Data/Default/Local Storage/leveldb/003383.log" | tail -1
+# strings  "/mnt/c/Users/rcham/AppData/Local/Google/Chrome/User Data/Default/Local Storage/leveldb/003388.log" | grep -a "face_play" | tail -1
+
+# printf "%s\n" "${leopard_files[@]}";
+# exit;
+
+# app_dir="$(dirname "$(realpath "$0")")"
+# source "${app_dir}/configuration_helpers"
+
+
+
+# FILE-SAVER NOTES:
+
+# Import saveAs() from file-saver
+# import { saveAs } from 'file-saver';
+# FileSaver saveAs(Blob/File/Url, optional DOMString filename, optional Object { autoBom })
+# Pass { autoBom: true } if you want FileSaver.js to automatically provide Unicode text encoding hints (see: byte order mark). Note that this is only done if your blob type has charset=utf-8 set.
+
+# Examples
+# Saving text using require()
+# var FileSaver = require('file-saver');
+# var blob = new Blob(["Hello, world!"], {type: "text/plain;charset=utf-8"});
+# FileSaver.saveAs(blob, "hello world.txt");
+# Saving text
+# var blob = new Blob(["Hello, world!"], {type: "text/plain;charset=utf-8"});
+# FileSaver.saveAs(blob, "hello world.txt");
+# Saving URLs
+# FileSaver.saveAs("https://httpbin.org/image", "image.jpg");
+# Using URLs within the same origin will just use a[download]. Otherwise, it will first check if it supports cors header with a synchronous head request. If it does, it will download the data and save using blob URLs. If not, it will try to download it using a[download].
+
+# The standard W3C File API Blob interface is not available in all browsers. Blob.js is a cross-browser Blob implementation that solves this.
+
+# Saving a canvas
+# var canvas = document.getElementById("my-canvas");
+# canvas.toBlob(function(blob) {
+#     saveAs(blob, "pretty image.png");
+# });
+# Note: The standard HTML5 canvas.toBlob() method is not available in all browsers. canvas-toBlob.js is a cross-browser canvas.toBlob() that polyfills this.
+
+# Saving File
+# You can save a File constructor without specifying a filename. If the file itself already contains a name, there is a hand full of ways to get a file instance (from storage, file input, new constructor, clipboard event). If you still want to change the name, then you can change it in the 2nd argument.
+
+# // Note: Ie and Edge don't support the new File constructor,
+# // so it's better to construct blobs and use saveAs(blob, filename)
+# var file = new File(["Hello, world!"], "hello world.txt", {type: "text/plain;charset=utf-8"});
+# FileSaver.saveAs(file);
+# Tracking image
+
+# Installation
+# # Basic Node.JS installation
+# npm install file-saver --save
+# bower install file-saver
+# Additionally, TypeScript definitions can be installed via:
+
+# # Additional typescript definitions
+# npm install @types/file-saver --save-dev
+
+# <script src="FileSaver.js"></script>
+# <script type="text/javascript">
+#     var blob = new Blob(["Hello, world!"], {type: "text/plain;charset=utf-8"});
+#     saveAs(blob, "hello world.txt");
+# </script>
