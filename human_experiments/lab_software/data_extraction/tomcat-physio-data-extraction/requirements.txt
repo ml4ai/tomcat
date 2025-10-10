@@ -1,0 +1,4 @@
+pyxdf
+termcolor
+numpy
+pandas

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block body_class %}index{% endblock %}
+
+{% block content %}
+{{ render_markdown("""
+# Derived data products
+
+We provide a number of derived data products based on this dataset.
+
+Documentation for the derived data products is in sections 4 and 5 of the [data
+products document](http://ivilab.cs.arizona.edu/data/tomcat/data_products.pdf).
+
+As of 2024-02-22, we recommend using the derived data in the `*_sync` tables in
+the SQLite3 database rather than the CSVs in the older derived data releases
+listed below, as the 2024-02-22 release fixes a number of issues with the
+2023-08-28 version of the derived data (see [here](/updates/2024-02-22) for
+details).
+
+## Older versions
+
+We always recommend using the latest version of the derived data products, as
+older versions may have issues that are fixed in the newest versions, and the
+documentation is only accurate for the newest version.
+
+However, we will continue to provide the older versions for as long as
+we feasibly can.
+
+- [Filtered synchronized data (generated 2023-08-28) (836
+GB)](https://ivilab.cs.arizona.edu/ivilab/data/tomcat/derived/release_2023_08_28_17.tar.gz)
+
+- [Filtered synchronized data (1.1
+TB)](https://ivilab.cs.arizona.edu/ivilab/data/tomcat/derived/release_2023_07_17_19.tar.gz).
+Uploaded 2023-07-19. See [here](/updates/2023-07-19) for details.
+
+- [Filtered synchronized data (168
+GB)](https://ivilab.cs.arizona.edu/ivilab/data/tomcat/derived/filtered_synchronized_data.tar.gz)
+Uploaded 2023-06-14.
+
+""") }}
+{% endblock %}

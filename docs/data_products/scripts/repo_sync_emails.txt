@@ -1,0 +1,6 @@
+# Emails that get told about failure, and, perhaps occasionally success (when we
+# are testing). Only lines that do not start with a '#' and have an '@' in them
+# are relevant, but those lines should be valid emails. 
+
+kobus@cs.arizona.edu
+# adarsh@email.arizona.edu
