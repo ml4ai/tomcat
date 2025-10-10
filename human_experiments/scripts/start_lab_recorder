@@ -79,7 +79,6 @@ echo " "
 echo -e "Restoring the LabRecorder config file back to what is in the main git repository on CAT:"
 #shellcheck disable=SC2029
 # ssh "$USER_ON_TARGET@$TARGET_IP" "cd ${CONFIG_DIR} && git checkout LabRecorder_Block${EXPERIMENT_BLOCK}.cfg"
-#ssh "$USER_ON_TARGET@$TARGET_IP" "cd ${CONFIG_DIR} && git checkout LabRecorder_Block${EXPERIMENT_BLOCK}.cfg"
 echo " "
 
 echo -e "${YELLOW}Verify that you have 1 LabRecorder window open on CAT and that it is recording the correct streams!${NC}"
