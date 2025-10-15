@@ -5,7 +5,7 @@
 #             It checks the existents of the sub directory, file count is between min & max, file exist, and file size is between min & max.
 #             Algorithm is driven by "data_inventory.tbl" and outputs to "data_inventory.log" in Experiment Dir (/path/exp_yyyy_mm_dd_hh/data_inventory.log).
 # By: Rick Champlin
-# Last Updated: 5/10/2023
+# Last Updated: 10/15/2025 (Added command-line options. Fixed "end of block" recognition problem, now uses ".." instead of "-" in data_invetory.tbl)
 # Start: Run Bash Script "data_inventory.sh".
 #        "data_inventory.tbl" defines directories and files to check.
 #        "data_inventory.vars" color variables definition used by "data_inventory.sh".
@@ -35,7 +35,6 @@ res_rnam="data_inventory.run"; # Name of Inventory Results Run File (Created in 
 di_i=0;
 di_no_menu=false;
 di_pausing=false;
-
 
 
 
@@ -176,7 +175,7 @@ print_results() {
     for (( di_r=4; di_r<=${#di_results[@]}; di_r++ ))
     do
       di_lstr="${di_results[${di_r}]}";
-      if [[ "${di_lstr: -10: 1}" == "-" ]]; then
+      if [[ "${di_lstr}" == *".."* ]]; then
         if ( ! ${nar_dspl} ); then printf "\n"; fi;
         if ( ${nar_dspl} ); then new_mode="WIDE"; else new_mode="NARROW"; fi;
 
@@ -445,7 +444,7 @@ build_results_array() {
         continue;
       fi
       if [[ "${1}" == "r" ]]; then
-        if [[ "${di_line: -3: 1}" == "-" ]]; then
+        if [[ "${di_line}" == *".."* ]]; then
           if [[ $(( ${di_i} + 1 )) != ${#di_lines[@]} ]]; then
             di_line=${NC}${BYellow}${Italic}'"; read -n 1 -r -s -p "<Press any key for Next Block>"; clear; printf "'${NC};
             di_results[${#di_results[@]}]=${di_line}${BBlue}'Experiment Directory: '${BPurple}${exp_dir}${NC};
@@ -469,6 +468,63 @@ build_results_array() {
   done
 }
 
+
+
+print_help() {
+  printf "${BYellow}Command-Line Help:${NC}\n";
+  printf "  $0${NC} [${number}-h ${BBlue}Print this Help Message and Exit${NC}]\n";
+  printf "                      [${number}-e ${BBlue}Set Experiment Directory:${NC}] \"${BCyan}<Experiment Directory>${NC}\" ${Purple}(include slash at begining & end of path)${NC}\n";
+  printf "                      [${number}-n ${BBlue}Set Sreen Width: NARROW${NC}]\n";
+  printf "                      [${number}-w ${BBlue}Set Sreen Width: WIDE (Default)${NC}]\n";
+  printf "                      [${number}-d ${BBlue}Set Screen Block Delay in Seconds:${NC}] ${BCyan}<Seconds>${NC} ${Purple}(1 - 100)${NC}\n";
+  printf "                      [${number}-c ${BBlue}START - Checking Data Inventory and Only Print Results on Screen${NC}]\n";
+  printf "                      [${number}-l ${BBlue}START - Checking Data Inventory and Create Log File in Experiment Directory${NC}]\n\n";
+}
+
+
+
+while getopts "he:nwd:cl" opt; do
+  case $opt in
+    h)
+      print_help;
+      exit;
+      ;;
+    e)
+      printf "Set Experiment Directory: $OPTARG\n";
+      exp_dir="$OPTARG";
+      sleep 1;
+      ;;
+    n)
+      printf "Set Screen Width: NARROW\n";
+      nar_dspl=true;
+      sleep 1;
+      ;;
+    w)
+      printf "Set Screen Width: WIDE\n";
+      nar_dspl=false;
+      sleep 1;
+      ;;
+    d)
+      printf "Set Screen Block Delay in Seconds: $OPTARG\n";
+      blk_dely=$OPTARG;
+      sleep 1;
+      ;;
+    c)
+      printf "START - Checking Data Inventory and Only Print Results on Screen.\n";
+      sleep 1;
+      print_results;
+      ;;
+    l)
+      printf "START - Checking Data Inventory and Create Log File in Experiment Directory.\n";
+      sleep 1;
+      create_results_file;
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      exit 1
+      ;;
+  esac
+done
 
 show_menu;
 
