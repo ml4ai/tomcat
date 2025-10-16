@@ -7,10 +7,12 @@ from mne.filter import notch_filter
 from sqlalchemy import Engine, func, select
 from sqlalchemy.orm import Session
 
-from datasette_interface.common.constants import (EEG_FREQUENCY,
-                                                  EEG_NOTCH_FILTER_FREQUENCY,
-                                                  EEG_NOTCH_WIDTH,
-                                                  EEG_TRANSISION_BANDWIDTH)
+from datasette_interface.common.constants import (
+    EEG_FREQUENCY,
+    EEG_NOTCH_FILTER_FREQUENCY,
+    EEG_NOTCH_WIDTH,
+    EEG_TRANSISION_BANDWIDTH,
+)
 from datasette_interface.common.utils import convert_unix_timestamp_to_iso8601
 from datasette_interface.database.entity.derived.eeg_sync import EEGSync
 from datasette_interface.database.entity.signal.eeg import EEGRaw
@@ -90,7 +92,7 @@ class EEGHelper(ModalityHelper):
                 EEGRaw.fc6,
                 EEGRaw.fcz,
                 EEGRaw.f8,
-                EEGRaw.aff2h
+                EEGRaw.aff2h,
             )
             .where(
                 EEGRaw.group_session_id == self.group_session,

@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block body_class %}index{% endblock %}
+
+{% block content %}
+{{ render_markdown(
+"""
+# 2025-03-09 update
+
+## Added demographic data to participant table
+
+Added demographic data to the `participant` table. The following additional
+fields were added:
+
+- age (integer),
+- sex (text),
+- hisp (boolean),
+- race (text),
+- income (text),
+- edu (text),
+- exp (text),
+- exp_mc (text),
+- handedness (text),
+- trackpad_preference (text),
+- sph_label (text),
+- shl_impairments (text),
+- shl_impairments_specify (text),
+- shl_impairments_agediagnosis (text),
+- shl_impairments_therapy (text),
+- first_language (text),
+- languages_spoken (text),
+- language_age_learned (text),
+- countries_live_one_year (text),
+- major_schooling_country (text),
+- health_label (text),
+- health_concussion (text),
+- health_seizure (text),
+- health_trauma (text),
+- health_other_trauma_specify (text),
+- health_medications (text),
+- health_vision (text),
+- health_vision_specify (text)
+
+## Post Game Survey table
+
+Added the `post_game_survey` table to the SQLite database.
+
+The Post Game Survey is a web page survey given to the
+participants at the conclusion of the experiment.
+The data in the post_game_survey table is the participant's
+responses to the questions in the survey.
+
+Note: The survey is not administered to experimenters
+who are filling in as confederates.
+
+The following fields are included in the `post_game_survey` table.
+
+- participant (integer),
+- agent_calm (text),
+- agent_anxious (text),
+- agent_sad (text),
+- agent_excited (text),
+- agent_guilty (text),
+- agent_angry (text),
+- agent_happy (text),
+- agent_lonely (text),
+- agent_proud (text),
+- agent_friendly (text),
+- game_calm (text),
+- game_anxious (text),
+- game_excited (text),
+- game_sad (text),
+- game_guilty (text),
+- game_angry (text),
+- game_happy (text),
+- game_lonely (text),
+- game_proud (text),
+- game_friendly (text),
+- agent_intel (integer),
+- agent_care (integer),
+- agent_honest (integer),
+- agent_expert (integer),
+- agent_concern (integer),
+- agent_trust (integer),
+- agent_comp (integer),
+- agent_insens (integer),
+- agent_honor (integer),
+- agent_bright (integer),
+- agent_understand (integer),
+- agent_phoney (integer),
+- agent_well (text),
+- agent_smooth (text),
+- agent_acc (text),
+- agent_like (text),
+- agent_enjoy (text),
+- agent_awk (text),
+- agent_place (text),
+- agent_play (text),
+- agent_perform (text),
+- team_calm (text),
+- team_anxious (text),
+- team_excited (text),
+- team_sad (text),
+- team_guilty (text),
+- team_angry (text),
+- team_happy (text),
+- team_lonely (text),
+- team_proud (text),
+- team_friendly (text),
+- team_intel (integer),
+- team_care (integer),
+- team_honest (integer),
+- team_expert (integer),
+- team_concern (integer),
+- team_trust (integer),
+- team_comp (integer),
+- team_insens (integer),
+- team_honor (integer),
+- team_bright (integer),
+- team_understand (integer),
+- team_phoney (integer),
+- team_wrong (text),
+- team_forget (text),
+- team_minimize (text),
+- team_insult (text),
+- team_irrat (text),
+- team_crit (text),
+- team_fault (text),
+- team_ignore (text),
+- team_impt (text),
+- team_weak (text),
+- team_along (text),
+- team_smooth (text),
+- team_accept (text),
+- team_like (text),
+- team_enjoy (text),
+- team_awk (text),
+- team_place (text),
+- team_likeme (text),
+- team_genuine (text),
+- team_part (text),
+- team_listen (text),
+- team_ilike (text),
+- team_interact (text),
+- team_itrust (text),
+- team_fit (text),
+- team_cohesion (text),
+- team_work (text),
+- team_knit (text),
+- team_like_mem (text),
+- team_work_well (text),
+- team_decision (text),
+- team_express (text),
+- team_organize (text),
+- team_accomplish (text),
+- team_approp (text),
+- team_alt (text),
+- team_influ (text),
+- team_contrib (text),
+- agent_emot1 (text),
+- agent_emot2 (text),
+- agent_emot3 (text),
+- agent_emot4 (text),
+- agent_emot5 (text),
+- agent_emot6 (text),
+- agent_emot7 (text),
+- agent_emot8 (text),
+- agent_emot9 (text),
+- agent_emot10 (text),
+- know_team_members (boolean),
+- know_person_at_cheetah (text),
+- know_person_at_lion (text),
+- know_person_at_tiger (text),
+- know_person_at_leopard (text)
+""")
+}}
+{% endblock %}

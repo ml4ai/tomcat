@@ -13,12 +13,16 @@ from tqdm import tqdm
 
 from datasette_interface.common.config import LOG_DIR, settings
 from datasette_interface.common.utils import (
-    cd, convert_unix_timestamp_to_iso8601, is_directory_with_unified_xdf_files,
-    should_ignore_directory)
+    cd,
+    convert_unix_timestamp_to_iso8601,
+    is_directory_with_unified_xdf_files,
+    should_ignore_directory,
+)
 from datasette_interface.database.config import get_db
 from datasette_interface.database.entity.base.data_validity import DataValidity
-from datasette_interface.database.entity.task.ping_pong_cooperative_task_observation import \
-    PingPongCooperativeTaskObservation
+from datasette_interface.database.entity.task.ping_pong_cooperative_task_observation import (
+    PingPongCooperativeTaskObservation,
+)
 
 logging.basicConfig(
     level=logging.INFO,

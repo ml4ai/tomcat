@@ -9,12 +9,17 @@ from tqdm import tqdm
 
 from datasette_interface.common.config import settings
 from datasette_interface.common.utils import (
-    cd, convert_unix_timestamp_to_iso8601, is_directory_with_unified_xdf_files,
-    should_ignore_directory)
+    cd,
+    convert_unix_timestamp_to_iso8601,
+    is_directory_with_unified_xdf_files,
+    should_ignore_directory,
+)
 from datasette_interface.database.config import engine, get_db
 from datasette_interface.database.entity.base.data_validity import DataValidity
-from datasette_interface.raw.common.label_data import (delete_invalid_signals,
-                                                       label_signals)
+from datasette_interface.raw.common.label_data import (
+    delete_invalid_signals,
+    label_signals,
+)
 
 
 def insert_raw_unlabeled_data(
@@ -24,7 +29,7 @@ def insert_raw_unlabeled_data(
         channel_from_xdf_parsing_fn,
         station_from_xdf_v2_parsing_fn,
         slice_series_fn=lambda x: x,
-        swap_channels_fn=None
+        swap_channels_fn=None,
 ):
     info("Inserting unlabeled data.")
     with cd(settings.experiment_root_dir):
@@ -61,7 +66,7 @@ def insert_raw_unlabeled_data(
                     xdf_signal_type,
                     channel_from_xdf_parsing_fn,
                     slice_series_fn,
-                    swap_channels_fn
+                    swap_channels_fn,
                 )
             else:
                 signals = process_directory_v2(
@@ -72,7 +77,7 @@ def insert_raw_unlabeled_data(
                     channel_from_xdf_parsing_fn,
                     station_from_xdf_v2_parsing_fn,
                     slice_series_fn,
-                    swap_channels_fn
+                    swap_channels_fn,
                 )
 
             if len(signals) > 0:
@@ -88,7 +93,7 @@ def get_signals(
         initial_id,
         channel_from_xdf_parsing_fn,
         slice_series_fn,
-        swap_channels_fn
+        swap_channels_fn=None,
 ):
     # We insert a participant ID of -1 since we don't actually know for sure
     # who the participant is - we will need to consult the data validity table
@@ -135,7 +140,7 @@ def process_directory_v1(
         xdf_signal_type,
         channel_from_xdf_parsing_fn,
         slice_series_fn,
-        swap_channels_fn
+        swap_channels_fn,
 ):
     signals = []
     with cd(f"{group_session}"):
@@ -163,7 +168,7 @@ def process_directory_v1(
                     0,
                     channel_from_xdf_parsing_fn,
                     slice_series_fn,
-                    swap_channels_fn
+                    swap_channels_fn,
                 )
             ]
             signals.extend(tmp)
@@ -179,7 +184,7 @@ def process_directory_v2(
         channel_from_xdf_parsing_fn,
         station_from_xdf_v2_parsing_fn,
         slice_series_fn,
-        swap_channels_fn
+        swap_channels_fn,
 ):
     """Process directory assuming unified XDF files."""
     signals = []
@@ -214,7 +219,7 @@ def process_directory_v2(
                         next_id,
                         channel_from_xdf_parsing_fn,
                         slice_series_fn,
-                        swap_channels_fn
+                        swap_channels_fn,
                     )
                 ]
                 signals.extend(tmp)

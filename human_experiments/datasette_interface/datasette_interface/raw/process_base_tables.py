@@ -7,6 +7,8 @@ from logging import info
 
 import pandas as pd
 from sqlalchemy import select
+from sqlalchemy.exc import NoResultFound
+from tqdm import tqdm
 
 from datasette_interface.common.config import LOG_DIR, settings
 from datasette_interface.database.config import get_db
@@ -15,6 +17,9 @@ from datasette_interface.database.entity.base.eeg_device import EEGDevice
 from datasette_interface.database.entity.base.group_session import GroupSession
 from datasette_interface.database.entity.base.modality import Modality
 from datasette_interface.database.entity.base.participant import Participant
+from datasette_interface.database.entity.base.post_game_survey import (
+    PostGameSurvey,
+)
 from datasette_interface.database.entity.base.station import Station
 from datasette_interface.database.entity.base.task import Task
 
@@ -99,7 +104,7 @@ def populate_participant_table():
     )
     # ID of -1 to represent 'unknown participant'
     # ID of -2 to represent the team (for affective task event data)
-    # ID of - 3 to represent an unknown experimenter(for the ping pong task data)
+    # ID of -3 to represent an unknown experimenter (for the ping pong task data)
     participants = [
         Participant(id=p) for p in [-1, -2, -3] if p not in saved_participants
     ]
@@ -124,7 +129,9 @@ def process_data_validity_workbook():
     # TODO Integrate the 'mask_on' statuses.
 
     df = pd.read_csv(
-        settings.data_validity_workbook_path, index_col="experiment_id", dtype=str
+        settings.data_validity_workbook_path,
+        index_col="experiment_id",
+        dtype=str,
     )
 
     db = next(get_db())
@@ -166,7 +173,10 @@ def process_data_validity_workbook():
 
         # TODO: Deal with 'no_face_image' case for eeg data.
         data_validity_entries = []
-        tasks_new = TASKS + ["ping_pong_competitive_0", "ping_pong_competitive_1"]
+        tasks_new = TASKS + [
+            "ping_pong_competitive_0",
+            "ping_pong_competitive_1",
+        ]
         tasks_new = [task for task in tasks_new if task != "ping_pong_competitive"]
         for station in STATIONS:
             for modality in MODALITIES:
@@ -245,7 +255,9 @@ def process_station_to_eeg_amp_mapping_workbook():
     info("Process station to eeg amp mapping workbook.")
 
     df = pd.read_csv(
-        settings.station_to_eeg_workbook_path, index_col="experiment_id", dtype=str
+        settings.station_to_eeg_workbook_path,
+        index_col="experiment_id",
+        dtype=str,
     )
 
     db = next(get_db())
@@ -294,7 +306,287 @@ def process_station_to_eeg_amp_mapping_workbook():
     db.close()
 
 
+def process_demographic_data():
+    db = next(get_db())
+    data_dictionary_df = pd.read_table(
+        settings.self_report_data_dictionary_path, index_col=0
+    )
+
+    demographics_fields = [
+        "age",
+        "sex",
+        "hisp",
+        "race",
+        "income",
+        "edu",
+        "exp",
+        "exp_mc",
+        "handedness",
+        "trackpad_preference",
+        "shl_impairments",
+        "shl_impairment_specify",
+        "shl_impairment_agediagnosis",
+        "shl_impairment_therapy",
+        "first_language",
+        "languages_spoken",
+        "language_age_learned",
+        "countries_live_one_year",
+        "major_schooling_country",
+        "health_concussion",
+        "health_seizure",
+        "health_trauma",
+        "health_other_trauma_specify",
+        "health_medications",
+        "health_vision",
+        "health_vision_specify",
+    ]
+
+    df = pd.read_table(
+        settings.self_report_data_path,
+        usecols=["subject_id"]
+        + [k.replace("impairments", "impairements") for k in demographics_fields],
+    )
+
+    for i, row in df.iterrows():
+        # Check if subject ID can be converted to an integer:
+        try:
+            participant_id = int(row["subject_id"])
+        except ValueError:
+            continue
+
+        # Check if subject ID is in table
+        try:
+            participant = db.scalars(
+                select(Participant).where(Participant.id == participant_id)
+            ).one()
+        except NoResultFound:
+            continue
+
+        for label in row.index:
+            field = data_dictionary_df.loc[label]
+            field_type = field["Field Type"]
+            entry = row.loc[label]
+            if pd.isna(entry):
+                entry = None
+
+            if entry is not None:
+                if field_type == "radio":
+                    choices = field["Choices, Calculations, OR Slider Labels"]
+                    choices = {
+                        int(k): v
+                        for k, v in [x.strip().split(", ") for x in choices.split("|")]
+                    }
+                    row.loc[label] = choices[row.loc[label]]
+
+        # Participant 14 entered their age as 18` instead of 18.
+        if row.loc["age"] == "18`":
+            row.loc["age"] = 18
+
+        for attr in row.index:
+            value = row.loc[attr]
+            if pd.isna(value):
+                value = None
+            setattr(participant, attr, value)
+        db.commit()
+
+    db.close()
+
+
+def process_post_game_survey():
+    info("Processing post game survey data...")
+    data_dictionary_df = pd.read_csv(
+        settings.post_game_survey_data_dictionary_path, index_col=0
+    )
+
+    post_game_survey_fields = [
+        "agent_calm",
+        "agent_anxious",
+        "agent_excited",
+        "agent_sad",
+        "agent_guilty",
+        "agent_angry",
+        "agent_happy",
+        "agent_lonely",
+        "agent_proud",
+        "agent_friendly",
+        "game_calm",
+        "game_anxious",
+        "game_excited",
+        "game_sad",
+        "game_guilty",
+        "game_angry",
+        "game_happy",
+        "game_lonely",
+        "game_proud",
+        "game_friendly",
+        "agent_intel",
+        "agent_care",
+        "agent_honest",
+        "agent_expert",
+        "agent_concern",
+        "agent_trust",
+        "agent_comp",
+        "agent_insens",
+        "agent_honor",
+        "agent_bright",
+        "agent_understand",
+        "agent_phoney",
+        "agent_well",
+        "agent_smooth",
+        "agent_acc",
+        "agent_like",
+        "agent_enjoy",
+        "agent_awk",
+        "agent_place",
+        "agent_play",
+        "agent_perform",
+        "team_calm",
+        "team_anxious",
+        "team_excited",
+        "team_sad",
+        "team_guilty",
+        "team_angry",
+        "team_happy",
+        "team_lonely",
+        "team_proud",
+        "team_friendly",
+        "team_intel",
+        "team_care",
+        "team_honest",
+        "team_expert",
+        "team_concern",
+        "team_trust",
+        "team_comp",
+        "team_insens",
+        "team_honor",
+        "team_bright",
+        "team_understand",
+        "team_phoney",
+        "team_wrong",
+        "team_forget",
+        "team_minimize",
+        "team_insult",
+        "team_irrat",
+        "team_crit",
+        "team_fault",
+        "team_ignore",
+        "team_impt",
+        "team_weak",
+        "team_along",
+        "team_smooth",
+        "team_accept",
+        "team_like",
+        "team_enjoy",
+        "team_awk",
+        "team_place",
+        "team_likeme",
+        "team_genuine",
+        "team_part",
+        "team_listen",
+        "team_ilike",
+        "team_interact",
+        "team_itrust",
+        "team_fit",
+        "team_cohesion",
+        "team_work",
+        "team_knit",
+        "team_like_mem",
+        "team_work_well",
+        "team_decision",
+        "team_express",
+        "team_organize",
+        "team_accomplish",
+        "team_approp",
+        "team_alt",
+        "team_influ",
+        "team_contrib",
+        "agent_emot1",
+        "agent_emot2",
+        "agent_emot3",
+        "agent_emot4",
+        "agent_emot5",
+        "agent_emot6",
+        "agent_emot7",
+        "agent_emot8",
+        "agent_emot9",
+        "agent_emot10",
+        "know_team_members",
+        "know_person_at_cheetah",
+        "know_person_at_lion",
+        "know_person_at_tiger",
+        "know_person_at_leopard",
+    ]
+
+    df = pd.read_csv(
+        settings.post_game_survey_data_path,
+        usecols=["subject_id"]
+        + [
+            k.replace("agent_intel", "agent_intell")
+            .replace("decision", "decisision")
+            .replace("team_guilty", "team_guilt")
+            for k in post_game_survey_fields
+        ]
+        + ["postgame_survey_timestamp"],
+    )
+
+    db = next(get_db())
+    for i, row in tqdm(df.iterrows(), total=len(df)):
+        participant_id = None
+        if row.postgame_survey_timestamp == "[not completed]" or pd.isna(
+            row.postgame_survey_timestamp
+        ):
+            continue
+
+        try:
+            participant_id = int(row["subject_id"])
+        except ValueError:
+            continue
+
+        try:
+            _ = db.scalars(
+                select(Participant).where(Participant.id == participant_id)
+            ).one()
+        except NoResultFound:
+            info(f"Inserting into post game survey data for Participant ID: {participant_id}")
+        else:
+            info(f"Participant ID: {participant_id} already found in post game survey, skipping...")
+            continue
+
+        for label in row.index:
+            if label != "postgame_survey_timestamp":
+                field = data_dictionary_df.loc[label]
+                field_type = field["Field Type"]
+                entry = row.loc[label]
+                if pd.isna(entry):
+                    entry = None
+
+                if entry is not None:
+                    if field_type == "radio":
+                        choices = field["Choices, Calculations, OR Slider Labels"]
+                        choices = {
+                            int(k): v
+                            for k, v in [
+                                x.strip().split(", ") for x in choices.split("|")
+                            ]
+                        }
+                        row.loc[label] = choices[row.loc[label]]
+
+        post_game_survey = PostGameSurvey(participant_id=participant_id)
+        for attr in row.index:
+            if attr not in ["subject_id", "postgame_survey_timestamp"]:
+                value = row.loc[attr]
+                if pd.isna(value):
+                    value = None
+                setattr(post_game_survey, attr, value)
+        db.add(post_game_survey)
+        db.flush()
+        db.commit()
+    db.close()
+
+
 def process_base_tables():
     populate_base_tables()
     process_data_validity_workbook()
     process_station_to_eeg_amp_mapping_workbook()
+    process_demographic_data()
+    process_post_game_survey()

@@ -1,4 +1,3 @@
-import json
 from logging import error
 from typing import Any
 
@@ -30,16 +29,15 @@ class ToMCATDialogAgent(SentenceLabeler):
             annotation.set_labels(index, labels)
 
     def _get_labels(self, sentence: str):
-        response = requests.post(self._api_url, data={"message": sentence})
+        response = requests.post(self._api_url, data=sentence.encode("utf-8"))
 
         labels = []
         if response.status_code == 200:
-            results = json.loads(response.text)
-            for res in results:
+            for res in response.json():
                 labels.extend(res["labels"])
         else:
             error(
                 f"Server Error! Request status code {response.status_code}. Sentence: {sentence}."
             )
 
-        return labels
+        return list(set(labels))

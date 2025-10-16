@@ -1,0 +1,327 @@
+#!/bin/bash
+
+# Application: Data Inventory
+# Decription: Checks and catalogs all data files and directories for an Experiment (/path/exp_yyyy_mm_dd_hh/).
+#             It checks the existents of the sub directory, file count is between min & max, file exist, and file size is between min & max.
+#             Algorithm is driven by "data_inventory.tbl" and outputs to "data_inventory.log" in Experiment Dir (/path/exp_yyyy_mm_dd_hh/data_inventory.log).
+# By: Rick Champlin
+# Last Updated: 4/26/2023
+# Start: Run Bash Script "data_inventory.sh".
+#        "data_inventory.tbl" defines directories and files to check.
+#        "data_inventory.vars" color variables definition used by "data_inventory.sh".
+
+source "data_inventory.vars"
+
+# Set for if this app is running at Rick's Office or LangLab:
+#run_at="home";
+run_at="lab";
+
+# Dev Settings:
+# show_brow_comm=false;
+# show_sync_vars=false;
+# show_sync_prep=false;
+# show_sync_work=false;
+# show_sync_results=false;
+# show_jump_work=false;
+
+
+if [[ "${run_at}" == "home" ]]; then
+  # FOR HOME:
+  wsl_dir="/mnt/c"; # This is to add to begining of bash paths for my wsl mount at home.
+  app_dir="${wsl_dir}/Users/rcham/Documents/ToMCAT/Lab/data_inventory/"
+  exp_dir="${wsl_dir}/Users/rcham/Documents/ToMCAT/Lab/data/cat/LangLab/dry_runs/group/exp_2023_04_03_13/";
+  dry_dir_pre="/Users/rcham/Documents/ToMCAT/Lab/data/cat/LangLab/dry_runs/group/exp_2023_";
+  plt_dir_pre="/Users/rcham/Documents/ToMCAT/Lab/data/cat/LangLab/experiments/study_3_pilot/group/exp_2023_";
+  def_file="data_inventory.tbl"; # Definition file with table of what directories and files to check for a normal ToMCAT experiment.
+fi
+
+if [[ "${run_at}" == "lab" ]]; then
+  # FOR LAB:
+  wsl_dir=""; # This is to add to begining of bash paths, "" if running on Linux Server.
+  app_dir="/rchamplin/data_inventory/"
+  exp_dir="/data/cat/LangLab/experiments/study_3_pilot/group/exp_2023_04_28_10/";
+  dry_dir_pre="/data/cat/LangLab/dry_runs/group/exp_2023_";
+  plt_dir_pre="/data/cat/LangLab/experiments/study_3_pilot/group/exp_2023_";
+  def_file="data_inventory.tbl"; # Definition file with table of what directories and files to check for a normal ToMCAT experiment.
+fi
+
+di_i=0;
+no_menu="";
+
+
+
+show_menu(){
+  if [[ "${no_no_menu}" == "y" ]]; then exit; fi
+
+    clear;
+
+    printf "\n${menu}******************************************${Red}Experiment Data Inventory${menu}******************************************${NC}\n";
+    printf "${menu}**${Green} Exp Dir: ${BPurple}${exp_dir}${NC}\n";
+    printf "${menu}**\n";
+    printf "${menu}**${number} e) ${BBlue}Set Experiment Directory.${NC}\n";
+    printf "${menu}**${number} c) ${BBlue}Check Data Inventory and Only Print Results on Screen.${NC}\n";
+    printf "${menu}**${number} l) ${BBlue}Check Data Inventory and Create Log File in Experiment Directory.${NC}\n";
+    printf "${menu}**${number} x) ${BBlue}Exit the program.${NC}\n";
+    printf "${menu}*************************************************************************************************************${NC}\n";
+
+    printf "Please enter a menu option and enter ${Red}(x to exit program): ${NC}";
+    read opt;
+}
+
+
+get_exp_dir(){
+  clear;
+  printf "\n";
+  ans="";
+  while [[ "$ans" != "d" ]] && [[ "$ans" != "p" ]] && [[ "$ans" != "x" ]];
+  do
+    printf "${Red}Is this for a Dry-Run or Pilot?\n${Yellow}(Enter '${BItalic}${BYellow}d${NC}${Yellow}' for '${BYellow}Dry-Run${Yellow}', '${BItalic}${BYellow}p${NC}${Yellow}' for '${BYellow}Pilot${Yellow}', '${BItalic}${BRed}x${NC}${Yellow}' ${BRed}return to menu${Yellow}):${NC} ";
+    read ans
+  done
+  if [[ "$ans" == "x" ]]; then return 1; fi
+  if [[ "$ans" == "d" ]]; then new_dir=${dry_dir_pre}; else new_dir=${plt_dir_pre}; fi
+
+  printf "\n${Red}Enter Experiment Directory: ${Yellow}(Must end with a slash '${NC}/${Yellow}')${NC}\n";
+  read -e -i "${new_dir}" new_dir;
+  if [[ "${new_dir: -1}" != "/" ]]; then new_dir="${new_dir}/"; fi
+  tst_dir="${new_dir: -14: 10}";
+  filter_date=${tst_dir//[_]/-};
+
+  if [[ "${new_dir: -19: 5}" != "/exp_" ]]; then
+    printf "\n${Yellow}The Experiment Directory that you entered does not start with '/exp_':${NC} (${BYellow}${Italic}/exp_${BGreen}yyyy_mm_dd_hh/${NC})\n";
+    yes_no_question "${Red}Do you want to re-enter the Experiment Directory?${NC}";
+    if [[ $? -eq 0 ]]; then
+      get_exp_dir;
+    fi
+  fi
+  if ! [[ "$filter_date" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] || ! date -d $filter_date >/dev/null 2>&1; then
+    printf "\n${Yellow}The Date part of the Experiment Directory that you entered is Invalid:${NC} (${BGreen}/exp_${BYellow}${Italic}yyyy_mm_dd${NC}${BGreen}_hh/${NC})\n";
+    yes_no_question "${Red}Do you want to re-enter the Experiment Directory?${NC}";
+    if [[ $? -eq 0 ]]; then
+      get_exp_dir;
+    fi
+  fi
+  if ! [[ "${new_dir: -3: 2}" =~ ^[0-9]{2}$ ]] || [[ "${new_dir: -3: 2}" -gt 24 ]] || [[ "${new_dir: -3: 2}" -lt 1 ]]; then
+    printf "\n${Yellow}The hour part of the Experiment Directory that you entered is Invalid:${NC} (${BGreen}/exp_yyyy_mm_dd_${BYellow}${Italic}hh${BGreen}/${NC})\n";
+    yes_no_question "${Red}Do you want to re-enter the Experiment Directory?${NC}";
+    if [[ $? -eq 0 ]]; then
+      get_exp_dir;
+    fi
+  fi
+
+  yes_no_question "\n${Red}Do you want set Experiment Directory to what you just entered?${NC}\n(${BYellow}${Italic}${wsl_dir}${new_dir}${NC})";
+  if [[ $? -eq 0 ]]; then
+    exp_dir="${wsl_dir}${new_dir}";
+  fi
+}
+
+
+load_def_file() {
+  # data_inventory.tbl
+  di_i=0
+  declare -a di_results
+  readarray di_lines < ${def_file}
+
+#  printf "\n${#di_lines[@]}\n";
+#  printf "0: ${di_lines[0]}";
+#  printf "1: ${di_lines[1]}";
+#  printf "2: ${di_lines[2]}";
+#  printf "3: ${di_lines[3]}";
+#  printf "4: ${di_lines[4]}";
+#  printf "5: ${di_lines[5]}";
+#  printf "6: ${di_lines[6]}";
+#  printf "7: ${di_lines[7]}";
+#  printf "8: ${di_lines[8]}";
+#  printf "9: ${di_lines[9]}";
+
+#  sleep 10;
+
+  # exit;
+}
+
+
+print_header() {
+  clear;
+  printf "\n${di_results[0]}${di_results[1]}${di_results[2]}${di_results[3]}";
+}
+
+
+print_results() {
+  di_x=0;
+  for (( di_x=1; di_x<=1000000; di_x++ ))
+  do
+    check_exp_data;
+    print_header;
+    for (( di_r=4; di_r<=${#di_results[@]}; di_r++ ))
+    do
+      di_lstr="${di_results[${di_r}]}";
+      if [[ "${di_lstr: -10: 1}" == "-" ]]; then
+        sleep 8;
+        print_header;
+        continue;
+      fi 
+      printf "${di_lstr}";
+    done
+  done
+}
+
+
+load_vars() {
+  #Status            |Description                                 |Directory                     |File(s)                   |Min Size |Max Size |Min Count |Max Count |File Size |File Count |
+  #------------------|--------------------------------------------|------------------------------|--------------------------|---------|---------|----------|----------|----------|-----------|
+  #1     <18>        19                 <44>                      64            <30>             95          <26>           122  <9>  132  <9>  142  <10>  153  <10>  164  <10>  175  <11>   187 
+
+  di_stat="${di_line: 0: 18}";
+  di_desc="${di_line: 19: 44}";
+  di_dire="${di_line: 64: 30}";
+  di_fils="${di_line: 95: 26}";
+  di_mins="${di_line: 122: 9}";
+  di_maxs="${di_line: 132: 9}";
+  di_minc="${di_line: 142: 10}";
+  di_maxc="${di_line: 153: 10}";
+  di_rfls="${di_line: 164: 10}";
+  di_rflc="${di_line: 175: 11}";
+
+  di_mins_k=${di_mins/"K"/"000"};
+  di_mins_m=${di_mins_k/"M"/"000000"};
+  di_mins_i=${di_mins_m/"G"/"000000000"};
+  di_maxs_k=${di_maxs/"K"/"000"};
+  di_maxs_m=${di_maxs_k/"M"/"000000"};
+  di_maxs_i=${di_maxs_m/"G"/"000000000"};
+
+  di_minc_k=${di_minc/"K"/"000"};
+  di_minc_m=${di_minc_k/"M"/"000000"};
+  di_minc_i=${di_minc_m/"G"/"000000000"};
+  di_maxc_k=${di_maxc/"K"/"000"};
+  di_maxc_m=${di_maxc_k/"M"/"000000"};
+  di_maxc_i=${di_maxc_m/"G"/"000000000"};
+
+  di_rfls_k=${di_rfls/"K"/"000"};
+  di_rfls_m=${di_rfls_k/"M"/"000000"};
+  di_rfls_i=${di_rfls_m/"G"/"000000000"};
+  di_rflc_k=${di_rflc/"K"/"000"};
+  di_rflc_m=${di_rflc_k/"M"/"000000"};
+  di_rflc_i=${di_rflc_m/"G"/"000000000"};
+  
+  di_path="${exp_dir}${di_dire}";
+  di_path="${di_path//" "/""}/";
+  
+  di_pfil="${di_path}${di_fils}";
+  di_pfil="${di_pfil//" "/""}";
+  
+  di_fflt="${di_fils}";
+  di_fflt="${di_fflt//" "/""}";
+  di_fflt="${di_fflt//"*"/""}";
+
+
+#  printf "\n${BBlue}di_stat: ${BGreen}${di_stat}    ${BBlue}di_desc: ${BGreen}${di_desc}${NC}\n";
+#  printf "${BBlue}di_dire: ${BGreen}${di_dire}    ${BBlue}di_fils: ${BGreen}${di_fils}${NC}\n";
+#  printf "${BBlue}di_mins: ${BGreen}${di_mins}    ${BBlue}di_maxs: ${BGreen}${di_maxs}${NC}\n";
+#  printf "${BBlue}di_minc: ${BGreen}${di_minc}    ${BBlue}di_maxc: ${BGreen}${di_maxc}${NC}\n";
+#  printf "${BBlue}di_rfls: ${BGreen}${di_rfls}    ${BBlue}di_rflc: ${BGreen}${di_rflc}${NC}\n\n";
+
+#  printf "${BBlue}di_mins_i: ${BGreen}${di_mins_i}    ${BBlue}di_maxs_i: ${BGreen}${di_maxs_i}${NC}\n";
+#  printf "${BBlue}di_minc_i: ${BGreen}${di_minc_i}    ${BBlue}di_maxc_i: ${BGreen}${di_maxc_i}${NC}\n";
+#  printf "${BBlue}di_rfls_i: ${BGreen}${di_rfls_i}    ${BBlue}di_rflc_i: ${BGreen}${di_rflc_i}${NC}\n\n";
+
+#  sleep 20;
+}
+
+
+build_result_line() {
+  # build_result_line $1="status text" $2="status color" $3="desc color" $4="dir color"
+  #                   $5="file color" $6="min size color" $7="max size color" $8="min count color"
+  #                   $9="max count color" $10="file size color" $11="file count color"
+  d="${Blue}|${BYellow}"; 
+  di_rlin="${2}${1}${d}${3}${di_desc}${d}${4}${di_dire}${d}${5}${di_fils}${d}${6}${di_mins}${d}${7}${di_maxs}${d}${8}${di_minc}${d}${9}${di_maxc}${d}${10}${di_rfls}${d}${11}${di_rflc}${d}${NC}\n";
+  di_results[${#di_results[@]}]="${di_rlin}";
+}
+
+
+check_exp_data() {
+  load_def_file;
+  di_results[${#di_results[@]}]="${BBlue}Experiment Directory: ${BPurple}${exp_dir}${NC}\n";
+  di_results[${#di_results[@]}]="${Blue}${di_lines[1]}${NC}";
+  di_results[${#di_results[@]}]="${Blue}${di_lines[2]}${NC}";
+  di_results[${#di_results[@]}]="${Blue}${di_lines[3]}${NC}";
+
+  for (( di_i=4; di_i<="${#di_lines[@]}"; di_i++ ))
+  do
+    di_line="${di_lines[di_i]}";
+    # di_line="${di_lines[5]}";
+
+
+    # printf "19: >${di_line: 18: 1}<\n";
+    # exit;
+
+    if [[ "${di_line: 18: 1}" == "|" ]]; then
+      load_vars;
+      
+      #printf "${di_path}\n";
+      #sleep 2;
+      if [ -d "${di_path}" ]; then
+        if [[ "${di_fils: 0: 1}" == "*" ]]; then
+          di_fcnt=$(ls "${di_path}" | grep "${di_fflt}" | wc -l)
+          di_rflc="${di_fcnt}           ";
+          di_rflc="${di_rflc: 0: 11}";
+          if [[ "${di_fcnt}" == "0" ]]; then build_result_line "Dir Has No Files  " "${Black}${On_Red}" "" "" "" "" "" "${BRed}" "" "" "${BRed}"; continue; fi;
+          if [[ ${di_fcnt} -lt ${di_minc_i} ]]; then build_result_line "File Count < Min  " "${Black}${On_Yellow}" "" "" "" "" "" "${BRed}" "" "" "${BRed}"; continue; fi;
+          if [[ ${di_fcnt} -gt ${di_maxc_i} ]]; then build_result_line "File Count > Max  " "${Black}${On_Yellow}" "" "" "" "" "" "" "${BRed}" "" "${BRed}"; continue; fi;
+          build_result_line "Dir Files Are OK  " "${Black}${On_Green}" "${Green}" "${BGreen}" "${BGreen}" "${BGreen}" "${BGreen}" "${BGreen}" "${BGreen}" "${BGreen}" "${BGreen}"; continue; 
+        else
+          if test -f "${di_pfil}" ; then
+            build_result_line "File Is OK        " "${Black}${On_Green}" "${Green}" "${BGreen}" "${BGreen}" "${BGreen}" "${BGreen}" "${BGreen}" "${BGreen}" "${BGreen}" "${BGreen}"; continue;
+          else
+            build_result_line "File Not Exist    " "${Black}${On_Red}" "" "" "${BRed}" "" "" "" "" "" ""; continue;
+          fi
+        fi
+      else
+        build_result_line "Dir Not Exist     " "${Black}${On_Red}" "" "${BRed}" "" "" "" "" "" "" ""; continue;
+      fi
+      
+
+    else
+      di_results[${#di_results[@]}]="${BBlue}${di_line}${NC}";
+    fi
+  done
+
+  #print_results;
+
+  # printf "\n${#di_results[@]}\n";
+  # printf "R0: ${di_results[0]}";
+  # printf "R1: ${di_results[1]}";
+  # printf "R2: ${di_results[2]}";
+  # printf "R3: ${di_results[3]}";
+}
+
+
+
+
+show_menu;
+
+while [ "$opt" != '' ]
+  do
+  case $opt in
+    e) get_exp_dir;
+       show_menu;
+    ;;
+    c) print_results;
+       exit;
+      #  show_menu;
+    ;;
+    l) check_exp_data;
+       show_menu;
+    ;;
+    x)exit;
+    ;;
+    \n)exit;
+    ;;
+    *) printf "\n${Red}*** Not a valid option ***${NC}\n";
+      sleep 3;
+      show_menu;
+    ;;
+  esac
+done
+
+
+exit;

@@ -5,6 +5,7 @@ services:
 
   datasette:
     image: datasette-with-plugins
+    restart: always
     ports:
         - "8001:8001"
     volumes:

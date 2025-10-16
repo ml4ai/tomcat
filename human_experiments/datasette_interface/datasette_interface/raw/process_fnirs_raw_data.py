@@ -7,7 +7,9 @@ from logging import info
 from datasette_interface.common.config import LOG_DIR
 from datasette_interface.database.entity.signal.fnirs import FNIRSRaw
 from datasette_interface.raw.common.process_raw_signals import (
-    insert_raw_unlabeled_data, label_data)
+    insert_raw_unlabeled_data,
+    label_data,
+)
 
 logging.basicConfig(
     level=logging.INFO,
@@ -26,7 +28,8 @@ def get_channel_names_from_xdf_stream(stream):
     ]
     raw_channels = [
         channel["custom_name"][0].lower().replace("-", "_")
-        + channel["type"][0][-4:].lower() + str(int(float(channel["wavelength"][0])))
+        + channel["type"][0][-4:].lower()
+        + str(int(float(channel["wavelength"][0])))
         for channel in stream["info"]["desc"][0]["channels"][0]["channel"][1:41]
     ]
     return raw_channels + hb_channels

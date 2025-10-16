@@ -4,28 +4,32 @@ import argparse
 import os
 
 from datasette_interface.database.config import SQLALCHEMY_DATABASE_URI
-from datasette_interface.raw.process_affective_task_data import \
-    process_affective_task_data
+from datasette_interface.raw.process_affective_task_data import (
+    process_affective_task_data,
+)
 from datasette_interface.raw.process_base_tables import process_base_tables
 from datasette_interface.raw.process_eeg_raw_data import process_eeg_raw_data
-from datasette_interface.raw.process_finger_tapping_task_data import \
-    process_finger_tapping_task_data
-from datasette_interface.raw.process_fnirs_raw_data import \
-    process_fnirs_raw_data
+from datasette_interface.raw.process_finger_tapping_task_data import (
+    process_finger_tapping_task_data,
+)
+from datasette_interface.raw.process_fnirs_raw_data import process_fnirs_raw_data
 from datasette_interface.raw.process_gaze_raw_data import process_gaze_raw_data
-from datasette_interface.raw.process_minecraft_data import \
-    process_minecraft_data
-from datasette_interface.raw.process_ping_pong_competitive_data import \
-    process_ping_pong_competitive_task_data
-from datasette_interface.raw.process_ping_pong_cooperative_data import \
-    process_ping_pong_cooperative_task_data
-from datasette_interface.raw.process_rest_state_task_data import \
-    process_rest_state_task_data
-from datasette_interface.raw.process_screen_capture_data import \
-    process_screen_capture_data
+from datasette_interface.raw.process_minecraft_data import process_minecraft_data
+from datasette_interface.raw.process_ping_pong_competitive_data import (
+    process_ping_pong_competitive_task_data,
+)
+from datasette_interface.raw.process_ping_pong_cooperative_data import (
+    process_ping_pong_cooperative_task_data,
+)
+from datasette_interface.raw.process_rest_state_task_data import (
+    process_rest_state_task_data,
+)
+from datasette_interface.raw.process_screen_capture_data import (
+    process_screen_capture_data,
+)
 from datasette_interface.raw.process_vocalics import process_vocalics
 
-TABLES = {
+DATA_ENTITIES = {
     "base",
     "rest_state",
     "affective",
@@ -38,6 +42,21 @@ TABLES = {
     "gaze",
     "screen_capture",
     "vocalics",
+}
+
+DATA_ENTITY_TO_TABLES = {
+    "base": "group_session, modality, participant, station, task, data_validity",
+    "rest_state": "rest_state_task",
+    "affective": "affective_task_event",
+    "finger_tapping": "finger_tapping_task_observation",
+    "ping_pong_competitive": "ping_pong_competitive_task_observation",
+    "ping_pong_cooperative": "ping_pong_cooperative_task_observation",
+    "minecraft": "minecraft_mission, minecraft_testbed_message",
+    "fnirs": "fnirs_raw",
+    "eeg": "eeg_raw",
+    "gaze": "gaze_raw",
+    "screen_capture": "screen_capture",
+    "vocalics": "audio_vocalics",
 }
 
 
@@ -81,42 +100,46 @@ if __name__ == "__main__":
         "--include",
         type=str,
         default=os.getenv("TBS", "all"),
-        help=f"Comma-separated list of modalities to process among {TABLES}",
+        help=f"Comma-separated list of entities to process among {DATA_ENTITIES}",
     )
     parser.add_argument(
         "--exclude",
         type=str,
-        help="Comma-separated list of modalities to exclude among the ones in "
+        help="Comma-separated list of entities to exclude among the ones in "
         "--include",
     )
 
     args = parser.parse_args()
 
     if args.include.strip() == "all":
-        tables = TABLES
+        data_entities = DATA_ENTITIES
     else:
-        tables = []
-        for modality in args.include.split(","):
-            modality = modality.strip()
-            if modality not in TABLES:
-                raise ValueError(f"Modality ({modality}) is invalid.")
+        data_entities = set()
+        for data_entity in args.include.split(","):
+            data_entity = data_entity.strip()
+            if data_entity not in DATA_ENTITIES:
+                raise ValueError(f"Data entity ({data_entity}) is invalid.")
 
-            tables.append(modality)
-        tables = set(tables)
+            data_entities.add(data_entity)
 
     if args.exclude:
-        for modality in args.exclude.split(","):
-            modality = modality.strip()
-            if len(modality) > 0 and modality not in tables:
-                raise ValueError(f"Modality ({modality}) not in --include ({tables}).")
+        for data_entity in args.exclude.split(","):
+            data_entity = data_entity.strip()
+            if len(data_entity) > 0 and data_entity not in data_entities:
+                raise ValueError(
+                    f"Data entity ({data_entity}) not in --include ({data_entities})."
+                )
 
-            tables.remove(modality)
+            data_entities.remove(data_entity)
 
+    all_tables = ", ".join(
+        [DATA_ENTITY_TO_TABLES[data_entity] for data_entity in data_entities]
+    )
     answer = input(
-        f"This operation may add data to the tables ({tables}) in the database "
+        f"This operation may add data to the tables ({all_tables}) in the database "
         f"({SQLALCHEMY_DATABASE_URI}). Do you want to proceed? (y/n): "
     )
     if answer.lower() in ["y", "yes"]:
-        populate_tables(tables)
+        populate_tables(data_entities)
     else:
         print("Operation aborted.")
