@@ -4,45 +4,40 @@ pub struct Migration;
 
 impl MigrationName for Migration {
     fn name(&self) -> &str {
-        "m20251107_000001_create_bakery_table" // Make sure this matches with the file name
+        "m20251107_000001_create_team_table"
     }
 }
 
 #[async_trait::async_trait]
 impl MigrationTrait for Migration {
-    // Define how to apply this migration: Create the Bakery table.
+    // Define how to apply this migration: Create the Team table.
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager
             .create_table(
                 Table::create()
-                    .table(Bakery::Table)
+                    .table(Team::Table)
                     .col(
-                        ColumnDef::new(Bakery::Id)
-                            .integer()
+                        ColumnDef::new(Team::Id)
+                            .string()
                             .not_null()
-                            .auto_increment()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(Bakery::Name).string().not_null())
-                    .col(ColumnDef::new(Bakery::ProfitMargin).double().not_null())
                     .to_owned(),
             )
             .await
     }
 
-    // Define how to rollback this migration: Drop the Bakery table.
+    // Define how to rollback this migration: Drop the Team table.
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager
-            .drop_table(Table::drop().table(Bakery::Table).to_owned())
+            .drop_table(Table::drop().table(Team::Table).to_owned())
             .await
     }
 }
 
 #[derive(Iden)]
-pub enum Bakery {
+pub enum Team {
     Table,
     Id,
-    Name,
-    ProfitMargin,
 }
 
