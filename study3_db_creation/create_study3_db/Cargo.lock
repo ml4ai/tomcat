@@ -585,6 +585,7 @@ name = "create_study3_db"
 version = "0.1.0"
 dependencies = [
  "futures",
+ "glob",
  "sea-orm",
  "sea-orm-migration",
 ]
