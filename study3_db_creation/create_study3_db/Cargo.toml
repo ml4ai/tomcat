@@ -1,0 +1,10 @@
+[package]
+name = "create_study3_db"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+futures = "0.3.31"
+sea-orm = { version = "1.1.17", features = ["sqlx-postgres", "runtime-async-std-native-tls"] }
+sea-orm-migration = {version = "1.1.17", features = ["sqlx-postgres", "runtime-async-std-native-tls"] }
+
