@@ -5,16 +5,24 @@
 #             Two main programs run, Bash Sript "visualizer.sh" (Image Files Server)
 #             and "visualizer.html" (Browser Images Viewer Page. Must run in Chrome).
 # By: Rick Champlin
-# Last Updated: 4/12/2023
+# Last Updated: 12/02/2025 (Added command-line options.)
 # Start: Run Bash Script "visualizer.sh".
 #        From its menu will be an option to launch "Google-Chrome" browser
 #        with "visualizer.html" loaded.
 
+echo -ne '\033]0;Visualizer Menu\007'
+
+my_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 source "visualizer.vars"
 
+current_yyyy=$(date +%Y)
+current_mm=$(date +%m)
+current_dd=$(date +%d)
+current_hh=$(date +%H)
+
 # Set for if this app is running at Rick's Office or LangLab:
-# run_at="home";
 run_at="lab";
+# run_at="home";
 
 # Dev Settings:
 show_brow_comm=false;
@@ -28,11 +36,11 @@ show_jump_work=false;
 if [[ "${run_at}" == "home" ]]; then
   # FOR HOME:
   wsl_dir="/mnt/c"; # This is to add to begining of bash paths for my wsl mount at home.
-  app_dir="${wsl_dir}/Users/rcham/Documents/ToMCAT/Lab/Visualizer/"
+  app_dir="${my_dir}/"
   exp_dir="${wsl_dir}/Users/rcham/Documents/ToMCAT/Lab/data/cat/LangLab/dry_runs/group/exp_2023_04_03_13/";
   browser_exp_dir="/Users/rcham/Documents/ToMCAT/Lab/data/cat/LangLab/dry_runs/group/exp_2023_04_03_13/";
-  dry_dir_pre="/Users/rcham/Documents/ToMCAT/Lab/data/cat/LangLab/dry_runs/group/exp_2023_";
-  plt_dir_pre="/Users/rcham/Documents/ToMCAT/Lab/data/cat/LangLab/experiments/study_3_pilot/group/exp_2023_";
+  dry_dir_pre="/Users/rcham/Documents/ToMCAT/Lab/data/cat/LangLab/dry_runs/group/exp_${current_yyyy}_";
+  plt_dir_pre="/Users/rcham/Documents/ToMCAT/Lab/data/cat/LangLab/experiments/study_3_pilot/group/exp_${current_yyyy}_";
   lion_dir="lion/face_images/block_1/";
   tiger_dir="tiger/face_images/block_1/";
   leopard_dir="leopard/face_images/block_1/";
@@ -43,19 +51,18 @@ if [[ "${run_at}" == "home" ]]; then
   browser_command_dir="${wsl_dir}/Users/rcham/Downloads/";
   browser_command_fil="vis_command.txt";
   browser_command_del="vis_command*.txt";
-  # "C:\Program Files\Google\Chrome\Application\chrome.exe"
-  browser_launch="/mnt/c/'Program Files'/Google/Chrome/Application/chrome.exe file:///C:/Users/rcham/Documents/ToMCAT/Lab/Visualizer/visualizer.html";
+  browser_launch="/mnt/c/Program\ Files/Google/Chrome/Application/chrome.exe file:///C:/Users/rcham/Documents/Git/tomcat/human_experiments/lab_software/visualizer/visualizer.html";
   sync_strip_off_seq_num=false;
 fi
 
 if [[ "${run_at}" == "lab" ]]; then
   # FOR LAB:
   wsl_dir=""; # This is to add to begining of bash paths, "" if running on Linux Server.
-  app_dir="/rchamplin/visualizer/"
-  exp_dir="/data/cat/LangLab/dry_runs/group/exp_2024_04_22_11/";
+  app_dir="/home/cat/tomcat/human_experiments/lab_software/visualizer/"
+  exp_dir="/data/cat/LangLab/dry_runs/group/exp_${current_yyyy}_${current_mm}_${current_dd}_${current_hh}/";
   browser_exp_dir="${exp_dir}";
-  dry_dir_pre="/data/cat/LangLab/dry_runs/group/exp_2024_";
-  plt_dir_pre="/data/cat/LangLab/experiments/study_3_pilot/group/exp_2024_";
+  dry_dir_pre="/data/cat/LangLab/dry_runs/group/exp_${current_yyyy}_";
+  plt_dir_pre="/data/cat/LangLab/experiments/study_3_pilot/group/exp_${current_yyyy}_";
   lion_dir="lion/face_images/block_1/";
   tiger_dir="tiger/face_images/block_1/";
   leopard_dir="leopard/face_images/block_1/";
@@ -66,7 +73,7 @@ if [[ "${run_at}" == "lab" ]]; then
   browser_command_dir="$HOME/Downloads/";
   browser_command_fil="vis_command.txt"
   browser_command_del="vis_command*.txt";
-  browser_launch="google-chrome file:///home/cat/rchamplin/visualizer/visualizer.html";
+  browser_launch="google-chrome file://${app_dir}visualizer.html";
   sync_strip_off_seq_num=true;
 fi
 
@@ -190,8 +197,7 @@ switch_blocks(){
 
 
 launch_browser(){
-  # eval "${browser_launch}";
-  xdg-open "${browser_launch}";
+  eval "${browser_launch}";
 }
 
 
@@ -772,7 +778,67 @@ serve_files() {
 }
 
 
+print_help() {
+  printf "${BYellow}Command-Line Help:${NC}\n";
+  printf "  $0${NC} [${number}-h ${BBlue}Print this Help Message and Exit${NC}]\n";
+  printf "                  [${number}-e ${BBlue}Set Experiment Directory:${NC}] \"${BCyan}<Experiment Directory>${NC}\" ${Purple}(include slash at begining & end of path)${NC}\n";
+  printf "                  [${number}-1 ${BBlue}Set to Block 1.${NC}]\n";
+  printf "                  [${number}-2 ${BBlue}Set to Block 2.${NC}]\n";
+  printf "                  [${number}-d ${BBlue}Set Image Files Served to Browser Delay:${NC}] ${BCyan}<Seconds>${NC} ${Purple}(0.1 - 99.9, Default 0.4)${NC}\n";
+  printf "                  [${number}-b ${BBlue}Launch Browser Window.${NC}]\n";
+  printf "                  [${number}-s ${BBlue}START - Serving Image File Names and Data to Browser.${NC}]\n\n";
+}
 
+
+
+
+
+
+while getopts "he:12d:bs" opt; do
+  case $opt in
+    h)
+      print_help;
+      exit;
+      ;;
+    e)
+      printf "Set Experiment Directory: $OPTARG\n";
+      exp_dir="$OPTARG";
+      browser_exp_dir="${exp_dir}";
+      sleep 2;
+      ;;
+    1)
+      printf "Set to Block 1\n";
+      block_new="1";
+      switch_blocks;
+      sleep 2;
+      ;;
+    2)
+      printf "Set to Block 2\n";
+      block_new="2";
+      switch_blocks;
+      sleep 2;
+      ;;
+    d)
+      printf "Set Image Files being Served to Browser Delay: $OPTARG seconds\n";
+      serve_delay=$OPTARG;
+      sleep 2;
+      ;;
+    b)
+      printf "Launch Chrome Browser:\n${browser_launch}\n";
+      launch_browser;
+      sleep 2;
+      ;;
+    s)
+      printf "START - Serving Image File Names and Data to Browser:\n";
+      sleep 3;
+      serve_files;
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      exit 1
+      ;;
+  esac
+done
 
 show_menu;
 
