@@ -472,13 +472,13 @@ build_results_array() {
 
 print_help() {
   printf "${BYellow}Command-Line Help:${NC}\n";
-  printf "  $0${NC} [${number}-h ${BBlue}Print this Help Message and Exit${NC}]\n";
+  printf "  $0${NC} [${number}-h ${BBlue}Print this Help Message and Exit${NC}] ${Purple}(No Args)${NC}\n";
   printf "                      [${number}-e ${BBlue}Set Experiment Directory:${NC}] \"${BCyan}<Experiment Directory>${NC}\" ${Purple}(include slash at begining & end of path)${NC}\n";
-  printf "                      [${number}-n ${BBlue}Set Sreen Width: NARROW${NC}]\n";
-  printf "                      [${number}-w ${BBlue}Set Sreen Width: WIDE (Default)${NC}]\n";
+  printf "                      [${number}-n ${BBlue}Set Sreen Results Width to ${BCyan}NARROW${NC}] ${Purple}(No Args)${NC}\n";
+  printf "                      [${number}-w ${BBlue}Set Sreen Results Width to ${BCyan}WIDE ${BBlue}(Default)${NC}] ${Purple}(No Args)${NC}\n";
   printf "                      [${number}-d ${BBlue}Set Screen Block Delay in Seconds:${NC}] ${BCyan}<Seconds>${NC} ${Purple}(1 - 100)${NC}\n";
-  printf "                      [${number}-c ${BBlue}START - Checking Data Inventory and Only Print Results on Screen${NC}]\n";
-  printf "                      [${number}-l ${BBlue}START - Checking Data Inventory and Create Log File in Experiment Directory${NC}]\n\n";
+  printf "                      [${number}-c ${BBlue}START - Checking Data Inventory and Only Print Results on Screen${NC}] ${Purple}(No Args)${NC}\n";
+  printf "                      [${number}-l ${BBlue}START - Checking Data Inventory and Create Log File in Experiment Directory${NC}] ${Purple}(No Args)${NC}\n\n";
 }
 
 

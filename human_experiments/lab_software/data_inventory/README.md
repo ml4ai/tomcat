@@ -1,7 +1,7 @@
 Experiment Data Inventory Program
 ======================
 Developed By: **Rick Champlin**<br>
-Last Modified: **05/10/2023**<br>
+Last Modified: **10/23/2025**<br>
 Start Program: ***./data_inventory.sh***
 <br><br>
 ## Description: 
@@ -24,8 +24,8 @@ The definition file drives the data inventory checking process. It is a plain te
 + The first 4 lines (Header Lines) should not be altered.
 + The first line (Experiment Directory) does not need to be edited and will be overwritten in the results files by the program with the specified Experiment Directory.
 + The "File Block Title Line" should have a colon ":" at the end of the Block Title and should only be missing the end of column bar for the first column ("Status Column").
-+ At the end of a "File Block" there should be a "End of File Block Line". It just have a dash "-" character and nothing else in the line.
-+ The last line of the file should be exactly like the "End of File Block Line" with just a dash "-" character and nothing else in the line.
++ At the end of a "File Block" there should be a "End of File Block Line". It just have a two periods ".." character and nothing else in the line.
++ The last line of the file should be exactly like the "End of File Block Line" with just a two periods ".." character and nothing else in the line.
 
   File(s) Checking and Analysis Specifications Lines:
 + 1st column "Status" - you do not need to enter anything into this column and can be left with "(Unchecked)" in it. The program writes inventory check and analysis into this column when it creates the results files.
@@ -43,6 +43,18 @@ The definition file drives the data inventory checking process. It is a plain te
 The "Output Results Files" are created in the root of the Experiment Directory when the "l" option of the "data_inventory.sh" menu is selected. If the Results Files already exist in the Experiment Director, the program will ask if you want to overwrite them.
 + *data_inventory.log* - is a plain text file that can easily be viewed with any text editor (vim, nano, Linux Text Editor, Visual Studio Code, Notepad, cat ...). The file will be formated for constant column widths and will use bars "|" to keep the columns aligned. The file can be opened as a spreadsheet by specifying to the spreadsheet program to use bar "|" as the delimiter and that the file's first 4 rows are a header.![Log File Example](Log_File_Example.jpg)
 + *data_inventory.run* - is a stand alone "bash script". It can be run on the Linux terminal or SSH terminal by running "*./data_inventory.run*". It print on the terminal screen the same Data Inventory Results that are in the *data_inventory.log* file, but with color, headers, and File Blocks formating.![Run File Example](Run_File_Example.jpg) 
+
+## Command-line options for running ./data_inventory.sh:
+```
+Command-Line options:
+  ./data_inventory.sh [-h Print this Help Message and Exit] (No Args)
+                      [-e Set Experiment Directory:] "<Experiment Directory>" (include slash at begining & end of path)
+                      [-n Set Sreen Results Width to NARROW] (No Args)
+                      [-w Set Sreen Results Width to WIDE (Default)] (No Args)
+                      [-d Set Screen Block Delay in Seconds:] <Seconds> (1 - 100)
+                      [-c START - Checking Data Inventory and Only Print Results on Screen] (No Args)
+                      [-l START - Checking Data Inventory and Create Log File in Experiment Directory] (No Args)
+```
 
 ## The Data Inventory Program Menu:
 The Data Inventory Program Menu is opened by running "*./data_inventory.sh*" in the Linux terminal or a SSH terminal.
