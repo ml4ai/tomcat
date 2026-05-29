@@ -88,7 +88,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.host_name = {
             "actiCHamp-20010205": "Tiger - EEG(200 10 205)",
-            "actiCHamp-21010477": "Lion - EEG(210 10 477)", #Lions EEG amp is replaced with cheetah's amp.
+            "actiCHamp-21030529": "Lion - EEG(210 30 529)", #Lions EEG amp is replaced with cheetah's amp.
             "actiCHamp-21020492": "Leopard - EEG(210 20 492)",
         }
 

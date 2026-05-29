@@ -1,0 +1,481 @@
+<!--
+    Application: Visualizer
+    Decription: Visualize Face & Screen Images for ToMCAT Experiment.
+                Two main programs run, Bash Sript "visualizer.sh" (Image Files Server)
+                and "visualizer.html" (Browser Images Viewer Page. Must run in Chrome).
+	By: Rick Champlin
+	Last Updated: 4/12/2023
+    Start: Run Bash Script "visualizer.sh".
+           From its menu will be an option to launch "Google-Chrome" browser
+           with "visualizer.html" loaded.
+-->
+<html>
+    <head>
+    	<link rel="stylesheet" href="visualizer.css" />
+    </head>
+    <body>
+        <div class="div_face">
+            <p class="face_imge_title">Lion</p>
+            <p class="pic_file_name" id="lion_file_name">(no file)</p>
+            <input type="checkbox" id="lion_switch" /><label for="lion_switch">Toggle</label>
+            <img class="img_win" id="img_lion_face" src="lion.jpg" ></img>
+            <div class="wrapper" id="lion_prg_wrp">
+                <div class="bar" id="lion_prg_bar"></div>
+                <div class="tooltip-container" id="lion_prg_con">
+                    <div class="tooltip" id="lion_prg_tip">
+                      <span class="number" id="lion_prg_pos" data-number="no data"></span>
+                      <div class="tooltip-indicator"  id="lion_prg_ind"></div>
+                    </div>
+                </div>
+            </div>
+            <p class="cnt_beg" id="lion_prg_beg">1</p>
+            <p class="cnt_end" id="lion_prg_end">???</p>
+            <p class="cnt_mid" id="lion_prg_mid">(face)</p>
+        </div>
+        
+        <div class="div_face">
+            <p class="face_imge_title">Tiger</p>
+            <p class="pic_file_name" id="tiger_file_name">(no file)</p>
+            <input type="checkbox" id="tiger_switch" /><label for="tiger_switch">Toggle</label>
+            <img class="img_win" id="img_tiger_face" src="tiger.jpg" ></img>
+            <div class="wrapper" id="tiger_prg_wrp">
+                <div class="bar" id="tiger_prg_bar"></div>
+                <div class="tooltip-container" id="tiger_prg_con">
+                    <div class="tooltip" id="tiger_prg_tip">
+                      <span class="number" id="tiger_prg_pos" data-number="no data"></span>
+                      <div class="tooltip-indicator"  id="tiger_prg_ind"></div>
+                    </div>
+                </div>
+            </div>
+            <p class="cnt_beg" id="tiger_prg_beg">1</p>
+            <p class="cnt_end" id="tiger_prg_end">???</p>
+            <p class="cnt_mid" id="tiger_prg_mid">(face)</p>
+        </div>
+
+        <div class="div_face">
+            <p class="face_imge_title" style="margin-right: 22px;">Leopard</p>
+            <p class="pic_file_name" id="leopard_file_name" style="margin-right: 36px;">(no file)</p>
+            <input type="checkbox" id="leopard_switch" /><label for="leopard_switch">Toggle</label>
+            <img class="img_win" id="img_leopard_face" src="leopard.jpg" style="margin-right: 24px;"></img>
+            <div class="wrapper" id="leopard_prg_wrp">
+                <div class="bar" id="leopard_prg_bar"></div>
+                <div class="tooltip-container" id="leopard_prg_con">
+                    <div class="tooltip" id="leopard_prg_tip">
+                      <span class="number" id="leopard_prg_pos" data-number="no data"></span>
+                      <div class="tooltip-indicator"  id="leopard_prg_ind"></div>
+                    </div>
+                </div>
+            </div>
+            <p class="cnt_beg" id="leopard_prg_beg">1</p>
+            <p class="cnt_end" id="leopard_prg_end" style="margin-right: 31px;">???</p>
+            <p class="cnt_mid" id="leopard_prg_mid" style="margin-right: 26px;">(face)</p>
+        </div>
+
+        <div class="div_screen">
+            <p class="pic_sfile_name" id="lion_sfile_name">(no file)</p>
+            <img class="img_win" id="img_lion_screen" src="lion.jpg" ></img>
+            <div class="wrapper" id="lion_sprg_wrp">
+                <div class="bar" id="lion_sprg_bar"></div>
+                <div class="tooltip-container" id="lion_sprg_con">
+                    <div class="tooltip" id="lion_sprg_tip">
+                      <span class="number" id="lion_sprg_pos" data-number="no data"></span>
+                      <div class="tooltip-indicator"  id="lion_sprg_ind"></div>
+                    </div>
+                </div>
+            </div>
+            <p class="cnt_beg" id="lion_sprg_beg">1</p>
+            <p class="cnt_end" id="lion_sprg_end">???</p>
+            <p class="cnt_mid" id="lion_sprg_mid">(screen)</p>
+        </div>
+
+        <div class="div_screen">
+            <p class="pic_sfile_name" id="tiger_sfile_name">(no file)</p>
+            <img class="img_win" id="img_tiger_screen" src="tiger.jpg" ></img>
+            <div class="wrapper" id="tiger_sprg_wrp">
+                <div class="bar" id="tiger_sprg_bar"></div>
+                <div class="tooltip-container" id="tiger_sprg_con">
+                    <div class="tooltip" id="tiger_sprg_tip">
+                      <span class="number" id="tiger_sprg_pos" data-number="no data"></span>
+                      <div class="tooltip-indicator"  id="tiger_sprg_ind"></div>
+                    </div>
+                </div>
+            </div>
+            <p class="cnt_beg" id="tiger_sprg_beg">1</p>
+            <p class="cnt_end" id="tiger_sprg_end"></p>
+            <p class="cnt_mid" id="tiger_sprg_mid">(screen)</p>
+        </div>
+
+        <div class="div_screen">
+            <p class="pic_sfile_name" id="leopard_sfile_name" style="margin-right: 36px;">(no file)</p>
+            <img class="img_win" id="img_leopard_screen" src="leopard.jpg" style="margin-right: 24px;"></img>
+            <div class="wrapper" id="leopard_sprg_wrp">
+                <div class="bar" id="leopard_sprg_bar"></div>
+                <div class="tooltip-container" id="leopard_sprg_con">
+                    <div class="tooltip" id="leopard_sprg_tip">
+                      <span class="number" id="leopard_sprg_pos" data-number="no data"></span>
+                      <div class="tooltip-indicator"  id="leopard_sprg_ind"></div>
+                    </div>
+                </div>
+            </div>
+            <p class="cnt_beg" id="leopard_sprg_beg">1</p>
+            <p class="cnt_end" id="leopard_sprg_end" style="margin-right: 31px;"></p>
+            <p class="cnt_mid" id="leopard_sprg_mid" style="margin-right: 26px;">(screen)</p>
+        </div>
+
+        <div class="play_what_buttons">
+            <input class="play_for" type="radio" name="play_what" id="play_live" checked onchange="change_mode();"/><label class="play_for" for="play_live" title="Switch to Live Mode">Toggle</label><span class="play_for_text">Live</span>
+            <P></P>
+            <input class="play_for" type="radio" name="play_what" id="play_replay" onchange="change_mode();"/><label class="play_for" for="play_replay" title="Switch to Replay Mode">Toggle</label><span class="play_for_text">Replay</span>
+        </div>
+
+        <div class="div_dir">
+            <p class="dir_lin">
+                <span class="dir_lab">Experiment Director: </span>
+                <span class="dir_dat" id="exp_dir">(not defined)</span>
+            </p>
+            <p class="dir_lin">
+                <span class="dir_lab">Lion: </span>
+                <span class="dir_dat" id="lion_dir">(not defined)</span>
+            </p>
+            <p class="dir_lin">
+                <span class="dir_lab">Tiger: </span>
+                <span class="dir_dat" id="tiger_dir">(not defined)</span>
+            </p>
+            <p class="dir_lin">
+                <span class="dir_lab">Leopard: </span>
+                <span class="dir_dat" id="leopard_dir">(not defined)</span>
+            </p>
+            <p class="dir_slin">
+                <span class="dir_lab">screen: </span>
+                <span class="dir_dat" id="lion_sdir">(not defined)</span>
+            </p>
+            <p class="dir_slin">
+                <span class="dir_lab">screen: </span>
+                <span class="dir_dat" id="tiger_sdir">(not defined)</span>
+            </p>
+            <p class="dir_slin">
+                <span class="dir_lab">screen: </span>
+                <span class="dir_dat" id="leopard_sdir">(not defined)</span>
+            </p>
+        </div>
+
+        <div class="play_face_button"><a href="javascript:start_play();" title="Play / Stop Playing Images"><span id="play_face_span"></span></a></div>
+
+        <p id="play_face_text">Stopped!</p>
+
+        <button class="tog_block" type="button" id="tog_block" title="Toggle Block Number (block_1 / block_2)" disabled="true" onclick="send_browser_command('block:toggle');">Toggle Block_#</button>
+
+        <button class="sync_images" type="button" id="sync_images" title="Sync images with Lion (Sync / Un-Sync)" onclick="send_browser_command('sync:toggle');">Sync Images</button>
+
+        <button class="jump_images" type="button" id="jump_b-03600" title="Jump Backward 1 Hour"     onclick="send_browser_command('jump:-03600');">< 1 hour</button>
+        <button class="jump_images" type="button" id="jump_b-01800" title="Jump Backward 30 Minutes" onclick="send_browser_command('jump:-01800');">< 30 min</button>
+        <button class="jump_images" type="button" id="jump_b-00600" title="Jump Backward 10 Minutes" onclick="send_browser_command('jump:-00600');">< 10 min</button>
+        <button class="jump_images" type="button" id="jump_b-00060" title="Jump Backward 1 Minute"   onclick="send_browser_command('jump:-00060');">< 1 min </button>
+        <button class="jump_images" type="button" id="jump_b-00030" title="Jump Backward 30 Seconds" onclick="send_browser_command('jump:-00030');">< 30 sec</button>
+        <button class="jump_images" type="button" id="jump_b-00010" title="Jump Backward 10 Seconds" onclick="send_browser_command('jump:-00010');">< 10 sec</button>
+
+        <button class="jump_images" type="button" id="jump_f000010" title="Jump Forward 10 Seconds"  onclick="send_browser_command('jump:000010');">10 sec ></button>
+        <button class="jump_images" type="button" id="jump_f000030" title="Jump Forward 30 Seconds"  onclick="send_browser_command('jump:000030');">30 sec ></button>
+        <button class="jump_images" type="button" id="jump_f000060" title="Jump Forward 1 Minute"    onclick="send_browser_command('jump:000060');"> 1 min ></button>
+        <button class="jump_images" type="button" id="jump_f000600" title="Jump Forward 10 Minutes"  onclick="send_browser_command('jump:000600');">10 min ></button>
+        <button class="jump_images" type="button" id="jump_f001800" title="Jump Forward 30 Minutes"  onclick="send_browser_command('jump:001800');">30 min ></button>
+        <button class="jump_images" type="button" id="jump_f003600" title="Jump Forward 1 Houre"     onclick="send_browser_command('jump:003600');">1 hour ></button>
+
+
+        <iframe class="pic_data"  id="pic_data" src="vis_data.html" scrolling="no" ></iframe>
+
+
+        <script src="FileSaver.js"></script>
+
+        <script>
+            var data_dir = "";
+            var data_file_name = "vis_data.html";
+
+            var exp_dir = "";
+
+            var lion_dir = "";
+            var lion_file_name = "";
+            var lion_file_count = "";
+            var lion_file_pos = "";
+            var lion_sync_status = "(live)";
+
+            var tiger_dir = "";
+            var tiger_file_name = "";
+            var tiger_file_count = "";
+            var tiger_file_pos = "";
+            var tiger_sync_status = "(live)";
+
+            var leopard_dir = "";
+            var leopard_file_name = "";
+            var leopard_file_count = "";
+            var leopard_file_pos = "";
+            var leopard_sync_status = "(live)";
+
+            var lion_sdir = "";
+            var lion_sfile_name = "";
+            var lion_sfile_count = "";
+            var lion_sfile_pos = "";
+            var lion_ssync_status = "(live)";
+
+            var tiger_sdir = "";
+            var tiger_sfile_name = "";
+            var tiger_sfile_count = "";
+            var tiger_sfile_pos = "";
+            var tiger_ssync_status = "(live)";
+
+            var leopard_sdir = "";
+            var leopard_sfile_name = "";
+            var leopard_sfile_count = "";
+            var leopard_sfile_pos = "";
+            var leopard_ssync_status = "(live)";
+
+
+            var root = document.querySelector(':root');
+
+            change_mode();
+
+            document.getElementById("lion_switch").checked = true;
+            document.getElementById("tiger_switch").checked = true;
+            document.getElementById("leopard_switch").checked = true;
+            document.getElementById("tog_block").disabled = true;
+            document.getElementById("sync_images").disabled = true;
+
+            var face_play = "0";
+            get_file_data();
+            localStorage.setItem("face_play","face_play=no");
+            localStorage.setItem("play_for","play_for=live");
+
+
+
+            function enable_jump_buts() {
+                var jump_buts = document.getElementsByClassName("jump_images");
+                for (var i = 0; i < jump_buts.length; i++) {
+                    jump_buts[i].disabled = (localStorage.getItem("play_for") == "play_for=live");
+                }
+            }
+
+            function reset_status_vars() {
+                var lion_sync_status = " ";
+                var tiger_sync_status = " ";
+                var leopard_sync_status = " ";
+                var lion_ssync_status = " ";
+                var tiger_ssync_status = " ";
+                var leopard_ssync_status = " ";
+            }
+
+            function change_mode() {
+                if (document.getElementById("play_replay").checked) {
+                    send_browser_command('mode:replay');
+                    localStorage.setItem("play_for","play_for=replay");
+                } else {
+                    send_browser_command('mode:live');
+                    localStorage.setItem("play_for","play_for=live");
+                }
+                enable_jump_buts()
+            }
+            
+
+            function play_face() {
+                get_file_data();
+                if (localStorage.getItem("play_for") == "play_for=live" && document.getElementById("play_replay").checked) {localStorage.setItem("play_for","play_for=replay");};
+                if (localStorage.getItem("play_for") == "play_for=replay" && document.getElementById("play_live").checked) {localStorage.setItem("play_for","play_for=live");};
+
+                if (face_play == "1") {
+                    update_image("lion_switch", lion_dir, lion_file_name, "lion_file_name", "img_lion_face");
+                    update_image("tiger_switch", tiger_dir, tiger_file_name, "tiger_file_name", "img_tiger_face");
+                    update_image("leopard_switch", leopard_dir, leopard_file_name, "leopard_file_name", "img_leopard_face");
+
+                    update_image("lion_switch", lion_sdir, lion_sfile_name, "lion_sfile_name", "img_lion_screen");
+                    update_image("tiger_switch", tiger_sdir, tiger_sfile_name, "tiger_sfile_name", "img_tiger_screen");
+                    update_image("leopard_switch", leopard_sdir, leopard_sfile_name, "leopard_sfile_name", "img_leopard_screen");
+
+                    window.setTimeout(function () {
+                        play_face();
+                    }, 200);
+                }
+            }
+
+
+            function start_play() {
+                var play_button_style = document.getElementById("play_face_span").style;
+                var play_text_style = document.getElementById("play_face_text").style;
+
+                if (face_play == "0") {
+                    // reset_status_vars();
+                    send_browser_command("playing:yes");
+                    play_button_style["border-top"] = "8px solid red";
+                    play_button_style["border-left"] = "8px solid red";
+                    play_button_style["border-right"] = "8px solid red";
+                    play_button_style["border-bottom"] = "8px solid red";
+                    play_button_style.top = "23%";
+                    play_button_style.left = "24%";
+                    play_text_style.color = "green";
+                    document.getElementById("play_face_text").innerText = "Playing...";    
+                    face_play = "1";
+                    localStorage.setItem("face_play","face_play=yes");
+                    document.getElementById("tog_block").disabled = false;
+                    window.setTimeout(function () {
+                        play_face();
+                    }, 200);
+                } else {
+                    send_browser_command("playing:no");
+                    play_button_style["border-top"] = "10px solid transparent";
+                    play_button_style["border-left"] = "15px solid green";
+                    play_button_style["border-right"] = "0";
+                    play_button_style["border-bottom"] = "10px solid transparent";
+                    play_button_style.top = "20%";
+                    play_button_style.left = "33%";
+                    play_text_style.color = "red";
+                    document.getElementById("play_face_text").innerText = "Stopped!";    
+                    face_play = "0";
+                    localStorage.setItem("face_play","face_play=no");
+                    document.getElementById("tog_block").disabled = true;
+                    document.getElementById("sync_images").disabled = true; 
+                }
+            }
+
+
+            function get_data_dir() {
+                // document.getElementById("exp_dir").innerText = "tester";
+
+                if (exp_dir != localStorage.getItem("exp_dir")) {
+                    exp_dir = localStorage.getItem("exp_dir");
+                    document.getElementById("exp_dir").innerText = exp_dir;
+                };
+ 
+                if (lion_dir != localStorage.getItem("lion_dir")) {
+                    lion_dir = localStorage.getItem("lion_dir");
+                    document.getElementById("lion_dir").innerText = lion_dir;
+                };
+                if (tiger_dir != localStorage.getItem("tiger_dir")) {
+                    tiger_dir = localStorage.getItem("tiger_dir");
+                    document.getElementById("tiger_dir").innerText = tiger_dir;
+                };
+                if (leopard_dir != localStorage.getItem("leopard_dir")) {
+                    leopard_dir = localStorage.getItem("leopard_dir");
+                    document.getElementById("leopard_dir").innerText = leopard_dir;
+                };
+ 
+                if (lion_sdir != localStorage.getItem("lion_sdir")) {
+                    lion_sdir = localStorage.getItem("lion_sdir");
+                    document.getElementById("lion_sdir").innerText = lion_sdir;
+                };
+                if (tiger_sdir != localStorage.getItem("tiger_sdir")) {
+                    tiger_sdir = localStorage.getItem("tiger_sdir");
+                    document.getElementById("tiger_sdir").innerText = tiger_sdir;
+                };
+                if (leopard_sdir != localStorage.getItem("leopard_sdir")) {
+                    leopard_sdir = localStorage.getItem("leopard_sdir");
+                    document.getElementById("leopard_sdir").innerText = leopard_sdir;
+                };
+           }
+
+
+            function update_image(s_switch, v_dir, v_file_name, s_file_name, s_img_face) {
+                if (document.getElementById(s_switch).checked) {
+                    if (v_dir != "" && v_file_name != "") {
+                        document.getElementById(s_file_name).innerText = v_file_name; 
+                        // var face_src = exp_dir + v_dir + v_file_name + "?t=" + new Date().getTime();
+                        var face_src = exp_dir + v_dir + v_file_name
+                        document.getElementById(s_img_face).src = face_src;
+                    };
+                };
+            }
+
+
+            function get_file_data() {
+                var data_file_src = data_dir + data_file_name + "?t=" + new Date().getTime();
+                document.getElementById("pic_data").src = data_file_src;
+
+                get_data_dir();
+                update_progress_bars();
+
+                if (lion_dir != localStorage.getItem("lion_dir")) {lion_dir = localStorage.getItem("lion_dir");};
+                if (lion_file_name != localStorage.getItem("lion_file_name")) {lion_file_name = localStorage.getItem("lion_file_name");};
+
+                if (tiger_dir != localStorage.getItem("tiger_dir")) {tiger_dir = localStorage.getItem("tiger_dir");};
+                if (tiger_file_name != localStorage.getItem("lion_file_name")) {tiger_file_name = localStorage.getItem("tiger_file_name");};
+
+                if (leopard_dir != localStorage.getItem("leopard_dir")) {leopard_dir = localStorage.getItem("leopard_dir");};
+                if (leopard_file_name != localStorage.getItem("leopard_file_name")) {leopard_file_name = localStorage.getItem("leopard_file_name");};
+
+                if (lion_sdir != localStorage.getItem("lion_sdir")) {lion_dir = localStorage.getItem("lion_sdir");};
+                if (lion_sfile_name != localStorage.getItem("lion_sfile_name")) {lion_sfile_name = localStorage.getItem("lion_sfile_name");};
+
+                if (tiger_sdir != localStorage.getItem("tiger_sdir")) {tiger_dir = localStorage.getItem("tiger_sdir");};
+                if (tiger_sfile_name != localStorage.getItem("lion_sfile_name")) {tiger_sfile_name = localStorage.getItem("tiger_sfile_name");};
+
+                if (leopard_sdir != localStorage.getItem("leopard_sdir")) {leopard_sdir = localStorage.getItem("leopard_sdir");};
+                if (leopard_sfile_name != localStorage.getItem("leopard_sfile_name")) {leopard_sfile_name = localStorage.getItem("leopard_sfile_name");};
+            }
+
+
+            function update_progress_bars() {
+                // up_prg_bar(v_file_count, s_file_count, s_prg_end, v_file_pos, s_file_pos, s_prg_pos, s_rv_progress, s_rv_ind_backgroundColor)
+                up_prg_bar(lion_file_count, "lion_file_count", "lion_prg_end", lion_file_pos, "lion_file_pos", "lion_prg_pos", "--lion_progress", "--lion_ind_backgroundColor", "lion_prg_mid", "lion_sync_status", lion_sync_status);
+                up_prg_bar(tiger_file_count, "tiger_file_count", "tiger_prg_end", tiger_file_pos, "tiger_file_pos", "tiger_prg_pos", "--tiger_progress", "--tiger_ind_backgroundColor", "tiger_prg_mid", "tiger_sync_status", tiger_sync_status);
+                up_prg_bar(leopard_file_count, "leopard_file_count", "leopard_prg_end", leopard_file_pos, "leopard_file_pos", "leopard_prg_pos", "--leopard_progress", "--leopard_ind_backgroundColor", "leopard_prg_mid", "leopard_sync_status", leopard_sync_status);
+                
+                up_prg_bar(lion_sfile_count, "lion_sfile_count", "lion_sprg_end", lion_sfile_pos, "lion_sfile_pos", "lion_sprg_pos", "--lion_sprogress", "--lion_sind_backgroundColor", "lion_sprg_mid", "lion_ssync_status", lion_ssync_status);
+                up_prg_bar(tiger_file_count, "tiger_sfile_count", "tiger_sprg_end", tiger_sfile_pos, "tiger_sfile_pos", "tiger_sprg_pos", "--tiger_sprogress", "--tiger_sind_backgroundColor", "tiger_sprg_mid", "tiger_ssync_status", tiger_ssync_status);
+                up_prg_bar(leopard_sfile_count, "leopard_sfile_count", "leopard_sprg_end", leopard_sfile_pos, "leopard_sfile_pos", "leopard_sprg_pos", "--leopard_sprogress", "--leopard_sind_backgroundColor", "leopard_sprg_mid", "leopard_ssync_status", leopard_ssync_status);
+            }
+            
+
+            function up_prg_bar(v_file_count, s_file_count, s_prg_end, v_file_pos, s_file_pos, s_prg_pos, s_rv_progress, s_rv_ind_backgroundColor, s_prg_mid, s_prg_mid_str, v_prg_mid_str) {
+                if (v_file_count != localStorage.getItem(s_file_count)) {
+                    v_file_count = localStorage.getItem(s_file_count);
+                    document.getElementById(s_prg_end).innerText = v_file_count;
+                }
+
+                if (v_prg_mid_str != localStorage.getItem(s_prg_mid_str)) {
+                    v_prg_mid_str = localStorage.getItem(s_prg_mid_str);
+                    document.getElementById(s_prg_mid).innerText = v_prg_mid_str;
+                    if (v_prg_mid_str == "(live)") {document.getElementById(s_prg_mid).style.color = "#7fffd4";}
+                    if (v_prg_mid_str == "(master)") {document.getElementById(s_prg_mid).style.color = "#ffd700";}
+                    if (v_prg_mid_str == "(synced)") {document.getElementById(s_prg_mid).style.color = "#00ff00";}
+                    if (v_prg_mid_str == "(waiting - images came later)") {document.getElementById(s_prg_mid).style.color = "#ff0000";}
+                    if (s_prg_mid_str == "lion_sync_status") {
+                        if (v_prg_mid_str != "(master)") {
+                            document.getElementById("sync_images").style.color = "#00af00";
+                            document.getElementById("sync_images").innerText = "Sync Images";
+                        } else {
+                            document.getElementById("sync_images").style.color = "#dc143c";
+                            document.getElementById("sync_images").innerText = "Stop Sync";
+                        }
+                    }
+                }
+
+                if (localStorage.getItem("play_for") == "play_for=live") {
+                    document.getElementById(s_prg_pos).dataset.number = "Live";
+                    root.style.setProperty(s_rv_progress, 100);
+                    root.style.setProperty(s_rv_ind_backgroundColor, "#1e90ff");
+                    document.getElementById("sync_images").disabled = true;
+                } else {
+                    if (v_file_pos != localStorage.getItem(s_file_pos)) {
+                        v_file_pos = localStorage.getItem(s_file_pos);
+                        document.getElementById(s_prg_pos).dataset.number = v_file_pos;
+                        document.getElementById("sync_images").disabled = false;
+                        var pos_percent = 0;
+                        if (Number(v_file_pos) && Number(v_file_count)) {
+                            pos_percent = parseInt((parseInt(v_file_pos) / parseInt(v_file_count)) * 100);
+                        } 
+                        root.style.setProperty(s_rv_progress, pos_percent);
+                        if (v_file_pos == v_file_count) {
+                            root.style.setProperty(s_rv_ind_backgroundColor, "#f08080");
+                        } else {
+                            root.style.setProperty(s_rv_ind_backgroundColor, "#90ee90"); // red "#d3d3d3"
+                        }
+                    }
+                }
+            }
+
+            function send_browser_command(bcomm) {
+                var blob = new Blob([bcomm], {type: "text/plain;charset=utf-8"});
+                saveAs(blob, "vis_command.txt");
+            }
+
+        </script>
+
+    </body>
+</html>

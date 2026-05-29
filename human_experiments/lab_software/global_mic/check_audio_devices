@@ -1,0 +1,5 @@
+import sounddevice as sd
+
+print("Available Audio Devices:")
+for i, device in enumerate(sd.query_devices()):
+        print(f"  {i}: {device['name']} (Input channels: {device['max_input_channels']}, Output channels: {device['max_output_channels']})")

@@ -36,7 +36,7 @@ _monitor_launch() {
     fi
 
     # Wait a bit and check again
-    sleep 5
+    sleep 1
     ((num_trials++))
   done
 
