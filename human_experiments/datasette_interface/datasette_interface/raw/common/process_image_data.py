@@ -49,7 +49,11 @@ def process_directory_v1(group_session, image_table_class, image_dir):
                 filename_to_timestamp = None
 
             unique_id = 0
-            sorted_filenames = sorted(os.listdir("../../.."))
+            # List the screenshot directory we just cd'd into. "../../.." climbed back
+            # up to the experiment root, so this enumerated group-session directories,
+            # matched no .png, and silently ingested nothing for every v1-layout
+            # session.
+            sorted_filenames = sorted(os.listdir("."))
             for filename in sorted_filenames:
                 lb_idx = filename.rfind(".") + 1
                 if filename[lb_idx:] != "png":
