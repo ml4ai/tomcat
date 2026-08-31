@@ -208,7 +208,7 @@ fi
 if [[ $GOTO -le 5 ]]; then
   echo " "
   if yes_no_question "[5] Do you want to launch ${EMPH}Data Inventory${NC}?"; then
-    ssh cat@cat -X "gnome-terminal --geometry=186x36 -- bash -c 'cd /home/cat/tomcat/human_experiments/lab_software/data_inventory && ./data_inventory.sh; exec bash' &"
+    ssh cat@cat -X "gnome-terminal --geometry=186x36 -- bash -c 'cd /home/cat/tomcat/human_experiments/lab_software/data_inventory && ./data_inventory.sh -e \"${EXPERIMENT_DIR}\" -n -c}; exec bash' &"
   fi
 fi
 
