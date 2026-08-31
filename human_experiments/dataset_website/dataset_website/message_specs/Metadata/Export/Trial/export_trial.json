@@ -1,0 +1,45 @@
+{
+	"definitions": {
+
+	},
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "http://asist.aptima.com/schemas/export_trial.json",
+	"type": "object",
+	"title": "The Root Schema",
+	"required": [ "header", "msg", "data" ],
+	"properties": {
+		"header": {
+			"$ref": "../../../Common_Header/common_header.json"
+		},
+		"msg": {
+			"$ref": "../../../Common_Message/common_message.json"
+		},
+		"data": {
+			"$id": "#/properties/data",
+			"type": "object",
+			"title": "The Export Trial Data Schema",
+			"required": [ "index", "metadata" ],
+			"properties": {
+				"index": {
+					"$id": "#/properties/trial/properties/index",
+					"type": "string",
+					"title": "The Index Schema",
+					"default": "",
+					"examples": [ "index" ],
+					"pattern": "^(.*)$"
+				},
+				"metadata": {				
+					"$id": "#/properties/data/properties/metadata",
+					"type": "object",
+					"title": "The Metadata Schema",
+					"required": [ "trial" ],
+					"properties": {
+						"trial": {
+								"$ref": "../../Trial/trial.json"
+						}
+					}
+				}
+			}
+		}
+	}
+}

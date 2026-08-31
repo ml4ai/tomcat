@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Experiment protocol — {{ db_name }}{% endblock %}
+{% block body_class %}index{% endblock %}
+{% block content %}
+{% raw %}
+<h1 id="overview">Overview</h1>
+<p>The experiment involves a three person team participating in one or two search and rescue (SAR) missions simulated in the Minecraft environment. Before participants execute this experiment, they individually attend a ‘pre-session’ where:</p>
+<ul>
+<li><p>They fill consent forms,</p></li>
+<li><p>We measure their head circumference to enable setting up brain data caps before they arrive at the main session,</p></li>
+<li><p>We ask them to perform a speech elicitation task</p></li>
+</ul>
+<p>The group session typically occurs a few days to few weeks later. The group session has multiple phases:</p>
+<ul>
+<li><p>Rest state task</p></li>
+<li><p>Finger tapping task</p></li>
+<li><p>Affective task</p></li>
+<li><p>Ping pong competitive task</p></li>
+<li><p>Ping pong cooperative task</p></li>
+<li><p>Hands-on Minecraft training</p></li>
+<li><p>Saturn A mission</p></li>
+<li><p>Saturn B mission</p></li>
+</ul>
+<p>The number of Saturn B missions in the data is fewer than the number of Saturn A missions, since frequently there were unexpected technical issues or delays during the group session such that we ran out of time before the Saturn B mission could be run.</p>
+<p>During all these phases, for each participant, we record the following:</p>
+<ul>
+<li><p>EKG</p></li>
+<li><p>EEG</p></li>
+<li><p>fNIRS</p></li>
+<li><p>Eye tracking data</p></li>
+<li><p>Testbed messages</p></li>
+<li><p>Audio of participants’ spoken dialog</p></li>
+<li><p>Facial video</p></li>
+<li><p>Screen captures</p></li>
+</ul>
+{% endraw %}
+{% endblock %}

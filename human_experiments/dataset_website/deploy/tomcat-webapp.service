@@ -1,0 +1,43 @@
+# systemd unit for the Postgres-backed public web app (the Datasette successor).
+#
+# Runs uvicorn straight from the project .venv on orca, next to the Postgres
+# cluster. The app connects as the read-only `tomcat_public` role over the local
+# socket (DB_HOST=/var/run/postgresql in .env), authenticated by WEB_DB_PASS; the
+# `local tomcat tomcat_public scram-sha-256` line in pg_hba.conf permits it.
+#
+# Paths/user below are for orca; adjust per host. Install:
+#   sudo cp deploy/tomcat-webapp.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now tomcat-webapp.service
+#   systemctl status tomcat-webapp.service        # check
+#   journalctl -u tomcat-webapp.service -f        # logs
+#
+# Binds 0.0.0.0:8002 so Caddy on the public host (starfish) can reach it over the
+# network. It is NOT otherwise public: restrict port 8002 to starfish with ufw, e.g.
+#   sudo ufw allow from <starfish_ip> to any port 8002 proto tcp
+# (Postgres is never exposed; the app talks to it over the local socket.)
+
+[Unit]
+Description=ToMCAT public web app (Postgres-backed dataset interface)
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=adarsh
+Group=adarsh
+WorkingDirectory=/home/adarsh/git/ml4ai/tomcat/human_experiments/dataset_website
+# The app reads .env (DB_*, WEB_DB_*, ARTIFACT_DIR) via pydantic, resolved
+# relative to WorkingDirectory -- so no EnvironmentFile is needed here.
+Environment=PYTHONPATH=/home/adarsh/git/ml4ai/tomcat/human_experiments/dataset_website
+ExecStart=/home/adarsh/git/ml4ai/tomcat/human_experiments/dataset_website/.venv/bin/python -m uvicorn dataset_website.app:app --host 0.0.0.0 --port 8002
+Restart=on-failure
+RestartSec=3
+
+# Light hardening (the app is read-only and binds localhost; keep this conservative
+# so it can still read the repo under /home and the Postgres socket).
+NoNewPrivileges=yes
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target

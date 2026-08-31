@@ -1,0 +1,157 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://gitlab-external.aptima.com/adapt/testbed/MessageSpecs/ToolUsed/tool_used_event_message.json",
+  "type": "object",
+  "title": "The Tool Used Event Schema",
+  "version": "1.1",
+  "required": [
+    "header",
+    "msg",
+    "data"
+  ],
+  "properties": {
+		"header": {
+			"$ref": "../Common_Header/common_header.json",
+			"properties": {         
+			  "message_type": {
+				"$id": "#/properties/message_type",
+				"type": "string",
+				"title": "The Message_type Schema",
+				"const": "event"
+			  }
+			}
+		},
+		"msg": {
+			"$ref": "../Common_Message/common_message.json",
+			"properties": {         
+			  "sub_type": {
+				"$id": "#/properties/sub_type",
+				"type": "string",
+				"title": "The Sub Type Schema",
+				"const": "Event:ToolUsed"
+			  }
+			}
+		},
+    "data": {
+      "$id": "#/properties/data",
+      "type": "object",
+      "title": "The Tool Used Data Schema",
+      "required": [
+        "mission_timer",
+        "elapsed_milliseconds",
+        "participant_id",
+        "tool_type",
+        "durability",
+        "count",
+        "target_block_x",
+        "target_block_y",
+        "target_block_z",
+        "target_block_type"
+      ],
+      "properties": {
+        
+        "mission_timer": {
+          "$id": "#/properties/data/properties/mission_timer",
+          "type": "string",
+          "title": "The Mission Timer Schema",          
+          "examples": [
+            "8 : 36"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "elapsed_milliseconds": {
+          "$id": "#/properties/event/state/elapsed_milliseconds",
+          "type": "number",
+          "title": "The Elapsed Milliseconds Schema",          
+          "examples": [
+            5000, 77459, 689457
+          ],
+          "pattern": "^[0-9]+$"
+        },
+        "participant_id": {
+          "$id": "#/properties/data/properties/participant_id",
+          "type": "string",
+          "title": "The Participant id Schema",
+          "examples": [
+            "E000321"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "playername": {
+          "$id": "#/properties/data/properties/playername",
+          "type": "string",
+          "title": "The PlayerName Schema",          
+          "examples": [
+            "Aptiminer1"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "tool_type": {
+          "$id": "#/properties/data/properties/tool_type",
+          "type": "string",
+          "title": "The Tool_Type Schema",
+          "enum": [ "MEDKIT", "STRETCHER","STRETCHER_OCCUPIED","HAMMER","NULL"],
+          "examples": [                
+            "MEDKIT"
+          ]          
+        },
+        "durability": {
+          "$id": "#/properties/data/properties/durability",
+          "type": "number",
+          "title": "The Durability Schema",
+          "examples":[
+            10
+          ],
+          "pattern": "^([0-9]+?)$"
+        
+        },
+        "count": {
+          "$id": "#/properties/data/properties/count",
+          "type": "number",
+          "title": "The Count Schema",
+          "examples":[
+            1
+          ],
+          "pattern": "^([0-9]+?)$"    
+        },
+        "target_block_x": {
+          "$id": "#/properties/data/properties/target_block_x",
+          "type": "number",
+          "title": "The Target_Block_X Schema",          
+          "examples": [
+            -2185
+          ],
+          "pattern": "^([0-9]+?)$"
+        },
+        "target_block_y": {
+          "$id": "#/properties/data/properties/target_block_y",
+          "type": "number",
+          "title": "The Target_Block_Y Schema",          
+          "examples": [
+            52
+          ],
+          "pattern": "^([0-9]+?)$"
+        },
+        "target_block_z": {
+          "$id": "#/properties/data/properties/target_block_z",
+          "type": "number",
+          "title": "The Target_Block_Z Schema",          
+          "examples": [
+            194
+          ],
+          "pattern": "^([0-9]+?)$"
+        },
+        "target_block_type": {
+          "$id": "#/properties/data/properties/target_block_type",
+          "type": "string",
+          "title": "The Target_Block_Type Schema",      
+          "examples": [                
+              "minecraft:gravel", "asistmod:block_victim_1", "asistmod:block_victim_2","asistmod:block_victim_1b"
+          ],
+          "pattern": "^(.*)$"        
+        }
+      }
+    }
+  }
+}

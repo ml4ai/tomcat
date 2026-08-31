@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}SQL query — {{ database }}{% endblock %}
+{% block body_class %}query{% endblock %}
+
+{% block content %}
+<h1>Read-only SQL query</h1>
+<p>
+    Write a single <code>SELECT</code> (or <code>WITH … SELECT</code>) query against the
+    <a href="/{{ database }}">{{ database }}</a> database. Queries run as a read-only
+    role and are aborted after 10 seconds. For heavy or whole-dataset work,
+    <a href="/download">download the database</a> and run it locally.
+</p>
+
+<form method="get" action="/{{ database }}/-/query" class="sql-form">
+    <textarea name="sql" rows="6" class="form-control font-monospace sql-editor"
+        placeholder="SELECT * FROM eeg_raw LIMIT 10">{{ sql }}</textarea>
+    <div class="mt-2">
+        <button type="submit" class="btn btn-primary">Run query</button>
+    </div>
+</form>
+
+{% if error %}
+<div class="query-error" style="color:#b00; margin-top:1rem;">
+    <strong>Query error:</strong> {{ error }}
+</div>
+{% endif %}
+
+{% if result is not none %}
+<p class="export-links">
+    {% set base = '/' ~ database ~ '/-/query?sql=' ~ (sql | urlencode) %}
+    {{ result.row_count }} row{{ "s" if result.row_count != 1 }}{% if result.truncated %}
+        (showing first {{ result.row_count }}; result truncated){% endif %}.
+    Export this query as
+    <a href="{{ base }}&amp;_format=json">JSON</a>,
+    <a href="{{ base }}&amp;_format=csv">CSV</a>.
+</p>
+
+<div class="table-scroll">
+<table class="rows-and-columns table table-sm table-striped table-hover align-middle">
+    <thead>
+        <tr>{% for col in result.columns %}<th>{{ col }}</th>{% endfor %}</tr>
+    </thead>
+    <tbody>
+    {% for row in result.rows %}
+        <tr>{% for col in result.columns %}<td>{{ row[col] if row[col] is not none else "" }}</td>{% endfor %}</tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+{% if not result.rows %}<p>No rows returned.</p>{% endif %}
+{% endif %}
+{% endblock %}

@@ -1,0 +1,61 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://asist.aptima.com/schemas/agent_rollcall_request.json",
+  "type": "object",
+  "title": "The agent rollcall request Schema",
+  "version": "0.1",
+  "required": [
+    "header",
+    "msg"
+  ],
+  "properties": {
+      "header": {
+          "$ref": "../../Common_Header/common_header.json",
+          "properties": {         
+            "message_type": {
+              "$id": "#/properties/message_type",
+              "type": "string",
+              "title": "The Message_type Schema",
+              "const": "agent"
+            }
+          }
+      },
+      "msg": {
+          "$ref": "../../Common_Message/common_message.json",
+          "properties": {         
+            "sub_type": {
+              "$id": "#/properties/sub_type",
+              "type": "string",
+              "title": "The Sub Type Schema",
+              "const": "rollcall:request"
+            },
+            "source": {
+              "$id": "#/properties/agent/source",
+              "type": "string",
+              "title": "The agent source schema",
+              "example": "aptima_reference_agent"
+            }
+          }
+      },
+      "data": {
+          "$id": "#/properties/properties/data",
+          "type": "object",
+          "title": "The agent Rollcall Response Data Schema",
+          "required": [
+            "rollcall_id"
+          ],
+      "properties": {
+        "rollcall_id": {
+          "$id": "#/properties/agent/rollcall_id",
+          "type": "string",
+          "title": "The agent rollcall id Schema",
+          "examples": [
+            "385e4567-e49b-12e3-a456-426655440132"
+          ],
+          "pattern": "^(.*)$"
+        }
+      }
+    }
+  }
+}

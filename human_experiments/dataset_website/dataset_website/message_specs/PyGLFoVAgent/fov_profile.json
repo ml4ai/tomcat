@@ -1,0 +1,251 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://asist.aptima.com/schemas/pygl_fov_profile.json",
+  "type": "object",
+  "title": "The PyGL FoV Agent Profile Info Schema",
+  "version": "0.1",
+  "required": [
+    "header",
+    "msg",
+    "data"
+  ],
+  "properties": {
+    "header": { "$ref": "../Common_Header/common_header.json" },
+    "msg": { "$ref": "../Common_Message/common_message.json" },
+    "data": {
+      "$id": "#/properties/data",
+      "type": "object",
+      "title": "The PyGL FoV Agent Version Info Data Schema",
+      "required": [
+        "version",
+        "url",
+        "dependencies"
+      ],
+      "properties": {
+        "backend": {
+          "$id": "#/properties/data/properties/backend",
+          "type": "string",
+          "title": "The Backend Schema",
+          "default": "UNKNOWN",
+          "examples": [
+            "GLFW"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "vendor": {
+          "$id": "#/properties/data/properties/vendor",
+          "type": "string",
+          "title": "The Vendor Schema",
+          "default": "UNKNOWN",
+          "examples": [
+            "NVIDIA Corporation"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "renderer": {
+          "$id": "#/properties/data/properties/renderer",
+          "type": "string",
+          "title": "The Renderer Schema",
+          "default": "UNKNOWN",
+          "examples": [
+            "UNKNOWN"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "version": {
+          "$id": "#/properties/data/properties/version",
+          "type": "string",
+          "title": "The Version Schema",
+          "default": "UNKNOWN",
+          "examples": [
+            "UNKNOWN"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "sl_version": {
+          "$id": "#/properties/data/properties/sl_version",
+          "type": "string",
+          "title": "The SL Vendor Schema",
+          "default": "UNKNOWN",
+          "examples": [
+            "UNKNOWN"
+          ],
+          "pattern": "^(.*)$"
+        },        
+        "render_time_perf": {
+          "$id": "#/properties/data/properties/render_time_perf",
+          "type": "object",
+          "title": "The Render Perf Time Profile",
+          "properties": {
+            "mean": {
+              "$id": "#/properties/data/properties/render_time_perf/properties/mean",
+              "type": "number",
+              "title": "The Mean Render Perf Time",
+              "default": 0.0,
+              "examples": [
+                0.0123
+              ]
+            },
+            "std": {
+              "$id": "#/properties/data/properties/render_time_perf/properties/std",
+              "type": "number",
+              "title": "The Std Render Perf Time",
+              "default": 0.0,
+              "examples": [
+                0.0123
+              ]
+            },
+            "min": {
+              "$id": "#/properties/data/properties/render_time_perf/properties/min",
+              "type": "number",
+              "title": "The Min Render Perf Time",
+              "default": 0.0,
+              "examples": [
+                0.0123
+              ]
+            },
+            "max": {
+              "$id": "#/properties/data/properties/render_time_perf/properties/max",
+              "type": "number",
+              "title": "The Max Render Perf Time",
+              "default": 0.0,
+              "examples": [
+                0.0123
+              ]
+            }
+          }
+      },
+      "render_time_proc": {
+          "$id": "#/properties/data/properties/render_time_proc",
+          "type": "object",
+          "title": "The Render Process Time Profile",
+          "properties": {
+            "mean": {
+              "$id": "#/properties/data/properties/render_time_proc/properties/mean",
+              "type": "number",
+              "title": "The Mean Render Process Time",
+              "default": 0.0,
+              "examples": [
+                0.0123
+              ]
+            },
+            "std": {
+              "$id": "#/properties/data/properties/render_time_proc/properties/std",
+              "type": "number",
+              "title": "The Std Render Process Time",
+              "default": 0.0,
+              "examples": [
+                0.0123
+              ]
+            },
+            "min": {
+              "$id": "#/properties/data/properties/render_time_proc/properties/min",
+              "type": "number",
+              "title": "The Min Render Process Time",
+              "default": 0.0,
+              "examples": [
+                0.0123
+              ]
+            },
+            "max": {
+              "$id": "#/properties/data/properties/render_time_proc/properties/max",
+              "type": "number",
+              "title": "The Max Render Process Time",
+              "default": 0.0,
+              "examples": [
+                0.0123
+              ]
+            }
+          }
+        },
+      "publish_time_perf": {
+          "$id": "#/properties/data/properties/publish_time_perf",
+          "type": "object",
+          "title": "The Publish Perf Time Profile",
+          "properties": {
+            "mean": {
+              "$id": "#/properties/data/properties/publish_time_perf/properties/mean",
+              "type": "number",
+              "title": "The Mean Publish Perf Time",
+              "default": 0.0,
+              "examples": [
+                0.0123
+              ]
+            },
+            "std": {
+              "$id": "#/properties/data/properties/publish_time_perf/properties/std",
+              "type": "number",
+              "title": "The Std Publish Perf Time",
+              "default": 0.0,
+              "examples": [
+                0.0123
+              ]
+            },
+            "min": {
+              "$id": "#/properties/data/properties/publish_time_perf/properties/min",
+              "type": "number",
+              "title": "The Min Publish Perf Time",
+              "default": 0.0,
+              "examples": [
+                0.0123
+              ]
+            },
+            "max": {
+              "$id": "#/properties/data/properties/publish_time_perf/properties/max",
+              "type": "number",
+              "title": "The Max Publish Perf Time",
+              "default": 0.0,
+              "examples": [
+                0.0123
+              ]
+            }
+          }
+      },
+      "publish_time_proc": {
+          "$id": "#/properties/data/properties/publish_time_proc",
+          "type": "object",
+          "title": "The Publish Process Time Profile",
+          "properties": {
+            "mean": {
+              "$id": "#/properties/data/properties/render_time_proc/properties/mean",
+              "type": "number",
+              "title": "The Mean Publish Process Time",
+              "default": 0.0,
+              "examples": [
+                0.0123
+              ]
+            },
+            "std": {
+              "$id": "#/properties/data/properties/publish_time_proc/properties/std",
+              "type": "number",
+              "title": "The Std PublishProcess Time",
+              "default": 0.0,
+              "examples": [
+                0.0123
+              ]
+            },
+            "min": {
+              "$id": "#/properties/data/properties/publish_time_proc/properties/min",
+              "type": "number",
+              "title": "The Min Publish Process Time",
+              "default": 0.0,
+              "examples": [
+                0.0123
+              ]
+            },
+            "max": {
+              "$id": "#/properties/data/properties/publish_time_proc/properties/max",
+              "type": "number",
+              "title": "The Max Publish Process Time",
+              "default": 0.0,
+              "examples": [
+                0.0123
+              ]
+            }
+          }
+        }                    
+      }
+    }
+  }
+}
+

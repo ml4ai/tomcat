@@ -1,0 +1,48 @@
+[project]
+name = "dataset_website"
+version = "0.1.0"
+description = "Public, Postgres-backed web interface for the ToMCAT dataset (tomcat.lab.pyarelal.xyz)."
+requires-python = ">=3.9"
+
+dependencies = [
+    "fastapi~=0.110",
+    "uvicorn[standard]~=0.29",
+    "jinja2~=3.1",
+    "markdown~=3.6",
+    "sqlparse~=0.5",
+    "sqlalchemy~=2.0.20",
+    # Source build (preferred over psycopg2-binary for a deployed service); needs the
+    # system libpq-dev + a C compiler at install time.
+    "psycopg2",
+    # Floor, not a `~=` pin. `pydantic~=2.5.3` caps at <2.6, which silently
+    # conflicts with FastAPI: it declares a wide `pydantic>=1.7.4` range but
+    # imports `IncEx` from `pydantic.main`, which only exists from 2.7.
+    # Resolvers therefore accept fastapi 0.136 + pydantic 2.5.3 happily and the
+    # app dies at import with `ImportError: cannot import name 'IncEx'`. That
+    # took tomcat.lab.pyarelal.xyz down for two days in August 2026: a
+    # 2026-08-14 install re-resolved pydantic back to 2.5.3 under a
+    # still-running process, and the breakage only surfaced when something
+    # restarted the unit ten days later.
+    "pydantic>=2.9,<3",
+    "pydantic-settings",
+    "pyyaml~=6.0.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+# Only the Python package — not templates/, static/, bin/, deploy/.
+include = ["dataset_website*"]
+
+[tool.ruff]
+# Vendored message specs (rsynced from ml4ai/minecraft_testbed): not project code.
+extend-exclude = [
+    "dataset_website/message_specs",
+]

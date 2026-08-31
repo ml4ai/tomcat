@@ -1,0 +1,41 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://asist.aptima.com/schemas/common_header.json",
+  "type": "object",
+  "title": "ASIST message common header Schema",
+  "version": "0.3",
+  "required": [
+    "timestamp",
+    "message_type",
+    "version"
+  ],
+  "properties": {
+    "timestamp": {
+      "$id": "#/properties/timestamp",
+      "type": "string",
+      "title": "The Timestamp Schema",
+      "examples": [
+        "2019-12-26T12:47:23.1234Z"
+      ],
+      "pattern": "[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}[.]?[0-9]{0,}?Z"
+    },
+    "message_type": {
+      "$id": "#/properties/message_type",
+      "type": "string",
+      "title": "The Message_type Schema",
+      "enum": [ "control", "observation", "chat", "status", "trial", "event", "groundtruth","experiment","metadata", "agent" ],
+      "examples": [
+        "observation"
+      ],
+      "pattern": "^([a-z_]*?)$"
+    },
+    "version": {
+      "$id": "#/properties/version",
+      "type": "string",
+      "title": "The message format version",
+      "examples": [ "1.0", "2.3.1" ],
+      "pattern": "^([0-9]+\\.)?([0-9]+\\.)?([0-9]+)$"
+    }
+  }
+}

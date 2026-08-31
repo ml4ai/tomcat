@@ -1,0 +1,56 @@
+{
+    "definitions": {},
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://asist.aptima.com/schemas/player_name.json",
+    "type": "object",
+    "title": "The Player Name Schema",
+    "version": "0.5",
+    "required": [
+      "header",
+      "msg",
+      "data"
+    ],
+    "properties": {
+      "header": {
+          "$ref": "../Common_Header/common_header.json",
+          "properties": {         
+            "message_type": {
+              "$id": "#/properties/message_type",
+              "type": "string",
+              "title": "The Message_type Schema",
+              "const": "status"
+            }
+          }
+      },
+      "msg": {
+          "$ref": "../Common_Message/common_message.json",
+          "properties": {         
+            "sub_type": {
+              "$id": "#/properties/sub_type",
+              "type": "string",
+              "title": "The Sub Type Schema",
+              "const": "Status:PlayerName"
+            }
+          }
+      },
+      "data": {
+        "$id": "#/properties/data",
+        "type": "object",
+        "title": "The Player Name Data Schema",
+        "required": [
+          "playername"
+        ],
+        "properties": {
+          "playername": {
+            "$id": "#/properties/data/properties/playername",
+            "type": "string",
+            "title": "The Player Name Logged in to Client Map",          
+            "examples": [
+              "Player123"
+            ],
+            "pattern": "^(.*)$"
+          }
+        }
+      }
+    }
+  }

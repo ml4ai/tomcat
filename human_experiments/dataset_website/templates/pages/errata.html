@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block body_class %}index{% endblock %}
+
+{% block content %}
+{{ render_markdown(
+"""
+# Errata
+
+Known errors in released versions of the dataset, newest first.
+
+## The 2025-03-09 release is missing most of `screen_capture`
+
+**Affects:** anyone who used `screen_capture` from the 2025-03-09 release,
+including the copy currently served at `tomcat.ivilab.org`.
+
+The 2025-03-09 release contains **347,093** rows in `screen_capture`. It should
+contain **4,125,377**. Approximately **91.5%** of the table is missing, and the
+missing rows are not distributed randomly — screen captures were dropped
+entirely for every session recorded before 2023-04-17, while later sessions are
+unaffected.
+
+The cause was a bug in the ingestion code: it listed the experiment directory
+instead of the screenshot directory, so those sessions contributed no rows. The
+failure was silent — the ingestion stage completed successfully and produced a
+non-empty table, so nothing indicated that data was missing.
+
+The 2024-02-22 release is **not** affected (4,100,470 rows). The current
+PostgreSQL database is not affected.
+
+**If you used `screen_capture` from the 2025-03-09 release, your session
+coverage was incomplete and any per-session or longitudinal analysis over that
+table should be re-run.**
+
+## The 2025-03-09 release is missing one station's EKG
+
+**Affects:** anyone who used `ekg_sync` for group session
+`exp_2023_04_17_13`, station `leopard`.
+
+In the 2025-03-09 release, `ekg_sync` has no rows for that session/station
+combination. It should have 1,026,490. Every other session/station combination
+in that table is correct, and the corresponding `eeg_sync` and `gsr_sync` rows
+for the same station are present and complete — so a query filtered to that
+station returns an empty result that looks like a legitimate absence of data
+rather than a gap.
+
+The cause was a signal-filtering error during the build: the EKG
+pre-processing step raised an exception for this one station's recording, the
+build logged it and continued, and the pair was silently omitted. Rebuilding
+in the current environment processes the same recording without error.
+
+The 2024-02-22 release is not affected. The current PostgreSQL database is not
+affected.
+
+## `audio_vocalics` column names changed after 2025-03-09
+
+**Affects:** queries and scripts written against any SQLite release.
+
+The OpenSMILE feature columns in `audio_vocalics` are now named with their
+original bracket indices (`mfcc_sma[1]`, `audspec_rfilt_sma[0]`) rather than
+the sanitized forms used in the SQLite releases (`mfcc_sma_1_`,
+`audspec_rfilt_sma_0_`; `audSpec_Rfilt_sma_0_` in 2024-02-22 and earlier).
+
+This is a naming change only — no values changed. Because the names contain
+brackets, they must be double-quoted in SQL:
+
+    select \"mfcc_sma[1]\" from audio_vocalics limit 10;
+
+## Labeling and `fnirs_raw` fixes (2023-07-17)
+
+The [2023-07-17 update](/updates/2023-07-17) fixes some labeling errors related
+to participant IDs, and also removes some invalid rows from the `fnirs_raw`
+table. See [here](/updates/2023-07-17) for more details.
+""")
+}}
+{% endblock %}

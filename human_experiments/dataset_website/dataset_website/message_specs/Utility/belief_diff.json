@@ -1,0 +1,106 @@
+{
+    "definitions": {},
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://asist.aptima.com/schemas/belief_diff.json",
+    "type": "object",
+    "title": "Belief Difference Communication",
+    "version": "0.1",
+    "required": [
+      "header",
+      "msg",
+      "data"
+    ],
+    "properties": {
+          "header": {
+              "$ref": "../Common_Header/common_header.json"
+              }
+          },
+          "msg": {
+              "$ref": "../Common_Message/common_message.json"
+          },
+      "data": {
+        "$id": "#/properties/data",
+        "type": "object",
+        "title": "The Belief Difference Data Schema",
+        "properties":{
+          "room_id":{
+            "$id": "#/properties/data/properties/room_id",
+            "type": "array",
+            "title": " all room ids in sequence, ending with an 'overall' entry, for the summed value across all rooms",
+            "items":{
+              "type":"string",
+              "examples":["A1", "A2", "A3", "A4", "A4A", "B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8", "B9", "C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "D1", "D2", "D3", "D4", "E1", "E2", "E3", "E4", "E5", "F1", "F2", "F3", "F4", "G1", "G2", "G3", "H1", "H1A", "H2", "I1", "I2", "I3", "I4", "I1A", "I2A", "I3A", "I4A", "J1", "J2", "J3", "J4", "K1", "K2", "K3", "K4", "L1", "L2", "L3", "M1", "M2", "M3", "overall"]
+            }
+          },
+          "shared":{
+            "$id": "#/properties/data/properties/shared",
+            "type": "array",
+            "title": "Entropy on victim type and number for each room, and summed across rooms (for the full map overview)",
+            "items":{
+              "type":"number",
+              "examples":[1.116, 1.116, 1.116, 1.116, 1.116, 1.116, 1.116, 1.116, 1.116, 1.116, 1.116, 1.116, 1.116, 1.116, 0.0, 0.0, 1.116, 1.116, 1.116, 1.116, 1.116, 1.116, 0.0, 1.116, 0.0, 0.0, 1.116, 1.116, 1.116, 1.116, 1.116, 1.116, 1.116, 1.116, 1.116, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.116, 1.116, 1.116, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 36.839]
+            }
+          },
+          "RED_indiv":{
+            "$id": "#/properties/data/properties/RED_indiv",
+            "type": "array",
+            "title": "Entropy on victim type and number based on direct information for the medic",
+            "items":{
+              "type":"number",
+              "examples":[0.998, 0.998, 0.998, 0.998, 0.998, 0.998, 0.998, 0.998, 0.998, 0.998, 0.998, 0.998, 0.998, 0.998, 0.0, 0.0, 0.998, 0.998, 0.998, 0.998, 0.998, 0.998, 0.0, 0.998, 0.0, 0.998, 0.998, 0.998, 0.998, 0.998, 0.998, 0.998, 0.998, 0.998, 0.998, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.998, 0.998, 0.0, 0.998, 0.998, 0.998, 0.0, 0.998, 0.998, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.998, 0.0, 38.936]
+            }
+          },
+          "BLUE_indiv":{
+            "$id": "#/properties/data/properties/BLUE_indiv",
+            "type": "array",
+            "title": "Entropy on victim type and number based on direct information for the engineer",
+            "items":{
+              "type":"number",
+              "examples":[1.049, 1.049, 1.049, 1.049, 1.049, 1.049, 1.049, 1.049, 1.049, 1.049, 1.049, 1.049, 1.049, 1.049, 0.0, 0.0, 1.049, 1.049, 1.049, 1.049, 1.049, 1.049, 1.049, 1.049, 0.0, 1.049, 1.049, 1.049, 1.049, 1.049, 1.049, 1.049, 1.049, 1.049, 1.049, 0.0, 0.0, 0.0, 0.0, 0.0, 1.049, 1.049, 0.0, 1.049, 0.0, 1.049, 1.049, 1.049, 0.0, 1.049, 0.0, 1.049, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.049, 1.049, 0.0, 0.0, 0.0, 44.078]
+            }
+          },
+          "GREEN_indiv":{
+            "$id": "#/properties/data/properties/GREEN_indiv",
+            "type": "array",
+            "title": "Entropy on victim type and number based on direct information for the transporter",
+            "items":{
+              "type":"number",
+              "examples":[1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 0.0, 1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 0.0, 0.0, 0.0, 0.0, 1.249, 1.249, 0.0, 0.0, 0.0, 0.0, 1.249, 1.249, 1.249, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 48.717]
+            }
+          },
+          "RED_marker":{
+            "$id": "#/properties/data/properties/RED_marker",
+            "type": "array",
+            "title": "Entropy on victim type and number based on direct information for the medic and marker block information",
+            "items":{
+              "type":"number",
+              "examples":[1.116, 1.116, 1.116, 1.116, 1.116, 1.116, 1.116, 1.116, 1.116, 1.116, 1.116, 1.116, 1.116, 1.116, 0.0, 0.0, 1.116, 1.116, 1.116, 1.116, 1.116, 1.116, 0.0, 1.116, 0.0, 0.0, 1.116, 1.116, 1.116, 1.116, 1.116, 1.116, 1.116, 1.116, 1.116, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.116, 1.116, 1.116, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 36.839]
+            }
+          },
+          "BLUE_marker":{
+            "$id": "#/properties/data/properties/BLUE_marker",
+            "type": "array",
+            "title": "Entropy on victim type and number based on direct information for the engineer and marker block information",
+            "items":{
+              "type":"number",
+              "examples":[1.18, 1.18, 1.18, 1.18, 1.18, 1.18, 1.18, 1.18, 1.18, 1.18, 1.18, 1.18, 1.18, 1.18, 0.0, 0.0, 1.18, 1.18, 1.18, 1.18, 1.18, 1.18, 1.18, 1.18, 0.0, 0.0, 1.18, 1.18, 1.18, 1.18, 1.18, 1.18, 1.18, 1.18, 1.18, 0.0, 0.0, 0.0, 0.0, 0.0, 1.18, 0.0, 0.0, 0.0, 0.0, 1.18, 1.18, 1.18, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 41.328]
+            }
+          },
+          "GREEN_marker":{
+            "$id": "#/properties/data/properties/GREEN_marker",
+            "type": "array",
+            "title": "Entropy on victim type and number based on direct information for the transporter and marker block information",
+            "items":{
+              "type":"number",
+              "examples":[1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 0.653, 1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 0.0, 1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 1.249, 0.0, 0.0, 0.0, 0.0, 0.653, 1.249, 0.0, 0.0, 0.0, 0.0, 1.249, 1.249, 1.249, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 47.525]
+            }
+          },
+          "time_in_seconds":{
+            "$id": "#/properties/data/properties/time_in_seconds",
+            "type": "number",
+            "title": "The mission time(sec) relative to mission start",
+            "examples": 609.317
+          }
+        }
+      }
+    }

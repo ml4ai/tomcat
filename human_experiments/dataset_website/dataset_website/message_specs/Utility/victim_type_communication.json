@@ -1,0 +1,85 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://asist.aptima.com/schemas/victim_type_communication.json",
+  "type": "object",
+  "title": "Victim Type Communication",
+  "version": "0.1",
+  "required": [
+    "header",
+    "msg",
+    "data"
+  ],
+  "properties": {
+		"header": {
+			"$ref": "../Common_Header/common_header.json"
+			}
+		},
+		"msg": {
+			"$ref": "../Common_Message/common_message.json"
+		},
+    "data": {
+      "$id": "#/properties/data",
+      "type": "object",
+      "title": "The Victim Type Communication Data Schema",
+      "properties":{
+        "player_placed":{
+          "$id": "#/properties/data/properties/player_placed",
+          "type": "array",
+          "title": "The ID of the player who placed the marker block",
+          "items":{
+            "type":"string",
+            "examples":["RED_ASIST2", "RED_ASIST2", "BLUE_ASIST2", "GREEN_ASIST2", "RED_ASIST2", "RED_ASIST2", "GREEN_ASIST2", "RED_ASIST2", "GREEN_ASIST2", "RED_ASIST2", "RED_ASIST2", "RED_ASIST2", "RED_ASIST2"]
+          }
+        },
+        "time_placed":{
+          "$id": "#/properties/data/properties/time_placed",
+          "type": "array",
+          "title": "The time the marker block is placed in seconds, relative to mission start.",
+          "items":{
+            "type":"number",
+            "examples":[107.141, 182.34, 199.992, 210.591, 342.542, 368.59, 406.491, 422.141, 533.991, 546.84, 598.891, 711.64, 716.341]
+          }
+        },
+        "marker_block_type":{
+          "$id": "#/properties/data/properties/marker_block_type",
+          "type": "array",
+          "title": "What type of victim marker block is placed.",
+          "items":{
+            "type":"string",
+            "examples":["A", "B", "A", "B", "B", "A", "B", "B", "B", "B", "B", "B", "A"]
+          }
+        },
+        "victim_type_in_vicinity":{
+          "$id": "#/properties/data/properties/victim_type_in_vicinity",
+          "type": "array",
+          "title": "String of the victim_ids(separated by comma) in the vicinity that matches the type of the marker block.",
+          "items":{
+            "type":"string",
+            "examples": ["A,C", "B", "B", "", "B", "A,B", "", "B", "B", "B", "B", "A,B", "A,B"]
+          }
+        },
+        "victims_match_marker_block":{
+          "$id": "#/properties/data/properties/victims_match_marker_block",
+          "type": "array",
+          "title": "List of the victim_ids(separated by comma) in the vicinity that matches the type of the marker block.",
+          "items":{
+            "type":"string",
+            "examples": ["24", "15", "", "", "28", "29", "", "6", "28", "21", "28", "14", "12"]
+          }
+        },
+        "vicinity_threshold_in_blocks":{
+          "$id": "#/properties/data/properties/vicinity_threshold_in_blocks",
+          "type": "number",
+          "title": "integer that indicated what counts as 'vicinity' for the purpose of this AC.",
+          "examples": 2
+        },
+        "time_in_seconds":{
+          "$id": "#/properties/data/properties/time_in_seconds",
+          "type": "number",
+          "title": "The mission time relative to mission start.",
+          "examples": 716.341
+        }
+      }
+    }
+  }

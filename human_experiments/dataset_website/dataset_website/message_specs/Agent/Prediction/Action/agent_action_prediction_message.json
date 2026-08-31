@@ -1,0 +1,116 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://asist.aptima.com/schemas/agent_action_prediction_message.json",
+  "type": "object",
+  "title": "The Agent Action Prediction Message Schema",
+  "version": "0.1",
+  "required": [
+    "unique_id",
+    "start_elapsed_time",
+    "predicted_property",
+    "action",
+    "using",
+    "subject",
+    "object",
+    "probability_type",
+    "probability_value",
+    "confidence_type",
+    "confidence_value",
+    "explanation"
+  ],
+  "properties":{
+    
+    "unique_id":{
+      "$id": "#/properties/unique_id",
+      "type":["string"],
+      "title": "The unique_id Schema",
+      "examples": [ "ce5c2729-65d1-4f6a-b503-e89dc3c36727" ]
+    },
+    "start_elapsed_time":{
+      "$id": "#/properties/start_elapsed_time",
+      "type":["number","null"],
+      "title": "The Start elapsed time Schema",
+      "examples": [ 324672, null ]
+    },
+    "duration":{
+      "$id": "#/properties/duration",
+      "type":["number","null"],
+      "title": "The Duration Schema",
+      "examples": [ 10,60, null ]
+    },
+    "predicted_property":{
+      "$id": "#/properties/predicted_property",
+      "type":["string"],
+      "title": "The predicted property Schema",
+      "examples": [ "M7:room_enter"]
+    },
+    "action":{
+      "$id": "#/properties/action",
+      "type":["string"],
+      "title": "The Action Schema",
+      "enum":["will_enter_room", "will_not_enter_room"],
+      "examples": [ "will_enter_room", "will_not_enter_room" ]
+    },
+    "using":{
+      "$id": "#/properties/using",
+      "type":["string","object"],
+      "title": "The Using Schema",
+      "examples": [ "\"location\": {\"x\": -600, \"y\": 120, \"z\": 60}, \"callsign\": \"Red\", \"type\": \"Marker Block 1\"" ]
+    },
+    "subject":{      
+      "$id": "#/properties/subject",
+      "type":["string"],
+      "title": "The Subject Schema",      
+      "examples": [ "Aptiminer1", "Player447" ]    
+    },
+    "object":{
+      "$id": "#/properties/object",
+      "type":["string"],
+      "title": "The Object Schema",      
+      "examples": [ "Aptiminer1", "Player447", "Victim #33", "c_-9_-25_-8_-24" ]
+    },
+    "probability_type":{
+      "$id": "#/properties/probability_type",
+      "type":["string"],
+      "title": "The Probability Type Schema",
+      "examples": [ "string", "integer","float" ]
+    },
+    "probability_value":{
+      "$id": "#/properties/probability_value",
+      "type":["string","number"],
+      "title": "The Probability Value Schema",
+      "examples": [ "80%",80,0.8 ]
+    },
+    "confidence_type":{
+      "$id": "#/properties/confidence_type",
+      "type":["string"],
+      "title": "The confidence Type Schema",
+      "examples": [ "string", "integer","float" ]
+    },
+    "confidence_value":{
+      "$id": "#/properties/confidence_value",
+      "type":["string","number"],
+      "title": "The confidence Value Schema",
+      "examples": [ "80%",80,0.8 ]
+    },
+    "explanation":{
+      "$id": "#/properties/explanation",
+      "type":["object"],
+      "title": "The Group Explanation Schema",
+      "examples": [
+        {
+          "extra_agent_data":{      
+            "key0":"data0",      
+            "key1":{
+              "something":"some metadata" 
+            },      
+            "key2":{
+              "somethingelse":"some more metadata"
+            }      
+          }
+        }
+      ]
+    }
+  }  
+}

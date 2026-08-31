@@ -1,0 +1,375 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "type": "object",
+    "title": "The root schema",
+    "examples": [
+        {
+            "data": {
+                "text": "I am going to save a green victim.",
+                "alternatives": [
+                    {
+                        "text": "I am going to save a green victim.",
+                        "confidence": 0.981501042842865
+                    },
+                    {
+                        "text": "I am going to save a Greene victim.",
+                        "confidence": 0.974869549274446
+                    },
+                    {
+                        "text": "I am going to save a grain victim.",
+                        "confidence": 0.9713254261016846
+                    },
+                    {
+                        "text": "I am going to save a green victum.",
+                        "confidence": 0.974603054523467
+                    },
+                    {
+                        "text": "I am going to save a green victom.",
+                        "confidence": 0.979378929138184
+                    }
+                ],
+                "asr_system": "Google",
+                "is_final": true,
+		"is_initial": false,
+                "id": "59678a5f-9c5b-451f-8506-04bc020f2cf3",
+                "participant_id": "participant_1",
+		"start_timestamp": "2021-01-19T23:27:57.978016Z",
+ 		"end_timestamp" : "2021-01-19T23:27:58.633076Z",
+		"features" : "See example_asr_mess.json",
+		"sentiment": {"speaker":"35cb434e-0c18-44d3-94e3-e532bbfc178c","emotions":{"anger":0.002021155087277293,"disgust":0.09554211795330048,"fear":0.002021155087277293,"joy":0.022178679704666138,"neutral":0.87403804063797,"sadness":0.002021155087277293,"surprise":0.0021777180954813957},"traits":{"extroversion":0.003421018598601222,"neuroticism":0.003421018598601222,"agreeableness":0.6680639386177063,"openness":0.13575837016105652,"conscientiousness":0.18933558464050293},"penultimate_emotions":[0.0,0.20094694197177887,0.0,0.5490803718566895,1.1174331903457642,-0.0,0.0,0.0,1.2479413747787476,0.0,1.2241981029510498,1.6163171529769897,0.0,1.5434015989303589,3.1412456035614014,1.9181157350540161,3.3949952125549316,2.7259912490844727,0.0,0.24653026461601257,0.0,1.9409351348876953,0.0,0.853614091873169,0.0,-0.0,0.0,1.2603272199630737,2.613118886947632,0.0,0.0,-0.0,0.0,0.0,0.0,1.7558680772781372,1.7072715759277344,0.0,0.0,0.0,1.715401530265808,2.9527125358581543,0.0,1.9544548988342285,0.0,2.6578049659729004,0.0,0.0,0.0,-0.0],"penultimate_traits":[1.5018659830093384,-0.0,-0.0,0.0,3.066028356552124,-0.0,0.0,0.0,0.0,-0.0,0.8364737629890442,1.2047011852264404,-0.0,2.4049181938171387,2.264213800430298,0.0,0.0,0.02852160483598709,0.6170178651809692,0.0,0.0,0.0,-0.0,2.739126682281494,2.376819610595703,1.433931589126587,0.0,0.16708949208259583,0.0,3.269641876220703,0.0,2.213355541229248,0.0,0.0,0.872717022895813,-0.0,0.0,-0.0,-0.0,-0.0,0.0,0.0,3.478353500366211,-0.0,-0.0,1.2697429656982422,0.0,-0.0,-0.0,2.093494176864624]}
+            },
+            "header": {
+                "timestamp": "2021-01-19T23:27:58.633076Z",
+                "message_type": "observation",
+                "version": "0.1"
+            },
+            "msg": {
+                "timestamp": "2021-01-19T23:27:58.633967Z",
+                "experiment_id": "e2a3cb96-5f2f-11eb-8971-18810ee8274e",
+                "trial_id": "ec76544c-7080-11eb-9123-18810ee8274e",
+                "version": "0.1",
+                "source": "tomcat_asr_agent",
+                "sub_type": "asr:transcription"
+            }
+        }
+    ],
+    "required": [
+        "data",
+        "header",
+        "msg"
+    ],
+    "properties": {
+        "data": {
+            "$id": "#/properties/data",
+            "type": "object",
+            "title": "The data schema",
+            "description": "The data being passed in the message",
+            "examples": [
+                {
+                    "text": "I am going to save a green victim.",
+                    "alternatives": [
+                        {
+                            "text": "I am going to save a green victim.",
+                            "confidence": 0.981501042842865
+                        },
+                        {
+                            "text": "I am going to save a Greene victim.",
+                            "confidence": 0.974869549274446
+                        },
+                        {
+                            "text": "I am going to save a grain victim.",
+                            "confidence": 0.9713254261016846
+                        },
+                        {
+                            "text": "I am going to save a green victum.",
+                            "confidence": 0.974603054523467
+                        },
+                        {
+                            "text": "I am going to save a green victom.",
+                            "confidence": 0.979378929138184
+                        }
+                    ],
+                    "asr_system": "Google",
+                    "is_final": true,
+		    "is_initial": false,
+                    "id": "59678a5f-9c5b-451f-8506-04bc020f2cf3",
+                    "participant_id": "participant_1",
+		    "start_timestamp": "2021-01-19T23:27:57.978016Z",
+		    "end_timestamp" : "2021-01-19T23:27:58.633076Z",
+		    "features" : "See test_message.json",
+		    "sentiment": {"speaker":"35cb434e-0c18-44d3-94e3-e532bbfc178c","emotions":{"anger":0.002021155087277293,"disgust":0.09554211795330048,"fear":0.002021155087277293,"joy":0.022178679704666138,"neutral":0.87403804063797,"sadness":0.002021155087277293,"surprise":0.0021777180954813957},"traits":{"extroversion":0.003421018598601222,"neuroticism":0.003421018598601222,"agreeableness":0.6680639386177063,"openness":0.13575837016105652,"conscientiousness":0.18933558464050293},"penultimate_emotions":[0.0,0.20094694197177887,0.0,0.5490803718566895,1.1174331903457642,-0.0,0.0,0.0,1.2479413747787476,0.0,1.2241981029510498,1.6163171529769897,0.0,1.5434015989303589,3.1412456035614014,1.9181157350540161,3.3949952125549316,2.7259912490844727,0.0,0.24653026461601257,0.0,1.9409351348876953,0.0,0.853614091873169,0.0,-0.0,0.0,1.2603272199630737,2.613118886947632,0.0,0.0,-0.0,0.0,0.0,0.0,1.7558680772781372,1.7072715759277344,0.0,0.0,0.0,1.715401530265808,2.9527125358581543,0.0,1.9544548988342285,0.0,2.6578049659729004,0.0,0.0,0.0,-0.0],"penultimate_traits":[1.5018659830093384,-0.0,-0.0,0.0,3.066028356552124,-0.0,0.0,0.0,0.0,-0.0,0.8364737629890442,1.2047011852264404,-0.0,2.4049181938171387,2.264213800430298,0.0,0.0,0.02852160483598709,0.6170178651809692,0.0,0.0,0.0,-0.0,2.739126682281494,2.376819610595703,1.433931589126587,0.0,0.16708949208259583,0.0,3.269641876220703,0.0,2.213355541229248,0.0,0.0,0.872717022895813,-0.0,0.0,-0.0,-0.0,-0.0,0.0,0.0,3.478353500366211,-0.0,-0.0,1.2697429656982422,0.0,-0.0,-0.0,2.093494176864624]}
+                }
+            ],
+            "required": [
+                "text",
+                "asr_system",
+                "is_final"
+            ],
+            "properties": {
+                "text": {
+                    "$id": "#/properties/data/properties/text",
+                    "type": "string",
+                    "title": "The text schema",
+                    "description": "The transcription returned from the asr system",
+                    "examples": [
+                        "I am going to save a green victim."
+                    ]
+                },
+                "alternatives": {
+                    "$id": "#/properties/data/properties/alternatives",
+                    "type": "array",
+                    "title": "The alternatives schema",
+                    "description": "A list of alterative transcription objects returned from the ASR system",
+                    "examples": [
+                        [
+                            {
+                                "text": "I am going to save a green victim.",
+                                "confidence": 0.981501042842865
+                            },
+                            {
+                                "text": "I am going to save a Greene victim.",
+                                "confidence": 0.974869549274446
+                            },
+                            {
+                                "text": "I am going to save a grain victim.",
+                                "confidence": 0.9713254261016846
+                            },
+                            {
+                                "text": "I am going to save a green victum.",
+                                "confidence": 0.974603054523467
+                            },
+                            {
+                                "text": "I am going to save a green victom.",
+                                "confidence": 0.979378929138184
+                            }
+                        ]
+                    ]
+                },
+                "asr_system": {
+                    "$id": "#/properties/data/properties/asr_system",
+                    "type": "string",
+                    "title": "The asr_system schema",
+                    "description": "The system used by the agent for automatic speech recognition",
+                    "examples": [
+                        "Google"
+                    ]
+                },
+                "is_final": {
+                    "$id": "#/properties/data/properties/is_final",
+                    "type": "boolean",
+                    "title": "The is_final schema",
+                    "description": "Indicates whether the transcription is an intermediate or final transcription",
+                    "default": false,
+                    "examples": [
+                        true
+                    ]
+                },
+                "is_initial": {
+                    "$id": "#/properties/data/properties/is_initial",
+                    "type": "boolean",
+                    "title": "The is_initial schema",
+                    "description": "Indicates whether an intermediate message marks the start of an utterance",
+                    "default": false,
+                    "examples": [
+                        true
+                    ]
+                },
+                "id":{
+                    "$id": "#/properties/data/properties/id",
+                    "type": "string",
+                    "title": "The id schema",
+                    "description": "A version 4 UUID associated with this message",
+                    "examples": [
+                        "59678a5f-9c5b-451f-8506-04bc020f2cf3"
+                    ]
+                },
+                "participant_id": {
+                    "$id": "#/properties/data/properties/participant_id",
+                    "type": "string",
+                    "title": "The participant_id schema",
+                    "description": "The participant id this data is accociated with",
+                    "examples": [
+                        "participant_1"
+                    ]
+                },
+                "start_timestamp": {
+                    "$id": "#/properties/data/properties/start_timestamp",
+                    "type": "string",
+                    "title": "The start_timestamp schema",
+                    "description": "A timestamp representing the start of an utterance",
+                    "examples": [
+                        "2021-01-19T23:27:57.978016Z"
+                    ]
+                },
+                "end_timestamp": {
+                    "$id": "#/properties/data/properties/end_timestamp",
+                    "type": "string",
+                    "title": "The end_timestamp schema",
+                    "description": "A timestamp representing the end of an utterance",
+                    "examples": [
+                        "2021-01-19T23:27:58.633076Z"
+                    ]
+                },
+		"features": {
+		    "$id": "#/properties/data/properties/features",
+                    "type": "object",
+                    "title": "The features schema",
+                    "description": "Word aligned extracted vocalic features from an utterance",
+                    "examples": [
+                        "See test_message.json"
+                    ]	
+                },
+		"sentiment":{
+		    "$id": "#/properties/data/properties/sentiment",
+                    "type": "object",
+                    "title": "The sentiment schema",
+                    "description": "A sentiment label for an utterance calculated from extracted features",
+                    "examples": [
+		    	{"speaker":"35cb434e-0c18-44d3-94e3-e532bbfc178c","emotions":{"anger":0.002021155087277293,"disgust":0.09554211795330048,"fear":0.002021155087277293,"joy":0.022178679704666138,"neutral":0.87403804063797,"sadness":0.002021155087277293,"surprise":0.0021777180954813957},"traits":{"extroversion":0.003421018598601222,"neuroticism":0.003421018598601222,"agreeableness":0.6680639386177063,"openness":0.13575837016105652,"conscientiousness":0.18933558464050293},"penultimate_emotions":[0.0,0.20094694197177887,0.0,0.5490803718566895,1.1174331903457642,-0.0,0.0,0.0,1.2479413747787476,0.0,1.2241981029510498,1.6163171529769897,0.0,1.5434015989303589,3.1412456035614014,1.9181157350540161,3.3949952125549316,2.7259912490844727,0.0,0.24653026461601257,0.0,1.9409351348876953,0.0,0.853614091873169,0.0,-0.0,0.0,1.2603272199630737,2.613118886947632,0.0,0.0,-0.0,0.0,0.0,0.0,1.7558680772781372,1.7072715759277344,0.0,0.0,0.0,1.715401530265808,2.9527125358581543,0.0,1.9544548988342285,0.0,2.6578049659729004,0.0,0.0,0.0,-0.0],"penultimate_traits":[1.5018659830093384,-0.0,-0.0,0.0,3.066028356552124,-0.0,0.0,0.0,0.0,-0.0,0.8364737629890442,1.2047011852264404,-0.0,2.4049181938171387,2.264213800430298,0.0,0.0,0.02852160483598709,0.6170178651809692,0.0,0.0,0.0,-0.0,2.739126682281494,2.376819610595703,1.433931589126587,0.0,0.16708949208259583,0.0,3.269641876220703,0.0,2.213355541229248,0.0,0.0,0.872717022895813,-0.0,0.0,-0.0,-0.0,-0.0,0.0,0.0,3.478353500366211,-0.0,-0.0,1.2697429656982422,0.0,-0.0,-0.0,2.093494176864624]}
+                    ]
+                }
+            },
+            "additionalProperties": true
+        },
+        "header": {
+            "$id": "#/properties/header",
+            "type": "object",
+            "title": "The header schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": {},
+            "examples": [
+                {
+                    "timestamp": "2021-01-19T23:27:58.633076Z",
+                    "message_type": "observation",
+                    "version": "0.1"
+                }
+            ],
+            "required": [
+                "timestamp",
+                "message_type",
+                "version"
+            ],
+            "properties": {
+                "timestamp": {
+                    "$id": "#/properties/header/properties/timestamp",
+                    "type": "string",
+                    "title": "The timestamp schema",
+                    "description": "Timestamp of when the data was generated in ISO 8601 format: YYYY-MM-DDThh:mm:ss.sssz",
+                    "examples": [
+                        "2021-01-19T23:27:58.633076Z"
+                    ],
+                    "pattern": "[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}[.]?[0-9]{0,}?Z"
+                },
+                "message_type": {
+                    "$id": "#/properties/header/properties/message_type",
+                    "type": "string",
+                    "title": "The message_type schema",
+                    "description": "One of the defined message types",
+                    "enum": [ "control", "observation", "chat", "status", "trial", "event", "groundtruth","experiment" ],
+                    "examples": [
+                        "observation"
+                    ],
+                    "pattern": "^([a-z_]*?)$"
+                },
+                "version": {
+                    "$id": "#/properties/header/properties/version",
+                    "type": "string",
+                    "title": "The version schema",
+                    "description": "The version of the message type object",
+                    "examples": [
+                        "0.1"
+                    ],
+                    "pattern": "^([0-9]*?)\\.([0-9]*?)$"
+                }
+            },
+            "additionalProperties": true
+        },
+        "msg": {
+            "$id": "#/properties/msg",
+            "type": "object",
+            "title": "The msg schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": {},
+            "examples": [
+                {
+                    "timestamp": "2021-01-19T23:27:58.633967Z",
+                    "experiment_id": "e2a3cb96-5f2f-11eb-8971-18810ee8274e",
+                    "trial_id": "ec76544c-7080-11eb-9123-18810ee8274e",
+                    "version": "0.1",
+                    "source": "tomcat_asr_agent",
+                    "sub_type": "asr:transcription"
+                }
+            ],
+            "required": [
+                "timestamp",
+                "version",
+                "source",
+                "sub_type"
+            ],
+            "properties": {
+                "timestamp": {
+                    "$id": "#/properties/msg/properties/timestamp",
+                    "type": "string",
+                    "title": "The timestamp schema",
+                    "description": "Timestamp of when the data was generated in ISO 8601 format: YYYY-MM-DDThh:mm:ss.sssz",
+                    "examples": [
+                        "2021-01-19T23:27:58.633967Z"
+                    ],
+                    "pattern": "[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}[.]?[0-9]{0,}?Z"
+                },
+                "experiment_id": {
+                    "$id": "#/properties/msg/properties/experiment_id",
+                    "type": "string",
+                    "title": "The experiment_id schema",
+                    "description": "The experiment id this message is associated with",
+                    "examples": [
+                        "e2a3cb96-5f2f-11eb-8971-18810ee8274e"
+                    ],
+                    "pattern": "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
+                },
+                "trial_id": {
+                    "$id": "#/properties/msg/properties/trial_id",
+                    "type": "string",
+                    "title": "The trial_id schema",
+                    "description": "The trial id this message is associate with",
+                    "examples": [
+                        "ec76544c-7080-11eb-9123-18810ee8274e"
+                    ],
+                    "pattern": "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
+                },
+                "version": {
+                    "$id": "#/properties/msg/properties/version",
+                    "type": "string",
+                    "title": "The version schema",
+                    "description": "The version of the sub_type format",
+                    "examples": [
+                        "1.0.1"
+                    ],
+                    "pattern": "^([.]*)|(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$"
+                },
+                "source": {
+                    "$id": "#/properties/msg/properties/source",
+                    "type": "string",
+                    "title": "The source schema",
+                    "description": "The name of the component that published this data",
+                    "examples": [
+                        "tomcat_asr_agent"
+                    ]
+                },
+                "sub_type": {
+                    "$id": "#/properties/msg/properties/sub_type",
+                    "type": "string",
+                    "title": "The sub_type schema",
+                    "description": "The subtype of the data. This field describes the format of this particular type of data",
+                    "examples": [
+                        "asr"
+                    ],
+                    "pattern": "^([a-zA-Z0-9_:]*?)$"
+                }
+            },
+            "additionalProperties": true
+        }
+    },
+    "additionalProperties": true
+}
+

@@ -1,0 +1,66 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://asist.aptima.com/schemas/event_state.json",
+  "type": "object",
+  "title": "The Victims Expired Event Schema",
+  "version": "0.5",
+  "required": [
+    "header",
+    "msg",
+    "data"
+  ],
+  "properties": {
+    "header": {
+      "$ref": "../../Common_Header/common_header.json",
+      "properties": {         
+        "message_type": {
+        "$id": "#/properties/message_type",
+        "type": "string",
+        "title": "The Message_type Schema",
+        "const": "groundtruth"
+        }
+      }
+    },
+    "msg": {
+      "$ref": "../../Common_Message/common_message.json",
+      "properties": {         
+        "sub_type": {
+        "$id": "#/properties/sub_type",
+        "type": "string",
+        "title": "The Sub Type Schema",
+        "const": "Event:VictimsExpired"
+        }
+      }
+    },
+    "data": {
+      "$id": "#/properties/message/properties/data",
+      "type": "object",
+      "title": "The Victims Expired Event Schema",
+      "required": [
+        "mission_timer",
+        "expired_message"		    
+      ],
+      "properties": {
+        "mission_timer": {
+          "$id": "#/properties/event/state/mission_timer",
+          "type": "string",
+          "title": "The Mission Timer Schema",          
+          "examples": [
+            "8 : 36"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "mission": {
+          "$id": "#/properties/data/properties/expired_message",
+          "type": "string",
+          "title": "The Expired Message Schema",          
+          "examples": [
+            "All remaining yellow victims have succumbed to their injuries."
+          ],
+          "pattern": "^(.*)$"
+        }
+      }
+    }
+  }
+}

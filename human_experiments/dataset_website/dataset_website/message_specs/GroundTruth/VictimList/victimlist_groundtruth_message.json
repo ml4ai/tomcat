@@ -1,0 +1,78 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://asist.aptima.com/schemas/event_state.json",
+  "type": "object",
+  "title": "The GroundTruth Mission:VictimList Schema",
+  "version": "0.5",
+  "required": [
+    "header",
+    "msg",
+    "data"
+  ],
+  "properties": {
+    "header": {
+      "$ref": "../../Common_Header/common_header.json",
+      "properties": {         
+        "message_type": {
+        "$id": "#/properties/message_type",
+        "type": "string",
+        "title": "The Message_type Schema",
+        "const": "groundtruth"
+        }
+      }
+    },
+    "msg": {
+      "$ref": "../../Common_Message/common_message.json",
+      "properties": {         
+        "sub_type": {
+        "$id": "#/properties/sub_type",
+        "type": "string",
+        "title": "The Sub Type Schema",
+        "const": "Mission:VictimList"
+        }
+      }
+    },
+    "data": {
+      "$id": "#/properties/message/properties/data",
+      "type": "object",
+      "title": "The GroundTruth Mission:VictimList Schema",
+      "required": [
+        "mission_timer",
+        "mission",
+        "mission_victim_list"
+		    
+      ],
+      "properties": {
+        "mission_timer": {
+          "$id": "#/properties/event/state/mission_timer",
+          "type": "string",
+          "title": "The Mission Timer Schema",          
+          "examples": [
+            "8 : 36"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "mission": {
+          "$id": "#/properties/data/properties/mission",
+          "type": "string",
+          "title": "The Mission Name Schema",          
+          "examples": [
+            "Singleplayer","Multiplayer"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "mission_victim_list": {
+					"$id": "#/properties/data/properties/mission_victim_list",
+					"type": "array",
+					"items": { "$ref": "./victimlist_victim.json" },
+					"title": "The Victim List Schema",
+					"default": "",
+					"examples": [
+						"[ {\"x\" : -2088.0,\"y\" : 60.0,\"z\" : 146.0,\"block_type\" : \"block_victim_1\",\"roomName\" : \"Security Office\"}]"
+					]
+				}
+      }
+    }
+  }
+}

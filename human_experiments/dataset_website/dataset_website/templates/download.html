@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Download — {{ metadata.title or "ToMCAT Dataset" }}{% endblock %}
+{% block body_class %}download{% endblock %}
+
+{% block content %}
+<h1>Download the dataset</h1>
+<p>
+    The live site is for browsing and ad-hoc queries (capped at 10 seconds). To work
+    with the whole dataset, download a full copy below and run it locally. Each
+    artifact is regenerated manually, so check its timestamp to see how current it
+    is.
+</p>
+
+{% if artifacts %}
+<table class="table">
+    <thead>
+        <tr><th>File</th><th>Format</th><th class="text-end">Size</th><th>Updated</th></tr>
+    </thead>
+    <tbody>
+    {% for a in artifacts %}
+        <tr>
+            <td><a href="{{ a.url }}"><strong>{{ a.name }}</strong></a></td>
+            <td>{{ a.description }}</td>
+            <td class="text-end">{{ a.size_gb }} GB</td>
+            <td>{{ a.updated }}</td>
+        </tr>
+        {% if a.checksum %}
+        <tr><td colspan="4" class="checksum"><small>SHA-256: <code>{{ a.checksum }}</code></small></td></tr>
+        {% endif %}
+    {% endfor %}
+    </tbody>
+</table>
+
+{{ render_markdown("""
+### Using the downloads
+
+- **SQLite** (`tomcat.db`): open directly with the `sqlite3` CLI, pandas
+  (`pd.read_sql`), R (`DBI`/`RSQLite`), or DuckDB (`ATTACH 'tomcat.db' (TYPE sqlite)`).
+- **PostgreSQL dump** (`tomcat.dump`): restore into your own cluster with
+  `pg_restore -d your_db tomcat.dump` (custom format, no manual decompression needed).
+""") }}
+{% else %}
+<p>No download artifacts are available yet. Please check back later.</p>
+{% endif %}
+{% endblock %}

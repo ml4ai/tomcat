@@ -1,0 +1,27 @@
+{
+    "definitions": {},
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://asist.aptima.com/schemas/M6.json",
+    "type": "object",
+    "title": "The M6 Schema",
+    "version": "0.5",
+    "required": [
+        "player_name", "marker_block_legend"
+    ],
+    "properties": {
+        "player_name": {
+            "$id": "#/properties/player_name",
+            "type": "string",
+            "title": "The player name",          
+            "examples": ["Player123"],
+            "pattern": "^(.*)$"
+        },
+        "marker_block_legend": {
+            "$id": "#/properties/marker_block_legend",
+            "type": "string",
+            "title": "The marker_block_legend name",          
+            "examples": ["SaturnA_24"],
+            "pattern": "^(.*)$"
+        }
+    }
+}

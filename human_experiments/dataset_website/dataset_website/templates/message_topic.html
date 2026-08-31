@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}{{ topic }} — Message Bus Reference{% endblock %}
+{% block body_class %}table{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1><code class="topic-name">{{ topic }}</code></h1>
+    {% if doc.description %}<p>{{ doc.description }}</p>{% endif %}
+</div>
+
+<p class="msg-meta">
+    <a href="/messages">&larr; All message topics</a>
+    &nbsp;·&nbsp; schema <code>{{ doc.schema_path }}</code>
+    {% if doc.topic != topic %}&nbsp;·&nbsp; matches spec topic <code>{{ doc.topic }}</code>{% endif %}
+</p>
+
+{% if not doc.sections %}
+<p>This topic's schema declares no fields.</p>
+{% endif %}
+
+{% for section in doc.sections %}
+<h3>{{ section.title }}</h3>
+<div class="table-scroll">
+<table class="rows-and-columns field-table table table-sm table-striped table-hover align-middle">
+    <thead>
+        <tr><th>Field</th><th>Type</th><th>Required</th><th>Allowed values</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+    {% for f in section.fields %}
+        <tr>
+            <td class="field-name" style="padding-left: {{ 0.8 + f.depth * 1.2 }}rem">{{ f.name }}</td>
+            <td class="field-type">{{ f.json_type }}</td>
+            <td class="field-req">{{ "✓" if f.required else "" }}</td>
+            <td class="field-enum">
+                {%- if f.enum -%}
+                    {%- for v in f.enum -%}
+                        <code>{{ v if v is not none else "null" }}</code>{{ " " if not loop.last }}
+                    {%- endfor -%}
+                {%- endif -%}
+            </td>
+            <td>{{ f.description }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endfor %}
+
+{% if doc.examples %}
+<h3>Example message{{ "s" if doc.examples | length > 1 }}</h3>
+{% for example in doc.examples %}
+<div class="code"><pre><code class="json-highlight">{{ example }}</code></pre></div>
+{% endfor %}
+{% endif %}
+
+<details class="column-descriptions-wrap">
+    <summary>Raw JSON Schema (resolved)</summary>
+    <div class="code"><pre><code class="json-highlight">{{ doc.raw_schema | tojson(indent=2) }}</code></pre></div>
+</details>
+
+{% if doc.prose %}
+<details class="column-descriptions-wrap">
+    <summary>Upstream spec documentation</summary>
+    {{ render_markdown(doc.prose) }}
+</details>
+{% endif %}
+
+<style>
+    .topic-name { font-size: .55em; }
+    .msg-meta { color: var(--muted); font-size: .92rem; margin: -.5rem 0 1.5rem; }
+    /* These field tables hold prose -- let cells wrap (base table is nowrap). */
+    table.field-table { white-space: normal; }
+    table.field-table td.field-name { white-space: nowrap; font-family: var(--font-mono);
+                                       font-size: .85rem; }
+    table.field-table td.field-type { font-family: var(--font-mono); font-size: .82rem;
+                                       color: var(--muted); white-space: nowrap; }
+    table.field-table td.field-req { text-align: center; color: var(--accent); }
+    table.field-table td.field-enum code { font-size: .78rem; }
+    /* Raw-schema / example blocks: allow the full width of the descriptions box. */
+    details.column-descriptions-wrap .code pre { max-width: none; }
+    .code pre { max-width: none; }
+</style>
+{% endblock %}

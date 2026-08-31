@@ -1,0 +1,1391 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://asist.aptima.com/schemas/player_compliance.json",
+  "type": "object",
+  "title": "Cornell Team Trust Analytic Component",
+  "version": "1.0",
+  "required": [
+    "header",
+    "msg",
+    "data"
+  ],
+  "properties": {
+    "header": {
+      "$ref": "../Common_Header/common_header.json",
+      "properties": {         
+        "message_type": {
+        "$id": "#/properties/message_type",
+        "type": "string",
+        "title": "The Message_type Schema",
+        "const": "agent"
+        }
+      }
+    },
+    "msg": {
+      "$ref": "../Common_Message/common_message.json",
+      "properties": {         
+        "sub_type": {
+            "$id": "#/properties/sub_type",
+            "type": "string",
+            "title": "The Sub Type Schema",
+            "const": "AC:Player_compliance"
+        },
+        "source": {
+            "$id": "#/properties/source",
+            "type": "string",
+            "title": "The Source Schema",
+            "const": "ac_cornell_ta2_teamtrust"
+        }
+      }
+    },
+    "data": {
+      "$id": "#/properties/message/properties/data",
+      "type": "object",
+      "title": "The Cornell Team Trust Analytic Component Data Schema",
+      "required": [ 
+        "elapsed_ms",
+        "Red",
+        "Blue",
+        "Green"
+      ],
+      "properties": {
+        "elapsed_ms": {
+          "$id": "#/properties/data/properties/elapsed_ms",
+          "type": "number",
+          "title": "The Elapsed Milliseconds Schema",
+          "description": "The number of elapsed milliseconds since mission start",
+          "pattern": "^[0-9]+$"
+        },
+        "Red": {
+          "$id": "#/properties/data/properties/Red",
+          "type": "object",
+          "title": "Compliance measures for Medic (Red)",
+          "description": "",
+          "required":[
+            "N_open_requests_triage",
+            "compliance_overall_triage",
+            "compliance_rate_triage",
+            "avg_response_start_time_triage",
+            "avg_response_action_time_triage",
+            "N_open_requests_transport",
+            "compliance_overall_transport",
+            "compliance_rate_transport",
+            "avg_response_start_time_transport",
+            "avg_response_action_time_transport"
+          ],
+          "properties": 
+          {
+            "N_open_requests_triage":
+            {
+              "$id": "#/properties/data/properties/Red/properties/N_open_requests_triage",
+              "type": "object",
+              "title": "Open triage requests for red",
+              "description": "",
+              "required":[
+                "Red_request",
+                "Green_request",
+                "Blue_request"
+              ],
+              "properties":
+              {
+                "Red_request":
+                {
+                  "$id": "#/properties/data/properties/Red/properties/N_open_requests_triage/properties/Red_request",
+                  "type": "number",
+                  "title": "For requests by Red player",
+                  "description": ""
+                },
+                "Green_request":
+                {
+                  "$id": "#/properties/data/properties/Red/properties/N_open_requests_triage/properties/Green_request",
+                  "type": "number",
+                  "title": "For requests by Green player",
+                  "description": ""
+                },
+                "Blue_request":
+                {
+                  "$id": "#/properties/data/properties/Red/properties/N_open_requests_triage/properties/Blue_request",
+                  "type": "number",
+                  "title": "For requests by Blue player",
+                  "description": ""
+                }
+              }
+            },
+            "compliance_overall_triage":
+            {
+              "$id": "#/properties/data/properties/Red/properties/compliance_overall_triage",
+              "type": "object",
+              "title": "Overall compliance for red",
+              "description": "",
+              "required":[
+                "Red_request",
+                "Green_request",
+                "Blue_request"
+              ],
+              "properties":
+              {
+                "Red_request":
+                {
+                  "$id": "#/properties/data/properties/Red/properties/compliance_overall_triage/properties/Red_request",
+                  "type": "number",
+                  "title": "For requests by Red player",
+                  "description": ""
+                },
+                "Green_request":
+                {
+                  "$id": "#/properties/data/properties/Red/properties/compliance_overall_triage/properties/Green_request",
+                  "type": "number",
+                  "title": "For requests by Green player",
+                  "description": ""
+                },
+                "Blue_request":
+                {
+                  "$id": "#/properties/data/properties/Red/properties/compliance_overall_triage/properties/Blue_request",
+                  "type": "number",
+                  "title": "For requests by Blue player",
+                  "description": ""
+                }
+              }
+            },
+            "compliance_rate_triage":
+            {
+              "$id": "#/properties/data/properties/Red/properties/compliance_rate_triage",
+              "type": "object",
+              "title": "Compliance rate for red",
+              "description": "",
+              "required":[
+                "Red_request",
+                "Green_request",
+                "Blue_request"
+              ],
+              "properties":
+              {
+                "Red_request":
+                {
+                  "$id": "#/properties/data/properties/Red/properties/compliance_rate_triage/properties/Red_request",
+                  "type": "number",
+                  "title": "For requests by Red player",
+                  "description": ""
+                },
+                "Green_request":
+                {
+                  "$id": "#/properties/data/properties/Red/properties/compliance_rate_triage/properties/Green_request",
+                  "type": "number",
+                  "title": "For requests by Green player",
+                  "description": ""
+                },
+                "Blue_request":
+                {
+                  "$id": "#/properties/data/properties/Red/properties/compliance_rate_triage/properties/Blue_request",
+                  "type": "number",
+                  "title": "For requests by Blue player",
+                  "description": ""
+                }
+              }
+            },
+            "avg_response_start_time_triage":
+            {
+              "$id": "#/properties/data/properties/Red/properties/avg_response_start_time_triage",
+              "type": "object",
+              "title": "Average response time for red",
+              "description": "",
+              "required":[
+                "Red_request",
+                "Green_request",
+                "Blue_request"
+              ],
+              "properties":
+              {
+                "Red_request":
+                {
+                  "$id": "#/properties/data/properties/Red/properties/avg_response_start_time_triage/properties/Red_request",
+                  "type": "number",
+                  "title": "For requests by Red player",
+                  "description": ""
+                },
+                "Green_request":
+                {
+                  "$id": "#/properties/data/properties/Red/properties/avg_response_start_time_triage/properties/Green_request",
+                  "type": "number",
+                  "title": "For requests by Green player",
+                  "description": ""
+                },
+                "Blue_request":
+                {
+                  "$id": "#/properties/data/properties/Red/properties/avg_response_start_time_triage/properties/Blue_request",
+                  "type": "number",
+                  "title": "For requests by Blue player",
+                  "description": ""
+                }
+              }
+            },
+            "avg_response_action_time_triage":
+            {
+              "$id": "#/properties/data/properties/Red/properties/avg_response_action_time_triage",
+              "type": "object",
+              "title": "Average action time for red",
+              "description": "",
+              "required":[
+                "Red_request",
+                "Green_request",
+                "Blue_request"
+              ],
+              "properties":
+              {
+                "Red_request":
+                {
+                  "$id": "#/properties/data/properties/Red/properties/avg_response_action_time_triage/properties/Red_request",
+                  "type": "number",
+                  "title": "For requests by Red player",
+                  "description": ""
+                },
+                "Green_request":
+                {
+                  "$id": "#/properties/data/properties/Red/properties/avg_response_action_time_triage/properties/Green_request",
+                  "type": "number",
+                  "title": "For requests by Green player",
+                  "description": ""
+                },
+                "Blue_request":
+                {
+                  "$id": "#/properties/data/properties/Red/properties/avg_response_action_time_triage/properties/Blue_request",
+                  "type": "number",
+                  "title": "For requests by Blue player",
+                  "description": ""
+                }
+              }
+            },
+            "N_open_requests_transport":
+            {
+              "$id": "#/properties/data/properties/Red/properties/N_open_requests_transport",
+              "type": "object",
+              "title": "Open transport requests for red",
+              "description": "",
+              "required":[
+                "Red_request",
+                "Green_request",
+                "Blue_request"
+              ],
+              "properties":
+              {
+                "Red_request":
+                {
+                  "$id": "#/properties/data/properties/Red/properties/N_open_requests_transport/properties/Red_request",
+                  "type": "number",
+                  "title": "For requests by Red player",
+                  "description": ""
+                },
+                "Green_request":
+                {
+                  "$id": "#/properties/data/properties/Red/properties/N_open_requests_transport/properties/Green_request",
+                  "type": "number",
+                  "title": "For requests by Green player",
+                  "description": ""
+                },
+                "Blue_request":
+                {
+                  "$id": "#/properties/data/properties/Red/properties/N_open_requests_transport/properties/Blue_request",
+                  "type": "number",
+                  "title": "For requests by Blue player",
+                  "description": ""
+                }
+              }
+            },
+            "compliance_overall_transport":
+            {
+              "$id": "#/properties/data/properties/Red/properties/compliance_overall_transport",
+              "type": "object",
+              "title": "Overall compliance for red",
+              "description": "",
+              "required":[
+                "Red_request",
+                "Green_request",
+                "Blue_request"
+              ],
+              "properties":
+              {
+                "Red_request":
+                {
+                  "$id": "#/properties/data/properties/Red/properties/compliance_overall_transport/properties/Red_request",
+                  "type": "number",
+                  "title": "For requests by Red player",
+                  "description": ""
+                },
+                "Green_request":
+                {
+                  "$id": "#/properties/data/properties/Red/properties/compliance_overall_transport/properties/Green_request",
+                  "type": "number",
+                  "title": "For requests by Green player",
+                  "description": ""
+                },
+                "Blue_request":
+                {
+                  "$id": "#/properties/data/properties/Red/properties/compliance_overall_transport/properties/Blue_request",
+                  "type": "number",
+                  "title": "For requests by Blue player",
+                  "description": ""
+                }
+              }
+            },
+            "compliance_rate_transport":
+            {
+              "$id": "#/properties/data/properties/Red/properties/compliance_rate_transport",
+              "type": "object",
+              "title": "Compliance rate for red",
+              "description": "",
+              "required":[
+                "Red_request",
+                "Green_request",
+                "Blue_request"
+              ],
+              "properties":
+              {
+                "Red_request":
+                {
+                  "$id": "#/properties/data/properties/Red/properties/compliance_rate_transport/properties/Red_request",
+                  "type": "number",
+                  "title": "For requests by Red player",
+                  "description": ""
+                },
+                "Green_request":
+                {
+                  "$id": "#/properties/data/properties/Red/properties/compliance_rate_transport/properties/Green_request",
+                  "type": "number",
+                  "title": "For requests by Green player",
+                  "description": ""
+                },
+                "Blue_request":
+                {
+                  "$id": "#/properties/data/properties/Red/properties/compliance_rate_transport/properties/Blue_request",
+                  "type": "number",
+                  "title": "For requests by Blue player",
+                  "description": ""
+                }
+              }
+            },
+            "avg_response_start_time_transport":
+            {
+              "$id": "#/properties/data/properties/Red/properties/avg_response_start_time_transport",
+              "type": "object",
+              "title": "Average response time for red",
+              "description": "",
+              "required":[
+                "Red_request",
+                "Green_request",
+                "Blue_request"
+              ],
+              "properties":
+              {
+                "Red_request":
+                {
+                  "$id": "#/properties/data/properties/Red/properties/avg_response_start_time_transport/properties/Red_request",
+                  "type": "number",
+                  "title": "For requests by Red player",
+                  "description": ""
+                },
+                "Green_request":
+                {
+                  "$id": "#/properties/data/properties/Red/properties/avg_response_start_time_transport/properties/Green_request",
+                  "type": "number",
+                  "title": "For requests by Green player",
+                  "description": ""
+                },
+                "Blue_request":
+                {
+                  "$id": "#/properties/data/properties/Red/properties/avg_response_start_time_transport/properties/Blue_request",
+                  "type": "number",
+                  "title": "For requests by Blue player",
+                  "description": ""
+                }
+              }
+            },
+            "avg_response_action_time_transport":
+            {
+              "$id": "#/properties/data/properties/Red/properties/avg_response_action_time_transport",
+              "type": "object",
+              "title": "Average action time for red",
+              "description": "",
+              "required":[
+                "Red_request",
+                "Green_request",
+                "Blue_request"
+              ],
+              "properties":
+              {
+                "Red_request":
+                {
+                  "$id": "#/properties/data/properties/Red/properties/avg_response_action_time_transport/properties/Red_request",
+                  "type": "number",
+                  "title": "For requests by Red player",
+                  "description": ""
+                },
+                "Green_request":
+                {
+                  "$id": "#/properties/data/properties/Red/properties/avg_response_action_time_transport/properties/Green_request",
+                  "type": "number",
+                  "title": "For requests by Green player",
+                  "description": ""
+                },
+                "Blue_request":
+                {
+                  "$id": "#/properties/data/properties/Red/properties/avg_response_action_time_transport/properties/Blue_request",
+                  "type": "number",
+                  "title": "For requests by Blue player",
+                  "description": ""
+                }
+              }
+            }
+          }
+        },
+        "Green": {
+          "$id": "#/properties/data/properties/Green",
+          "type": "object",
+          "title": "Compliance measures for Medic (Red)",
+          "description": "",
+          "required":[
+            "N_open_requests_triage",
+            "compliance_overall_triage",
+            "compliance_rate_triage",
+            "avg_response_start_time_triage",
+            "avg_response_action_time_triage",
+            "N_open_requests_transport",
+            "compliance_overall_transport",
+            "compliance_rate_transport",
+            "avg_response_start_time_transport",
+            "avg_response_action_time_transport"
+          ],
+          "properties": 
+          {
+            "N_open_requests_triage":
+            {
+              "$id": "#/properties/data/properties/Green/properties/N_open_requests_triage",
+              "type": "object",
+              "title": "Open triage requests for Green",
+              "description": "",
+              "required":[
+                "Red_request",
+                "Green_request",
+                "Blue_request"
+              ],
+              "properties":
+              {
+                "Red_request":
+                {
+                  "$id": "#/properties/data/properties/Green/properties/N_open_requests_triage/properties/Red_request",
+                  "type": "number",
+                  "title": "For requests by Red player",
+                  "description": ""
+                },
+                "Green_request":
+                {
+                  "$id": "#/properties/data/properties/Green/properties/N_open_requests_triage/properties/Green_request",
+                  "type": "number",
+                  "title": "For requests by Green player",
+                  "description": ""
+                },
+                "Blue_request":
+                {
+                  "$id": "#/properties/data/properties/Green/properties/N_open_requests_triage/properties/Blue_request",
+                  "type": "number",
+                  "title": "For requests by Blue player",
+                  "description": ""
+                }
+              }
+            },
+            "compliance_overall_triage":
+            {
+              "$id": "#/properties/data/properties/Green/properties/compliance_overall_triage",
+              "type": "object",
+              "title": "Overall compliance for Green",
+              "description": "",
+              "required":[
+                "Red_request",
+                "Green_request",
+                "Blue_request"
+              ],
+              "properties":
+              {
+                "Red_request":
+                {
+                  "$id": "#/properties/data/properties/Green/properties/compliance_overall_triage/properties/Red_request",
+                  "type": "number",
+                  "title": "For requests by Red player",
+                  "description": ""
+                },
+                "Green_request":
+                {
+                  "$id": "#/properties/data/properties/Green/properties/compliance_overall_triage/properties/Green_request",
+                  "type": "number",
+                  "title": "For requests by Green player",
+                  "description": ""
+                },
+                "Blue_request":
+                {
+                  "$id": "#/properties/data/properties/Green/properties/compliance_overall_triage/properties/Blue_request",
+                  "type": "number",
+                  "title": "For requests by Blue player",
+                  "description": ""
+                }
+              }
+            },
+            "compliance_rate_triage":
+            {
+              "$id": "#/properties/data/properties/Green/properties/compliance_rate_triage",
+              "type": "object",
+              "title": "Compliance rate for Green",
+              "description": "",
+              "required":[
+                "Red_request",
+                "Green_request",
+                "Blue_request"
+              ],
+              "properties":
+              {
+                "Red_request":
+                {
+                  "$id": "#/properties/data/properties/Green/properties/compliance_rate_triage/properties/Red_request",
+                  "type": "number",
+                  "title": "For requests by Red player",
+                  "description": ""
+                },
+                "Green_request":
+                {
+                  "$id": "#/properties/data/properties/Green/properties/compliance_rate_triage/properties/Green_request",
+                  "type": "number",
+                  "title": "For requests by Green player",
+                  "description": ""
+                },
+                "Blue_request":
+                {
+                  "$id": "#/properties/data/properties/Green/properties/compliance_rate_triage/properties/Blue_request",
+                  "type": "number",
+                  "title": "For requests by Blue player",
+                  "description": ""
+                }
+              }
+            },
+            "avg_response_start_time_triage":
+            {
+              "$id": "#/properties/data/properties/Green/properties/avg_response_start_time_triage",
+              "type": "object",
+              "title": "Average response time for Green",
+              "description": "",
+              "required":[
+                "Red_request",
+                "Green_request",
+                "Blue_request"
+              ],
+              "properties":
+              {
+                "Red_request":
+                {
+                  "$id": "#/properties/data/properties/Green/properties/avg_response_start_time_triage/properties/Red_request",
+                  "type": "number",
+                  "title": "For requests by Red player",
+                  "description": ""
+                },
+                "Green_request":
+                {
+                  "$id": "#/properties/data/properties/Green/properties/avg_response_start_time_triage/properties/Green_request",
+                  "type": "number",
+                  "title": "For requests by Green player",
+                  "description": ""
+                },
+                "Blue_request":
+                {
+                  "$id": "#/properties/data/properties/Green/properties/avg_response_start_time_triage/properties/Blue_request",
+                  "type": "number",
+                  "title": "For requests by Blue player",
+                  "description": ""
+                }
+              }
+            },
+            "avg_response_action_time_triage":
+            {
+              "$id": "#/properties/data/properties/Green/properties/avg_response_action_time_triage",
+              "type": "object",
+              "title": "Average action time for Green",
+              "description": "",
+              "required":[
+                "Red_request",
+                "Green_request",
+                "Blue_request"
+              ],
+              "properties":
+              {
+                "Red_request":
+                {
+                  "$id": "#/properties/data/properties/Green/properties/avg_response_action_time_triage/properties/Red_request",
+                  "type": "number",
+                  "title": "For requests by Red player",
+                  "description": ""
+                },
+                "Green_request":
+                {
+                  "$id": "#/properties/data/properties/Green/properties/avg_response_action_time_triage/properties/Green_request",
+                  "type": "number",
+                  "title": "For requests by Green player",
+                  "description": ""
+                },
+                "Blue_request":
+                {
+                  "$id": "#/properties/data/properties/Green/properties/avg_response_action_time_triage/properties/Blue_request",
+                  "type": "number",
+                  "title": "For requests by Blue player",
+                  "description": ""
+                }
+              }
+            },
+            "N_open_requests_transport":
+            {
+              "$id": "#/properties/data/properties/Green/properties/N_open_requests_transport",
+              "type": "object",
+              "title": "Open transport requests for Green",
+              "description": "",
+              "required":[
+                "Red_request",
+                "Green_request",
+                "Blue_request"
+              ],
+              "properties":
+              {
+                "Red_request":
+                {
+                  "$id": "#/properties/data/properties/Green/properties/N_open_requests_transport/properties/Red_request",
+                  "type": "number",
+                  "title": "For requests by Red player",
+                  "description": ""
+                },
+                "Green_request":
+                {
+                  "$id": "#/properties/data/properties/Green/properties/N_open_requests_transport/properties/Green_request",
+                  "type": "number",
+                  "title": "For requests by Green player",
+                  "description": ""
+                },
+                "Blue_request":
+                {
+                  "$id": "#/properties/data/properties/Green/properties/N_open_requests_transport/properties/Blue_request",
+                  "type": "number",
+                  "title": "For requests by Blue player",
+                  "description": ""
+                }
+              }
+            },
+            "compliance_overall_transport":
+            {
+              "$id": "#/properties/data/properties/Green/properties/compliance_overall_transport",
+              "type": "object",
+              "title": "Overall compliance for Green",
+              "description": "",
+              "required":[
+                "Red_request",
+                "Green_request",
+                "Blue_request"
+              ],
+              "properties":
+              {
+                "Red_request":
+                {
+                  "$id": "#/properties/data/properties/Green/properties/compliance_overall_transport/properties/Red_request",
+                  "type": "number",
+                  "title": "For requests by Red player",
+                  "description": ""
+                },
+                "Green_request":
+                {
+                  "$id": "#/properties/data/properties/Green/properties/compliance_overall_transport/properties/Green_request",
+                  "type": "number",
+                  "title": "For requests by Green player",
+                  "description": ""
+                },
+                "Blue_request":
+                {
+                  "$id": "#/properties/data/properties/Green/properties/compliance_overall_transport/properties/Blue_request",
+                  "type": "number",
+                  "title": "For requests by Blue player",
+                  "description": ""
+                }
+              }
+            },
+            "compliance_rate_transport":
+            {
+              "$id": "#/properties/data/properties/Green/properties/compliance_rate_transport",
+              "type": "object",
+              "title": "Compliance rate for Green",
+              "description": "",
+              "required":[
+                "Red_request",
+                "Green_request",
+                "Blue_request"
+              ],
+              "properties":
+              {
+                "Red_request":
+                {
+                  "$id": "#/properties/data/properties/Green/properties/compliance_rate_transport/properties/Red_request",
+                  "type": "number",
+                  "title": "For requests by Red player",
+                  "description": ""
+                },
+                "Green_request":
+                {
+                  "$id": "#/properties/data/properties/Green/properties/compliance_rate_transport/properties/Green_request",
+                  "type": "number",
+                  "title": "For requests by Green player",
+                  "description": ""
+                },
+                "Blue_request":
+                {
+                  "$id": "#/properties/data/properties/Green/properties/compliance_rate_transport/properties/Blue_request",
+                  "type": "number",
+                  "title": "For requests by Blue player",
+                  "description": ""
+                }
+              }
+            },
+            "avg_response_start_time_transport":
+            {
+              "$id": "#/properties/data/properties/Green/properties/avg_response_start_time_transport",
+              "type": "object",
+              "title": "Average response time for Green",
+              "description": "",
+              "required":[
+                "Red_request",
+                "Green_request",
+                "Blue_request"
+              ],
+              "properties":
+              {
+                "Red_request":
+                {
+                  "$id": "#/properties/data/properties/Green/properties/avg_response_start_time_transport/properties/Red_request",
+                  "type": "number",
+                  "title": "For requests by Red player",
+                  "description": ""
+                },
+                "Green_request":
+                {
+                  "$id": "#/properties/data/properties/Green/properties/avg_response_start_time_transport/properties/Green_request",
+                  "type": "number",
+                  "title": "For requests by Green player",
+                  "description": ""
+                },
+                "Blue_request":
+                {
+                  "$id": "#/properties/data/properties/Green/properties/avg_response_start_time_transport/properties/Blue_request",
+                  "type": "number",
+                  "title": "For requests by Blue player",
+                  "description": ""
+                }
+              }
+            },
+            "avg_response_action_time_transport":
+            {
+              "$id": "#/properties/data/properties/Green/properties/avg_response_action_time_transport",
+              "type": "object",
+              "title": "Average action time for Green",
+              "description": "",
+              "required":[
+                "Red_request",
+                "Green_request",
+                "Blue_request"
+              ],
+              "properties":
+              {
+                "Red_request":
+                {
+                  "$id": "#/properties/data/properties/Green/properties/avg_response_action_time_transport/properties/Red_request",
+                  "type": "number",
+                  "title": "For requests by Red player",
+                  "description": ""
+                },
+                "Green_request":
+                {
+                  "$id": "#/properties/data/properties/Green/properties/avg_response_action_time_transport/properties/Green_request",
+                  "type": "number",
+                  "title": "For requests by Green player",
+                  "description": ""
+                },
+                "Blue_request":
+                {
+                  "$id": "#/properties/data/properties/Green/properties/avg_response_action_time_transport/properties/Blue_request",
+                  "type": "number",
+                  "title": "For requests by Blue player",
+                  "description": ""
+                }
+              }
+            }
+          }
+        },   
+        "Blue": {
+          "$id": "#/properties/data/properties/Blue",
+          "type": "object",
+          "title": "Compliance measures for Medic (Red)",
+          "description": "",
+          "required":[
+            "N_open_requests_triage",
+            "compliance_overall_triage",
+            "compliance_rate_triage",
+            "avg_response_start_time_triage",
+            "avg_response_action_time_triage",
+            "N_open_requests_transport",
+            "compliance_overall_transport",
+            "compliance_rate_transport",
+            "avg_response_start_time_transport",
+            "avg_response_action_time_transport",
+            "N_open_requests_rubble_clear",
+            "compliance_overall_rubble_clear",
+            "compliance_rate_rubble_clear",
+            "avg_response_start_time_rubble_clear",
+            "avg_response_action_time_rubble_clear"
+          ],
+          "properties": 
+          {
+            "N_open_requests_triage":
+            {
+              "$id": "#/properties/data/properties/Blue/properties/N_open_requests_triage",
+              "type": "object",
+              "title": "Open triage requests for Blue",
+              "description": "",
+              "required":[
+                "Red_request",
+                "Green_request",
+                "Blue_request"
+              ],
+              "properties":
+              {
+                "Red_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/N_open_requests_triage/properties/Red_request",
+                  "type": "number",
+                  "title": "For requests by Red player",
+                  "description": ""
+                },
+                "Green_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/N_open_requests_triage/properties/Green_request",
+                  "type": "number",
+                  "title": "For requests by Green player",
+                  "description": ""
+                },
+                "Blue_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/N_open_requests_triage/properties/Blue_request",
+                  "type": "number",
+                  "title": "For requests by Blue player",
+                  "description": ""
+                }
+              }
+            },
+            "compliance_overall_triage":
+            {
+              "$id": "#/properties/data/properties/Blue/properties/compliance_overall_triage",
+              "type": "object",
+              "title": "Overall compliance for Blue",
+              "description": "",
+              "required":[
+                "Red_request",
+                "Green_request",
+                "Blue_request"
+              ],
+              "properties":
+              {
+                "Red_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/compliance_overall_triage/properties/Red_request",
+                  "type": "number",
+                  "title": "For requests by Red player",
+                  "description": ""
+                },
+                "Green_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/compliance_overall_triage/properties/Green_request",
+                  "type": "number",
+                  "title": "For requests by Green player",
+                  "description": ""
+                },
+                "Blue_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/compliance_overall_triage/properties/Blue_request",
+                  "type": "number",
+                  "title": "For requests by Blue player",
+                  "description": ""
+                }
+              }
+            },
+            "compliance_rate_triage":
+            {
+              "$id": "#/properties/data/properties/Blue/properties/compliance_rate_triage",
+              "type": "object",
+              "title": "Compliance rate for Blue",
+              "description": "",
+              "required":[
+                "Red_request",
+                "Green_request",
+                "Blue_request"
+              ],
+              "properties":
+              {
+                "Red_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/compliance_rate_triage/properties/Red_request",
+                  "type": "number",
+                  "title": "For requests by Red player",
+                  "description": ""
+                },
+                "Green_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/compliance_rate_triage/properties/Green_request",
+                  "type": "number",
+                  "title": "For requests by Green player",
+                  "description": ""
+                },
+                "Blue_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/compliance_rate_triage/properties/Blue_request",
+                  "type": "number",
+                  "title": "For requests by Blue player",
+                  "description": ""
+                }
+              }
+            },
+            "avg_response_start_time_triage":
+            {
+              "$id": "#/properties/data/properties/Blue/properties/avg_response_start_time_triage",
+              "type": "object",
+              "title": "Average response time for Blue",
+              "description": "",
+              "required":[
+                "Red_request",
+                "Green_request",
+                "Blue_request"
+              ],
+              "properties":
+              {
+                "Red_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/avg_response_start_time_triage/properties/Red_request",
+                  "type": "number",
+                  "title": "For requests by Red player",
+                  "description": ""
+                },
+                "Green_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/avg_response_start_time_triage/properties/Green_request",
+                  "type": "number",
+                  "title": "For requests by Green player",
+                  "description": ""
+                },
+                "Blue_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/avg_response_start_time_triage/properties/Blue_request",
+                  "type": "number",
+                  "title": "For requests by Blue player",
+                  "description": ""
+                }
+              }
+            },
+            "avg_response_action_time_triage":
+            {
+              "$id": "#/properties/data/properties/Blue/properties/avg_response_action_time_triage",
+              "type": "object",
+              "title": "Average action time for Blue",
+              "description": "",
+              "required":[
+                "Red_request",
+                "Green_request",
+                "Blue_request"
+              ],
+              "properties":
+              {
+                "Red_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/avg_response_action_time_triage/properties/Red_request",
+                  "type": "number",
+                  "title": "For requests by Red player",
+                  "description": ""
+                },
+                "Green_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/avg_response_action_time_triage/properties/Green_request",
+                  "type": "number",
+                  "title": "For requests by Green player",
+                  "description": ""
+                },
+                "Blue_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/avg_response_action_time_triage/properties/Blue_request",
+                  "type": "number",
+                  "title": "For requests by Blue player",
+                  "description": ""
+                }
+              }
+            },
+            "N_open_requests_transport":
+            {
+              "$id": "#/properties/data/properties/Blue/properties/N_open_requests_transport",
+              "type": "object",
+              "title": "Open transport requests for Blue",
+              "description": "",
+              "required":[
+                "Red_request",
+                "Green_request",
+                "Blue_request"
+              ],
+              "properties":
+              {
+                "Red_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/N_open_requests_transport/properties/Red_request",
+                  "type": "number",
+                  "title": "For requests by Red player",
+                  "description": ""
+                },
+                "Green_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/N_open_requests_transport/properties/Green_request",
+                  "type": "number",
+                  "title": "For requests by Green player",
+                  "description": ""
+                },
+                "Blue_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/N_open_requests_transport/properties/Blue_request",
+                  "type": "number",
+                  "title": "For requests by Blue player",
+                  "description": ""
+                }
+              }
+            },
+            "compliance_overall_transport":
+            {
+              "$id": "#/properties/data/properties/Blue/properties/compliance_overall_transport",
+              "type": "object",
+              "title": "Overall compliance for Blue",
+              "description": "",
+              "required":[
+                "Red_request",
+                "Green_request",
+                "Blue_request"
+              ],
+              "properties":
+              {
+                "Red_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/compliance_overall_transport/properties/Red_request",
+                  "type": "number",
+                  "title": "For requests by Red player",
+                  "description": ""
+                },
+                "Green_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/compliance_overall_transport/properties/Green_request",
+                  "type": "number",
+                  "title": "For requests by Green player",
+                  "description": ""
+                },
+                "Blue_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/compliance_overall_transport/properties/Blue_request",
+                  "type": "number",
+                  "title": "For requests by Blue player",
+                  "description": ""
+                }
+              }
+            },
+            "compliance_rate_transport":
+            {
+              "$id": "#/properties/data/properties/Blue/properties/compliance_rate_transport",
+              "type": "object",
+              "title": "Compliance rate for Blue",
+              "description": "",
+              "required":[
+                "Red_request",
+                "Green_request",
+                "Blue_request"
+              ],
+              "properties":
+              {
+                "Red_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/compliance_rate_transport/properties/Red_request",
+                  "type": "number",
+                  "title": "For requests by Red player",
+                  "description": ""
+                },
+                "Green_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/compliance_rate_transport/properties/Green_request",
+                  "type": "number",
+                  "title": "For requests by Green player",
+                  "description": ""
+                },
+                "Blue_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/compliance_rate_transport/properties/Blue_request",
+                  "type": "number",
+                  "title": "For requests by Blue player",
+                  "description": ""
+                }
+              }
+            },
+            "avg_response_start_time_transport":
+            {
+              "$id": "#/properties/data/properties/Blue/properties/avg_response_start_time_transport",
+              "type": "object",
+              "title": "Average response time for Blue",
+              "description": "",
+              "required":[
+                "Red_request",
+                "Green_request",
+                "Blue_request"
+              ],
+              "properties":
+              {
+                "Red_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/avg_response_start_time_transport/properties/Red_request",
+                  "type": "number",
+                  "title": "For requests by Red player",
+                  "description": ""
+                },
+                "Green_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/avg_response_start_time_transport/properties/Green_request",
+                  "type": "number",
+                  "title": "For requests by Green player",
+                  "description": ""
+                },
+                "Blue_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/avg_response_start_time_transport/properties/Blue_request",
+                  "type": "number",
+                  "title": "For requests by Blue player",
+                  "description": ""
+                }
+              }
+            },
+            "avg_response_action_time_transport":
+            {
+              "$id": "#/properties/data/properties/Blue/properties/avg_response_action_time_transport",
+              "type": "object",
+              "title": "Average action time for Blue",
+              "description": "",
+              "required":[
+                "Red_request",
+                "Green_request",
+                "Blue_request"
+              ],
+              "properties":
+              {
+                "Red_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/avg_response_action_time_transport/properties/Red_request",
+                  "type": "number",
+                  "title": "For requests by Red player",
+                  "description": ""
+                },
+                "Green_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/avg_response_action_time_transport/properties/Green_request",
+                  "type": "number",
+                  "title": "For requests by Green player",
+                  "description": ""
+                },
+                "Blue_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/avg_response_action_time_transport/properties/Blue_request",
+                  "type": "number",
+                  "title": "For requests by Blue player",
+                  "description": ""
+                }
+              }
+            },
+            "N_open_requests_rubble_clear":
+            {
+              "$id": "#/properties/data/properties/Blue/properties/N_open_requests_rubble_clear",
+              "type": "object",
+              "title": "Open rubble_clear requests for Blue",
+              "description": "",
+              "required":[
+                "Red_request",
+                "Green_request",
+                "Blue_request"
+              ],
+              "properties":
+              {
+                "Red_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/N_open_requests_rubble_clear/properties/Red_request",
+                  "type": "number",
+                  "title": "For requests by Red player",
+                  "description": ""
+                },
+                "Green_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/N_open_requests_rubble_clear/properties/Green_request",
+                  "type": "number",
+                  "title": "For requests by Green player",
+                  "description": ""
+                },
+                "Blue_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/N_open_requests_rubble_clear/properties/Blue_request",
+                  "type": "number",
+                  "title": "For requests by Blue player",
+                  "description": ""
+                }
+              }
+            },
+            "compliance_overall_rubble_clear":
+            {
+              "$id": "#/properties/data/properties/Blue/properties/compliance_overall_rubble_clear",
+              "type": "object",
+              "title": "Overall compliance for Blue",
+              "description": "",
+              "required":[
+                "Red_request",
+                "Green_request",
+                "Blue_request"
+              ],
+              "properties":
+              {
+                "Red_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/compliance_overall_rubble_clear/properties/Red_request",
+                  "type": "number",
+                  "title": "For requests by Red player",
+                  "description": ""
+                },
+                "Green_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/compliance_overall_rubble_clear/properties/Green_request",
+                  "type": "number",
+                  "title": "For requests by Green player",
+                  "description": ""
+                },
+                "Blue_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/compliance_overall_rubble_clear/properties/Blue_request",
+                  "type": "number",
+                  "title": "For requests by Blue player",
+                  "description": ""
+                }
+              }
+            },
+            "compliance_rate_rubble_clear":
+            {
+              "$id": "#/properties/data/properties/Blue/properties/compliance_rate_rubble_clear",
+              "type": "object",
+              "title": "Compliance rate for Blue",
+              "description": "",
+              "required":[
+                "Red_request",
+                "Green_request",
+                "Blue_request"
+              ],
+              "properties":
+              {
+                "Red_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/compliance_rate_rubble_clear/properties/Red_request",
+                  "type": "number",
+                  "title": "For requests by Red player",
+                  "description": ""
+                },
+                "Green_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/compliance_rate_rubble_clear/properties/Green_request",
+                  "type": "number",
+                  "title": "For requests by Green player",
+                  "description": ""
+                },
+                "Blue_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/compliance_rate_rubble_clear/properties/Blue_request",
+                  "type": "number",
+                  "title": "For requests by Blue player",
+                  "description": ""
+                }
+              }
+            },
+            "avg_response_start_time_rubble_clear":
+            {
+              "$id": "#/properties/data/properties/Blue/properties/avg_response_start_time_rubble_clear",
+              "type": "object",
+              "title": "Average response time for Blue",
+              "description": "",
+              "required":[
+                "Red_request",
+                "Green_request",
+                "Blue_request"
+              ],
+              "properties":
+              {
+                "Red_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/avg_response_start_time_rubble_clear/properties/Red_request",
+                  "type": "number",
+                  "title": "For requests by Red player",
+                  "description": ""
+                },
+                "Green_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/avg_response_start_time_rubble_clear/properties/Green_request",
+                  "type": "number",
+                  "title": "For requests by Green player",
+                  "description": ""
+                },
+                "Blue_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/avg_response_start_time_rubble_clear/properties/Blue_request",
+                  "type": "number",
+                  "title": "For requests by Blue player",
+                  "description": ""
+                }
+              }
+            },
+            "avg_response_action_time_rubble_clear":
+            {
+              "$id": "#/properties/data/properties/Blue/properties/avg_response_action_time_rubble_clear",
+              "type": "object",
+              "title": "Average action time for Blue",
+              "description": "",
+              "required":[
+                "Red_request",
+                "Green_request",
+                "Blue_request"
+              ],
+              "properties":
+              {
+                "Red_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/avg_response_action_time_rubble_clear/properties/Red_request",
+                  "type": "number",
+                  "title": "For requests by Red player",
+                  "description": ""
+                },
+                "Green_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/avg_response_action_time_rubble_clear/properties/Green_request",
+                  "type": "number",
+                  "title": "For requests by Green player",
+                  "description": ""
+                },
+                "Blue_request":
+                {
+                  "$id": "#/properties/data/properties/Blue/properties/avg_response_action_time_rubble_clear/properties/Blue_request",
+                  "type": "number",
+                  "title": "For requests by Blue player",
+                  "description": ""
+                }
+              }
+            }
+          }
+        }   
+      }
+    }
+  }
+}

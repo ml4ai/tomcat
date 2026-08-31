@@ -1,0 +1,73 @@
+{
+    "definitions": {},
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://asist.aptima.com/schemas/role_text.json",
+    "type": "object",
+    "title": "The Role Text Ground Truth Schema",
+    "version": "2.0",
+    "required": [
+        "header",
+        "msg",
+        "data"
+    ],
+    "properties": {
+        "header": {
+            "$ref": "../../Common_Header/common_header.json",
+            "properties": {         
+            "message_type": {
+            "$id": "#/properties/message_type",
+            "type": "string",
+            "title": "The Message_type Schema",
+            "const": "groundtruth"
+            }
+            }
+        },
+        "msg": {
+          "$ref": "../../Common_Message/common_message.json",
+          "properties": {         
+            "sub_type": {
+            "$id": "#/properties/sub_type",
+            "type": "string",
+            "title": "The Sub Type Schema",
+            "const": "Mission:RoleText"
+            }
+          }
+        },
+        "data": {
+            "required": [
+                "missionName",
+                "medical_specialist_text",
+                "transport_specialist_text",
+                "engineering_specialist_text"
+            ],
+            "properties": {
+                "missionName": {
+                    "$id": "#/properties/data/properties/mission_name",
+                    "type": "string",
+                    "title": "The mission name",          
+                    "examples": [
+                    "Saturn_B"
+                    ],
+                    "pattern": "^(.*)$"
+                },
+                "medical_specialist_text":{
+                    
+                    "type": "array",
+                    "items": {"ref":"string"}
+
+                },
+                "engineering_specialist_text":{
+                    "type": "array",
+                    "items": {"ref":"string"}
+                },
+                "transport_specialist_text":{
+                    
+                    "type": "array",
+                    "items": {"ref":"string"}
+                    
+                }
+            }
+        }
+    }
+}
+                

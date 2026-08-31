@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+
+{% block title %}{{ table.name }} — {{ database }}{% endblock %}
+{% block body_class %}table{% endblock %}
+
+{% block extra_head %}
+<style>
+    .facet li .facet-val { display: inline-flex; align-items: baseline; gap: .4rem;
+                           overflow: hidden; }
+    a.facet-doc { font-family: var(--font-mono); font-size: .68rem; text-transform: uppercase;
+                  letter-spacing: .04em; text-decoration: none; color: var(--muted);
+                  border: 1px solid var(--line); border-radius: 5px; padding: 0 .3rem;
+                  flex: none; }
+    a.facet-doc:hover { color: var(--accent); border-color: var(--accent); }
+
+    /* JSON columns: collapsed by default so a page of 100 rows doesn't create 100
+       scrollable boxes (each its own compositor layer -- that combination crashes
+       the renderer). Closed <details> doesn't lay out its <pre>, so there are no
+       extra layers until a row is expanded. */
+    table.rows-and-columns td.json-td { white-space: normal; vertical-align: top;
+                                        padding: .35rem .5rem; }
+    details.json-details > summary { cursor: pointer; display: block; max-width: 26rem;
+                    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+                    font-family: var(--font-mono); font-size: .76rem; color: var(--muted); }
+    details.json-details > summary:hover { color: var(--accent); }
+    details.json-details[open] > summary { color: var(--ink); margin-bottom: .35rem; }
+    /* Only expanded cells get a scroll box -- a handful at a time, never 100. */
+    pre.json-cell { margin: 0; max-width: 34rem; max-height: 22rem; overflow: auto;
+                    white-space: pre; font-family: var(--font-mono); font-size: .76rem;
+                    line-height: 1.45; tab-size: 2; background: var(--surface-2);
+                    border: 1px solid var(--line); border-radius: 8px; padding: .5rem .6rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+{# JSON-typed columns render as a narrow, pretty-printed, syntax-highlighted cell. #}
+{% set json_cols = [] %}
+{% for c in table.columns %}{% if 'JSON' in c.type_label %}{% set _ = json_cols.append(c.name) %}{% endif %}{% endfor %}
+<div class="page-header">
+    <h1>{{ table.name }}</h1>
+    {% if table.description %}<p>{{ table.description }}</p>{% endif %}
+</div>
+
+{% if table.columns | selectattr("description") | list %}
+<details class="column-descriptions-wrap">
+    <summary>Column descriptions</summary>
+    <dl class="column-descriptions">
+    {% for c in table.columns %}{% if c.description %}
+        <dt>{{ c.name }}</dt><dd>{{ c.description }}</dd>
+    {% endif %}{% endfor %}
+    </dl>
+</details>
+{% endif %}
+
+<h3>
+    {% if result.estimated_total %}~{{ "{:,}".format(result.estimated_total) }} rows (estimated){% endif %}
+</h3>
+
+{% if applied %}
+<div class="applied-filters">
+    <strong>Filters:</strong>
+    {% for a in applied %}
+        <span class="filter-chip">{{ a.filter.label }}
+            <a href="{{ a.remove_url }}" title="remove">&times;</a></span>
+    {% endfor %}
+    <a href="{{ database and '/' ~ database ~ '/' ~ table.name }}">clear all</a>
+</div>
+{% endif %}
+
+<form class="filters" id="add-filter" onsubmit="return applyFilter(event)">
+    <select id="f-col" class="form-select form-select-sm">
+        {% for c in table.columns %}<option value="{{ c.name }}">{{ c.name }}</option>{% endfor %}
+    </select>
+    <select id="f-op" class="form-select form-select-sm">
+        {% for key, op in operators.items() %}<option value="{{ key }}" data-needs-value="{{ 1 if op.needs_value else 0 }}">{{ op.label }}</option>{% endfor %}
+    </select>
+    <input type="text" id="f-val" class="form-control form-control-sm" placeholder="value">
+    <button type="submit" class="btn btn-primary btn-sm">Apply</button>
+</form>
+
+<p class="export-links">
+    This data as
+    <a href="{{ links.export('json') }}">JSON</a>,
+    <a href="{{ links.export('csv') }}">CSV</a>
+    (capped; for the full dataset, <a href="/download">download the database</a>).
+</p>
+
+{% if facets %}
+<div class="facets">
+    {% for facet in facets %}
+    <div class="facet">
+        <strong>{{ facet.column }}</strong>
+        {% if facet.timed_out %}<span class="facet-timeout">(facet timed out)</span>
+        {% else %}
+        <ul>
+        {% for v in facet.values %}
+            <li>
+                <span class="facet-val">
+                    <a href="{{ links.filter(facet.column, 'exact', v.value) }}">{{ v.value if v.value is not none else "∅ null" }}</a>
+                    {%- if documented_topics and facet.column == 'topic' and v.value in documented_topics %}
+                    <a class="facet-doc" href="/messages/{{ v.value }}" title="Message schema for this topic">docs</a>
+                    {%- endif %}
+                </span>
+                <span class="count">{{ "{:,}".format(v.count) }}</span>
+            </li>
+        {% endfor %}
+        {% if facet.truncated %}<li>…</li>{% endif %}
+        </ul>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="table-scroll">
+<table class="rows-and-columns table table-sm table-striped table-hover align-middle">
+    <thead>
+        <tr>
+        {% for col in result.column_names %}
+            <th>
+                {{ col }}
+                <a class="sort" href="{{ links.sort_asc(col) }}" title="sort ascending">▲</a><a class="sort" href="{{ links.sort_desc(col) }}" title="sort descending">▼</a>
+            </th>
+        {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+    {% for row in result.rows %}
+        <tr>
+        {% for col in result.column_names %}
+            {% if col in json_cols %}
+            {% set pretty = pretty_json(row[col]) %}
+            <td class="json-td">
+                {% if pretty %}
+                <details class="json-details">
+                    <summary class="json-preview">{{ pretty | replace("\n", " ") | truncate(110, True, "…") }}</summary>
+                    <pre class="json-cell"><code class="json-highlight">{{ pretty }}</code></pre>
+                </details>
+                {% endif %}
+            </td>
+            {% else %}
+            <td>{{ row[col] if row[col] is not none else "" }}</td>
+            {% endif %}
+        {% endfor %}
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+
+{% if not result.rows %}<p>No rows match.</p>{% endif %}
+
+<nav class="pagination">
+    {% if result.offset > 0 %}
+        <a href="{{ links.page(result.offset - result.size) }}">&laquo; Previous</a>
+    {% endif %}
+    <span>rows {{ result.offset + 1 }}–{{ result.offset + result.rows | length }}</span>
+    {% if result.has_next %}
+        <a href="{{ links.page(result.offset + result.size) }}">Next &raquo;</a>
+    {% endif %}
+</nav>
+
+<script>
+// Translate the add-filter form into the compact `col__op=value` URL grammar,
+// preserving the existing querystring (minus paging).
+function applyFilter(e) {
+    e.preventDefault();
+    const col = document.getElementById('f-col').value;
+    const op = document.getElementById('f-op').value;
+    const val = document.getElementById('f-val').value;
+    const params = new URLSearchParams(window.location.search);
+    params.delete('_offset');
+    const key = op === 'exact' ? col : col + '__' + op;
+    params.set(key, val);
+    window.location.search = params.toString();
+    return false;
+}
+</script>
+{% endblock %}

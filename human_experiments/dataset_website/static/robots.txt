@@ -1,0 +1,27 @@
+# ToMCAT Dataset — https://tomcat.lab.pyarelal.xyz
+#
+# Documentation, errata, the schema diagram, the Message Bus Reference and the
+# table index are all open to crawlers.
+#
+# What is blocked below is not private — it is expensive. Filters, facets,
+# pagination and format exports over a ~10^9-row database generate effectively
+# unbounded URL space, and every one of those URLs is a real SQL query against
+# PostgreSQL. A crawler that follows them will do far more work than it needs to
+# in order to index this site, and so will the server.
+
+User-agent: *
+
+# The read-only SQL console: arbitrary queries, up to 10 seconds each.
+Disallow: /tomcat/-/query
+
+# Anything carrying a query string — faceted, filtered, sorted, paginated, or
+# exported as CSV/JSON. Bare table pages (e.g. /tomcat/participant) stay
+# crawlable; the documentation pages take no query parameters, so this costs
+# them nothing.
+Disallow: /*?
+
+# Bulk download artifacts are hundreds of gigabytes each.
+Disallow: /downloads/
+
+# Honoured by Bing and Yandex; Google ignores it and is tuned in Search Console.
+Crawl-delay: 10

@@ -111,3 +111,6 @@ HSR*
 *.texpadtmp/
 
 *.egg-info
+
+# Generated from sources on /tomcat; not checked in (see generate_session_notes_csv.py)
+human_experiments/dataset_pipeline/group_session_raw_notes.csv

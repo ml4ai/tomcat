@@ -1,0 +1,79 @@
+{
+    "definitions": {},
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://asist.aptima.com/schemas/puzzle_text_summary_message.json",
+    "type": "object",
+    "title": "The Puzzle Text Summary Schema",
+    "version": "2.0",
+    "required": [
+        "header",
+        "msg",
+        "data"
+    ],
+    "properties": {
+        "header": {
+            "$ref": "../../Common_Header/common_header.json",
+            "properties": {         
+            "message_type": {
+            "$id": "#/properties/message_type",
+            "type": "string",
+            "title": "The Message_type Schema",
+            "const": "event"
+            }
+            }
+        },
+        "msg": {
+          "$ref": "../../Common_Message/common_message.json",
+          "properties": {         
+            "sub_type": {
+            "$id": "#/properties/sub_type",
+            "type": "string",
+            "title": "The Sub Type Schema",
+            "const": "Mission:PuzzleTextSummary"
+            }
+          }
+        },
+        "data": {
+            "required": [
+                "missionName",
+                "medical_specialist_puzzle_summary",
+                "transport_specialist_puzzle_summary",
+                "engineering_specialist_puzzle_summary"
+            ],
+            "properties": {
+                "missionName": {
+                    "$id": "#/properties/data/properties/mission_name",
+                    "type": "string",
+                    "title": "The mission name",          
+                    "examples": [
+                    "Saturn_B"
+                    ],
+                    "pattern": "^(.*)$"
+                },
+                "medical_specialist_puzzle_summary":{
+                    
+                    "type": "array",
+                    "items": {                        
+                        "enum": ["MEETING LOCATIONS","MEETING ATTENDANTS","ROOM DAMAGE SEVERITY"]
+                    }
+
+                },
+                "engineering_specialist_puzzle_summary":{
+                    "type": "array",
+                    "items": {                        
+                        "enum": ["MEETING LOCATIONS","MEETING ATTENDANTS","ROOM DAMAGE SEVERITY"]
+                    }
+                },
+                "transport_specialist_puzzle_summary":{
+                    
+                    "type": "array",
+                    "items": {                        
+                        "enum": ["MEETING LOCATIONS","MEETING ATTENDANTS","ROOM DAMAGE SEVERITY"]
+                    }
+                    
+                }
+            }
+        }
+    }
+}
+                

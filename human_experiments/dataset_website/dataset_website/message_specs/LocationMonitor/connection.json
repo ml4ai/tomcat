@@ -1,0 +1,25 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://asist.aptima.com/schemas/player_connection.json",
+  "type": "object",
+  "title": "The Player Connection Schema",
+  "version": "1.0",
+  "required": [
+    "id"
+  ],
+  "properties": {
+    "id": {
+      "$id": "#/properties/event/player/connection/id",
+      "type": "string",
+      "title": "The Connection's id",
+      "pattern": "^(.*)$"
+    },
+    "name": {
+      "$id": "#/properties/event/player/connection/connected_locations",
+      "type": "array",
+      "items": { "type": "string" },
+      "title": "The location ids which this connections connects"
+    }
+  }
+}

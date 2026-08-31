@@ -1,0 +1,117 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://asist.aptima.com/schemas/agent_intervention_message.json",
+  "type": "object",
+  "title": "The Agent Prediction Message Schema",
+  "version": "0.2",
+  "required": [
+    "header",
+    "msg",
+    "data"
+  ],
+  "properties": {
+    "header": {
+       "$ref": "../../Common_Header/common_header.json",
+       "properties": {         
+          "message_type": {
+            "$id": "#/properties/message_type",
+            "type": "string",
+            "title": "The Message_type Schema",
+            "const": "agent"
+          }
+        }
+    },
+    "msg": {
+       "$ref": "../../Common_Message/common_message.json",
+       "properties": {         
+          "sub_type": {
+            "$id": "#/properties/sub_type",
+            "type": "string",
+            "title": "The Sub Type Schema",
+            "enum": ["Prediction:State", "Prediction:Action"]
+          }
+        }
+    },
+    "data": { 
+      "$id": "#/properties/message/properties/data",
+      "type": "object",
+      "title": "The Prediction Data Schema",
+      "required": [
+        "created_elapsed_time",
+        "group",
+        "predictions"
+      ],
+      "properties": {         
+        "created_elapsed_time": {
+          "$id": "#/properties/data/properties/created_elapsed_time",
+          "type": "number",
+          "title": "The Created Schema",          
+          "examples": [ "1265", 348737 ],
+          "pattern": "[0-9]{7}"
+        },
+        "group":{
+          "$id": "#/properties/data/properties/group",
+          "type": "object",
+          "title": "The Group Schema",
+		  "description": "set default values for the entire provided group",
+          "required": [
+            "start_elapsed_time",
+            "duration",
+            "explanation"
+          ],
+          "properties": {
+            "start_elapsed_time":{
+              "$id": "#/properties/data/properties/group/start_elapsed_time",
+              "type":["number","null"],
+              "title": "The Group Start elapsed time Schema",
+			        "description": "start time in mission milliseconds, or null to use the group value",
+              "examples": [ "", null ]
+            },
+            "duration":{
+              "$id": "#/properties/data/properties/group/timeout",
+              "type":["number","null"],
+              "title": "The Group Duration Schema",
+              "examples": [ 10,60, "null" ]
+            },
+            "explanation":{
+              "$id": "#/properties/data/properties/group/explanation",
+              "type": "object",
+              "title": "The Group Explanation Schema",
+			        "description": "Custom format explanation of the prediction",
+              "examples": [
+                {
+                  "extra_agent_data":{      
+                    "key0":"data0",      
+                    "key1":{
+                      "something":"some metadata" 
+                    },      
+                    "key2":{
+                      "somethingelse":"some more metadata"
+                    }      
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "predictions":{
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "Action/agent_action_prediction_message.json"
+              }
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "State/agent_state_prediction_message.json"
+              }
+            }
+          ]
+        }
+      }
+    } 
+  }
+}

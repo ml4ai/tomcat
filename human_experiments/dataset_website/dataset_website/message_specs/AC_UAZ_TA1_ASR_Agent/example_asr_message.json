@@ -1,0 +1,49 @@
+{
+  "data": {
+    "text": "I am going to save a green victim.",
+    "alternatives": [
+      {
+        "text": "I am going to save a green victim.",
+        "confidence": 0.981501042842865
+      },
+      {
+        "text": "I am going to save a Greene victim.",
+        "confidence": 0.974869549274446
+      },
+      {
+        "text": "I am going to save a grain victim.",
+        "confidence": 0.9713254261016846
+      },
+      {
+        "text": "I am going to save a green victum.",
+        "confidence": 0.974603054523467
+      },
+      {
+        "text": "I am going to save a green victom.",
+        "confidence": 0.979378929138184
+      }
+    ],
+    "asr_system": "Vosk",
+    "is_final": true,
+    "id": "59678a5f-9c5b-451f-8506-04bc020f2cf3",
+    "participant_id": "participant_1",
+    "start_timestamp": "2021-01-19T23:27:57.978016Z",
+    "end_timestamp" : "2021-01-19T23:27:58.633076Z",
+    "features":{"text":"i am going to save a green victim","time_interval":0.01,"word_messages":[{"word":"i","start_time":79,"end_time":80}, "word":"am","start_time":80,"end_time":81},"word":"going","start_time":81.5,"end_time":82.33},"word":"to","start_time":82.9,"end_time":83.1},"word":"save","start_time":83.3,"end_time":84.3},"word":"a","start_time":84.5,"end_time":85},"word":"green","start_time":85.9,"end_time":87},"word":"victim","start_time":87.3,"end_time":88.2}],"utterance_id":"1170dec0-1608-4f81-9ae8-78e00948cd19","id":"24321371-e27f-43de-b4fd-76ac25a27a44"},
+    "sentiment" : {"speaker":"35cb434e-0c18-44d3-94e3-e532bbfc178c","emotions":{"anger":0.002021155087277293,"disgust":0.09554211795330048,"fear":0.002021155087277293,"joy":0.022178679704666138,"neutral":0.87403804063797,"sadness":0.002021155087277293,"surprise":0.0021777180954813957},"traits":{"extroversion":0.003421018598601222,"neuroticism":0.003421018598601222,"agreeableness":0.6680639386177063,"openness":0.13575837016105652,"conscientiousness":0.18933558464050293},"penultimate_emotions":[0.0,0.20094694197177887,0.0,0.5490803718566895,1.1174331903457642,-0.0,0.0,0.0,1.2479413747787476,0.0,1.2241981029510498,1.6163171529769897,0.0,1.5434015989303589,3.1412456035614014,1.9181157350540161,3.3949952125549316,2.7259912490844727,0.0,0.24653026461601257,0.0,1.9409351348876953,0.0,0.853614091873169,0.0,-0.0,0.0,1.2603272199630737,2.613118886947632,0.0,0.0,-0.0,0.0,0.0,0.0,1.7558680772781372,1.7072715759277344,0.0,0.0,0.0,1.715401530265808,2.9527125358581543,0.0,1.9544548988342285,0.0,2.6578049659729004,0.0,0.0,0.0,-0.0],"penultimate_traits":[1.5018659830093384,-0.0,-0.0,0.0,3.066028356552124,-0.0,0.0,0.0,0.0,-0.0,0.8364737629890442,1.2047011852264404,-0.0,2.4049181938171387,2.264213800430298,0.0,0.0,0.02852160483598709,0.6170178651809692,0.0,0.0,0.0,-0.0,2.739126682281494,2.376819610595703,1.433931589126587,0.0,0.16708949208259583,0.0,3.269641876220703,0.0,2.213355541229248,0.0,0.0,0.872717022895813,-0.0,0.0,-0.0,-0.0,-0.0,0.0,0.0,3.478353500366211,-0.0,-0.0,1.2697429656982422,0.0,-0.0,-0.0,2.093494176864624]}
+  },
+  "header": {
+    "timestamp": "2021-01-19T23:27:58.633076Z",
+    "message_type": "observation",
+    "version": "0.1"
+  },
+  "msg": {
+    "timestamp": "2021-01-19T23:27:58.633967Z",
+    "experiment_id": "e2a3cb96-5f2f-11eb-8971-18810ee8274e",
+    "trial_id": "256d1b4a-d81d-465d-8ef0-2162ff96e204",
+    "version": "0.1",
+    "source": "tomcat_asr_agent",
+    "sub_type": "asr:transcription"
+  }
+}
+

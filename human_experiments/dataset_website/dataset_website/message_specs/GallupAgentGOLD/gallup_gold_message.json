@@ -1,0 +1,83 @@
+{
+    "definitions": {},
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://asist.aptima.com/schemas/GALLUP_EL.json",
+    "type": "object",
+    "title": "Gallup - Object Library Distributor (GOLD)",
+    "version": "0.2.0",
+    "required": [
+		"header",
+		"msg",
+		"data",
+		"topic"	
+    ],
+	"properties": {
+		"header": {
+			"$ref": "../Common_Header/common_header.json"
+		},
+		"msg": {      
+			"$ref": "../Common_Message/common_message.json"
+		},
+		"data": {
+			"$id": "#/properties/data",
+			"type": "object",
+			"title": "The GOLD Event Data Schema",
+			"required": [
+				"gold_msg_id",
+				"gold_pub_minute",
+				"created_ts",
+				"gold_feature_inventory",
+				"gold_results"
+			],
+			"properties": {
+				"gold_msg_id":{
+					"$id": "#/properties/data/properties/gold_msg_id",
+					"type": "string",
+					"title": "Unique message id",          
+					"examples": ["3f42e519-85eb-49a3-b811-745525cba829"],
+					"pattern": "^.+\\-.+\\-.+\\-.+\\-.+$"
+				},
+				"gold_pub_minute":{
+					"$id": "#/properties/data/properties/gold_pub_minute",
+					"type": "number",
+					"title": "Trial minute reference",          
+					"examples": [0,1,9,15],
+					"pattern": "^\\d+$"
+				},
+				"created_ts":{
+					"$id": "#/properties/data/properties/created_ts",
+					"type": "string",
+					"format": "date-time",
+					"title": "The event time, format ISO 8601",          
+					"examples": ["2021-12-12T22:03:27.277182Z"],
+					"pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z"
+				},
+				"gold_feature_inventory":{
+					"$id": "#/properties/data/properties/gold_feature_inventory",
+					"type": "object",
+					"title": "GOLD collection of possible features. Not populated when sub_type=bullion.",
+					"examples": ["<GOLD feature 1 name goes here>","<GOLD feature 2 name goes here>","<GOLD feature N name goes here>"],
+					"pattern": ".*"
+				},
+				"gold_results":{
+					"$id": "#/properties/data/properties/gold_results",
+					"type": "object",
+					"title": "GOLD item object payload. Not populated when sub_type=standard. When present, features represented will include respective participant_id, agg_trial, agg_minute along with available feature scoring according to feature inventory list published in sub_type=standard.",          
+					"examples": [
+						{"participant_id": "P000421", "agg_trial":"20220310_004115", "agg_minute": 1, "<GOLD feature N name>": "<GOLD feature N numeric value>"},
+						{"participant_id": "P000422", "agg_trial":"20220310_004115", "agg_minute": 1, "<GOLD feature N name>": "<GOLD feature N numeric value>"},
+						{"participant_id": "P000423", "agg_trial":"20220310_004115", "agg_minute": 1, "<GOLD feature N name>": "<GOLD feature N numeric value>"}
+					],
+					"pattern": ".*"
+				}		
+			}
+		},
+		"topic": {
+			"$id": "#/properties/topic",
+			"type": "string",
+			"title": "Event message topic",          
+			"examples": ["agent/gold"],
+			"pattern": ".*"
+		}
+	}
+}

@@ -1,0 +1,42 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://asist.aptima.com/schemas/pygl_fov_version_info_dependency.json",
+  "type": "object",
+  "title": "The PyGL FoV Agent Version Info Dependency Schema",
+  "version": "0.1",
+  "required": [
+    "package",
+    "version",
+    "url"
+  ],
+  "properties": {
+    "package": {
+      "$id": "#/properties/dependency/properties/package",
+      "type": "string",
+      "title": "The PyGL FoV Dependency Package Schema",
+      "examples": [
+        "MinecraftBridge"
+      ],
+      "pattern": "^(.*)$"
+    },
+    "version": {
+      "$id": "#/properties/dependency/properties/version",
+      "type": "string",
+      "title": "The PyGL FoV Dependency Version Schema",
+      "examples": [
+        "0.3.0b1"
+      ],
+      "pattern": "^(.*)$"
+    },
+    "url": {
+      "$id": "#/properties/dependency/properties/url",
+      "type": "string",
+      "title": "The PyGL FoV Dependency URL Schema",
+      "examples": [
+        "https://gitlab.com/cmu_asist/MinecraftBridge.git"
+      ],
+      "pattern": "^(.*)$"
+    }
+  }
+}

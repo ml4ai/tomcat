@@ -1,0 +1,107 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://asist.aptima.com/schemas/agent_versioninfo.json",
+  "type": "object",
+  "title": "The agent version info Schema",
+  "version": "0.1",
+  "required": [
+    "header",
+    "msg",
+    "data"
+  ],
+  "properties": {
+      "header": {
+          "$ref": "../../Common_Header/common_header.json",
+          "properties": {         
+            "message_type": {
+              "$id": "#/properties/message_type",
+              "type": "string",
+              "title": "The Message_type Schema",
+              "const": "agent"
+            }
+          }
+      },
+      "msg": {
+          "$ref": "../../Common_Message/common_message.json",
+          "properties": {         
+            "sub_type": {
+              "$id": "#/properties/sub_type",
+              "type": "string",
+              "title": "The Sub Type Schema",
+              "const": "versioninfo"
+            }
+          }
+      },
+      "data": {
+      "$id": "#/properties/message/properties/data",
+      "type": "object",
+      "title": "The agent version info Schema",
+      "required": [
+        "agent_name",
+        "version",
+        "owner"
+      ],
+      "properties": {
+        "agent_name": {
+          "$id": "#/properties/agent/agent_name",
+          "type": "string",
+          "title": "The agent name Schema",          
+          "examples": [
+            "Location_Monitor"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "version": {
+          "$id": "#/properties/agent/version",
+          "type": "string",
+          "title": "The agent version Schema",          
+          "examples": [
+            "1.2-12","5.1-1" 
+          ],
+          "pattern":  "^([.]*)|(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$"
+        },
+        "agent_type": {
+          "$id": "#/properties/agent/agent_type",
+          "type": "string",
+          "title": "The agent type message Schema",
+          "enum": ["ASI", "AC", "other"]
+        },
+        "config": {
+          "$id": "#/properties/agent/parameters",
+          "type": "array",
+          "title": "The agent config parameters Schema",
+          "items": { "$ref": "./parameters.json"}
+        },
+        "source": {
+          "$id": "#/properties/agent/source",
+          "type": "array",
+          "title": "The agent source schema",
+          "items": {"type": "string"}
+         },
+        "dependencies": {
+          "$id": "#/properties/agent/dependencies",
+          "type": "array",
+          "title": "The agent dependencies schema",
+          "items": {"type": "string"}
+        },
+        "owner": {
+          "$id": "#/properties/agent/owner",
+          "type": "string"
+        },
+        "publishes": {
+          "$id": "#/properties/agent/pubsub",
+          "type": "array",
+          "title": "The agent pubsub message Schema",
+          "items": { "$ref": "./pubsub.json"}
+        },
+        "subscribes": {
+          "$id": "#/properties/agent/pubsub",
+          "type": "array",
+          "title": "The agent pubsub message Schema",
+          "items": { "$ref": "./pubsub.json"}
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://asist.aptima.com/schemas/agent_cognitive-load.json",
+  "type": "object",
+  "title": "The Event Cognitive-Load Schema",
+  "version": "1.0",
+  "required": [
+    "header",
+    "msg",
+    "data"
+  ],
+  "properties": {
+    "header": {
+      "$ref": "../Common_Header/common_header.json",
+      "properties": {         
+        "message_type": {
+        "$id": "#/properties/message_type",
+        "type": "string",
+        "title": "The Message_type Schema",
+        "const": "event"
+        }
+      }
+    },
+    "msg": {
+      "$ref": "../Common_Message/common_message.json",
+      "properties": {         
+        "sub_type": {
+        "$id": "#/properties/sub_type",
+        "type": "string",
+        "title": "The Sub Type Schema",
+        "const": "Event:proximity"
+        }
+      }
+    },
+    "data": {
+      "$id": "#/properties/message/properties/data",
+      "type": "object",
+      "title": "The Proximity update Data Schema",
+      "required": [
+        "id",
+        "elapsed_milliseconds",
+        "cognitive_load",
+        "probability_of_forgetting"
+      ],
+      "properties": {
+        "id": {
+          "$id": "#/properties/id",
+          "type": "string",
+          "title": "The Cognitive Load Measure Id Schema",
+          "default": "",
+          "examples": [ "123e4567-e89b-12d3-a456-426655440000" ],
+          "pattern": "(([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})|Not Set|Null|null)"
+        },
+        "agent": {
+          "$id": "#/properties/source",
+          "type": "string",
+          "title": "The Source Schema",
+          "default": "",
+          "examples": [ "simulator" ],
+          "pattern": "^(.*)$"
+        },
+        "created": {
+          "$id": "#/properties/timestamp",
+          "type": "string",
+          "title": "The Timestamp Schema",
+          "default": "",
+          "examples": [ "2019-12-26T14:05:02.3412Z" ],
+          "pattern": "[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}[.]?[0-9]{0,}?Z"
+        },
+        "elapsed_milliseconds": {
+          "$id": "#/properties/event/state/elapsed_milliseconds",
+          "type": "number",
+          "title": "The Elapsed Milliseconds Schema",
+          "examples": [
+            5000, 77459, 689457
+          ],
+          "pattern": "^[0-9]+$"
+        },
+        "cognitive_load": {
+          "$ref": "Measure.json"
+        },
+        "probability_of_forgetting": {
+          "$ref": "Measure.json"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block body_class %}index{% endblock %}
+
+{% block content %}
+{{ render_markdown(
+"""
+# 2026-08-30 update
+
+## The dataset is now served from PostgreSQL
+
+The site previously served a periodically-exported SQLite file through
+Datasette. It now queries a PostgreSQL database directly, which removes the
+export step from the release path entirely — updates to the data are visible
+here without a multi-day rebuild.
+
+Existing links keep working: table URLs still use the same
+`?column__operator=value` form as before, so bookmarks and links in papers
+resolve unchanged.
+
+**One breaking change.** In the `audio_vocalics` table, the OpenSMILE feature
+columns are now named with their original bracket indices — `mfcc_sma[1]`
+rather than `mfcc_sma_1_`. Queries written against the older SQLite releases
+need updating, and because the names contain brackets they must be
+double-quoted in SQL:
+
+    select \"mfcc_sma[1]\" from audio_vocalics limit 10;
+
+## Ingestion is complete
+
+All 24 tables are populated across all 40 group sessions. EEG labeling is
+finished (previously 8 of 40 sessions), the four synchronized signal tables
+(`eeg_sync`, `fnirs_sync`, `gsr_sync`, `ekg_sync`) are built, and
+`audio_vocalics` is populated for the 36 sessions that have attachable audio.
+
+## Documentation moved onto the site
+
+The data products documentation was previously a PDF in the repository. It is
+now served here as linked pages: an [index](/documentation), the
+[experiment protocol](/experiment-protocol), and
+[derived data products](/derived-data-products), the last carrying the
+synchronization methodology, the EEG/fNIRS montage figure, and an appendix
+preserving the older releases and their download links.
+
+## Message Bus Reference
+
+`minecraft_testbed_message.message` is JSON whose schema varies by topic, and
+interpreting it previously meant reading testbed source code. Every topic
+present in the data is now documented at [Messages](/messages) as field tables,
+and the topic facet on the table page links directly from any row to that
+topic's documentation.
+
+## Column descriptions
+
+Column-level descriptions are stored in the database itself and shown beside
+the data on each table page. Coverage is not yet complete — most columns of
+the `participant` table, in particular, are not yet described.
+""")
+}}
+{% endblock %}

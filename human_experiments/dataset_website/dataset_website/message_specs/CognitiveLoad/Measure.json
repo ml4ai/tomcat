@@ -1,0 +1,26 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://asist.aptima.com/schemas/agent_measure.json",
+  "type": "object",
+  "title": "The Cognitive Load Measure Schema",
+  "version": "1.0",
+  "required": [
+    "value",
+    "confidence"
+  ],
+  "properties": {
+    "value": {
+      "$id": "#/properties/event/agent/measure/value",
+      "type": "number",
+      "title": "The value of the measure",
+      "pattern": "^[0-9]*\\.?[0-9]+$"
+    },
+    "confidence": {
+      "$id": "#/properties/event/agent/measure/confidence",
+      "type": "number",
+      "title": "The confidence of the measure value",
+      "pattern": "^[0-9]*\\.?[0-9]+$"
+    }
+  }
+}

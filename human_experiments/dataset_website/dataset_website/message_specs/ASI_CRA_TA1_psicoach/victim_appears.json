@@ -1,0 +1,75 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://asist.aptima.com/schemas/event_state.json",
+  "type": "object",
+  "title": "The Victim Appears Event Schema",
+  "version": "1.0",
+  "required": [
+    "header",
+    "msg",
+    "data"
+  ],
+  "properties": {
+    "header": { "$ref": "../Common_Header/common_header.json" },
+    "msg": { "$ref": "../Common_Message/common_message.json" },
+    "data": {
+      "$id": "#/properties/message/properties/data",
+      "type": "object",
+      "title": "The Victim Appears Event Data Schema",
+      "required": [
+		"location",
+        "missionTime",
+        "victim",
+        "location"
+      ],
+      "properties": {
+        "SecondaryEvent": {
+          "$id": "#/properties/psicoach/secondaryevent",
+          "type": "string",
+          "title": "The Secondary Event Schema",          
+          "examples": [
+            "VictimAppearsEvent"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "location": {
+          "$id": "#/properties/psicoach/location",
+          "type": "string",
+          "title": "The Location Schema",          
+          "examples": [
+            "(1.0, 2.8, 8.0)"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "missionTime": {
+          "$id": "#/properties/psicoach/missionTime",
+          "type": "string",
+          "title": "The Mission Time Schema",          
+          "examples": [
+            "726"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "timestamp": {
+          "$id": "#/properties/psicoach/timestamp",
+          "type": "string",
+          "title": "The Timestamp Schema",          
+          "examples": [
+            "2019-12-26T14:05:02.890Z"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "victim": {
+          "$id": "#/properties/psicoach/victim",
+          "type": "string",
+          "title": "The Victim Schema",          
+          "examples": [
+            "VictimID[2080404575]"
+          ],
+          "pattern": "^(.*)$"
+        }
+      }
+    }
+  }
+}

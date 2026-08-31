@@ -1,0 +1,664 @@
+# Metadata for the Datasette instance.
+
+title: The ToMCAT Dataset
+description: Multimodal dataset for human-machine teaming research.
+license: CC BY-NC-SA 4.0
+license_url: https://creativecommons.org/licenses/by-nc-sa/4.0/
+databases:
+    tomcat:
+        tables:
+            affective_task_event:
+                description: Events from the individual and team affective tasks.
+                columns:
+                    group_session: The group session the task is a part of.
+                    participant: Participant ID.
+                    timestamp_unix: The Unix timestamp of the event.
+                    timestamp_iso8601: The ISO-8601 timestamp of the event.
+                    event_type: The type of the event.
+                    image_path: The path to the image that was shown on the participant screen(s).
+                    arousal_score: The arousal score reported by the participant. Null if not applicable.
+                    valence_score: The valence score reported by the participant. Null if not applicable.
+
+            audio_vocalics:
+              description: >
+                OpenSMILE acoustic features extracted from each participant's
+                microphone audio during the Minecraft missions; each row is one
+                analysis frame. Beyond the identifying columns below, the table has one
+                column per OpenSMILE low-level descriptor (LLD) from the ComParE feature
+                set (e.g. `f0final_sma`, `jitterlocal_sma`, `shimmerlocal_sma`, and the
+                `audspec_rfilt_sma[*]` and `mfcc_sma[*]` families) together with their
+                first-order delta (`*_de`) coefficients.
+              columns:
+                group_session: The group session the audio is a part of.
+                station: The iMac that the participant was stationed at.
+                minecraft_mission_id: ID of the Minecraft mission during which the audio was recorded.
+                id: Sequential ID of the frame.
+                timestamp_unix: The Unix timestamp of the frame.
+                timestamp_iso8601: The ISO-8601 timestamp of the frame.
+                frame_time: The frame time in seconds.
+                f0final_sma: Smoothed fundamental frequency (F0) contour.
+                voicingfinalunclipped_sma: Voicing probability of the final F0 candidate.
+                jitterlocal_sma: Local (cycle-to-cycle) jitter in F0.
+                jitterddp_sma: Differential frame-to-frame jitter (DDP).
+                shimmerlocal_sma: Local (cycle-to-cycle) variation in amplitude (shimmer).
+                loghnr_sma: Log harmonics-to-noise ratio.
+                wave_rmsenergy_sma: Root-mean-square frame energy.
+                wave_zcr_sma: Zero-crossing rate of the time-domain signal.
+
+            data_validity:
+                description: >
+                    Table with information about which participants were
+                    involved in the tasks, and whether the data from the EEG,
+                    fNIRS, and eye tracking modalities are valid. In most
+                    cases, when an experimenter stepped in to replace a
+                    participant (e.g., for a no-show participant), they did
+                    not wear fNIRS/EEG devices, and in some cases, they did not
+                    wear the eye tracker either. Not all groups completed all
+                    the tasks, and for some tasks, the data is missing. In
+                    cases such as these, the table simply omits rows for which
+                    we do not have data.
+                columns:
+                    group_session: Group session ID
+                    participant: Participant ID
+                    station: The iMac that the participant was stationed at.
+                    task: Task ID.
+                    modality: The modality of the data.
+                    is_valid: >
+                        Whether the data for the relevant
+                        participant/task/modality is valid (1) or invalid (0).
+
+            eeg_device:
+              description: >
+                Table with a mapping between station and EEG device id used in each experiment.
+              columns:
+                group_session: Group session ID.
+                station: The iMac that the participant was stationed at.
+                device_id: The id of the EEG device used in the station.
+
+            eeg_raw:
+              description: >
+                Table with raw EEG data.
+              columns:
+                group_session: Group session ID
+                task: Task ID.
+                station: The iMac that the participant was stationed at.
+                participant: >
+                  Participant ID. A participant ID of -1 indicates an
+                  unknown participant. All rows that do not have values
+                  for the `task` column will have their participant ID
+                  set to -1. In the future, we will label some of these
+                  inter/pre/post task rows with the correct participant
+                  ID.
+                timestamp_unix: The Unix timestamp of the event.
+                timestamp_iso8601: The ISO-8601 timestamp of the event.
+
+            eeg_sync:
+              description: >
+                Table with EEG data synchronized to a main clock with fixed frequency. The start
+                and end timestamps of the main clock spans across all the tasks in the experiment.
+                Each remaining column is one EEG electrode, named for its 10-20 montage position
+                (see the documentation for the electrode montage figure).
+              columns:
+                group_session: Group session ID
+                frequency: Frequency of the samples (main clock frequency).
+                station: The iMac that the participant was stationed at.
+                id: Sequential ID of the sample.
+                timestamp_unix: The Unix timestamp of the event.
+                timestamp_iso8601: The ISO-8601 timestamp of the event.
+                aff1h: EEG electrode AFF1h — left anterior frontal region.
+                f7: EEG electrode F7 — left frontal region.
+                fc5: EEG electrode FC5 — left fronto-central region.
+                c3: EEG electrode C3 — left central region.
+                t7: EEG electrode T7 — left temporal region.
+                tp9: EEG electrode TP9 — left temporal-parietal region.
+                pz: EEG electrode Pz — central parietal region.
+                p3: EEG electrode P3 — left parietal region.
+                p7: EEG electrode P7 — left parietal region.
+                o1: EEG electrode O1 — left occipital region.
+                o2: EEG electrode O2 — right occipital region.
+                p8: EEG electrode P8 — right parietal region.
+                p4: EEG electrode P4 — right parietal region.
+                tp10: EEG electrode TP10 — right temporal-parietal region.
+                cz: EEG electrode Cz — central region.
+                c4: EEG electrode C4 — right central region.
+                t8: EEG electrode T8 — right temporal region.
+                fc6: EEG electrode FC6 — right fronto-central region.
+                fcz: EEG electrode FCz — central fronto-central region.
+                f8: EEG electrode F8 — right frontal region.
+                aff2h: EEG electrode AFF2h — right anterior frontal region.
+
+            ekg_sync:
+              description: >
+                Table with EKG data synchronized to a main clock with fixed frequency. The start
+                and end timestamps of the main clock spans across all the tasks in the experiment.
+              columns:
+                group_session: Group session ID
+                frequency: Frequency of the samples (main clock frequency).
+                station: The iMac that the participant was stationed at.
+                id: Sequential ID of the sample.
+                timestamp_unix: The Unix timestamp of the event.
+                timestamp_iso8601: The ISO-8601 timestamp of the event.
+                ekg: Pre-processed (FIR band-pass filtered) EKG signal value.
+                heart_rate: Instantaneous heart rate derived from the EKG signal (NeuroKit2).
+
+            fnirs_raw:
+              description: >
+                Table with raw fNIRS data.
+              columns:
+                group_session: Group session ID
+                task: Task ID.
+                station: The iMac that the participant was stationed at.
+                participant: >
+                  Participant ID. A participant ID of -1 indicates an
+                  unknown participant. All rows that do not have values
+                  for the `task` column will have their participant ID
+                  set to -1. In the future, we will label some of these
+                  inter/pre/post task rows with the correct participant
+                  ID.
+                timestamp_unix: The Unix timestamp of the event.
+                timestamp_iso8601: The ISO-8601 timestamp of the event.
+
+            fnirs_sync:
+              description: >
+                Table with fNIRS data synchronized to a main clock with fixed frequency. The start
+                and end timestamps of the main clock spans across all the tasks in the experiment.
+                Each signal column is one source-detector (S#-D#) channel; `_hbo` columns are
+                oxyhemoglobin and `_hbr` columns deoxyhemoglobin concentrations (see the
+                documentation for the optode montage figure).
+              columns:
+                group_session: Group session ID
+                frequency: Frequency of the samples (main clock frequency).
+                station: The iMac that the participant was stationed at.
+                id: Sequential ID of the sample.
+                timestamp_unix: The Unix timestamp of the event.
+                timestamp_iso8601: The ISO-8601 timestamp of the event.
+                s1_d1_hbo: Oxyhemoglobin (HbO) — channel S1-D1 (F3-F5, left frontal region).
+                s1_d2_hbo: Oxyhemoglobin (HbO) — channel S1-D2 (F3-F1, left frontal region).
+                s2_d1_hbo: Oxyhemoglobin (HbO) — channel S2-D1 (Af7-F5, left anterior frontal region).
+                s2_d3_hbo: Oxyhemoglobin (HbO) — channel S2-D3 (Af7-Fp1, left anterior frontal region).
+                s3_d1_hbo: Oxyhemoglobin (HbO) — channel S3-D1 (Af3-F5, left anterior frontal region).
+                s3_d3_hbo: Oxyhemoglobin (HbO) — channel S3-D3 (Af3-Fp1, left anterior frontal region).
+                s3_d4_hbo: Oxyhemoglobin (HbO) — channel S3-D4 (Af3-Afz, left anterior frontal region).
+                s4_d2_hbo: Oxyhemoglobin (HbO) — channel S4-D2 (Fz-F1, left frontal region).
+                s4_d4_hbo: Oxyhemoglobin (HbO) — channel S4-D4 (Fz-Afz, central frontal region).
+                s4_d5_hbo: Oxyhemoglobin (HbO) — channel S4-D5 (Fz-F2, right frontal region).
+                s5_d3_hbo: Oxyhemoglobin (HbO) — channel S5-D3 (Fpz-Fp1, left frontal polar region).
+                s5_d4_hbo: Oxyhemoglobin (HbO) — channel S5-D4 (Fpz-Afz, central frontal polar region).
+                s5_d6_hbo: Oxyhemoglobin (HbO) — channel S5-D6 (Fpz-Fp2, right frontal polar region).
+                s6_d4_hbo: Oxyhemoglobin (HbO) — channel S6-D4 (Af4-Afz, right anterior frontal region).
+                s6_d6_hbo: Oxyhemoglobin (HbO) — channel S6-D6 (Af4-Fp2, right anterior frontal region).
+                s6_d7_hbo: Oxyhemoglobin (HbO) — channel S6-D7 (Af4-F6, right anterior frontal region).
+                s7_d5_hbo: Oxyhemoglobin (HbO) — channel S7-D5 (F4-F2, right frontal region).
+                s7_d7_hbo: Oxyhemoglobin (HbO) — channel S7-D7 (F4-F6, right frontal region).
+                s8_d6_hbo: Oxyhemoglobin (HbO) — channel S8-D6 (Af8-Fp2, right anterior frontal region).
+                s8_d7_hbo: Oxyhemoglobin (HbO) — channel S8-D7 (Af8-F6, right anterior frontal region).
+                s1_d1_hbr: Deoxyhemoglobin (HbR) — channel S1-D1 (F3-F5, left frontal region).
+                s1_d2_hbr: Deoxyhemoglobin (HbR) — channel S1-D2 (F3-F1, left frontal region).
+                s2_d1_hbr: Deoxyhemoglobin (HbR) — channel S2-D1 (Af7-F5, left anterior frontal region).
+                s2_d3_hbr: Deoxyhemoglobin (HbR) — channel S2-D3 (Af7-Fp1, left anterior frontal region).
+                s3_d1_hbr: Deoxyhemoglobin (HbR) — channel S3-D1 (Af3-F5, left anterior frontal region).
+                s3_d3_hbr: Deoxyhemoglobin (HbR) — channel S3-D3 (Af3-Fp1, left anterior frontal region).
+                s3_d4_hbr: Deoxyhemoglobin (HbR) — channel S3-D4 (Af3-Afz, left anterior frontal region).
+                s4_d2_hbr: Deoxyhemoglobin (HbR) — channel S4-D2 (Fz-F1, left frontal region).
+                s4_d4_hbr: Deoxyhemoglobin (HbR) — channel S4-D4 (Fz-Afz, central frontal region).
+                s4_d5_hbr: Deoxyhemoglobin (HbR) — channel S4-D5 (Fz-F2, right frontal region).
+                s5_d3_hbr: Deoxyhemoglobin (HbR) — channel S5-D3 (Fpz-Fp1, left frontal polar region).
+                s5_d4_hbr: Deoxyhemoglobin (HbR) — channel S5-D4 (Fpz-Afz, central frontal polar region).
+                s5_d6_hbr: Deoxyhemoglobin (HbR) — channel S5-D6 (Fpz-Fp2, right frontal polar region).
+                s6_d4_hbr: Deoxyhemoglobin (HbR) — channel S6-D4 (Af4-Afz, right anterior frontal region).
+                s6_d6_hbr: Deoxyhemoglobin (HbR) — channel S6-D6 (Af4-Fp2, right anterior frontal region).
+                s6_d7_hbr: Deoxyhemoglobin (HbR) — channel S6-D7 (Af4-F6, right anterior frontal region).
+                s7_d5_hbr: Deoxyhemoglobin (HbR) — channel S7-D5 (F4-F2, right frontal region).
+                s7_d7_hbr: Deoxyhemoglobin (HbR) — channel S7-D7 (F4-F6, right frontal region).
+                s8_d6_hbr: Deoxyhemoglobin (HbR) — channel S8-D6 (Af8-Fp2, right anterior frontal region).
+                s8_d7_hbr: Deoxyhemoglobin (HbR) — channel S8-D7 (Af8-F6, right anterior frontal region).
+
+            gaze_raw:
+              description: >
+                Table with raw Gaze data.
+              columns:
+                group_session: Group session ID
+                task: Task ID.
+                station: The iMac that the participant was stationed at.
+                participant: >
+                  Participant ID. A participant ID of -1 indicates an
+                  unknown participant. All rows that do not have values
+                  for the `task` column will have their participant ID
+                  set to -1. In the future, we will label some of these
+                  inter/pre/post task rows with the correct participant
+                  ID.
+                timestamp_unix: The Unix timestamp of the event.
+                timestamp_iso8601: The ISO-8601 timestamp of the event.
+                confidence: Computed confidence between 0 (not confident) - 1 (confident).
+                norm_pos_x: X position in the eye image frame in normalized coordinates.
+                norm_pos_y: Y position in the eye image frame in normalized coordinates.
+                gaze_point_3d_x: X position of the 3d gaze point (the point the subject looks at) in the world camera coordinate system.
+                gaze_point_3d_y: Y position of the 3d gaze point (the point the subject looks at) in the world camera coordinate system.
+                gaze_point_3d_z: X position of the 3d gaze point (the point the subject looks at) in the world camera coordinate system.
+                eye_center0_3d_x: X center of eye-ball 0 in the world camera coordinate system.
+                eye_center0_3d_y: Y center of eye-ball 0 in the world camera coordinate system.
+                eye_center0_3d_z: Z center of eye-ball 0 in the world camera coordinate system.
+                eye_center1_3d_x: X center of eye-ball 1 in the world camera coordinate system.
+                eye_center1_3d_y: Y center of eye-ball 1 in the world camera coordinate system.
+                eye_center1_3d_z: Z center of eye-ball 1 in the world camera coordinate system.
+                gaze_normal0_x: X normal of the visual axis for eye 0 in the world camera coordinate system. The visual axis goes through the eye ball center and the object that is looked at.
+                gaze_normal0_y: Y normal of the visual axis for eye 0 in the world camera coordinate system. The visual axis goes through the eye ball center and the object that is looked at.
+                gaze_normal0_z: Z normal of the visual axis for eye 0 in the world camera coordinate system. The visual axis goes through the eye ball center and the object that is looked at.
+                gaze_normal1_x: X normal of the visual axis for eye 1 in the world camera coordinate system. The visual axis goes through the eye ball center and the object that is looked at.
+                gaze_normal1_y: Y normal of the visual axis for eye 1 in the world camera coordinate system. The visual axis goes through the eye ball center and the object that is looked at.
+                gaze_normal1_z: Z normal of the visual axis for eye 1 in the world camera coordinate system. The visual axis goes through the eye ball center and the object that is looked at.
+                diameter0_2d: Diameter of the eye-ball 0's pupil in image pixels as observed in the eye image frame (not corrected for perspective).
+                diameter1_2d: Diameter of the eye-ball 1's pupil in image pixels as observed in the eye image frame (not corrected for perspective).
+                diameter0_3d: Diameter of the eye-ball 0's pupil scaled to mm based on anthropomorphic avg eye ball diameter and corrected for perspective.
+                diameter1_3d: Diameter of the eye-ball 1's pupil scaled to mm based on anthropomorphic avg eye ball diameter and corrected for perspective.
+
+            group_session:
+                description: Table with group session IDs.
+                label_column: id
+                columns:
+                    id: >
+                        Group session ID. Format: `exp_YYYY_MM_DD_HH`.
+                    advisor: The advisor that intervene in the Minecraft missions.
+
+            gsr_sync:
+              description: >
+                Table with GSR data synchronized to a main clock with fixed frequency. The start
+                and end timestamps of the main clock spans across all the tasks in the experiment.
+              columns:
+                group_session: Group session ID
+                frequency: Frequency of the samples (main clock frequency).
+                station: The iMac that the participant was stationed at.
+                id: Sequential ID of the sample.
+                timestamp_unix: The Unix timestamp of the event.
+                timestamp_iso8601: The ISO-8601 timestamp of the event.
+                gsr: Pre-processed (3 Hz low-pass filtered) GSR (galvanic skin response) signal value.
+
+            minecraft_mission:
+                description: Metadata about the Minecraft missions.
+                label_column: id
+                columns:
+                    id: The unique ID of the mission.
+                    group_session: The group session that the mission was a part of.
+                    name: The name of the mission (Hands-on Training, Saturn A, or Saturn B)
+                    mission_start_timestamp_iso8601: The starting timestamp of the mission in ISO-8601 format.
+                    mission_start_timestamp_unix: The starting Unix timestamp of the mission.
+                    mission_stop_timestamp_iso8601: The stop timestamp of the mission in ISO-8601 format.
+                    mission_stop_timestamp_unix: The stopping Unix timestamp of the mission.
+                    trial_start_timestamp_iso8601: The starting timestamp of the trial in ISO-8601 format.
+                    trial_start_timestamp_unix: The starting Unix timestamp of the trial.
+                    trial_stop_timestamp_iso8601: The stop timestamp of the trial in ISO-8601 format.
+                    trial_stop_timestamp_unix: The stopping Unix timestamp of the trial.
+                    final_team_score: The final mission score achieved by the team.
+                    testbed_version: The version of the testbed used for the mission.
+
+            modality:
+                description: Modalities for physiological data.
+                columns:
+                    id: The ID of the modality.
+
+            participant:
+                description: Table with participant IDs.
+                label_column: id
+                columns:
+                    id: >
+                        Participant ID.
+                        -1 indicates an unknown participant.
+                        -2 indicates the team as a whole. This is relevant for the affective_task_event table,
+                        where some events intrinsically involve the team as a whole, rather than just one player.
+                        -3 indicates that the participant is a confederate whose identity was not recorded.
+                        Participants with IDs > 999 are confederates (i.e.,
+                        experimenters who stepped in to replace no-show
+                        participants or participants who left partway through
+                        the group session.)
+
+            ping_pong_competitive_task_observation:
+                description: Observations from the competitive ping-pong tasks.
+                columns:
+                    group_session: The group session ID.
+                    player_1_id: Player 1's participant ID
+                    player_2_id: Player 2's participant ID
+                    player_1_station: Player 1's station.
+                    player_2_station: Player 2's station.
+                    timestamp_unix: Unix timestamp of the observation
+                    timestamp_iso8601: ISO-8601 timestamp of the observation.
+                    task_started: Whether the task has started (1) or not (0).
+                    seconds: The number of seconds left in the game (not shown to participants).
+                    ball_position_x: The x-coordinate of the ball.
+                    ball_position_y: The y-coordinate of the ball.
+                    player_1_paddle_position_x: >
+                        The x-coordinate of the pixel at the top left corner of player 1's paddle.
+                    player_1_paddle_position_y: >
+                        The y-coordinate of the pixel at the top left corner of player 1's paddle.
+                    player_2_paddle_position_x: >
+                        The x-coordinate of the pixel at the top left corner of player 2's paddle.
+                    player_2_paddle_position_y: >
+                        The y-coordinate of the pixel at the top left corner of player 2's paddle.
+                    player_1_score: Player 1's score.
+                    player_2_score: Player 2's score.
+
+            ping_pong_cooperative_task_observation:
+                description: Observations from the cooperative ping-pong tasks.
+                columns:
+                    group_session: The group session ID
+                    player_1_id: Player 1's participant ID
+                    player_2_id: Player 2's participant ID
+                    player_3_id: Player 3's participant ID
+                    timestamp_unix: Unix timestamp of the observation
+                    timestamp_iso8601: ISO-8601 timestamp of the observation.
+                    task_started: Whether the task has started (1) or not (0).
+                    seconds: The number of seconds left in the game (not shown to participants).
+                    ball_position_x: The x-coordinate of the ball.
+                    ball_position_y: The y-coordinate of the ball.
+                    player_1_paddle_position_x: >
+                        The x-coordinate of the pixel at the top left corner of player 1's paddle.
+                    player_1_paddle_position_y: >
+                        The y-coordinate of the pixel at the top left corner of player 1's paddle.
+                    player_2_paddle_position_x: >
+                        The x-coordinate of the pixel at the top left corner of player 2's paddle.
+                    player_2_paddle_position_y: >
+                        The y-coordinate of the pixel at the top left corner of player 2's paddle.
+                    player_3_paddle_position_x: >
+                        The x-coordinate of the pixel at the top left corner of player 3's paddle.
+                    player_3_paddle_position_y: >
+                        The y-coordinate of the pixel at the top left corner of player 3's paddle.
+                    ai_paddle_position_x: >
+                        The x-coordinate of the pixel at the top left corner of the AI player's paddle.
+                    ai_paddle_position_y: >
+                        The y-coordinate of the pixel at the top left corner of the AI player's paddle.
+                    team_score: The team's score.
+                    ai_score: The score of the AI player.
+
+            finger_tapping_task_observation:
+                description: Observations from the baseline finger-tapping task.
+                columns:
+                    group_session: The group session ID.
+                    timestamp_unix: Unix timestamp of the observation.
+                    timestamp_iso8601: ISO-8601 timestamp of the observation.
+                    event_type: >
+                        Phase of the task: `start_fingertapping_task` (start/practice),
+                        `individual` (participants tap in rhythm by themselves), or
+                        `team` (participants tap in synchronized rhythm together).
+                    countdown_timer: Countdown timer (seconds) shown to participants for the remaining duration of the phase.
+                    lion_spacebar_pressed: 1 when the participant at the Lion station is holding the spacebar, 0 otherwise.
+                    tiger_spacebar_pressed: 1 when the participant at the Tiger station is holding the spacebar, 0 otherwise.
+                    leopard_spacebar_pressed: 1 when the participant at the Leopard station is holding the spacebar, 0 otherwise.
+
+            post_game_survey:
+                description: >
+                    Each participant's responses to the REDCap "Post Game Survey",
+                    administered at the end of the group session. Items capture emotions
+                    felt during the game, impressions of the AI agent and of the other
+                    team members, and teamwork/decision-making ratings. Numeric items
+                    use the small Likert/slider scales noted per column.
+                columns:
+                    participant: Participant ID (see the participant table).
+                    agent_calm: Felt calm or relaxed due to the agent (0=not at all to 4=very large amount).
+                    agent_anxious: Felt anxious or stressed due to the agent (0 to 4).
+                    agent_excited: Felt excited or energized due to the agent (0 to 4).
+                    agent_sad: Felt sad or depressed due to the agent (0 to 4).
+                    agent_guilty: Felt guilty or ashamed due to the agent (0 to 4).
+                    agent_angry: Felt frustrated or angry due to the agent (0 to 4).
+                    agent_happy: Felt happy or content due to the agent (0 to 4).
+                    agent_lonely: Felt lonely or ignored due to the agent (0 to 4).
+                    agent_proud: Felt confident or proud due to the agent (0 to 4).
+                    agent_friendly: Felt friendly or amused due to the agent (0 to 4).
+                    game_calm: Felt calm or relaxed due to how the game went (0 to 4).
+                    game_anxious: Felt anxious or stressed due to how the game went (0 to 4).
+                    game_excited: Felt excited or energized due to how the game went (0 to 4).
+                    game_sad: Felt sad or depressed due to how the game went (0 to 4).
+                    game_guilty: Felt guilty or ashamed due to how the game went (0 to 4).
+                    game_angry: Felt frustrated or angry due to how the game went (0 to 4).
+                    game_happy: Felt happy or content due to how the game went (0 to 4).
+                    game_lonely: Felt lonely or ignored due to how the game went (0 to 4).
+                    game_proud: Felt confident or proud due to how the game went (0 to 4).
+                    game_friendly: Felt friendly or amused due to how the game went (0 to 4).
+                    agent_intel: Impression of the agent, Intelligent to Unintelligent (slider 0 to 100).
+                    agent_care: Impression of the agent, Cares about me to Doesn't care about me (slider 0 to 100).
+                    agent_honest: Impression of the agent, Honest to Dishonest (slider 0 to 100).
+                    agent_expert: Impression of the agent, Inexpert to Expert (slider 0 to 100).
+                    agent_concern: Impression of the agent, Concerned about me to Unconcerned about me (slider 0 to 100).
+                    agent_trust: Impression of the agent, Untrustworthy to Trustworthy (slider 0 to 100).
+                    agent_comp: Impression of the agent, Incompetent to Competent (slider 0 to 100).
+                    agent_insens: Impression of the agent, Insensitive to Sensitive (slider 0 to 100).
+                    agent_honor: Impression of the agent, Honorable to Dishonorable (slider 0 to 100).
+                    agent_bright: Impression of the agent, Bright to Stupid (slider 0 to 100).
+                    agent_understand: Impression of the agent, Not understanding to Understanding (slider 0 to 100).
+                    agent_phoney: Impression of the agent, Phoney to Genuine (slider 0 to 100).
+                    agent_well: Agreement that I got along with the agent pretty well (-2=strongly disagree to 2=strongly agree).
+                    agent_smooth: Agreement that the interaction with the agent was smooth (-2 to 2).
+                    agent_acc: Agreement that I felt accepted and respected by the agent (-2 to 2).
+                    agent_like: Agreement that the agent is likeable (-2 to 2).
+                    agent_enjoy: Agreement that I enjoyed the interaction with the agent (-2 to 2).
+                    agent_awk: Agreement that the interaction with the agent was forced, awkward and strained (-2 to 2).
+                    agent_place: Agreement that the agent said things that were out of place (-2 to 2).
+                    agent_play: Agreement that I would want the agent there if I played again (-2 to 2).
+                    agent_perform: Agreement that having the agent there helped me perform better (-2 to 2).
+                    team_calm: Felt calm or relaxed due to the other team member(s) (0 to 4).
+                    team_anxious: Felt anxious or stressed due to the other team member(s) (0 to 4).
+                    team_excited: Felt excited or energized due to the other team member(s) (0 to 4).
+                    team_sad: Felt sad or depressed due to the other team member(s) (0 to 4).
+                    team_guilty: Felt guilty or ashamed due to the other team member(s) (0 to 4).
+                    team_angry: Felt frustrated or angry due to the other team member(s) (0 to 4).
+                    team_happy: Felt happy or content due to the other team member(s) (0 to 4).
+                    team_lonely: Felt lonely or ignored due to the other team member(s) (0 to 4).
+                    team_proud: Felt confident or proud due to the other team member(s) (0 to 4).
+                    team_friendly: Felt friendly or amused due to the other team member(s) (0 to 4).
+                    team_intel: Impression of the other team member(s), Intelligent to Unintelligent (slider 0 to 100).
+                    team_care: Impression of the other team member(s), Cares about me to Doesn't care about me (slider 0 to 100).
+                    team_honest: Impression of the other team member(s), Honest to Dishonest (slider 0 to 100).
+                    team_expert: Impression of the other team member(s), Inexpert to Expert (slider 0 to 100).
+                    team_concern: Impression of the other team member(s), Concerned about me to Unconcerned about me (slider 0 to 100).
+                    team_trust: Impression of the other team member(s), Untrustworthy to Trustworthy (slider 0 to 100).
+                    team_comp: Impression of the other team member(s), Incompetent to Competent (slider 0 to 100).
+                    team_insens: Impression of the other team member(s), Insensitive to Sensitive (slider 0 to 100).
+                    team_honor: Impression of the other team member(s), Honorable to Dishonorable (slider 0 to 100).
+                    team_bright: Impression of the other team member(s), Bright to Stupid (slider 0 to 100).
+                    team_understand: Impression of the other team member(s), Not understanding to Understanding (slider 0 to 100).
+                    team_phoney: Impression of the other team member(s), Phoney to Genuine (slider 0 to 100).
+                    team_wrong: My emotional reaction seemed wrong or incorrect because of my team members' responses (1=strongly disagree to 5=strongly agree).
+                    team_forget: Felt I should forget about my feelings and move on because of my team members' responses (1 to 5).
+                    team_minimize: Felt my feelings were minimized because of my team members' responses (1 to 5).
+                    team_insult: Felt insulted when I shared my feelings (1 to 5).
+                    team_irrat: Felt my feelings were irrational because of my team members' responses (1 to 5).
+                    team_crit: Felt my team members were critical of my feelings (1 to 5).
+                    team_fault: Felt my feelings were my fault because of my team members' responses (1 to 5).
+                    team_ignore: Felt ignored when I shared my feelings (1 to 5).
+                    team_impt: Felt my feelings were unimportant because of my team members' responses (1 to 5).
+                    team_weak: Felt weak because of my team members' response to my emotional reactions (1 to 5).
+                    team_along: Agreement that I got along with my team members pretty well (-2 to 2).
+                    team_smooth: Agreement that the interaction with my team members was smooth (-2 to 2).
+                    team_accept: Agreement that I felt accepted and respected by my team members (-2 to 2).
+                    team_like: Agreement that my team members are likable (-2 to 2).
+                    team_enjoy: Agreement that I enjoyed the interaction with my team members (-2 to 2).
+                    team_awk: Agreement that the interaction with my team members was forced, awkward and strained (-2 to 2).
+                    team_place: Agreement that my team members said things that were out of place (-2 to 2).
+                    team_likeme: Agreement that other group members liked me (-2 to 2).
+                    team_genuine: Agreement that I felt I was a genuine member of the group (-2 to 2).
+                    team_part: Agreement that I got to participate whenever I wanted to (-2 to 2).
+                    team_listen: Agreement that other members of the group really listened to me (-2 to 2).
+                    team_ilike: Agreement that I liked the group I was in (-2 to 2).
+                    team_interact: Agreement that I enjoyed interacting with this group (-2 to 2).
+                    team_itrust: Agreement that I trusted group members (-2 to 2).
+                    team_fit: Agreement that the group was composed of people who fit together (-2 to 2).
+                    team_cohesion: Agreement that there was a feeling of unity and cohesion in the group (-2 to 2).
+                    team_work: Agreement that, compared to other groups, this group worked well together (-2 to 2).
+                    team_knit: Agreement that we were a closely knit group (-2 to 2).
+                    team_like_mem: Agreement that I like the members of the group (-2 to 2).
+                    team_work_well: Agreement that our group worked well together (-2 to 2).
+                    team_decision: Agreement that the group used effective decision-making techniques (-2 to 2).
+                    team_express: Agreement that the group provided comfortable expression for members (-2 to 2).
+                    team_organize: Agreement that we approached the game in an organized manner (-2 to 2).
+                    team_accomplish: Agreement that the group accomplished what it set out to do (-2 to 2).
+                    team_approp: Agreement that our group's decisions were appropriate (-2 to 2).
+                    team_alt: Agreement that we selected the right alternatives (-2 to 2).
+                    team_influ: Agreement that I had a lot of influence on group decisions (-2 to 2).
+                    team_contrib: Agreement that I contributed important information during the decision process (-2 to 2).
+                    agent_emot1: My emotional reaction seemed wrong or incorrect because of the agent's response (1=strongly disagree to 5=strongly agree).
+                    agent_emot2: Felt I should forget about my feelings and move on because of the agent's response (1 to 5).
+                    agent_emot3: Felt my feelings were minimized because of the agent's reaction (1 to 5).
+                    agent_emot4: Felt insulted when I shared my feelings (1 to 5).
+                    agent_emot5: Felt my feelings were irrational because of the agent's response (1 to 5).
+                    agent_emot6: Felt the agent was being critical of my feelings (1 to 5).
+                    agent_emot7: Felt my feelings were my fault because of the agent's response (1 to 5).
+                    agent_emot8: Felt ignored when I shared my feelings (1 to 5).
+                    agent_emot9: Felt my feelings were unimportant because of the agent's response (1 to 5).
+                    agent_emot10: Felt weak because of the agent's response to my emotional reactions (1 to 5).
+                    know_team_members: Whether the participant knew any of the other team members (1=yes, 0=no).
+                    know_person_at_cheetah: If known, to what extent the participant knew the team member at the Cheetah station (free text).
+                    know_person_at_lion: If known, to what extent the participant knew the team member at the Lion station (free text).
+                    know_person_at_tiger: If known, to what extent the participant knew the team member at the Tiger station (free text).
+                    know_person_at_leopard: If known, to what extent the participant knew the team member at the Leopard station (free text).
+
+            rest_state_task:
+                description: >
+                    Start and stop times of the baseline rest-state task, during which
+                    participants sat quietly while physiological signals were recorded.
+                columns:
+                    group_session: The group session ID.
+                    start_timestamp_unix: Unix timestamp marking the start of the rest state.
+                    start_timestamp_iso8601: ISO-8601 timestamp marking the start of the rest state.
+                    stop_timestamp_unix: Unix timestamp marking the end of the rest state.
+                    stop_timestamp_iso8601: ISO-8601 timestamp marking the end of the rest state.
+
+            station:
+                description: >
+                    During the group session, each participant is seated at one
+                    of four iMacs, labeled 'lion', 'tiger', 'leopard', and
+                    'cheetah'. The 'cheetah' station is only used in the
+                    competitive ping pong task, when an experimenter steps in
+                    to play against the participant seated at the 'leopard'
+                    station.
+                label_column: id
+                columns:
+                    id: Station ID.
+
+            screen_capture:
+              description: >
+                Table with screen capture data.
+              columns:
+                group_session: Group session ID
+                task: Task ID.
+                station: The iMac that the participant was stationed at.
+                participant: >
+                  Participant ID. A participant ID of -1 indicates an
+                  unknown participant. All rows that do not have values
+                  for the `task` column will have their participant ID
+                  set to -1. In the future, we will label some of these
+                  inter/pre/post task rows with the correct participant
+                  ID.
+                timestamp_unix: The Unix timestamp of the event.
+                timestamp_iso8601: The ISO-8601 timestamp of the event.
+                filename: Name of the screenshot file.
+                timestamp_origin: >
+                  The source of the timestamp. The priority is precision-driven. LSL time are
+                  used if available, otherwise, creation time is used if available. Modification
+                  time is used as last resort.
+
+            task:
+                description: The different tasks that take place during a group session.
+                label_column: id
+                columns:
+                    id: Task ID.
+
+            minecraft_testbed_message:
+                description: Messages sent over the testbed's message bus during missions.
+                columns:
+                    mission: The ID of the Minecraft mission during which the message was published.
+                    id: Sequential ID of the message within the mission.
+                    topic: The topic the message was published on.
+                    timestamp_unix: The Unix timestamp of the message.
+                    timestamp_iso8601: The timestamp of the message in ISO-8601 format.
+                    message: >
+                      The contents of the message, stored as JSON; use your
+                      database's JSON functions and operators to query into it. The
+                      payload schema varies by topic — see the Message Bus Reference
+                      at /messages for field-level documentation of each topic.
+# Custom CSS
+extra_css_urls:
+    - /assets/app.css
+    - url: https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css
+      sri: sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM
+
+extra_js_urls:
+    - url: https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js
+      sri: sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz
+
+# ====================
+# Plugin configuration
+# ====================
+
+plugins:
+  datasette-render-markdown:
+    templates: true
+
+# Structured metadata, as required by the NeurIPS 2023 Datasets and Benchmarks
+# track.
+structured_metadata:
+  '@context': https://schema.org/
+  '@type': Dataset
+  name: The ToMCAT Dataset
+  description: Multimodal dataset for human-machine teaming research.
+  url: https://tomcat.ivilab.org
+  keywords:
+    - fNIRS
+    - EEG
+    - EKG
+    - GSR
+    - Eye tracking
+    - Minecraft
+    - Human-machine teaming
+  license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+  isAccessibleForFree: true
+  creator:
+    - '@type': Person
+      sameAs: https://orcid.org/0000-0002-1602-0386
+      name: Adarsh Pyarelal
+    - '@type': Person
+      sameAs: https://orcid.org/0000-0003-3277-5145
+      name: Eric Duong
+    - '@type': Person
+      sameAs: https://orcid.org/0000-0002-3141-5669
+      name: Caleb Jones Shibu
+    - '@type': Person
+      sameAs: https://orcid.org/0000-0002-0646-037X
+      name: Paulo Ricardo da Silva Soares
+    - '@type': Person
+      name: Savannah Boyd
+    - '@type': Person
+      name: Payal Khosla
+    - '@type': Person
+      name: Valeria Pfeifer
+    - '@type': Person
+      sameAs: https://orcid.org/0000-0001-8878-8952
+      name: Diheng Zhang
+    - '@type': Person
+      sameAs: https://orcid.org/0000-0001-7186-5755
+      name: Eric Andrews
+    - '@type': Person
+      name: Rick Champlin
+    - '@type': Person
+      name: Vincent Paul Raymond
+    - '@type': Person
+      sameAs: https://orcid.org/0000-0002-0205-9298
+      name: Meghavarshini Krishnaswamy
+    - '@type': Person
+      sameAs: https://orcid.org/0000-0002-3606-0078
+      name: Clayton Morrison
+    - '@type': Person
+      name: Emily Butler
+    - '@type': Person
+      sameAs: https://orcid.org/0000-0002-8568-9518
+      name: Kobus Barnard
+    - '@type': Organization
+      sameAs: https://ror.org/03m2x1q45
+      name: University of Arizona
+  citation: https://openreview.net/forum?id=ZJWQfgXQb6
+  funder:
+    '@type': Organization
+    sameAs: https://ror.org/02caytj08
+    name: Defense Advanced Research Projects Agency
+  distribution:
+    - '@type': DataDownload
+      encodingFormat: SQLite
+      contentUrl: https://tomcat.ivilab.org/tomcat.db
+  temporalCoverage: 2022-09-30/2023-05-03

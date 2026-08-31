@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}{{ database }} — {{ metadata.title or "ToMCAT Dataset" }}{% endblock %}
+{% block body_class %}db{% endblock %}
+
+{% block content %}
+<h1>{{ database }}</h1>
+<p>{{ "{:,}".format(tables | sum(attribute="rows")) }} rows (estimated) across
+   {{ tables | length }} table{{ "s" if tables | length != 1 }}.
+   Row counts are fast estimates from the query planner statistics.</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr><th>Table</th><th class="text-end">Rows (est.)</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+    {% for t in tables %}
+        <tr>
+            <td><a href="/{{ database }}/{{ t.name }}">{{ t.name }}</a></td>
+            <td class="text-end">{{ "{:,}".format(t.rows) }}</td>
+            <td>{{ t.description }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

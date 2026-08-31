@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# Shell script for launching the Datasette instance in dev mode
+
+set -euo pipefail
+
+# Load the same env file the Python pipeline uses so ARTIFACT_DIR is available here too.
+ENV_FILE="${TOMCAT_ENV_FILE:-.env}"
+if [[ -f "$ENV_FILE" ]]; then
+    set -a
+    # shellcheck disable=SC1090
+    source "$ENV_FILE"
+    set +a
+fi
+
+datasette \
+    "${ARTIFACT_DIR:?set ARTIFACT_DIR (e.g. in .env)}/tomcat.db" \
+    --metadata metadata.yml \
+    --reload \
+    --template-dir=templates \
+    --plugins-dir=plugins/ \
+    --inspect-file=inspect-data.json \
+    --static assets:static \
+    --setting sql_time_limit_ms 10000 \
+    --setting facet_time_limit_ms 10000 \
+    --setting num_sql_threads 10 \
+    --setting max_csv_mb 12000 \

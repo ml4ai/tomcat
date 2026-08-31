@@ -1,0 +1,240 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://asist.aptima.com/schemas/observation_state.json",
+  "type": "object",
+  "title": "The Observation State Schema",
+  "version": "1.1",
+  "required": [
+    "header",
+    "msg",
+    "data"
+  ],
+  "properties": {
+      "header": {
+          "$ref": "../Common_Header/common_header.json",
+          "properties": {         
+            "message_type": {
+              "$id": "#/properties/message_type",
+              "type": "string",
+              "title": "The Message_type Schema",
+              "const": "observation"
+            }
+          }
+      },
+      "msg": {
+          "$ref": "../Common_Message/common_message.json",
+          "properties": {         
+            "sub_type": {
+              "$id": "#/properties/sub_type",
+              "type": "string",
+              "title": "The Sub Type Schema",
+              "const": "state"
+            }
+          }
+      },
+      "data": {
+      "$id": "#/properties/data",
+      "type": "object",
+      "title": "The Observation State Data Schema",
+      "required": [
+        "mission_timer",
+        "elapsed_milliseconds",
+        "observation_number",
+        "timestamp",
+        "entity_type",
+        "x",
+        "y",
+        "z",
+        "pitch",
+        "yaw",
+        "world_time",
+        "total_time",
+        "id",
+        "motion_x",
+        "motion_y",
+        "motion_z",
+        "life",
+        "participant_id"
+      ],
+      "properties": {
+        "mission_timer": {
+          "$id": "#/properties/event/state/mission_timer",
+          "type": "string",
+          "title": "The Mission Timer Schema",          
+          "examples": [
+            "8 : 36"
+          ],
+          "pattern": "(^([0-9]*? : [+0-9]*?)$)|(^Mission Timer not initialized\\.$)"
+        },
+        "elapsed_milliseconds": {
+          "$id": "#/properties/event/state/elapsed_milliseconds",
+          "type": "number",
+          "title": "The Elapsed Milliseconds Schema",          
+          "examples": [
+            5000, 77459, 689457
+          ],
+          "pattern": "^[0-9]+$"
+        },
+        "observation_number": {
+          "$id": "#/properties/data/properties/observation_number",
+          "type": "integer",
+          "title": "The Observation Number Schema",
+          "default": 0,
+          "examples": [
+            6857
+          ]
+        },
+        "timestamp": {
+          "$id": "#/properties/data/properties/timestamp",
+          "type": "string",
+          "title": "The Timestamp Schema",
+          "default": "",
+          "examples": [
+            "2019-12-18 19:13:46.145219Z"
+          ],
+          "pattern": "[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}[.]?[0-9]{0,}?Z"
+        },
+        "participant_id": {
+          "$id": "#/properties/data/properties/participant_id",
+          "type": "string",
+          "title": "The participant_id Schema",
+          "default": "",
+          "examples": [
+            "E000231"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "playername": {
+          "$id": "#/properties/data/properties/playername",
+          "type": "string",
+          "title": "The playerName Schema",
+          "default": "",
+          "examples": [
+            "Ed"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "x": {
+          "$id": "#/properties/data/properties/x",
+          "type": "number",
+          "title": "The X Schema",
+          "default": 0.0,
+          "examples": [
+            -2194.8933503172193
+          ]
+        },
+        "y": {
+          "$id": "#/properties/data/properties/y",
+          "type": "number",
+          "title": "The Y Schema",
+          "default": 0.0,
+          "examples": [
+            24.0
+          ]
+        },
+        "z": {
+          "$id": "#/properties/data/properties/z",
+          "type": "number",
+          "title": "The Z Schema",
+          "default": 0.0,
+          "examples": [
+            190.33727
+          ]
+        },
+        "pitch": {
+          "$id": "#/properties/data/properties/pitch",
+          "type": "number",
+          "title": "The Pitch Schema",
+          "default": 0.0,
+          "examples": [
+            0.0
+          ]
+        },
+        "yaw": {
+          "$id": "#/properties/data/properties/yaw",
+          "type": "number",
+          "title": "The Yaw Schema",
+          "default": 0.0,
+          "examples": [
+            0.4
+          ]
+        },
+        "world_time": {
+          "$id": "#/properties/data/properties/world_time",
+          "type": "integer",
+          "title": "The Worldtime Schema",
+          "default": 0,
+          "examples": [
+            12000
+          ]
+        },
+        "total_time": {
+          "$id": "#/properties/data/properties/total_time",
+          "type": "integer",
+          "title": "The Total Time Schema",
+          "default": 0,
+          "examples": [
+            6706346
+          ]
+        },
+        "entity_type": {
+          "$id": "#/properties/data/properties/entity_type",
+          "type": "string",
+          "title": "The Entity Type Schema",
+          "default": "",
+          "examples": [
+            "human"
+          ],
+          "Enum": [ "human", "agent" ]
+        },
+        "id": {
+          "$id": "#/properties/data/properties/id",
+          "type": "string",
+          "title": "The Id Schema",
+          "default": "",
+          "examples": [
+            "699ba7c4-ceaf-3c46-a3cf-50b02c2ff935"
+          ],
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+        },
+        "motion_x": {
+          "$id": "#/properties/data/properties/motion_x",
+          "type": "number",
+          "title": "The Motionx Schema",
+          "default": 0.0,
+          "examples": [
+            0.08991309562755659
+          ]
+        },
+        "motion_y": {
+          "$id": "#/properties/data/properties/motion_y",
+          "type": "number",
+          "title": "The Motion Y Schema",
+          "default": 0.0,
+          "examples": [
+            0.5
+          ]
+        },
+        "motion_z": {
+          "$id": "#/properties/data/properties/motion_z",
+          "type": "number",
+          "title": "The Motionz Schema",
+          "default": 0.0,
+          "examples": [
+            -0.11381933207744127
+          ]
+        },
+        "life": {
+          "$id": "#/properties/data/properties/life",
+          "type": "number",
+          "title": "The Life Schema",
+          "default": 0.0,
+          "examples": [
+            20.0
+          ]
+        }
+      }
+    }
+  }
+}

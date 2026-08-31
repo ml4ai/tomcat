@@ -1,0 +1,66 @@
+{
+	"definitions": {
+
+	},
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "http://asist.aptima.com/schemas/experiment.json",
+	"type": "object",
+	"title": "The Root Schema",
+	"required": [ "id", "experiment_id", "name", "date", "author", "mission" ],
+	"properties": {
+		"id": {
+			"$id": "#/properties/id",
+			"type": "integer",
+			"title": "The ID Schema",
+			"examples": [ 1 ]
+		},
+		"experiment_id": {
+			"$id": "#/properties/experiment_id",
+			"type": "string",
+			"title": "The Experiment Id Schema",
+			"default": "",
+			"examples": [ "123e4567-e89b-12d3-a456-426655440000" ],
+			"pattern": "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
+		},		
+		"name": {
+			"$id": "#/properties/name",
+			"type": "string",
+			"title": "The Name Schema",
+			"default": "",
+			"examples": [
+				"My Experiment Trial"
+			],
+			"pattern": "^(.*)$"
+		},
+		"date": {
+			"$id": "#/properties/date",
+			"type": "string",
+			"title": "The Date Schema",
+			"default": "",
+			"examples": [
+				"2019-12-26T12:47:23.123Z"
+			],
+			"pattern": "[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}[.]?[0-9]{0,}?Z"
+		},
+		"author": {
+			"$id": "#/properties/author",
+			"type": "string",
+			"title": "The Author Schema",
+			"default": "",
+			"examples": [
+				"The author"
+			],
+			"pattern": "^(.*)$"
+		},
+		"mission": {
+			"$id": "#/properties/mission",
+			"type": "string",
+			"title": "The Mission Schema",
+			"default": "",
+			"examples": [
+				""
+			],
+			"pattern": "^(.*)$"
+		}	
+	}
+}

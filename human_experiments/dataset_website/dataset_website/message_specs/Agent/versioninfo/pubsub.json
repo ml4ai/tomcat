@@ -1,0 +1,31 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://asist.aptima.com/schemas/pubsub.json",
+  "type": "object",
+  "title": "The agent publish and subscribe Schema",
+  "version": "1.0",
+  "required": [
+    "topic"
+  ],
+  "properties": {
+    "topic": {
+      "$id": "#/properties/agent/version/pubsub/topic",
+      "type": "string",
+      "title": "The agent pubsub topic",
+      "pattern": "^(.*)$"
+    },
+    "message_type": {
+      "$id": "#/properties/agent/version/pubsub/message_type",
+      "type": "string",
+      "title": "The agent pubsub message_type",
+      "pattern": "^(.*)$"
+    },
+    "sub_type": {
+      "$id": "#/properties/agent/version/pubsub/sub_type",
+      "type": "string",
+      "title": "The agent pubsub sub_type",
+      "pattern": "^(.*)$"
+    }
+  }
+}

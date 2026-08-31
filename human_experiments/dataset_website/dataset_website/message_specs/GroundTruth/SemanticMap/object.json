@@ -1,0 +1,45 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://asist.aptima.com/schemas/event_state.json",
+  "type": "object",
+  "title": "The GroundTruth SemanticMap Object Schema",
+  "version": "1.0",
+  "required": [
+    "id",
+    "type"
+  ],
+  "properties": {
+    "id": {
+      "$id": "#/properties/data/properties/semantic_map/object/id",
+      "type": "string",
+      "title": "The id of the object",
+      "pattern": "^(.*)$"
+    },
+    "name": {
+      "$id": "#/properties/data/properties/semantic_map/object/name",
+      "type": "string",
+      "title": "The name of the object",
+      "pattern": "^(.*)$"
+    },
+    "type": {
+      "$id": "#/properties/data/properties/semantic_map/object/type",
+      "type": "string",
+      "title": "The type of the object",
+      "examples": [
+        "light_switch", "button", "green_victim", "yellow_victim"
+      ],
+      "pattern": "^(.*)$"
+    },
+    "facing": {
+      "$id": "#/properties/data/properties/semantic_map/object/facing",
+      "type": "string",
+      "title": "The side of the block the object is on (light switches)",
+      "examples": [
+        "north", "south", "east", "west"
+      ],
+      "pattern": "^(.*)$"
+    },
+    "bounds": { "$ref": "./bounds.json" }
+  }
+}

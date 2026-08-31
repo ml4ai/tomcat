@@ -1,0 +1,27 @@
+{
+    "definitions": {},
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://asist.aptima.com/schemas/hvt_victims.json",
+    "type": "object",
+    "title": "The hvt_victims Schema",
+    "version": "0.5",
+    "required": [
+        "victim_location", "loiter_time", "player_arrivals"
+    ],
+    "properties": {
+        "victim_location": { "$ref": "../coords.json" },
+        "loiter_time": {
+            "$id": "#/properties/loiter_time",
+            "type": "number",
+            "title": "The loiter name",          
+            "examples": [6.5],
+            "pattern": "^[+-]?([0-9]*[.])?[0-9]+$"
+        },
+        "player_arrivals": {
+            "$id": "#/properties/player_arrivals",
+            "type": "array",
+            "title": "list the player arrivals",
+            "items": { "$ref": "./player_arrivals.json" }
+        }
+    }
+}

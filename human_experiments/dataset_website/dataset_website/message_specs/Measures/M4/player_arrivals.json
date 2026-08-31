@@ -1,0 +1,27 @@
+{
+    "definitions": {},
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://asist.aptima.com/schemas/player_arrivals.json",
+    "type": "object",
+    "title": "The player_arrivals Schema",
+    "version": "0.5",
+    "required": [
+        "player_name", "arrival_time"
+    ],
+    "properties": {
+        "player_name": {
+            "$id": "#/properties/player_name",
+            "type": "string",
+            "title": "The player name",          
+            "examples": ["Player123"],
+            "pattern": "^(.*)$"
+        },
+        "arrival_time": {
+            "$id": "#/properties/arrival_time",
+            "type": "number",
+            "title": "The arrival time",          
+            "examples": [21002],
+            "pattern": "^[0-9]+$"
+        }
+    }
+}

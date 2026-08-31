@@ -1,0 +1,102 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://asist.aptima.com/schemas/event_player_dyad.json",
+  "type": "object",
+  "title": "The Event Player Dyad Schema",
+  "version": "1.0",
+  "required": [
+    "header",
+    "msg",
+    "data"
+  ],
+  "properties": {
+    "header": {
+      "$ref": "../Common_Header/common_header.json",
+      "properties": {         
+        "message_type": {
+        "$id": "#/properties/message_type",
+        "type": "string",
+        "title": "The Message_type Schema",
+        "const": "event"
+        }
+      }
+    },
+    "msg": {
+      "$ref": "../Common_Message/common_message.json",
+      "properties": {         
+        "sub_type": {
+        "$id": "#/properties/sub_type",
+        "type": "string",
+        "title": "The Sub Type Schema",
+        "const": "Event:dyad"
+        }
+      }
+    },
+    "data": {
+      "$id": "#/properties/message/properties/data",
+      "type": "object",
+      "title": "The Dyad update Data Schema",
+      "required": [
+        "id",
+        "event",
+        "elapsed_milliseconds",
+        "participants",
+        "in-dyad-probability"
+      ],
+      "properties": {
+        "id": {
+          "$id": "#/properties/dyad_id",
+          "type": "string",
+          "title": "The Dyad Id Schema",
+          "default": "",
+          "examples": [ "7b87ee9f-fbe7-448d-b00f-35b93844a623" ],
+          "pattern": "([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})"
+        },
+        "event": {
+          "$id": "#/properties/data/properties/dyad_event",
+          "type": "string",
+          "title": "The Dyad Event Schema",
+          "enum": [ "start", "update", "end" ],
+          "examples": [
+            "start"
+          ]
+        },
+        "elapsed_milliseconds": {
+          "$id": "#/properties/event/state/elapsed_milliseconds",
+          "type": "number",
+          "title": "The Elapsed Milliseconds Schema",
+          "examples": [
+            5000, 77459, 689457
+          ],
+          "pattern": "^[0-9]+$"
+        },
+        "participants": {
+          "$id": "#/properties/data/properties/dyad_participant_list",
+          "type": "array",
+          "items": { "$ref": "./dyad_participant.json" },
+          "title": "The Dyad Participant List Schema",
+          "default": ""
+        },
+        "in-dyad-probability": {
+          "$id": "#/properties/event/state/in-dyad-probability",
+          "type": "number",
+          "title": "The In Dyad Probability Schema",
+          "examples": [
+            0.0, 0.5, 1.0
+          ],
+          "pattern": "^(0(\\.\\d+)?|1\\.0)$"
+        },
+        "duration": {
+          "$id": "#/properties/event/state/dyad_duration",
+          "type": "number",
+          "title": "The Dyad Duration Schema",
+          "examples": [
+            5000, 77459, 689457
+          ],
+          "pattern": "^[0-9]+$"
+        }
+      }
+    }
+  }
+}

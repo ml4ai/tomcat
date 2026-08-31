@@ -1,0 +1,82 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://asist.aptima.com/schemas/event_state.json",
+  "type": "object",
+  "title": "The GroundTruth SemanticMap:Initialized Schema",
+  "version": "2.0",
+  "required": [
+    "header",
+    "msg",
+    "data"
+  ],
+  "properties": {
+    "header": {
+      "$ref": "../../Common_Header/common_header.json",
+      "properties": {         
+        "message_type": {
+        "$id": "#/properties/message_type",
+        "type": "string",
+        "title": "The Message_type Schema",
+        "const": "groundtruth"
+        }
+      }
+    },
+    "msg": {
+      "$ref": "../../Common_Message/common_message.json",
+      "properties": {         
+        "sub_type": {
+        "$id": "#/properties/sub_type",
+        "type": "string",
+        "title": "The Sub Type Schema",
+        "const": "SemanticMap:Initialized"
+        }
+      }
+    },
+    "data": {
+      "$id": "#/properties/message/properties/data",
+      "type": "object",
+      "title": "The GroundTruth SemanticMap:Initialized Schema",
+      "required": [
+        "semantic_map_name",
+        "semantic_map"
+      ],
+      "properties": {
+        "semantic_map_name": {
+          "$id": "#/properties/data/properties/semantic_map/filename",
+          "type": "string",
+          "title": "The Semantic Map file where the map was loaded from",
+          "examples": [
+            "Falcon_sm_v1.0.json"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "semantic_map": {
+          "$id": "#/properties/data/properties/semantic_map",
+          "type": "object",
+          "title": "The Semantic Map Schema",
+          "properties": {
+            "locations": {
+              "$id": "#/properties/data/properties/semantic_map/additions/locations",
+              "type": "array",
+              "items": { "$ref": "./location.json" },
+              "title": "Location in the Semantic Map"
+            },
+            "connections": {
+              "$id": "#/properties/data/properties/semantic_map/additions/connections",
+              "type": "array",
+              "items": { "$ref": "./connection.json" },
+              "title": "Connection in the Semantic Map"
+            },
+            "objects": {
+              "$id": "#/properties/data/properties/semantic_map/additions/objects",
+              "type": "array",
+              "items": { "$ref": "./object.json" },
+              "title": "Object in the Semantic Map"
+            }
+          }
+        }
+      }
+    }
+  }
+}

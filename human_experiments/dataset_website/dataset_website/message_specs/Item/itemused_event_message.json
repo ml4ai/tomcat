@@ -1,0 +1,116 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://asist.aptima.com/schemas/itemused_event_message.json",
+  "type": "object",
+  "title": "The Item Used Event Schema",
+  "version": "0.1",
+  "required": [
+    "header",
+    "msg",
+    "data"
+  ],
+  "properties": {
+    "header": {
+        "$ref": "../Common_Header/common_header.json",
+        "properties": {         
+          "message_type": {
+            "$id": "#/properties/message_type",
+            "type": "string",
+            "title": "The Message_type Schema",
+            "const": "event"
+          }
+        }
+    },
+    "msg": {
+        "$ref": "../Common_Message/common_message.json",
+        "properties": {         
+          "sub_type": {
+            "$id": "#/properties/sub_type",
+            "type": "string",
+            "title": "The Sub Type Schema",
+            "const": "Event:ItemUsed"
+          }
+        }
+    },
+    "data": {
+      "$id": "#/properties/message/properties/data",
+      "type": "object",
+      "title": "The Item Used Event Data Schema",
+      "required": [
+        "mission_timer",
+        "elapsed_milliseconds",
+        "playername",
+        "itemname",
+		    "item_x",
+		    "item_y",
+        "item_z"
+      ],
+      "properties": {
+        "mission_timer": {
+          "$id": "#/properties/event/state/mission_timer",
+          "type": "string",
+          "title": "The Mission Timer Schema",          
+          "examples": [
+            "8 : 36"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "elapsed_milliseconds": {
+          "$id": "#/properties/event/state/elapsed_milliseconds",
+          "type": "number",
+          "title": "The Elapsed Milliseconds Schema",          
+          "examples": [
+            5000, 77459, 689457
+          ],
+          "pattern": "^[0-9]+$"
+        },
+        "playername": {
+          "$id": "#/properties/event/state/playername",
+          "type": "string",
+          "title": "The Playername Schema",          
+          "examples": [
+            "Aptiminer1"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "itemname": {
+          "$id": "#/properties/event/state/itemname",
+          "type": "string",
+          "title": "The Itemname Schema",          
+          "examples": [
+            "minecraft:lead"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "item_x": {
+          "$id": "#/properties/event/state/item_x",
+          "type": "number",
+          "title": "The Item_X Schema",          
+          "examples": [
+            -2185
+          ],
+          "pattern": "^([0-9]+?)$"
+        },
+        "item_y": {
+          "$id": "#/properties/event/state/item_y",
+          "type": "number",
+          "title": "The Item_Y Schema",          
+          "examples": [
+            52
+          ],
+          "pattern": "^([0-9]+?)$"
+        },
+        "item_z": {
+          "$id": "#/properties/event/state/item_z",
+          "type": "number",
+          "title": "The Item_Z Schema",          
+          "examples": [
+            194
+          ],
+          "pattern": "^([0-9]+?)$"
+        }        
+      }
+    }
+  }
+}

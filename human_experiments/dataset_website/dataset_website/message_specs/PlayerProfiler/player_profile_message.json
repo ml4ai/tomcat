@@ -1,0 +1,71 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://asist.aptima.com/schemas/player_profile.json",
+  "type": "object",
+  "title": "UCF player profile message",
+  "version": "0.2",
+  "required": [
+    "header",
+    "msg",
+    "data"
+  ],
+  "properties": {
+    "header": {
+      "$ref": "../Common_Header/common_header.json"
+    },
+    "msg": {
+      "$ref": "../Common_Message/common_message.json"
+    },
+    "data": {
+      "$id": "#/properties/data",
+      "type": "object",
+      "title": "The Comment Data Schema",
+      "required": [
+        "player-profile",
+        "team-potential-category",
+        "task-potential-category",
+        "participant_id",
+        "callsign"
+      ],
+      "properties": {
+        "player-profile":{
+          "$id": "#/properties/data/properties/player-profile",
+          "type": "string",
+          "title": "Player Profile",
+          "examples": ["LowTaskLowTeam", "LowTaskHighTeam", "HighTaskLowTeam", "HighTaskHighTeam"]
+        },
+        "team-potential-category":{
+          "$id": "#/properties/data/properties/team-potential-category",
+          "type": "string",
+          "title": "Team potential category",
+          "examples": ["LowTeam", "HighTeam"]
+        },
+        "task-potential-category":{
+          "$id": "#/properties/data/properties/task-potential-category",
+          "type": "string",
+          "title": "Task potential category",
+          "examples": ["LowTask", "HighTask"]
+        },
+        "callsign": {
+          "$id": "#/properties/data/properties/callsign",
+          "type": "string",
+          "title": "The Call Sign Assigned to the Player",
+          "examples": [
+            "Alpha", "Bravo","Delta", "Red", "Green", "Blue"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "participant_id": {
+          "$id": "#/properties/data/properties/participant_id",
+          "type": "string",
+          "title": "The Player's Participant ID",
+          "examples": [
+            "1234aBcD"
+          ],
+          "pattern": "^(.*)$"
+        }
+      }
+    }
+  }
+}

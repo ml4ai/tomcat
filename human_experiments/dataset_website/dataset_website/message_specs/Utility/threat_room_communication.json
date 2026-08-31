@@ -1,0 +1,70 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://asist.aptima.com/schemas/threat_room_communication.json",
+  "type": "object",
+  "title": "Threat Room Communication",
+  "version": "0.1",
+  "required": [
+    "header",
+    "msg",
+    "data"
+  ],
+  "properties": {
+		"header": {
+			"$ref": "../Common_Header/common_header.json"
+			}
+		},
+		"msg": {
+			"$ref": "../Common_Message/common_message.json"
+		},
+    "data": {
+      "$id": "#/properties/data",
+      "type": "object",
+      "title": "The Threat Communication Data Schema",
+      "properties":{
+        "player_placed":{
+          "$id": "#/properties/data/properties/player_placed",
+          "type": "array",
+          "title": "The ID of the player who placed the marker block",
+          "items":{
+            "type":"string",
+            "examples":["BLUE_ASIST2", "RED_ASIST2", "RED_ASIST2", "BLUE_ASIST2", "BLUE_ASIST2", "BLUE_ASIST2"]
+          }
+        },
+        "time_placed":{
+          "$id": "#/properties/data/properties/time_placed",
+          "type": "array",
+          "title": "The time the marker block is placed in seconds, relative to mission start",
+          "items":{
+            "type":"number",
+            "examples":[110.591, 236.991, 327.89, 342.545, 343.341, 713.341]
+          }
+        },
+        "nearest_room":{
+          "$id": "#/properties/data/properties/nearest_room",
+          "type": "array",
+          "title": "The id of the room closest to the threat room marker block",
+          "items":{
+            "type":"string",
+            "examples":["J4", "K2", "K2", "K2", "K2", "A4"]
+          }
+        },
+        "is_observed_threat_room":{
+          "$id": "#/properties/data/properties/is_observed_threat_room",
+          "type": "array",
+          "title": "Whether this room is a known threat room",
+          "items":{
+            "type":"boolean",
+            "examples":[true, false, true, true, true, false]
+          }
+        },
+        "time_in_seconds":{
+          "$id": "#/properties/data/properties/time_in_seconds",
+          "type": "number",
+          "title": "The mission time relative to mission start.",
+          "examples": 609.317
+        }
+      }
+      }
+    }

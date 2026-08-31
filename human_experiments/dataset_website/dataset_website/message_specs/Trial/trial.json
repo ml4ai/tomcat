@@ -1,0 +1,193 @@
+{
+	"definitions": {
+
+	},
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "http://example.com/root.json",
+	"type": "object",
+	"title": "The Root Schema",
+	"required": [ "header", "msg" ],
+	"properties": {
+		"header": {
+			"$ref": "../Common_Header/common_header.json",
+			"properties": {         
+			  "message_type": {
+				"$id": "#/properties/message_type",
+				"type": "string",
+				"title": "The Message_type Schema",
+				"const": "trial"
+			  }
+			}
+		},
+		"msg": {
+			"$ref": "../Common_Message/common_message.json",
+			"properties": {         
+			  "sub_type": {
+				"$id": "#/properties/sub_type",
+				"type": "string",
+				"title": "The Sub Type Schema",
+				"enum": ["start","stop"]
+			  }
+			}
+		},
+		"data": {
+			"$id": "#/properties/data",
+			"type": "object",
+			"title": "The Trial Data Schema",
+			"required": [ "name", "date", "experimenter", "subjects", "testbed_version", "experiment_name", "experiment_date", "experiment_author", "experiment_mission", "client_info", "role_text" ],
+			"properties": {
+				"name": {
+					"$id": "#/properties/data/properties/name",
+					"type": "string",
+					"title": "The Name Schema",
+					"default": "",
+					"examples": [ "My Experiment Trial" ],
+					"pattern": "^(.*)$"
+				},
+				"date": {
+					"$id": "#/properties/data/properties/date",
+					"type": "string",
+					"title": "The Date Schema",
+					"default": "",
+					"examples": [ "2019-12-26T12:47:23.123Z" ],
+					"pattern": "[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}[.]?[0-9]{0,}?Z"
+				},
+				"experimenter": {
+					"$id": "#/properties/data/properties/experimenter",
+					"type": "string",
+					"title": "The Experimenter Schema",
+					"default": "",
+					"examples": [ "The experimenter" ],
+					"pattern": "^(.*)$"
+				},
+				"subjects": {
+					"$id": "#/properties/data/properties/subjects",
+					"type": "array",
+					"items": {
+						"type": "string"
+					},
+					"title": "The Subjects Schema",
+					"default": "",
+					"examples": [ "[\"Subject 1\", \"Subject 2\", \"Subject 3\"]" ],
+					"pattern": "^(.*)$"
+				},
+				"trial_number": {
+					"$id": "#/properties/data/properties/trial_number",
+					"type": "string",
+					"title": "The Trial Number Schema",
+					"default": "",
+					"examples": [ "Trial-Number" ],
+					"pattern": "^(.*)$"
+				},
+				"group_number": {
+					"$id": "#/properties/data/properties/group_number",
+					"type": "string",
+					"title": "The Group Number Schema",
+					"default": "",
+					"examples": [ "Group-Number" ],
+					"pattern": "^(.*)$"
+				},
+				"study_number": {
+					"$id": "#/properties/data/properties/study_number",
+					"type": "string",
+					"title": "The Study Number Schema",
+					"default": "",
+					"examples": [ "My Study Number" ],
+					"pattern": "^(.*)$"
+				},
+				"condition": {
+					"$id": "#/properties/data/properties/condition",
+					"type": "string",
+					"title": "The Condition Schema",
+					"default": "",
+					"examples": [ "My Experimental Condition" ],
+					"pattern": "^(.*)$"
+				},
+				"notes": {
+					"$id": "#/properties/data/properties/notes",
+					"type": "array",
+					"items": {
+						"type": "string"
+					},
+					"title": "The Notes Schema",
+					"default": "",
+					"examples": [ "[\"Line 1\", \"Line 2\", \"Line 3\"]" ],
+					"pattern": "^(.*)$"
+				},
+				"testbed_version": {
+					"$id": "#/properties/data/properties/testbed_version",
+					"type": "string",
+					"title": "The Testbed Schema",
+					"default": "",
+					"examples": [ "0.5" ],
+					"pattern": "^(.*)$"
+				},
+				"experiment_name": {
+					"$id": "#/properties/data/properties/name",
+					"type": "string",
+					"title": "The Experiment Name Schema",
+					"default": "",
+					"examples": [ "My Experiment Name" ],
+					"pattern": "^(.*)$"
+				},
+				"experiment_date": {
+					"$id": "#/properties/data/properties/experiment_date",
+					"type": "string",
+					"title": "The Experiment Date Schema",
+					"default": "",
+					"examples": [ "2019-12-26T12:47:23.123Z" ],
+					"pattern": "[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}[.]?[0-9]{0,}?Z"
+				},
+				"experiment_author": {
+					"$id": "#/properties/data/properties/experiment_author",
+					"type": "string",
+					"title": "The Experiment Author Schema",
+					"default": "",
+					"examples": [ "My Experiment Author" ],
+					"pattern": "^(.*)$"
+				},
+				"experiment_mission": {
+					"$id": "#/properties/data/properties/experiment_mission",
+					"type": "string",
+					"title": "The Experiment Mission Schema",
+					"default": "",
+					"examples": [ "My Experiment Mission" ],
+					"pattern": "^(.*)$"
+				},
+				"map_name": {
+					"$id": "#/properties/data/properties/map_name",
+					"type": "string",
+					"title": "The Map Name",
+					"default": "",
+					"examples": [ "Falcon" ],
+					"pattern": "^(.*)$"
+				},
+				"intervention_agents": {
+					"$id": "#/properties/data/properties/intervention_agents",
+					"type": "array",
+					"items": {
+						"type": "string"
+					},
+					"title": "The Intervention Agents Schema",
+					"default": "",
+					"examples": [ "[\"AgentName1\"]" ],
+					"pattern": "^(.*)$"
+				},
+				"map_block_filename": {
+					"$id": "#/properties/data/properties/map_block_filename",
+					"type": "string",
+					"title": "The Map Block file to use during trial",
+					"default": "",
+					"examples": [ "MapBlocks_Easy.csv" ],
+					"pattern": "^(.*)$"
+				},
+				"client_info": {
+					"$id": "#/properties/data/properties/client_info",
+					"type": "array",
+					"items": { "$ref": "./client_info.json" },
+					"title": "The Client Info Schema"
+				}
+			}
+		}
+	}
+}

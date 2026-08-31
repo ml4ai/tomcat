@@ -1,0 +1,76 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://asist.aptima.com/schemas/threat_room_coordination.json",
+  "type": "object",
+  "title": "Threat Room Co-ordination",
+  "version": "0.1",
+  "required": [
+    "header",
+    "msg",
+    "data"
+  ],
+  "properties": {
+		"header": {
+			"$ref": "../Common_Header/common_header.json"
+			}
+		},
+		"msg": {
+			"$ref": "../Common_Message/common_message.json"
+		},
+    "data": {
+      "$id": "#/properties/data",
+      "type": "object",
+      "title": "The Threat Coordination Data Schema",
+      "properties":{
+        "room_id":{
+          "$id": "#/properties/data/properties/room_id",
+          "type": "array",
+          "title": "Room id of activated threat plate",
+          "items":{
+            "type":"string",
+            "examples":["H1A", "J4", "H1A", "J4", "K2", "M3", "D3"]
+          }
+        },
+        "threat_activation_time":{
+          "$id": "#/properties/data/properties/threat_activation_time",
+          "type": "array",
+          "title": "Threat plate activation time in seconds from mission start",
+          "items":{
+            "type":"number",
+            "examples":[80.745, 87.143, 120.742, 173.342, 310.041, 408.342, 539.691]
+          }
+        },
+        "threat_activation_player":{
+          "$id": "#/properties/data/properties/threat_activation_player",
+          "type": "array",
+          "title": "Player id of the player who activated the threat plate",
+          "items":{
+            "type":"string",
+            "examples":["RED_ASIST2", "BLUE_ASIST2", "RED_ASIST2", "RED_ASIST2", "RED_ASIST2", "RED_ASIST2", "RED_ASIST2"]
+          }
+        },
+        "wait_time":{
+          "$id": "#/properties/data/properties/wait_time",
+          "type": "array",
+          "title": "Difference in seconds from threat_activation_time until the threat rubble is removed",
+          "items":{
+            "type":"number",
+            "examples":["Infinity", 20.947000000000003, 14.897999999999982, 1.899000000000001, 29.25, 2.4530000000000314, "Infinity"]
+          }
+        },
+        "threshold":{
+          "$id": "#/properties/data/properties/threshold",
+          "type": "number",
+          "title": "Single entry giving the threshold for wait time for the AC to flag that a participant appears to be stuck. The threshold is set to 10 seconds, which corresponds to five seconds less than the median wait time in the pilot data.",
+          "examples": 10
+        },
+        "time_in_seconds":{
+          "$id": "#/properties/data/properties/time_in_seconds",
+          "type": "number",
+          "title": "The mission time relative to mission start.",
+          "examples": 552.521
+        }
+      }
+    }
+  }

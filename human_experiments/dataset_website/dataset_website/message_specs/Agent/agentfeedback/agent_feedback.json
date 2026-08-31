@@ -1,0 +1,73 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://asist.aptima.com/schemas/agent_feedback.json",
+  "type": "object",
+  "title": "The agent feedback info Schema",
+  "version": "0.1",
+  "required": [
+    "header",
+    "msg",
+    "data"
+  ],
+  "properties": {
+      "header": {
+          "$ref": "../../Common_Header/common_header.json",
+          "properties": {         
+            "message_type": {
+              "$id": "#/properties/message_type",
+              "type": "string",
+              "title": "The Message_type Schema",
+              "const": "agent"
+            }
+          }
+      },
+      "msg": {
+          "$ref": "../../Common_Message/common_message.json",
+          "properties": {         
+            "sub_type": {
+              "$id": "#/properties/sub_type",
+              "type": "string",
+              "title": "The Sub Type Schema",
+              "const": "agent:feedbacktoagent"
+            }
+          }
+      },
+      "data": {
+      "$id": "#/properties/message/properties/data",
+      "type": "object",
+      "title": "The agent feedback Data Schema",
+      "required": [
+        "participant_id",
+        "feedback_type",
+        "feedback_text"
+      ],
+      "properties": {
+        "participant_id": {
+          "$id": "#/properties/agent/participant_id",
+          "type": "string",
+          "title": "The agent participant id Schema",          
+          "examples": [
+            "P000213"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "feedback_type": {
+          "$id": "#/properties/agent/feedback_type",
+          "type": "string",
+          "title": "The agent feedback type Schema",
+          "enum": ["text"],          
+          "examples": [
+            "text" 
+          ]
+        },
+        "feedback_text": {
+          "$id": "#/properties/agent/feedback_text",
+          "type": "string",
+          "title": "The agent feedback text Schema",
+          "examples": ["Too much advice"]
+        }
+      }
+    }
+  }
+}

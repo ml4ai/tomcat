@@ -1,0 +1,48 @@
+{
+    "definitions": {},
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://asist.aptima.com/schemas/post_room_exit_locations.json",
+    "type": "object",
+    "title": "The post_room_exit_locations Schema",
+    "version": "0.5",
+    "required": [
+        "time_of_event", "player_name", "room_name", "angle", "direction"
+    ],
+    "properties": {
+        "time_of_event": {
+            "$id": "#/properties/time_of_event",
+            "type": "number",
+            "title": "The time in milliseconds",          
+            "examples": [10000],
+            "pattern": "^[0-9]+$"
+        },
+        "player_name": {
+            "$id": "#/properties/player_name",
+            "type": "string",
+            "title": "The player name",          
+            "examples": ["Player123"],
+            "pattern": "^(.*)$"
+        },
+        "room_name": {
+            "$id": "#/properties/room_name",
+            "type": "string",
+            "title": "The room name",          
+            "examples": ["Kitchen"],
+            "pattern": "^(.*)$"
+        },
+        "angle": {
+            "$id": "#/properties/angle",
+            "type": "number",
+            "title": "The angle in degrees",          
+            "examples": [40.5],
+            "pattern": "^[+-]?([0-9]*[.])?[0-9]+$"
+        },
+        "direction": {
+            "$id": "#/properties/direction",
+            "type": "string",
+            "title": "The cardinal direction traveled",          
+            "examples": ["E"],
+            "pattern": "^(.*)$"
+        }
+    }
+}

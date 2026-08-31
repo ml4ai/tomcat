@@ -1,0 +1,94 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://asist.aptima.com/schemas/proximity.json",
+  "type": "object",
+  "title": "The Player Proximity Schema",
+  "version": "1.0",
+  "required": [
+    "callsign",
+    "participant_id",
+    "role",
+    "current_location",
+    "distance_to_participants",
+    "distance_to_current_location_exits",
+    "distance_to_closest_locations",
+    "distance_to_role_change",
+    "distance_to_treatment_areas"
+  ],
+  "properties": {
+    "callsign": {
+      "$id": "#/properties/data/properties/callsign",
+      "type": "string",
+      "title": "The Call Sign Assigned to the Player",
+      "examples": [
+        "Alpha",
+        "Bravo",
+        "Delta",
+        "Red",
+        "Green",
+        "Blue"
+      ],
+      "pattern": "^(.*)$"
+    },
+    "participant_id": {
+      "$id": "#/properties/data/properties/participant_id",
+      "type": "string",
+      "title": "The participant_id schema",
+      "description": "The participant id this data is associated with",
+      "examples": [
+        "participant_1"
+      ]
+    },
+    "role": {
+      "$id": "#/properties/data/properties/new_role",
+      "type": "string",
+      "title": "The New Role Schema",
+      "enum": [ "None", "Engineering_Specialist", "Transport_Specialist", "Medical_Specialist" ],
+      "examples": [
+        "Engineering_Specialist"
+      ]
+    },
+    "current_location": {
+      "$id": "#/properties/event/player/location/id",
+      "type": "string",
+      "title": "The Location's id",
+      "pattern": "^(.*)$"
+    },
+    "distance_to_participants": {
+      "$id": "#/properties/data/properties/distance_list",
+      "type": "array",
+      "items": { "$ref": "./distance.json" },
+      "title": "The Distance List Schema",
+      "default": ""
+    },
+    "distance_to_current_location_exits": {
+      "$id": "#/properties/data/properties/distance_list",
+      "type": "array",
+      "items": { "$ref": "./distance.json" },
+      "title": "The Distance List Schema",
+      "default": ""
+    },
+    "distance_to_closest_locations": {
+      "$id": "#/properties/data/properties/distance_list",
+      "type": "array",
+      "items": { "$ref": "./distance.json" },
+      "title": "The Distance List Schema",
+      "default": ""
+    },
+    "distance_to_role_change": {
+      "$id": "#/properties/data/properties/distance_list",
+      "type": "array",
+      "items": { "$ref": "./distance.json" },
+      "title": "The Distance List Schema",
+      "default": ""
+    },
+    "distance_to_treatment_areas": {
+      "$id": "#/properties/data/properties/distance_list",
+      "type": "array",
+      "items": { "$ref": "./distance.json" },
+      "title": "The Distance List Schema",
+      "default": ""
+    }
+  }
+}

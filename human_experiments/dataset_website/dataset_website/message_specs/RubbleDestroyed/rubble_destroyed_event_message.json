@@ -1,0 +1,115 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://gitlab-external.aptima.com/adapt/testbed/MessageSpecs/RubbleDestroyed/rubble_destroyed_event_message.json",
+  "type": "object",
+  "title": "The Rubble Destroyed Event Schema",
+  "version": "1.1",
+  "required": [
+    "header",
+    "msg",
+    "data"
+  ],
+  "properties": {
+		"header": {
+			"$ref": "../Common_Header/common_header.json",
+			"properties": {         
+			  "message_type": {
+				"$id": "#/properties/message_type",
+				"type": "string",
+				"title": "The Message_type Schema",
+				"const": "event"
+			  }
+			}
+		},
+		"msg": {
+			"$ref": "../Common_Message/common_message.json",
+			"properties": {         
+			  "sub_type": {
+				"$id": "#/properties/sub_type",
+				"type": "string",
+				"title": "The Sub Type Schema",
+				"const": "Event:RubbleDestroyed"
+			  }
+			}
+		},
+    "data": {
+      "$id": "#/properties/data",
+      "type": "object",
+      "title": "The Rubble Destroyed Data Schema",
+      "required": [
+        "mission_timer",
+        "elapsed_milliseconds",
+        "playername",       
+		    "rubble_x",
+		    "rubble_y",
+        "rubble_z"        
+      ],
+      "properties": {
+        "mission_timer": {
+          "$id": "#/properties/data/properties/mission_timer",
+          "type": "string",
+          "title": "The Mission Timer Schema",          
+          "examples": [
+            "8 : 36"
+          ],
+          "pattern": "^(.*)$"
+        },  
+        "elapsed_milliseconds": {
+          "$id": "#/properties/event/state/elapsed_milliseconds",
+          "type": "number",
+          "title": "The Elapsed Milliseconds Schema",          
+          "examples": [
+            5000, 77459, 689457
+          ],
+          "pattern": "^[0-9]+$"
+        },     
+        "playername": {
+          "$id": "#/properties/event/state/playername",
+          "type": "string",
+          "title": "The PlayerName Schema",          
+          "examples": [
+            "Aptiminer1"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "participant_id": {
+          "$id": "#/properties/event/state/participant_id",
+          "type": "string",
+          "title": "The Participant ID Schema",          
+          "examples": [
+            "P100"
+          ],
+          "pattern": "^(.*)$"
+        },        
+		    "rubble_x": {
+          "$id": "#/properties/data/properties/rubble_x",
+          "type": "number",
+          "title": "The rubble_X Schema",          
+          "examples": [
+            -2185
+          ],
+          "pattern": "^([0-9]+?)$"
+        },
+        "rubble_y": {
+          "$id": "#/properties/data/properties/rubble_y",
+          "type": "number",
+          "title": "The rubble_Y Schema",          
+          "examples": [
+            52
+          ],
+          "pattern": "^([0-9]+?)$"
+        },
+        "rubble_z": {
+          "$id": "#/properties/data/properties/rubble_z",
+          "type": "number",
+          "title": "The rubble_Z Schema",          
+          "examples": [
+            194
+          ],
+          "pattern": "^([0-9]+?)$"
+        }        
+      }
+    }
+  }
+}

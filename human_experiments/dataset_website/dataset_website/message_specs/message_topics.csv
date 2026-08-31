@@ -1,0 +1,88 @@
+topic,schema,description
+agent/control/rollcall/request,Agent/rollcall/agent_rollcall_request.json,agent rollcall request
+agent/control/rollcall/response,Agent/rollcall/agent_rollcall_response.json,agent rollcall response
+agent/control/feedbacktoagent,Agent/agentfeedback/agent_feedback.json,player feedback to agent
+agent/pygl_fov/player/3d/summary,PyGLFoVAgent/fov.json,CMU field of view agent,
+agent/pygl_fov/profile,PyGLFoVAgent/fov_profile.json,CMU Field of View Agent profiling
+agent/intervention/+/block,Agent/Intervention/agent_intervention_block_message.json,block intervention from agent,
+agent/intervention/+/chat,Agent/Intervention/agent_intervention_text_message.json,chat intervention from agent,
+agent/ac/ac_cmu_ta2_ted/ted,AC_CMU_TA2_TED/cmu_ta2_ted_message.json,CMU TA2 TED AC
+agent/ac/ac_cmu_ta2_beard/beard,AC_CMU_TA2_BEARD/cmu_ta2_beard_message.json,CMU TA2 BEARD AC
+agent/ac/player_compliance,Cornell_TeamTrust_AC/player_compliance_message.json,Cornell Team Trust
+status/+/heartbeats,Status/status.json,components can send heartbeat message indicating that they are still functioning,
+agent/dialog,DialogAgent/chat_analysis_message.json,message for speech analysis after final speech message,
+agent/prediction/+,Agent/Prediction/agent_prediction_message.json,predictions from agent,
+agent/measures/+,Measures/agent_measures.json,measures from message bus,
+observations/state,PlayerState/observation_state.json,includes location and state (e.g. health) of each player,
+control,Control/Control.json,messages that control the startup,initialization, running and stopping of the testbed,
+minecraft/chat,Chat/chat_event_message.json,chat message either between agent and humans or between humans,
+status/server/stopped,Status/serverstopped.json, tracks when the minecraft server has stopped and whether it was due to error
+status/minecraft/loading,Status/minecraftloading.json,tracks the loading progress of the modded server during trial startup
+status/asistdataingester/userspeech,Status/userspeech.json,The speech to text processor can send the text of user utterances
+status/clientmapsystem/playername,Status/player_name.json,publishes the player name on the message bus,
+agent/asr/final,AC_UAZ_TA1_ASR_Agent/asr_message.json,AU speech translation message for final speech messges
+agent/asr/intermediate,AC_UAZ_TA1_ASR_Agent/asr_message.json,AU speech translation message for intermediate speech messages
+agent/speech_analyzer/sentiment,AC_UAZ_TA1_SpeechAnalyzer/sentiment_message.json, Sentiment labels for final transcription
+agent/speech_analyzer/personality,AC_UAZ_TA1_SpeechAnalyzer/personality_message.json, Personality labels for final transcription
+agent/+/versioninfo,Agent/versioninfo/agent_versioninfo.json,agent version information message
+status/asistdataingester/surveyresponse,Status/surveyresponse.json,The responses from Qualtrics surveys entered by the user
+experiment,Experiment/experiment.json,contains information about the experiment that is being performed including experiment metadata,
+observations/events/player/jumped,PlayerEvent/jump_event_message.json,
+observations/events/player/sprinting,PlayerEvent/sprint_event_message.json,
+observations/events/player/swinging,PlayerEvent/swinging_event_message.json,
+observations/events/player/itemequipped,Item/itemequipped_event_message.json,
+observations/events/player/itemdrop,Item/itemdropped_event_message.json,
+observations/events/player/itempickup,Item/itempickup_event_message.json,
+observations/events/player/itemuse,Item/itemused_event_message.json,
+observations/events/competency/task,CompetencyTask/competencytask_event_message.json,
+observations/events/training/task,TrainingTask/trainingtask_event_message.json,
+observations/events/player/proximity_block,ProximityBlockInteraction/proximity_block_interaction_event_message.json,
+trial,Trial/trial.json,Trial Start and Stop messages (Creates and Starts a Trial --> stored in metadata db),
+observations/events/player/tool_used,ToolUsed/tool_used_event_message.json,
+observations/events/player/tool_depleted,ToolDepleted/tool_depleted_event_message.json,
+observations/events/player/marker_placed,MarkerPlaced/marker_placed_event_message.json,
+observations/events/player/marker_removed,MarkerRemoved/marker_removed_event_message.json,
+observations/events/player/victim_picked_up,VictimPickedUp/victim_picked_up_event_message.json,
+observations/events/player/victim_placed,VictimPlaced/victim_placed_event_message.json,
+observations/events/player/rubble_destroyed,RubbleDestroyed/rubble_destroyed_event_message.json,
+observations/events/player/role_selected,RoleSelected/role_selected_event_message.json,
+observations/events/player/door,Door/door_event_message.json,
+observations/events/player/lever,Lever/lever_event_message.json,
+observations/events/player/location,LocationMonitor/location_event_message.json,
+observations/events/player/proximity,Proximity/proximity_event_message.json,
+observations/events/player/jag,JointActivityInterdependence/joint-activity-interdependence.json,
+observations/events/server/victim_evacuated,VictimEvacuated/victim_evacuated_event_message.json,
+observations/events/player/rubble_collapse,RubbleCollapse/rubble_collapse_event_message.json,
+observations/events/player/dyad,Proximity/dyad_event_message.json,
+observations/events/player/woof,Woof/woof_event_message.json,
+observations/events/player/triage,Triage/triage_event_message.json,
+observations/events/player/freeze,PlayerFrozenStateChange/player_frozen_state_change_event_message.json,
+observations/events/scoreboard,Scoreboard/scoreboard_event_message.json,
+observations/events/mission,MissionState/missionstate_event_message.json,mission events such as START and STOP,
+observations/events/mission/puzzle_summary,PuzzleTextSummary/puzzle_text_summary_message.json,a summary of the puzzle displayed to each role,
+observations/events/mission/perturbation,Perturbation/perturbation_event_message.json,perturbation type and state,
+observations/events/mission/perturbation_rubble_locations,Perturbation/RubbleLocations/perturbation_rubble_locations_event_message.json,rubble type and locations,
+control/request/getTrialInfo,Control_Request_Response/request.json,
+control/response/getTrialInfo,Control_Request_Response/response.json,
+observations/events/player/signal,VictimSignal/victim_signal_event_message.json,
+observations/events/pause,Pause/pause_event_message.json,
+ground_truth/mission/victims_list,GroundTruth/VictimList/victimlist_groundtruth_message.json,
+ground_truth/mission/role_text,GroundTruth/RoleText/role_text_message.json,
+ground_truth/mission/blockages_list,GroundTruth/BlockageList/blockagelist_groundtruth_message.json,
+ground_truth/mission/freezeblock_list,GroundTruth/FreezeBlockList/freezeblock_groundtruth_message.json,
+ground_truth/mission/threatsign_list,GroundTruth/ThreatSignList/threatsign_groundtruth_message.json,
+ground_truth/mission/victims_rescued,GroundTruth/VictimsRescued/victimsRescued_event_message.json,
+ground_truth/mission/victims_expired,GroundTruth/VictimsExpired/victimsExpired_event_message.json,
+ground_truth/semantic_map/updates,GroundTruth/SemanticMap/semanticmap_updates_message.json,semantic map updates from location monitor,
+ground_truth/semantic_map/initialized,GroundTruth/SemanticMap/semanticmap_message.json,semantic map initialized message
+metadata/trial/export,Metadata/Export/Trial/export_trial.json,Message created when a trial is exported,
+metadata/experiment/created,Metadata/Experiment/experiment.json,Message created when an experiment is created,
+metadata/trial/created,Metadata/Trial/trial.json,Message created when a trial is created,
+metadata/replay/created,Metadata/Replay/replay.json,Message created when a replay is created,
+metadata/replay/message/count,Metadata/Replay/Message/Count/count.json,Replay message count for replay status in metadata-gui dashboard,
+metadata/log,Metadata/Log/log_message.json,Message created when a metadata-app log message is logged using an mqtt appender,
+agent/ac/threat_room_coordination, Utility/threat_room_coordination.json, Measures wait time in threat rooms
+agent/measure/+/load,CognitiveLoad/cognitive-load_event_message.json,
+agent/ac/threat_room_communication, Utility/threat_room_communication.json, Measures whether a threat room marker block is placed outside of a threat room
+agent/ac/victim_type_communication, Utility/victim_type_communication.json, Measures whether victim type marker blocks are placed near victims of the appropriate types
+agent/ac/belief_diff, Utility/belief_diff.json, Computes the entropy of beliefs about victim distribution under three different information sharing assumptions

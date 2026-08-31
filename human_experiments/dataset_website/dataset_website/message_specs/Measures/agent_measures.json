@@ -1,0 +1,110 @@
+{
+    "definitions": {},
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://asist.aptima.com/schemas/agent_measures.json",
+    "type": "object",
+    "title": "The Measures Agent Schema",
+    "version": "0.4",
+    "required": [
+      "header",
+      "msg",
+      "data"
+    ],
+    "properties": {
+
+      "header": {
+        "$ref": "../Common_Header/common_header.json",
+        "properties": {         
+          "message_type": {
+            "$id": "#/properties/message_type",
+            "type": "string",
+            "title": "The Message_type Schema",
+            "const": "agent"
+          }
+        }
+      },
+      "msg": {
+          "$ref": "../Common_Message/common_message.json",
+          "properties": {         
+            "sub_type": {
+              "$id": "#/properties/sub_type",
+              "type": "string",
+              "title": "The Sub Type Schema",
+              "const": "measures"
+            }
+          }
+      },  
+      "data": {
+        "$id": "#/properties/data",
+        "type": "object",
+        "title": "The Scoreboard Data Schema",
+        "required": [
+          "study_version",
+          "elapsed_milliseconds",
+          "event_properties",
+          "measure_data"
+        ],
+        "properties": {
+          "study_version": {
+            "$id": "#/properties/data/properties/study_version",
+            "type": "string",
+            "title": "The study_version",          
+            "examples": ["3"],
+            "pattern": "^(.*)$"
+          },
+          "elapsed_milliseconds": {
+            "$id": "#/properties/data/properties/elapsed_milliseconds",
+            "type": "number",
+            "title": "The elapsed_milliseconds",          
+            "examples": [107777],
+            "pattern": "^[0-9]+$"    
+          },
+          "event_properties": {
+            "$id": "#/properties/data/properties/event_properties",
+            "type": "object",
+            "title": "The event_properties Schema",
+            "required": ["qualifying_event_type"],
+            "properties": {
+              "qualifying_event_type": {
+                "$id": "#/properties/data/properties/event_properties/properties/qualifying_event_type",
+                "type": "string",
+                "title": "The qualifying_event_type",          
+                "examples": ["event", "time"],
+                "pattern": "^(.*)$"
+              }
+            }
+          },
+          "measure_data": {
+            "$id": "#/properties/data/properties/measure_data",
+            "type": "object",
+            "title": "The measure_data Schema",
+            "required": ["measure_id","datatype","measure_value","description"],
+            "properties": {
+              "measure_id": {
+                "$id": "#/properties/data/properties/measure_data/properties/measure_id",
+                "type": "string",
+                "title": "The measure_id",          
+                "examples": ["ASI-M1"],
+                "pattern": "^(.*)$"
+              },
+              "datatype": {
+                "$id": "#/properties/data/properties/measure_data/properties/datatype",
+                "type": "string",
+                "title": "The datatype",          
+                "examples": ["integer"],
+                "pattern": "^(.*)$"
+              },
+              "measure_value": {},
+              "description": {
+                "$id": "#/properties/data/properties/measure_data/properties/description",
+                "type": "string",
+                "title": "The description",          
+                "examples": ["Current score"],
+                "pattern": "^(.*)$"
+              }
+            }
+          }
+        }
+      }
+    }
+}

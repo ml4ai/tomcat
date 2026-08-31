@@ -1,0 +1,42 @@
+{
+    "definitions": {},
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://asist.aptima.com/schemas/surveyresponse.json",
+    "type": "object",
+    "title": "The Qualtrics Survey response Message Schema",
+    "version": "0.1",
+    "required": [
+      "header",
+      "msg"
+    ],
+    "properties": {
+        "header": {
+            "$ref": "../Common_Header/common_header.json",
+            "properties": {         
+              "message_type": {
+                "$id": "#/properties/message_type",
+                "type": "string",
+                "title": "The Message_type Schema",
+                "const": "status"
+              }
+            }
+        },
+        "msg": {
+            "$ref": "../Common_Message/common_message.json",
+            "properties": {         
+              "sub_type": {
+                "$id": "#/properties/sub_type",
+                "type": "string",
+                "title": "The Sub Type Schema",
+                "const": "Status:SurveyResponse"
+              }
+            }
+        },
+        "data": {
+        "$id": "#/properties/data",
+        "type": "object",
+        "title": "The Qualtrics Survey response Message Schema"
+      }
+    }
+  }
+  

@@ -1,0 +1,72 @@
+{
+    "definitions": {},
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://asist.aptima.com/schemas/mission_victim.json",
+    "type": "object",
+    "title": "Misson Victim Schema",
+    "version": "0.6",
+    "required": [
+      "x",
+      "y",
+      "z",
+      "block_type",
+      "unique_id"
+    ],
+    "properties": {
+      "x": {
+          "$id": "#/properties/x",
+          "type": "number",
+          "title": "The X Schema",
+          "default": 0,
+          "examples": [
+            -2194
+          ]
+        },
+      "y": {
+        "$id": "#/properties/y",
+        "type": "number",
+        "title": "The Y Schema",
+        "default": 0,
+        "examples": [
+          24
+        ]
+      },
+      "z": {
+        "$id": "#/properties/z",
+        "type": "number",
+        "title": "The Z Schema",
+        "default": 0,
+        "examples": [
+          190
+        ]
+      },
+      "block_type": {
+        "$id": "#/properties/block_type",
+        "type": "string",
+        "title": "The Block Type Schema",          
+        "examples": [
+          "block_victim_1","block_victim_proximity","block_victim_saved"
+        ],
+        "pattern": "^(.*)$"
+      },
+      "room_name": {
+        "$id": "#/properties/room_name",
+        "type": "string",
+        "title": "The Room Name Schema",          
+        "examples": [
+          "Security Office"
+        ],
+        "pattern": "^(.*)$"
+      },
+      "unique_id": {
+        "$id": "#/properties/uniaue_id",
+        "type": "number",
+        "title": "The unique Victim Id Schema",          
+        "examples": [
+          1,33,55
+        ],
+        "pattern": "^([0-9]+?)$"
+      }
+    }
+  }
+  

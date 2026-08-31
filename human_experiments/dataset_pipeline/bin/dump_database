@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# Generate the bulk-download pg_dump artifact + a sha256 sidecar.
+#
+# Writes ${ARTIFACT_DIR}/tomcat.dump (PostgreSQL custom format -- compressed and
+# pg_restore-able) which the web app's /download page links. Run offline; it can
+# take a while on the full dataset. Internal/temp tables are excluded so the public
+# dump matches the public site.
+#
+# Usage (curator/superuser over local peer auth, or set PGHOST/PGUSER/PGPASSWORD):
+#     ./bin/dump_database
+
+set -euo pipefail
+
+ENV_FILE="${TOMCAT_ENV_FILE:-.env}"
+if [[ -f "$ENV_FILE" ]]; then
+    set -a
+    # shellcheck disable=SC1090
+    source "$ENV_FILE"
+    set +a
+fi
+
+: "${ARTIFACT_DIR:?set ARTIFACT_DIR (e.g. in .env)}"
+DB="${TOMCAT_DB_NAME:-tomcat}"
+OUT="${ARTIFACT_DIR}/tomcat.dump"
+TMP="${OUT}.partial"
+
+# Keep the public dump aligned with the public site: exclude internal/temp tables
+# (mirror the REVOKE list in bin/setup_public_role.sql).
+EXCLUDE_ARGS=(--exclude-table-data='public.fnirs_tmp' --exclude-table='public.fnirs_tmp')
+
+echo ">> Dumping '${DB}' to ${OUT} (custom format) ..."
+pg_dump -Fc -d "$DB" "${EXCLUDE_ARGS[@]}" -f "$TMP"
+mv -f "$TMP" "$OUT"
+
+echo ">> Writing checksum ..."
+( cd "$ARTIFACT_DIR" && sha256sum "tomcat.dump" > "tomcat.dump.sha256" )
+
+echo ">> Done: ${OUT}"
+ls -lh "$OUT"

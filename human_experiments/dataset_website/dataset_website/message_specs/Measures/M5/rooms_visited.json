@@ -1,0 +1,55 @@
+{
+    "definitions": {},
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://asist.aptima.com/schemas/rooms_visited.json",
+    "type": "object",
+    "title": "The rooms_visited Schema",
+    "version": "0.5",
+    "required": [
+        "room_id", "room_name", "Medical_Specialist",
+        "Search_Specialist", "Hazardous_Material_Specialist", "visitors"
+    ],
+    "properties": {
+        "room_id": {
+            "$id": "#/properties/room_id",
+            "type": "string",
+            "title": "The room_id",          
+            "examples": ["llc"],
+            "pattern": "^(.*)$"
+        },
+        "room_name": {
+            "$id": "#/properties/room_name",
+            "type": "string",
+            "title": "The room_name",          
+            "examples": ["The Limping Lamb Chophouse"],
+            "pattern": "^(.*)$"
+        },
+        "Medical_Specialist": {
+            "$id": "#/properties/Medical_Specialist",
+            "type": "number",
+            "title": "The Medical_Specialist visit count",          
+            "examples": [2],
+            "pattern": "^[0-9]+$"
+        },
+        "Search_Specialist": {
+            "$id": "#/properties/Search_Specialist",
+            "type": "number",
+            "title": "The Search_Specialist visit count",          
+            "examples": [2],
+            "pattern": "^[0-9]+$"
+        },
+        "Hazardous_Material_Specialist": {
+            "$id": "#/properties/Hazardous_Material_Specialist",
+            "type": "number",
+            "title": "The Hazardous_Material_Specialist visit count",          
+            "examples": [2],
+            "pattern": "^[0-9]+$"
+        },
+        "visitors": {
+            "$id": "#/properties/visitors",
+            "type": "array",
+            "title": "The visitors array",   
+            "items": { "$ref": "./visitors.json" }       
+        }
+    }
+}

@@ -1,0 +1,38 @@
+{
+  "definitions": {
+    "point": {
+      "type": "object",
+      "properties": {
+        "x": {"type": "number"},
+        "y": {"type": "number"},
+        "z": {"type": "number"}
+      }
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://asist.aptima.com/schemas/event_state.json",
+  "type": "object",
+  "title": "The GroundTruth SemanticMap Bounds Schema",
+  "version": "1.0",
+  "required": [
+    "type",
+    "coordinates"
+  ],
+  "properties": {
+    "type": {
+      "$id": "#/properties/data/properties/semantic_map/bounds/type",
+      "type": "string",
+      "title": "The type of the bounds",
+      "examples": [
+        "rectangle", "line", "block", "point"
+      ],
+      "pattern": "^(.*)$"
+    },
+    "coordinates": {
+      "$id": "#/properties/data/properties/semantic_map/object/facing",
+      "type": "array",
+      "items": {"$ref": "#/definitions/point"},
+      "title": "The list of points which define the bounds based on the type"
+    }
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://asist.aptima.com/schemas/event_state.json",
+  "type": "object",
+  "title": "The GroundTruth Mission:BlockageList Schema",
+  "version": "0.5",
+  "required": [
+    "header",
+    "msg",
+    "data"
+  ],
+  "properties": {
+    "header": {
+      "$ref": "../../Common_Header/common_header.json",
+      "properties": {         
+        "message_type": {
+        "$id": "#/properties/message_type",
+        "type": "string",
+        "title": "The Message_type Schema",
+        "const": "groundtruth"
+        }
+      }
+    },
+    "msg": {
+      "$ref": "../../Common_Message/common_message.json",
+      "properties": {         
+        "sub_type": {
+        "$id": "#/properties/sub_type",
+        "type": "string",
+        "title": "The Sub Type Schema",
+        "const": "Mission:BlockageList"
+        }
+      }
+    },
+    "data": {
+      "$id": "#/properties/message/properties/data",
+      "type": "object",
+      "title": "The GroundTruth Mission:BlockageList Schema",
+      "required": [
+
+        "mission",
+        "mission_blockage_list"
+		    
+      ],
+      "properties": {
+        "mission": {
+          "$id": "#/properties/data/properties/mission",
+          "type": "string",
+          "title": "The Mission Name Schema",          
+          "examples": [
+            "Singleplayer","Multiplayer"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "mission_blockage_list": {
+					"$id": "#/properties/data/properties/mission_blockage_list",
+					"type": "array",
+					"items": { "$ref": "./blockagelist_blockage.json" },
+					"title": "The Blockage List Schema",
+					"default": "",
+					"examples": [
+						"[ {\"x\" : -2088.0,\"y\" : 60.0,\"z\" : 146.0,\"block_type\" : \"cobblestone\",\"feature_type\" : \"Blockage\"}]"
+					]
+				}
+      }
+    }
+  }
+}

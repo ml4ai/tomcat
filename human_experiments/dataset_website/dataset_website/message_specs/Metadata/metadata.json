@@ -1,0 +1,163 @@
+{
+  "definitions": {
+
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://example.com/root.json",
+  "type": "object",
+  "title": "The Root Schema",
+  "required": [
+    "header",
+    "trial"
+  ],
+  "properties": {
+    "header": {
+      "$ref": "../Common_Header/common_header.json"
+    },
+    "trial": {
+      "$id": "#/properties/trial",
+      "type": "object",
+      "title": "The Trial Schema",
+      "required": [
+        "id",
+        "name",
+        "date",
+        "observer",
+        "duration",
+        "subjects",
+        "experiment",
+        "notes",
+        "testbed"
+      ],
+      "properties": {
+        "id": {
+          "$id": "#/properties/trial/properties/id",
+          "type": "string",
+          "title": "The Id Schema",
+          "default": "",
+          "examples": [
+            "123e4567-e89b-12d3-a456-426655440000"
+          ],
+          "pattern": "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
+        },
+        "name": {
+          "$id": "#/properties/trial/properties/name",
+          "type": "string",
+          "title": "The Name Schema",
+          "default": "",
+          "examples": [
+            "My Experiment Trial"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "date": {
+          "$id": "#/properties/trial/properties/date",
+          "type": "string",
+          "title": "The Date Schema",
+          "default": "",
+          "examples": [
+            "2019-12-26T12:47:23.123Z"
+          ],
+          "pattern": "[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}[.]?[0-9]{0,}?Z"
+        },
+        "observer": {
+          "$id": "#/properties/trial/properties/observer",
+          "type": "string",
+          "title": "The Observer Schema",
+          "default": "",
+          "examples": [
+            ""
+          ],
+          "pattern": "^(.*)$"
+        },
+        "duration": {
+          "$id": "#/properties/trial/properties/duration",
+          "type": "string",
+          "title": "The Duration Schema",
+          "default": "",
+          "examples": [
+            "15"
+          ],
+          "pattern": "^[1-9]\\d*$"
+        },
+        "subjects": {
+          "$id": "#/properties/trial/properties/subjects",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "The Subjects Schema",
+          "default": "",
+          "examples": [
+            "[\"A\", \"B\", \"C\"]"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "experiment": {
+          "$id": "#/properties/trial/properties/experiment",
+          "type": "object",
+          "title": "The Experiment Schema",
+          "required": [
+            "name",
+            "author"
+          ],
+          "properties": {
+            "name": {
+              "$id": "#/properties/trial/properties/experiment/properties/name",
+              "type": "string",
+              "title": "The Name Schema",
+              "default": "",
+              "examples": [
+                "My Experiment"
+              ],
+              "pattern": "^(.*)$"
+            },
+            "author": {
+              "$id": "#/properties/trial/properties/experiment/properties/author",
+              "type": "string",
+              "title": "The Author Schema",
+              "default": "",
+              "examples": [
+                "Aotima, Inc."
+              ],
+              "pattern": "^(.*)$"
+            }
+          }
+        },
+        "notes": {
+          "$id": "#/properties/trial/properties/notes",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "The Notes Schema",
+          "default": "",
+          "examples": [
+            "[\"Line 1\", \"Line 2\", \"Line 3\"]"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "testbed": {
+          "$id": "#/properties/trial/properties/testbed",
+          "type": "object",
+          "title": "The Testbed Schema",
+          "required": [
+            "vesrion"
+          ],
+          "properties": {
+            "version": {
+              "$id": "#/properties/trial/properties/testbed/properties/version",
+              "type": "string",
+              "title": "The Version Schema",
+              "default": "",
+              "examples": [
+                ""
+              ],
+              "pattern": "^(.*)$"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,92 @@
+{
+	"definitions": {
+
+	},
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "http://example.com/root.json",
+	"type": "object",
+	"title": "The Root Schema",
+	"required": [
+		"header",
+		"msg",
+		"data"
+	],
+	"properties": {
+        "header": {
+            "$ref": "../Common_Header/common_header.json",
+            "properties": {         
+              "message_type": {
+                "$id": "#/properties/message_type",
+                "type": "string",
+                "title": "The Message_type Schema",
+                "const": "experiment"
+              }
+            }
+        },
+        "msg": {
+            "$ref": "../Common_Message/common_message.json",
+            "properties": {         
+              "sub_type": {
+                "$id": "#/properties/sub_type",
+                "type": "string",
+                "title": "The Sub Type Schema",
+                "const": "create"
+              }
+            }
+        },
+		"data": {
+			"$id": "#/properties/data",
+			"type": "object",
+			"title": "The Experiment Schema",
+			"required": [
+				"name",
+				"date",
+				"author",
+				"mission"
+
+			],
+			"properties": {
+				"name": {
+					"$id": "#/properties/data/properties/name",
+					"type": "string",
+					"title": "The Name Schema",
+					"default": "",
+					"examples": [
+						"My Experiment Trial"
+					],
+					"pattern": "^(.*)$"
+				},
+				"date": {
+					"$id": "#/properties/data/properties/date",
+					"type": "string",
+					"title": "The Date Schema",
+					"default": "",
+					"examples": [
+						"2019-12-26T12:47:23.123Z"
+					],
+					"pattern": "[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}[.]?[0-9]{0,}?Z"
+				},
+				"author": {
+					"$id": "#/properties/data/properties/author",
+					"type": "string",
+					"title": "The Author Schema",
+					"default": "",
+					"examples": [
+						"The author"
+					],
+					"pattern": "^(.*)$"
+				},
+				"mission": {
+					"$id": "#/properties/data/properties/mission",
+					"type": "string",
+					"title": "The Mission Schema",
+					"default": "",
+					"examples": [
+						""
+					],
+					"pattern": "^(.*)$"
+				}				
+			}
+		}
+	}
+}

@@ -1,0 +1,193 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/clulab/tomcat-text/message_specs/chat_analysis_message.json",
+  "type": "object",
+  "title": "The Chat Analysis Message schema",
+  "version": "0.1",
+  "required": [
+    "header",
+    "msg",
+    "data"
+  ],
+  "properties": {
+    "header": {
+      "$ref": "../Common_Header/common_header.json",
+      "properties": {         
+        "message_type": {
+          "$id": "#/properties/message_type",
+          "type": "string",
+          "title": "The Message_type Schema",
+          "const": "event"
+        }
+      }
+    },
+    "msg": {
+        "$ref": "../Common_Message/common_message.json",
+        "properties": {         
+          "sub_type": {
+            "$id": "#/properties/sub_type",
+            "type": "string",
+            "title": "The Sub Type Schema",
+            "const": "Event:dialogue_event"
+          }
+        }
+    },
+    "data": {
+      "$id": "#/properties/data",
+      "type": "object",
+      "title": "data schema",
+      "version": "0.1",
+      "required": [
+        "participant_id",
+        "asr_msg_id",
+        "text",
+        "extractions"
+      ],
+      "properties": {
+        "participant_id": {
+          "$id": "#/properties/data/properties/participant_id",
+          "type": "string",
+          "title": "The Participant Id schema",
+          "default": "",
+          "examples": [
+            "participant 21"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "asr_msg_id": {
+          "$asr_msg_id": "#/properties/data/properties/id",
+          "type": "string",
+          "title": "The ASR Message ID schema",
+          "default": "",
+          "examples": [
+            "59678a5f-9c5b-451f-8506-04bc020f2cf3"
+          ],
+          "pattern": "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
+        },
+        "text": {
+          "$id": "#/properties/data/properties/text",
+          "type": "string",
+          "title": "text schema",
+          "default": "",
+          "examples": [
+            "I see a green victim"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "utterance_source": {
+          "$id": "#/properties/data/properties/source",
+          "type": "object",
+          "title": "The Data Source Schema",
+          "version": "0.5",
+          "required": [
+            "source_type"
+          ],
+          "properties": {
+            "source_type": {
+              "$id": "#/properties/data/properties/source/properties/source_type",
+              "type": "string",
+              "title": "The Data Source Type Schema",
+              "default": "",
+              "examples": [
+                "vtt_file" 
+              ],
+              "pattern": "^([a-z_]*?)$"
+            },
+            "source_name": {
+              "$id": "#/properties/data/properties/source/properties/source_name",
+              "type": "string",
+              "title": "The Data Source Name Schema",
+              "default": "",
+              "examples": [ 
+                "AudioTranscript_1.vtt" 
+              ],
+              "pattern": "^[a-zA-Z0-9_\\.\\/]*$"
+            }
+          }
+        },
+        "extractions": {
+          "$id": "#/properties/data/properties/extractions",
+          "type": "Seq[object]",
+          "title": "The Data Extractions Schema",
+          "version": "0.1",
+          "default": "[]",
+          "required": [
+          ],
+          "properties": {
+            "labels": {
+              "$id": "#/properties/labels",
+              "type": "array",
+              "items": {
+                  "type": "string"
+              },
+              "title": "The labels schema",
+              "default": "",
+              "examples": [ "[\"MoveTo\", \"Move\", \"SimpleAction\"]" ],
+              "pattern": "^(.*)$"
+            },
+            "rule": {
+              "$id": "#/properties/rule",
+              "type": "string",
+              "title": "rule schema",
+              "default": "",
+              "examples": [
+                "move_nmod_action"
+              ],
+              "pattern": "^(.*)$"
+            },
+            "dialog_act_label": {
+              "$id": "#/properties/dialog_act_label",
+              "type": "string",
+              "title": "dialog_act_label schema",
+              "default": "",
+              "examples": [
+                "Statement", "Joke"
+              ],
+              "pattern": "^(.*)$"
+            },
+            "span": {
+              "$id": "#/properties/span",
+              "type": "string",
+              "title": "span schema",
+              "default": "",
+              "examples": [
+                "was one yellow victim"
+              ],
+              "pattern": "^(.*)$"
+            },
+            "arguments": {
+              "$id": "#/properties/arguments",
+              "type": "string",
+              "title": "arguments schema",
+              "default": "",
+              "examples": [
+                "#/definitions/id"
+              ],
+              "pattern": "^(.*)$"
+            },
+            "start_offset": {
+              "$id": "#/properties/start_offset",
+              "type": "integer",
+              "title": "start_offset schema",
+              "default": "",
+              "examples": [
+                32
+              ],
+              "pattern": "^[0-9]+$"
+            },
+            "end_offset": {
+              "$id": "#/properties/end_offset",
+              "type": "integer",
+              "title": "end_offset schema",
+              "default": "",
+              "examples": [
+                50
+              ],
+              "pattern": "^[0-9]+$"
+            }
+          }
+        }
+      }
+    }
+  }
+}

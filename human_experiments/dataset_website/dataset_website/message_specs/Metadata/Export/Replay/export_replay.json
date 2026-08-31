@@ -1,0 +1,76 @@
+{
+	"definitions": {
+
+	},
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "http://asist.aptima.com/schemas/export_replay.json",
+	"type": "object",
+	"title": "The Root Schema",
+	"required": [ "header", "msg", "data" ],
+	"properties": {
+		"header": {
+			"$ref": "../../../Common_Header/common_header.json"
+		},
+		"msg": {
+			"$ref": "../../../Common_Message/common_message.json"
+		},
+		"data": {
+			"$id": "#/properties/data",
+			"type": "object",
+			"title": "The Export Trial Data Schema",
+			"required": [ "index", "metadata" ],
+			"properties": {
+				"index": {
+					"$id": "#/properties/data/properties/index",
+					"type": "string",
+					"title": "The Index Schema",
+					"default": "",
+					"examples": [ "index" ],
+					"pattern": "^(.*)$"
+				},
+				"ignore_list": {
+					"$id": "#/properties/data/properties/ignore_list",
+					"type": "array",
+					"items": {
+						"type": "string"
+					},
+					"title": "The Ignore List Schema",
+					"default": "",
+					"examples": [ "[\"Message type 1\", \"Message type 2\", \"Message type 3\"]" ],
+					"pattern": "^(.*)$"
+				},
+				"metadata": {
+					"$id": "#/properties/data/properties/metadata",
+					"type": "object",
+					"title": "The Metadata Schema",
+					"required": [ "parents" ],
+					"properties": {
+						"parents": {
+							"$id": "#/properties/data/properties/metadata/properties/parents",
+							"type": "object",
+							"title": "The Parents Schema",
+							"required": [ "trial", "replay" ],
+							"properties": {
+								"trial": {
+									"$ref": "../../Trial/trial.json"
+								},
+								"replay": {
+									"$ref": "../../Replay/replay.json"
+								}
+							},
+							"anyOf": [
+								{
+									"required": [ "trial" ]
+								},
+								{
+									"required": [ "replay" ]
+								}
+							],
+							"additionalProperties" : false
+						}
+					}
+				}
+			}
+		}
+	}
+}

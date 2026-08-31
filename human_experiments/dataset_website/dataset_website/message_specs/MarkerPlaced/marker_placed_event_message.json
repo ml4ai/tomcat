@@ -1,0 +1,127 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://gitlab-external.aptima.com/adapt/testbed/MessageSpecs/MarkerPlaced/marker_placed_event_message.json",
+  "type": "object",
+  "title": "The Marker Placed Event Schema",
+  "version": "0.1",
+  "required": [
+    "header",
+    "msg",
+    "data"
+  ],
+  "properties": {
+		"header": {
+			"$ref": "../Common_Header/common_header.json",
+			"properties": {         
+			  "message_type": {
+				"$id": "#/properties/message_type",
+				"type": "string",
+				"title": "The Message_type Schema",
+				"const": "event"
+			  }
+			}
+		},
+		"msg": {
+			"$ref": "../Common_Message/common_message.json",
+			"properties": {         
+			  "sub_type": {
+				"$id": "#/properties/sub_type",
+				"type": "string",
+				"title": "The Sub Type Schema",
+				"const": "Event:MarkerPlaced"
+			  }
+			}
+		},
+    "data": {
+      "$id": "#/properties/data",
+      "type": "object",
+      "title": "The Marker Placed Data Schema",
+      "required": [
+        "mission_timer",
+        "elapsed_milliseconds",
+        "participant_id",        
+		    "marker_x",
+		    "marker_y",
+        "marker_z",
+        "type"
+      ],
+      "properties": {
+        "mission_timer": {
+          "$id": "#/properties/data/properties/mission_timer",
+          "type": "string",
+          "title": "The Mission Timer Schema",          
+          "examples": [
+            "8 : 36"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "elapsed_milliseconds": {
+          "$id": "#/properties/event/state/elapsed_milliseconds",
+          "type": "number",
+          "title": "The Elapsed Milliseconds Schema",          
+          "examples": [
+            5000, 77459, 689457
+          ],
+          "pattern": "^[0-9]+$"
+        },
+        "participant_id": {
+          "$id": "#/properties/data/participant_id",
+          "type": "string",
+          "title": "The Participant id Schema",   
+          "examples": [
+            "E000213"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "playername": {
+          "$id": "#/properties/data/playername",
+          "type": "string",
+          "title": "The Playername Schema",          
+          "examples": [
+            "Aptiminer1"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "type": {
+          "$id": "#/properties/data/properties/type",
+          "type": "string",
+          "title": "The Type Schema",
+          "enum": ["red_abrasion","red_bonedamage","red_novictim","red_regularvictim","red_criticalvictim","red_rubble","red_threat","red_sos",
+            "green_abrasion","green_bonedamage","green_novictim","green_regularvictim","green_criticalvictim","green_rubble","green_threat","green_sos",
+            "blue_abrasion","blue_bonedamage","blue_novictim","blue_regularvictim","blue_criticalvictim","blue_rubble","blue_threat","blue_sos"],
+          "examples": [
+            "blue_abrasion"
+          ]            
+        },
+		    "marker_x": {
+          "$id": "#/properties/data/properties/marker_x",
+          "type": "number",
+          "title": "The Marker_X Schema",          
+          "examples": [
+            -2185
+          ],
+          "pattern": "^([0-9]+?)$"
+        },
+        "marker_y": {
+          "$id": "#/properties/data/properties/marker_y",
+          "type": "number",
+          "title": "The Marker_Y Schema",          
+          "examples": [
+            52
+          ],
+          "pattern": "^([0-9]+?)$"
+        },
+        "marker_z": {
+          "$id": "#/properties/data/properties/marker_z",
+          "type": "number",
+          "title": "The Marker_Z Schema",          
+          "examples": [
+            194
+          ],
+          "pattern": "^([0-9]+?)$"
+        }        
+      }
+    }
+  }
+}

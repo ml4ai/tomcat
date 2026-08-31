@@ -1,0 +1,425 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://asist.aptima.com/schemas/cmu_ta2_beard_ac.json",
+  "type": "object",
+  "title": "CMU TA2 BEARD Analytic Component",
+  "version": "3.0",
+  "required": [
+    "header",
+    "msg",
+    "data"
+  ],
+  "properties": {
+    "header": {
+      "$ref": "../Common_Header/common_header.json",
+      "properties": {         
+        "message_type": {
+        "$id": "#/properties/message_type",
+        "type": "string",
+        "title": "The Message_type Schema",
+        "const": "agent"
+        }
+      }
+    },
+    "msg": {
+      "$ref": "../Common_Message/common_message.json",
+      "properties": {         
+        "sub_type": {
+            "$id": "#/properties/sub_type",
+            "type": "string",
+            "title": "The Sub Type Schema",
+            "const": "AC:BEARD"
+        },
+        "source": {
+            "$id": "#/properties/source",
+            "type": "string",
+            "title": "The Source Schema",
+            "const": "ac_cmu_ta2_beard"
+        }
+      }
+    },
+    "data": {
+      "$id": "#/properties/message/properties/data",
+      "type": "object",
+      "title": "The CMU TA2 BEARD Analytic Component Data Schema",
+      "required": [        
+        "team"
+      ],
+      "properties": {
+        "team": {
+          "$id": "#/properties/message/properties/data/properties/team",
+          "type": "object",
+          "title": "Team variables",
+          "required": [        
+            "anger_mean",
+            "anger_sd",
+            "anxiety_mean",
+            "anxiety_sd",
+            "rmie_mean",
+            "rmie_sd", 
+            "mission_knowledge_mean", 
+            "mission_knowledge_sd",
+            "sbsod_mean",
+            "sbsod_sd",
+            "gaming_experience_mean",  
+            "gaming_experience_sd",
+            "walking_skill_mean",
+            "walking_skill_sd",
+            "marking_skill_mean",
+            "marking_skill_sd",
+            "transporting_skill_mean",
+            "transporting_skill_sd"
+          ],
+          "properties": {
+            "anger_mean": {
+              "$id": "#/properties/data/properties/data/properties/team/properties/anger_mean",
+              "type": "number",
+              "title": "Mean Anger Score",
+              "description": ""
+            },
+            "anger_sd": {
+              "$id": "#/properties/data/properties/data/properties/team/properties/anger_sd",
+              "type": "number",
+              "title": "Standard Deviation Anger Score",
+              "description": ""
+            },
+            "anxiety_mean": {
+              "$id": "#/properties/data/properties/data/properties/team/properties/anxiety_mean",
+              "type": "number",
+              "title": "Mean Anxiety Score",
+              "description": ""
+            },
+            "anxiety_sd": {
+              "$id": "#/properties/data/properties/data/properties/team/properties/anxiety_sd",
+              "type": "number",
+              "title": "Standard Deviation Anxiety Score",
+              "description": ""
+            },
+            "rmie_mean": {
+              "$id": "#/properties/data/properties/data/properties/team/properties/rmie_mean",
+              "type": "number",
+              "title": "Mean Reading the Mind in the Eyes Score",
+              "description": ""
+            },
+            "rmie_sd": {
+              "$id": "#/properties/data/properties/data/properties/team/properties/rmie_sd",
+              "type": "number",
+              "title": "Standard Deviation Reading the Mind in the Eyes Score",
+              "description": ""
+            },
+            "mission_knowledge_mean": {
+              "$id": "#/properties/data/properties/data/properties/team/properties/mission_knowledge_mean",
+              "type": "number",
+              "title": "Mean Mission Knowledge Score",
+              "description": ""
+            },
+            "mission_knowledge_sd": {
+              "$id": "#/properties/data/properties/data/properties/team/properties/mission_knowledge_sd",
+              "type": "number",
+              "title": "Standard Deviation Mission Knowledge Score",
+              "description": ""
+            },
+            "sbsod_mean": {
+              "$id": "#/properties/data/properties/data/properties/team/properties/sbsod_mean",
+              "type": "number",
+              "title": "Mean Santa Barbara Sense of Direction Score",
+              "description": ""
+            },
+            "sbsod_sd": {
+              "$id": "#/properties/data/properties/data/properties/team/properties/sbsod_sd",
+              "type": "number",
+              "title": "Standard Deviation Santa Barbara Sense of Direction Score",
+              "description": ""
+            },
+            "gaming_experience_mean": {
+              "$id": "#/properties/data/properties/data/properties/team/properties/gaming_experience_mean",
+              "type": "number",
+              "title": "Mean Gaming Experience Score",
+              "description": ""
+            },
+            "gaming_experience_sd": {
+              "$id": "#/properties/data/properties/data/properties/team/properties/gaming_experience_sd",
+              "type": "number",
+              "title": "Standard Deviation Gaming Experience Score",
+              "description": ""
+            },
+            "walking_skill_mean": {
+              "$id": "#/properties/data/properties/data/properties/team/properties/walking_skill_mean",
+              "type": "number",
+              "title": "Mean Walking Skill Score (lower number indicate greater speed)",
+              "description": ""
+            },
+            "walking_skill_sd": {
+              "$id": "#/properties/data/properties/data/properties/team/properties/walking_skill_sd",
+              "type": "number",
+              "title": "Standard Deviation Walking Skill Score",
+              "description": ""
+            },
+            "marking_skill_mean": {
+              "$id": "#/properties/data/properties/data/properties/team/properties/marking_skill_mean",
+              "type": "number",
+              "title": "Mean Marking Skill Score",
+              "description": ""
+            },
+            "marking_skill_sd": {
+              "$id": "#/properties/data/properties/data/properties/team/properties/marking_skill_sd",
+              "type": "number",
+              "title": "Standard Deviation Marking Skill Score",
+              "description": ""
+            },
+            "transporting_skill_mean": {
+              "$id": "#/properties/data/properties/data/properties/team/properties/transporting_skill_mean",
+              "type": "number",
+              "title": "Mean Transporting Skill Score",
+              "description": ""
+            },
+            "transporting_skill_sd": {
+              "$id": "#/properties/data/properties/data/properties/team/properties/transporting_skill_sd",
+              "type": "number",
+              "title": "Standard Deviation Transporting Skill Score",
+              "description": ""
+            }
+          },
+          "BLUE_ASIST1": {
+            "$id": "#/properties/message/properties/data/properties/BLUE_ASIST1",
+            "type": "object",
+            "title": "Blue player's variables",
+            "required": [        
+              "anger",
+              "anxiety",
+              "rmie",
+              "mission_knowledge", 
+              "sbsod",
+              "gaming_experience",  
+              "walking_skill",
+              "marking_skill",
+              "transporting_skill",
+              "role"
+            ],
+            "properties": {
+              "anger": {
+                "$id": "#/properties/data/properties/data/properties/BLUE_ASIST1/properties/anger",
+                "type": "number",
+                "title": "Anger Score",
+                "description": ""
+              },
+              "anxiety": {
+                "$id": "#/properties/data/properties/data/properties/BLUE_ASIST1/properties/anxiety",
+                "type": "number",
+                "title": "Anxiety Score",
+                "description": ""
+              },
+              "rmie": {
+                "$id": "#/properties/data/properties/data/properties/BLUE_ASIST1/properties/rmie",
+                "type": "number",
+                "title": "Reading the Mind in the Eyes Score",
+                "description": ""
+              },
+              "mission_knowledge": {
+                "$id": "#/properties/data/properties/data/properties/BLUE_ASIST1/properties/mission_knowledge",
+                "type": "number",
+                "title": "Mission Knowledge Score",
+                "description": ""
+              },
+              "sbsod": {
+                "$id": "#/properties/data/properties/data/properties/BLUE_ASIST1/properties/sbsod",
+                "type": "number",
+                "title": "Santa Barbara Sense of Direction Score",
+                "description": ""
+              },
+              "gaming_experience": {
+                "$id": "#/properties/data/properties/data/properties/BLUE_ASIST1/properties/gaming_experience",
+                "type": "number",
+                "title": "Gaming Experience Score",
+                "description": ""
+              },
+              "walking_skill": {
+                "$id": "#/properties/data/properties/data/properties/BLUE_ASIST1/properties/walking_skill",
+                "type": "number",
+                "title": "Walking Skill Score (lower number indicate greater speed)",
+                "description": ""
+              },
+              "marking_skill": {
+                "$id": "#/properties/data/properties/data/properties/BLUE_ASIST1/properties/marking_skill",
+                "type": "number",
+                "title": "Marking Skill Score",
+                "description": ""
+              },
+              "transporting_skill": {
+                "$id": "#/properties/data/properties/data/properties/BLUE_ASIST1/properties/transporting_skill",
+                "type": "number",
+                "title": "Transporting Skill Score",
+                "description": ""
+              },
+              "role": {
+                "$id": "#/properties/data/properties/data/properties/BLUE_ASIST1/properties/role",
+                "type": "string",
+                "title": "Player role",
+                "description": ""
+              }
+            }
+          },
+          "RED_ASIST1": {
+            "$id": "#/properties/message/properties/data/properties/RED_ASIST1",
+            "type": "object",
+            "title": "Red player's variables",
+            "required": [        
+              "anger",
+              "anxiety",
+              "rmie",
+              "mission_knowledge", 
+              "sbsod",
+              "gaming_experience",  
+              "walking_skill",
+              "marking_skill",
+              "transporting_skill",
+              "role"
+            ],
+            "properties": {
+              "anger": {
+                "$id": "#/properties/data/properties/data/properties/RED_ASIST1/properties/anger",
+                "type": "number",
+                "title": "Anger Score",
+                "description": ""
+              },
+              "anxiety": {
+                "$id": "#/properties/data/properties/data/properties/RED_ASIST1/properties/anxiety",
+                "type": "number",
+                "title": "Anxiety Score",
+                "description": ""
+              },
+              "rmie": {
+                "$id": "#/properties/data/properties/data/properties/RED_ASIST1/properties/rmie",
+                "type": "number",
+                "title": "Reading the Mind in the Eyes Score",
+                "description": ""
+              },
+              "mission_knowledge": {
+                "$id": "#/properties/data/properties/data/properties/RED_ASIST1/properties/mission_knowledge",
+                "type": "number",
+                "title": "Mission Knowledge Score",
+                "description": ""
+              },
+              "sbsod": {
+                "$id": "#/properties/data/properties/data/properties/RED_ASIST1/properties/sbsod",
+                "type": "number",
+                "title": "Santa Barbara Sense of Direction Score",
+                "description": ""
+              },
+              "gaming_experience": {
+                "$id": "#/properties/data/properties/data/properties/RED_ASIST1/properties/gaming_experience",
+                "type": "number",
+                "title": "Gaming Experience Score",
+                "description": ""
+              },
+              "walking_skill": {
+                "$id": "#/properties/data/properties/data/properties/RED_ASIST1/properties/walking_skill",
+                "type": "number",
+                "title": "Walking Skill Score (lower number indicate greater speed)",
+                "description": ""
+              },
+              "marking_skill": {
+                "$id": "#/properties/data/properties/data/properties/RED_ASIST1/properties/marking_skill",
+                "type": "number",
+                "title": "Marking Skill Score",
+                "description": ""
+              },
+              "transporting_skill": {
+                "$id": "#/properties/data/properties/data/properties/RED_ASIST1/properties/transporting_skill",
+                "type": "number",
+                "title": "Transporting Skill Score",
+                "description": ""
+              },
+              "role": {
+                "$id": "#/properties/data/properties/data/properties/RED_ASIST1/properties/role",
+                "type": "string",
+                "title": "Player role",
+                "description": ""
+              }
+            }
+          },
+          "GREEN_ASIST1": {
+            "$id": "#/properties/message/properties/data/properties/GREEN_ASIST1",
+            "type": "object",
+            "title": "Green player's variables",
+            "required": [        
+              "anger",
+              "anxiety",
+              "rmie",
+              "mission_knowledge", 
+              "sbsod",
+              "gaming_experience",  
+              "walking_skill",
+              "marking_skill",
+              "transporting_skill",
+              "role"
+            ],
+            "properties": {
+              "anger": {
+                "$id": "#/properties/data/properties/data/properties/GREEN_ASIST1/properties/anger",
+                "type": "number",
+                "title": "Anger Score",
+                "description": ""
+              },
+              "anxiety": {
+                "$id": "#/properties/data/properties/data/properties/GREEN_ASIST1/properties/anxiety",
+                "type": "number",
+                "title": "Anxiety Score",
+                "description": ""
+              },
+              "rmie": {
+                "$id": "#/properties/data/properties/data/properties/GREEN_ASIST1/properties/rmie",
+                "type": "number",
+                "title": "Reading the Mind in the Eyes Score",
+                "description": ""
+              },
+              "mission_knowledge": {
+                "$id": "#/properties/data/properties/data/properties/GREEN_ASIST1/properties/mission_knowledge",
+                "type": "number",
+                "title": "Mission Knowledge Score",
+                "description": ""
+              },
+              "sbsod": {
+                "$id": "#/properties/data/properties/data/properties/GREEN_ASIST1/properties/sbsod",
+                "type": "number",
+                "title": "Santa Barbara Sense of Direction Score",
+                "description": ""
+              },
+              "gaming_experience": {
+                "$id": "#/properties/data/properties/data/properties/GREEN_ASIST1/properties/gaming_experience",
+                "type": "number",
+                "title": "Gaming Experience Score",
+                "description": ""
+              },
+              "walking_skill": {
+                "$id": "#/properties/data/properties/data/properties/GREEN_ASIST1/properties/walking_skill",
+                "type": "number",
+                "title": "Walking Skill Score (lower number indicate greater speed)",
+                "description": ""
+              },
+              "marking_skill": {
+                "$id": "#/properties/data/properties/data/properties/GREEN_ASIST1/properties/marking_skill",
+                "type": "number",
+                "title": "Marking Skill Score",
+                "description": ""
+              },
+              "transporting_skill": {
+                "$id": "#/properties/data/properties/data/properties/GREEN_ASIST1/properties/transporting_skill",
+                "type": "number",
+                "title": "Transporting Skill Score",
+                "description": ""
+              },
+              "role": {
+                "$id": "#/properties/data/properties/data/properties/GREEN_ASIST1/properties/role",
+                "type": "string",
+                "title": "Player role",
+                "description": ""
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

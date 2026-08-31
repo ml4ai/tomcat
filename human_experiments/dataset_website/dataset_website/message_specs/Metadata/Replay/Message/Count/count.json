@@ -1,0 +1,38 @@
+{
+	"definitions": {
+
+	},
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "http://asist.aptima.com/schemas/count.json",
+	"type": "object",
+	"title": "The Root Schema",
+	"required": [ "replay_id", "current_message_count", "total_message_count" ],
+	"properties": {
+		"replay_id": {
+			"$id": "#/properties/replay_id",
+			"type": "string",
+			"title": "The Replay Id Schema",
+			"default": "",
+			"examples": [ "123e4567-e89b-12d3-a456-426655440000" ],
+			"pattern": "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
+		},
+        "current_message_count": {
+          "$id": "#/properties/current_message_count",
+          "type": "integer",
+          "title": "The Current Message Count Schema",
+          "default": 0,
+          "examples": [
+            1
+          ]
+        },
+		"total_message_count": {
+          "$id": "#/properties/total_message_count",
+          "type": "integer",
+          "title": "The Total Message Count Schema",
+          "default": 0,
+          "examples": [
+            1
+          ]
+        }
+	}
+}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Documentation — {{ db_name }}{% endblock %}
+{% block body_class %}index{% endblock %}
+
+{% block content %}
+{{ render_markdown("""
+# Documentation
+
+These pages describe the ToMCAT dataset in detail — how the experiment was run, how the
+raw recordings are organized, and how the derived (synchronized) signals are produced.
+They are adapted from the *ToMCAT data products* document.
+
+## Dataset documentation
+
+- [Experiment protocol](/experiment-protocol) — the pre-session, the phases of the group
+  session, and the modalities recorded for each participant.
+- [Derived data products](/derived-data-products) — the synchronized `*_sync` tables: the
+  EEG/fNIRS channel montage, the filtering and 200 Hz master-clock synchronization
+  pipeline, and a description of the deprecated (pre-2024-02-22) derived data products.
+
+## Schema & data
+
+- [Interactive schema diagram](/schema) — the tables and the foreign-key relationships
+  between them. Per-table and per-column descriptions also appear on each table's page.
+- [Message bus reference](/messages) — field-level documentation for the JSON schemas in
+  the `minecraft_testbed_message.message` column, organized by topic.
+- [Download the database](/download) — the full SQLite database and a compressed
+  PostgreSQL dump, for whole-dataset work.
+
+## Related pages
+
+- [Papers and systems](/papers-and-systems) that use the dataset.
+- [Derived data releases](/derived-data-products) and [updates](/updates).
+- [Errata](/errata) — known issues.
+- [Ethical review](/ethical-review) — consent and recruitment materials.
+
+## Reference document
+
+The complete data-products document (the source for these pages) is also available as a
+single PDF: [data_products.pdf](/assets/data_products.pdf).
+""") }}
+{% endblock %}

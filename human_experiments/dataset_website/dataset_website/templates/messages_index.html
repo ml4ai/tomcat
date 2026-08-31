@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Message Bus Reference — {{ db_name }}{% endblock %}
+{% block body_class %}index{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Message Bus Reference</h1>
+    <p>Field-level documentation for the JSON stored in the
+       <code>minecraft_testbed_message.message</code> column, organized by the topic
+       each message was published on. The {{ count }} topic{{ "s" if count != 1 }}
+       below are those actually present in the data.</p>
+</div>
+
+<p class="msg-attribution">
+    These message schemas build upon the ASIST Study&nbsp;3
+    <a href="https://gitlab.com/artificialsocialintelligence/study3/-/tree/main/MessageSpecs"
+       target="_blank" rel="noopener">MessageSpecs</a>.
+</p>
+
+{% if not observed_known %}
+<div class="site-notice">
+    <span class="label">Note</span>
+    <p class="msg">Could not read the topics present in the data, so the full message
+       specification is shown rather than only the observed subset.</p>
+</div>
+{% endif %}
+
+{% macro render_node(node) %}
+<li>
+    {% if node.topic %}
+        <a href="/messages/{{ node.topic }}"><code>{{ node.name }}</code></a>
+    {% else %}
+        <span class="tree-branch">{{ node.name }}/</span>
+    {% endif %}
+    {% if node.children %}
+        <ul>{% for child in node.children %}{{ render_node(child) }}{% endfor %}</ul>
+    {% endif %}
+</li>
+{% endmacro %}
+
+<ul class="topic-tree">
+    {% for node in tree %}{{ render_node(node) }}{% endfor %}
+</ul>
+
+{% if undocumented %}
+<details class="column-descriptions-wrap">
+    <summary>Observed topics without a documented schema ({{ undocumented | length }})</summary>
+    <ul class="undocumented-list">
+        {% for topic in undocumented %}<li><code>{{ topic }}</code></li>{% endfor %}
+    </ul>
+</details>
+{% endif %}
+
+<style>
+    .msg-attribution { color: var(--muted); font-size: .92rem; margin-bottom: 1.5rem; }
+    ul.topic-tree, ul.topic-tree ul { list-style: none; margin: .15rem 0; padding-left: 1.1rem; }
+    ul.topic-tree { border-left: 2px solid var(--line); padding-left: .9rem; }
+    ul.topic-tree li { padding: .12rem 0; }
+    ul.topic-tree a { text-decoration: none; }
+    .tree-branch { color: var(--muted); font-family: var(--font-mono); font-size: .85rem;
+                   letter-spacing: .02em; }
+    .undocumented-list { columns: 2; font-size: .9rem; margin: .5rem 0 0; }
+</style>
+{% endblock %}

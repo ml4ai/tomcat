@@ -1,0 +1,180 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "type": "object",
+    "title": "The root schema",
+    "required": [
+        "data",
+        "header",
+        "msg"
+    ],
+    "properties": {
+        "data": {
+            "$id": "#/properties/data",
+            "type": "object",
+            "title": "The data schema",
+            "description": "The data being passed in the message",
+            "required": [
+                "sentiment",
+                "utterance_id"
+            ],
+            "properties": {
+                "utterance_id":{
+                    "$id": "#/properties/data/properties/utterance_id",
+                    "type": "string",
+                    "title": "The utterance_id schema",
+                    "description": "A version 4 UUID used to link asr and sentiment messages",
+                    "examples": [
+                        "59678a5f-9c5b-451f-8506-04bc020f2cf3"
+                    ]
+                },
+		"sentiment":{
+		    "$id": "#/properties/data/properties/sentiment",
+                    "type": "object",
+                    "title": "The sentiment schema",
+                    "description": "A sentiment label for an utterance calculated from extracted features"
+                }
+            },
+            "additionalProperties": true
+        },
+        "header": {
+            "$id": "#/properties/header",
+            "type": "object",
+            "title": "The header schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": {},
+            "examples": [
+                {
+                    "timestamp": "2021-01-19T23:27:58.633076Z",
+                    "message_type": "observation",
+                    "version": "0.1"
+                }
+            ],
+            "required": [
+                "timestamp",
+                "message_type",
+                "version"
+            ],
+            "properties": {
+                "timestamp": {
+                    "$id": "#/properties/header/properties/timestamp",
+                    "type": "string",
+                    "title": "The timestamp schema",
+                    "description": "Timestamp of when the data was generated in ISO 8601 format: YYYY-MM-DDThh:mm:ss.sssz",
+                    "examples": [
+                        "2021-01-19T23:27:58.633076Z"
+                    ],
+                    "pattern": "[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}[.]?[0-9]{0,}?Z"
+                },
+                "message_type": {
+                    "$id": "#/properties/header/properties/message_type",
+                    "type": "string",
+                    "title": "The message_type schema",
+                    "description": "One of the defined message types",
+                    "enum": [ "control", "observation", "chat", "status", "trial", "event", "groundtruth","experiment" ],
+                    "examples": [
+                        "observation"
+                    ],
+                    "pattern": "^([a-z_]*?)$"
+                },
+                "version": {
+                    "$id": "#/properties/header/properties/version",
+                    "type": "string",
+                    "title": "The version schema",
+                    "description": "The version of the message type object",
+                    "examples": [
+                        "0.1"
+                    ],
+                    "pattern": "^([0-9]*?)\\.([0-9]*?)$"
+                }
+            },
+            "additionalProperties": true
+        },
+        "msg": {
+            "$id": "#/properties/msg",
+            "type": "object",
+            "title": "The msg schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": {},
+            "examples": [
+                {
+                    "timestamp": "2021-01-19T23:27:58.633967Z",
+                    "experiment_id": "e2a3cb96-5f2f-11eb-8971-18810ee8274e",
+                    "trial_id": "ec76544c-7080-11eb-9123-18810ee8274e",
+                    "version": "0.1",
+                    "source": "tomcat_asr_agent",
+                    "sub_type": "asr:transcription"
+                }
+            ],
+            "required": [
+                "timestamp",
+                "version",
+                "source",
+                "sub_type"
+            ],
+            "properties": {
+                "timestamp": {
+                    "$id": "#/properties/msg/properties/timestamp",
+                    "type": "string",
+                    "title": "The timestamp schema",
+                    "description": "Timestamp of when the data was generated in ISO 8601 format: YYYY-MM-DDThh:mm:ss.sssz",
+                    "examples": [
+                        "2021-01-19T23:27:58.633967Z"
+                    ],
+                    "pattern": "[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}[.]?[0-9]{0,}?Z"
+                },
+                "experiment_id": {
+                    "$id": "#/properties/msg/properties/experiment_id",
+                    "type": "string",
+                    "title": "The experiment_id schema",
+                    "description": "The experiment id this message is associated with",
+                    "examples": [
+                        "e2a3cb96-5f2f-11eb-8971-18810ee8274e"
+                    ],
+                    "pattern": "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
+                },
+                "trial_id": {
+                    "$id": "#/properties/msg/properties/trial_id",
+                    "type": "string",
+                    "title": "The trial_id schema",
+                    "description": "The trial id this message is associate with",
+                    "examples": [
+                        "ec76544c-7080-11eb-9123-18810ee8274e"
+                    ],
+                    "pattern": "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
+                },
+                "version": {
+                    "$id": "#/properties/msg/properties/version",
+                    "type": "string",
+                    "title": "The version schema",
+                    "description": "The version of the sub_type format",
+                    "examples": [
+                        "1.0.1"
+                    ],
+                    "pattern": "^([.]*)|(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$"
+                },
+                "source": {
+                    "$id": "#/properties/msg/properties/source",
+                    "type": "string",
+                    "title": "The source schema",
+                    "description": "The name of the component that published this data",
+                    "examples": [
+                        "tomcat_asr_agent"
+                    ]
+                },
+                "sub_type": {
+                    "$id": "#/properties/msg/properties/sub_type",
+                    "type": "string",
+                    "title": "The sub_type schema",
+                    "description": "The subtype of the data. This field describes the format of this particular type of data",
+                    "examples": [
+                        "asr"
+                    ],
+                    "pattern": "^([a-zA-Z0-9_:]*?)$"
+                }
+            },
+            "additionalProperties": true
+        }
+    },
+    "additionalProperties": true
+}
+

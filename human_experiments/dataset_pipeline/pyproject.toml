@@ -1,0 +1,82 @@
+[project]
+name = "dataset_pipeline"
+version = "0.1.0"
+description = "Parses ToMCAT experiment files into the Postgres dataset (and exports the bulk-download artifacts)."
+requires-python = ">=3.9"
+
+# Core: config, ORM, and base + task + raw-signal ingestion. Enough to run
+# create_tables and populate_raw_tables for everything EXCEPT vocalics (audio
+# extra) and the derived sync_* step (signal extra).
+dependencies = [
+    "tqdm~=4.66.1",
+    "pytz~=2023.3",
+    "python-dateutil~=2.8.2",
+    "pandas~=2.0.3",
+    "numpy~=1.25.2",
+    "pyxdf~=1.16.4",
+    "py",
+    "sqlalchemy~=2.0.20",
+    "sqlalchemy-utils",
+    # Source build (preferred over psycopg2-binary for a deployed service); needs the
+    # system libpq-dev + a C compiler at install time.
+    "psycopg2",
+    # Floor, not a `~=` pin. `pydantic~=2.5.3` caps at <2.6, which silently
+    # conflicts with the website's deps: FastAPI declares a wide `pydantic>=1.7.4`
+    # range but imports `IncEx` from `pydantic.main`, which only exists from
+    # 2.7. Resolvers therefore accept fastapi 0.136 + pydantic 2.5.3 happily and
+    # the app dies at import with `ImportError: cannot import name 'IncEx'`.
+    # That took tomcat.lab.pyarelal.xyz down for two days in August 2026: the
+    # 2026-08-14 install of the `signal` extra re-resolved pydantic back to
+    # 2.5.3 under a still-running process, and the breakage only surfaced when
+    # something restarted the unit ten days later. (The website now has its own
+    # venv, but keep the floor: sharing a venv must never re-break it.)
+    "pydantic>=2.9,<3",
+    "pydantic-settings",
+    "pyyaml~=6.0.1",
+    "setuptools~=68.0.0",
+]
+
+[project.optional-dependencies]
+# Derived sync_* step (derived/helper/*).
+signal = [
+    "scipy~=1.11.2",
+    "neurokit2~=0.2.7",
+    "mne~=1.6.0",
+]
+# Vocalics / transcription (model/audio/*, process_vocalics). Heavy: pulls torch.
+audio = [
+    "torch~=2.1.2",
+    "openai-whisper",
+    "pydub~=0.25.1",
+    "praat-textgrids==1.4.0",
+]
+# SQLite bulk-download artifact (bin/to_sqlite.py shells out to db-to-sqlite).
+# The Datasette serving deps this extra once carried are parked in
+# legacy_datasette/README.md.
+sqlite_export = [
+    "db-to-sqlite[postgresql]",
+]
+dev = [
+    "black",
+    "flake8",
+    "isort",
+    "autoflake",
+]
+# Everything (the old `requirements.txt` behaviour).
+all = [
+    "dataset_pipeline[signal,audio,sqlite_export,dev]",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+# Only the Python package — not legacy_datasette/ or bin/.
+include = ["dataset_pipeline*"]
+
+[tool.ruff]
+# Parked datasette-era code: don't lint or format it as project code.
+extend-exclude = [
+    "legacy_datasette",
+]

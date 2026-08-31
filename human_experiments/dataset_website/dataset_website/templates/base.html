@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}{{ metadata.title or "ToMCAT Dataset" }}{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Set the color mode BEFORE first paint (no flash). localStorage wins; else
+         follow the OS. Exposes window.__toggleTheme() for the navbar button. -->
+    <script>
+      (function () {
+        var KEY = "tomcat-theme";
+        var root = document.documentElement;
+        var mq = window.matchMedia("(prefers-color-scheme: dark)");
+        function system() { return mq.matches ? "dark" : "light"; }
+        function apply(t) { root.setAttribute("data-bs-theme", t); }
+        apply(localStorage.getItem(KEY) || system());
+        // Follow the OS live only while the user hasn't picked a theme.
+        mq.addEventListener("change", function () {
+          if (!localStorage.getItem(KEY)) apply(system());
+        });
+        window.__toggleTheme = function () {
+          var next = root.getAttribute("data-bs-theme") === "dark" ? "light" : "dark";
+          localStorage.setItem(KEY, next);
+          apply(next);
+        };
+      })();
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;450;500;600&display=swap">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+          integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
+          crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/lib/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/addon/hint/show-hint.min.css">
+    <style>
+      /* ============ Editorial-scientific theme (Fraunces / IBM Plex) ============ */
+      :root {
+        --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+        --font-body: "IBM Plex Sans", system-ui, sans-serif;
+        --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
+        --radius: 12px;
+        --maxw: 1080px;
+        --step: 0.5rem;
+      }
+      /* Light + dark token sets, both keyed off Bootstrap's data-bs-theme. */
+      [data-bs-theme="light"] {
+        --bg: #faf8f4; --surface: #ffffff; --surface-2: #f4f1ea;
+        --ink: #1c1b18; --muted: #6c675e; --line: #e6e0d5;
+        --accent: #0f766e; --accent-strong: #0b5650; --accent-soft: rgba(15,118,110,.10);
+        --shadow: 0 1px 2px rgba(28,27,24,.04), 0 8px 24px -16px rgba(28,27,24,.18);
+        --bs-link-color-rgb: 15,118,110;
+        --cm-kw: #0c5e57; --cm-str: #9a3412; --cm-num: #1d4ed8;
+        --notice-bg: #fdf6e7; --notice-line: #f0e2bd; --notice-edge: #b4791a;
+      }
+      [data-bs-theme="dark"] {
+        --bg: #131417; --surface: #1a1c20; --surface-2: #22252a;
+        --ink: #e9e6df; --muted: #9aa0a6; --line: #2b2e34;
+        --accent: #5eead4; --accent-strong: #99f6e4; --accent-soft: rgba(94,234,212,.12);
+        --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 32px -18px rgba(0,0,0,.6);
+        --bs-link-color-rgb: 94,234,212;
+        --cm-kw: #5eead4; --cm-str: #fdba74; --cm-num: #93c5fd;
+        --notice-bg: rgba(180,140,40,.12); --notice-line: rgba(180,140,40,.32); --notice-edge: #e2b65a;
+      }
+
+      html { -webkit-text-size-adjust: 100%; }
+      body {
+        background: var(--bg); color: var(--ink);
+        font-family: var(--font-body); font-size: 1.0625rem; line-height: 1.65;
+        font-feature-settings: "kern", "liga", "cv05";
+        -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+      }
+      ::selection { background: var(--accent-soft); }
+
+      a { color: var(--accent); text-underline-offset: 2px; text-decoration-thickness: 1px; }
+      a:hover { color: var(--accent-strong); }
+
+      /* ---- Type scale ---- */
+      h1, h2, h3 { font-family: var(--font-display); font-weight: 500;
+                   line-height: 1.12; letter-spacing: -0.012em; color: var(--ink); }
+      h1 { font-size: clamp(2rem, 1.4rem + 2.4vw, 2.85rem); font-weight: 600;
+           font-optical-sizing: auto; margin: 0; }
+      h2 { font-size: clamp(1.35rem, 1.1rem + 1vw, 1.7rem); margin: 2rem 0 .6rem; }
+      h3 { font-size: 1.2rem; margin: 1.4rem 0 .5rem; }
+      p { max-width: 70ch; }
+      code, pre, .font-mono { font-family: var(--font-mono); }
+
+      /* small-caps section label helper */
+      .eyebrow { font-family: var(--font-mono); font-size: .72rem; letter-spacing: .14em;
+                 text-transform: uppercase; color: var(--muted); }
+
+      .page { max-width: var(--maxw); margin-inline: auto; padding: 0 1.5rem; }
+
+      /* ---- Nav ---- */
+      .navbar { background: color-mix(in srgb, var(--bg) 88%, transparent);
+                backdrop-filter: saturate(1.4) blur(8px);
+                border-bottom: 1px solid var(--line); padding-block: .55rem; }
+      .navbar-brand { font-family: var(--font-display); font-weight: 600; font-size: 1.25rem;
+                      letter-spacing: -.02em; color: var(--ink) !important; }
+      .navbar-brand:hover { color: var(--accent) !important; }
+      .nav-link { color: var(--ink); font-size: .94rem; padding-inline: .65rem;
+                  border-radius: 7px; }
+      .nav-link:hover { color: var(--accent); background: var(--accent-soft); }
+
+      .theme-toggle { display: inline-grid; place-items: center; width: 38px; height: 38px;
+                      border: 1px solid var(--line); border-radius: 9px; background: var(--surface);
+                      color: var(--ink); cursor: pointer; transition: border-color .15s, color .15s; }
+      .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+      .theme-toggle .moon { display: none; } .theme-toggle .sun { display: block; }
+      [data-bs-theme="dark"] .theme-toggle .moon { display: block; }
+      [data-bs-theme="dark"] .theme-toggle .sun { display: none; }
+
+      /* ---- Page content ---- */
+      main.page { padding-top: 2rem; padding-bottom: 4rem; }
+      @media (prefers-reduced-motion: no-preference) {
+        main.page { animation: rise .5s cubic-bezier(.2,.7,.2,1) both; }
+        @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; } }
+      }
+
+      .page-header { border-left: 3px solid var(--accent); padding: .1rem 0 .1rem 1rem;
+                     margin: .25rem 0 1.6rem; }
+      .page-header p { color: var(--muted); margin: .5rem 0 0; }
+
+      /* ---- Tables ---- */
+      .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch;
+                      border: 1px solid var(--line); border-radius: var(--radius);
+                      background: var(--surface); box-shadow: var(--shadow); }
+      table.rows-and-columns { font-size: .9rem; white-space: nowrap; margin: 0;
+                               font-variant-numeric: tabular-nums; }
+      table.rows-and-columns thead th {
+        position: sticky; top: 0; z-index: 1; background: var(--surface-2);
+        border-bottom: 1px solid var(--line); font-family: var(--font-mono);
+        font-weight: 500; font-size: .76rem; letter-spacing: .03em; text-transform: uppercase;
+        color: var(--muted); padding: .6rem .8rem; }
+      table.rows-and-columns td { padding: .5rem .8rem; border-color: var(--line); }
+      table.rows-and-columns th .sort { color: var(--muted); text-decoration: none;
+                               font-size: .72rem; opacity: .55; }
+      table.rows-and-columns th .sort:hover { opacity: 1; color: var(--accent); }
+
+      /* ---- Filters ---- */
+      form.filters { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center;
+                     background: var(--surface); border: 1px solid var(--line);
+                     border-radius: var(--radius); padding: .7rem; margin: .5rem 0 1.25rem;
+                     box-shadow: var(--shadow); }
+      form.filters .form-select, form.filters .form-control { width: auto; min-width: 9rem;
+                     font-size: .9rem; }
+      .applied-filters { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center;
+                         margin: .25rem 0 1rem; }
+      .filter-chip { display: inline-flex; gap: .45rem; align-items: center;
+                     background: var(--accent-soft); color: var(--accent-strong);
+                     border-radius: 999px; padding: .2rem .75rem; font-size: .85rem; }
+      .filter-chip a { color: inherit; text-decoration: none; font-weight: 700; }
+
+      /* ---- Facets ---- */
+      .facets { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+                gap: .9rem; margin: 1.25rem 0; }
+      .facet { background: var(--surface); border: 1px solid var(--line);
+               border-radius: var(--radius); padding: .85rem 1rem; box-shadow: var(--shadow); }
+      .facet > strong { display: block; font-family: var(--font-mono); font-size: .72rem;
+               letter-spacing: .08em; text-transform: uppercase; color: var(--muted);
+               margin-bottom: .5rem; font-weight: 500; }
+      .facet ul { list-style: none; padding: 0; margin: 0; font-size: .9rem; }
+      .facet li { display: flex; justify-content: space-between; gap: .7rem; padding: .15rem 0; }
+      .facet li a { text-decoration: none; overflow: hidden; text-overflow: ellipsis;
+                    white-space: nowrap; }
+      .facet .count { color: var(--muted); font-variant-numeric: tabular-nums; }
+
+      /* ---- Descriptions ---- */
+      details.column-descriptions-wrap { background: var(--surface); border: 1px solid var(--line);
+               border-radius: var(--radius); padding: .6rem 1rem; margin-bottom: 1.25rem; }
+      details.column-descriptions-wrap summary { cursor: pointer; font-weight: 600; }
+      dl.column-descriptions dt { font-family: var(--font-mono); font-size: .85rem;
+               font-weight: 500; margin-top: .6rem; }
+      dl.column-descriptions dd { color: var(--muted); margin: .1rem 0 0; }
+
+      .export-links { color: var(--muted); font-size: .92rem; }
+      nav.pagination { display: flex; gap: 1.25rem; align-items: center; margin: 1.25rem 0;
+                       flex-wrap: wrap; font-variant-numeric: tabular-nums; }
+
+      /* ---- Buttons ---- */
+      /* A deliberately dark green in BOTH themes so white label text stays readable
+         (~7.8:1 contrast). The bright --accent is for links/borders, not fills. */
+      .btn-primary { --bs-btn-bg: #0c5e57; --bs-btn-border-color: #0c5e57;
+                     --bs-btn-hover-bg: #0a4f49; --bs-btn-hover-border-color: #0a4f49;
+                     --bs-btn-active-bg: #093f3a; --bs-btn-active-border-color: #093f3a;
+                     --bs-btn-color: #fff; --bs-btn-hover-color: #fff; }
+
+      /* ---- Under-construction notice ---- */
+      /* Warm ochre rather than the teal accent, so it reads as an advisory aside
+         distinct from the site's primary actions. Theme-aware via --notice-* tokens. */
+      .site-notice { display: flex; align-items: baseline; gap: .85rem; flex-wrap: wrap;
+               background: var(--notice-bg); border: 1px solid var(--notice-line);
+               border-left: 3px solid var(--notice-edge); border-radius: var(--radius);
+               padding: .8rem 1.1rem; margin: 0 0 1.75rem; }
+      .site-notice .label { font-family: var(--font-mono); font-size: .68rem;
+               letter-spacing: .14em; text-transform: uppercase; font-weight: 600;
+               color: var(--notice-edge); white-space: nowrap; }
+      .site-notice .msg { margin: 0; color: var(--ink); font-size: .96rem; }
+
+      /* Content images never overflow their column (the markdown-emitted <img>
+         is bare, so the old `a img` rule never matched it). */
+      img { max-width: 100%; height: auto; }
+
+      /* ---- Code / citation blocks ---- */
+      /* Capped to a reading measure so the citation doesn't span the full page
+         width while prose sits at 70ch; long lines scroll inside the box. */
+      .code pre, pre.bibtex { background: var(--surface-2); color: var(--ink);
+               border: 1px solid var(--line); border-radius: var(--radius);
+               padding: 1rem 1.1rem; overflow-x: auto; font-size: .82rem; line-height: 1.5;
+               max-width: 64ch; }
+
+      /* BibTeX highlighting — token classes added client-side (see script below),
+         colored from the same theme tokens as the SQL editor. */
+      pre.bibtex .tok-type   { color: var(--cm-kw); font-weight: 600; }
+      pre.bibtex .tok-field  { color: var(--cm-kw); }
+      pre.bibtex .tok-key    { color: var(--accent-strong); }
+      pre.bibtex .tok-string { color: var(--cm-str); }
+      pre.bibtex .tok-num    { color: var(--cm-num); }
+      pre.bibtex .tok-punct  { color: var(--muted); }
+
+      /* JSON highlighting — spans added client-side (see script below), colored
+         from the same theme tokens as the SQL editor and BibTeX blocks. */
+      code.json-highlight .tok-json-key    { color: var(--cm-kw); font-weight: 600; }
+      code.json-highlight .tok-json-string { color: var(--cm-str); }
+      code.json-highlight .tok-json-number { color: var(--cm-num); }
+      code.json-highlight .tok-json-bool,
+      code.json-highlight .tok-json-null   { color: var(--cm-kw); font-style: italic; }
+
+      /* ---- CodeMirror SQL editor (token colors track the theme tokens) ---- */
+      .CodeMirror { font-family: var(--font-mono); font-size: .88rem; line-height: 1.55;
+               height: auto; min-height: 4.2rem; padding: .35rem .2rem;
+               background: var(--surface); color: var(--ink);
+               border: 1px solid var(--line); border-radius: var(--radius); }
+      .CodeMirror-focused { border-color: var(--accent);
+               box-shadow: 0 0 0 3px var(--accent-soft); }
+      .CodeMirror-cursor { border-left: 1.5px solid var(--ink); }
+      .CodeMirror-selected { background: var(--accent-soft) !important; }
+      .cm-s-default .cm-keyword, .cm-s-default .cm-builtin, .cm-s-default .cm-def {
+               color: var(--cm-kw); font-weight: 600; }
+      .cm-s-default .cm-string, .cm-s-default .cm-string-2 { color: var(--cm-str); }
+      .cm-s-default .cm-number, .cm-s-default .cm-atom { color: var(--cm-num); }
+      .cm-s-default .cm-comment { color: var(--muted); font-style: italic; }
+      .cm-s-default .cm-operator, .cm-s-default .cm-punctuation { color: var(--muted); }
+      .cm-s-default .cm-variable, .cm-s-default .cm-variable-2,
+      .cm-s-default .cm-property { color: var(--ink); }
+
+      /* ---- Autocomplete dropdown (sql-hint), themed to match ---- */
+      .CodeMirror-hints { font-family: var(--font-mono); font-size: .82rem;
+               background: var(--surface); color: var(--ink);
+               border: 1px solid var(--line); border-radius: 9px;
+               box-shadow: var(--shadow); padding: .25rem; z-index: 1100; }
+      .CodeMirror-hint { color: var(--ink); border-radius: 6px; padding: .15rem .55rem; }
+      li.CodeMirror-hint-active { background: var(--accent-soft);
+               color: var(--accent-strong); }
+
+      @media (max-width: 576px) {
+        .page { padding-inline: 1rem; }
+        form.filters { flex-direction: column; align-items: stretch; }
+        form.filters .form-select, form.filters .form-control { width: 100%; }
+      }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container-fluid page">
+            <a class="navbar-brand" href="/">{{ metadata.title or "ToMCAT Dataset" }}</a>
+            <div class="d-flex align-items-center gap-2 order-lg-last">
+                <button class="theme-toggle" type="button" onclick="window.__toggleTheme()"
+                        aria-label="Toggle light/dark theme" title="Toggle theme">
+                    <svg class="sun" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                      <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/>
+                    </svg>
+                    <svg class="moon" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>
+                    </svg>
+                </button>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#nav" aria-controls="nav"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+            <div class="collapse navbar-collapse" id="nav">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="/{{ db_name }}">Database</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/{{ db_name }}/-/query">Query</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/download">Download</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/documentation">Documentation</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/ethical-review">Ethical Review</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/derived-data-products">Derived Data</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/updates">Updates</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/errata">Errata</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/schema">Schema</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/messages">Messages</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/papers-and-systems">Papers</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/mailing-list">Mailing List</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="page">
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+            crossorigin="anonymous"></script>
+
+    <!-- CodeMirror 5: progressive-enhance any <textarea class="sql-editor"> into a
+         SQL editor. fromTextArea keeps the textarea synced, so the GET form still works;
+         if these scripts fail to load, the plain textarea remains usable. -->
+    <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/lib/codemirror.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/mode/sql/sql.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/addon/display/placeholder.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/addon/hint/show-hint.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.16/addon/hint/sql-hint.min.js"></script>
+    <script>
+      (function () {
+        if (!window.CodeMirror) return;
+
+        // Table -> [columns] for autocomplete. Populated async from the schema
+        // endpoint; we pass this same object reference into every showHint call,
+        // so editors created before the fetch resolves still pick up the tables
+        // once they arrive. Empty until then (keyword completion still works).
+        var SQL_TABLES = {};
+        fetch("/{{ db_name }}/-/schema.json")
+          .then(function (r) { return r.ok ? r.json() : {}; })
+          .then(function (data) { Object.assign(SQL_TABLES, data); })
+          .catch(function () { /* leave keyword-only completion */ });
+
+        function complete(cm) {
+          CodeMirror.showHint(cm, CodeMirror.hint.sql, {
+            tables: SQL_TABLES,
+            completeSingle: false           // never auto-insert a lone match
+          });
+        }
+
+        document.querySelectorAll("textarea.sql-editor").forEach(function (ta) {
+          var cm = CodeMirror.fromTextArea(ta, {
+            mode: "text/x-sql",
+            lineWrapping: true,
+            viewportMargin: Infinity,           // auto-grow to content height
+            placeholder: ta.getAttribute("placeholder") || "",
+            extraKeys: {
+              "Ctrl-Space": complete,           // explicit autocomplete trigger
+              "Ctrl-Enter": function (cm) { cm.getTextArea().form.submit(); },
+              "Cmd-Enter": function (cm) { cm.getTextArea().form.submit(); }
+            }
+          });
+          // Suggest as you type: fire on word/`.` characters, but not while a
+          // popup is already open and not right after Enter selects a completion.
+          cm.on("inputRead", function (cm, change) {
+            if (cm.state.completionActive) return;
+            if (!/[\w.]$/.test(change.text[0] || "")) return;
+            complete(cm);
+          });
+        });
+      })();
+    </script>
+
+    <!-- BibTeX highlighter: progressive enhancement over <pre class="bibtex">.
+         A tiny state machine tokenizes the entry and wraps tokens in themed
+         spans; if it doesn't run, the raw citation text stays perfectly readable. -->
+    <script>
+      (function () {
+        function esc(s) {
+          return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+        function span(cls, s) { return '<span class="' + cls + '">' + esc(s) + "</span>"; }
+
+        // Walk the text once. State: 'top' (before/between entries) vs 'body'
+        // (inside the {...} after the entry type, where fields live).
+        function highlight(src) {
+          var out = "", i = 0, n = src.length, state = "top", seenKey = false;
+          while (i < n) {
+            var c = src[i];
+            if (c === "@" && state === "top") {                 // @inproceedings
+              var m = /^@[A-Za-z]+/.exec(src.slice(i));
+              out += span("tok-type", m[0]); i += m[0].length; continue;
+            }
+            if (c === "{" && state === "top") {                 // open entry body
+              out += span("tok-punct", "{"); i++; state = "body"; seenKey = false; continue;
+            }
+            if (state === "body") {
+              if (/\s/.test(c)) { out += c; i++; continue; }
+              if (c === "}" || c === "," || c === "=") {
+                out += span("tok-punct", c); i++; if (c === "}") state = "top"; continue;
+              }
+              if (c === "{" || c === '"') {                     // a brace/quote value
+                var open = c, close = c === "{" ? "}" : '"', depth = 1, j = i + 1;
+                while (j < n && depth > 0) {
+                  if (src[j] === "\\") { j += 2; continue; }
+                  if (close === "}" && src[j] === "{") depth++;
+                  else if (src[j] === close) depth--;
+                  if (depth === 0) break;
+                  j++;
+                }
+                out += span("tok-string", src.slice(i, j + 1)); i = j + 1; continue;
+              }
+              // a bare token: the citation key (first), a field name (before '='),
+              // or a bare numeric value.
+              var w = /^[^\s,={}"]+/.exec(src.slice(i))[0];
+              var rest = src.slice(i + w.length);
+              if (!seenKey) { out += span("tok-key", w); seenKey = true; }
+              else if (/^\s*=/.test(rest)) out += span("tok-field", w);
+              else if (/^\d+$/.test(w)) out += span("tok-num", w);
+              else out += esc(w);
+              i += w.length; continue;
+            }
+            out += esc(c); i++;                                  // whitespace at top level
+          }
+          return out;
+        }
+
+        document.querySelectorAll("pre.bibtex").forEach(function (pre) {
+          var target = pre.querySelector("code") || pre;   // color the <code> if present
+          target.innerHTML = highlight(target.textContent);
+        });
+      })();
+    </script>
+
+    <!-- JSON highlighter: progressive enhancement over <code class="json-highlight">
+         (message-column cells and the message-topic example/raw-schema blocks). A
+         single regex tags strings, keys, numbers, and literals; if it doesn't run,
+         the raw (already pretty-printed) JSON stays perfectly readable. Tolerant of
+         slightly-malformed example payloads — it highlights what it recognizes. -->
+    <script>
+      (function () {
+        function esc(s) {
+          return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+        var TOKEN = /("(?:\\u[a-fA-F0-9]{4}|\\[^u]|[^\\"])*"\s*:?|\btrue\b|\bfalse\b|\bnull\b|-?\d+(?:\.\d+)?(?:[eE][+\-]?\d+)?)/g;
+        function highlight(json) {
+          return esc(json).replace(TOKEN, function (m) {
+            var cls = "tok-json-number";
+            if (m[0] === '"') cls = /:\s*$/.test(m) ? "tok-json-key" : "tok-json-string";
+            else if (m === "true" || m === "false") cls = "tok-json-bool";
+            else if (m === "null") cls = "tok-json-null";
+            return '<span class="' + cls + '">' + m + "</span>";
+          });
+        }
+        function apply(el) {
+          if (el.dataset.hl) return;            // highlight each block at most once
+          el.innerHTML = highlight(el.textContent);
+          el.dataset.hl = "1";
+        }
+        // Colorize what's visible now; skip blocks inside a collapsed <details>
+        // (e.g. the 100 message cells in the table) until they're opened.
+        document.querySelectorAll("code.json-highlight").forEach(function (el) {
+          var d = el.closest("details");
+          if (!d || d.open) apply(el);
+        });
+        // ...then colorize a block the first time its <details> is expanded.
+        // (toggle doesn't bubble, so listen in the capture phase.)
+        document.addEventListener("toggle", function (e) {
+          var d = e.target;
+          if (d.tagName === "DETAILS" && d.open) {
+            d.querySelectorAll("code.json-highlight:not([data-hl])").forEach(apply);
+          }
+        }, true);
+      })();
+    </script>
+</body>
+</html>

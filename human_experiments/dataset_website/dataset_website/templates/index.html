@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block body_class %}index{% endblock %}
+
+{% block extra_head %}
+<script type="application/ld+json">
+{{ metadata.structured_metadata | tojson(indent=2) }}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="site-notice" role="status">
+  <span class="label">Under Construction</span>
+  <p class="msg">This site is actively being built out — some pages and data are
+  incomplete and details may change. Thanks for your patience.</p>
+</div>
+
+<h1>{{ metadata.title or "The ToMCAT Dataset" }}</h1>
+
+{{ render_markdown("""
+Welcome to the ToMCAT dataset!
+
+The dataset is served directly from a PostgreSQL database. You can
+[browse the tables](/""" ~ database ~ """), apply filters and facets, or write your
+own read-only SQL in the [query console](/""" ~ database ~ """/-/query). Queries
+that run longer than 10 seconds are aborted to keep the site responsive; for heavy
+or whole-dataset work, [download the entire database](/download) and run it locally.
+
+Explore the [interactive schema diagram](/schema) to see the tables and the
+relationships between them.
+
+Sign up for our [mailing list](/mailing-list) to get updates on the dataset!
+
+## Citation
+
+If you use this dataset, please cite our [NeurIPS 2023
+paper](https://openreview.net/forum?id=ZJWQfgXQb6) that introduces the dataset.
+
+### BibTeX Format
+""") }}
+
+<pre class="bibtex"><code>@inproceedings{
+    pyarelal2023the,
+    title={The To{MCAT} Dataset},
+    author={Adarsh Pyarelal and Eric Duong and Caleb Jones Shibu and Paulo Soares
+        and Savannah Boyd and Payal Khosla and Valeria Pfeifer and Diheng Zhang
+        and Eric S Andrews and Rick Champlin and Vincent Paul Raymond
+        and Meghavarshini Krishnaswamy and Clayton Morrison and Emily Butler
+        and Kobus Barnard},
+    booktitle={Thirty-seventh Conference on Neural Information Processing Systems Datasets and Benchmarks Track},
+    year={2023},
+    url={https://openreview.net/forum?id=ZJWQfgXQb6}
+}</code></pre>
+
+{{ render_markdown("""
+### APA Format
+
+Adarsh Pyarelal, Eric Duong, Caleb Jones Shibu, Paulo Soares, Savannah Boyd, Payal
+Khosla, Valeria Pfeifer, Diheng Zhang, Eric S Andrews, Rick Champlin, Vincent Paul
+Raymond, Meghavarshini Krishnaswamy, Clayton Morrison, Emily Butler, & Kobus Barnard
+(2023). The ToMCAT Dataset. In Thirty-seventh Conference on Neural Information
+Processing Systems Datasets and Benchmarks Track.
+""") }}
+
+<h2 style="border-left: 10px solid #ccc; padding-left: 10px;">
+    <a href="/{{ database }}">{{ database }}</a>
+</h2>
+<p>{{ "{:,}".format(tables | sum(attribute="rows")) }} rows (estimated) in
+   {{ tables | length }} table{{ "s" if tables | length != 1 }}.</p>
+<p>
+{% for t in tables %}<a href="/{{ database }}/{{ t.name }}" title="{{ t.rows }} rows (est.)">{{ t.name }}</a>{{ ", " if not loop.last }}{% endfor %}
+</p>
+
+{{ render_markdown("""
+## Funding Acknowledgment
+
+- The creation of this dataset was funded by the Army Research Office and was
+accomplished under Grant Number W911NF-20-1-0002. The grant was awarded through the
+Defense Advanced Research Projects Agency (DARPA).
+- We would also like to acknowledge intramural seed funding from the University of
+Arizona's SensorLab.
+- Continued support (documentation updates, replying to questions from dataset
+users, etc.) is supported by Army Research Office (ARO) Award Number
+W911NF-24-2-0034.
+""") }}
+{% endblock %}

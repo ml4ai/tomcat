@@ -1,0 +1,111 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://asist.aptima.com/schemas/event_state.json",
+  "type": "object",
+  "title": "The Training Task Event Schema",
+  "version": "2.0",
+  "required": [
+    "header",
+    "msg",
+    "data"
+  ],
+  "properties": {
+    "header": {
+      "$ref": "../Common_Header/common_header.json",
+      "properties": {         
+        "message_type": {
+        "$id": "#/properties/message_type",
+        "type": "string",
+        "title": "The Message_type Schema",
+        "const": "event"
+        }
+      }
+    },
+    "msg": {
+      "$ref": "../Common_Message/common_message.json",
+      "properties": {         
+        "sub_type": {
+        "$id": "#/properties/sub_type",
+        "type": "string",
+        "title": "The Sub Type Schema",
+        "const": "Event:TrainingTask"
+        }
+      }
+    },
+    "data": {
+      "$id": "#/properties/message/properties/data",
+      "type": "object",
+      "title": "The Training Task Data Schema",
+      "required": [
+        "participant_id",
+        "callsign",
+        "task_message"		    
+      ],
+      "properties": {
+        "mission_timer": {
+          "$id": "#/properties/data/properties/mission_timer",
+          "type": "string",
+          "title": "The Mission Timer Schema",          
+          "examples": [
+            "8 : 36"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "elapsed_milliseconds": {
+          "$id": "#/properties/data/properties/elapsed_milliseconds",
+          "type": "number",
+          "title": "The Elapsed Milliseconds Schema",          
+          "examples": [
+            5000, 77459, 689457
+          ],
+          "pattern": "^[0-9]+$"
+        },
+        "participant_id": {
+          "$id": "#/properties/data/properties/participant_id",
+          "type": "string",
+          "title": "The Participant id Schema",
+          "examples": [
+            "E000321"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "callsign": {
+          "$id": "#/properties/data/properties/participant_id",
+          "type": "string",
+          "title": "The Participant id Schema",
+          "examples": [
+            "E000321"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "playername": {
+          "$id": "#/properties/data/properties/playername",
+          "type": "string",
+          "title": "The Playername Schema",          
+          "examples": [
+            "Aptiminer1"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "task_message": {
+          "$id": "#/properties/data/properties/task_message",
+          "type": "string",
+          "title": "The Task Message Schema",   
+          "enum":["Red Training: Start","Red Training: Task #1 Complete","Red Training: Task #2 Complete","Red Training: Task #3 Complete",
+            "Red Training: Task #4 Complete","Red Training: End","Red Team Training: Start","Red Team Training: End","Green Training: Start",
+            "Green Training: Task #1 Complete","Green Training: Task #2 Complete","Green Training: Task #3 Complete",
+            "Green Training: Task #4 Complete","Green Training: End","Green Team Training: Start","Green Team Training: End",
+            "Blue Training: Start","Blue Training: Task #1 Complete","Blue Training: Task #2 Complete","Blue Training: Task #3 Complete",
+            "Blue Training: Task #4 Complete","Blue Training: End","Blue Team Training: Start","Blue Team Training: End"],       
+          "examples": [
+            "Red Training: Start",
+            "Green Training: Task #1 Complete",
+            "Blue Training: Task #4 Complete"
+          ],
+          "pattern": "^(.*)$"
+        }
+      }
+    }
+  }
+}

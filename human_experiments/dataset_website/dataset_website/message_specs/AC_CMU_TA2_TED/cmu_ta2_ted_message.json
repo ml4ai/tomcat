@@ -1,0 +1,316 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://asist.aptima.com/schemas/cmu_ta2_ted_ac.json",
+  "type": "object",
+  "title": "CMU TA2 TED Analytic Component",
+  "version": "3.0",
+  "required": [
+    "header",
+    "msg",
+    "data"
+  ],
+  "properties": {
+    "header": {
+      "$ref": "../Common_Header/common_header.json",
+      "properties": {         
+        "message_type": {
+        "$id": "#/properties/message_type",
+        "type": "string",
+        "title": "The Message_type Schema",
+        "const": "agent"
+        }
+      }
+    },
+    "msg": {
+      "$ref": "../Common_Message/common_message.json",
+      "properties": {         
+        "sub_type": {
+            "$id": "#/properties/sub_type",
+            "type": "string",
+            "title": "The Sub Type Schema",
+            "const": "AC:TED"
+        },
+        "source": {
+            "$id": "#/properties/source",
+            "type": "string",
+            "title": "The Source Schema",
+            "const": "ac_cmu_ta2_ted"
+        }
+      }
+    },
+    "data": {
+      "$id": "#/properties/message/properties/data",
+      "type": "object",
+      "title": "The CMU TA2 TED Analytic Component Data Schema",
+      "required": [        
+        "elapsed_ms",
+        "delta_ms",
+        "process_coverage",
+        "process_coverage_agg",
+        "inaction_stand_s",
+        "action_triage_s",
+        "triage_count",
+        "action_dig_rubble_s",
+        "dig_rubble_count",
+        "action_move_victim_s",
+        "move_victim_count",
+        "action_explore_s",
+        "explore_count",
+        "process_triaging_agg",
+        "team_score",
+        "team_score_agg",
+        "comms_total_words",
+        "comms_equity",
+        "process_skill_use_s",
+        "process_effort_s",
+        "process_skill_use_rel",
+        "process_workload_burnt",
+        "process_skill_use_agg",
+        "process_effort_agg",
+        "process_workload_burnt_agg"
+      ],
+      "properties": {
+        "team_score_agg": {
+          "$id": "#/properties/data/properties/team_score_agg",
+          "type": "number",
+          "title": "Current Team Score",
+          "description": "Running total of team score during mission",
+          "examples": [
+            20,
+            40,
+            100
+          ],
+          "pattern": "^[0-9]+$"
+        },
+        "team_score": {
+          "$id": "#/properties/data/properties/team_score",
+          "type": "number",
+          "title": "Team Score",
+          "description": "Difference in team score from previous message",
+          "examples": [
+            20,
+            40,
+            100
+          ],
+          "pattern": "^[0-9]+$"
+        },
+        "delta_ms": {
+          "$id": "#/properties/data/properties/delta_ms",
+          "type": "number",
+          "title": "The Mission Timer Schema",
+          "description": "Time difference from previous message",
+          "examples": [
+            10000
+          ],
+          "pattern": "^[0-9]+$"
+        },
+        "elapsed_ms": {
+          "$id": "#/properties/data/properties/elapsed_ms",
+          "type": "number",
+          "title": "The Elapsed Milliseconds Schema",
+          "description": "The number of elapsed milliseconds since mission start from the State message",
+          "examples": [
+            10000
+          ],
+          "pattern": "^[0-9]+$"
+        },
+        "process_coverage": {
+          "$id": "#/properties/data/properties/process_coverage",
+          "type": "number",
+          "title": "TODO",
+          "description": "TODO",
+          "examples": [
+            100
+          ],
+          "pattern": "^[0-9]+$"
+        },
+        "process_coverage_agg": {
+          "$id": "#/properties/data/properties/process_coverage_agg",
+          "type": "number",
+          "title": "TODO",
+          "description": "TODO",
+          "examples": [
+            0.0229
+          ]
+        },
+        "inaction_stand_s": {
+          "$id": "#/properties/data/properties/inaction_stand_s",
+          "type": "number",
+          "title": "TODO",
+          "description": "TODO",
+          "examples": [
+            0.0
+          ]
+        },
+        "action_triage_s": {
+          "$id": "#/properties/data/properties/action_triage_s",
+          "type": "number",
+          "title": "TODO",
+          "description": "TODO",
+          "examples": [
+            0.0
+          ]
+        },
+        "triage_count": {
+          "$id": "#/properties/data/properties/triage_count",
+          "type": "number",
+          "title": "TODO",
+          "description": "TODO",
+          "examples": [
+            0
+          ],
+          "pattern": "^[0-9]+$"
+        },
+        "action_dig_rubble_s": {
+          "$id": "#/properties/data/properties/action_dig_rubble_s",
+          "type": "number",
+          "title": "TODO",
+          "description": "TODO",
+          "examples": [
+            0.0
+          ]
+        },
+        "dig_rubble_count": {
+          "$id": "#/properties/data/properties/dig_rubble_count",
+          "type": "number",
+          "title": "TODO",
+          "description": "TODO",
+          "examples": [
+            0
+          ],
+          "pattern": "^[0-9]+$"
+        },
+        "action_move_victim_s": {
+          "$id": "#/properties/data/properties/action_move_victim_s",
+          "type": "number",
+          "title": "TODO",
+          "description": "TODO",
+          "examples": [
+            0.0
+          ]
+        },
+        "move_victim_count": {
+          "$id": "#/properties/data/properties/move_victim_count",
+          "type": "number",
+          "title": "TODO",
+          "description": "TODO",
+          "examples": [
+            0
+          ],
+          "pattern": "^[0-9]+$"
+        },
+        "action_explore_s": {
+          "$id": "#/properties/data/properties/action_explore_s",
+          "type": "number",
+          "title": "TODO",
+          "description": "TODO",
+          "examples": [
+            7.858
+          ]
+        },
+        "explore_count": {
+          "$id": "#/properties/data/properties/explore_count",
+          "type": "number",
+          "title": "TODO",
+          "description": "TODO",
+          "examples": [
+            181
+          ],
+          "pattern": "^[0-9]+$"
+        },
+        "process_triaging_agg": {
+          "$id": "#/properties/data/properties/process_triaging_agg",
+          "type": "number",
+          "title": "TODO",
+          "description": "TODO",
+          "examples": [
+            0.0
+          ]
+        },
+        "message_freq": {
+          "$id": "#/properties/data/properties/comms_total_words",
+          "type": "number",
+          "title": "TODO",
+          "description": "TODO",
+          "examples": [
+            0
+          ],
+          "pattern": "^[0-9]+$"
+        },
+        "message_equity": {
+          "$id": "#/properties/data/properties/comms_equity",
+          "type": "number",
+          "title": "TODO",
+          "description": "TODO",
+          "examples": [
+            0.0
+          ]
+        },
+        "process_skill_use_s": {
+          "$id": "#/properties/data/properties/process_skill_use_s",
+          "type": "number",
+          "title": "TODO",
+          "description": "TODO",
+          "examples": [
+            7.858
+          ]
+        },
+        "process_effort_s": {
+          "$id": "#/properties/data/properties/process_effort_s",
+          "type": "number",
+          "title": "TODO",
+          "description": "TODO",
+          "examples": [
+            10.047
+          ]
+        },
+        "process_skill_use_rel": {
+          "$id": "#/properties/data/properties/process_skill_use_rel",
+          "type": "number",
+          "title": "TODO",
+          "description": "TODO",
+          "examples": [
+            0.7821
+          ]
+        },
+        "process_workload_burnt": {
+          "$id": "#/properties/data/properties/process_workload_burnt",
+          "type": "number",
+          "title": "TODO",
+          "description": "TODO",
+          "examples": [
+            0.0101
+          ]
+        },
+        "process_skill_use_agg": {
+          "$id": "#/properties/data/properties/process_skill_use_agg",
+          "type": "number",
+          "title": "TODO",
+          "description": "TODO",
+          "examples": [
+            0.0288
+          ]
+        },
+        "process_effort_agg": {
+          "$id": "#/properties/data/properties/process_effort_agg",
+          "type": "number",
+          "title": "TODO",
+          "description": "TODO",
+          "examples": [
+            0.0288
+          ]
+        },
+        "process_workload_burnt_agg": {
+          "$id": "#/properties/data/properties/process_workload_burnt_agg",
+          "type": "number",
+          "title": "TODO",
+          "description": "TODO",
+          "examples": [
+            0.0288
+          ]
+        }
+      }
+    }
+  }
+}

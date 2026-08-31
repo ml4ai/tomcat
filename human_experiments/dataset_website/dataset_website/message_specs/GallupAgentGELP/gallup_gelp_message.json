@@ -1,0 +1,161 @@
+{
+    "definitions": {},
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://asist.aptima.com/schemas/GALLUP_EL.json",
+    "type": "object",
+    "title": "Gallup - Emergent Leadership Prediction (GELP)",
+    "version": "0.6.0",
+    "required": [
+		"header",
+		"msg",
+		"data"		
+    ],
+	"properties": {
+		"header": {
+			"$ref": "../Common_Header/common_header.json"
+		},
+		"msg": {      
+			"$ref": "../Common_Message/common_message.json"
+		},
+		"data": {
+			"$id": "#/properties/data",
+			"type": "object",
+			"title": "The Comment Data Schema",
+			"required": [
+				"gelp_msg_id",
+				"gelp_pub_minute",
+				"created_ts",
+				"gelp_results"
+			],
+			"properties": {
+				"agent_name":{
+					"$id": "#/properties/data/properties/gelp_msg_id",
+					"type": "string",
+					"title": "Unique message id",          
+					"examples": ["3f42e519-85eb-49a3-b811-745525cba829"],
+					"pattern": "^.+\\-.+\\-.+\\-.+\\-.+$"
+				},
+				"version":{
+					"$id": "#/properties/data/properties/gelp_pub_minute",
+					"type": "number",
+					"title": "Minute of trial",          
+					"examples": [13],
+					"pattern": "^\\d+$"
+				},
+				"owner":{
+					"$id": "#/properties/data/properties/created_ts",
+					"type": "string",
+					"format": "date-time",
+					"title": "The event time, format ISO 8601",          
+					"examples": ["2021-12-12T22:03:27.277182Z"],
+					"pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z"
+				},
+				"gelp_results":{
+					"$id": "#/properties/data/properties/gelp_results",
+					"type": "object",
+					"title": "GELP calculated results",
+					"required": [
+						"participant_id", 
+						"callsign", 
+						"gelp_overall",
+						"gelp_overall_lower_bound",
+						"gelp_overall_upper_bound",
+						"gelp_components",
+						"gelp_components_lower_bound",
+						"gelp_components_upper_bound",
+						"gelp_missingness_factor"
+					],
+					"participant_id":{
+						"$id": "#/properties/data/properties/gelp_results/properties/participant_id",
+						"type": "string",
+						"title": "The participant id",          
+						"examples": ["E000997","E000998","E000999"],
+						"pattern": "^([A-Z]\\d{6})$"
+					},
+					"callsign":{
+						"$id": "#/properties/data/properties/gelp_results/properties/callsign",
+						"type": "string",
+						"title": "The participant callsign for trial",          
+						"examples": ["Green","Red","Blue"],
+						"pattern": "^[A-Za-z]+$"
+					},		
+					"gelp_overall": {
+						"$id": "#/properties/data/properties/gelp_results/properties/gelp_overall",
+						"type": "number",
+						"title": "The Gallup - Emergent Leadership Prediction (GELP) overall score",
+						"examples": [5.646666666666667]                                                           	
+						},
+					"gelp_overall_lower_bound": {
+						"$id": "#/properties/data/properties/gelp_results/properties/gelp_overall_lower_bound",
+						"type": "number",
+						"title": "The Gallup - Emergent Leadership Prediction (GELP) overall score, lower bound",
+						"examples": [2.5957446685571199]                                                           		
+						},
+					"gelp_overall_upper_bound": {
+						"$id": "#/properties/data/properties/gelp_results/properties/gelp_overall_upper_bound",
+						"type": "number",
+						"title": "The Gallup - Emergent Leadership Prediction (GELP) overall score, upper bound",
+						"examples": [8.697588664776216]                                                           	
+						},
+					"gelp_components_overall": { 
+						"$id": "#/properties/data/properties/gelp_results/properties/gelp_components",
+						"type": "array",
+						"title": "The Gallup - Emergent Leadership Prediction (GELP) Components object: Overall Scores by Component where index 0 equates to component 1, etc.",
+						"maxItems": 8,
+						"items": {
+							"type": "number",
+							"examples": [3.6746666666666676,
+								3.7173333333333327,
+								4.348333333333333,
+								3.749,
+								3.954,
+								3.7768333333333325,
+								4.126666666666668,
+								4.704833333333332]
+							}
+						},
+					"gelp_components_lower_bound": { 
+						"$id": "#/properties/data/properties/gelp_results/properties/gelp_components_lower_bound",
+						"type": "array",
+						"title": "The Gallup - Emergent Leadership Prediction (GELP) Components object: Lower Bound Scores by Component where index 0 equates to component 1, etc.",
+						"maxItems": 8,
+						"items": {
+							"type": "number",
+							"examples": [1.3532169230855602,
+								1.037764495541964,
+								2.213507249076661,
+								0.9541372377893325,
+								1.7839631636720066,
+								1.3295101456930275,
+								1.827645380629761,
+								2.579154438808013]
+							}
+						},
+					"gelp_components_upper_bound": { 
+						"$id": "#/properties/data/properties/gelp_results/properties/gelp_components_upper_bound",
+						"type": "array",
+						"title": "The Gallup - Emergent Leadership Prediction (GELP) Components object: Upper Bound Scores by Component where index 0 equates to component 1, etc.",
+						"maxItems": 8,
+						"items": {
+							"type": "number",
+							"examples": [5.996116410247774,
+								6.396902171124701,
+								6.483159417590004,
+								6.543862762210668,
+								6.124036836327994,
+								6.224156520973637,
+								6.425687952703575,
+								6.830512227858652]
+							}
+						},
+					"gelp_missingness_factor": {
+						"$id": "#/properties/data/properties/gelp_results/properties/gelp_missingness_factor",
+						"type": "number",
+						"title": "Ratio of unavailable participant feature columns vs. model-expected feature columns at time of calculation. Lower result indicates less imputation of missing data in model at time of calculation.",
+						"examples": [0.8813559322033898] 
+						}
+					}		
+				}
+			}
+		}
+	}

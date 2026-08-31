@@ -1,0 +1,123 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://asist.aptima.com/schemas/event_player_location.json",
+  "type": "object",
+  "title": "The Event Player Location Schema",
+  "version": "3.0",
+  "required": [
+    "header",
+    "msg",
+    "data"
+  ],
+  "properties": {
+    "header": {
+      "$ref": "../Common_Header/common_header.json",
+      "properties": {         
+        "message_type": {
+        "$id": "#/properties/message_type",
+        "type": "string",
+        "title": "The Message_type Schema",
+        "const": "event"
+        }
+      }
+    },
+    "msg": {
+      "$ref": "../Common_Message/common_message.json",
+      "properties": {         
+        "sub_type": {
+        "$id": "#/properties/sub_type",
+        "type": "string",
+        "title": "The Sub Type Schema",
+        "const": "Event:location"
+        }
+      }
+    },
+    "data": {
+      "$id": "#/properties/message/properties/data",
+      "type": "object",
+      "title": "The Location Change Data Schema",
+      "required": [        
+        "participant_id",
+        "mission_timer",
+        "elapsed_milliseconds",
+        "corresponding_observation_number"
+      ],
+      "properties": {
+        "participant_id": {
+          "$id": "#/properties/data/properties/participant_id",
+          "type": "string",
+          "title": "The participant_id schema",
+          "description": "The participant id this data is associated with",
+          "examples": [
+            "participant_1"
+          ]
+        },
+        "callsign": {
+          "$id": "#/properties/data/properties/callsign",
+          "type": "string",
+          "title": "The Call Sign Assigned to the Player",
+          "examples": [
+            "Alpha", "Bravo","Delta", "Red", "Green", "Blue"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "mission_timer": {
+          "$id": "#/properties/event/state/mission_timer",
+          "type": "string",
+          "title": "The Mission Timer Schema",
+          "examples": [
+            "8 : 36"
+          ],
+          "pattern": "(^([0-9]*? : [+0-9]*?)$)|(^Mission Timer not initialized\\.$)"
+        },
+        "elapsed_milliseconds": {
+          "$id": "#/properties/event/state/elapsed_milliseconds",
+          "type": "number",
+          "title": "The Elapsed Milliseconds Schema",
+          "examples": [
+            5000, 77459, 689457
+          ],
+          "pattern": "^[0-9]+$"
+        },
+        "cooresponding_observation_number": {
+          "$id": "#/properties/data/properties/cooresponding_observation_number",
+          "type": "integer",
+          "title": "The Corresponding Observation Number from the State Message",
+          "default": 0,
+          "examples": [
+            6857
+          ]
+        },
+        "locations": {
+          "$id": "#/properties/data/properties/location_list",
+          "type": "array",
+          "items": { "$ref": "./location.json" },
+          "title": "The Location List Schema",
+          "default": ""
+        },
+        "connections": {
+          "$id": "#/properties/data/properties/connection_list",
+          "type": "array",
+          "items": { "$ref": "./connection.json" },
+          "title": "The connection List Schema",
+          "default": ""
+        },
+        "exited_locations": {
+          "$id": "#/properties/data/properties/exited_location_list",
+          "type": "array",
+          "items": { "$ref": "./location.json" },
+          "title": "The Exited Location List Schema",
+          "default": ""
+        },
+        "exited_connections": {
+          "$id": "#/properties/data/properties/exited_connection_list",
+          "type": "array",
+          "items": { "$ref": "./connection.json" },
+          "title": "The Exited Connection List Schema",
+          "default": ""
+        }
+      }
+    }
+  }
+}

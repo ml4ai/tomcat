@@ -1,0 +1,41 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://asist.aptima.com/schemas/event_state.json",
+  "type": "object",
+  "title": "The GroundTruth SemanticMap Location Schema",
+  "version": "1.0",
+  "required": [
+    "id"
+  ],
+  "properties": {
+    "id": {
+      "$id": "#/properties/data/properties/semantic_map/location/id",
+      "type": "string",
+      "title": "The id of the location",
+      "pattern": "^(.*)$"
+    },
+    "name": {
+      "$id": "#/properties/data/properties/semantic_map/location/name",
+      "type": "string",
+      "title": "The name of the location",
+      "pattern": "^(.*)$"
+    },
+    "type": {
+      "$id": "#/properties/data/properties/semantic_map/location/id",
+      "type": "string",
+      "title": "The type of the location",
+      "examples": [
+        "hallway", "room", "elevator", "bathroom", "yard"
+      ],
+      "pattern": "^(.*)$"
+    },
+    "child_locations": {
+      "$id": "#/properties/data/properties/semantic_map/location/child_locations",
+      "type": "array",
+      "items": { "type": "string" },
+      "title": "Location ids of this location's children"
+    },
+    "bounds": { "$ref": "./bounds.json" }
+  }
+}

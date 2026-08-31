@@ -1,0 +1,89 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://asist.aptima.com/schemas/control.json",
+  "type": "object",
+  "title": "The ASIST control message Schema",
+  "version": "0.3",
+  "required": [
+    "header",
+    "msg"
+  ],
+  "properties": {
+    "header": {
+        "$ref": "../Common_Header/common_header.json",
+        "properties": {         
+          "message_type": {
+            "$id": "#/properties/message_type",
+            "type": "string",
+            "title": "The Message_type Schema",
+            "const": "control"
+          }
+        }
+    },
+    "msg": {
+      "$id": "#/properties/msg",
+      "type": "object",
+      "title": "The Control Message Schema",
+      "required": [
+        "command",
+        "experiment_name",
+		    "trial_id"
+      ],
+      "properties": {
+        "command": {
+          "$id": "#/properties/message/properties/command",
+          "type": "string",
+          "title": "The Command Schema",
+          "default": "",
+          "enum": [ "init", "start", "pause", "stop", "replay" ],
+          "examples": [
+            "replay"
+          ],
+          "pattern": "^(.*)$"
+        },
+
+        "experiment_name": {
+          "$id": "#/properties/message/properties/experiment_name",
+          "type": "string",
+          "title": "The Experiment_name Schema",
+          "default": "",
+          "examples": [
+            "Engineering Test 1"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "start_time": {
+          "$id": "#/properties/message/properties/start_time",
+          "type": "string",
+          "title": "The Start_time Schema",
+          "default": "",
+          "examples": [
+            "2019-12-26T12:43:16.0000Z"
+          ],
+          "pattern": "[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}[.]?[0-9]{0,}?Z"
+        },
+        "trial_id": {
+          "$id": "#/properties/message/properties/trial_id",
+          "type": "string",
+          "title": "The Trial_id Schema",
+          "default": "",
+          "examples": [
+            "123e4567-e89b-12d3-a456-426655440000"
+          ],
+          "pattern": "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
+        },
+        "replay_id": {
+          "$id": "#/properties/message/properties/replay_id",
+          "type": "string",
+          "title": "The replay_id Schema",
+          "default": "",
+          "examples": [
+            "123e4567-e89b-12d3-a456-426655440000"
+          ],
+          "pattern": "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
+        }
+      }
+    }
+  }
+}

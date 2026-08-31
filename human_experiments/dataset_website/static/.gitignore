@@ -1,0 +1,4 @@
+# The repo-root .gitignore ignores *.pdf, but this archival copy of the
+# data-products document is a served static asset (linked from /documentation
+# and /derived-data-products), so keep it tracked.
+!data_products.pdf

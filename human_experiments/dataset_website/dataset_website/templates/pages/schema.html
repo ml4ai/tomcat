@@ -1,0 +1,436 @@
+{% extends "base.html" %}
+
+{% block title %}Schema — {{ metadata.title or "ToMCAT Dataset" }}{% endblock %}
+{% block body_class %}schema{% endblock %}
+
+{% block extra_head %}
+<style>
+  /* ---- Interactive ERD ---------------------------------------------------- */
+  .erd-intro p { max-width: 70ch; }
+
+  .erd-toolbar { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap;
+                 margin: .75rem 0; }
+  .erd-toolbar .zoom { display: inline-flex; border: 1px solid var(--line);
+                 border-radius: 9px; overflow: hidden; background: var(--surface); }
+  .erd-toolbar .zoom button { border: 0; background: none; color: var(--ink);
+                 font-family: var(--font-mono); font-size: .85rem; line-height: 1;
+                 padding: .4rem .7rem; cursor: pointer; }
+  .erd-toolbar .zoom button + button { border-left: 1px solid var(--line); }
+  .erd-toolbar .zoom button:hover { background: var(--accent-soft); color: var(--accent-strong); }
+  .erd-hint { color: var(--muted); font-size: .82rem; }
+  .erd-png { margin-left: auto; font-size: .85rem; }
+
+  .erd { position: relative; height: 72vh; min-height: 440px; overflow: hidden;
+         border: 1px solid var(--line); border-radius: var(--radius);
+         background:
+           radial-gradient(circle at 1px 1px, var(--line) 1px, transparent 1.4px) 0 0 / 22px 22px,
+           var(--surface);
+         box-shadow: var(--shadow); touch-action: none; cursor: grab; }
+  .erd.panning { cursor: grabbing; }
+  .erd.is-loading::after { content: "Loading schema…"; position: absolute; inset: 0;
+         display: grid; place-items: center; color: var(--muted);
+         font-family: var(--font-mono); font-size: .85rem; }
+
+  .erd-canvas { position: absolute; top: 0; left: 0; transform-origin: 0 0; }
+  .erd-edges { position: absolute; top: 0; left: 0; overflow: visible; pointer-events: none; }
+  .erd-edges path { fill: none; stroke: var(--muted); stroke-width: 1.5; opacity: .5;
+         transition: opacity .15s, stroke .15s, stroke-width .15s; }
+  .erd-edges path.hot { stroke: var(--accent); opacity: 1; stroke-width: 2.2; }
+  .erd-edges path.dim { opacity: .1; }
+
+  .erd-table { position: absolute; width: max-content; min-width: 132px; max-width: 240px;
+         background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+         box-shadow: var(--shadow); font-size: .82rem; user-select: none;
+         transition: box-shadow .15s, opacity .15s, border-color .15s; }
+  .erd-table.dragging { box-shadow: 0 10px 30px -10px rgba(0,0,0,.45); z-index: 10;
+         border-color: var(--accent); }
+  .erd-table.hot { border-color: var(--accent); }
+  .erd-table.dim { opacity: .3; }
+  .erd-th { display: block; font-family: var(--font-mono); font-weight: 600; font-size: .8rem;
+         padding: .4rem .6rem; border-bottom: 1px solid var(--line);
+         background: var(--surface-2); border-radius: 10px 10px 0 0;
+         color: var(--ink) !important; text-decoration: none; cursor: grab; }
+  .erd-th:hover { color: var(--accent) !important; }
+  .erd-cols { padding: .25rem 0; }
+  .erd-col { display: flex; align-items: center; gap: .45rem; padding: .12rem .65rem;
+         font-family: var(--font-mono); white-space: nowrap; color: var(--ink); }
+  .erd-col[hidden] { display: none; }
+  .erd-col.fk { color: var(--accent-strong); }
+  .erd-badge { width: 1em; text-align: center; font-size: .7rem; flex: none; }
+  .erd-badge.pk { color: var(--cm-num); }
+  .erd-badge.fk { color: var(--accent); }
+  .erd-more { display: block; width: 100%; text-align: left; background: none;
+         border: 0; border-top: 1px dashed var(--line); color: var(--muted);
+         font-family: var(--font-mono); font-size: .72rem; padding: .28rem .65rem;
+         cursor: pointer; border-radius: 0 0 10px 10px; }
+  .erd-more:hover { color: var(--accent); background: var(--accent-soft); }
+
+  #erd-fallback { position: absolute; inset: 0; display: none; place-items: center;
+         padding: 1rem; overflow: auto; text-align: center; }
+  #erd-fallback.show { display: grid; }
+  #erd-fallback img { border: 1px solid var(--line); border-radius: var(--radius); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Schema</h1>
+    <p>The tables of the database and the foreign-key relationships between them.</p>
+</div>
+
+<div class="erd-intro">
+    <p>Drag a table to rearrange it, scroll to zoom, and drag the background to pan.
+       Hover a table to highlight what it connects to; a table&rsquo;s heading links
+       to its browse page. <span class="erd-badge pk">&#9670;</span> marks a primary-key
+       column and <span class="erd-badge fk">&#8599;</span> a foreign key.</p>
+</div>
+
+<div class="erd-toolbar">
+    <span class="zoom">
+        <button type="button" data-z="out" aria-label="Zoom out">&minus;</button>
+        <button type="button" data-z="reset">fit</button>
+        <button type="button" data-z="in" aria-label="Zoom in">+</button>
+    </span>
+    <span class="erd-hint">drag &middot; scroll to zoom &middot; drag background to pan</span>
+    <a class="erd-png" href="/assets/db_diagram.png" target="_blank" rel="noopener">static diagram &#8599;</a>
+</div>
+
+<div id="erd" class="erd is-loading">
+    <div id="erd-canvas" class="erd-canvas">
+        <svg id="erd-edges" class="erd-edges"></svg>
+    </div>
+    <div id="erd-fallback">
+        <div>
+            <p class="erd-hint" style="margin-bottom:.75rem">Couldn&rsquo;t load the
+               interactive diagram. Here is the static version:</p>
+            <img src="/assets/db_diagram.png" alt="Database schema diagram">
+        </div>
+    </div>
+</div>
+
+<noscript>
+    <p>The interactive diagram needs JavaScript. Here is the static version:</p>
+    <img src="/assets/db_diagram.png" alt="Database schema diagram">
+</noscript>
+
+<script>
+(function () {
+  var DB = "{{ db_name }}";
+  var container = document.getElementById("erd");
+  var canvas = document.getElementById("erd-canvas");
+  var svg = document.getElementById("erd-edges");
+  var fallback = document.getElementById("erd-fallback");
+
+  var W = 1500, H = 1000;          // logical canvas size (px, pre-zoom)
+  var zoom = 1, panX = 0, panY = 0;
+  var nodes = [], byName = {}, edges = [], edgeEls = [];
+
+  function applyTransform() {
+    canvas.style.transform = "translate(" + panX + "px," + panY + "px) scale(" + zoom + ")";
+  }
+
+  fetch("/" + DB + "/-/schema-graph.json")
+    .then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.json(); })
+    .then(build)
+    .catch(showFallback);
+
+  function showFallback() {
+    container.classList.remove("is-loading");
+    fallback.classList.add("show");
+  }
+
+  function build(data) {
+    if (!data.tables || !data.tables.length) return showFallback();
+    container.classList.remove("is-loading");
+
+    canvas.style.width = W + "px";
+    canvas.style.height = H + "px";
+    svg.setAttribute("width", W);
+    svg.setAttribute("height", H);
+    svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+
+    // Degree drives nothing structurally, but we render every table as a card.
+    data.tables.forEach(function (t) {
+      var node = { name: t.name, el: buildCard(t), x: 0, y: 0, w: 0, h: 0, rows: {} };
+      canvas.appendChild(node.el);
+      nodes.push(node);
+      byName[t.name] = node;
+    });
+
+    edges = data.edges.filter(function (e) {
+      return e.source !== e.target && byName[e.source] && byName[e.target];
+    });
+
+    nodes.forEach(measure);
+    layout();
+    nodes.forEach(place);
+    buildEdges();
+    drawEdges();
+    fitView();
+    wireInteractions();
+
+    // Re-measure once webfonts settle (card sizes shift slightly), then redraw.
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(function () {
+        nodes.forEach(measure); nodes.forEach(place); drawEdges(); fitView();
+      });
+    }
+  }
+
+  function buildCard(t) {
+    var el = document.createElement("div");
+    el.className = "erd-table";
+    el.dataset.name = t.name;
+
+    var th = document.createElement("a");
+    th.className = "erd-th";
+    th.href = "/" + DB + "/" + t.name;
+    th.textContent = t.name;
+    el.appendChild(th);
+
+    var cols = document.createElement("div");
+    cols.className = "erd-cols";
+    var hiddenCount = 0;
+    t.columns.forEach(function (c) {
+      var row = document.createElement("div");
+      row.className = "erd-col" + (c.fk ? " fk" : "");
+      row.dataset.col = c.name;
+      var badge = document.createElement("span");
+      badge.className = "erd-badge " + (c.pk ? "pk" : c.fk ? "fk" : "");
+      badge.textContent = c.pk ? "◆" : c.fk ? "↗" : "";
+      row.appendChild(badge);
+      row.appendChild(document.createTextNode(c.name));
+      // Show key columns by default; tuck the rest behind a toggle.
+      if (!c.pk && !c.fk) { row.hidden = true; hiddenCount++; }
+      cols.appendChild(row);
+    });
+    el.appendChild(cols);
+
+    if (hiddenCount > 0) {
+      var more = document.createElement("button");
+      more.type = "button";
+      more.className = "erd-more";
+      more.textContent = "+ " + hiddenCount + " more";
+      more.addEventListener("click", function (e) {
+        e.stopPropagation();
+        var showing = more.dataset.open === "1";
+        cols.querySelectorAll(".erd-col").forEach(function (r) {
+          if (!r.querySelector(".erd-badge").textContent) r.hidden = showing;
+        });
+        more.dataset.open = showing ? "0" : "1";
+        more.textContent = showing ? "+ " + hiddenCount + " more" : "− fewer";
+        var node = byName[t.name];
+        measure(node); place(node); drawEdges();
+      });
+      el.appendChild(more);
+    }
+    return el;
+  }
+
+  function measure(node) {
+    node.w = node.el.offsetWidth;
+    node.h = node.el.offsetHeight;
+    node.rows = {};
+    node.el.querySelectorAll(".erd-col").forEach(function (r) {
+      if (!r.hidden) node.rows[r.dataset.col] = r.offsetTop + r.offsetHeight / 2;
+    });
+  }
+
+  function place(node) {
+    node.el.style.left = node.x + "px";
+    node.el.style.top = node.y + "px";
+  }
+
+  // Force-directed layout (Fruchterman–Reingold) with gentle centering, then a
+  // few overlap-removal passes. Deterministic: seeded on a circle by index.
+  function layout() {
+    var n = nodes.length, cx = W / 2, cy = H / 2, R = Math.min(W, H) * 0.36;
+    nodes.forEach(function (nd, i) {
+      var a = (i / n) * Math.PI * 2;
+      nd.x = cx + R * Math.cos(a) - nd.w / 2;
+      nd.y = cy + R * Math.sin(a) - nd.h / 2;
+    });
+    var k = Math.sqrt((W * H) / n) * 0.62;
+    for (var it = 0; it < 320; it++) {
+      var cool = 1 - it / 320;
+      nodes.forEach(function (a) { a.dx = 0; a.dy = 0; });
+      for (var i = 0; i < n; i++) {
+        for (var j = i + 1; j < n; j++) {
+          var a = nodes[i], b = nodes[j];
+          var ax = a.x + a.w / 2, ay = a.y + a.h / 2;
+          var bx = b.x + b.w / 2, by = b.y + b.h / 2;
+          var dx = ax - bx, dy = ay - by, d = Math.hypot(dx, dy) || 0.5;
+          var f = (k * k) / d;
+          a.dx += dx / d * f; a.dy += dy / d * f;
+          b.dx -= dx / d * f; b.dy -= dy / d * f;
+        }
+      }
+      edges.forEach(function (e) {
+        var a = byName[e.source], b = byName[e.target];
+        var ax = a.x + a.w / 2, ay = a.y + a.h / 2;
+        var bx = b.x + b.w / 2, by = b.y + b.h / 2;
+        var dx = ax - bx, dy = ay - by, d = Math.hypot(dx, dy) || 0.5;
+        var f = (d * d) / k;
+        a.dx -= dx / d * f; a.dy -= dy / d * f;
+        b.dx += dx / d * f; b.dy += dy / d * f;
+      });
+      nodes.forEach(function (a) {
+        var ax = a.x + a.w / 2, ay = a.y + a.h / 2;
+        a.dx += (cx - ax) * 0.018; a.dy += (cy - ay) * 0.018;
+        var disp = Math.hypot(a.dx, a.dy) || 1;
+        var lim = Math.min(disp, 30 * cool + 2);
+        a.x += a.dx / disp * lim; a.y += a.dy / disp * lim;
+      });
+    }
+    for (var p = 0; p < 80; p++) {
+      for (var i2 = 0; i2 < n; i2++) {
+        for (var j2 = i2 + 1; j2 < n; j2++) separate(nodes[i2], nodes[j2]);
+      }
+    }
+  }
+
+  function separate(a, b) {
+    var gap = 26;
+    var ax = a.x - gap, ay = a.y - gap, aw = a.w + 2 * gap, ah = a.h + 2 * gap;
+    var ox = Math.min(ax + aw, b.x + b.w) - Math.max(ax, b.x);
+    var oy = Math.min(ay + ah, b.y + b.h) - Math.max(ay, b.y);
+    if (ox > 0 && oy > 0) {
+      if (ox < oy) { var s = ox / 2; if (a.x < b.x) { a.x -= s; b.x += s; } else { a.x += s; b.x -= s; } }
+      else { var s2 = oy / 2; if (a.y < b.y) { a.y -= s2; b.y += s2; } else { a.y += s2; b.y -= s2; } }
+    }
+  }
+
+  function buildEdges() {
+    edges.forEach(function (e) {
+      var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      svg.appendChild(path);
+      edgeEls.push({ el: path, edge: e });
+    });
+  }
+
+  function rowY(node, col) {
+    return node.y + (node.rows[col] !== undefined ? node.rows[col] : node.h / 2);
+  }
+
+  function drawEdges() {
+    edgeEls.forEach(function (o) {
+      var s = byName[o.edge.source], t = byName[o.edge.target];
+      var scx = s.x + s.w / 2, tcx = t.x + t.w / 2;
+      var sLeft = tcx < scx;              // source anchored on its left side?
+      var tLeft = scx < tcx;              // target anchored on its left side?
+      var x1 = sLeft ? s.x : s.x + s.w;
+      var y1 = rowY(s, o.edge.source_columns[0]);
+      var x2 = tLeft ? t.x : t.x + t.w;
+      var y2 = rowY(t, o.edge.target_columns[0]);
+      var dx = Math.max(40, Math.abs(x2 - x1) * 0.5);
+      var c1 = x1 + (sLeft ? -dx : dx);
+      var c2 = x2 + (tLeft ? -dx : dx);
+      o.el.setAttribute("d", "M" + x1 + "," + y1 + " C" + c1 + "," + y1 +
+        " " + c2 + "," + y2 + " " + x2 + "," + y2);
+    });
+  }
+
+  function fitView() {
+    if (!nodes.length) return;
+    var pad = 48;
+    var minx = Infinity, miny = Infinity, maxx = -Infinity, maxy = -Infinity;
+    nodes.forEach(function (n) {
+      minx = Math.min(minx, n.x); miny = Math.min(miny, n.y);
+      maxx = Math.max(maxx, n.x + n.w); maxy = Math.max(maxy, n.y + n.h);
+    });
+    var bw = maxx - minx + 2 * pad, bh = maxy - miny + 2 * pad;
+    var cw = container.clientWidth, ch = container.clientHeight;
+    zoom = Math.max(0.2, Math.min(cw / bw, ch / bh, 1.15));
+    panX = (cw - bw * zoom) / 2 - (minx - pad) * zoom;
+    panY = (ch - bh * zoom) / 2 - (miny - pad) * zoom;
+    applyTransform();
+  }
+
+  function highlight(name) {
+    var near = {}; near[name] = 1;
+    edges.forEach(function (e) {
+      if (e.source === name) near[e.target] = 1;
+      if (e.target === name) near[e.source] = 1;
+    });
+    nodes.forEach(function (nd) {
+      nd.el.classList.toggle("hot", nd.name === name);
+      nd.el.classList.toggle("dim", !near[nd.name]);
+    });
+    edgeEls.forEach(function (o) {
+      var on = o.edge.source === name || o.edge.target === name;
+      o.el.classList.toggle("hot", on);
+      o.el.classList.toggle("dim", !on);
+    });
+  }
+  function clearHighlight() {
+    nodes.forEach(function (nd) { nd.el.classList.remove("hot", "dim"); });
+    edgeEls.forEach(function (o) { o.el.classList.remove("hot", "dim"); });
+  }
+
+  function wireInteractions() {
+    var dragNode = null, panning = false;
+    var sx = 0, sy = 0, ox = 0, oy = 0, opx = 0, opy = 0;
+
+    nodes.forEach(function (node) {
+      node.el.addEventListener("pointerdown", function (e) {
+        if (e.target.closest("a, button")) return;   // links/toggle keep working
+        e.preventDefault(); e.stopPropagation();
+        dragNode = node; sx = e.clientX; sy = e.clientY; ox = node.x; oy = node.y;
+        node.el.classList.add("dragging");
+        node.el.setPointerCapture(e.pointerId);
+      });
+      node.el.addEventListener("pointermove", function (e) {
+        if (dragNode !== node) return;
+        node.x = ox + (e.clientX - sx) / zoom;
+        node.y = oy + (e.clientY - sy) / zoom;
+        place(node); drawEdges();
+      });
+      function end() { if (dragNode === node) { node.el.classList.remove("dragging"); dragNode = null; } }
+      node.el.addEventListener("pointerup", end);
+      node.el.addEventListener("pointercancel", end);
+      node.el.addEventListener("mouseenter", function () { if (!dragNode) highlight(node.name); });
+      node.el.addEventListener("mouseleave", function () { if (!dragNode) clearHighlight(); });
+    });
+
+    container.addEventListener("pointerdown", function (e) {
+      if (e.target.closest(".erd-table")) return;
+      panning = true; sx = e.clientX; sy = e.clientY; opx = panX; opy = panY;
+      container.classList.add("panning");
+      container.setPointerCapture(e.pointerId);
+    });
+    container.addEventListener("pointermove", function (e) {
+      if (!panning) return;
+      panX = opx + (e.clientX - sx); panY = opy + (e.clientY - sy);
+      applyTransform();
+    });
+    function panEnd() { panning = false; container.classList.remove("panning"); }
+    container.addEventListener("pointerup", panEnd);
+    container.addEventListener("pointercancel", panEnd);
+
+    container.addEventListener("wheel", function (e) {
+      e.preventDefault();
+      var rect = container.getBoundingClientRect();
+      var mx = e.clientX - rect.left, my = e.clientY - rect.top;
+      var old = zoom;
+      zoom = Math.max(0.2, Math.min(2.5, zoom * (e.deltaY < 0 ? 1.1 : 1 / 1.1)));
+      panX = mx - (mx - panX) * (zoom / old);
+      panY = my - (my - panY) * (zoom / old);
+      applyTransform();
+    }, { passive: false });
+
+    document.querySelectorAll(".erd-toolbar [data-z]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var z = btn.dataset.z;
+        if (z === "reset") return fitView();
+        var rect = container.getBoundingClientRect();
+        var mx = rect.width / 2, my = rect.height / 2, old = zoom;
+        zoom = Math.max(0.2, Math.min(2.5, zoom * (z === "in" ? 1.2 : 1 / 1.2)));
+        panX = mx - (mx - panX) * (zoom / old);
+        panY = my - (my - panY) * (zoom / old);
+        applyTransform();
+      });
+    });
+  }
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,27 @@
+{
+    "definitions": {},
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://asist.aptima.com/schemas/coords.json",
+    "type": "object",
+    "title": "The coords Schema",
+    "version": "0.5",
+    "required": [
+        "x", "z"
+    ],
+    "properties": {
+        "x":{
+            "$id": "#/properties/x",
+            "type": "number",
+            "title": "The x value",          
+            "examples": [-2169],
+            "pattern": "^([0-9]+?)$"        
+        },
+        "z":{
+            "$id": "#/properties/z",
+            "type": "number",
+            "title": "The z value",          
+            "examples": [29],
+            "pattern": "^([0-9]+?)$"   
+        }
+    }
+}

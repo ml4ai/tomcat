@@ -1,0 +1,57 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://asist.aptima.com/schemas/event_state.json",
+  "type": "object",
+  "title": "The GroundTruth SemanticMap Connection Schema",
+  "version": "1.0",
+  "required": [
+    "id",
+    "connected_locations"
+  ],
+  "properties": {
+    "id": {
+      "$id": "#/properties/data/properties/semantic_map/connection/id",
+      "type": "string",
+      "title": "The id of the connection",
+      "pattern": "^(.*)$"
+    },
+    "name": {
+      "$id": "#/properties/data/properties/semantic_map/connection/id",
+      "type": "string",
+      "title": "The name of the connection",
+      "pattern": "^(.*)$"
+    },
+    "type": {
+      "$id": "#/properties/data/properties/semantic_map/connection/id",
+      "type": "string",
+      "title": "The type of the connection",
+      "examples": [
+        "opening", "door", "extension", "double_door"
+      ],
+      "pattern": "^(.*)$"
+    },
+    "passable": {
+      "$id": "#/properties/data/properties/semantic_map/connection/id",
+      "type": "boolean",
+      "title": "True if the connection is passable.  Could be False in the case of a closed door",
+      "pattern": "^(.*)$"
+    },
+    "facing": {
+      "$id": "#/properties/data/properties/semantic_map/connection/facing",
+      "type": "string",
+      "title": "The side of the block the connection (door) is on",
+      "examples": [
+        "north", "south", "east", "west"
+      ],
+      "pattern": "^(.*)$"
+    },
+    "connected_locations": {
+      "$id": "#/properties/data/properties/semantic_map/connection/connected_locations",
+      "type": "array",
+      "items": { "type": "string" },
+      "title": "Location ids of this location's connected by this connection"
+    },
+    "bounds": { "$ref": "./bounds.json" }
+  }
+}

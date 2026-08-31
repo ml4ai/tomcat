@@ -1,0 +1,42 @@
+{
+    "definitions": {},
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://asist.aptima.com/schemas/visitors.json",
+    "type": "object",
+    "title": "The visitors Schema",
+    "version": "0.5",
+    "required": [
+        "player", "time_elapsed_milliseconds"
+    ],
+    "properties": {
+        "player": {
+            "$id": "#/properties/player",
+            "type": "object",
+            "title": "The player visiting",
+            "required": ["name", "role"],
+            "properties": {
+                "name": {
+                    "$id": "#/properties/player/properties/name",
+                    "type": "string",
+                    "title": "The player name",          
+                    "examples": ["Player123"],
+                    "pattern": "^(.*)$"
+                },
+                "role": {
+                    "$id": "#/properties/player/properties/role",
+                    "type": "string",
+                    "title": "The player role",          
+                    "examples": ["Search_Specialist"],
+                    "pattern": "^(.*)$"
+                }
+            }
+        },
+        "time_elapsed_milliseconds": {
+            "$id": "#/properties/time_elapsed_milliseconds",
+            "type": "number",
+            "title": "The time of visit",          
+            "examples": [73973],
+            "pattern": "^[0-9]+$"
+        }
+    }
+}

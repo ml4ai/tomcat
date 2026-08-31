@@ -1,0 +1,52 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://asist.aptima.com/schemas/dyad_participant.json",
+  "type": "object",
+  "title": "The Dyad Participant Schema",
+  "version": "1.0",
+  "required": [
+    "callsign",
+    "participant_id",
+    "role"
+  ],
+  "properties": {
+    "callsign": {
+      "$id": "#/properties/data/properties/callsign",
+      "type": "string",
+      "title": "The Call Sign Assigned to the Player",
+      "examples": [
+        "Alpha",
+        "Bravo",
+        "Delta",
+        "Red",
+        "Green",
+        "Blue"
+      ],
+      "pattern": "^(.*)$"
+    },
+    "participant_id": {
+      "$id": "#/properties/data/properties/participant_id",
+      "type": "string",
+      "title": "The participant_id schema",
+      "description": "The participant id this data is associated with",
+      "examples": [
+        "participant_1"
+      ]
+    },
+    "role": {
+      "$id": "#/properties/data/properties/new_role",
+      "type": "string",
+      "title": "The New Role Schema",
+      "enum": [
+        "None",
+        "Search_Specialist",
+        "Hazardous_Material_Specialist",
+        "Medical_Specialist"
+      ],
+      "examples": [
+        "Hazardous_Material_Specialist"
+      ]
+    }
+  }
+}

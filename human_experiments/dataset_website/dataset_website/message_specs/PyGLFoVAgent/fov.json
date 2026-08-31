@@ -1,0 +1,216 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://asist.aptima.com/schemas/pygl_fov.json",
+  "type": "object",
+  "title": "The PyGL FoV Agent Schema",
+  "version": "0.1",
+  "required": [
+    "header",
+    "msg",
+    "data"
+  ],
+  "properties": {
+    "header": {
+      "$ref": "../Common_Header/common_header.json",
+      "properties": {         
+        "message_type": {
+        "$id": "#/properties/message_type",
+        "type": "string",
+        "title": "The Message_type Schema",
+        "const": "observation"
+        }
+      }
+    },
+    "msg": {
+      "$ref": "../Common_Message/common_message.json",
+      "properties": {         
+        "sub_type": {
+        "$id": "#/properties/sub_type",
+        "type": "string",
+        "title": "The Sub Type Schema",
+        "const": "FoV"
+        }
+      }
+    },
+    "data": {
+      "$id": "#/properties/data",
+      "type": "object",
+      "title": "The PyGL FoV Data Schema",
+      "required": [
+        "observation",
+        "playername",
+        "blocks"
+      ],
+      "properties": {
+        "observation": {
+          "$id": "#/properties/data/properties/observation",
+          "type": "integer",
+          "title": "The Observation Number Schema",
+          "default": 0,
+          "examples": [
+            6857
+          ]
+        },
+        "name": {
+          "$id": "#/properties/data/properties/playername",
+          "type": "string",
+          "title": "The Name Schema",
+          "default": "",
+          "examples": [
+            "Ed"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "blocks": {
+            "$id": "#/properties/data/properties/blocks",
+            "type": "array",
+            "title": "The Block List Schema",
+            "items": {
+                "$ref": "#/definitions/block"
+            },
+            "default": []
+        }
+      }
+    }
+  },
+  "definitions": {
+      "block": {
+          "$id": "#/properties/block",
+          "type": "object",
+          "title": "The PyGL FoV Block Schema",
+          "required": [
+              "location",
+              "type"
+          ],
+          "properties": {
+              "location": {
+                  "$id": "#/properties/block/properties/location",
+                  "type": "array",
+                  "title": "The PyGL FoV Block Location Schema",
+                  "items": [
+                    {
+                        "$id": "#/properties/block/properties/location/properties/x",
+                        "type": "number",
+                        "title": "The PyGL FoV Block Location X Schema",
+                        "default": 0,
+                        "examples": [
+                            -1324
+                        ]
+                    },
+                    {
+                        "$id": "#/properties/block/properties/location/properties/y",
+                        "type": "number",
+                        "title": "The PyGL FoV Block Location Y Schema",
+                        "default": 0,
+                        "minimum": 0,
+                        "maximum": 255,
+                        "examples": [
+                            54
+                        ]
+                    },
+                    {
+                        "$id": "#/properties/block/properties/location/properties/z",
+                        "type": "number",
+                        "title": "The PyGL FoV Block Location Z Schema",
+                        "default": 0,
+                        "examples": [
+                            160
+                        ]
+                    }                    
+                  ]
+              },
+              "type": {
+                  "$id": "#/properties/block/properties/type",
+                  "type": "string",
+                  "title": "The PyGL FoV Block Type Schema",
+                  "pattern": "^(.*)$",
+                  "examples": [
+                    "clay"    
+                  ]
+              },
+              "number_pixels": {
+                  "$id": "#/properties/block/properties/number_pixels",
+                  "type": "integer",
+                  "title": "The PyGL FoV Block Pixel Count Schema",
+                  "minimum": 1,
+                  "examples": [
+                    1543    
+                  ]
+              },
+              "playername": {
+                  "$id": "#/properties/block/properties/playername",
+                  "type": "string",
+                  "title": "The PyGL FoV Block Playername Schema",
+                  "pattern": "^(.*)$",
+                  "examples": [
+                    "McSillypants"    
+                  ]
+              },              
+              "bounding_box": {
+                  "$id": "#/properties/block/properties/bounding_box",
+                  "type": "object",
+                  "title": "The PyGL FoV Block Bounding Box Schema",
+                  "required": [ "x", "y" ],
+                  "properties": {
+                      "x" : {
+                          "$id": "#/properties/block/properties/bounding_box/properties/x",
+                          "type": "array",
+                          "title": "The PyGL FoV Block X Bounding Box Schema",
+                          "items": [
+                              {
+                                  "$id": "#/properties/block/properties/bounding_box/properties/x/properties/xmin",
+                                  "type": "integer",
+                                  "title": "The PyGL FoV Block Bounding Box x_min Schema",
+                                  "minimum": 0,
+                                  "examples": [
+                                    50
+                                  ]
+                              },
+                              {
+                                  "$id": "#/properties/block/properties/bounding_box/properties/x/properties/xmax",
+                                  "type": "integer",
+                                  "title": "The PyGL FoV Block Bounding Box x_max Schema",
+                                  "minimum": 0,
+                                  "examples": [
+                                    72
+                                  ]                              
+                              }                              
+                          ],
+                          "examples": [
+                            [ 52, 83 ]
+                          ]
+                      },
+                      "y": {
+                           "$id": "#/properties/block/properties/bounding_box/properties/y",
+                          "type": "array",
+                          "title": "The PyGL FoV Block Y Bounding Box Schema",
+                          "items": [
+                              {
+                                  "$id": "#/properties/block/properties/bounding_box/properties/x/properties/ymin",
+                                  "type": "integer",
+                                  "title": "The PyGL FoV Block Bounding Box y_min Schema",
+                                  "minimum": 0,
+                                  "examples": [
+                                    83
+                                  ]
+                              },
+                              {
+                                  "$id": "#/properties/block/properties/bounding_box/properties/y/properties/ymax",
+                                  "type": "integer",
+                                  "title": "The PyGL FoV Block Bounding Box y_max Schema",
+                                  "minimum": 0,
+                                  "examples": [
+                                    120
+                                  ]
+                              }
+                          ],
+                          "examples": [
+                            [ 128, 423 ]
+                          ]
+                      }
+                  }
+              }
+          }
+      }
+  }
+}

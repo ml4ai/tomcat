@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# Launch the Postgres-backed public web app (the SQLite-free Datasette successor).
+#
+# Connects to Postgres as the read-only tomcat_public role, so WEB_DB_PASS must be
+# set (in .env or the environment). Serves on PORT (default 8002) -- the legacy
+# Datasette runs on 8001, so both can run side by side during the transition.
+#
+# UVICORN_RELOAD=1 (default) enables auto-reload for development; the Docker
+# entrypoint sets UVICORN_RELOAD=0.
+
+set -euo pipefail
+
+ENV_FILE="${TOMCAT_ENV_FILE:-.env}"
+if [[ -f "$ENV_FILE" ]]; then
+    set -a
+    # shellcheck disable=SC1090
+    source "$ENV_FILE"
+    set +a
+fi
+
+PORT="${PORT:-8002}"
+HOST="${HOST:-127.0.0.1}"
+export PYTHONPATH="${PYTHONPATH:-.}"
+
+args=(uvicorn dataset_website.app:app --host "$HOST" --port "$PORT")
+if [[ "${UVICORN_RELOAD:-1}" == "1" ]]; then
+    args+=(--reload)
+fi
+
+exec "${args[@]}"

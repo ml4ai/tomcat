@@ -1,0 +1,144 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://asist.aptima.com/schemas/event_state.json",
+  "type": "object",
+  "title": "The GroundTruth SemanticMap:Update Schema",
+  "version": "2.0",
+  "required": [
+    "header",
+    "msg",
+    "data"
+  ],
+  "properties": {
+    "header": {
+      "$ref": "../../Common_Header/common_header.json",
+      "properties": {         
+        "message_type": {
+        "$id": "#/properties/message_type",
+        "type": "string",
+        "title": "The Message_type Schema",
+        "const": "groundtruth"
+        }
+      }
+    },
+    "msg": {
+      "$ref": "../../Common_Message/common_message.json",
+      "properties": {         
+        "sub_type": {
+        "$id": "#/properties/sub_type",
+        "type": "string",
+        "title": "The Sub Type Schema",
+        "const": "SemanticMap:All_Updates"
+        }
+      }
+    },
+    "data": {
+      "$id": "#/properties/message/properties/data",
+      "type": "object",
+      "title": "The GroundTruth SemanticMap:Update Schema",
+      "required": [
+          "updates"
+      ],
+      "properties": {
+        "semantic_map_name": {
+          "$id": "#/properties/data/properties/semantic_map/filename",
+          "type": "string",
+          "title": "The Semantic Map file these updates were applied to",
+          "examples": [
+            "Falcon_sm_v1.0.json"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "updates": {
+          "$id": "#/properties/data/properties/semantic_map/updates",
+          "type": "object",
+          "title": "The Semantic Map Updates Schema",
+          "properties": {
+            "additions": {
+              "$id": "#/properties/data/properties/semantic_map/additions",
+              "type": "object",
+              "title": "Additions to the Semantic Map",
+              "properties": {
+                "locations": {
+                  "$id": "#/properties/data/properties/semantic_map/additions/locations",
+                  "type": "array",
+                  "items": { "$ref": "./location.json" },
+                  "title": "Location additions to the Semantic Map"
+                },
+                "connections": {
+                  "$id": "#/properties/data/properties/semantic_map/additions/connections",
+                  "type": "array",
+                  "items": { "$ref": "./connection.json" },
+                  "title": "Connection additions to the Semantic Map"
+                },
+                "objects": {
+                  "$id": "#/properties/data/properties/semantic_map/additions/objects",
+                  "type": "array",
+                  "items": { "$ref": "./object.json" },
+                  "title": "Object additions to the Semantic Map"
+                }
+              }
+            },
+            "modifications": {
+              "$id": "#/properties/data/properties/semantic_map/modifications",
+              "type": "object",
+              "title": "Modifications to the Semantic Map",
+              "properties": {
+                "locations": {
+                  "$id": "#/properties/data/properties/semantic_map/modifications/locations",
+                  "type": "array",
+                  "items": {
+                    "$ref": "./location.json"
+                  },
+                  "title": "Location modifications to the Semantic Map"
+                },
+                "connections": {
+                  "$id": "#/properties/data/properties/semantic_map/modifications/connections",
+                  "type": "array",
+                  "items": {
+                    "$ref": "./connection.json"
+                  },
+                  "title": "Connection modifications to the Semantic Map"
+                },
+                "objects": {
+                  "$id": "#/properties/data/properties/semantic_map/modifications/objects",
+                  "type": "array",
+                  "items": {
+                    "$ref": "./object.json"
+                  },
+                  "title": "Object modifications to the Semantic Map"
+                }
+              }
+            },
+            "deletions": {
+              "$id": "#/properties/data/properties/semantic_map/deletions",
+              "type": "object",
+              "title": "Items ids to be deleted from the Semantic Map",
+              "properties": {
+                "locations": {
+                  "$id": "#/properties/data/properties/semantic_map/deletions/locations",
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "title": "Location ids to be deleted from the Semantic Map"
+                },
+                "connections": {
+                  "$id": "#/properties/data/properties/semantic_map/deletions/connections",
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "title": "Connection ids to be deleted from the Semantic Map"
+                },
+                "objects": {
+                  "$id": "#/properties/data/properties/semantic_map/deletions/objects",
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "title": "Object ids to be deleted from the Semantic Map"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

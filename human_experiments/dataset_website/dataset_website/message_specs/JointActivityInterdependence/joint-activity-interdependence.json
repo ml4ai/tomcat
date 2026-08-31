@@ -1,0 +1,107 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "http://asist.aptima.com/schemas/joint-activity-interdependence.json",
+  "type": "object",
+  "title": "IHMC TA2 Joint activity interdependence",
+  "required": [
+    "header",
+    "msg",
+    "data"
+  ],
+  "properties": {
+    "header": {
+      "$ref": "../Common_Header/common_header.json",
+      "type": "object",
+      "properties": {
+        "message_type": {
+          "$id": "#/properties/message_type",
+          "type": "string",
+          "title": "The Message_type Schema",
+          "const": "event"
+        }
+      }
+    },
+    "msg": {
+      "$ref": "../Common_Message/common_message.json",
+      "type": "object",
+      "properties": {
+        "sub_type": {
+          "type": "string",
+          "title": "The Sub Type Schema",
+          "enum": [
+            "Event:Discovered",
+            "Event:Awareness",
+            "Event:Addressing",
+            "Event:Completion",
+            "Event:Summary"
+          ]
+        },
+        "source": {
+          "const": "ac_ihmc_ta2_joint-activity-interdependence"
+        }
+      }
+    },
+    "data": {
+      "type": "object",
+      "title": "IHMC TA2 Joint activity interdependence payload",
+      "required": ["jag"],
+      "properties": {
+        "participant_id": {
+          "type": "string",
+          "title": "Participant id"
+        },
+        "jag": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "instances": {
+              "type": "object"
+            },
+            "urn": {
+              "type": "string"
+            },
+            "inputs": {
+              "type": "object"
+            },
+            "outputs": {
+              "type": "object"
+            },
+            "children": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            "elapsed_millisecond": {
+              "type": "number"
+            },
+            "is_complete": {
+              "type": "boolean"
+            },
+            "awareness": {
+              "type": "object"
+            },
+            "preparing": {
+              "type": "object"
+            },
+            "addressing": {
+              "type": "object"
+            }
+          },
+          "active_duration": {
+            "type": "number"
+          },
+          "joint_activity_efficiency": {
+            "type": "number"
+          },
+          "redundancy_ratio": {
+            "type": "number"
+          }
+        }
+      }
+    }
+  }
+}

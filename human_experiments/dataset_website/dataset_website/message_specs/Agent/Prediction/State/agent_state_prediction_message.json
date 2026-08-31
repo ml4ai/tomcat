@@ -1,0 +1,105 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://asist.aptima.com/schemas/agent_state_prediction_message.json",
+  "type": "object",
+  "title": "The Agent State Prediction Message Schema",
+  "version": "0.1",
+  "required": [
+    "unique_id",
+    "start_elapsed_time",
+    "subject_type",
+    "subject",
+    "predicted_property",
+    "prediction"
+  ],
+  "properties": {
+    "unique_id":{
+      "$id": "#/properties/unique_id",
+      "type":["string"],
+      "title": "The unique_id Schema",
+      "examples": [ "ce5c2729-65d1-4f6a-b503-e89dc3c36727" ]
+    },
+    "start_elapsed_time":{
+      "$id": "#/properties/start_elapsed_time",
+      "type":["number","null"],
+      "title": "The Start elapsed time Schema",
+      "examples": [ "2019-12-26T14:05:02.3412Z", null ]
+    },
+    "subject_type": {
+      "$id": "#/properties/subject_type",
+      "type":["string"],
+      "enum": ["team", "individual"],
+      "title": "The subject type Schema",
+      "examples": [ "team", "individual"]
+    },
+    "duration":{
+      "$id": "#/properties/duration",
+      "type":["number"],
+      "title": "The Duration Schema",
+      "examples": [ 10,60 ]
+    },
+    "subject":{
+      "$id": "#/properties/prediction_subject",
+      "type":["string"],
+      "title": "The Prediction Subject Schema",
+      "examples": [ "Player447","Victim #33","ASIST Team" ]
+    }, 
+    "predicted_property":{      
+      "$id": "#/properties/subject_property",
+      "type":["string"],
+      "enum": ["M1:team_performance", "M3:participant_map", "M6:participant_block_legend", "M7:participant_room_enter"],
+      "title": "The Property Name Schema",
+      "examples": [ "M1:team_performance", "M3:participant_map", "M6:participant_block_legend", "M7:participant_room_enter" ]
+    },
+    "prediction":{
+      "$id": "#/properties/predicted_value",
+      "type":["string","number"],
+      "title": "The Predicted Value Schema",
+      "examples": [ 580,"VERSION A", "VERSION B", "-2100 60 200 "]
+    },    
+    "probability_type":{
+      "$id": "#/properties/probability_type",
+      "type":["string"],
+      "title": "The Probability Type Schema",
+      "examples": [ "string", "integer","float" ]
+    },
+    "probability":{
+      "$id": "#/properties/probability_value",
+      "type":["string","number"],
+      "title": "The Probability Value Schema",
+      "examples": [ "80%",80,0.8 ]
+    },
+    "confidence_type":{
+      "$id": "#/properties/confidence_type",
+      "type":["string"],
+      "title": "The confidence Type Schema",
+      "examples": [ "string", "integer","float" ]
+    },
+    "confidence":{
+      "$id": "#/properties/confidence_value",
+      "type":["string","number"],
+      "title": "The confidence Value Schema",
+      "examples": [ "80%",80,0.8 ]
+    },
+      
+    "explanation":{
+      "$id": "#/properties/explanation",
+      "type":["object"],
+      "title": "The Group Explanation Schema",
+      "examples": [
+        {
+          "extra_agent_data":{      
+            "key0":"data0",      
+            "key1":{
+              "something":"some metadata" 
+            },      
+            "key2":{
+              "somethingelse":"some more metadata"
+            }      
+          }
+        }
+      ]
+    }
+  }  
+}

@@ -1,0 +1,140 @@
+{
+	"definitions": {
+
+	},
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "http://example.com/root.json",
+	"type": "object",
+	"title": "The Response Schema",
+	"required": [
+		"experiment_id",
+		"trial_id",
+		"mission_name",
+		"map_name",
+		"map_block_filename",
+		"map_info_filename",
+		"observer_info",
+		"callsigns"
+	],
+	"properties": {
+		"experiment_id": {
+			"$id": "#/properties/experiment_id",
+			"type": "string",
+			"title": "The Experiemnt Id Schema",
+			"default": "",
+			"examples": [
+				"123e4567-e89b-12d3-a456-426655440000"
+			],
+			"pattern": "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
+		},		
+		"trial_id": {
+			"$id": "#/properties/trial_id",
+			"type": "string",
+			"title": "The Trial Id Schema",
+			"default": "",
+			"examples": [
+				"123e4567-e89b-12d3-a456-426655440000"
+			],
+			"pattern": "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
+		},
+		"mission_name": {
+			"$id": "#/properties/mission_name",
+			"type": "string",
+			"title": "The Mission Name Schema",
+			"default": "",
+			"examples": [
+				"Saturn_A"
+			],
+			"pattern": "^(.*)$"
+		},
+		"map_name": {
+			"$id": "#/properties/map_name",
+			"type": "string",
+			"title": "The Map Name Schema",
+			"default": "",
+			"examples": [
+				"Saturn_1.1_3D"
+			],
+			"pattern": "^(.*)$"
+		},
+		"map_block_filename": {
+			"$id": "#/properties/map_block_filename",
+			"type": ["string","null"],
+			"title": "The Map Block Filename Schema",
+			"default": "",
+			"examples": [
+				"MapBlocks_SaturnA_1.2_xyz.csv"
+			],
+			"pattern": "^(.*)$"
+		},
+		"map_info_filename":{
+			"$id": "#/properties/map_info_filename",
+			"type": ["string","null"],
+			"title": "The Map Info Filename Schema",
+			"default": "",
+			"examples": [
+				"MapInfo_SaturnA_1.2_xyz.csv"
+			],
+			"pattern": "^(.*)$"
+		},
+		"observer_info":{
+			"$id": "#/properties/observer_info",
+			"type":"array",					
+			"items":{
+				"type": "string"
+			},				
+			"examples": [
+				["ASIST1","Admin_01"]
+			]
+		},
+		"active_agents":{
+			"$id": "#/properties/active_agents",
+			"type":"array",					
+			"items":{
+				"type": "string"
+			},				
+			"examples": [
+				["tomcat","Rita_Agent"]
+			]
+
+		},
+		"callsigns":{
+			"$id": "#/properties/callsigns",
+			"type":"object",
+			"title":" The CallSign Schema",
+			"properties": {
+				"PlayerNameA":{
+					"type":"string",
+					"examples":["Red"]
+				},
+				"PlayerNameB":{
+					"type":"string",
+					"examples":["Green"]
+				},
+				"PlayerNameC":{
+					"type":"string",
+					"examples":["Blue"]
+				}
+			}
+		},
+		"participant_ids":{
+			"$id": "#/properties/pariticipant_ids",
+			"type":"object",
+			"title":" The Participant Id Schema",
+			"properties": {
+				"PlayerNameA":{
+					"type":"string",
+					"examples":["P100"]
+				},
+				"PlayerNameB":{
+					"type":"string",
+					"examples":["P101"]
+				},
+				"PlayerNameC":{
+					"type":"string",
+					"examples":["P102"]
+				}
+			}
+		}
+	}
+}
