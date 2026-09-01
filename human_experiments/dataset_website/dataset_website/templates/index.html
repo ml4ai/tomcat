@@ -9,12 +9,6 @@
 {% endblock %}
 
 {% block content %}
-<div class="site-notice" role="status">
-  <span class="label">Under Construction</span>
-  <p class="msg">This site is actively being built out — some pages and data are
-  incomplete and details may change. Thanks for your patience.</p>
-</div>
-
 <h1>{{ metadata.title or "The ToMCAT Dataset" }}</h1>
 
 {{ render_markdown("""

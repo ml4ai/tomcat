@@ -12,6 +12,18 @@
     is.
 </p>
 
+{% set artifact_names = artifacts | map(attribute="name") | list %}
+{% if "tomcat.db" not in artifact_names %}
+<div class="site-notice" role="status">
+  <span class="label">SQLite export coming soon</span>
+  <p class="msg">The single-file SQLite build of the dataset
+  (<code>tomcat.db</code>) is not available for download yet.
+  {% if artifacts %}The PostgreSQL dump below is a complete copy in the
+  meantime, and the live site serves the same data.{% else %}Please check back
+  later.{% endif %}</p>
+</div>
+{% endif %}
+
 {% if artifacts %}
 <table class="table">
     <thead>
@@ -34,13 +46,12 @@
 
 {{ render_markdown("""
 ### Using the downloads
-
+""" ~ ("""
 - **SQLite** (`tomcat.db`): open directly with the `sqlite3` CLI, pandas
   (`pd.read_sql`), R (`DBI`/`RSQLite`), or DuckDB (`ATTACH 'tomcat.db' (TYPE sqlite)`).
+""" if "tomcat.db" in artifact_names else "") ~ ("""
 - **PostgreSQL dump** (`tomcat.dump`): restore into your own cluster with
   `pg_restore -d your_db tomcat.dump` (custom format, no manual decompression needed).
-""") }}
-{% else %}
-<p>No download artifacts are available yet. Please check back later.</p>
+""" if "tomcat.dump" in artifact_names else "")) }}
 {% endif %}
 {% endblock %}
