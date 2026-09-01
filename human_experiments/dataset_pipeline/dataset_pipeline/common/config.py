@@ -49,7 +49,6 @@ class Settings(BaseSettings):
     experiment_root_dir: Optional[str] = None
     data_validity_workbook_path: Optional[str] = None
     station_to_eeg_workbook_path: Optional[str] = None
-    station_to_minecraft_playername_mapping_path: Optional[str] = None
     self_report_data_path: Optional[str] = None
     self_report_data_dictionary_path: Optional[str] = None
     post_game_survey_data_path: Optional[str] = None
@@ -62,9 +61,6 @@ class Settings(BaseSettings):
             "experiment_root_dir": "group",
             "data_validity_workbook_path": "data_validity_table.csv",
             "station_to_eeg_workbook_path": "station_to_eeg_amp_mapping.csv",
-            "station_to_minecraft_playername_mapping_path": (
-                "station_to_minecraft_playername_mapping.csv"
-            ),
             "self_report_data_path": "ToMCATSelfReport_DATA_2023-06-11_2358.tsv",
             "self_report_data_dictionary_path": (
                 "ToMCATSelfReport_DataDictionary_2023-08-08.tsv"
