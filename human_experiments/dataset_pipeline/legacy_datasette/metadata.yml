@@ -1,0 +1,425 @@
+# Metadata for the Datasette instance.
+
+title: The ToMCAT Dataset
+description: Multimodal dataset for human-machine teaming research.
+license: CC BY-NC-SA 4.0
+license_url: https://creativecommons.org/licenses/by-nc-sa/4.0/
+databases:
+    tomcat:
+        tables:
+            affective_task_event:
+                description: Events from the individual and team affective tasks.
+                columns:
+                    group_session: The group session the task is a part of.
+                    participant: Participant ID.
+                    timestamp_unix: The Unix timestamp of the event.
+                    timestamp_iso8601: The ISO-8601 timestamp of the event.
+                    event_type: The type of the event.
+                    image_path: The path to the image that was shown on the participant screen(s).
+                    arousal_score: The arousal score reported by the participant. Null if not applicable.
+                    valence_score: The valence score reported by the participant. Null if not applicable.
+
+            audio_vocalics:
+              description: OpenSMILE vocalic features extracted from the audios during the Minecraft missions.
+              columns:
+                group_session: The group session the task is a part of.
+                station: Participant ID.
+                minecraft_mission_id: ID of the minecraft mission the audio was recorded.
+                id: sequential ID of the signal.
+                timestamp_unix: The Unix timestamp of the signal.
+                timestamp_iso8601: The ISO-8601 timestamp of the signal.
+                frame_time: The frame time in seconds.
+                features: A list of OpenSMILE features extracted from the audio.
+
+            data_validity:
+                description: >
+                    Table with information about which participants were
+                    involved in the tasks, and whether the data from the EEG,
+                    fNIRS, and eye tracking modalities are valid. In most
+                    cases, when an experimenter stepped in to replace a
+                    participant (e.g., for a no-show participant), they did
+                    not wear fNIRS/EEG devices, and in some cases, they did not
+                    wear the eye tracker either. Not all groups completed all
+                    the tasks, and for some tasks, the data is missing. In
+                    cases such as these, the table simply omits rows for which
+                    we do not have data.
+                columns:
+                    group_session: Group session ID
+                    participant: Participant ID
+                    station: The iMac that the participant was stationed at.
+                    task: Task ID.
+                    modality: The modality of the data.
+                    is_valid: >
+                        Whether the data for the relevant
+                        participant/task/modality is valid (1) or invalid (0).
+
+            eeg_device:
+              description: >
+                Table with a mapping between station and EEG device id used in each experiment.
+              columns:
+                group_session: Group session ID.
+                station: The iMac that the participant was stationed at.
+                device_id: The id of the EEG device used in the station.
+
+            eeg_raw:
+              description: >
+                Table with raw EEG data.
+              columns:
+                group_session: Group session ID
+                task: Task ID.
+                station: The iMac that the participant was stationed at.
+                participant: >
+                  Participant ID. A participant ID of -1 indicates an
+                  unknown participant. All rows that do not have values
+                  for the `task` column will have their participant ID
+                  set to -1. In the future, we will label some of these
+                  inter/pre/post task rows with the correct participant
+                  ID.
+                timestamp_unix: The Unix timestamp of the event.
+                timestamp_iso8601: The ISO-8601 timestamp of the event.
+
+            eeg_sync:
+              description: >
+                Table with EEG data synchronized to a main clock with fixed frequency. The start
+                and end timestamps of the main clock spans across all the tasks in the experiment.
+              columns:
+                group_session: Group session ID
+                frequency: Frequency of the samples (main clock frequency).
+                station: The iMac that the participant was stationed at.
+                timestamp_unix: The Unix timestamp of the event.
+                timestamp_iso8601: The ISO-8601 timestamp of the event.
+
+            ekg_sync:
+              description: >
+                Table with EKG data synchronized to a main clock with fixed frequency. The start
+                and end timestamps of the main clock spans across all the tasks in the experiment.
+              columns:
+                group_session: Group session ID
+                frequency: Frequency of the samples (main clock frequency).
+                station: The iMac that the participant was stationed at.
+                timestamp_unix: The Unix timestamp of the event.
+                timestamp_iso8601: The ISO-8601 timestamp of the event.
+                aux_ekg: value of the ekg channel.
+
+            fnirs_raw:
+              description: >
+                Table with raw fNIRS data.
+              columns:
+                group_session: Group session ID
+                task: Task ID.
+                station: The iMac that the participant was stationed at.
+                participant: >
+                  Participant ID. A participant ID of -1 indicates an
+                  unknown participant. All rows that do not have values
+                  for the `task` column will have their participant ID
+                  set to -1. In the future, we will label some of these
+                  inter/pre/post task rows with the correct participant
+                  ID.
+                timestamp_unix: The Unix timestamp of the event.
+                timestamp_iso8601: The ISO-8601 timestamp of the event.
+
+            fnirs_sync:
+              description: >
+                Table with fNIRS data synchronized to a main clock with fixed frequency. The start
+                and end timestamps of the main clock spans across all the tasks in the experiment.
+              columns:
+                group_session: Group session ID
+                frequency: Frequency of the samples (main clock frequency).
+                station: The iMac that the participant was stationed at.
+                timestamp_unix: The Unix timestamp of the event.
+                timestamp_iso8601: The ISO-8601 timestamp of the event.
+
+            gaze_raw:
+              description: >
+                Table with raw Gaze data.
+              columns:
+                group_session: Group session ID
+                task: Task ID.
+                station: The iMac that the participant was stationed at.
+                participant: >
+                  Participant ID. A participant ID of -1 indicates an
+                  unknown participant. All rows that do not have values
+                  for the `task` column will have their participant ID
+                  set to -1. In the future, we will label some of these
+                  inter/pre/post task rows with the correct participant
+                  ID.
+                timestamp_unix: The Unix timestamp of the event.
+                timestamp_iso8601: The ISO-8601 timestamp of the event.
+                confidence: Computed confidence between 0 (not confident) - 1 (confident).
+                norm_pos_x: X position in the eye image frame in normalized coordinates.
+                norm_pos_y: Y position in the eye image frame in normalized coordinates.
+                gaze_point_3d_x: X position of the 3d gaze point (the point the subject looks at) in the world camera coordinate system.
+                gaze_point_3d_y: Y position of the 3d gaze point (the point the subject looks at) in the world camera coordinate system.
+                gaze_point_3d_z: X position of the 3d gaze point (the point the subject looks at) in the world camera coordinate system.
+                eye_center0_3d_x: X center of eye-ball 0 in the world camera coordinate system.
+                eye_center0_3d_y: Y center of eye-ball 0 in the world camera coordinate system.
+                eye_center0_3d_z: Z center of eye-ball 0 in the world camera coordinate system.
+                eye_center1_3d_x: X center of eye-ball 1 in the world camera coordinate system.
+                eye_center1_3d_y: Y center of eye-ball 1 in the world camera coordinate system.
+                eye_center1_3d_z: Z center of eye-ball 1 in the world camera coordinate system.
+                gaze_normal0_x: X normal of the visual axis for eye 0 in the world camera coordinate system. The visual axis goes through the eye ball center and the object that is looked at.
+                gaze_normal0_y: Y normal of the visual axis for eye 0 in the world camera coordinate system. The visual axis goes through the eye ball center and the object that is looked at.
+                gaze_normal0_z: Z normal of the visual axis for eye 0 in the world camera coordinate system. The visual axis goes through the eye ball center and the object that is looked at.
+                gaze_normal1_x: X normal of the visual axis for eye 1 in the world camera coordinate system. The visual axis goes through the eye ball center and the object that is looked at.
+                gaze_normal1_y: Y normal of the visual axis for eye 1 in the world camera coordinate system. The visual axis goes through the eye ball center and the object that is looked at.
+                gaze_normal1_z: Z normal of the visual axis for eye 1 in the world camera coordinate system. The visual axis goes through the eye ball center and the object that is looked at.
+                diameter0_2d: Diameter of the eye-ball 0's pupil in image pixels as observed in the eye image frame (not corrected for perspective).
+                diameter1_2d: Diameter of the eye-ball 1's pupil in image pixels as observed in the eye image frame (not corrected for perspective).
+                diameter0_3d: Diameter of the eye-ball 0's pupil scaled to mm based on anthropomorphic avg eye ball diameter and corrected for perspective.
+                diameter1_3d: Diameter of the eye-ball 1's pupil scaled to mm based on anthropomorphic avg eye ball diameter and corrected for perspective.
+
+            group_session:
+                description: Table with group session IDs.
+                label_column: id
+                columns:
+                    id: >
+                        Group session ID. Format: `exp_YYYY_MM_DD_HH`.
+                    advisor: The advisor that intervene in the Minecraft missions.
+
+            gsr_sync:
+              description: >
+                Table with GSR data synchronized to a main clock with fixed frequency. The start
+                and end timestamps of the main clock spans across all the tasks in the experiment.
+              columns:
+                group_session: Group session ID
+                frequency: Frequency of the samples (main clock frequency).
+                station: The iMac that the participant was stationed at.
+                timestamp_unix: The Unix timestamp of the event.
+                timestamp_iso8601: The ISO-8601 timestamp of the event.
+                aux_gsr: value of the gsr channel.
+
+            mission:
+                description: Metadata about the Minecraft missions.
+                label_column: id
+                columns:
+                    id: The unique ID of the mission.
+                    group_session_id: The group session that the mission was a part of.
+                    name: The name of the mission (Hands-on Training, Saturn A, or Saturn B)
+                    mission_start_timestamp_iso8601: The starting timestamp of the mission in ISO-8601 format.
+                    mission_start_timestamp_unix: The starting Unix timestamp of the mission.
+                    mission_stop_timestamp_iso8601: The stop timestamp of the mission in ISO-8601 format.
+                    mission_stop_timestamp_unix: The stopping Unix timestamp of the mission.
+                    trial_start_timestamp_iso8601: The starting timestamp of the trial in ISO-8601 format.
+                    trial_start_timestamp_unix: The starting Unix timestamp of the trial.
+                    trial_stop_timestamp_iso8601: The stop timestamp of the trial in ISO-8601 format.
+                    trial_stop_timestamp_unix: The stopping Unix timestamp of the trial.
+                    final_team_score: The final mission score achieved by the team.
+                    testbed_version: The version of the testbed used for the mission.
+
+            modality:
+                description: Modalities for physiological data.
+                columns:
+                    id: The ID of the modality.
+
+            participant:
+                description: Table with participant IDs.
+                label_column: id
+                columns:
+                    id: >
+                        Participant ID.
+                        -1 indicates an unknown participant.
+                        -2 indicates the team as a whole. This is relevant for the affective_task_event table,
+                        where some events intrinsically involve the team as a whole, rather than just one player.
+                        -3 indicates that the participant is a confederate whose identity was not recorded.
+                        Participants with IDs > 999 are confederates (i.e.,
+                        experimenters who stepped in to replace no-show
+                        participants or participants who left partway through
+                        the group session.)
+
+            ping_pong_competitive_task_observation:
+                description: Observations from the competitive ping-pong tasks.
+                columns:
+                    group_session: The group session ID.
+                    player_1_id: Player 1's participant ID
+                    player_2_id: Player 2's participant ID
+                    player_1_station: Player 1's station.
+                    player_2_station: Player 2's station.
+                    timestamp_unix: Unix timestamp of the observation
+                    timestamp_iso8601: ISO-8601 timestamp of the observation.
+                    task_started: Whether the task has started (1) or not (0).
+                    seconds: The number of seconds left in the game (not shown to participants).
+                    ball_position_x: The x-coordinate of the ball.
+                    ball_position_y: The y-coordinate of the ball.
+                    player_1_paddle_position_x: >
+                        The x-coordinate of the pixel at the top left corner of player 1's paddle.
+                    player_1_paddle_position_y: >
+                        The y-coordinate of the pixel at the top left corner of player 1's paddle.
+                    player_2_paddle_position_x: >
+                        The x-coordinate of the pixel at the top left corner of player 2's paddle.
+                    player_2_paddle_position_y: >
+                        The y-coordinate of the pixel at the top left corner of player 2's paddle.
+                    player_1_score: Player 1's score.
+                    player_2_score: Player 2's score.
+
+            ping_pong_cooperative_task_observation:
+                description: Observations from the cooperative ping-pong tasks.
+                columns:
+                    group_session: The group session ID
+                    player_1_id: Player 1's participant ID
+                    player_2_id: Player 2's participant ID
+                    player_3_id: Player 3's participant ID
+                    timestamp_unix: Unix timestamp of the observation
+                    timestamp_iso8601: ISO-8601 timestamp of the observation.
+                    task_started: Whether the task has started (1) or not (0).
+                    seconds: The number of seconds left in the game (not shown to participants).
+                    ball_position_x: The x-coordinate of the ball.
+                    ball_position_y: The y-coordinate of the ball.
+                    player_1_paddle_position_x: >
+                        The x-coordinate of the pixel at the top left corner of player 1's paddle.
+                    player_1_paddle_position_y: >
+                        The y-coordinate of the pixel at the top left corner of player 1's paddle.
+                    player_2_paddle_position_x: >
+                        The x-coordinate of the pixel at the top left corner of player 2's paddle.
+                    player_2_paddle_position_y: >
+                        The y-coordinate of the pixel at the top left corner of player 2's paddle.
+                    player_3_paddle_position_x: >
+                        The x-coordinate of the pixel at the top left corner of player 3's paddle.
+                    player_3_paddle_position_y: >
+                        The y-coordinate of the pixel at the top left corner of player 3's paddle.
+                    ai_paddle_position_x: >
+                        The x-coordinate of the pixel at the top left corner of the AI player's paddle.
+                    ai_paddle_position_y: >
+                        The y-coordinate of the pixel at the top left corner of the AI player's paddle.
+                    team_score: The team's score.
+                    ai_score: The score of the AI player.
+
+            station:
+                description: >
+                    During the group session, each participant is seated at one
+                    of four iMacs, labeled 'lion', 'tiger', 'leopard', and
+                    'cheetah'. The 'cheetah' station is only used in the
+                    competitive ping pong task, when an experimenter steps in
+                    to play against the participant seated at the 'leopard'
+                    station.
+                label_column: id
+                columns:
+                    id: Station ID.
+
+            screen_capture:
+              description: >
+                Table with screen capture data.
+              columns:
+                group_session: Group session ID
+                task: Task ID.
+                station: The iMac that the participant was stationed at.
+                participant: >
+                  Participant ID. A participant ID of -1 indicates an
+                  unknown participant. All rows that do not have values
+                  for the `task` column will have their participant ID
+                  set to -1. In the future, we will label some of these
+                  inter/pre/post task rows with the correct participant
+                  ID.
+                timestamp_unix: The Unix timestamp of the event.
+                timestamp_iso8601: The ISO-8601 timestamp of the event.
+                filename: Name of the screenshot file.
+                timestamp_origin: >
+                  The source of the timestamp. The priority is precision-driven. LSL time are
+                  used if available, otherwise, creation time is used if available. Modification
+                  time is used as last resort.
+
+            task:
+                description: The different tasks that take place during a group session.
+                label_column: id
+                columns:
+                    id: Task ID.
+
+            testbed_message:
+                description: Messages sent over the the testbed's message bus during missions.
+                columns:
+                    timestamp_unix: The Unix timestamp of the message.
+                    timestamp_iso8601: The timestamp of the message in ISO-8601 format.
+                    mission_id: The ID of the mission during which the message was published.
+                    topic: The topic the message was published on.
+                    message: >
+                      The contents of the message. The messages are in JSON
+                      format, so you can leverage SQLite JSON functions and operators
+                      in your queries.
+# Custom CSS
+extra_css_urls:
+    - /assets/app.css
+    - url: https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css
+      sri: sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM
+
+extra_js_urls:
+    - url: https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js
+      sri: sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz
+
+# ====================
+# Plugin configuration
+# ====================
+
+plugins:
+  datasette-render-markdown:
+    templates: true
+
+# Structured metadata, as required by the NeurIPS 2023 Datasets and Benchmarks
+# track.
+structured_metadata:
+  '@context': https://schema.org/
+  '@type': Dataset
+  name: The ToMCAT Dataset
+  description: Multimodal dataset for human-machine teaming research.
+  url: https://tomcat.ivilab.org
+  keywords:
+    - fNIRS
+    - EEG
+    - EKG
+    - GSR
+    - Eye tracking
+    - Minecraft
+    - Human-machine teaming
+  license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+  isAccessibleForFree: true
+  creator:
+    - '@type': Person
+      sameAs: https://orcid.org/0000-0002-1602-0386
+      name: Adarsh Pyarelal
+    - '@type': Person
+      sameAs: https://orcid.org/0000-0003-3277-5145
+      name: Eric Duong
+    - '@type': Person
+      sameAs: https://orcid.org/0000-0002-3141-5669
+      name: Caleb Jones Shibu
+    - '@type': Person
+      sameAs: https://orcid.org/0000-0002-0646-037X
+      name: Paulo Ricardo da Silva Soares
+    - '@type': Person
+      name: Savannah Boyd
+    - '@type': Person
+      name: Payal Khosla
+    - '@type': Person
+      name: Valeria Pfeifer
+    - '@type': Person
+      sameAs: https://orcid.org/0000-0001-8878-8952
+      name: Diheng Zhang
+    - '@type': Person
+      sameAs: https://orcid.org/0000-0001-7186-5755
+      name: Eric Andrews
+    - '@type': Person
+      name: Rick Champlin
+    - '@type': Person
+      name: Vincent Paul Raymond
+    - '@type': Person
+      sameAs: https://orcid.org/0000-0002-0205-9298
+      name: Meghavarshini Krishnaswamy
+    - '@type': Person
+      sameAs: https://orcid.org/0000-0002-3606-0078
+      name: Clayton Morrison
+    - '@type': Person
+      name: Emily Butler
+    - '@type': Person
+      sameAs: https://orcid.org/0000-0002-8568-9518
+      name: Kobus Barnard
+    - '@type': Organization
+      sameAs: https://ror.org/03m2x1q45
+      name: University of Arizona
+  citation: https://openreview.net/forum?id=ZJWQfgXQb6
+  funder:
+    '@type': Organization
+    sameAs: https://ror.org/02caytj08
+    name: Defense Advanced Research Projects Agency
+  distribution:
+    - '@type': DataDownload
+      encodingFormat: SQLite
+      contentUrl: https://tomcat.ivilab.org/tomcat.db
+  temporalCoverage: 2022-09-30/2023-05-03
