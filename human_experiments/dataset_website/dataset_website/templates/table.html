@@ -46,7 +46,8 @@
     <summary>Column descriptions</summary>
     <dl class="column-descriptions">
     {% for c in table.columns %}{% if c.description %}
-        <dt>{{ c.name }}</dt><dd>{{ c.description }}</dd>
+        <dt>{{ c.name }} <span class="col-type">{{ c.type_label }}</span></dt>
+        <dd>{{ render_markdown(c.description) }}</dd>
     {% endif %}{% endfor %}
     </dl>
 </details>

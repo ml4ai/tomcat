@@ -173,8 +173,23 @@
                border-radius: var(--radius); padding: .6rem 1rem; margin-bottom: 1.25rem; }
       details.column-descriptions-wrap summary { cursor: pointer; font-weight: 600; }
       dl.column-descriptions dt { font-family: var(--font-mono); font-size: .85rem;
-               font-weight: 500; margin-top: .6rem; }
+               font-weight: 500; margin-top: .6rem;
+               display: flex; align-items: baseline; gap: .5rem; flex-wrap: wrap; }
       dl.column-descriptions dd { color: var(--muted); margin: .1rem 0 0; }
+      /* Descriptions are authored as Markdown, so an inline code span needs to look
+         like one without inheriting the block <pre> treatment. */
+      dl.column-descriptions dd > p { margin: 0; }
+      dl.column-descriptions dd > p + p { margin-top: .4rem; }
+      dl.column-descriptions dd code { font-family: var(--font-mono); font-size: .85em;
+               background: var(--surface-2); border-radius: 4px; padding: .05rem .3rem;
+               color: var(--ink); }
+      /* Column type, shown beside the name. Deliberately quieter than .filter-chip:
+         a type is a label, not something you can act on. */
+      .col-type { font-family: var(--font-mono); font-size: .7rem; font-weight: 500;
+               text-transform: lowercase; letter-spacing: .02em;
+               background: var(--surface-2); color: var(--muted);
+               border: 1px solid var(--line); border-radius: 999px;
+               padding: .05rem .5rem; white-space: nowrap; }
 
       .export-links { color: var(--muted); font-size: .92rem; }
       nav.pagination { display: flex; gap: 1.25rem; align-items: center; margin: 1.25rem 0;
