@@ -293,12 +293,26 @@ def process_station_to_eeg_amp_mapping_workbook():
     db.close()
 
 
+# REDCap field name -> participant column, for the fields where the two differ.
+# `impairements` is misspelled in REDCap itself, and the other three are singular
+# where the columns are plural. Everything not listed here maps to itself.
+FIELD_TO_COLUMN = {
+    "shl_impairements": "shl_impairments",
+    "shl_impairment_specify": "shl_impairments_specify",
+    "shl_impairment_agediagnosis": "shl_impairments_agediagnosis",
+    "shl_impairment_therapy": "shl_impairments_therapy",
+}
+
+
 def process_demographic_data():
     db = next(get_db())
     data_dictionary_df = pd.read_table(
         settings.self_report_data_dictionary_path, index_col=0
     )
 
+    # Field names as they appear in the REDCap export, which is also how they are
+    # keyed in the data dictionary. Four of them do not match the column they land
+    # in -- see FIELD_TO_COLUMN below.
     demographics_fields = [
         "age",
         "sex",
@@ -310,7 +324,7 @@ def process_demographic_data():
         "exp_mc",
         "handedness",
         "trackpad_preference",
-        "shl_impairments",
+        "shl_impairements",
         "shl_impairment_specify",
         "shl_impairment_agediagnosis",
         "shl_impairment_therapy",
@@ -330,8 +344,7 @@ def process_demographic_data():
 
     df = pd.read_table(
         settings.self_report_data_path,
-        usecols=["subject_id"]
-        + [k.replace("impairments", "impairements") for k in demographics_fields],
+        usecols=["subject_id"] + demographics_fields,
     )
 
     for i, row in df.iterrows():
@@ -370,10 +383,23 @@ def process_demographic_data():
             row.loc["age"] = 18
 
         for attr in row.index:
+            if attr == "subject_id":
+                # The join key, not a column on the table.
+                continue
             value = row.loc[attr]
             if pd.isna(value):
                 value = None
-            setattr(participant, attr, value)
+            column = FIELD_TO_COLUMN.get(attr, attr)
+            if not hasattr(type(participant), column):
+                # setattr on a declarative instance accepts any name and sets a
+                # plain Python attribute, so a mismatch here is silent data loss
+                # rather than an error. Fail loudly instead.
+                raise AttributeError(
+                    f"Self-report field {attr!r} maps to {column!r}, which is not "
+                    f"a column on {type(participant).__name__}. Add it to "
+                    f"FIELD_TO_COLUMN or to the model."
+                )
+            setattr(participant, column, value)
         db.commit()
 
     db.close()
