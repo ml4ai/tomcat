@@ -399,7 +399,7 @@ def process_metadata_file(
             ),
             timestamp_iso8601=message["header"]["timestamp"],
             topic=message.pop("topic"),
-            message=json.dumps(message),
+            message=message,
         )
         for i, message in enumerate(messages_to_insert_into_db)
     ]
@@ -579,7 +579,7 @@ def process_directory_v2(group_session: str, db_session):
                                     stream["time_stamps"][i]
                                 ),
                                 topic=message.pop("topic"),
-                                message=json.dumps(message),
+                                message=message,
                             )
                         )
 

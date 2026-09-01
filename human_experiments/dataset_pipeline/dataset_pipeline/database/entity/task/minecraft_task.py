@@ -1,6 +1,7 @@
 from typing import Any, Dict, Optional
 
-from sqlalchemy import JSON, ForeignKey, Integer, Text, func
+from sqlalchemy import ForeignKey, Integer, Text, func
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, Session, mapped_column
 
 from dataset_pipeline.database.config import Base
@@ -37,7 +38,12 @@ class MinecraftTestbedMessage(Base):
     topic: Mapped[str] = mapped_column(Text)
     timestamp_unix: Mapped[str] = mapped_column(Text)
     timestamp_iso8601: Mapped[str] = mapped_column(Text)
-    message: Mapped[Dict[str, Any]] = mapped_column(JSON)
+    # JSONB, not JSON: the payload is there to be queried into, and jsonb is what
+    # supports the containment operators and GIN indexing that makes that practical.
+    # Pass the dict itself -- SQLAlchemy serializes it. Passing json.dumps(...) here
+    # stores a JSON *string* rather than an object, which is not an error and which
+    # makes `message -> 'data'` return NULL instead of failing.
+    message: Mapped[Dict[str, Any]] = mapped_column(JSONB)
 
     @staticmethod
     def get_next_id(database_engine, mission_id):
