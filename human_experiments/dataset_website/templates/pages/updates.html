@@ -12,6 +12,11 @@ list](/mailing-list) to receive email updates whenever the dataset is updated.
 
 ## List of updates
 
+- [2026-08-31](/updates/2026-08-31): `minecraft_testbed_message.message` is now
+a JSON object rather than a double-encoded JSON string — a breaking change for
+queries that used the old workaround. Also fills in seven columns of
+`participant` and `post_game_survey` whose values were being dropped on ingest,
+and completes the `participant` column descriptions.
 - [2026-08-30](/updates/2026-08-30): The dataset now runs on PostgreSQL and is
 served by a new web application. Adds full documentation, a Message Bus
 Reference for the testbed message column, and column-level descriptions

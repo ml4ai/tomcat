@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block body_class %}index{% endblock %}
+
+{% block content %}
+{{ render_markdown(
+"""
+# 2026-08-31 update
+
+## Testbed messages are now JSON objects
+
+**This is a breaking change** for anyone who had already worked around the
+problem it fixes.
+
+`minecraft_testbed_message.message` held double-encoded JSON. The column was
+typed `json`, but what was stored in it was a JSON *string* whose content was
+the payload, for all 6,370,941 rows. The practical effect was that the obvious
+query returned nothing and did not report an error:
+
+    select message -> 'data' ->> 'text' from minecraft_testbed_message
+    where topic = 'agent/asr/final';   -- null for every row
+
+Reaching the payload required decoding twice, which was neither documented nor
+discoverable:
+
+    (message #>> '{}')::jsonb #>> '{data,text}'
+
+The column is now `jsonb` and holds the payload directly, so the natural form
+works:
+
+    select message #>> '{data,text}' from minecraft_testbed_message
+    where topic = 'agent/asr/final';
+
+If you wrote queries using the double-decode workaround, they need updating.
+Queries written the way the [Message Bus Reference](/messages) implies now
+work as written. `jsonb` also brings the containment operators and the option
+of GIN indexing.
+
+## Three corrections to published data
+
+Each of these was a field that was collected and then silently dropped during
+ingest, so the column existed and was empty rather than absent. All are now
+populated.
+
+- **`participant.shl_impairments`** and its three companions
+  (`_specify`, `_agediagnosis`, `_therapy`) — the speech, hearing and language
+  impairment items. 100 participants now carry a response where previously all
+  114 rows were null.
+- **`post_game_survey.agent_intel`**, **`team_guilty`** and
+  **`team_decision`** — three survey items, each now populated for all 96 rows.
+- The cause in both cases was the same: the ingest read these fields under
+  their source names in the survey export and then wrote them back under those
+  same names, which did not match the database columns. No error was raised
+  because the write silently did nothing.
+
+If an analysis treated any of these columns as "not collected", it can now use
+them. No previously-present value changed — this only fills in nulls.
+
+## Documentation
+
+Every column of the `participant` table now carries a description; previously
+only `id` did. Column descriptions throughout the site now render Markdown, so
+the values enumerated in them appear as code rather than as literal backticks,
+and each column shows its type beside its name.
+
+The [SQL console](/tomcat/-/query) now offers worked example queries, including
+one that reads the transcribed team speech out of the message payloads.
+""")
+}}
+{% endblock %}
