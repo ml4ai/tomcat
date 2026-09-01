@@ -2,6 +2,7 @@
 
 import argparse
 import os
+import shlex
 import subprocess
 
 from dataset_pipeline.common.config import TMP_DIR, settings
@@ -69,23 +70,30 @@ if __name__ == "__main__":
     sqlite_filepath = f"{settings.artifact_dir}/tomcat.db"
 
     skip = None
-    if args.include == "all":
+    if args.include.strip() == "all":
         tables = "--all"
-        skip = " ".join(
-            [f"--skip={table.strip()}" for table in args.exclude.split(",")]
-        )
+        # --exclude is optional, and the validation above already treats it that
+        # way; without this guard the default invocation (`--include all`, no
+        # --exclude) dies on None.split(",").
+        if args.exclude:
+            skip = " ".join(
+                [f"--skip={table.strip()}" for table in args.exclude.split(",")]
+            )
     else:
         tables = " ".join(
             [f"--table={table.strip()}" for table in args.include.split(",")]
         )
         skip = None
 
+    # The URI and the output path are shell-quoted: the libpq-style URI carries
+    # query parameters (?host=...&port=...), and an unquoted & makes the shell
+    # background everything up to it and then fail on the remainder.
+    uri = shlex.quote(SQLALCHEMY_DATABASE_URI)
+    out = shlex.quote(sqlite_filepath)
     if skip:
-        command = f"db-to-sqlite -p {tables} {skip} {SQLALCHEMY_DATABASE_URI} {sqlite_filepath}"
+        command = f"db-to-sqlite -p {tables} {skip} {uri} {out}"
     else:
-        command = (
-            f"db-to-sqlite -p {tables} {SQLALCHEMY_DATABASE_URI} {sqlite_filepath}"
-        )
+        command = f"db-to-sqlite -p {tables} {uri} {out}"
 
     answer = input(
         f"The command ({command}) will be executed. Do you want to proceed? (y/n): "
