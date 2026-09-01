@@ -370,26 +370,21 @@ databases:
                         block of the instrument; it is a form-layout artifact and was
                         never intended to hold a response.
                     shl_impairments: >
-                        Intended to record any reported speech or hearing impairment,
-                        but empty for every participant. The responses exist in the
-                        REDCap export and are lost during ingest, which reads the
-                        field under its export name (`shl_impairements`, misspelled
-                        upstream) and then writes it back under that same name rather
-                        than this column's. The same defect affects
-                        `shl_impairments_specify`, `shl_impairments_agediagnosis`
-                        and `shl_impairments_therapy`.
+                        Whether the participant reported any speech, hearing or
+                        language impairment: `Yes` or `No`. Left blank by
+                        participants who skipped the item.
                     shl_impairments_specify: >
-                        Intended to record the free-text description of the impairment
-                        reported in `shl_impairments`. Empty for every participant,
-                        for the reason given there.
+                        Free-text description of the impairment reported in
+                        `shl_impairments`, in the participant's own words. Populated
+                        only for the few participants who reported one.
                     shl_impairments_agediagnosis: >
-                        Intended to record the age at which the impairment reported in
-                        `shl_impairments` was diagnosed. Empty for every participant,
-                        for the reason given there.
+                        When the impairment reported in `shl_impairments` was first
+                        diagnosed. Free text and not normalized, so values range from
+                        a calendar year to an approximate phrase.
                     shl_impairments_therapy: >
-                        Intended to record any therapy received for the impairment
-                        reported in `shl_impairments`. Empty for every participant,
-                        for the reason given there.
+                        Whether the participant currently sees a speech therapist or
+                        other healthcare professional for the impairment reported in
+                        `shl_impairments`: `Yes` or `No`.
                     first_language: >
                         Free-text first language or languages, as written by the
                         participant. Not normalized to a controlled vocabulary.
