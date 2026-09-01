@@ -297,7 +297,15 @@ databases:
                     id: The ID of the modality.
 
             participant:
-                description: Table with participant IDs.
+                description: >
+                    One row per participant, carrying the self-reported demographic,
+                    language and health background collected on the pre-session
+                    subject information sheet (a REDCap instrument). Of the 114 rows,
+                    100 are consented participants with self-report data; the
+                    remainder are the sentinel and confederate IDs described under
+                    `id`, which have none. Responses to multiple-choice items are
+                    stored as the decoded answer text (for example `Right-handed`),
+                    not as the underlying REDCap numeric code.
                 label_column: id
                 columns:
                     id: >
@@ -310,6 +318,126 @@ databases:
                         experimenters who stepped in to replace no-show
                         participants or participants who left partway through
                         the group session.)
+                    age: >
+                        Self-reported age in years at the time of the session.
+                    sex: >
+                        Self-reported sex. One of `Male`, `Female`, `Other`, or
+                        `Prefer not to say`.
+                    hisp: >
+                        Whether the participant reported being of Cuban, Mexican,
+                        Puerto Rican, South or Central American, or other Spanish
+                        culture of origin (Hispanic). Asked as a separate yes/no
+                        item from `race`, following the two-question ethnicity and
+                        race convention.
+                    race: >
+                        Self-described racial background. One of `European American`,
+                        `African American`, `Asian American`, `Native Hawaiian or
+                        Pacific Islander`, `Non-Hispanic White`, or `Other`. The
+                        offered categories overlap (`European American` and
+                        `Non-Hispanic White` in particular) and only one could be
+                        chosen, so counts should be read as the response to this
+                        specific instrument rather than as a clean partition.
+                    income: >
+                        Self-reported typical yearly household income before taxes,
+                        as one of six bands from `$0 - $25,000` to
+                        `Greater than $150,000`.
+                    edu: >
+                        Highest level of education completed. One of `Less than
+                        high-school`, `High-school`, `Professional program`,
+                        `Some college`, `Undergraduate degree`, or `Graduate degree`.
+                    exp: >
+                        Self-rated experience playing video games in general. One of
+                        `Never played them`, `Have played them occasionally`, `Have
+                        played them fairly often`, or `Have played them regularly for
+                        years`.
+                    exp_mc: >
+                        Self-rated experience playing Minecraft specifically, on the
+                        same four-point scale as `exp`. Relevant to task performance,
+                        since the group missions are played in a Minecraft-based
+                        testbed.
+                    handedness: >
+                        Self-reported dominant hand: `Right-handed`, `Left-handed`,
+                        or `Ambidextrous`. Relevant to the EEG and fNIRS montages and
+                        to the finger-tapping task.
+                    trackpad_preference: >
+                        Whether the participant prefers a trackpad or a mouse when
+                        working on a computer: `Trackpad`, `Mouse`, or
+                        `Doesn't matter`. Recorded because stations were operated
+                        with a mouse.
+                    sph_label: >
+                        Always empty. This column mirrors a REDCap section-header
+                        element that introduces the speech, hearing and language
+                        block of the instrument; it is a form-layout artifact and was
+                        never intended to hold a response.
+                    shl_impairments: >
+                        Intended to record any reported speech or hearing impairment,
+                        but empty for every participant. The responses exist in the
+                        REDCap export and are lost during ingest, which reads the
+                        field under its export name (`shl_impairements`, misspelled
+                        upstream) and then writes it back under that same name rather
+                        than this column's. The same defect affects
+                        `shl_impairments_specify`, `shl_impairments_agediagnosis`
+                        and `shl_impairments_therapy`.
+                    shl_impairments_specify: >
+                        Intended to record the free-text description of the impairment
+                        reported in `shl_impairments`. Empty for every participant,
+                        for the reason given there.
+                    shl_impairments_agediagnosis: >
+                        Intended to record the age at which the impairment reported in
+                        `shl_impairments` was diagnosed. Empty for every participant,
+                        for the reason given there.
+                    shl_impairments_therapy: >
+                        Intended to record any therapy received for the impairment
+                        reported in `shl_impairments`. Empty for every participant,
+                        for the reason given there.
+                    first_language: >
+                        Free-text first language or languages, as written by the
+                        participant. Not normalized to a controlled vocabulary.
+                    languages_spoken: >
+                        Free-text list of languages the participant speaks on a
+                        daily, weekly or monthly basis. Not normalized.
+                    language_age_learned: >
+                        Free-text ages at which each language was learned. Requested
+                        in the form `language (age)` — for example `Spanish
+                        (5-years-old)` — but entered by hand and not validated, so
+                        the formatting varies.
+                    countries_live_one_year: >
+                        Free-text list of countries the participant lived in for more
+                        than one year.
+                    major_schooling_country: >
+                        Free text: where the participant completed the majority of
+                        their schooling.
+                    health_label: >
+                        Always empty. As with `sph_label`, this column mirrors a
+                        REDCap section-header element introducing the health block and
+                        holds no response.
+                    health_concussion: >
+                        Whether the participant reported a history of concussion:
+                        `Yes` or `No`. Part of the neurological history relevant to
+                        interpreting the EEG and fNIRS recordings.
+                    health_seizure: >
+                        Whether the participant reported a history of seizure: `Yes`
+                        or `No`.
+                    health_trauma: >
+                        Whether the participant reported other neurological trauma,
+                        such as traumatic brain injury: `Yes` or `No`.
+                    health_other_trauma_specify: >
+                        Free-text description of the trauma or condition reported in
+                        `health_trauma`. Empty for every participant in this release,
+                        which is consistent with the responses to `health_trauma`.
+                    health_medications: >
+                        Whether the participant reported currently taking psychoactive
+                        medication, such as anti-depressants or ADHD medication:
+                        `Yes` or `No`.
+                    health_vision: >
+                        Whether the participant reported a visual impairment other
+                        than wearing glasses or contacts, such as partial or full
+                        colorblindness: `Yes` or `No`. Relevant to the affective task
+                        and the Minecraft missions, both of which use colour cues.
+                    health_vision_specify: >
+                        Free-text description of the impairment reported in
+                        `health_vision`. Populated for the three participants who
+                        reported one.
 
             ping_pong_competitive_task_observation:
                 description: Observations from the competitive ping-pong tasks.
