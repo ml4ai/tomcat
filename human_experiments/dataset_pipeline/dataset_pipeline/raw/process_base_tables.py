@@ -303,6 +303,14 @@ FIELD_TO_COLUMN = {
     "shl_impairment_therapy": "shl_impairments_therapy",
 }
 
+# The same for the post-game survey: `agent_intell` and `decisision` are
+# misspelled in REDCap, and `team_guilt` is singular where the column is not.
+POST_GAME_SURVEY_FIELD_TO_COLUMN = {
+    "agent_intell": "agent_intel",
+    "team_guilt": "team_guilty",
+    "team_decisision": "team_decision",
+}
+
 
 def process_demographic_data():
     db = next(get_db())
@@ -432,7 +440,7 @@ def process_post_game_survey():
         "game_lonely",
         "game_proud",
         "game_friendly",
-        "agent_intel",
+        "agent_intell",
         "agent_care",
         "agent_honest",
         "agent_expert",
@@ -457,7 +465,7 @@ def process_post_game_survey():
         "team_anxious",
         "team_excited",
         "team_sad",
-        "team_guilty",
+        "team_guilt",
         "team_angry",
         "team_happy",
         "team_lonely",
@@ -505,7 +513,7 @@ def process_post_game_survey():
         "team_knit",
         "team_like_mem",
         "team_work_well",
-        "team_decision",
+        "team_decisision",
         "team_express",
         "team_organize",
         "team_accomplish",
@@ -533,12 +541,7 @@ def process_post_game_survey():
     df = pd.read_csv(
         settings.post_game_survey_data_path,
         usecols=["subject_id"]
-        + [
-            k.replace("agent_intel", "agent_intell")
-            .replace("decision", "decisision")
-            .replace("team_guilty", "team_guilt")
-            for k in post_game_survey_fields
-        ]
+        + post_game_survey_fields
         + ["postgame_survey_timestamp"],
     )
 
@@ -601,7 +604,16 @@ def process_post_game_survey():
                 value = row.loc[attr]
                 if pd.isna(value):
                     value = None
-                setattr(post_game_survey, attr, value)
+                column = POST_GAME_SURVEY_FIELD_TO_COLUMN.get(attr, attr)
+                if not hasattr(type(post_game_survey), column):
+                    # See the note on FIELD_TO_COLUMN: setattr accepts any name
+                    # here, so a mismatch loses the value without complaining.
+                    raise AttributeError(
+                        f"Survey field {attr!r} maps to {column!r}, which is not "
+                        f"a column on {type(post_game_survey).__name__}. Add it "
+                        f"to POST_GAME_SURVEY_FIELD_TO_COLUMN or to the model."
+                    )
+                setattr(post_game_survey, column, value)
         db.add(post_game_survey)
         db.flush()
         db.commit()
