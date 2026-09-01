@@ -20,6 +20,83 @@
     </div>
 </form>
 
+{% if result is none %}
+{% set examples = [
+    {
+        "title": "Read what the teams said to each other",
+        "note": "Speech transcribed by the ASR system, scoped to one mission.
+                 The payload is JSON, so the transcript is reached with a path
+                 operator rather than a column.",
+        "sql": "SELECT timestamp_iso8601,
+       message #>> '{data,participant_id}' AS participant,
+       message #>> '{data,text}'           AS text
+FROM minecraft_testbed_message
+WHERE topic = 'agent/asr/final'
+  AND mission = (SELECT id FROM minecraft_mission ORDER BY id LIMIT 1)
+ORDER BY id
+LIMIT 20;"
+    },
+    {
+        "title": "What is in the dataset",
+        "note": "Group sessions with the number of participants and tasks in each.",
+        "sql": "SELECT group_session,
+       count(DISTINCT participant) AS participants,
+       count(DISTINCT task)        AS tasks
+FROM data_validity
+GROUP BY group_session
+ORDER BY group_session
+LIMIT 10;"
+    },
+    {
+        "title": "Who took part",
+        "note": "Self-reported Minecraft experience, with mean age per group.",
+        "sql": "SELECT exp_mc AS minecraft_experience,
+       count(*)         AS participants,
+       round(avg(age), 1) AS mean_age
+FROM participant
+WHERE exp_mc IS NOT NULL
+GROUP BY exp_mc
+ORDER BY participants DESC;"
+    },
+    {
+        "title": "What the message bus carries",
+        "note": "Topics in a single mission, by volume. Scoped to one mission on
+                 purpose — counting topics across all 6.4 million messages takes
+                 longer than the ten-second limit allows.",
+        "sql": "SELECT topic, count(*) AS messages
+FROM minecraft_testbed_message
+WHERE mission = (SELECT id FROM minecraft_mission ORDER BY id LIMIT 1)
+GROUP BY topic
+ORDER BY messages DESC
+LIMIT 10;"
+    },
+    {
+        "title": "A slice of synchronized EEG",
+        "note": "One station's signal on the 200 Hz master clock. Each electrode
+                 is its own column, named for its 10-20 montage position.",
+        "sql": "SELECT timestamp_iso8601, aff1h, cz, pz, o1
+FROM eeg_sync
+WHERE group_session = 'exp_2022_09_30_10'
+  AND station = 'lion'
+ORDER BY id
+LIMIT 10;"
+    }
+] %}
+<section class="query-examples" style="margin-top:1.5rem;">
+    <h2 style="font-size:1.15rem;">Example queries</h2>
+    <p>Each one runs as written — select it to load it into the box above.</p>
+    <ul style="list-style:none; padding-left:0;">
+    {% for ex in examples %}
+        <li style="margin-bottom:.9rem;">
+            <a href="/{{ database }}/-/query?sql={{ ex.sql | urlencode }}">
+                <strong>{{ ex.title }}</strong></a><br>
+            <small>{{ ex.note }}</small>
+        </li>
+    {% endfor %}
+    </ul>
+</section>
+{% endif %}
+
 {% if error %}
 <div class="query-error" style="color:#b00; margin-top:1rem;">
     <strong>Query error:</strong> {{ error }}
