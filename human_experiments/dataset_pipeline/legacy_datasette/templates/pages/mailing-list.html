@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block body_class %}index{% endblock %}
+
+{% block content %}
+{{ render_markdown(
+"""
+# Mailing List
+
+
+Sign up for our mailing list to get notifications whenever the dataset is
+updated. To subscribe, send an email to
+[list@list.arizona.edu](mailto:list@list.arizona.edu) with a blank
+message body and the following subject line:
+
+    subscribe tomcat-dataset-updates <firstname> <lastname>
+
+(replace `<firstname>` and `<lastname>` with your own first name and last name).
+""")
+}}
+{% endblock %}

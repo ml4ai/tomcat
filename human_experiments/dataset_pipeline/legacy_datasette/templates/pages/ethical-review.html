@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block body_class %}index{% endblock %}
+
+{% block content %}
+{{ render_markdown("""
+# Ethical Review
+
+Supporting documentation on the ethical review process.
+
+- [Consent form](/assets/supporting-material/pyarelal_consent_r1_2023_03_08.pdf)
+- [Recruitment materials](/assets/supporting-material/pyarelal_recruitment_material_r1_2023_02_25.pdf)
+""") }}
+{% endblock %}
