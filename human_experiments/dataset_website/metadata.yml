@@ -721,7 +721,8 @@ structured_metadata:
   '@type': Dataset
   name: The ToMCAT Dataset
   description: Multimodal dataset for human-machine teaming research.
-  url: https://tomcat.ivilab.org
+  url: https://tomcat.lab.pyarelal.xyz
+  sameAs: https://tomcat.ivilab.org
   keywords:
     - fNIRS
     - EEG
@@ -783,5 +784,8 @@ structured_metadata:
   distribution:
     - '@type': DataDownload
       encodingFormat: SQLite
-      contentUrl: https://tomcat.ivilab.org/tomcat.db
+      contentUrl: https://tomcat.lab.pyarelal.xyz/downloads/tomcat-core.db
+    - '@type': DataDownload
+      encodingFormat: application/x-postgresql-dump
+      contentUrl: https://tomcat.lab.pyarelal.xyz/downloads/tomcat.dump
   temporalCoverage: 2022-09-30/2023-05-03

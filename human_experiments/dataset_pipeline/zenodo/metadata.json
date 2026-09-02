@@ -1,0 +1,43 @@
+{
+  "upload_type": "dataset",
+  "title": "The ToMCAT Dataset",
+  "version": "2026-09-02",
+  "language": "eng",
+  "access_right": "open",
+  "license": "cc-by-nc-sa-4.0",
+  "keywords": [
+    "fNIRS",
+    "EEG",
+    "EKG",
+    "GSR",
+    "Eye tracking",
+    "Minecraft",
+    "Human-machine teaming",
+    "Multimodal",
+    "Team cognition"
+  ],
+  "creators": [
+    {"name": "Pyarelal, Adarsh", "affiliation": "School of Information, University of Arizona", "orcid": "0000-0002-1602-0386"},
+    {"name": "Duong, Eric", "affiliation": "Department of Computer Science, University of Arizona", "orcid": "0000-0003-3277-5145"},
+    {"name": "Shibu, Caleb Jones", "affiliation": "Department of Computer Science, University of Arizona", "orcid": "0000-0002-3141-5669"},
+    {"name": "Soares, Paulo Ricardo da Silva", "affiliation": "Department of Computer Science, University of Arizona", "orcid": "0000-0002-0646-037X"},
+    {"name": "Boyd, Savannah", "affiliation": "Department of Psychology, University of Arizona"},
+    {"name": "Khosla, Payal", "affiliation": "Norton School of Human Ecology, University of Arizona"},
+    {"name": "Pfeifer, Valeria", "affiliation": "Department of Psychology, University of Arizona"},
+    {"name": "Zhang, Diheng", "affiliation": "Department of Psychology, University of Arizona", "orcid": "0000-0001-8878-8952"},
+    {"name": "Andrews, Eric", "affiliation": "Department of Psychology, University of Arizona", "orcid": "0000-0001-7186-5755"},
+    {"name": "Champlin, Rick", "affiliation": "School of Information, University of Arizona"},
+    {"name": "Raymond, Vincent Paul", "affiliation": "Lum AI"},
+    {"name": "Krishnaswamy, Meghavarshini", "affiliation": "Department of Linguistics, University of Arizona", "orcid": "0000-0002-0205-9298"},
+    {"name": "Morrison, Clayton", "affiliation": "School of Information, University of Arizona", "orcid": "0000-0002-3606-0078"},
+    {"name": "Butler, Emily", "affiliation": "Norton School of Human Ecology, University of Arizona"},
+    {"name": "Barnard, Kobus", "affiliation": "Department of Computer Science, University of Arizona", "orcid": "0000-0002-8568-9518"}
+  ],
+  "related_identifiers": [
+    {"identifier": "https://openreview.net/forum?id=ZJWQfgXQb6", "relation": "isSupplementTo", "resource_type": "publication-conferencepaper"},
+    {"identifier": "https://tomcat.lab.pyarelal.xyz", "relation": "isPartOf", "resource_type": "dataset"},
+    {"identifier": "https://tomcat.lab.pyarelal.xyz/download", "relation": "isSourceOf", "resource_type": "dataset"}
+  ],
+  "description": "<p>The ToMCAT (Theory of Mind-based Cognitive Architecture for Teams) dataset is a multimodal dataset for human-machine teaming research, collected at the University of Arizona between 2022-09-30 and 2023-05-03. Teams of three participants completed a rest-state period, individual and team affective tasks, a finger-tapping task, competitive and cooperative ping-pong tasks, and two Minecraft search-and-rescue missions, while wearing EEG, fNIRS, EKG, GSR and eye-tracking sensors and being recorded on audio, video and screen capture. Forty group sessions with 114 participants are included.</p><p><strong>What this record contains.</strong> <code>tomcat-core.db</code> is a single SQLite database holding every table of the dataset except the seven high-rate signal tables: group sessions, participants (demographics and self-report), stations, tasks, task-observation tables for each task, the post-game survey, data-validity flags, screen-capture references, the Minecraft missions, and the complete testbed message bus (6.4 million JSON messages). Table and column descriptions are included in its <code>_schema_docs</code> table. The seven signal tables (<code>eeg_raw</code>, <code>gaze_raw</code>, <code>fnirs_sync</code>, <code>eeg_sync</code>, <code>audio_vocalics</code>, <code>gsr_sync</code>, <code>ekg_sync</code>; about 400 GB) are not in this record; they are available, together with the complete PostgreSQL dump and a browsable, queryable copy of every table, at <a href=\"https://tomcat.lab.pyarelal.xyz\">https://tomcat.lab.pyarelal.xyz</a>. The README in this record documents the schema and how to use the file.</p><p><strong>Site.</strong> The dataset's canonical home is <a href=\"https://tomcat.lab.pyarelal.xyz\">https://tomcat.lab.pyarelal.xyz</a> (formerly <a href=\"https://tomcat.ivilab.org\">https://tomcat.ivilab.org</a>, the address given in the paper). Errata and updates are published there.</p><p><strong>Paper.</strong> Pyarelal et al., <em>The ToMCAT Dataset</em>, NeurIPS 2023 Datasets and Benchmarks Track: <a href=\"https://openreview.net/forum?id=ZJWQfgXQb6\">https://openreview.net/forum?id=ZJWQfgXQb6</a>.</p><p><strong>Funding.</strong> The creation of this dataset was funded by the Army Research Office under Grant Number W911NF-20-1-0002, awarded through the Defense Advanced Research Projects Agency (DARPA), with intramural seed funding from the University of Arizona's SensorLab. Continued support is provided by Army Research Office Award Number W911NF-24-2-0034.</p>",
+  "notes": "All publicly released data has been de-identified; informed consent was obtained in person from every participant (see the paper's datasheet and the consent form on the dataset site). License: CC BY-NC-SA 4.0."
+}
