@@ -48,5 +48,9 @@ sync_ekg:
 
 sync_all: sync_fnirs sync_eeg sync_gsr sync_ekg
 
+# SQLite bulk-download artifact: tomcat-core.db, every table except the seven
+# high-rate signal tables (those are in the pg_dump). Streams via COPY, resumes
+# a killed run, and writes a sha256 sidecar. Unattended-safe; run it in tmux.
+# TBS=all (or a comma-separated list) overrides the table set.
 to_sqlite:
 	@PYTHONPATH="." working_env=production ./bin/to_sqlite.py

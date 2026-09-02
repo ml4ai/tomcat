@@ -61,8 +61,11 @@ ARTIFACT_DIR = Path(settings.artifact_dir)
 # offline (see Makefile: to_sqlite, pg_dump_artifact) and served as static files;
 # they never touch the database connection.
 BULK_ARTIFACTS = {
-    "tomcat.db": "SQLite database — opens in pandas, R, DuckDB, the sqlite3 CLI.",
-    "tomcat.dump": "PostgreSQL dump (custom format) — restore with pg_restore.",
+    "tomcat-core.db": (
+        "SQLite database of every table except the seven high-rate signal tables"
+        " — opens in pandas, R, DuckDB, the sqlite3 CLI."
+    ),
+    "tomcat.dump": "PostgreSQL dump of the full dataset (custom format) — restore with pg_restore.",
 }
 
 # --- Site-level chrome (NOT schema): title, citations, schema.org, CSS links -

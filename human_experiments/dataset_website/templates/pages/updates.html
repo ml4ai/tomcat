@@ -12,6 +12,10 @@ list](/mailing-list) to receive email updates whenever the dataset is updated.
 
 ## List of updates
 
+- [2026-09-02](/updates/2026-09-02): Bulk downloads are available: a SQLite
+file of every table except the seven high-rate signal tables
+(`tomcat-core.db`), and a `pg_restore`-able dump of the full database
+(`tomcat.dump`), both with checksums.
 - [2026-08-31](/updates/2026-08-31): `minecraft_testbed_message.message` is now
 a JSON object rather than a double-encoded JSON string — a breaking change for
 queries that used the old workaround. Also fills in seven columns of

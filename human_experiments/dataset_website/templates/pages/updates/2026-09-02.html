@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block body_class %}index{% endblock %}
+
+{% block content %}
+{{ render_markdown(
+"""
+# 2026-09-02 update
+
+## Bulk downloads are available
+
+The [Download](/download) page now serves two artifacts, each with a SHA-256
+checksum:
+
+- **`tomcat-core.db`** — a single SQLite file holding every table *except* the
+  seven high-rate signal tables (`eeg_raw`, `gaze_raw`, `fnirs_sync`,
+  `eeg_sync`, `audio_vocalics`, `gsr_sync`, `ekg_sync`). That is the sessions,
+  participants, stations, tasks, task observations, surveys, data validity,
+  screen-capture references, Minecraft missions and the complete testbed
+  message bus — everything that defines the experiment — in a file that opens
+  directly in the `sqlite3` CLI, pandas, R or DuckDB. Table and column
+  descriptions travel with it in a `_schema_docs` table.
+- **`tomcat.dump`** — a `pg_restore`-able dump of the full database, signal
+  tables included. Plan on roughly 420 GB of disk for the restored database.
+
+The signal tables are left out of the SQLite file deliberately. They are about
+400 GB of the 413 GB database, SQLite does not compress, and a file that size
+is neither downloadable over HTTP nor usable in the tools the SQLite build is
+for. The live site serves them one session at a time; the PostgreSQL dump has
+all of them.
+
+Until now, whole-dataset work meant asking us for a custom export. It no
+longer does.
+""")
+}}
+{% endblock %}
