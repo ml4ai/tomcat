@@ -137,7 +137,7 @@ The live app is for browse/ad-hoc queries (10s cap, capped export). Whole-datase
 are pre-generated static files linked from `/download`, regenerated **offline**
 in `../dataset_pipeline/`:
 ```bash
-make to_sqlite          # tomcat.db   (SQLite)            -- run in tmux; slow
+make to_sqlite          # tomcat-core.db (SQLite, signal tables excluded) + .sha256 -- run in tmux
 make pg_dump_artifact   # tomcat.dump (pg_restore custom) + .sha256 sidecar
 ```
 Both land in `ARTIFACT_DIR`. In production, let Caddy serve `/downloads/*` directly off

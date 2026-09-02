@@ -7,17 +7,17 @@
 <h1>Download the dataset</h1>
 <p>
     The live site is for browsing and ad-hoc queries (capped at 10 seconds). To work
-    with the whole dataset, download a full copy below and run it locally. Each
+    with the whole dataset, download a copy below and run it locally. Each
     artifact is regenerated manually, so check its timestamp to see how current it
     is.
 </p>
 
 {% set artifact_names = artifacts | map(attribute="name") | list %}
-{% if "tomcat.db" not in artifact_names %}
+{% if "tomcat-core.db" not in artifact_names %}
 <div class="site-notice" role="status">
   <span class="label">SQLite export coming soon</span>
-  <p class="msg">The single-file SQLite build of the dataset
-  (<code>tomcat.db</code>) is not available for download yet.
+  <p class="msg">The single-file SQLite build of the core tables
+  (<code>tomcat-core.db</code>) is not available for download yet.
   {% if artifacts %}The PostgreSQL dump below is a complete copy in the
   meantime, and the live site serves the same data.{% else %}Please check back
   later.{% endif %}</p>
@@ -45,13 +45,25 @@
 </table>
 
 {{ render_markdown("""
-### Using the downloads
+### Which file do I want?
+
+The seven high-rate signal tables — `eeg_raw`, `gaze_raw`, `fnirs_sync`,
+`eeg_sync`, `audio_vocalics`, `gsr_sync`, `ekg_sync` — are about 400 GB of the
+413 GB database, and SQLite does not compress. So the SQLite file carries
+everything *else*: sessions, participants, stations, tasks, task observations,
+surveys, data validity, screen-capture references, the Minecraft missions and
+the full testbed message bus. That is every table that defines the experiment,
+in a form that opens instantly. The signal tables are in the PostgreSQL dump
+(and on the live site, one session at a time).
 """ ~ ("""
-- **SQLite** (`tomcat.db`): open directly with the `sqlite3` CLI, pandas
-  (`pd.read_sql`), R (`DBI`/`RSQLite`), or DuckDB (`ATTACH 'tomcat.db' (TYPE sqlite)`).
-""" if "tomcat.db" in artifact_names else "") ~ ("""
+- **SQLite** (`tomcat-core.db`): open directly with the `sqlite3` CLI, pandas
+  (`pd.read_sql`), R (`DBI`/`RSQLite`), or DuckDB (`ATTACH 'tomcat-core.db' (TYPE sqlite)`).
+  Table and column descriptions are included in the `_schema_docs` table.
+  Primary keys are present as unique indexes of the same name as in PostgreSQL.
+""" if "tomcat-core.db" in artifact_names else "") ~ ("""
 - **PostgreSQL dump** (`tomcat.dump`): restore into your own cluster with
   `pg_restore -d your_db tomcat.dump` (custom format, no manual decompression needed).
+  Plan on roughly 420 GB of disk for the restored database.
 """ if "tomcat.dump" in artifact_names else "")) }}
 {% endif %}
 {% endblock %}

@@ -28,7 +28,7 @@ class Settings(BaseSettings):
     web_db_user: str = "tomcat_public"
     web_db_pass: str = ""
 
-    # Where the offline bulk artifacts (tomcat.db, tomcat.dump) land; the
+    # Where the offline bulk artifacts (tomcat-core.db, tomcat.dump) land; the
     # /download page serves them from here.
     artifact_dir: str = f"/space/{os.getenv('USER')}/tomcat"
 

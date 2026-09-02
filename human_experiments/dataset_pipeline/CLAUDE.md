@@ -27,7 +27,8 @@ All operations go through the Makefile. Read `README.md` for the prose version.
   `working_env=production db_pass=<pass> make <target>`
 - Key targets: `create_tables`, `update_raw` (incremental — skips processed sessions;
   scope with `TBS=<tables>`), `sync_all` (= `sync_fnirs sync_eeg sync_gsr sync_ekg`),
-  `to_sqlite` (very slow — run in tmux), `pg_dump_artifact`, `sync_comments`
+  `to_sqlite` (streams to `tomcat-core.db`, signal tables excluded by default;
+  resumable; run in tmux), `pg_dump_artifact`, `sync_comments`
   (imports `../dataset_website/metadata.yml` prose into Postgres COMMENTs),
   `lint` (ruff check+format).
 - Scripts in `bin/` back these targets one-for-one (`populate_raw_tables.py` ← `update_raw`,

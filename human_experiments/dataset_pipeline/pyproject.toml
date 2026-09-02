@@ -50,12 +50,9 @@ audio = [
     "pydub~=0.25.1",
     "praat-textgrids==1.4.0",
 ]
-# SQLite bulk-download artifact (bin/to_sqlite.py shells out to db-to-sqlite).
-# The Datasette serving deps this extra once carried are parked in
-# legacy_datasette/README.md.
-sqlite_export = [
-    "db-to-sqlite[postgresql]",
-]
+# The SQLite bulk-download artifact (bin/to_sqlite.py) needs only psycopg2 and
+# the stdlib sqlite3, both in the base install. The Datasette serving deps the
+# old sqlite_export extra once carried are parked in legacy_datasette/README.md.
 dev = [
     "black",
     "flake8",
@@ -64,7 +61,7 @@ dev = [
 ]
 # Everything (the old `requirements.txt` behaviour).
 all = [
-    "dataset_pipeline[signal,audio,sqlite_export,dev]",
+    "dataset_pipeline[signal,audio,dev]",
 ]
 
 [build-system]

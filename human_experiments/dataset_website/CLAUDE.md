@@ -58,8 +58,11 @@ Jinja `ChoiceLoader`.
 
 The live app is for browse/ad-hoc queries only (10s cap, capped export).
 Whole-dataset grabs are pre-generated static files linked from `/download`: the
-SQLite `tomcat.db` and a compressed pg_dump `tomcat.dump`, produced offline by
-the pipeline (`make to_sqlite` / `make pg_dump_artifact`) into `ARTIFACT_DIR`.
+SQLite `tomcat-core.db` (every table except the seven ~400 GB signal tables)
+and a compressed pg_dump `tomcat.dump` (everything), produced offline by the
+pipeline (`make to_sqlite` / `make pg_dump_artifact`) into `ARTIFACT_DIR`.
+`BULK_ARTIFACTS` in `app.py` is the filename allowlist; anything else in the
+directory is invisible.
 In prod let Caddy serve `/downloads/*` directly.
 
 ## Gotchas

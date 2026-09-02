@@ -8,7 +8,6 @@ uv venv && source .venv/bin/activate
 uv pip install -e .                     # core: base + task + raw-signal ingestion
 uv pip install -e '.[signal]'           # + derived sync_* step (scipy/neurokit2/mne)
 uv pip install -e '.[audio]'            # + vocalics (heavy: torch/whisper)
-uv pip install -e '.[sqlite_export]'    # + db-to-sqlite (the to_sqlite target)
 uv pip install -e '.[all]'              # everything
 ```
 Configuration is read from a `.env` file (see `.env.example`); copy it to `.env` and edit.
@@ -26,7 +25,7 @@ Your user must have permission to modify the Postgres database in production mod
 2. **update_raw**: Adds new raw data to the relevant tables. This can be called to update the database with new experiment data. It will skip experiments already processed. The environment variable `TBS` can be used in conjunction with this command to specify a subset of tables one wants to update.
 3. **sync_all** (or per-modality `sync_fnirs`/`sync_eeg`/`sync_gsr`/`sync_ekg`): Filters and synchronizes signals with a main clock with frequency 200Hz that starts 1 minute before the rest_state task and ends 1 minute after end of the last minecraft trial. Synchronized signals are saved to the `*_sync` tables.
 4. **sync_comments**: Imports table/column descriptions from `../dataset_website/metadata.yml` into native Postgres COMMENTs (what the public site displays).
-5. **to_sqlite**: Copies the Postgres database to an SQLite bulk-download artifact in `ARTIFACT_DIR`. It runs in production mode automatically to make sure to read from the Postgres database. The environment variable `TBS` can be used in conjunction with this command to specify a subset of tables one wants to copy, otherwise, all tables will be copied. Be patient and run this in a tmux session as this process can take several days depending on the size of the tables.
+5. **to_sqlite**: Copies the Postgres database to the SQLite bulk-download artifact `tomcat-core.db` in `ARTIFACT_DIR`, plus a sha256 sidecar. By default it exports every table *except* the seven high-rate signal tables (`eeg_raw`, `gaze_raw`, `fnirs_sync`, `eeg_sync`, `audio_vocalics`, `gsr_sync`, `ekg_sync`), which are ~400 GB of the 413 GB database and belong in the pg_dump instead. `TBS=all` or `TBS=<comma-separated tables>` overrides that (with `all` the output is `tomcat.db`). It runs in production mode automatically so it reads Postgres. Tables stream via `COPY`, so memory stays flat; a killed run resumes from the last completed table. Run it in tmux.
 6. **pg_dump_artifact**: Writes a compressed, pg_restore-able dump (plus sha256 sidecar) to `ARTIFACT_DIR`.
 
 # Miscellaneous
