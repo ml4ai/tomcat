@@ -53,6 +53,10 @@ audio = [
 # The SQLite bulk-download artifact (bin/to_sqlite.py) needs only psycopg2 and
 # the stdlib sqlite3, both in the base install. The Datasette serving deps the
 # old sqlite_export extra once carried are parked in legacy_datasette/README.md.
+# Zenodo deposit of that artifact (bin/zenodo_deposit.py, zenodo/).
+zenodo = [
+    "requests",
+]
 dev = [
     "black",
     "flake8",
