@@ -15,8 +15,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from functools import lru_cache
+from threading import Lock
+from time import monotonic
 
 from sqlalchemy import inspect, text
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.types import Boolean, Integer, Numeric
 
 from dataset_website.settings import settings
@@ -183,17 +186,80 @@ def get_database() -> Database:
     return Database(name=settings.db_name, tables=tables)
 
 
+# --- Estimated row counts ---------------------------------------------------
+# Held in memory rather than read per request. reltuples only moves on ingestion,
+# so a stale estimate costs nothing; a fresh one used to cost a great deal. The
+# index pages render ~24 tables and called this once per table, each opening its
+# own connection -- so whenever Postgres was slow, `/` serialised up to 24 doomed
+# round-trips, each able to burn the full db.STATEMENT_TIMEOUT_MS before erroring.
+# That is exactly how the 2026-09-05/06 outages turned a memory-starved host into
+# a 500 on the homepage (the queries themselves are catalog lookups, microseconds
+# when the page cache is warm). One connection, one query, cached, and stale on
+# failure instead of raising.
+ROW_COUNT_TTL_SECONDS = 900
+# After a failed refresh, serve the previous snapshot for this long rather than
+# retrying on every request -- a starved database must not be re-probed 24 times
+# a page.
+ROW_COUNT_RETRY_SECONDS = 60
+
+_row_counts: dict[str, int] = {}
+_row_counts_expires_at: float = 0.0
+_row_counts_lock = Lock()
+
+
+def _fetch_row_counts() -> dict[str, int]:
+    """Every public table's reltuples in a single catalog query.
+
+    Restricted to ordinary and partitioned tables visible on the search path, so a
+    same-named index or a relation in another schema can't shadow the real entry
+    (the per-table query this replaced matched on relname alone).
+    """
+    names = list(get_database().tables)
+    if not names:
+        return {}
+    with engine.connect() as conn:
+        rows = conn.execute(
+            text(
+                "SELECT relname, reltuples::bigint FROM pg_class "
+                "WHERE relname = ANY(:names) "
+                "AND relkind IN ('r', 'p') "
+                "AND pg_table_is_visible(oid)"
+            ),
+            {"names": names},
+        ).all()
+    return {name: int(count) for name, count in rows if count and count > 0}
+
+
+def row_counts(*, force: bool = False) -> dict[str, int]:
+    """Cached {table_name: estimated rows}, refreshed at most once per TTL.
+
+    Never raises on a database failure: the previous snapshot is served instead,
+    and an empty one on the very first failure. Callers then see 0, which is
+    already the "unknown" value here (reltuples is -1 before a first ANALYZE).
+    """
+    global _row_counts, _row_counts_expires_at
+
+    with _row_counts_lock:
+        # Re-checked under the lock, so concurrent requests share one refresh
+        # instead of each firing its own query at an already-struggling database.
+        if not force and monotonic() < _row_counts_expires_at:
+            return _row_counts
+        try:
+            _row_counts = _fetch_row_counts()
+            _row_counts_expires_at = monotonic() + ROW_COUNT_TTL_SECONDS
+        except SQLAlchemyError:
+            # Degrade, don't 500. The expiry is still advanced so the retry is
+            # bounded; waiters that wake after this see it and return immediately.
+            _row_counts_expires_at = monotonic() + ROW_COUNT_RETRY_SECONDS
+        return _row_counts
+
+
 def estimated_row_count(table_name: str) -> int:
     """Fast, approximate row count from pg_class.reltuples.
 
     reltuples is an estimate maintained by ANALYZE/autovacuum, so the table index
     page never blocks on COUNT(*) over millions of rows -- the very thing that makes
     the current Datasette index slow. Returns 0 when unknown (reltuples is -1 before
-    a table is first analyzed).
+    a table is first analyzed, and after a failed refresh).
     """
-    with engine.connect() as conn:
-        result = conn.execute(
-            text("SELECT reltuples::bigint FROM pg_class WHERE relname = :t"),
-            {"t": table_name},
-        ).scalar()
-    return int(result) if result and result > 0 else 0
+    return row_counts().get(table_name, 0)
