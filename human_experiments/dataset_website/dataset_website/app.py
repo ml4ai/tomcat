@@ -20,6 +20,7 @@ from __future__ import annotations
 import csv
 import io
 import json
+from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlencode
@@ -43,7 +44,12 @@ from dataset_website import facets as facet_engine
 from dataset_website import query as query_engine
 from dataset_website.config import EXPORT_ROW_CAP
 from dataset_website.message_specs import get_topic_index, topic_tree
-from dataset_website.schema import Table, estimated_row_count, get_database
+from dataset_website.schema import (
+    Table,
+    estimated_row_count,
+    get_database,
+    row_counts,
+)
 
 # --- Paths ------------------------------------------------------------------
 PACKAGE_DIR = Path(__file__).resolve().parent  # .../dataset_website/dataset_website
@@ -117,10 +123,42 @@ def render(template: str, request: Request, **context) -> HTMLResponse:
     return HTMLResponse(_jinja.get_template(template).render(**ctx))
 
 
+@asynccontextmanager
+async def _lifespan(_app: FastAPI):
+    """Populate the row-count snapshot before the first request arrives.
+
+    Best-effort: row_counts() swallows database failures, so a cluster that is
+    unhealthy at boot yields an empty snapshot (rows render as 0) rather than
+    preventing the app from starting.
+    """
+    row_counts(force=True)
+    yield
+
+
 app = FastAPI(
-    title=SITE_METADATA.get("title", "ToMCAT Dataset"), docs_url=None, redoc_url=None
+    title=SITE_METADATA.get("title", "ToMCAT Dataset"),
+    docs_url=None,
+    redoc_url=None,
+    lifespan=_lifespan,
 )
 app.mount("/assets", StaticFiles(directory=str(STATIC_DIR)), name="assets")
+
+
+def _table_listing() -> list[dict]:
+    """Name/description/rows for every public table, from cached data only.
+
+    Both index pages render this. The counts come from one in-memory snapshot,
+    so neither page costs a database round-trip per table.
+    """
+    counts = row_counts()
+    return [
+        {
+            "name": t.name,
+            "description": t.description,
+            "rows": counts.get(t.name, 0),
+        }
+        for t in get_database().tables.values()
+    ]
 
 
 def _get_table_or_404(table_name: str) -> Table:
@@ -203,16 +241,7 @@ class _TableLinks:
 # --- Routes -----------------------------------------------------------------
 @app.get("/", response_class=HTMLResponse)
 def home(request: Request):
-    db = get_database()
-    tables = [
-        {
-            "name": t.name,
-            "description": t.description,
-            "rows": estimated_row_count(t.name),
-        }
-        for t in db.tables.values()
-    ]
-    return render("index.html", request, tables=tables, database=DB_NAME)
+    return render("index.html", request, tables=_table_listing(), database=DB_NAME)
 
 
 @app.get("/-/structured_metadata.json")
@@ -273,16 +302,7 @@ def download_file(name: str):
 
 @app.get(DB_PREFIX, response_class=HTMLResponse)
 def database_index(request: Request):
-    db = get_database()
-    tables = [
-        {
-            "name": t.name,
-            "description": t.description,
-            "rows": estimated_row_count(t.name),
-        }
-        for t in db.tables.values()
-    ]
-    return render("database.html", request, database=DB_NAME, tables=tables)
+    return render("database.html", request, database=DB_NAME, tables=_table_listing())
 
 
 @app.get(f"{DB_PREFIX}/-/schema.json")
