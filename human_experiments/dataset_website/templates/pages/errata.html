@@ -7,9 +7,164 @@
 """
 # Errata
 
-Known errors in released versions of the dataset, newest first.
+This page lists known problems with the dataset. The first section covers
+problems that are present in the current database, so they affect anyone
+using it today. The second covers errors in earlier releases that have since
+been fixed.
 
-## The 2025-03-09 release is missing most of `screen_capture`
+## Known problems in the current database
+
+### The advisor did not run in 8 missions labelled with it
+
+**Affects:** any analysis that uses `group_session.advisor` to decide whether
+participants received advisor interventions.
+
+`group_session.advisor` records the condition a session was *assigned*. It
+does not record whether the advisor actually ran. Of the 50 Saturn missions
+in sessions labelled `tomcat`, 8 contain no advisor interventions at all, and
+a ninth contains only 3 because the mission was aborted after about six
+minutes:
+
+| Group session | Mission | Advisor interventions |
+|---|---|---|
+| `exp_2022_09_30_10` | Saturn_A | 0 |
+| `exp_2022_10_04_09` | Saturn_A | 0 |
+| `exp_2022_10_07_15` | Saturn_A | 0 |
+| `exp_2022_10_07_15` | Saturn_B | 0 |
+| `exp_2022_10_18_10` | Saturn_A | 3 (mission aborted) |
+| `exp_2022_10_18_10` | Saturn_B | 0 |
+| `exp_2022_10_28_10` | Saturn_A | 0 |
+| `exp_2022_10_28_10` | Saturn_B | 0 |
+| `exp_2022_12_02_15` | Saturn_A | 0 |
+
+The advisor ran as a separate process that had to be started by hand shortly
+before each mission. In these missions it was not started, was not restarted
+after the previous mission was aborted, or was started after the mission had
+already begun (it only activates on a mission start it observes). No mission
+in a session labelled `none` contains advisor messages, so the error runs in
+one direction only.
+
+Because the label is per session, it also cannot express
+`exp_2022_12_02_15`, where the advisor ran in Saturn_B but not in Saturn_A.
+
+**To tell whether the advisor ran in a given mission**, count its heartbeat
+messages. A mission in which the advisor ran has about 100 of them; one in
+which it did not has none.
+
+    select mission, count(*) as heartbeats
+    from minecraft_testbed_message
+    where topic = 'status/ASI_UAZ_TA1_ToMCAT/heartbeats'
+    group by mission;
+
+Advisor interventions themselves are on the topic
+`agent/intervention/ASI_UAZ_TA1_ToMCAT/chat`.
+
+### `agent_*` survey responses are not meaningful in sessions without an advisor
+
+**Affects:** the `agent_*` columns of `post_game_survey`.
+
+The post-game survey asks participants for their impressions of the AI
+advisor, and those questions were mandatory. In the 10 group sessions with
+`advisor = 'none'`, participants had no advisor to rate but were instructed to
+answer the questions anyway. The `agent_*` columns are populated for those 22
+participants, but the values do not describe an advisor and should be treated
+as missing.
+
+The same caution applies to sessions where the advisor was assigned but never
+ran (see the previous item). In `exp_2022_09_30_10`, `exp_2022_10_04_09`,
+`exp_2022_10_07_15` and `exp_2022_10_28_10`, no recorded mission contains an
+advisor intervention.
+
+### Missing demographic and post-game survey data
+
+**Affects:** the `participant` and `post_game_survey` tables.
+
+- **Demographics** are missing for participants **56** and **81**. Their
+  `participant` rows exist, but every self-report column is null.
+- **Post-game surveys** are missing for participants **12, 51, 101, 147, 154
+  and 161**. They have no row in `post_game_survey`.
+
+The data was not collected, so it cannot be recovered. This is separate from
+the sentinel and confederate participant IDs (negative IDs, and IDs above
+999), which have no self-report data by design; see the `participant.id`
+column description.
+
+### Some sessions have fewer than two Saturn missions
+
+**Affects:** analyses that assume every group session has both Saturn_A and
+Saturn_B.
+
+Each session was designed to include Hands-on Training followed by two Saturn
+missions. The following 13 sessions have fewer than two Saturn missions in
+the data:
+
+| Group session | Missions present |
+|---|---|
+| `exp_2022_09_30_10` | Hands-on Training, Saturn_A |
+| `exp_2022_10_04_09` | Hands-on Training, Saturn_A |
+| `exp_2022_10_24_12` | Hands-on Training, Saturn_A |
+| `exp_2022_11_17_15` | Hands-on Training, Saturn_A |
+| `exp_2023_01_30_13` | none |
+| `exp_2023_01_31_14` | Hands-on Training |
+| `exp_2023_02_06_13` | Hands-on Training, Saturn_A |
+| `exp_2023_02_10_10` | Hands-on Training, Saturn_A |
+| `exp_2023_02_16_14` | Saturn_A |
+| `exp_2023_04_17_13` | Hands-on Training, Saturn_A |
+| `exp_2023_04_21_10` | Hands-on Training, Saturn_A |
+| `exp_2023_04_27_14` | Hands-on Training |
+| `exp_2023_05_01_13` | Hands-on Training, Saturn_A |
+
+`exp_2023_01_30_13` has no Minecraft data at all, so it has no missions, no
+testbed messages and no Minecraft player names. Its other data is intact.
+
+### Screen capture is missing for one station in `exp_2023_04_21_10`
+
+The screen recording program crashed on station `lion` during
+`exp_2023_04_21_10`. `screen_capture` holds a single frame for that station
+and session, and there is no screen-capture video for it.
+
+### Three `screen_capture` rows have invalid timestamps
+
+Three rows in `screen_capture` have timestamps in 1969 or 1970: two for
+station `lion` in `exp_2023_04_18_14` and one for station `lion` in
+`exp_2023_04_21_10`, all with `timestamp_origin = 'lsl'`. Exclude them from
+any analysis that relies on screen-capture timing.
+
+    select * from screen_capture where timestamp_iso8601 < '2020';
+
+### The synchronized signal tables have no `task` or `participant` column
+
+**Affects:** `eeg_sync`, `fnirs_sync`, `gsr_sync` and `ekg_sync`.
+
+This is a limitation rather than an error. The raw signal tables (`eeg_raw`,
+`fnirs_raw`, `gaze_raw`) carry `task` and `participant` columns, but the
+synchronized tables are built from the raw signals afterwards and identify
+rows by `group_session` and `station` only. To align a synchronized signal
+with a task, join on the task's start and stop times from the task tables
+(`rest_state_task`, `finger_tapping_task_observation`,
+`affective_task_event`, the two `ping_pong_*_task_observation` tables, and
+`minecraft_mission`), and use `data_validity` to map a station to its
+participant for that session.
+
+### Three survey columns are named differently from the codebook
+
+**Affects:** anyone matching `post_game_survey` columns against the REDCap
+codebook.
+
+Three columns were named to correct typos in the survey's field names:
+
+| Column | Codebook field |
+|---|---|
+| `agent_intel` | `agent_intell` |
+| `team_decision` | `team_decisision` |
+| `team_guilty` | `team_guilt` |
+
+The values are unchanged. Until the [2026-08-31 update](/updates/2026-08-31),
+these three columns were empty because of this mismatch.
+
+## Errors in earlier releases
+
+### The 2025-03-09 release is missing most of `screen_capture`
 
 **Affects:** anyone who used `screen_capture` from the 2025-03-09 release,
 including the copy currently served at `tomcat.ivilab.org`.
@@ -32,7 +187,7 @@ PostgreSQL database is not affected.
 coverage was incomplete and any per-session or longitudinal analysis over that
 table should be re-run.**
 
-## The 2025-03-09 release is missing one station's EKG
+### The 2025-03-09 release is missing one station's EKG
 
 **Affects:** anyone who used `ekg_sync` for group session
 `exp_2023_04_17_13`, station `leopard`.
@@ -52,7 +207,7 @@ in the current environment processes the same recording without error.
 The 2024-02-22 release is not affected. The current PostgreSQL database is not
 affected.
 
-## `audio_vocalics` column names changed after 2025-03-09
+### `audio_vocalics` column names changed after 2025-03-09
 
 **Affects:** queries and scripts written against any SQLite release.
 
@@ -66,7 +221,7 @@ brackets, they must be double-quoted in SQL:
 
     select \"mfcc_sma[1]\" from audio_vocalics limit 10;
 
-## Labeling and `fnirs_raw` fixes (2023-07-17)
+### Labeling and `fnirs_raw` fixes (2023-07-17)
 
 The [2023-07-17 update](/updates/2023-07-17) fixes some labeling errors related
 to participant IDs, and also removes some invalid rows from the `fnirs_raw`
