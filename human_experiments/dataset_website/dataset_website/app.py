@@ -43,6 +43,7 @@ from dataset_website import browse as browse_engine
 from dataset_website import facets as facet_engine
 from dataset_website import query as query_engine
 from dataset_website.config import EXPORT_ROW_CAP
+from dataset_website.load_shed import query_slot
 from dataset_website.message_specs import get_topic_index, topic_tree
 from dataset_website.schema import (
     Table,
@@ -359,7 +360,8 @@ def sql_console(request: Request):
                 if fmt in ("csv", "json")
                 else query_engine.SQL_CONSOLE_ROW_CAP
             )
-            result = query_engine.run_query(sql, cap=cap)
+            with query_slot():
+                result = query_engine.run_query(sql, cap=cap)
         except query_engine.InvalidQuery as exc:
             error = str(exc)
 
@@ -376,6 +378,11 @@ def sql_console(request: Request):
 @app.get(f"{DB_PREFIX}/{{table_name}}", response_class=HTMLResponse)
 def table_view(table_name: str, request: Request):
     table = _get_table_or_404(table_name)
+    with query_slot():
+        return _table_view(table, request)
+
+
+def _table_view(table: Table, request: Request):
     params = list(request.query_params.multi_items())
     fmt = request.query_params.get("_format")
 
